@@ -1,0 +1,28 @@
+{
+  try {
+    final Pipe pipe=Pipe.open();
+    Thread writer=new Thread(){
+      public void run(){
+        try {
+          WritableByteChannel wbc=pipe.sink();
+          write(wbc);
+          try {
+            wbc.close();
+          }
+ catch (          IOException ioe) {
+            throw new RestletException("Error while closing the output stream",ioe);
+          }
+        }
+ catch (        RestletException re) {
+          re.printStackTrace();
+        }
+      }
+    }
+;
+    writer.start();
+    return pipe.source();
+  }
+ catch (  IOException ioe) {
+    throw new RestletException(ioe);
+  }
+}

@@ -1,0 +1,16 @@
+{
+  List<Cookie> result=new ArrayList<Cookie>();
+  try {
+    CookiesReader cis=getCookiesReader();
+    Cookie cookie=cis.readCookie();
+    while (cookie != null) {
+      result.add(cookie);
+      cis.readCookie();
+    }
+    cis.close();
+  }
+ catch (  Exception e) {
+    throw new RestletException("Error while reading the call's cookies",e);
+  }
+  return result;
+}

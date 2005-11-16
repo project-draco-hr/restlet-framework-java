@@ -1,0 +1,111 @@
+{
+  Preference result=null;
+  boolean readingMetadata=true;
+  boolean readingParamName=false;
+  boolean readingParamValue=false;
+  StringBuilder metadataBuffer=new StringBuilder();
+  StringBuilder paramNameBuffer=null;
+  StringBuilder paramValueBuffer=null;
+  List<Parameter> parameters=null;
+  int nextChar=0;
+  try {
+    while ((result == null) && (nextChar != -1)) {
+      nextChar=read();
+      if (readingMetadata) {
+        if ((nextChar == ',') || (nextChar == -1)) {
+          if (metadataBuffer.length() > 0) {
+            result=createPreference(metadataBuffer,null);
+            paramNameBuffer=new StringBuilder();
+          }
+ else           if (nextChar == -1) {
+          }
+ else {
+            throw new RestletException("Empty metadata name detected","Please check your metadata names");
+          }
+        }
+ else         if (nextChar == ';') {
+          if (metadataBuffer.length() > 0) {
+            readingMetadata=false;
+            readingParamName=true;
+            paramNameBuffer=new StringBuilder();
+            parameters=new ArrayList<Parameter>();
+          }
+ else {
+            throw new RestletException("Empty metadata name detected","Please check your metadata names");
+          }
+        }
+ else         if (nextChar == ' ') {
+        }
+ else         if (isText(nextChar)) {
+          metadataBuffer.append((char)nextChar);
+        }
+ else {
+          throw new RestletException("Control characters are not allowed within a metadata name","Please check your metadata names");
+        }
+      }
+ else       if (readingParamName) {
+        if (nextChar == '=') {
+          if (paramNameBuffer.length() > 0) {
+            readingParamName=false;
+            readingParamValue=true;
+            paramValueBuffer=new StringBuilder();
+          }
+ else {
+            throw new RestletException("Empty parameter name detected","Please check your parameter names");
+          }
+        }
+ else         if ((nextChar == ',') || (nextChar == -1)) {
+          if (paramNameBuffer.length() > 0) {
+            parameters.add(createParameter(paramNameBuffer,null));
+            result=createPreference(metadataBuffer,parameters);
+          }
+ else {
+            throw new RestletException("Empty parameter name detected","Please check your parameter names");
+          }
+        }
+ else         if (nextChar == ';') {
+          parameters.add(createParameter(paramNameBuffer,null));
+          paramNameBuffer=new StringBuilder();
+          readingParamName=true;
+          readingParamValue=false;
+        }
+ else         if (isTokenChar(nextChar)) {
+          paramNameBuffer.append((char)nextChar);
+        }
+ else {
+          throw new RestletException("Separator and control characters are not allowed within a token","Please check your parameter names");
+        }
+      }
+ else       if (readingParamValue) {
+        if ((nextChar == ',') || (nextChar == -1)) {
+          if (paramValueBuffer.length() > 0) {
+            parameters.add(createParameter(paramNameBuffer,paramValueBuffer));
+            result=createPreference(metadataBuffer,parameters);
+          }
+ else {
+            throw new RestletException("Empty parameter value detected","Please check your parameter values");
+          }
+        }
+ else         if (nextChar == ';') {
+          parameters.add(createParameter(paramNameBuffer,paramValueBuffer));
+          paramNameBuffer=new StringBuilder();
+          readingParamName=true;
+          readingParamValue=false;
+        }
+ else         if ((nextChar == '"') && (paramValueBuffer.length() == 0)) {
+          paramValueBuffer.append(readQuotedString());
+        }
+ else         if (isTokenChar(nextChar)) {
+          paramValueBuffer.append((char)nextChar);
+        }
+ else {
+          throw new RestletException("Separator and control characters are not allowed within a token","Please check your parameter values");
+        }
+      }
+    }
+  }
+ catch (  IOException ioe) {
+    throw new RestletException("Unexpected I/O exception","Please contact the administrator");
+  }
+  return result;
+}

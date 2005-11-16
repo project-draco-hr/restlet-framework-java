@@ -1,0 +1,73 @@
+{
+  Parameter currentParam=null;
+  boolean compatible=false;
+  RepresentationMetadata currentVariant=null;
+  MediaType currentRange=null;
+  RepresentationMetadata bestVariant=null;
+  float bestQuality=0;
+  Preference currentPref=null;
+  Preference bestPref=null;
+  int currentSpecificity=0;
+  int bestSpecificity=0;
+  List<RepresentationMetadata> variants=resource.getVariantsMetadata();
+  if (variants == null) {
+    setStatus(StatusEnum.CLIENT_ERROR_NOT_FOUND);
+  }
+ else {
+    for (Iterator iter1=variants.iterator(); iter1.hasNext(); ) {
+      currentVariant=(RepresentationMetadata)iter1.next();
+      for (Iterator iter2=getMediaTypePrefs().iterator(); iter2.hasNext(); ) {
+        compatible=true;
+        currentSpecificity=0;
+        currentPref=(Preference)iter2.next();
+        currentRange=(MediaType)currentPref.getMetadata();
+        if (currentVariant.getMediaType().getMainType().equals(currentRange.getMainType())) {
+          currentSpecificity+=1000;
+        }
+ else         if (!currentRange.getMainType().equals("*")) {
+          compatible=false;
+        }
+ else         if (!currentRange.getSubtype().equals("*")) {
+          compatible=false;
+        }
+        if (compatible) {
+          if (currentVariant.getMediaType().getSubtype().equals(currentRange.getSubtype())) {
+            currentSpecificity+=100;
+          }
+ else           if (!currentRange.getSubtype().equals("*")) {
+            compatible=false;
+          }
+          if (compatible && (currentVariant.getMediaType().getParameters() != null)) {
+            for (Iterator iter3=currentVariant.getMediaType().getParameters().iterator(); iter3.hasNext(); ) {
+              currentParam=(Parameter)iter3.next();
+              if (isParameterFound(currentParam,currentRange)) {
+                currentSpecificity++;
+              }
+            }
+          }
+          if (compatible && ((bestPref == null) || (currentSpecificity > bestSpecificity))) {
+            bestPref=currentPref;
+          }
+        }
+      }
+      if (bestPref != null) {
+        if (bestVariant == null) {
+          bestVariant=currentVariant;
+          bestQuality=bestPref.getQuality();
+        }
+ else {
+          if (bestPref.getQuality() > bestQuality) {
+            bestVariant=currentVariant;
+            bestQuality=bestPref.getQuality();
+          }
+        }
+      }
+    }
+    if (bestVariant == null) {
+      setStatus(StatusEnum.CLIENT_ERROR_NOT_ACCEPTABLE);
+    }
+ else {
+      setOutput(resource.getRepresentation(bestVariant));
+    }
+  }
+}

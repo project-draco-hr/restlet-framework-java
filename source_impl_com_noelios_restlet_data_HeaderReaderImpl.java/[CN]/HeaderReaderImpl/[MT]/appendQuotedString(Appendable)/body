@@ -1,0 +1,34 @@
+{
+  boolean done=false;
+  boolean quotedPair=false;
+  int nextChar=0;
+  try {
+    while ((!done) && (nextChar != -1)) {
+      nextChar=read();
+      if (quotedPair) {
+        if (isText(nextChar)) {
+          buffer.append((char)nextChar);
+          quotedPair=false;
+        }
+ else {
+          throw new RestletException("Invalid character detected in quoted string","Please check your value");
+        }
+      }
+ else       if (isDoubleQuote(nextChar)) {
+        done=true;
+      }
+ else       if (nextChar == '\\') {
+        quotedPair=true;
+      }
+ else       if (isText(nextChar)) {
+        buffer.append((char)nextChar);
+      }
+ else {
+        throw new RestletException("Invalid character detected in quoted string","Please check your value");
+      }
+    }
+  }
+ catch (  IOException ioe) {
+    throw new RestletException("Error while reading the header characters","Please check your header");
+  }
+}

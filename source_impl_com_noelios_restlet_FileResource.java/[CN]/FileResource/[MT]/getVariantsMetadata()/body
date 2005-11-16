@@ -1,0 +1,42 @@
+{
+  List<RepresentationMetadata> result=null;
+  File baseDirectory=new File(getBasePath()).getParentFile();
+  if (baseDirectory != null) {
+    File[] files=baseDirectory.listFiles();
+    File currentFile=null;
+    Metadata metadata=null;
+    MediaType mediaType=null;
+    CharacterSet characterSet=null;
+    Language language=null;
+    for (int i=0; i < files.length; i++) {
+      currentFile=files[i];
+      if (currentFile.getAbsolutePath().toLowerCase().startsWith(getBasePath())) {
+        String[] tokens=currentFile.getName().split("\\.");
+        if (tokens[0].equalsIgnoreCase(getBaseName())) {
+          for (int j=1; j < tokens.length; j++) {
+            metadata=getDirectoryRestlet().getMetadata(tokens[j]);
+            if (metadata instanceof MediaType)             mediaType=(MediaType)metadata;
+            if (metadata instanceof CharacterSet)             characterSet=(CharacterSet)metadata;
+            if (metadata instanceof Language)             language=(Language)metadata;
+            int dashIndex=tokens[j].indexOf('-');
+            if ((metadata == null) && (dashIndex != -1)) {
+              String primaryPart=tokens[j].substring(0,dashIndex);
+              metadata=getDirectoryRestlet().getMetadata(primaryPart);
+              if (metadata instanceof Language)               language=(Language)metadata;
+            }
+          }
+          if (mediaType != null) {
+            if (result == null)             result=new ArrayList<RepresentationMetadata>();
+            FileRepresentation fr=new FileRepresentation(currentFile.getAbsolutePath(),mediaType);
+            fr.setCharacterSet(characterSet);
+            fr.setLanguage(language);
+            result.add(fr);
+          }
+ else {
+          }
+        }
+      }
+    }
+  }
+  return result;
+}

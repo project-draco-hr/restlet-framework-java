@@ -1,0 +1,12 @@
+{
+  if (!firstReaderCreation && getStream().markSupported()) {
+    try {
+      getStream().reset();
+    }
+ catch (    IOException ioe) {
+      throw new RestletException("Couldn't reset the form stream",ioe);
+    }
+  }
+  firstReaderCreation=false;
+  return new FormReaderImpl(getStream());
+}

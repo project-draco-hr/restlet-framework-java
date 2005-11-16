@@ -1,0 +1,26 @@
+{
+  Writer tmplWriter=null;
+  try {
+    if (getCharacterSet() != null) {
+      tmplWriter=new BufferedWriter(new OutputStreamWriter(outputStream,getCharacterSet().getName()));
+    }
+ else {
+      tmplWriter=new BufferedWriter(new OutputStreamWriter(outputStream,template.getEncoding()));
+    }
+    template.process(getValues(),tmplWriter);
+  }
+ catch (  IOException ioe) {
+    throw new RestletException("Template loading error",ioe);
+  }
+catch (  TemplateException te) {
+    throw new RestletException("Template processing error",te);
+  }
+ finally {
+    try {
+      if (tmplWriter != null)       tmplWriter.close();
+    }
+ catch (    IOException ioe) {
+      throw new RestletException("Can't close the writer",ioe);
+    }
+  }
+}

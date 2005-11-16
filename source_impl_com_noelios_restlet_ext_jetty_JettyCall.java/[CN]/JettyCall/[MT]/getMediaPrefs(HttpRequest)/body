@@ -1,0 +1,13 @@
+{
+  List<Preference> result=null;
+  String accept=request.getField(HttpFields.__Accept);
+  if (accept != null) {
+    PreferenceReaderImpl pr=new PreferenceReaderImpl(PreferenceReaderImpl.TYPE_MEDIA_TYPE,accept);
+    result=pr.readPreferences();
+  }
+ else {
+    result=new ArrayList<Preference>();
+    result.add(new PreferenceImpl(MediaTypeEnum.ALL));
+  }
+  return result;
+}
