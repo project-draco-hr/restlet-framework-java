@@ -22,7 +22,7 @@
  else             if (nextChar == -1) {
             }
  else {
-              throw new RestletException("Empty cookie name detected","Please check your cookies");
+              throw new IOException("Empty cookie name detected. Please check your cookies");
             }
           }
  else           if (nextChar == '=') {
@@ -33,7 +33,7 @@
             nameBuffer.append((char)nextChar);
           }
  else {
-            throw new RestletException("Separator and control characters are not allowed within a token","Please check your cookie header");
+            throw new IOException("Separator and control characters are not allowed within a token. Please check your cookie header");
           }
         }
  else         if (readingValue) {
@@ -49,16 +49,13 @@
             valueBuffer.append((char)nextChar);
           }
  else {
-            throw new RestletException("Separator and control characters are not allowed within a token","Please check your cookie header");
+            throw new IOException("Separator and control characters are not allowed within a token. Please check your cookie header");
           }
         }
       }
     }
  catch (    UnsupportedEncodingException uee) {
-      throw new RestletException("Unsupported encoding","Please contact the administrator");
-    }
-catch (    IOException ioe) {
-      throw new RestletException("Unexpected I/O exception","Please contact the administrator");
+      throw new IOException("Unsupported encoding. Please contact the administrator");
     }
   }
   return result;

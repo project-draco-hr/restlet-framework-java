@@ -1,16 +1,11 @@
 {
   List<Parameter> result=new ArrayList<Parameter>();
-  try {
-    FormReader fis=getFormReader();
-    Parameter param=fis.readParameter();
-    while (param != null) {
-      result.add(param);
-      fis.readParameter();
-    }
-    fis.close();
+  FormReader fis=getFormReader();
+  Parameter param=fis.readParameter();
+  while (param != null) {
+    result.add(param);
+    fis.readParameter();
   }
- catch (  Exception e) {
-    throw new RestletException("Error while reading the form parameters",e);
-  }
+  fis.close();
   return result;
 }

@@ -1,6 +1,7 @@
 {
   Writer tmplWriter=null;
   try {
+    Template template=loadTemplate(templatePath,config);
     if (getCharacterSet() != null) {
       tmplWriter=new BufferedWriter(new OutputStreamWriter(outputStream,getCharacterSet().getName()));
     }
@@ -9,18 +10,10 @@
     }
     template.process(getValues(),tmplWriter);
   }
- catch (  IOException ioe) {
-    throw new RestletException("Template loading error",ioe);
-  }
-catch (  TemplateException te) {
-    throw new RestletException("Template processing error",te);
+ catch (  TemplateException te) {
+    throw new IOException("Template processing error");
   }
  finally {
-    try {
-      if (tmplWriter != null)       tmplWriter.close();
-    }
- catch (    IOException ioe) {
-      throw new RestletException("Can't close the writer",ioe);
-    }
+    if (tmplWriter != null)     tmplWriter.close();
   }
 }
