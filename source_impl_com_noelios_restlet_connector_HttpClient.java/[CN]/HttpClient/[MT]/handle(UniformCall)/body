@@ -15,9 +15,11 @@
     if (call.getInput() != null) {
       call.getInput().write(huc.getOutputStream());
     }
-    MediaType mediaType=new MediaTypeImpl(huc.getContentType());
     call.setStatus(new StatusImpl(huc.getResponseCode()));
-    call.setOutput(new InputRepresentation(huc.getInputStream(),mediaType));
+    ContentType contentType=new ContentType(huc.getContentType());
+    Representation output=new InputRepresentation(huc.getInputStream(),contentType.getMediaType());
+    output.getMetadata().setCharacterSet(contentType.getCharacterSet());
+    call.setOutput(output);
   }
  catch (  MalformedURLException e) {
     e.printStackTrace();
