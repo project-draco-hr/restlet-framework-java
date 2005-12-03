@@ -18,7 +18,23 @@
       }
     }
     if (call.getOutput() != null) {
-      response.setContentType(call.getOutput().getMetadata().getMediaType().toString());
+      RepresentationMetadata meta=call.getOutput().getMetadata();
+      if (meta.getMediaType() != null) {
+        StringBuilder contentType=new StringBuilder(meta.getMediaType().toString());
+        if (meta.getCharacterSet() != null) {
+          contentType.append("; charset=").append(meta.getCharacterSet().getName());
+        }
+        response.setContentType(contentType.toString());
+      }
+      if (meta.getExpirationDate() != null) {
+        response.addDateField("Expires",meta.getExpirationDate());
+      }
+      if (meta.getModificationDate() != null) {
+        response.addDateField("Last-Modified",meta.getModificationDate());
+      }
+      if (meta.getTag() != null) {
+        response.addField("ETag",meta.getTag().getName());
+      }
       call.getOutput().write(response.getOutputStream());
     }
     response.commit();
