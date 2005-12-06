@@ -1,0 +1,34 @@
+{
+  this.directoryRestlet=directoryRestlet;
+  StringBuilder filePath=new StringBuilder(directoryRestlet.getRootPath());
+  int lastIndex=-1;
+  char nextChar;
+  for (int i=0; i < basePath.length(); i++) {
+    nextChar=basePath.charAt(i);
+    if (nextChar == '/') {
+      lastIndex=i;
+      filePath.append(File.separatorChar);
+    }
+ else {
+      filePath.append(nextChar);
+    }
+  }
+  this.basePath=filePath.toString().toLowerCase();
+  if (new File(this.basePath).isDirectory()) {
+    String indexName=getDirectoryRestlet().getIndexName();
+    if (indexName != null) {
+      this.basePath=this.basePath + indexName;
+      this.baseName=indexName;
+    }
+  }
+ else {
+    if (lastIndex == -1) {
+      this.baseName=basePath;
+    }
+ else {
+      this.baseName=basePath.substring(lastIndex + 1);
+    }
+  }
+  int dotIndex=this.baseName.indexOf('.');
+  if (dotIndex != -1)   this.baseName=this.baseName.substring(0,dotIndex);
+}

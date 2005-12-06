@@ -1,0 +1,30 @@
+{
+  try {
+    URL url=new URL(call.getResourceUri().toString());
+    HttpURLConnection huc=(HttpURLConnection)url.openConnection();
+    if (call.getReferrerUri() != null) {
+      huc.setRequestProperty("Referer",call.getReferrerUri().toString());
+    }
+    if (call.getUserAgentName() != null) {
+      huc.setRequestProperty("User-Agent",call.getUserAgentName());
+    }
+ else {
+      huc.setRequestProperty("User-Agent","Noelios-Restlet-Engine/0.11b HttpURLConnection/5.0");
+    }
+    huc.setRequestMethod(call.getMethod().getName());
+    if (call.getInput() != null) {
+      call.getInput().write(huc.getOutputStream());
+    }
+    call.setStatus(new StatusImpl(huc.getResponseCode()));
+    ContentType contentType=new ContentType(huc.getContentType());
+    Representation output=new InputRepresentation(huc.getInputStream(),contentType.getMediaType());
+    output.getMetadata().setCharacterSet(contentType.getCharacterSet());
+    call.setOutput(output);
+  }
+ catch (  MalformedURLException e) {
+    e.printStackTrace();
+  }
+catch (  IOException e) {
+    e.printStackTrace();
+  }
+}

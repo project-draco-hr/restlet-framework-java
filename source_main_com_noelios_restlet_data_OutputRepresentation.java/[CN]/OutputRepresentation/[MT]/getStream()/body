@@ -1,0 +1,19 @@
+{
+  final PipeStream pipe=new PipeStream();
+  Thread writer=new Thread(){
+    public void run(){
+      try {
+        OutputStream os=pipe.getOutputStream();
+        write(os);
+        os.write(-1);
+        os.close();
+      }
+ catch (      IOException ioe) {
+        ioe.printStackTrace();
+      }
+    }
+  }
+;
+  writer.start();
+  return pipe.getInputStream();
+}
