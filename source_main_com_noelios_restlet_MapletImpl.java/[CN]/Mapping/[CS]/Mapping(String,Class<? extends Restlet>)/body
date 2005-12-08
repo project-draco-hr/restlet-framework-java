@@ -1,24 +1,4 @@
 {
+  super(restletClass);
   this.pathPattern=Pattern.compile(pathPattern,Pattern.CASE_INSENSITIVE);
-  this.restlet=null;
-  this.restletClass=restletClass;
-  this.setContainer=false;
-  Constructor[] constructors=restletClass.getConstructors();
-  Class[] parameters;
-  for (int i=0; (this.restletConstructor == null) && (i < constructors.length); i++) {
-    parameters=constructors[i].getParameterTypes();
-    if (parameters.length == 1) {
-      if (RestletContainer.class.isAssignableFrom(parameters[0])) {
-        this.restletConstructor=constructors[i];
-        this.setContainer=true;
-      }
-    }
-  }
-  if (this.restletConstructor == null) {
-    try {
-      this.restletConstructor=restletClass.getConstructor(new Class[]{});
-    }
- catch (    NoSuchMethodException nsme) {
-    }
-  }
 }
