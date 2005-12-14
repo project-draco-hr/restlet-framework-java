@@ -1,0 +1,38 @@
+{
+  StringBuilder sb=new StringBuilder();
+  long currentTime=System.currentTimeMillis();
+  sb.append(String.format("%tF",currentTime));
+  sb.append('\t');
+  sb.append(String.format("%tT",currentTime));
+  sb.append('\t');
+  String methodName=call.getMethod().getName();
+  sb.append((methodName == null) ? "-" : methodName);
+  sb.append('\t');
+  String resourcePath=call.getResourceUri().getPath();
+  sb.append((resourcePath == null) ? "-" : resourcePath);
+  sb.append("\t-");
+  sb.append('\t');
+  String clientAddress=call.getClientAddress();
+  sb.append((clientAddress == null) ? "-" : clientAddress);
+  sb.append("\t-");
+  sb.append('\t');
+  String clientName=call.getClientName();
+  sb.append((clientName == null) ? "-" : clientName);
+  sb.append('\t');
+  sb.append((call.getReferrerUri() == null) ? "-" : call.getReferrerUri().getIdentifier());
+  sb.append('\t');
+  sb.append((call.getStatus() == null) ? "-" : Integer.toString(call.getStatus().getHttpCode()));
+  sb.append('\t');
+  if (call.getOutput() == null) {
+    sb.append('0');
+  }
+ else {
+    sb.append((call.getOutput().getSize() == -1) ? "-" : Long.toString(call.getOutput().getSize()));
+  }
+  sb.append('\t');
+  String query=call.getResourceUri().getQuery();
+  sb.append((query == null) ? "-" : query);
+  sb.append('\t');
+  sb.append((call.getResourceUri() == null) ? "-" : call.getResourceUri().getServerIdentifier());
+  this.logger.log(Level.INFO,sb.toString());
+}

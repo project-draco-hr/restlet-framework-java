@@ -1,0 +1,84 @@
+{
+  StringBuilder sb=new StringBuilder();
+  char nextChar=0;
+  int potentialStart=0;
+  int potentialEnd=0;
+  int potentialIndex=0;
+  int textStart=0;
+  int instructionStart=0;
+  int parseState=STATE_TEXT;
+  int state=STATE_INSTRUCTION_APPEND;
+  int i=0;
+  for (; i < template.length(); i++) {
+    nextChar=template.charAt(i);
+switch (parseState) {
+case STATE_TEXT:
+      if (nextChar == delimiterStart.charAt(0)) {
+        if (delimiterStart.length() == 1) {
+          state=processText(state,textStart,i,sb,dataModel);
+          instructionStart=i + 1;
+          parseState=STATE_INSTRUCTION;
+        }
+ else {
+          potentialStart=i;
+          parseState=STATE_POTENTIAL_DELIMITER_START;
+        }
+      }
+ else {
+      }
+    break;
+case STATE_POTENTIAL_DELIMITER_START:
+  potentialIndex=i - potentialStart;
+if (nextChar == delimiterStart.charAt(potentialIndex)) {
+  if (delimiterStart.length() == potentialIndex + 1) {
+    state=processText(state,textStart,potentialStart,sb,dataModel);
+    instructionStart=i + 1;
+    parseState=STATE_INSTRUCTION;
+  }
+ else {
+  }
+}
+ else {
+  parseState=STATE_TEXT;
+  i=potentialStart;
+}
+break;
+case STATE_INSTRUCTION:
+if (nextChar == delimiterEnd.charAt(0)) {
+if (delimiterEnd.length() == 1) {
+state=processInstruction(state,instructionStart,i,sb,dataModel);
+textStart=i + 1;
+parseState=STATE_TEXT;
+}
+ else {
+potentialEnd=i;
+parseState=STATE_POTENTIAL_DELIMITER_END;
+}
+}
+ else {
+}
+break;
+case STATE_POTENTIAL_DELIMITER_END:
+potentialIndex=i - potentialEnd;
+if (nextChar == delimiterEnd.charAt(potentialIndex)) {
+if (delimiterEnd.length() == potentialIndex + 1) {
+state=processInstruction(state,instructionStart,potentialEnd,sb,dataModel);
+textStart=i + 1;
+parseState=STATE_TEXT;
+}
+ else {
+}
+}
+ else {
+parseState=STATE_INSTRUCTION;
+i=potentialEnd;
+}
+break;
+}
+}
+if (parseState == STATE_TEXT) {
+processText(state,textStart,i,sb,dataModel);
+}
+logger.log(Level.FINE,"Template result",sb);
+return sb.toString();
+}
