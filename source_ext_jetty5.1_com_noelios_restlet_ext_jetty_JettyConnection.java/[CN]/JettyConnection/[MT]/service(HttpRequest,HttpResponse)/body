@@ -1,10 +1,9 @@
 {
-  long startTime=System.currentTimeMillis();
   try {
     UniformCall call=new JettyCall(request,response);
     getJettyConnector().getTarget().handle(call);
     if (call.getStatus() != null) {
-      response.setStatus(call.getStatus().getHttpCode());
+      response.setStatus(call.getStatus().getHttpCode(),call.getStatus().getDescription());
     }
     CookieSetting cookieSetting;
     for (Iterator iter=call.getCookieSettings().iterator(); iter.hasNext(); ) {
@@ -45,8 +44,5 @@
     request.setHandled(true);
     re.printStackTrace();
   }
-  long endTime=System.currentTimeMillis();
-  int duration=(int)(endTime - startTime);
-  logger.info("Call duration=" + duration + "ms");
   return null;
 }

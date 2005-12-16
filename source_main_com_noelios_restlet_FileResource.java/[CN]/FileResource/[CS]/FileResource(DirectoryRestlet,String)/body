@@ -1,5 +1,6 @@
 {
   this.directoryRestlet=directoryRestlet;
+  logger.info("Parameter base path: " + basePath);
   StringBuilder filePath=new StringBuilder(directoryRestlet.getRootPath());
   int lastIndex=-1;
   char nextChar;
@@ -13,7 +14,7 @@
       filePath.append(nextChar);
     }
   }
-  this.basePath=filePath.toString().toLowerCase();
+  this.basePath=filePath.toString();
   if (new File(this.basePath).isDirectory()) {
     String indexName=getDirectoryRestlet().getIndexName();
     if (indexName != null) {
@@ -31,4 +32,6 @@
   }
   int dotIndex=this.baseName.indexOf('.');
   if (dotIndex != -1)   this.baseName=this.baseName.substring(0,dotIndex);
+  logger.info("Converted base path: " + this.basePath);
+  logger.info("Converted base name: " + this.baseName);
 }

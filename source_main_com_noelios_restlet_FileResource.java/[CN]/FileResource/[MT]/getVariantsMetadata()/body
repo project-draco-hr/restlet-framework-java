@@ -1,4 +1,5 @@
 {
+  logger.info("Getting variants for : " + getBasePath());
   List<RepresentationMetadata> result=null;
   File baseDirectory=new File(getBasePath()).getParentFile();
   if (baseDirectory != null) {
@@ -10,9 +11,9 @@
     Language language=null;
     for (int i=0; (files != null) && (i < files.length); i++) {
       currentFile=files[i];
-      if (currentFile.getAbsolutePath().toLowerCase().startsWith(getBasePath())) {
-        String[] tokens=currentFile.getName().split("" + File.separatorChar + '.');
-        if (tokens[0].equalsIgnoreCase(getBaseName())) {
+      if (currentFile.getAbsolutePath().startsWith(getBasePath())) {
+        String[] tokens=currentFile.getName().split("\\.");
+        if (tokens[0].equals(getBaseName())) {
           for (int j=1; j < tokens.length; j++) {
             metadata=getDirectoryRestlet().getMetadata(tokens[j]);
             if (metadata instanceof MediaType)             mediaType=(MediaType)metadata;
@@ -26,6 +27,7 @@
             }
           }
           if (mediaType != null) {
+            logger.info("Variant accepted: " + currentFile.getAbsolutePath());
             if (result == null)             result=new ArrayList<RepresentationMetadata>();
             FileRepresentation fr=new FileRepresentation(currentFile.getAbsolutePath(),mediaType);
             fr.setCharacterSet(characterSet);
@@ -33,6 +35,7 @@
             result.add(fr);
           }
  else {
+            logger.info("Variant rejected: " + currentFile.getAbsolutePath());
           }
         }
       }
