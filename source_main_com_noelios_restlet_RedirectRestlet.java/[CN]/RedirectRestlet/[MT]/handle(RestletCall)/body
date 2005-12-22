@@ -1,0 +1,29 @@
+{
+  try {
+    StringTemplate te=new StringTemplate(this.targetPattern);
+    String targetURI=te.process(new RestletCallModel(call));
+switch (this.mode) {
+case MODE_CLIENT:
+      logger.log(Level.INFO,"Redirecting client: " + targetURI);
+    call.setTemporaryRedirect(targetURI);
+  break;
+case MODE_CONNECTOR:
+logger.log(Level.INFO,"Redirecting to connector " + this.connectorName + ": "+ targetURI);
+call.getResourceRef().setIdentifier(targetURI);
+call.getMatches().clear();
+call.getPaths().clear();
+getContainer().callClient(this.connectorName,call);
+break;
+case MODE_CONTAINER:
+logger.log(Level.INFO,"Redirecting to container: " + targetURI);
+call.getResourceRef().setIdentifier(targetURI);
+call.getMatches().clear();
+call.getPaths().clear();
+getContainer().handle(call);
+break;
+}
+}
+ catch (IOException ioe) {
+logger.log(Level.WARNING,"Error during redirection",ioe);
+}
+}
