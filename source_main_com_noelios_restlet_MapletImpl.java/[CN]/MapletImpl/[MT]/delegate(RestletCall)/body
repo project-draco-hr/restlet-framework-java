@@ -13,6 +13,10 @@
     resourcePath=resourcePath.substring(matcher.end());
     call.getPaths().set(0,restletPath);
     call.getPaths().add(0,resourcePath);
+    call.getMatches().clear();
+    for (int i=0; i < matcher.groupCount(); i++) {
+      call.getMatches().add(matcher.group(i + 1));
+    }
     Restlet restlet=null;
     try {
       if (mapping.getRestlet() != null) {
