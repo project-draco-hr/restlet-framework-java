@@ -1,12 +1,16 @@
 {
   try {
     StringTemplate te=new StringTemplate(this.targetPattern);
-    String targetURI=te.process(new RestletCallModel(call));
+    String targetURI=te.process(new RestletCallModel(call,null));
 switch (this.mode) {
-case MODE_CLIENT:
+case MODE_CLIENT_PERMANENT:
       logger.log(Level.INFO,"Redirecting client: " + targetURI);
-    call.setTemporaryRedirect(targetURI);
+    call.setRedirect(targetURI,true);
   break;
+case MODE_CLIENT_TEMPORARY:
+logger.log(Level.INFO,"Redirecting client: " + targetURI);
+call.setRedirect(targetURI,false);
+break;
 case MODE_CONNECTOR:
 logger.log(Level.INFO,"Redirecting to connector " + this.connectorName + ": "+ targetURI);
 call.getResourceRef().setIdentifier(targetURI);

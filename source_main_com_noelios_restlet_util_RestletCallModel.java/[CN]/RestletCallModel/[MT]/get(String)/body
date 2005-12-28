@@ -45,5 +45,34 @@
  else   if (name.equals(NAME_RESOURCE_USER_INFO)) {
     result=call.getResourceRef().getUserInfo();
   }
+ else   if (name.startsWith(NAME_RESOURCE_QUERY_PARAM)) {
+    int beginIndex=NAME_RESOURCE_QUERY_PARAM.length();
+    int endIndex=name.indexOf("\"]");
+    if (endIndex != -1) {
+      try {
+        String paramName=name.substring(beginIndex,endIndex);
+        result=call.getResourceRef().getQueryAsForm().getFirstParameter(paramName).getValue();
+      }
+ catch (      IOException e) {
+        result=null;
+      }
+    }
+  }
+ else   if (name.startsWith(NAME_RESOURCE_COOKIE)) {
+    int beginIndex=NAME_RESOURCE_COOKIE.length();
+    int endIndex=name.indexOf("\"]");
+    if (endIndex != -1) {
+      try {
+        String cookieName=name.substring(beginIndex,endIndex);
+        result=call.getCookies().getFirstCookie(cookieName).getValue();
+      }
+ catch (      IOException e) {
+        result=null;
+      }
+    }
+  }
+  if (result == null) {
+    result=this.defaultValue;
+  }
   return result;
 }
