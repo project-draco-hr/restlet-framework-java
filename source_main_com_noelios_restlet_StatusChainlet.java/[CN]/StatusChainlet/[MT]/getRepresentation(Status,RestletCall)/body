@@ -1,0 +1,28 @@
+{
+  StringBuilder sb=new StringBuilder();
+  sb.append("<html>\n");
+  sb.append("<head>\n");
+  sb.append("   <title>Status page</title>\n");
+  sb.append("</head>\n");
+  sb.append("<body>\n");
+  sb.append("<h3>");
+  if (status.getDescription() != null) {
+    sb.append(status.getDescription());
+  }
+ else {
+    sb.append("No description available for this result status");
+  }
+  sb.append("</h3>");
+  sb.append("<p>You can get technical details <a href=\"");
+  sb.append(status.getUri());
+  sb.append("\">here</a>.<br/>\n");
+  if (email != null) {
+    sb.append("For further assistance, you can contact the <a href=\"mailto:");
+    sb.append(email);
+    sb.append("\">administrator</a>.\n");
+  }
+  sb.append("</p>\n");
+  sb.append("</body>\n");
+  sb.append("</html>\n");
+  return new StringRepresentation(sb.toString(),MediaTypes.TEXT_HTML);
+}

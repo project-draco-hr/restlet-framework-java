@@ -1,0 +1,15 @@
+{
+  try {
+    com.noelios.restlet.Engine.register();
+    RestletContainer myContainer=new DefaultRestletContainer("My container");
+    JettyServer httpServer=new JettyServer("My connector",8182,myContainer);
+    myContainer.addServer(httpServer);
+    String target="http://www.google.com/search?q=site:mysite.org+${query[\"query\"]}";
+    RedirectRestlet searchRedirect=new RedirectRestlet(myContainer,target,RedirectRestlet.MODE_CLIENT_TEMPORARY);
+    myContainer.attach("http://localhost:8182/search",searchRedirect);
+    myContainer.start();
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+}
