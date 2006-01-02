@@ -1,9 +1,19 @@
 {
-  int separator=getName().indexOf(';');
-  if (separator == -1) {
-    return getName().substring(getName().indexOf('/') + 1);
-  }
+  String result=null;
+  if (getName() != null) {
+    int slash=getName().indexOf('/');
+    if (slash == -1) {
+      result="*";
+    }
  else {
-    return getName().substring(getName().indexOf('/') + 1,separator);
+      int separator=getName().indexOf(';');
+      if (separator == -1) {
+        result=getName().substring(slash + 1);
+      }
+ else {
+        result=getName().substring(slash + 1,separator);
+      }
+    }
   }
+  return result;
 }

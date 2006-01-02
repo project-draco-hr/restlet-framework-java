@@ -4,10 +4,10 @@
     RestletContainer myContainer=new DefaultRestletContainer("My container");
     JettyServer httpServer=new JettyServer("My connector",8182,myContainer);
     myContainer.addServer(httpServer);
-    LoggerChainlet logger=new LoggerChainlet(myContainer,"com.noelios.restlet.tutorial");
-    myContainer.attach("http://localhost:8182/",logger);
+    LogChainlet log=new LogChainlet(myContainer,"com.noelios.restlet.tutorial");
+    myContainer.attach("http://localhost:8182/",log);
     StatusChainlet status=new StatusChainlet(myContainer,true,"webmaster@mysite.org","http://www.mysite.org");
-    logger.attach(status);
+    log.attach(status);
     DirectoryRestlet dirRestlet=new DirectoryRestlet(myContainer,"D:/Restlet/www/docs/api/",true,"index");
     dirRestlet.addExtension("html",MediaTypes.TEXT_HTML);
     dirRestlet.addExtension("css",MediaTypes.TEXT_CSS);

@@ -4,9 +4,22 @@
     RestletContainer myContainer=new DefaultRestletContainer("My container");
     JettyServer httpServer=new JettyServer("My connector",8182,myContainer);
     myContainer.addServer(httpServer);
-    String target="http://www.google.com/search?q=site:mysite.org+${query[\"query\"]}";
-    RedirectRestlet searchRedirect=new RedirectRestlet(myContainer,target,RedirectRestlet.MODE_CLIENT_TEMPORARY);
-    myContainer.attach("http://localhost:8182/search",searchRedirect);
+    LogChainlet log=new LogChainlet(myContainer,"com.noelios.restlet.tutorial");
+    myContainer.attach("http://localhost:8182/",log);
+    StatusChainlet status=new StatusChainlet(myContainer,true,"webmaster@mysite.org","http://www.mysite.org");
+    log.attach(status);
+    GuardChainlet guard=new GuardChainlet(myContainer,"com.noelios.restlet.tutorial","Restlet tutorial"){
+      protected boolean authorize(      String userId,      String password){
+        return userId.equals("scott") && password.equals("tiger");
+      }
+    }
+;
+    status.attach(guard);
+    DirectoryRestlet dirRestlet=new DirectoryRestlet(myContainer,"D:/Restlet/www/docs/api/",true,"index");
+    dirRestlet.addExtension("html",MediaTypes.TEXT_HTML);
+    dirRestlet.addExtension("css",MediaTypes.TEXT_CSS);
+    dirRestlet.addExtension("gif",MediaTypes.IMAGE_GIF);
+    guard.attach(dirRestlet);
     myContainer.start();
   }
  catch (  Exception e) {

@@ -16,6 +16,12 @@
         call.setOutput(null);
       }
     }
+ else     if (response.getStatus() == HttpResponse.__401_Unauthorized) {
+      if ((call.getSecurity() != null) && (call.getSecurity().getChallengeRequest() != null)) {
+        ChallengeRequest challenge=call.getSecurity().getChallengeRequest();
+        response.setField(HttpFields.__WwwAuthenticate,challenge.getScheme().getTechnicalName() + " realm=\"" + challenge.getRealm()+ '"');
+      }
+    }
     if (call.getOutput() != null) {
       RepresentationMetadata meta=call.getOutput().getMetadata();
       if (meta.getMediaType() != null) {

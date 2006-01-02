@@ -1,0 +1,15 @@
+{
+  Security result=new SecurityImpl();
+  result.setConfidential(connection.getRequest().isSecure());
+  String authorization=connection.getRequest().getHeader(HttpHeaders.AUTHORIZATION);
+  if (authorization != null) {
+    int space=authorization.indexOf(' ');
+    if (space != -1) {
+      String scheme=authorization.substring(0,space);
+      String credentials=authorization.substring(space + 1);
+      ChallengeResponse challengeResponse=new ChallengeResponseImpl(new ChallengeSchemeImpl("HTTP_" + scheme,scheme),credentials);
+      result.setChallengeResponse(challengeResponse);
+    }
+  }
+  return result;
+}

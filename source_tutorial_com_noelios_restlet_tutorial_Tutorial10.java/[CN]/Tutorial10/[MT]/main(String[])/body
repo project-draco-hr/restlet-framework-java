@@ -4,35 +4,9 @@
     RestletContainer myContainer=new DefaultRestletContainer("My container");
     JettyServer httpServer=new JettyServer("My connector",8182,myContainer);
     myContainer.addServer(httpServer);
-    LoggerChainlet logger=new LoggerChainlet(myContainer,"com.noelios.restlet.tutorial");
-    myContainer.attach("http://localhost:8182",logger);
-    StatusChainlet status=new StatusChainlet(myContainer,true,"webmaster@mysite.org","http://www.mysite.org");
-    logger.attach(status);
-    Maplet rootMaplet=new DefaultMaplet(myContainer);
-    status.attach(rootMaplet);
-    DirectoryRestlet dirRestlet=new DirectoryRestlet(myContainer,"D:/Restlet/www/docs/api/",true,"index");
-    dirRestlet.addExtension("html",MediaTypes.TEXT_HTML);
-    dirRestlet.addExtension("css",MediaTypes.TEXT_CSS);
-    dirRestlet.addExtension("gif",MediaTypes.IMAGE_GIF);
-    rootMaplet.attach("/docs/",dirRestlet);
-    Maplet usersMaplet=new DefaultMaplet(myContainer);
-    rootMaplet.attach("/users",usersMaplet);
-    Maplet userMaplet=new DefaultMaplet(myContainer){
-      public void handle(      RestletCall call) throws RestletException {
-        String output="Account of user named: " + call.getPath(1,true);
-        call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
-      }
-    }
-;
-    usersMaplet.attach("/[a-z]+",userMaplet);
-    Restlet ordersRestlet=new AbstractRestlet(myContainer){
-      public void handle(      RestletCall call) throws RestletException {
-        String output="Orders of user named: " + call.getPath(2,true);
-        call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
-      }
-    }
-;
-    userMaplet.attach("/orders$",ordersRestlet);
+    String target="http://www.google.com/search?q=site:mysite.org+${query[\"query\"]}";
+    RedirectRestlet searchRedirect=new RedirectRestlet(myContainer,target,RedirectRestlet.MODE_CLIENT_TEMPORARY);
+    myContainer.attach("http://localhost:8182/search",searchRedirect);
     myContainer.start();
   }
  catch (  Exception e) {

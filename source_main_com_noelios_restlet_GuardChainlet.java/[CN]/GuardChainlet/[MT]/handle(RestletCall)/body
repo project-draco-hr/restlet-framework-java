@@ -1,0 +1,42 @@
+{
+  Security security=call.getSecurity();
+  if (security == null) {
+    security=Manager.createSecurity();
+    call.setSecurity(security);
+    challengeClient(call);
+  }
+ else {
+    ChallengeResponse resp=security.getChallengeResponse();
+    if (resp == null) {
+      challengeClient(call);
+    }
+ else     if (resp.getScheme().equals(ChallengeSchemes.HTTP_BASIC)) {
+      try {
+        String credentials=new String(Base64.decode(resp.getCredentials()),"US-ASCII");
+        int separator=credentials.indexOf(':');
+        if (separator == -1) {
+          logger.warning("Invalid credentials given by client with IP: " + call.getClientAddress());
+          block(call,null);
+        }
+ else {
+          String userId=credentials.substring(0,separator);
+          String password=credentials.substring(separator + 1);
+          if (authorize(userId,password)) {
+            logger.info("User: " + userId + " was authorized for client with IP: "+ call.getClientAddress());
+            super.handle(call);
+          }
+ else {
+            logger.warning("User: " + userId + " failed to get authorized for client with IP: "+ call.getClientAddress());
+            block(call,userId);
+          }
+        }
+      }
+ catch (      UnsupportedEncodingException e) {
+        throw new RestletException("Unsupported encoding error",e);
+      }
+    }
+ else {
+      challengeClient(call);
+    }
+  }
+}
