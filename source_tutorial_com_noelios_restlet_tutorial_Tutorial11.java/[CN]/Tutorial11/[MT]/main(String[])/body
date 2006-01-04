@@ -26,9 +26,13 @@
     rootMaplet.attach("/users",usersMaplet);
     Maplet userMaplet=new DefaultMaplet(myContainer){
       public void handle(      RestletCall call) throws RestletException {
-        String output="Account of user named: " + call.getPath(1,true);
-        call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
-        delegate(call);
+        if (call.getPath(0,true).equals("")) {
+          String output="Account of user named: " + call.getPath(1,true);
+          call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
+        }
+ else {
+          delegate(call);
+        }
       }
     }
 ;
