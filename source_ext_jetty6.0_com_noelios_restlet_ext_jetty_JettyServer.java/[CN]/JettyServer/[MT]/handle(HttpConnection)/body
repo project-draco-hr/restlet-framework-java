@@ -1,56 +1,5 @@
 {
-  long startTime=System.currentTimeMillis();
-  try {
-    UniformCall call=new JettyCall(connection);
-    getTarget().handle(call);
-    if (call.getStatus() != null) {
-      connection.getResponse().setStatus(call.getStatus().getHttpCode(),call.getStatus().getDescription());
-    }
-    CookieSetting cookieSetting;
-    for (Iterator iter=call.getCookieSettings().iterator(); iter.hasNext(); ) {
-      cookieSetting=(CookieSetting)iter.next();
-      connection.getResponse().addCookie(new JettyCookie(cookieSetting));
-    }
-    int status=connection.getResponse().getStatus();
-    if ((status == Statuses.SUCCESS_CREATED.getHttpCode()) || (status == Statuses.REDIRECTION_MULTIPLE_CHOICES.getHttpCode()) || (status == Statuses.REDIRECTION_MOVED_PERMANENTLY.getHttpCode())|| (status == Statuses.REDIRECTION_MOVED_TEMPORARILY.getHttpCode())|| (status == Statuses.REDIRECTION_SEE_OTHER.getHttpCode())|| (status == Statuses.REDIRECTION_TEMPORARY_REDIRECT.getHttpCode())) {
-      if ((call.getOutput() != null) && (call.getOutput().getMetadata().getMediaType().equals(MediaTypes.TEXT_URI))) {
-        connection.getResponse().setHeader(HttpHeaders.LOCATION,call.getOutput().toString());
-        call.setOutput(null);
-      }
-    }
- else     if (status == Statuses.CLIENT_ERROR_UNAUTHORIZED.getHttpCode()) {
-      if ((call.getSecurity() != null) && (call.getSecurity().getChallengeRequest() != null)) {
-        ChallengeRequest challenge=call.getSecurity().getChallengeRequest();
-        connection.getResponse().setHeader(HttpHeaders.WWW_AUTHENTICATE,challenge.getScheme().getTechnicalName() + " realm=\"" + challenge.getRealm()+ '"');
-      }
-    }
-    if (call.getOutput() != null) {
-      RepresentationMetadata meta=call.getOutput().getMetadata();
-      if (meta.getMediaType() != null) {
-        StringBuilder contentType=new StringBuilder(meta.getMediaType().getName());
-        if (meta.getCharacterSet() != null) {
-          contentType.append("; charset=").append(meta.getCharacterSet().getName());
-        }
-        connection.getResponse().setContentType(contentType.toString());
-      }
-      if (meta.getExpirationDate() != null) {
-        connection.getResponse().addDateHeader("Expires",meta.getExpirationDate().getTime());
-      }
-      if (meta.getModificationDate() != null) {
-        connection.getResponse().addDateHeader("Last-Modified",meta.getModificationDate().getTime());
-      }
-      if (meta.getTag() != null) {
-        connection.getResponse().addHeader("ETag",meta.getTag().getName());
-      }
-      connection.getResponse().setContentLength((int)call.getOutput().getSize());
-      call.getOutput().write(connection.getResponse().getOutputStream());
-    }
-  }
- catch (  Exception re) {
-    connection.getResponse().setStatus(Statuses.SERVER_ERROR_INTERNAL.getHttpCode());
-    re.printStackTrace();
-  }
-  long endTime=System.currentTimeMillis();
-  int duration=(int)(endTime - startTime);
-  logger.info("Call duration=" + duration + "ms");
+  JettyCall call=new JettyCall(connection);
+  getTarget().handle(call);
+  call.reply();
 }
