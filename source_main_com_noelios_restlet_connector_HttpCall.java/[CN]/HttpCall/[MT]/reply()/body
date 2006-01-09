@@ -1,0 +1,54 @@
+{
+  try {
+    if (getStatus() != null) {
+      setResponseStatus(getStatus().getHttpCode(),getStatus().getDescription());
+switch (getStatus().getHttpCode()) {
+case STATUS_SUCCESS_CREATED:
+case STATUS_REDIRECTION_MULTIPLE_CHOICES:
+case STATUS_REDIRECTION_MOVED_PERMANENTLY:
+case STATUS_REDIRECTION_FOUND:
+case STATUS_REDIRECTION_SEE_OTHER:
+case STATUS_REDIRECTION_TEMPORARY_REDIRECT:
+        if ((getOutput() != null) && (getOutput().getMetadata().getMediaType().equals(MediaTypes.TEXT_URI))) {
+          setResponseHeader(HEADER_LOCATION,getOutput().toString());
+          setOutput(null);
+        }
+      break;
+case STATUS_CLIENT_ERROR_UNAUTHORIZED:
+    if ((getSecurity() != null) && (getSecurity().getChallengeRequest() != null)) {
+      ChallengeRequest challenge=getSecurity().getChallengeRequest();
+      setResponseHeader(HEADER_WWW_AUTHENTICATE,challenge.getScheme().getTechnicalName() + " realm=\"" + challenge.getRealm()+ '"');
+    }
+  break;
+}
+}
+for (Iterator iter=getCookieSettings().iterator(); iter.hasNext(); ) {
+setResponseCookie((CookieSetting)iter.next());
+}
+if (getOutput() != null) {
+RepresentationMetadata meta=getOutput().getMetadata();
+if (meta.getMediaType() != null) {
+StringBuilder contentType=new StringBuilder(meta.getMediaType().getName());
+if (meta.getCharacterSet() != null) {
+  contentType.append("; charset=").append(meta.getCharacterSet().getName());
+}
+setResponseHeader(HEADER_CONTENT_TYPE,contentType.toString());
+}
+if (meta.getExpirationDate() != null) {
+setResponseHeader("Expires",meta.getExpirationDate().getTime());
+}
+if (meta.getModificationDate() != null) {
+setResponseHeader("Last-Modified",meta.getModificationDate().getTime());
+}
+if (meta.getTag() != null) {
+setResponseHeader(HEADER_ETAG,meta.getTag().getName());
+}
+if (getOutput().getSize() != -1) {
+setResponseHeader(HEADER_CONTENT_LENGTH,Long.toString(getOutput().getSize()));
+}
+getOutput().write(getResponseStream());
+}
+}
+ catch (IOException ioe) {
+}
+}
