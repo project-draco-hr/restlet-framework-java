@@ -2,7 +2,7 @@
   try {
     com.noelios.restlet.Engine.register();
     RestletContainer myContainer=new DefaultRestletContainer("My container");
-    JettyServer httpServer=new JettyServer("My connector",8182,myContainer);
+    JettyServer httpServer=new JettyServer("My connector",myContainer,JettyServer.LISTENER_HTTP,8182);
     myContainer.addServer(httpServer);
     LogChainlet log=new LogChainlet(myContainer,"com.noelios.restlet.tutorial");
     myContainer.attach("http://localhost:8182",log);
@@ -25,7 +25,7 @@
     Maplet usersMaplet=new DefaultMaplet(myContainer);
     rootMaplet.attach("/users",usersMaplet);
     Maplet userMaplet=new DefaultMaplet(myContainer){
-      public void handle(      RestletCall call) throws RestletException {
+      public void handle(      UniformCall call){
         if (call.getPath(0,true).equals("")) {
           String output="Account of user named: " + call.getPath(1,true);
           call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
@@ -38,7 +38,7 @@
 ;
     usersMaplet.attach("/[a-z]+",userMaplet);
     Restlet ordersRestlet=new AbstractRestlet(myContainer){
-      public void handle(      RestletCall call) throws RestletException {
+      public void handle(      UniformCall call){
         String output="Orders of user named: " + call.getPath(2,true);
         call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
       }

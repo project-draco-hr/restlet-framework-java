@@ -2,10 +2,10 @@
   try {
     com.noelios.restlet.Engine.register();
     RestletContainer myContainer=new DefaultRestletContainer("My container");
-    JettyServer httpServer=new JettyServer("My connector",8182,myContainer);
+    JettyServer httpServer=new JettyServer("My connector",myContainer,JettyServer.LISTENER_HTTP,8182);
     myContainer.addServer(httpServer);
     Restlet myRestlet=new AbstractRestlet(myContainer){
-      public void handle(      RestletCall call) throws RestletException {
+      public void handle(      UniformCall call){
         String output="Resource path = " + call.getPath(0,false) + '\n'+ "Restlet  path = "+ call.getPath(1,false);
         call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
       }
