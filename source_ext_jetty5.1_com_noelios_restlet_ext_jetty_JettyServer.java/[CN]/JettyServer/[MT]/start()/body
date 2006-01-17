@@ -1,8 +1,41 @@
 {
   try {
-    super.start();
+switch (this.listenerType) {
+case LISTENER_AJP:
+      if (this.address != null) {
+        this.listener=new AjpListener(this,this.address);
+      }
+ else {
+        this.listener=new AjpListener(this);
+        this.listener.setPort(port);
+      }
+    break;
+case LISTENER_HTTP:
+  if (this.address != null) {
+    this.listener=new HttpListener(this,this.address);
   }
- catch (  Exception e) {
-    e.printStackTrace();
+ else {
+    this.listener=new HttpListener(this);
+    this.listener.setPort(port);
   }
+break;
+case LISTENER_HTTPS:
+if (this.address != null) {
+HttpsListener httpsListener=new HttpsListener(this,this.address);
+httpsListener.setKeystore(this.keystorePath);
+httpsListener.setPassword(this.keystorePassword);
+httpsListener.setKeyPassword(this.keyPassword);
+this.listener=httpsListener;
+}
+ else {
+this.listener=new HttpsListener(this);
+this.listener.setPort(port);
+}
+break;
+}
+getListener().start();
+}
+ catch (Exception e) {
+e.printStackTrace();
+}
 }

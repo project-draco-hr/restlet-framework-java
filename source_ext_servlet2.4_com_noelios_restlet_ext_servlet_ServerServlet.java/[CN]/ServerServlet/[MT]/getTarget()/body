@@ -1,6 +1,6 @@
 {
-  if (this.target != null) {
-    return this.target;
+  if (this.handler != null) {
+    return this.handler;
   }
  else {
 synchronized (ServerServlet.class) {
@@ -9,8 +9,8 @@ synchronized (ServerServlet.class) {
         targetAttributeName=getServletContext().getInitParameter(NAME_TARGET_ATTRIBUTE);
       }
       if (targetAttributeName != null) {
-        this.target=(UniformInterface)getServletContext().getAttribute(targetAttributeName);
-        if (this.target == null) {
+        this.handler=(UniformInterface)getServletContext().getAttribute(targetAttributeName);
+        if (this.handler == null) {
           String targetClassName=getServletConfig().getInitParameter(NAME_TARGET_CLASS);
           if (targetClassName == null) {
             targetClassName=getServletContext().getInitParameter(NAME_TARGET_CLASS);
@@ -18,8 +18,8 @@ synchronized (ServerServlet.class) {
           if (targetClassName != null) {
             try {
               Class targetClass=Class.forName(targetClassName);
-              this.target=(UniformInterface)targetClass.newInstance();
-              getServletContext().setAttribute(NAME_TARGET_ATTRIBUTE,this.target);
+              this.handler=(UniformInterface)targetClass.newInstance();
+              getServletContext().setAttribute(NAME_TARGET_ATTRIBUTE,this.handler);
             }
  catch (            ClassNotFoundException e) {
               log("[Noelios Restlet Engine] - The ServerServlet couldn't find the class. Please check that your classpath includes " + NAME_TARGET_CLASS);
@@ -40,6 +40,6 @@ catch (            IllegalAccessException e) {
         log("[Noelios Restlet Engine] - The ServerServlet couldn't find the attribute name of the target handler. Please set the initialization parameter called " + NAME_TARGET_ATTRIBUTE);
       }
     }
-    return this.target;
+    return this.handler;
   }
 }
