@@ -1,0 +1,43 @@
+{
+  Conditions result=new ConditionsImpl();
+  Date ifModifiedSince=getRequestDateHeader(HEADER_IF_MODIFIED_SINCE);
+  if ((ifModifiedSince != null) && (ifModifiedSince.getTime() != -1)) {
+    result.setModifiedSince(ifModifiedSince);
+  }
+  Date ifUnmodifiedSince=getRequestDateHeader(HEADER_IF_UNMODIFIED_SINCE);
+  if ((ifUnmodifiedSince != null) && (ifUnmodifiedSince.getTime() != -1)) {
+    result.setUnmodifiedSince(ifUnmodifiedSince);
+  }
+  List<Tag> match=null;
+  Tag current=null;
+  String matchHeader=getRequestHeader(HEADER_IF_MATCH);
+  if (matchHeader != null) {
+    String[] tags=matchHeader.split(",");
+    for (int i=0; i < tags.length; i++) {
+      try {
+        current=new TagImpl(tags[i]);
+        if (match == null) {
+          match=new ArrayList<Tag>();
+          result.setMatch(match);
+        }
+        match.add(current);
+      }
+ catch (      IllegalArgumentException iae) {
+        logger.log(Level.WARNING,iae.getMessage(),iae);
+      }
+    }
+  }
+  List<Tag> noneMatch=null;
+  String noneMatchHeader=getRequestHeader(HEADER_IF_NONE_MATCH);
+  if (noneMatchHeader != null) {
+    String[] tags=noneMatchHeader.split(",");
+    for (int i=0; i < tags.length; i++) {
+      if (noneMatch == null) {
+        noneMatch=new ArrayList<Tag>();
+        result.setNoneMatch(noneMatch);
+      }
+      noneMatch.add(new TagImpl(tags[i]));
+    }
+  }
+  return result;
+}

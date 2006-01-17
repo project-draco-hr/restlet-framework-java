@@ -1,0 +1,29 @@
+{
+  try {
+    HttpClientCall clientCall=createCall(call.getResourceRef().toString());
+    if (call.getReferrerRef() != null) {
+      clientCall.setRequestHeader(HttpCall.HEADER_REFERRER,call.getReferrerRef().toString());
+    }
+    if (call.getClientName() != null) {
+      clientCall.setRequestHeader(HttpCall.HEADER_USER_AGENT,call.getClientName());
+    }
+ else {
+      clientCall.setRequestHeader(HttpCall.HEADER_USER_AGENT,"HttpURLConnection/5.0");
+    }
+    clientCall.setRequestMethod(call.getMethod().getName());
+    if (call.getInput() != null) {
+      call.getInput().write(clientCall.getRequestStream());
+    }
+    call.setStatus(new StatusImpl(clientCall.getResponseStatusCode()));
+    ContentType contentType=new ContentType(clientCall.getResponseHeader(HttpCall.HEADER_CONTENT_TYPE));
+    Representation output=new InputRepresentation(clientCall.getResponseStream(),contentType.getMediaType());
+    output.getMetadata().setCharacterSet(contentType.getCharacterSet());
+    call.setOutput(output);
+  }
+ catch (  MalformedURLException e) {
+    e.printStackTrace();
+  }
+catch (  IOException e) {
+    e.printStackTrace();
+  }
+}
