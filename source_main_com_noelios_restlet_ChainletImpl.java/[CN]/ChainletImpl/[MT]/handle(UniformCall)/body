@@ -1,0 +1,32 @@
+{
+  if (this.target != null) {
+    Restlet restlet=null;
+    try {
+      if (this.target.getRestlet() != null) {
+        restlet=this.target.getRestlet();
+      }
+ else       if (this.target.isSetContainer()) {
+        restlet=(Restlet)this.target.getRestletConstructor().newInstance(getContainer());
+      }
+ else {
+        restlet=(Restlet)this.target.getRestletClass().newInstance();
+      }
+    }
+ catch (    InstantiationException ie) {
+      call.setStatus(Statuses.SERVER_ERROR_INTERNAL);
+      logger.log(Level.WARNING,"Restlet can't be instantiated",ie);
+    }
+catch (    IllegalAccessException iae) {
+      call.setStatus(Statuses.SERVER_ERROR_INTERNAL);
+      logger.log(Level.WARNING,"Restlet can't be accessed",iae);
+    }
+catch (    InvocationTargetException ite) {
+      call.setStatus(Statuses.SERVER_ERROR_INTERNAL);
+      logger.log(Level.WARNING,"Restlet can't be invoked",ite);
+    }
+    restlet.handle(call);
+  }
+ else {
+    call.setStatus(Statuses.CLIENT_ERROR_NOT_FOUND);
+  }
+}

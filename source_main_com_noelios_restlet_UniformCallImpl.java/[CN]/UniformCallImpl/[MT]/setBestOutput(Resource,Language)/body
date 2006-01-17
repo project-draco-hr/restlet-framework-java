@@ -1,0 +1,22 @@
+{
+  List<RepresentationMetadata> variants=resource.getVariantsMetadata();
+  if ((variants == null) || (variants.size() < 1)) {
+    setStatus(Statuses.CLIENT_ERROR_NOT_FOUND);
+  }
+ else {
+    RepresentationMetadata bestVariant=getBestVariant(variants,fallbackLanguage);
+    if (bestVariant == null) {
+      setStatus(Statuses.CLIENT_ERROR_NOT_ACCEPTABLE);
+    }
+ else {
+      Date modifiedSince=(getConditions() == null) ? null : getConditions().getModifiedSince();
+      if ((modifiedSince == null) || DateUtils.after(modifiedSince,bestVariant.getModificationDate())) {
+        setOutput(resource.getRepresentation(bestVariant));
+        setStatus(Statuses.SUCCESS_OK);
+      }
+ else {
+        setStatus(Statuses.REDIRECTION_NOT_MODIFIED);
+      }
+    }
+  }
+}
