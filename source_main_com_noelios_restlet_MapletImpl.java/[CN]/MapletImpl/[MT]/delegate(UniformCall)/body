@@ -17,16 +17,16 @@
     for (int i=0; i < matcher.groupCount(); i++) {
       call.getMatches().add(matcher.group(i + 1));
     }
-    Restlet restlet=null;
+    UniformInterface target=null;
     try {
-      if (mapping.getRestlet() != null) {
-        restlet=mapping.getRestlet();
+      if (mapping.getHandler() != null) {
+        target=mapping.getHandler();
       }
  else       if (mapping.isSetContainer()) {
-        restlet=(Restlet)mapping.getRestletConstructor().newInstance(getContainer());
+        target=(UniformInterface)mapping.getHandlerConstructor().newInstance(getContainer());
       }
  else {
-        restlet=(Restlet)mapping.getRestletClass().newInstance();
+        target=(UniformInterface)mapping.getHandlerClass().newInstance();
       }
     }
  catch (    InstantiationException ie) {
@@ -41,7 +41,7 @@ catch (    InvocationTargetException ite) {
       call.setStatus(Statuses.SERVER_ERROR_INTERNAL);
       logger.log(Level.WARNING,"Restlet can't be invoked",ite);
     }
-    restlet.handle(call);
+    target.handle(call);
   }
  else {
     call.setStatus(Statuses.CLIENT_ERROR_NOT_FOUND);
