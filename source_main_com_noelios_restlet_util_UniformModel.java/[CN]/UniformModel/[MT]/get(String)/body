@@ -9,6 +9,9 @@
  else   if (name.equals(NAME_METHOD)) {
     result=call.getMethod().getName();
   }
+ else   if (name.equals(NAME_REDIRECT_URI)) {
+    result=call.getRedirectRef().toString();
+  }
  else   if (name.equals(NAME_REFERRER_URI)) {
     result=call.getReferrerRef().toString();
   }
@@ -51,25 +54,32 @@
     if (endIndex != -1) {
       try {
         String paramName=name.substring(beginIndex,endIndex);
-        result=call.getResourceRef().getQueryAsForm().getFirstParameter(paramName).getValue();
+        Parameter param=call.getResourceRef().getQueryAsForm().getFirstParameter(paramName);
+        if (param != null)         result=param.getValue();
+ else         result=null;
       }
  catch (      IOException e) {
         result=null;
       }
     }
   }
- else   if (name.startsWith(NAME_RESOURCE_COOKIE)) {
-    int beginIndex=NAME_RESOURCE_COOKIE.length();
+ else   if (name.startsWith(NAME_COOKIE)) {
+    int beginIndex=NAME_COOKIE.length();
     int endIndex=name.indexOf("\"]");
     if (endIndex != -1) {
-      try {
-        String cookieName=name.substring(beginIndex,endIndex);
-        result=call.getCookies().getFirstCookie(cookieName).getValue();
-      }
- catch (      IOException e) {
-        result=null;
-      }
+      String cookieName=name.substring(beginIndex,endIndex);
+      Cookie cookie=CookieUtils.getFirstCookie(call.getCookies(),cookieName);
+      if (cookie != null)       result=cookie.getValue();
     }
+  }
+ else   if (name.equals(NAME_SERVER_ADDRESS)) {
+    result=call.getServerAddress();
+  }
+ else   if (name.equals(NAME_SERVER_NAME)) {
+    result=call.getServerName();
+  }
+ else   if (name.equals(NAME_STATUS)) {
+    result=Integer.toString(call.getStatus().getHttpCode());
   }
   if (result == null) {
     result=this.defaultValue;

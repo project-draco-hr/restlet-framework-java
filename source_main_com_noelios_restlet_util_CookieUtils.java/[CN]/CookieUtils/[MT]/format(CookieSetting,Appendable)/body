@@ -1,0 +1,50 @@
+{
+  String name=cookieSetting.getName();
+  String value=cookieSetting.getValue();
+  int version=cookieSetting.getVersion();
+  if ((name == null) || (name.length() == 0)) {
+    throw new IllegalArgumentException("Can't write cookie. Invalid name detected");
+  }
+ else {
+    appendValue(name,version,destination).append('=');
+    if ((value != null) && (value.length() > 0)) {
+      appendValue(value,version,destination);
+    }
+    long maxAge=cookieSetting.getMaxAge();
+    if (maxAge >= 0) {
+      if (version == 0) {
+        destination.append(";Expires=");
+      }
+ else {
+        destination.append(";Max-Age=");
+        destination.append(Integer.toString(cookieSetting.getMaxAge()));
+      }
+    }
+ else     if ((maxAge == -1) && (version > 0)) {
+      destination.append(";Discard");
+    }
+ else {
+    }
+    String domain=cookieSetting.getDomain();
+    if ((domain != null) && (domain.length() > 0)) {
+      destination.append(";Domain=").append(domain.toLowerCase());
+    }
+    String path=cookieSetting.getPath();
+    if ((path != null) && (path.length() > 0)) {
+      destination.append(";Path=").append(path);
+    }
+    if (cookieSetting.isSecure()) {
+      destination.append(";Secure");
+    }
+    if (version > 0) {
+      destination.append(";Version=").append(Integer.toString(version));
+    }
+    if (version > 0) {
+      String comment=cookieSetting.getComment();
+      if ((comment != null) && (comment.length() > 0)) {
+        destination.append(";Comment=");
+        HeaderUtils.appendQuote(comment,destination);
+      }
+    }
+  }
+}
