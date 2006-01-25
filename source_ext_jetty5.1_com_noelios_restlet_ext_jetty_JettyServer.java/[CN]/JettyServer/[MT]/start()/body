@@ -1,27 +1,27 @@
 {
   try {
 switch (this.listenerType) {
-case LISTENER_AJP:
+case PROTOCOL_AJP:
       if (this.address != null) {
-        this.listener=new AjpListener(this,this.address);
+        this.listener=new AjpListener(this,new InetAddrPort(this.address,this.port));
       }
  else {
         this.listener=new AjpListener(this);
         this.listener.setPort(port);
       }
     break;
-case LISTENER_HTTP:
+case PROTOCOL_HTTP:
   if (this.address != null) {
-    this.listener=new HttpListener(this,this.address);
+    this.listener=new HttpListener(this,new InetAddrPort(this.address,this.port));
   }
  else {
     this.listener=new HttpListener(this);
     this.listener.setPort(port);
   }
 break;
-case LISTENER_HTTPS:
+case PROTOCOL_HTTPS:
 if (this.address != null) {
-HttpsListener httpsListener=new HttpsListener(this,this.address);
+HttpsListener httpsListener=new HttpsListener(this,new InetAddrPort(this.address,this.port));
 httpsListener.setKeystore(this.keystorePath);
 httpsListener.setPassword(this.keystorePassword);
 httpsListener.setKeyPassword(this.keyPassword);
