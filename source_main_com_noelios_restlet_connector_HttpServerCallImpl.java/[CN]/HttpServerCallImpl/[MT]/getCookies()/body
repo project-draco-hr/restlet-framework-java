@@ -1,0 +1,23 @@
+{
+  if (this.cookies == null) {
+    this.cookies=new ArrayList<Cookie>();
+    Parameter header;
+    for (Iterator<Parameter> iter=getRequestHeaders().iterator(); iter.hasNext(); ) {
+      header=iter.next();
+      if (header.getName().equalsIgnoreCase(HEADER_COOKIE)) {
+        try {
+          CookieReader cr=new CookieReader(header.getValue());
+          Cookie current=cr.readNextCookie();
+          while (current != null) {
+            this.cookies.add(current);
+            current=cr.readNextCookie();
+          }
+        }
+ catch (        Exception e) {
+          logger.log(Level.WARNING,"An exception occured during cookies parsing. Header: " + header.getValue(),e);
+        }
+      }
+    }
+  }
+  return this.cookies;
+}

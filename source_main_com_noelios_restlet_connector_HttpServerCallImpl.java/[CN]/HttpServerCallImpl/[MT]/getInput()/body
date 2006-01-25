@@ -1,0 +1,29 @@
+{
+  if ((this.input == null) && ((getRequestStream() != null) || getRequestChannel() != null)) {
+    Encoding contentEncoding=null;
+    Language contentLanguage=null;
+    MediaType contentType=null;
+    Parameter header;
+    for (Iterator<Parameter> iter=getRequestHeaders().iterator(); iter.hasNext(); ) {
+      header=iter.next();
+      if (header.getName().equalsIgnoreCase(HEADER_CONTENT_ENCODING)) {
+        contentEncoding=Manager.createEncoding(header.getValue());
+      }
+ else       if (header.getName().equalsIgnoreCase(HEADER_CONTENT_LANGUAGE)) {
+        contentLanguage=Manager.createLanguage(header.getValue());
+      }
+ else       if (header.getName().equalsIgnoreCase(HEADER_CONTENT_TYPE)) {
+        contentType=Manager.createMediaType(header.getValue());
+      }
+    }
+    if (getRequestStream() != null) {
+      this.input=new InputRepresentation(getRequestStream(),contentType);
+    }
+ else     if (getRequestChannel() != null) {
+      this.input=new ReadableRepresentation(getRequestChannel(),contentType);
+    }
+    this.input.getMetadata().setEncoding(contentEncoding);
+    this.input.getMetadata().setLanguage(contentLanguage);
+  }
+  return this.input;
+}

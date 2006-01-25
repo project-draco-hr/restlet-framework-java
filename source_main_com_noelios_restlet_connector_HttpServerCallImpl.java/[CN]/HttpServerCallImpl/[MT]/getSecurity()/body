@@ -1,0 +1,28 @@
+{
+  if (this.security == null) {
+    this.security=new SecurityDataImpl();
+    if (isConfidential()) {
+      getSecurity().setConfidential(isConfidential());
+    }
+ else {
+    }
+    String authorization=null;
+    Parameter header;
+    for (Iterator<Parameter> iter=getRequestHeaders().iterator(); (authorization == null) && iter.hasNext(); ) {
+      header=iter.next();
+      if (header.getName().equalsIgnoreCase(HEADER_AUTHORIZATION)) {
+        authorization=header.getValue();
+      }
+    }
+    if (authorization != null) {
+      int space=authorization.indexOf(' ');
+      if (space != -1) {
+        String scheme=authorization.substring(0,space);
+        String credentials=authorization.substring(space + 1);
+        ChallengeResponse challengeResponse=new ChallengeResponseImpl(new ChallengeSchemeImpl("HTTP_" + scheme,scheme),credentials);
+        getSecurity().setChallengeResponse(challengeResponse);
+      }
+    }
+  }
+  return this.security;
+}

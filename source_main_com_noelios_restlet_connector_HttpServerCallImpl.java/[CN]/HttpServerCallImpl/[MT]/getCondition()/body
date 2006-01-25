@@ -1,0 +1,61 @@
+{
+  if (this.condition == null) {
+    this.condition=new ConditionDataImpl();
+    Date ifModifiedSince=null;
+    Date ifUnmodifiedSince=null;
+    String ifMatchHeader=null;
+    String ifNoneMatchHeader=null;
+    Parameter header;
+    for (Iterator<Parameter> iter=getRequestHeaders().iterator(); iter.hasNext(); ) {
+      header=iter.next();
+      if (header.getName().equalsIgnoreCase(HEADER_IF_MATCH)) {
+        ifMatchHeader=header.getValue();
+      }
+ else       if (header.getName().equalsIgnoreCase(HEADER_IF_MODIFIED_SINCE)) {
+        ifModifiedSince=parseDate(header.getValue(),false);
+      }
+ else       if (header.getName().equalsIgnoreCase(HEADER_IF_NONE_MATCH)) {
+        ifNoneMatchHeader=header.getValue();
+      }
+ else       if (header.getName().equalsIgnoreCase(HEADER_IF_UNMODIFIED_SINCE)) {
+        ifUnmodifiedSince=parseDate(header.getValue(),false);
+      }
+    }
+    if ((ifModifiedSince != null) && (ifModifiedSince.getTime() != -1)) {
+      getCondition().setModifiedSince(ifModifiedSince);
+    }
+    if ((ifUnmodifiedSince != null) && (ifUnmodifiedSince.getTime() != -1)) {
+      getCondition().setUnmodifiedSince(ifUnmodifiedSince);
+    }
+    List<Tag> match=null;
+    Tag current=null;
+    if (ifMatchHeader != null) {
+      String[] tags=ifMatchHeader.split(",");
+      for (int i=0; i < tags.length; i++) {
+        try {
+          current=new TagImpl(tags[i]);
+          if (match == null) {
+            match=new ArrayList<Tag>();
+            getCondition().setMatch(match);
+          }
+          match.add(current);
+        }
+ catch (        IllegalArgumentException iae) {
+          logger.log(Level.WARNING,iae.getMessage(),iae);
+        }
+      }
+    }
+    List<Tag> noneMatch=null;
+    if (ifNoneMatchHeader != null) {
+      String[] tags=ifNoneMatchHeader.split(",");
+      for (int i=0; i < tags.length; i++) {
+        if (noneMatch == null) {
+          noneMatch=new ArrayList<Tag>();
+          getCondition().setNoneMatch(noneMatch);
+        }
+        noneMatch.add(new TagImpl(tags[i]));
+      }
+    }
+  }
+  return this.condition;
+}

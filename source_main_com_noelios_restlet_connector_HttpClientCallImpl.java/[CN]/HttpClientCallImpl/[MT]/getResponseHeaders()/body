@@ -1,0 +1,15 @@
+{
+  if (this.responseHeaders == null) {
+    this.responseHeaders=new ArrayList<Parameter>();
+    int i=1;
+    String headerName=getConnection().getHeaderFieldKey(i);
+    String headerValue=getConnection().getHeaderField(i);
+    while (headerName != null) {
+      this.responseHeaders.add(Manager.createParameter(headerName,headerValue));
+      i++;
+      headerName=getConnection().getHeaderFieldKey(i);
+      headerValue=getConnection().getHeaderField(i);
+    }
+  }
+  return this.responseHeaders;
+}

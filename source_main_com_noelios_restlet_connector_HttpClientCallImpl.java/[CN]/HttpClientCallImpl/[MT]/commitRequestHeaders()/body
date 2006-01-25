@@ -1,0 +1,13 @@
+{
+  try {
+    getConnection().setRequestMethod(getRequestMethod());
+  }
+ catch (  ProtocolException e) {
+    logger.log(Level.WARNING,"Unable to set method",e);
+  }
+  Parameter header;
+  for (Iterator<Parameter> iter=getRequestHeaders().iterator(); iter.hasNext(); ) {
+    header=iter.next();
+    getConnection().addRequestProperty(header.getName(),header.getValue());
+  }
+}
