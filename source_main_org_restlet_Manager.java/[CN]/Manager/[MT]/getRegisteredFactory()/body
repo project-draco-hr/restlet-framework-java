@@ -1,6 +1,15 @@
 {
   if (registeredFactory == null) {
-    throw new RuntimeException("No restlet factory was registered");
+    String factoryClassName=System.getProperty(PROPERTY_FACTORY);
+    if (factoryClassName == null)     factoryClassName="com.noelios.restlet.Engine";
+    try {
+      registeredFactory=(Factory)Class.forName(factoryClassName).newInstance();
+      return registeredFactory;
+    }
+ catch (    Exception e) {
+      logger.log(Level.SEVERE,"Unable to register the Restlet API implementation",e);
+      throw new RuntimeException("Unable to register the Restlet API implementation");
+    }
   }
  else {
     return registeredFactory;
