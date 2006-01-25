@@ -1,0 +1,15 @@
+{
+  if (this.requestHeaders == null) {
+    this.requestHeaders=new ArrayList<Parameter>();
+    String headerName;
+    String headerValue;
+    for (Enumeration names=getConnection().getRequest().getHeaderNames(); names.hasMoreElements(); ) {
+      headerName=(String)names.nextElement();
+      for (Enumeration values=getConnection().getRequest().getHeaders(headerName); values.hasMoreElements(); ) {
+        headerValue=(String)values.nextElement();
+        this.requestHeaders.add(Manager.createParameter(headerName,headerValue));
+      }
+    }
+  }
+  return this.requestHeaders;
+}
