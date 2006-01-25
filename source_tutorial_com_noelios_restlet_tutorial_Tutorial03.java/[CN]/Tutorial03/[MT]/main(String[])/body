@@ -1,13 +1,12 @@
 {
   try {
-    com.noelios.restlet.Engine.register();
     UniformInterface handler=new UniformInterface(){
       public void handle(      UniformCall call){
         call.setOutput(new StringRepresentation("Hello World!",MediaTypes.TEXT_PLAIN));
       }
     }
 ;
-    new JettyServer("My Web server",handler,JettyServer.LISTENER_HTTP,8182).start();
+    Manager.createHttpServer("My server",handler,HttpServer.PROTOCOL_HTTP,null,8182).start();
   }
  catch (  Exception e) {
     e.printStackTrace();

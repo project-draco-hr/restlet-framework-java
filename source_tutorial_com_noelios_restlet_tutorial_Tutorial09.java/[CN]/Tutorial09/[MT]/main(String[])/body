@@ -1,9 +1,8 @@
 {
   try {
-    com.noelios.restlet.Engine.register();
     RestletContainer myContainer=new DefaultRestletContainer("My container");
-    JettyServer httpServer=new JettyServer("My connector",myContainer,JettyServer.LISTENER_HTTP,8182);
-    myContainer.addServer(httpServer);
+    HttpServer server=Manager.createHttpServer("My connector",myContainer,HttpServer.PROTOCOL_HTTP,null,8182);
+    myContainer.addServer(server);
     LogChainlet log=new LogChainlet(myContainer,"com.noelios.restlet.tutorial");
     myContainer.attach("http://localhost:8182/",log);
     StatusChainlet status=new StatusChainlet(myContainer,true,"webmaster@mysite.org","http://www.mysite.org");
