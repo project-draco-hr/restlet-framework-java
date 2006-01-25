@@ -33,7 +33,7 @@
       clientCall.addRequestHeader(HttpCall.HEADER_IF_UNMODIFIED_SINCE,iusDate);
     }
     if (call.getCookies().size() > 0) {
-      String cookies=CookieUtils.formatCookies(call.getCookies());
+      String cookies=CookieUtils.format(call.getCookies());
       clientCall.addRequestHeader(HttpCall.HEADER_COOKIE,cookies);
     }
     if (call.getReferrerRef() != null) {
@@ -51,6 +51,10 @@
     }
     if (pref.getLanguages() != null) {
       clientCall.addRequestHeader(HttpCall.HEADER_ACCEPT_LANGUAGE,PreferenceUtils.format(pref.getLanguages()));
+    }
+    ChallengeResponse response=call.getSecurity().getChallengeResponse();
+    if (response != null) {
+      clientCall.addRequestHeader(HttpCall.HEADER_AUTHORIZATION,SecurityUtils.format(response));
     }
     clientCall.commitRequestHeaders();
     if (call.getInput() != null) {
@@ -94,8 +98,17 @@
         call.setRedirectRef(Manager.createReference(header.getValue()));
       }
  else       if ((header.getName().equalsIgnoreCase(HttpCall.HEADER_SET_COOKIE)) || (header.getName().equalsIgnoreCase(HttpCall.HEADER_SET_COOKIE2))) {
+        try {
+          CookieReader cr=new CookieReader(header.getValue());
+          call.getCookieSettings().add(cr.readCookieSetting());
+        }
+ catch (        Exception e) {
+          logger.log(Level.WARNING,"Error during cookie setting parsing. Header: " + header.getValue(),e);
+        }
       }
  else       if (header.getName().equalsIgnoreCase(HttpCall.HEADER_WWW_AUTHENTICATE)) {
+        ChallengeRequest request=SecurityUtils.parseRequest(header.getValue());
+        call.getSecurity().setChallengeRequest(request);
       }
  else       if (header.getName().equalsIgnoreCase(HttpCall.HEADER_SERVER)) {
         call.setServerName(header.getValue());
@@ -109,19 +122,18 @@
  else       if (clientCall.getResponseChannel() != null) {
         output=new ReadableRepresentation(clientCall.getResponseChannel(),contentType.getMediaType());
       }
-      output.getMetadata().setCharacterSet(contentType.getCharacterSet());
-      output.getMetadata().setEncoding(encoding);
-      output.getMetadata().setExpirationDate(expires);
-      output.getMetadata().setLanguage(language);
-      output.getMetadata().setModificationDate(lastModified);
-      output.getMetadata().setTag(tag);
-      call.setOutput(output);
+      if (output != null) {
+        if (contentType != null)         output.getMetadata().setCharacterSet(contentType.getCharacterSet());
+        output.getMetadata().setEncoding(encoding);
+        output.getMetadata().setExpirationDate(expires);
+        output.getMetadata().setLanguage(language);
+        output.getMetadata().setModificationDate(lastModified);
+        output.getMetadata().setTag(tag);
+        call.setOutput(output);
+      }
     }
   }
- catch (  MalformedURLException e) {
-    e.printStackTrace();
-  }
-catch (  IOException e) {
-    e.printStackTrace();
+ catch (  Exception e) {
+    logger.log(Level.WARNING,"An error occured during the handling of an HTTP client call.",e);
   }
 }

@@ -8,8 +8,7 @@
       addResponseHeader(HEADER_LOCATION,call.getRedirectRef().toString());
     }
     if (call.getSecurity().getChallengeRequest() != null) {
-      ChallengeRequest challenge=call.getSecurity().getChallengeRequest();
-      addResponseHeader(HEADER_WWW_AUTHENTICATE,challenge.getScheme().getTechnicalName() + " realm=\"" + challenge.getRealm()+ '"');
+      addResponseHeader(HEADER_WWW_AUTHENTICATE,SecurityUtils.format(call.getSecurity().getChallengeRequest()));
     }
     addResponseHeader(HEADER_SERVER,call.getServerName());
     if (call.getStatus() != null) {

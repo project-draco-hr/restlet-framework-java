@@ -2,6 +2,7 @@
   Parameter result=null;
   if (cachedPair != null) {
     result=cachedPair;
+    cachedPair=null;
   }
  else {
     try {
@@ -29,7 +30,7 @@
             readingName=false;
             readingValue=true;
           }
- else           if (HeaderUtils.isTokenChar(nextChar)) {
+ else           if (HeaderUtils.isTokenChar(nextChar) || (this.globalVersion < 1)) {
             nameBuffer.append((char)nextChar);
           }
  else {
@@ -39,13 +40,13 @@
  else         if (readingValue) {
           if ((HeaderUtils.isSpace(nextChar)) && (valueBuffer.length() == 0)) {
           }
- else           if ((nextChar == -1) || (nextChar == ';') || (nextChar == ',')) {
+ else           if ((nextChar == -1) || (nextChar == ';')) {
             result=createParameter(nameBuffer,valueBuffer);
           }
  else           if ((nextChar == '"') && (valueBuffer.length() == 0)) {
             valueBuffer.append(readQuotedString());
           }
- else           if (HeaderUtils.isTokenChar(nextChar)) {
+ else           if (HeaderUtils.isTokenChar(nextChar) || (this.globalVersion < 1)) {
             valueBuffer.append((char)nextChar);
           }
  else {

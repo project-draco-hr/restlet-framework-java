@@ -6,44 +6,57 @@
     throw new IllegalArgumentException("Can't write cookie. Invalid name detected");
   }
  else {
-    appendValue(name,version,destination).append('=');
+    destination.append(name).append('=');
     if ((value != null) && (value.length() > 0)) {
       appendValue(value,version,destination);
     }
-    long maxAge=cookieSetting.getMaxAge();
-    if (maxAge >= 0) {
+    if (version > 0) {
+      destination.append("; Version=");
+      appendValue(Integer.toString(version),version,destination);
+    }
+    String path=cookieSetting.getPath();
+    if ((path != null) && (path.length() > 0)) {
+      destination.append("; Path=");
       if (version == 0) {
-        destination.append(";Expires=");
+        destination.append(path);
       }
  else {
-        destination.append(";Max-Age=");
-        destination.append(Integer.toString(cookieSetting.getMaxAge()));
+        HeaderUtils.appendQuote(path,destination);
+      }
+    }
+    int maxAge=cookieSetting.getMaxAge();
+    if (maxAge >= 0) {
+      if (version == 0) {
+        long currentTime=System.currentTimeMillis();
+        long maxTime=((long)maxAge * 1000L);
+        long expiresTime=currentTime + maxTime;
+        Date expires=new Date(expiresTime);
+        destination.append("; Expires=");
+        appendValue(DateUtils.format(expires,DateUtils.FORMAT_RFC_1036),version,destination);
+      }
+ else {
+        destination.append("; Max-Age=");
+        appendValue(Integer.toString(cookieSetting.getMaxAge()),version,destination);
       }
     }
  else     if ((maxAge == -1) && (version > 0)) {
-      destination.append(";Discard");
+      destination.append("; Discard");
     }
  else {
     }
     String domain=cookieSetting.getDomain();
     if ((domain != null) && (domain.length() > 0)) {
-      destination.append(";Domain=").append(domain.toLowerCase());
-    }
-    String path=cookieSetting.getPath();
-    if ((path != null) && (path.length() > 0)) {
-      destination.append(";Path=").append(path);
+      destination.append("; Domain=");
+      appendValue(domain.toLowerCase(),version,destination);
     }
     if (cookieSetting.isSecure()) {
-      destination.append(";Secure");
-    }
-    if (version > 0) {
-      destination.append(";Version=").append(Integer.toString(version));
+      destination.append("; Secure");
     }
     if (version > 0) {
       String comment=cookieSetting.getComment();
       if ((comment != null) && (comment.length() > 0)) {
-        destination.append(";Comment=");
-        HeaderUtils.appendQuote(comment,destination);
+        destination.append("; Comment=");
+        appendValue(comment,version,destination);
       }
     }
   }
