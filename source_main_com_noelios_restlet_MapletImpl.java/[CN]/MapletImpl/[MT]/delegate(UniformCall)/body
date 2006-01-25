@@ -2,7 +2,7 @@
   Mapping mapping=null;
   Matcher matcher=null;
   boolean found=false;
-  String resourcePath=call.getPath(0,false);
+  String resourcePath=call.getResourcePath(0,false);
   for (Iterator iter=iterator(); !found && iter.hasNext(); ) {
     mapping=(Mapping)iter.next();
     matcher=mapping.getPathPattern().matcher(resourcePath);
@@ -11,11 +11,11 @@
   if (found) {
     String restletPath=resourcePath.substring(0,matcher.end());
     resourcePath=resourcePath.substring(matcher.end());
-    call.getPaths().set(0,restletPath);
-    call.getPaths().add(0,resourcePath);
-    call.getMatches().clear();
+    call.getResourcePaths().set(0,restletPath);
+    call.getResourcePaths().add(0,resourcePath);
+    call.getResourceMatches().clear();
     for (int i=0; i < matcher.groupCount(); i++) {
-      call.getMatches().add(matcher.group(i + 1));
+      call.getResourceMatches().add(matcher.group(i + 1));
     }
     UniformInterface target=null;
     try {

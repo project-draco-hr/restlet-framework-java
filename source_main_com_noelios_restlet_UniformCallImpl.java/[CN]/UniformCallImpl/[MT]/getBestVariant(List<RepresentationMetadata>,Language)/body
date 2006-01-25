@@ -11,18 +11,19 @@
     MediaType currentMediaType=null;
     RepresentationMetadata bestVariant=null;
     float bestQuality=0;
-    Preference currentPref=null;
-    Preference bestLanguagePref=null;
-    Preference bestMediaTypePref=null;
+    LanguagePref currentLanguagePref=null;
+    LanguagePref bestLanguagePref=null;
+    MediaTypePref currentMediaTypePref=null;
+    MediaTypePref bestMediaTypePref=null;
     float currentScore=0;
     float bestLanguageScore=0;
     float bestMediaTypeScore=0;
     for (Iterator iter1=variants.iterator(); iter1.hasNext(); ) {
       currentVariant=(RepresentationMetadata)iter1.next();
-      if (getLanguagePrefs() != null) {
-        for (Iterator iter2=getLanguagePrefs().iterator(); (currentVariant.getLanguage() != null) && iter2.hasNext(); ) {
-          currentPref=(Preference)iter2.next();
-          currentLanguage=(Language)currentPref.getMetadata();
+      if (getPreference().getLanguages() != null) {
+        for (Iterator<LanguagePref> iter2=getPreference().getLanguages().iterator(); (currentVariant.getLanguage() != null) && iter2.hasNext(); ) {
+          currentLanguagePref=iter2.next();
+          currentLanguage=currentLanguagePref.getLanguage();
           compatiblePref=true;
           currentScore=0;
           if (currentVariant.getLanguage().getMainTag().equals(currentLanguage.getMainTag())) {
@@ -52,17 +53,17 @@
               compatiblePref=false;
             }
             if (compatiblePref && ((bestLanguagePref == null) || (currentScore > bestLanguageScore))) {
-              bestLanguagePref=currentPref;
+              bestLanguagePref=currentLanguagePref;
               bestLanguageScore=currentScore;
             }
           }
         }
       }
       compatibleLanguage=(currentVariant.getLanguage() == null) || (bestLanguagePref != null) || (currentVariant.getLanguage().equals(fallbackLanguage));
-      if (getMediaTypePrefs() != null) {
-        for (Iterator iter2=getMediaTypePrefs().iterator(); compatibleLanguage && iter2.hasNext(); ) {
-          currentPref=(Preference)iter2.next();
-          currentMediaType=(MediaType)currentPref.getMetadata();
+      if (getPreference().getMediaTypes() != null) {
+        for (Iterator<MediaTypePref> iter2=getPreference().getMediaTypes().iterator(); compatibleLanguage && iter2.hasNext(); ) {
+          currentMediaTypePref=iter2.next();
+          currentMediaType=currentMediaTypePref.getMediaType();
           compatiblePref=true;
           currentScore=0;
           if (currentMediaType.getMainType().equals(currentVariant.getMediaType().getMainType())) {
@@ -90,7 +91,7 @@
               }
             }
             if (compatiblePref && ((bestMediaTypePref == null) || (currentScore > bestMediaTypeScore))) {
-              bestMediaTypePref=currentPref;
+              bestMediaTypePref=currentMediaTypePref;
               bestMediaTypeScore=currentScore;
             }
           }

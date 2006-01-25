@@ -8,6 +8,7 @@
     Metadata metadata=null;
     MediaType mediaType=null;
     CharacterSet characterSet=null;
+    Encoding encoding=null;
     Language language=null;
     for (int i=0; (files != null) && (i < files.length); i++) {
       currentFile=files[i];
@@ -18,6 +19,7 @@
             metadata=getDirectoryRestlet().getMetadata(tokens[j]);
             if (metadata instanceof MediaType)             mediaType=(MediaType)metadata;
             if (metadata instanceof CharacterSet)             characterSet=(CharacterSet)metadata;
+            if (metadata instanceof Encoding)             encoding=(Encoding)metadata;
             if (metadata instanceof Language)             language=(Language)metadata;
             int dashIndex=tokens[j].indexOf('-');
             if ((metadata == null) && (dashIndex != -1)) {
@@ -27,10 +29,12 @@
             }
           }
           if (result == null)           result=new ArrayList<RepresentationMetadata>();
+          if (encoding == null)           encoding=getDirectoryRestlet().getDefaultEncoding();
           if (mediaType == null)           mediaType=getDirectoryRestlet().getDefaultMediaType();
           if (language == null)           language=getDirectoryRestlet().getDefaultLanguage();
           FileRepresentation fr=new FileRepresentation(currentFile.getAbsolutePath(),mediaType,getDirectoryRestlet().getTimeToLive());
           fr.setCharacterSet(characterSet);
+          fr.setEncoding(encoding);
           fr.setLanguage(language);
           result.add(fr);
         }
