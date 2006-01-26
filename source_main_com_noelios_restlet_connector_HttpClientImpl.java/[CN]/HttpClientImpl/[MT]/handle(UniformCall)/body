@@ -40,17 +40,29 @@
       clientCall.addRequestHeader(HttpCall.HEADER_REFERRER,call.getReferrerRef().toString());
     }
     PreferenceData pref=call.getPreference();
-    if (pref.getMediaTypes() != null) {
+    if (pref.getMediaTypes().size() > 0) {
       clientCall.addRequestHeader(HttpCall.HEADER_ACCEPT,PreferenceUtils.format(pref.getMediaTypes()));
     }
-    if (pref.getCharacterSets() != null) {
+ else {
+      clientCall.addRequestHeader(HttpCall.HEADER_ACCEPT,MediaTypes.ALL.getName());
+    }
+    if (pref.getCharacterSets().size() > 0) {
       clientCall.addRequestHeader(HttpCall.HEADER_ACCEPT_CHARSET,PreferenceUtils.format(pref.getCharacterSets()));
     }
-    if (pref.getEncodings() != null) {
+ else {
+      clientCall.addRequestHeader(HttpCall.HEADER_ACCEPT_CHARSET,CharacterSets.ALL.getName());
+    }
+    if (pref.getEncodings().size() > 0) {
       clientCall.addRequestHeader(HttpCall.HEADER_ACCEPT_ENCODING,PreferenceUtils.format(pref.getEncodings()));
     }
-    if (pref.getLanguages() != null) {
+ else {
+      clientCall.addRequestHeader(HttpCall.HEADER_ACCEPT_ENCODING,Encodings.ALL.getName());
+    }
+    if (pref.getLanguages().size() > 0) {
       clientCall.addRequestHeader(HttpCall.HEADER_ACCEPT_LANGUAGE,PreferenceUtils.format(pref.getLanguages()));
+    }
+ else {
+      clientCall.addRequestHeader(HttpCall.HEADER_ACCEPT_LANGUAGE,Languages.ALL.getName());
     }
     ChallengeResponse response=call.getSecurity().getChallengeResponse();
     if (response != null) {
