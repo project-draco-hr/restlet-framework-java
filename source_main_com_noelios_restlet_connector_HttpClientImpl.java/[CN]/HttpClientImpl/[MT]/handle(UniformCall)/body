@@ -1,6 +1,6 @@
 {
   try {
-    HttpClientCall clientCall=createCall(call.getMethod().getName(),call.getResourceRef().toString());
+    HttpClientCall clientCall=createCall(call.getMethod().getName(),call.getResourceRef().toString(),(call.getInput() != null));
     if (call.getClientName() != null) {
       clientCall.addRequestHeader(HttpCall.HEADER_USER_AGENT,call.getClientName());
     }
@@ -72,9 +72,11 @@
     if (call.getInput() != null) {
       if (clientCall.getRequestStream() != null) {
         call.getInput().write(clientCall.getRequestStream());
+        clientCall.getRequestStream().close();
       }
  else       if (clientCall.getRequestChannel() != null) {
         call.getInput().write(clientCall.getRequestChannel());
+        clientCall.getRequestChannel().close();
       }
     }
     call.setStatus(new StatusImpl(clientCall.getResponseStatusCode()));

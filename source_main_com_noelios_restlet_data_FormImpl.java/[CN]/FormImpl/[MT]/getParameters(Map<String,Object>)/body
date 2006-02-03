@@ -1,3 +1,35 @@
 {
-  getFormReader().readParameters(parameters);
+  Parameter param;
+  Object currentValue=null;
+  for (Iterator<Parameter> iter=getParameters().iterator(); iter.hasNext(); ) {
+    param=iter.next();
+    if (params.containsKey(param.getName())) {
+      currentValue=params.get(param.getName());
+      if (currentValue != null) {
+        List<Object> values=null;
+        if (currentValue instanceof List) {
+          values=(List<Object>)currentValue;
+        }
+ else {
+          values=new ArrayList<Object>();
+          values.add(currentValue);
+          params.put(param.getName(),values);
+        }
+        if (param.getValue() == null) {
+          values.add(new EmptyValue());
+        }
+ else {
+          values.add(param.getValue());
+        }
+      }
+ else {
+        if (param.getValue() == null) {
+          params.put(param.getName(),new EmptyValue());
+        }
+ else {
+          params.put(param.getName(),param.getValue());
+        }
+      }
+    }
+  }
 }
