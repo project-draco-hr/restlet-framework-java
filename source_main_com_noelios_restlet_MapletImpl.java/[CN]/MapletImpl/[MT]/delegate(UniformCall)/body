@@ -1,10 +1,10 @@
 {
-  Mapping mapping=null;
+  HandlerMapping mapping=null;
   Matcher matcher=null;
   boolean found=false;
   String resourcePath=call.getResourcePath(0,false);
-  for (Iterator iter=iterator(); !found && iter.hasNext(); ) {
-    mapping=(Mapping)iter.next();
+  for (Iterator<HandlerMapping> iter=getMappings().iterator(); !found && iter.hasNext(); ) {
+    mapping=iter.next();
     matcher=mapping.getPathPattern().matcher(resourcePath);
     found=matcher.lookingAt();
   }
@@ -17,31 +17,7 @@
     for (int i=0; i < matcher.groupCount(); i++) {
       call.getResourceMatches().add(matcher.group(i + 1));
     }
-    UniformInterface target=null;
-    try {
-      if (mapping.getHandler() != null) {
-        target=mapping.getHandler();
-      }
- else       if (mapping.isSetContainer()) {
-        target=(UniformInterface)mapping.getHandlerConstructor().newInstance(getContainer());
-      }
- else {
-        target=(UniformInterface)mapping.getHandlerClass().newInstance();
-      }
-    }
- catch (    InstantiationException ie) {
-      call.setStatus(Statuses.SERVER_ERROR_INTERNAL);
-      logger.log(Level.WARNING,"Restlet can't be instantiated",ie);
-    }
-catch (    IllegalAccessException iae) {
-      call.setStatus(Statuses.SERVER_ERROR_INTERNAL);
-      logger.log(Level.WARNING,"Restlet can't be accessed",iae);
-    }
-catch (    InvocationTargetException ite) {
-      call.setStatus(Statuses.SERVER_ERROR_INTERNAL);
-      logger.log(Level.WARNING,"Restlet can't be invoked",ite);
-    }
-    target.handle(call);
+    mapping.handle(call,getContainer());
   }
  else {
     call.setStatus(Statuses.CLIENT_ERROR_NOT_FOUND);

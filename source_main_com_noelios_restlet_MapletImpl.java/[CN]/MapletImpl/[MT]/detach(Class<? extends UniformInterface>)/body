@@ -1,7 +1,8 @@
 {
-  Mapping mapping;
-  for (Iterator iter=iterator(); iter.hasNext(); ) {
-    mapping=(Mapping)iter.next();
-    if (mapping.getHandlerClass() == targetClass)     remove(mapping);
+  HandlerMapping mapping;
+  for (Iterator<HandlerMapping> iter=getMappings().iterator(); iter.hasNext(); ) {
+    mapping=iter.next();
+    if (mapping.getHandlerClass() == targetClass)     iter.remove();
   }
+  if (getMappings().size() == 0)   this.mappings=null;
 }
