@@ -1,6 +1,6 @@
 {
   try {
-    HttpClientCall clientCall=createCall(call.getMethod().getName(),call.getResourceRef().toString(),(call.getInput() != null));
+    HttpClientCall clientCall=createCall(call.getMethod().getName(),call.getResourceRef().toString(),hasInput(call));
     if (call.getClientName() != null) {
       clientCall.addRequestHeader(HttpCall.HEADER_USER_AGENT,call.getClientName());
     }
@@ -69,7 +69,7 @@
       clientCall.addRequestHeader(HttpCall.HEADER_AUTHORIZATION,SecurityUtils.format(response));
     }
     clientCall.commitRequestHeaders();
-    if (call.getInput() != null) {
+    if (hasInput(call)) {
       if (clientCall.getRequestStream() != null) {
         call.getInput().write(clientCall.getRequestStream());
         clientCall.getRequestStream().close();
