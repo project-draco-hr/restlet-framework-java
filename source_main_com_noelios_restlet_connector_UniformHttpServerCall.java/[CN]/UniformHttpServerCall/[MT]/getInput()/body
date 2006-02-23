@@ -1,0 +1,31 @@
+{
+  InputStream requestStream=((ServerCall)getConnectorCall()).getRequestStream();
+  ReadableByteChannel requestChannel=((ServerCall)getConnectorCall()).getRequestChannel();
+  if ((this.input == null) && (requestStream != null || requestChannel != null)) {
+    Encoding contentEncoding=null;
+    Language contentLanguage=null;
+    MediaType contentType=null;
+    Parameter header;
+    for (Iterator<Parameter> iter=getConnectorCall().getRequestHeaders().iterator(); iter.hasNext(); ) {
+      header=iter.next();
+      if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_ENCODING)) {
+        contentEncoding=Manager.createEncoding(header.getValue());
+      }
+ else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_LANGUAGE)) {
+        contentLanguage=Manager.createLanguage(header.getValue());
+      }
+ else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_TYPE)) {
+        contentType=Manager.createMediaType(header.getValue());
+      }
+    }
+    if (requestStream != null) {
+      this.input=new InputRepresentation(requestStream,contentType);
+    }
+ else     if (requestChannel != null) {
+      this.input=new ReadableRepresentation(requestChannel,contentType);
+    }
+    this.input.getMetadata().setEncoding(contentEncoding);
+    this.input.getMetadata().setLanguage(contentLanguage);
+  }
+  return this.input;
+}

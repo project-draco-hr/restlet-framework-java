@@ -1,0 +1,20 @@
+{
+  if (this.security == null) {
+    this.security=new SecurityDataImpl();
+    if (getConnectorCall().isConfidential()) {
+      getSecurity().setConfidential(true);
+    }
+ else {
+    }
+    String authorization=null;
+    Parameter header;
+    for (Iterator<Parameter> iter=getConnectorCall().getRequestHeaders().iterator(); (authorization == null) && iter.hasNext(); ) {
+      header=iter.next();
+      if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_AUTHORIZATION)) {
+        authorization=header.getValue();
+      }
+    }
+    getSecurity().setChallengeResponse(SecurityUtils.parseResponse(authorization));
+  }
+  return this.security;
+}

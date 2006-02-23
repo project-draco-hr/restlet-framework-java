@@ -1,0 +1,27 @@
+{
+  if (this.clientAddress == null) {
+    boolean useForwardedFor=Boolean.valueOf(System.getProperty(ServerCall.PROPERTY_USE_FORWARDED_FOR));
+    if (useForwardedFor) {
+      Parameter header;
+      for (Iterator<Parameter> iter=getConnectorCall().getRequestHeaders().iterator(); iter.hasNext(); ) {
+        header=iter.next();
+        if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_X_FORWARDED_FOR)) {
+          int index=header.getValue().lastIndexOf(',');
+          if (index == -1) {
+            this.clientAddress=header.getValue().trim();
+          }
+ else {
+            this.clientAddress=header.getValue().substring(index + 1).trim();
+          }
+        }
+      }
+      if ((this.clientAddress == null) || this.clientAddress.equalsIgnoreCase("unknown")) {
+        this.clientAddress=getConnectorCall().getRequestAddress();
+      }
+    }
+ else {
+      this.clientAddress=getConnectorCall().getRequestAddress();
+    }
+  }
+  return this.clientAddress;
+}

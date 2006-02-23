@@ -1,7 +1,6 @@
 {
   try {
-switch (this.listenerType) {
-case PROTOCOL_AJP:
+    if (Protocols.AJP.equals(this.protocol)) {
       if (this.address != null) {
         this.listener=new AjpListener(this,new InetAddrPort(this.address,this.port));
       }
@@ -9,33 +8,32 @@ case PROTOCOL_AJP:
         this.listener=new AjpListener(this);
         this.listener.setPort(port);
       }
-    break;
-case PROTOCOL_HTTP:
-  if (this.address != null) {
-    this.listener=new HttpListener(this,new InetAddrPort(this.address,this.port));
-  }
+    }
+ else     if (Protocols.HTTP.equals(this.protocol)) {
+      if (this.address != null) {
+        this.listener=new HttpListener(this,new InetAddrPort(this.address,this.port));
+      }
  else {
-    this.listener=new HttpListener(this);
-    this.listener.setPort(port);
-  }
-break;
-case PROTOCOL_HTTPS:
-if (this.address != null) {
-HttpsListener httpsListener=new HttpsListener(this,new InetAddrPort(this.address,this.port));
-httpsListener.setKeystore(this.keystorePath);
-httpsListener.setPassword(this.keystorePassword);
-httpsListener.setKeyPassword(this.keyPassword);
-this.listener=httpsListener;
-}
+        this.listener=new HttpListener(this);
+        this.listener.setPort(port);
+      }
+    }
+ else     if (Protocols.HTTPS.equals(this.protocol)) {
+      if (this.address != null) {
+        HttpsListener httpsListener=new HttpsListener(this,new InetAddrPort(this.address,this.port));
+        httpsListener.setKeystore(this.keystorePath);
+        httpsListener.setPassword(this.keystorePassword);
+        httpsListener.setKeyPassword(this.keyPassword);
+        this.listener=httpsListener;
+      }
  else {
-this.listener=new HttpsListener(this);
-this.listener.setPort(port);
-}
-break;
-}
-getListener().start();
-}
- catch (Exception e) {
-e.printStackTrace();
-}
+        this.listener=new HttpsListener(this);
+        this.listener.setPort(port);
+      }
+    }
+    getListener().start();
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
 }
