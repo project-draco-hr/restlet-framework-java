@@ -25,8 +25,8 @@
     rootMaplet.attach("/users",usersMaplet);
     Maplet userMaplet=new DefaultMaplet(myContainer){
       public void handle(      UniformCall call){
-        if (call.getResourcePath(0,true).equals("")) {
-          String output="Account of user named: " + call.getResourcePath(1,true);
+        if (call.getResourcePath().equals("")) {
+          String output="Account of user named: " + call.getHandlerRef().getLastSegment();
           call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
         }
  else {
@@ -38,7 +38,8 @@
     usersMaplet.attach("/[a-z]+",userMaplet);
     Restlet ordersRestlet=new AbstractRestlet(myContainer){
       public void handle(      UniformCall call){
-        String output="Orders of user named: " + call.getResourcePath(2,true);
+        List<String> segments=call.getHandlerRef().getSegments();
+        String output="Orders of user named: " + segments.get(segments.size() - 2);
         call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
       }
     }

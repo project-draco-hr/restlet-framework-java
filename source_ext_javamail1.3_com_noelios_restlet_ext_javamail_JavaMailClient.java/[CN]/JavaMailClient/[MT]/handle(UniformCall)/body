@@ -52,6 +52,11 @@
       }
       msg.setSubject(subject);
       msg.setText(text);
+      Parameter customHeader;
+      for (Iterator<Parameter> iter=call.getConnectorCall().getRequestHeaders().iterator(); iter.hasNext(); ) {
+        customHeader=iter.next();
+        msg.addHeader(customHeader.getName(),customHeader.getValue());
+      }
       msg.setSentDate(new Date());
       msg.saveChanges();
       transport.sendMessage(msg,msg.getAllRecipients());

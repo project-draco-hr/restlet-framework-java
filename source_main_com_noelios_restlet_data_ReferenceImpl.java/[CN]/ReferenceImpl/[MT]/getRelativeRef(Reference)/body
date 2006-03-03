@@ -1,0 +1,118 @@
+{
+  Reference result=null;
+  if (base == null) {
+    result=this;
+  }
+ else   if (!isAbsolute() || !isHierarchical()) {
+    throw new IllegalArgumentException("The reference must have an absolute hierarchical path component");
+  }
+ else   if (!base.isAbsolute() || !base.isHierarchical()) {
+    throw new IllegalArgumentException("The base reference must have an absolute hierarchical path component");
+  }
+ else   if (!getHostIdentifier().equals(base.getHostIdentifier())) {
+    result=this;
+  }
+ else {
+    String localPath=getPath();
+    String basePath=base.getPath();
+    String relativePath=null;
+    if ((basePath == null) || (localPath == null)) {
+      relativePath=localPath;
+    }
+ else {
+      boolean diffFound=false;
+      int lastSlashIndex=-1;
+      int i=0;
+      char current;
+      while (!diffFound && (i < localPath.length()) && (i < basePath.length())) {
+        current=localPath.charAt(i);
+        if (current != basePath.charAt(i)) {
+          diffFound=true;
+        }
+ else {
+          if (current == '/')           lastSlashIndex=i;
+          i++;
+        }
+      }
+      if (!diffFound) {
+        if (localPath.length() == basePath.length()) {
+          relativePath=".";
+        }
+ else         if (i == localPath.length()) {
+          if (basePath.charAt(i) == '/') {
+            if ((i + 1) == basePath.length()) {
+              relativePath=".";
+            }
+ else {
+              StringBuilder sb=new StringBuilder();
+              sb.append("..");
+              boolean canAdd=false;
+              for (int j=i + 1; j < basePath.length(); j++) {
+                if (basePath.charAt(j) == '/') {
+                  canAdd=true;
+                }
+ else                 if (canAdd) {
+                  sb.append("/..");
+                  canAdd=false;
+                }
+              }
+              relativePath=sb.toString();
+            }
+          }
+ else {
+            StringBuilder sb=new StringBuilder();
+            sb.append("..");
+            boolean canAdd=false;
+            for (int j=i; j < basePath.length(); j++) {
+              if (basePath.charAt(j) == '/') {
+                canAdd=true;
+              }
+ else               if (canAdd) {
+                sb.append("/..");
+                canAdd=false;
+              }
+            }
+            sb.append('/').append(localPath.substring(lastSlashIndex + 1));
+            relativePath=sb.toString();
+          }
+        }
+ else         if (i == basePath.length()) {
+          if (localPath.charAt(i) == '/') {
+            if ((i + 1) == localPath.length()) {
+              relativePath=".";
+            }
+ else {
+              relativePath=localPath.substring(i + 1);
+            }
+          }
+ else {
+            if (lastSlashIndex == (i - 1)) {
+              relativePath=localPath.substring(i);
+            }
+ else {
+              relativePath=".." + localPath.substring(lastSlashIndex);
+            }
+          }
+        }
+      }
+ else {
+        StringBuilder sb=new StringBuilder();
+        sb.append("..");
+        boolean canAdd=false;
+        for (int j=i; j < basePath.length(); j++) {
+          if (basePath.charAt(j) == '/') {
+            canAdd=true;
+          }
+ else           if (canAdd) {
+            sb.append("/..");
+            canAdd=false;
+          }
+        }
+        sb.append('/').append(localPath.substring(lastSlashIndex + 1));
+        relativePath=sb.toString();
+      }
+    }
+    result=Manager.createReference(relativePath);
+  }
+  return result;
+}

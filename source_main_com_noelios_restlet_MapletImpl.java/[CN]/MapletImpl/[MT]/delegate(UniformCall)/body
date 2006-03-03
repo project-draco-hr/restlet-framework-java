@@ -2,20 +2,24 @@
   HandlerMapping mapping=null;
   Matcher matcher=null;
   boolean found=false;
-  String resourcePath=call.getResourcePath(0,false);
+  String resourcePath=call.getResourcePath();
   for (Iterator<HandlerMapping> iter=getMappings().iterator(); !found && iter.hasNext(); ) {
     mapping=iter.next();
     matcher=mapping.getPathPattern().matcher(resourcePath);
     found=matcher.lookingAt();
   }
   if (found) {
-    String restletPath=resourcePath.substring(0,matcher.end());
-    resourcePath=resourcePath.substring(matcher.end());
-    call.getResourcePaths().set(0,restletPath);
-    call.getResourcePaths().add(0,resourcePath);
-    call.getResourceMatches().clear();
+    String oldHandlerPath=call.getHandlerPath();
+    String handlerPath=resourcePath.substring(0,matcher.end());
+    if (oldHandlerPath == null) {
+      call.setHandlerPath(handlerPath);
+    }
+ else {
+      call.setHandlerPath(oldHandlerPath + handlerPath);
+    }
+    call.getHandlerMatches().clear();
     for (int i=0; i < matcher.groupCount(); i++) {
-      call.getResourceMatches().add(matcher.group(i + 1));
+      call.getHandlerMatches().add(matcher.group(i + 1));
     }
     mapping.handle(call,getContainer());
   }
