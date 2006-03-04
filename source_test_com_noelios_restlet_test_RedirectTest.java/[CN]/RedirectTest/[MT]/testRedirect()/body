@@ -1,0 +1,34 @@
+{
+  try {
+    RestletContainer myContainer=new DefaultRestletContainer("My container");
+    myContainer.addClient(Manager.createClient(Protocols.HTTP,"Test client"));
+    myContainer.addClient(Manager.createClient(Protocols.HTTP,"Proxy client"));
+    String target="http://localhost:9090${path}${if query}?${query}${end}";
+    RedirectRestlet proxy=new RedirectRestlet(myContainer,target,RedirectRestlet.MODE_CONNECTOR);
+    proxy.setConnectorName("Proxy client");
+    Restlet trace=new AbstractRestlet(myContainer){
+      public void handle(      UniformCall call){
+        String output="Resource URI:  " + call.getResourceRef() + '\n'+ "Handler path:  "+ call.getHandlerPath()+ '\n'+ "Resource path: "+ call.getResourcePath()+ '\n'+ "Query string:  "+ call.getResourceRef().getQuery()+ '\n'+ "Method name:   "+ call.getMethod()+ '\n';
+        call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
+      }
+    }
+;
+    myContainer.addServer(Manager.createServer(Protocols.HTTP,"Proxy server",proxy,null,8080));
+    myContainer.addServer(Manager.createServer(Protocols.HTTP,"Origin server",trace,null,9090));
+    myContainer.start();
+    String uri="http://localhost:8080/?foo=bar";
+    testCall(myContainer,Methods.GET,uri);
+    testCall(myContainer,Methods.POST,uri);
+    testCall(myContainer,Methods.PUT,uri);
+    testCall(myContainer,Methods.DELETE,uri);
+    uri="http://localhost:8080/abcd/efgh/ijkl?foo=bar&foo=beer";
+    testCall(myContainer,Methods.GET,uri);
+    testCall(myContainer,Methods.POST,uri);
+    testCall(myContainer,Methods.PUT,uri);
+    testCall(myContainer,Methods.DELETE,uri);
+    myContainer.stop();
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+}
