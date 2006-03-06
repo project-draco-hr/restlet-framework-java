@@ -3,6 +3,13 @@
     return this.resourceRef.toString(false,false);
   }
  else {
-    return this.resourceRef.toString(false,false).substring(getHandlerPath().length());
+    String resourceURI=this.resourceRef.toString(false,false);
+    int length=getHandlerPath().length();
+    if (logger.isLoggable(Level.FINE)) {
+      logger.fine("Resource URI: " + resourceURI);
+      logger.fine("Handler path: " + getHandlerPath());
+      logger.fine("Handler path length: " + length);
+    }
+    return resourceURI.substring(length);
   }
 }
