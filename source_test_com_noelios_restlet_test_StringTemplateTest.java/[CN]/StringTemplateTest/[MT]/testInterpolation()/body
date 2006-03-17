@@ -1,0 +1,13 @@
+{
+  DefaultModel dataModel=new DefaultModel();
+  dataModel.put("number",Integer.toString(12345));
+  dataModel.put("string","abcdef");
+  StringTemplate st;
+  String result;
+  st=new StringTemplate("The number is ${number} and the string is ${string}");
+  result=st.process(dataModel);
+  assertEquals(result,"The number is 12345 and the string is abcdef");
+  st=new StringTemplate("The number is $$$ {{{${number}${number} and the string is ${string}$${string}$i{ng}");
+  result=st.process(dataModel);
+  assertEquals(result,"The number is $$$ {{{1234512345 and the string is abcdef$abcdef$i{ng}");
+}
