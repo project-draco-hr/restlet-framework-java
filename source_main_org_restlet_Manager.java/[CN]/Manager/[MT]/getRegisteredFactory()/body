@@ -1,17 +1,31 @@
 {
-  if (registeredFactory == null) {
-    String factoryClassName=System.getProperty(PROPERTY_FACTORY);
-    if (factoryClassName == null)     factoryClassName="com.noelios.restlet.Engine";
-    try {
-      registeredFactory=(Factory)Class.forName(factoryClassName).newInstance();
-      return registeredFactory;
+  Factory result=registeredFactory;
+  if (result == null) {
+    String factoryClassName=null;
+    ClassLoader cl=Thread.currentThread().getContextClassLoader();
+    URL configURL=cl.getResource("META-INF/services/org.restlet.Factory");
+    if (configURL != null) {
+      try {
+        BufferedReader reader=new BufferedReader(new InputStreamReader(configURL.openStream(),"utf-8"));
+        String providerName=reader.readLine();
+        factoryClassName=providerName.substring(0,providerName.indexOf('#')).trim();
+      }
+ catch (      Exception e) {
+      }
     }
- catch (    Exception e) {
-      logger.log(Level.SEVERE,"Unable to register the Restlet API implementation",e);
-      throw new RuntimeException("Unable to register the Restlet API implementation");
+    if (factoryClassName == null) {
+      logger.log(Level.SEVERE,"Unable to register the Restlet API implementation. Please check that the JAR file is in your classpath.");
     }
-  }
  else {
-    return registeredFactory;
+      try {
+        registeredFactory=(Factory)Class.forName(factoryClassName).newInstance();
+        result=registeredFactory;
+      }
+ catch (      Exception e) {
+        logger.log(Level.SEVERE,"Unable to register the Restlet API implementation",e);
+        throw new RuntimeException("Unable to register the Restlet API implementation");
+      }
+    }
   }
+  return result;
 }
