@@ -1,46 +1,10 @@
 {
   if (this.preference == null) {
     this.preference=new PreferenceDataImpl();
-    String acceptCharset=null;
-    String acceptEncoding=null;
-    String acceptLanguage=null;
-    String acceptMediaType=null;
-    Parameter header;
-    for (Iterator<Parameter> iter=getConnectorCall().getRequestHeaders().iterator(); iter.hasNext(); ) {
-      header=iter.next();
-      if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_ACCEPT)) {
-        if (acceptMediaType == null) {
-          acceptMediaType=header.getValue();
-        }
- else {
-          acceptMediaType=acceptMediaType + ", " + header.getValue();
-        }
-      }
- else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_ACCEPT_CHARSET)) {
-        if (acceptCharset == null) {
-          acceptCharset=header.getValue();
-        }
- else {
-          acceptCharset=acceptCharset + ", " + header.getValue();
-        }
-      }
- else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_ACCEPT_ENCODING)) {
-        if (acceptEncoding == null) {
-          acceptEncoding=header.getValue();
-        }
- else {
-          acceptEncoding=acceptEncoding + ", " + header.getValue();
-        }
-      }
- else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_ACCEPT_LANGUAGE)) {
-        if (acceptLanguage == null) {
-          acceptLanguage=header.getValue();
-        }
- else {
-          acceptLanguage=acceptLanguage + ", " + header.getValue();
-        }
-      }
-    }
+    String acceptCharset=getConnectorCall().getRequestHeaderValue(ConnectorCall.HEADER_ACCEPT_CHARSET);
+    String acceptEncoding=getConnectorCall().getRequestHeaderValue(ConnectorCall.HEADER_ACCEPT_ENCODING);
+    String acceptLanguage=getConnectorCall().getRequestHeaderValue(ConnectorCall.HEADER_ACCEPT_LANGUAGE);
+    String acceptMediaType=getConnectorCall().getRequestHeaderValue(ConnectorCall.HEADER_ACCEPT);
     if (acceptCharset != null) {
       if (acceptCharset.length() == 0) {
         this.preference.getCharacterSets().add(new CharacterSetPrefImpl(CharacterSets.ISO_8859_1));

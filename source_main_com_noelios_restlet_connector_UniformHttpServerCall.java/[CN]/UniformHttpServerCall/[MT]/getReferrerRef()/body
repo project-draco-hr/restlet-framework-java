@@ -1,11 +1,8 @@
 {
   if (this.referrerRef == null) {
-    Parameter header;
-    for (Iterator<Parameter> iter=getConnectorCall().getRequestHeaders().iterator(); (this.referrerRef == null) && iter.hasNext(); ) {
-      header=iter.next();
-      if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_REFERRER)) {
-        this.referrerRef=new ReferenceImpl(header.getValue());
-      }
+    String referrerValue=getConnectorCall().getRequestHeaderValue(ConnectorCall.HEADER_REFERRER);
+    if (referrerValue != null) {
+      this.referrerRef=Manager.createReference(referrerValue);
     }
   }
   return this.referrerRef;

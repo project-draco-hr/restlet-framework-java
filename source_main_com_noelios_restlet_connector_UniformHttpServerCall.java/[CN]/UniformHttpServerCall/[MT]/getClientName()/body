@@ -1,12 +1,6 @@
 {
   if (this.clientName == null) {
-    Parameter header;
-    for (Iterator<Parameter> iter=getConnectorCall().getRequestHeaders().iterator(); iter.hasNext(); ) {
-      header=iter.next();
-      if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_USER_AGENT)) {
-        this.clientName=header.getValue();
-      }
-    }
+    this.clientName=getConnectorCall().getRequestHeaderValue(ConnectorCall.HEADER_USER_AGENT);
   }
   return this.clientName;
 }

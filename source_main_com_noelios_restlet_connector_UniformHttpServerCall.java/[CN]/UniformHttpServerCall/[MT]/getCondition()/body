@@ -1,21 +1,13 @@
 {
   if (this.condition == null) {
     this.condition=new ConditionDataImpl();
+    String ifMatchHeader=getConnectorCall().getRequestHeaderValue(ConnectorCall.HEADER_IF_MATCH);
+    String ifNoneMatchHeader=getConnectorCall().getRequestHeaderValue(ConnectorCall.HEADER_IF_NONE_MATCH);
     Date ifModifiedSince=null;
     Date ifUnmodifiedSince=null;
-    String ifMatchHeader=null;
-    String ifNoneMatchHeader=null;
-    Parameter header;
-    for (Iterator<Parameter> iter=getConnectorCall().getRequestHeaders().iterator(); iter.hasNext(); ) {
-      header=iter.next();
-      if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_IF_MATCH)) {
-        ifMatchHeader=header.getValue();
-      }
- else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_IF_MODIFIED_SINCE)) {
+    for (    Parameter header : getConnectorCall().getRequestHeaders()) {
+      if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_IF_MODIFIED_SINCE)) {
         ifModifiedSince=getConnectorCall().parseDate(header.getValue(),false);
-      }
- else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_IF_NONE_MATCH)) {
-        ifNoneMatchHeader=header.getValue();
       }
  else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_IF_UNMODIFIED_SINCE)) {
         ifUnmodifiedSince=getConnectorCall().parseDate(header.getValue(),false);

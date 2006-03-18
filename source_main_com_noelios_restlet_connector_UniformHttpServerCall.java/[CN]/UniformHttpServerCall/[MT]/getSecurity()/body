@@ -6,14 +6,7 @@
     }
  else {
     }
-    String authorization=null;
-    Parameter header;
-    for (Iterator<Parameter> iter=getConnectorCall().getRequestHeaders().iterator(); (authorization == null) && iter.hasNext(); ) {
-      header=iter.next();
-      if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_AUTHORIZATION)) {
-        authorization=header.getValue();
-      }
-    }
+    String authorization=getConnectorCall().getRequestHeaderValue(ConnectorCall.HEADER_AUTHORIZATION);
     getSecurity().setChallengeResponse(SecurityUtils.parseResponse(authorization));
   }
   return this.security;
