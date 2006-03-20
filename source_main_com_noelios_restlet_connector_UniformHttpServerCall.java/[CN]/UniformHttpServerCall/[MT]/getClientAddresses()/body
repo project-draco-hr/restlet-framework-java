@@ -1,0 +1,13 @@
+{
+  if (this.clientAddresses == null) {
+    this.clientAddresses=super.getClientAddresses();
+    String header=getConnectorCall().getRequestHeaderValue(ConnectorCall.HEADER_X_FORWARDED_FOR);
+    if (header != null) {
+      String[] addresses=header.split(",");
+      for (int i=addresses.length - 1; i >= 0; i--) {
+        this.clientAddresses.add(addresses[i].trim());
+      }
+    }
+  }
+  return this.clientAddresses;
+}
