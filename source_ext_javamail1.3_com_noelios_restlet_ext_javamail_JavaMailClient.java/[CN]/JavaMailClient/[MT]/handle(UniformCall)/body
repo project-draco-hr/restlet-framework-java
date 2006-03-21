@@ -34,10 +34,12 @@
     Properties props=System.getProperties();
     props.put("mail.smtp.host",smtpHost);
     props.put("mail.smtp.port",Integer.toString(smtpPort));
-    props.put("mail.smtp.auth","false");
+    props.put("mail.smtp.auth","true");
+    props.put("mail.smtp.starttls.enable","true");
+    props.put("mail.smtp.debug","true");
     Session session=Session.getDefaultInstance(props);
     Transport transport=session.getTransport("smtp");
-    transport.connect();
+    transport.connect(smtpHost,"jlouvel","saya05peru");
     if (transport.isConnected()) {
       Message msg=new MimeMessage(session);
       msg.setFrom(new InternetAddress(from));
