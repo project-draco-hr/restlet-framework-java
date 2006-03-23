@@ -1,0 +1,151 @@
+{
+  try {
+    ClientCall clientCall=createCall(call.getMethod().getName(),call.getResourceRef().toString(),hasInput(call));
+    if (call.getClientName() != null) {
+      clientCall.addRequestHeader(ConnectorCall.HEADER_USER_AGENT,call.getClientName());
+    }
+ else {
+      clientCall.addRequestHeader(ConnectorCall.HEADER_USER_AGENT,FactoryImpl.VERSION_HEADER);
+    }
+    ConditionData condition=call.getCondition();
+    if (condition.getMatch() != null) {
+      StringBuilder value=new StringBuilder();
+      for (int i=0; i < condition.getMatch().size(); i++) {
+        if (i > 0)         value.append(", ");
+        value.append(condition.getMatch().get(i).getName());
+      }
+      clientCall.addRequestHeader(ConnectorCall.HEADER_IF_MATCH,value.toString());
+    }
+    if (condition.getModifiedSince() != null) {
+      String imsDate=DateUtils.format(condition.getModifiedSince(),DateUtils.FORMAT_RFC_1123);
+      clientCall.addRequestHeader(ConnectorCall.HEADER_IF_MODIFIED_SINCE,imsDate);
+    }
+    if (condition.getNoneMatch() != null) {
+      StringBuilder value=new StringBuilder();
+      for (int i=0; i < condition.getNoneMatch().size(); i++) {
+        if (i > 0)         value.append(", ");
+        value.append(condition.getNoneMatch().get(i).getName());
+      }
+      clientCall.addRequestHeader(ConnectorCall.HEADER_IF_NONE_MATCH,value.toString());
+    }
+    if (condition.getUnmodifiedSince() != null) {
+      String iusDate=DateUtils.format(condition.getUnmodifiedSince(),DateUtils.FORMAT_RFC_1123);
+      clientCall.addRequestHeader(ConnectorCall.HEADER_IF_UNMODIFIED_SINCE,iusDate);
+    }
+    if (call.getCookies().size() > 0) {
+      String cookies=CookieUtils.format(call.getCookies());
+      clientCall.addRequestHeader(ConnectorCall.HEADER_COOKIE,cookies);
+    }
+    if (call.getReferrerRef() != null) {
+      clientCall.addRequestHeader(ConnectorCall.HEADER_REFERRER,call.getReferrerRef().toString());
+    }
+    PreferenceData pref=call.getPreference();
+    if (pref.getMediaTypes().size() > 0) {
+      clientCall.addRequestHeader(ConnectorCall.HEADER_ACCEPT,PreferenceUtils.format(pref.getMediaTypes()));
+    }
+ else {
+      clientCall.addRequestHeader(ConnectorCall.HEADER_ACCEPT,MediaTypes.ALL.getName());
+    }
+    if (pref.getCharacterSets().size() > 0) {
+      clientCall.addRequestHeader(ConnectorCall.HEADER_ACCEPT_CHARSET,PreferenceUtils.format(pref.getCharacterSets()));
+    }
+ else {
+      clientCall.addRequestHeader(ConnectorCall.HEADER_ACCEPT_CHARSET,CharacterSets.ALL.getName());
+    }
+    if (pref.getEncodings().size() > 0) {
+      clientCall.addRequestHeader(ConnectorCall.HEADER_ACCEPT_ENCODING,PreferenceUtils.format(pref.getEncodings()));
+    }
+ else {
+      clientCall.addRequestHeader(ConnectorCall.HEADER_ACCEPT_ENCODING,Encodings.ALL.getName());
+    }
+    if (pref.getLanguages().size() > 0) {
+      clientCall.addRequestHeader(ConnectorCall.HEADER_ACCEPT_LANGUAGE,PreferenceUtils.format(pref.getLanguages()));
+    }
+ else {
+      clientCall.addRequestHeader(ConnectorCall.HEADER_ACCEPT_LANGUAGE,Languages.ALL.getName());
+    }
+    ChallengeResponse response=call.getSecurity().getChallengeResponse();
+    if (response != null) {
+      clientCall.addRequestHeader(ConnectorCall.HEADER_AUTHORIZATION,SecurityUtils.format(response));
+    }
+    Parameter header;
+    for (Iterator<Parameter> iter=call.getConnectorCall().getRequestHeaders().iterator(); iter.hasNext(); ) {
+      header=iter.next();
+      clientCall.addRequestHeader(header.getName(),header.getValue());
+    }
+    clientCall.sendRequestHeaders();
+    if (hasInput(call)) {
+      clientCall.sendRequestInput(call.getInput());
+    }
+    call.setStatus(new StatusImpl(clientCall.getResponseStatusCode(),null,clientCall.getResponseReasonPhrase(),null));
+    call.setServerAddress(clientCall.getResponseAddress());
+    call.setConnectorCall(clientCall);
+    ContentType contentType=null;
+    Date expires=null;
+    Date lastModified=null;
+    Encoding encoding=null;
+    Language language=null;
+    Tag tag=null;
+    for (Iterator<Parameter> iter=clientCall.getResponseHeaders().iterator(); iter.hasNext(); ) {
+      header=iter.next();
+      if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_TYPE)) {
+        contentType=new ContentType(header.getValue());
+      }
+ else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_EXPIRES)) {
+        expires=clientCall.parseDate(header.getValue(),false);
+      }
+ else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_ENCODING)) {
+        encoding=Manager.createEncoding(header.getValue());
+      }
+ else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_LANGUAGE)) {
+        language=Manager.createLanguage(header.getValue());
+      }
+ else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_LAST_MODIFIED)) {
+        lastModified=clientCall.parseDate(header.getValue(),false);
+      }
+ else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_ETAG)) {
+        tag=Manager.createTag(header.getValue());
+      }
+ else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_LOCATION)) {
+        call.setRedirectionRef(Manager.createReference(header.getValue()));
+      }
+ else       if ((header.getName().equalsIgnoreCase(ConnectorCall.HEADER_SET_COOKIE)) || (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_SET_COOKIE2))) {
+        try {
+          CookieReader cr=new CookieReader(header.getValue());
+          call.getCookieSettings().add(cr.readCookieSetting());
+        }
+ catch (        Exception e) {
+          logger.log(Level.WARNING,"Error during cookie setting parsing. Header: " + header.getValue(),e);
+        }
+      }
+ else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_WWW_AUTHENTICATE)) {
+        ChallengeRequest request=SecurityUtils.parseRequest(header.getValue());
+        call.getSecurity().setChallengeRequest(request);
+      }
+ else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_SERVER)) {
+        call.setServerName(header.getValue());
+      }
+    }
+    if (contentType != null) {
+      Representation output=null;
+      if (clientCall.getResponseStream() != null) {
+        output=new InputRepresentation(clientCall.getResponseStream(),contentType.getMediaType());
+      }
+ else       if (clientCall.getResponseChannel() != null) {
+        output=new ReadableRepresentation(clientCall.getResponseChannel(),contentType.getMediaType());
+      }
+      if (output != null) {
+        if (contentType != null)         output.getMetadata().setCharacterSet(contentType.getCharacterSet());
+        output.getMetadata().setEncoding(encoding);
+        output.getMetadata().setExpirationDate(expires);
+        output.getMetadata().setLanguage(language);
+        output.getMetadata().setModificationDate(lastModified);
+        output.getMetadata().setTag(tag);
+        call.setOutput(output);
+      }
+    }
+  }
+ catch (  Exception e) {
+    logger.log(Level.WARNING,"An error occured during the handling of an HTTP client call.",e);
+  }
+}
