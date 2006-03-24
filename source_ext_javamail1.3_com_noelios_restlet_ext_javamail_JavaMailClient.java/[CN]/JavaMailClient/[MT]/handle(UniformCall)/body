@@ -34,8 +34,10 @@
     Properties props=System.getProperties();
     props.put("mail.smtp.host",smtpHost);
     props.put("mail.smtp.port",Integer.toString(smtpPort));
+    props.put("mail.smtp.auth","false");
     Session session=Session.getDefaultInstance(props);
     Transport transport=session.getTransport("smtp");
+    transport.connect();
     if (transport.isConnected()) {
       Message msg=new MimeMessage(session);
       msg.setFrom(new InternetAddress(from));
