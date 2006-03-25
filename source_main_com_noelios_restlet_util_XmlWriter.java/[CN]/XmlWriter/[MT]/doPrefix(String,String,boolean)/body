@@ -1,0 +1,42 @@
+{
+  String defaultNS=nsSupport.getURI("");
+  if ("".equals(uri)) {
+    if (isElement && defaultNS != null)     nsSupport.declarePrefix("","");
+    return null;
+  }
+  String prefix;
+  if (isElement && defaultNS != null && uri.equals(defaultNS)) {
+    prefix="";
+  }
+ else {
+    prefix=nsSupport.getPrefix(uri);
+  }
+  if (prefix != null) {
+    return prefix;
+  }
+  prefix=(String)doneDeclTable.get(uri);
+  if (prefix != null && ((!isElement || defaultNS != null) && "".equals(prefix) || nsSupport.getURI(prefix) != null)) {
+    prefix=null;
+  }
+  if (prefix == null) {
+    prefix=(String)prefixTable.get(uri);
+    if (prefix != null && ((!isElement || defaultNS != null) && "".equals(prefix) || nsSupport.getURI(prefix) != null)) {
+      prefix=null;
+    }
+  }
+  if (prefix == null && qName != null && !"".equals(qName)) {
+    int i=qName.indexOf(':');
+    if (i == -1) {
+      if (isElement && defaultNS == null) {
+        prefix="";
+      }
+    }
+ else {
+      prefix=qName.substring(0,i);
+    }
+  }
+  for (; prefix == null || nsSupport.getURI(prefix) != null; prefix="__NS" + ++prefixCounter)   ;
+  nsSupport.declarePrefix(prefix,uri);
+  doneDeclTable.put(uri,prefix);
+  return prefix;
+}
