@@ -1,0 +1,48 @@
+{
+  boolean result=false;
+  if (this.scheme == null) {
+    result=authenticate(call,null,null);
+    if (result) {
+      logger.info("User authenticated for client with IP: " + call.getClientAddress());
+    }
+ else {
+      logger.warning("User couldn't be authenticated for client with IP: " + call.getClientAddress());
+    }
+  }
+ else {
+    SecurityData security=call.getSecurity();
+    ChallengeResponse resp=security.getChallengeResponse();
+    if (resp == null) {
+      challengeClient(call);
+    }
+ else     if (resp.getScheme().equals(ChallengeSchemes.HTTP_BASIC)) {
+      try {
+        String credentials=new String(Base64.decode(resp.getCredentials()),"US-ASCII");
+        int separator=credentials.indexOf(':');
+        if (separator == -1) {
+          logger.warning("Invalid credentials given by client with IP: " + call.getClientAddress());
+          block(call);
+        }
+ else {
+          String userId=credentials.substring(0,separator);
+          String password=credentials.substring(separator + 1);
+          result=authenticate(call,userId,password);
+          if (result) {
+            logger.info("User: " + userId + " authenticated for client with IP: "+ call.getClientAddress());
+          }
+ else {
+            logger.warning("User: " + userId + " couldn't be authenticated for client with IP: "+ call.getClientAddress());
+          }
+        }
+      }
+ catch (      UnsupportedEncodingException e) {
+        logger.log(Level.WARNING,"Unsupported encoding error",e);
+      }
+    }
+ else {
+      logger.log(Level.WARNING,"Unsupported authentication mechanism: " + resp.getScheme().getName() + ". Challenging the client again.");
+      challengeClient(call);
+    }
+  }
+  return result;
+}

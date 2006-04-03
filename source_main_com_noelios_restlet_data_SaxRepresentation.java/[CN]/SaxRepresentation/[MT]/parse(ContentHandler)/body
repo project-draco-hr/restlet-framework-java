@@ -1,0 +1,21 @@
+{
+  if (contentReader != null) {
+    try {
+      Result result=new SAXResult(contentReader);
+      TransformerFactory.newInstance().newTransformer().transform(this.source,result);
+    }
+ catch (    TransformerConfigurationException tce) {
+      throw new IOException("Couldn't parse the source representation: " + tce.getMessage());
+    }
+catch (    TransformerException te) {
+      te.printStackTrace();
+      throw new IOException("Couldn't parse the source representation: " + te.getMessage());
+    }
+catch (    TransformerFactoryConfigurationError tfce) {
+      throw new IOException("Couldn't parse the source representation: " + tfce.getMessage());
+    }
+  }
+ else {
+    throw new IOException("Couldn't parse the source representation: no content handler defined.");
+  }
+}

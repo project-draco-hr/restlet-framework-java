@@ -1,4 +1,9 @@
 {
-  call.setStatus(Statuses.CLIENT_ERROR_UNAUTHORIZED);
-  call.getSecurity().setChallengeRequest(new ChallengeRequestImpl(ChallengeSchemes.HTTP_BASIC,this.realm));
+  if (this.scheme != null) {
+    call.setStatus(Statuses.CLIENT_ERROR_UNAUTHORIZED);
+    call.getSecurity().setChallengeRequest(new ChallengeRequestImpl(this.scheme,this.realm));
+  }
+ else {
+    logger.log(Level.WARNING,"Unspecified client challenging mechanism. Please override the challengeClient method or use a standard challenge scheme.");
+  }
 }

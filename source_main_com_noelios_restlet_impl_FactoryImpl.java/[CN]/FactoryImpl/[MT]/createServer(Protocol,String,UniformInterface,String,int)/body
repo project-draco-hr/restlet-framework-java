@@ -1,13 +1,16 @@
 {
   Server result=null;
-  if (Protocols.AJP.equals(protocol)) {
-    result=new JettyServer(protocol,name,target,address,port);
+  try {
+    Class<? extends Server> providerClass=this.servers.get(protocol);
+    if (protocol != null) {
+      result=providerClass.getConstructor(Protocol.class,String.class,UniformInterface.class,String.class,int.class).newInstance(protocol,name,target,address,port);
+    }
+ else {
+      logger.log(Level.WARNING,"No client connector supports the " + protocol.getName() + " protocol.");
+    }
   }
- else   if (Protocols.HTTP.equals(protocol)) {
-    result=new JettyServer(protocol,name,target,address,port);
-  }
- else   if (Protocols.HTTPS.equals(protocol)) {
-    result=new JettyServer(protocol,name,target,address,port);
+ catch (  Exception e) {
+    logger.log(Level.SEVERE,"Exception while instantiation the client connector.",e);
   }
   return result;
 }

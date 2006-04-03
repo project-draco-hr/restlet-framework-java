@@ -17,7 +17,7 @@
       clientCall.addRequestHeader(ConnectorCall.HEADER_IF_MATCH,value.toString());
     }
     if (condition.getModifiedSince() != null) {
-      String imsDate=DateUtils.format(condition.getModifiedSince(),DateUtils.FORMAT_RFC_1123);
+      String imsDate=DateUtils.format(condition.getModifiedSince(),DateUtils.FORMAT_RFC_1123[0]);
       clientCall.addRequestHeader(ConnectorCall.HEADER_IF_MODIFIED_SINCE,imsDate);
     }
     if (condition.getNoneMatch() != null) {
@@ -29,7 +29,7 @@
       clientCall.addRequestHeader(ConnectorCall.HEADER_IF_NONE_MATCH,value.toString());
     }
     if (condition.getUnmodifiedSince() != null) {
-      String iusDate=DateUtils.format(condition.getUnmodifiedSince(),DateUtils.FORMAT_RFC_1123);
+      String iusDate=DateUtils.format(condition.getUnmodifiedSince(),DateUtils.FORMAT_RFC_1123[0]);
       clientCall.addRequestHeader(ConnectorCall.HEADER_IF_UNMODIFIED_SINCE,iusDate);
     }
     if (call.getCookies().size() > 0) {
@@ -72,6 +72,9 @@
     for (Iterator<Parameter> iter=call.getConnectorCall().getRequestHeaders().iterator(); iter.hasNext(); ) {
       header=iter.next();
       clientCall.addRequestHeader(header.getName(),header.getValue());
+    }
+    if (hasInput(call) && (call.getInput().getSize() > 0)) {
+      clientCall.addRequestHeader(ConnectorCall.HEADER_CONTENT_LENGTH,Long.toString(call.getInput().getSize()));
     }
     clientCall.sendRequestHeaders();
     if (hasInput(call)) {

@@ -1,13 +1,16 @@
 {
   Client result=null;
-  if (Protocols.HTTP.equals(protocol)) {
-    result=new HttpClientImpl(name);
+  try {
+    Class<? extends Client> providerClass=this.clients.get(protocol);
+    if (protocol != null) {
+      result=providerClass.getConstructor(Protocol.class,String.class).newInstance(protocol,name);
+    }
+ else {
+      logger.log(Level.WARNING,"No client connector supports the " + protocol.getName() + " protocol.");
+    }
   }
- else   if (Protocols.HTTPS.equals(protocol)) {
-    result=new HttpClientImpl(name);
-  }
- else   if (Protocols.SMTP.equals(protocol)) {
-    result=new JavaMailClient(name);
+ catch (  Exception e) {
+    logger.log(Level.SEVERE,"Exception while instantiation the client connector.",e);
   }
   return result;
 }

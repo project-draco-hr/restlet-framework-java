@@ -1,0 +1,76 @@
+{
+  this.clients=new TreeMap<Protocol,Class<? extends Client>>();
+  this.servers=new TreeMap<Protocol,Class<? extends Server>>();
+  String providerName=null;
+  String providerClassName=null;
+  ClassLoader cl=Thread.currentThread().getContextClassLoader();
+  URL configURL;
+  try {
+    for (Enumeration<URL> configUrls=cl.getResources("meta-inf/services/org.restlet.connector.Client"); configUrls.hasMoreElements(); ) {
+      configURL=configUrls.nextElement();
+      try {
+        BufferedReader reader=new BufferedReader(new InputStreamReader(configURL.openStream(),"utf-8"));
+        providerName=reader.readLine();
+        providerClassName=providerName.substring(0,providerName.indexOf('#')).trim();
+      }
+ catch (      Exception e) {
+        logger.log(Level.SEVERE,"Unable to read the provider descriptor: " + configURL.toString());
+      }
+      if (providerClassName == null) {
+        logger.log(Level.SEVERE,"Unable to process the following connector provider: " + providerName + ". Please check your JAR file metadata.");
+      }
+ else {
+        try {
+          Class<? extends Client> providerClass=(Class<? extends Client>)Class.forName(providerClassName);
+          java.lang.reflect.Method getMethod=providerClass.getMethod("getProtocols",(Class[])null);
+          List<Protocol> supportedProtocols=(List<Protocol>)getMethod.invoke(null,(Object[])null);
+          for (          Protocol protocol : supportedProtocols) {
+            if (!this.clients.containsKey(protocol)) {
+              this.clients.put(protocol,providerClass);
+            }
+          }
+        }
+ catch (        Exception e) {
+          logger.log(Level.SEVERE,"Unable to register the client connector " + providerClassName,e);
+        }
+      }
+    }
+  }
+ catch (  IOException ioe) {
+    logger.log(Level.SEVERE,"Exception while detecting the client connectors.",ioe);
+  }
+  try {
+    for (Enumeration<URL> configUrls=cl.getResources("meta-inf/services/org.restlet.connector.Server"); configUrls.hasMoreElements(); ) {
+      configURL=configUrls.nextElement();
+      try {
+        BufferedReader reader=new BufferedReader(new InputStreamReader(configURL.openStream(),"utf-8"));
+        providerName=reader.readLine();
+        providerClassName=providerName.substring(0,providerName.indexOf('#')).trim();
+      }
+ catch (      Exception e) {
+        logger.log(Level.SEVERE,"Unable to read the provider descriptor: " + configURL.toString());
+      }
+      if (providerClassName == null) {
+        logger.log(Level.SEVERE,"Unable to process the following connector provider: " + providerName + ". Please check your JAR file metadata.");
+      }
+ else {
+        try {
+          Class<? extends Server> providerClass=(Class<? extends Server>)Class.forName(providerClassName);
+          java.lang.reflect.Method getMethod=providerClass.getMethod("getProtocols",(Class[])null);
+          List<Protocol> supportedProtocols=(List<Protocol>)getMethod.invoke(null,(Object[])null);
+          for (          Protocol protocol : supportedProtocols) {
+            if (!this.servers.containsKey(protocol)) {
+              this.servers.put(protocol,providerClass);
+            }
+          }
+        }
+ catch (        Exception e) {
+          logger.log(Level.SEVERE,"Unable to register the server connector " + providerClassName,e);
+        }
+      }
+    }
+  }
+ catch (  IOException ioe) {
+    logger.log(Level.SEVERE,"Exception while detecting the client connectors.",ioe);
+  }
+}

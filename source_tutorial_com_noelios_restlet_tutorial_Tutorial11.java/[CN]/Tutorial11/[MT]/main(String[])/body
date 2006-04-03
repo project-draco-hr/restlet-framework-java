@@ -9,8 +9,8 @@
     log.attach(status);
     Maplet rootMaplet=new DefaultMaplet(myContainer);
     status.attach(rootMaplet);
-    GuardChainlet guard=new GuardChainlet(myContainer,"com.noelios.restlet.tutorial","Restlet tutorial"){
-      protected boolean authorize(      String userId,      String password){
+    GuardChainlet guard=new GuardChainlet(myContainer,ChallengeSchemes.HTTP_BASIC,"com.noelios.restlet.tutorial","Restlet tutorial"){
+      protected boolean authenticate(      UniformCall call,      String userId,      String password){
         return userId.equals("scott") && password.equals("tiger");
       }
     }
