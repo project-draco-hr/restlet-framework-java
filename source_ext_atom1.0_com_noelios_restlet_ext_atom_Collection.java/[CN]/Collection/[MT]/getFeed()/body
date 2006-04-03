@@ -1,0 +1,12 @@
+{
+  UniformCall get=Manager.createCall();
+  get.setMethod(Methods.GET);
+  get.setResourceRef(getHref());
+  getWorkspace().getService().getClient().handle(get);
+  if (get.getStatus().equals(Statuses.SUCCESS_OK)) {
+    return new Feed(get.getOutput());
+  }
+ else {
+    throw new Exception("Couldn't get the feed representation. Status returned: " + get.getStatus().getDescription());
+  }
+}
