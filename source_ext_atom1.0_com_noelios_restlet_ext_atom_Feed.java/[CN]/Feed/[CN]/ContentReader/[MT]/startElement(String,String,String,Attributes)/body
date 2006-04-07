@@ -102,5 +102,21 @@
         state=State.FEED_ENTRY_SOURCE_CATEGORY;
       }
     }
+ else     if (localName.equalsIgnoreCase("content")) {
+      if (state == State.FEED_ENTRY) {
+        MediaType type=getMediaType(attrs.getValue("","type"));
+        String srcAttr=attrs.getValue("","src");
+        Content currentContent=new Content();
+        if (srcAttr == null) {
+          currentContent.setInlineContent(new StringRepresentation(null,type));
+        }
+ else {
+          currentContent.setExternalRef(Manager.createReference(srcAttr));
+          currentContent.setExternalType(type);
+        }
+        currentEntry.setContent(currentContent);
+        state=State.FEED_ENTRY_CONTENT;
+      }
+    }
   }
 }

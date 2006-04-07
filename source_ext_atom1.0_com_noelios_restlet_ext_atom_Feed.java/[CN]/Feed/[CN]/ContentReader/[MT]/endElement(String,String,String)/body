@@ -118,6 +118,15 @@
         state=State.FEED_ENTRY_SOURCE;
       }
     }
+ else     if (localName.equalsIgnoreCase("content")) {
+      if (state == State.FEED_ENTRY_CONTENT) {
+        if (currentEntry.getContent().isInline()) {
+          StringRepresentation sr=(StringRepresentation)currentEntry.getContent().getInlineContent();
+          sr.setValue(contentBuffer.toString());
+        }
+        state=State.FEED_ENTRY;
+      }
+    }
   }
   currentText=null;
   currentDate=null;

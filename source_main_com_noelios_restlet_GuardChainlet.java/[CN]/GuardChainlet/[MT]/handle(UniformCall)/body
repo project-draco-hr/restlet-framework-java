@@ -1,8 +1,11 @@
 {
-  if (authenticate(call)) {
-    super.handle(call);
+  if (this.authentication) {
+    authenticate(call);
+  }
+  if (!this.authorization || authorize(call)) {
+    accept(call);
   }
  else {
-    block(call);
+    reject(call);
   }
 }
