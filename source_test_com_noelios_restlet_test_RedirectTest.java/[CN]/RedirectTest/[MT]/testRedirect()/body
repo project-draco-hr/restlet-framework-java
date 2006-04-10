@@ -6,8 +6,8 @@
     String target="http://localhost:9090${path}${if query}?${query}${end}";
     RedirectRestlet proxy=new RedirectRestlet(myContainer,target,RedirectRestlet.MODE_CONNECTOR);
     proxy.setConnectorName("Proxy client");
-    UniformInterface trace=new AbstractHandler(myContainer){
-      public void handle(      UniformCall call){
+    Restlet trace=new AbstractRestlet(myContainer){
+      public void handle(      RestletCall call){
         String output="Resource URI:  " + call.getResourceRef() + '\n'+ "Handler path:  "+ call.getHandlerPath()+ '\n'+ "Resource path: "+ call.getResourcePath()+ '\n'+ "Query string:  "+ call.getResourceRef().getQuery()+ '\n'+ "Method name:   "+ call.getMethod()+ '\n';
         call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
       }
