@@ -7,7 +7,7 @@
     myContainer.attach("http://localhost:8182",log);
     StatusChainlet status=new StatusChainlet(myContainer,true,"webmaster@mysite.org","http://www.mysite.org");
     log.attach(status);
-    Maplet rootMaplet=new DefaultMaplet(myContainer);
+    Maplet rootMaplet=new DefaultRestlet(myContainer);
     status.attach(rootMaplet);
     GuardChainlet guard=new GuardChainlet(myContainer,"com.noelios.restlet.tutorial",true,ChallengeSchemes.HTTP_BASIC,"Restlet tutorial",true){
       protected boolean authorize(      UniformCall call){
@@ -21,9 +21,9 @@
     dirRestlet.addExtension("css",MediaTypes.TEXT_CSS);
     dirRestlet.addExtension("gif",MediaTypes.IMAGE_GIF);
     guard.attach(dirRestlet);
-    Maplet usersMaplet=new DefaultMaplet(myContainer);
+    Maplet usersMaplet=new DefaultRestlet(myContainer);
     rootMaplet.attach("/users",usersMaplet);
-    Maplet userMaplet=new DefaultMaplet(myContainer){
+    Maplet userMaplet=new DefaultRestlet(myContainer){
       public void handle(      UniformCall call){
         if (call.getResourcePath().equals("")) {
           String output="Account of user named: " + call.getHandlerRef().getLastSegment();
@@ -36,7 +36,7 @@
     }
 ;
     usersMaplet.attach("/[a-z]+",userMaplet);
-    Restlet ordersRestlet=new AbstractRestlet(myContainer){
+    UniformInterface ordersRestlet=new AbstractHandler(myContainer){
       public void handle(      UniformCall call){
         List<String> segments=call.getHandlerRef().getSegments();
         String output="Orders of user named: " + segments.get(segments.size() - 2);
