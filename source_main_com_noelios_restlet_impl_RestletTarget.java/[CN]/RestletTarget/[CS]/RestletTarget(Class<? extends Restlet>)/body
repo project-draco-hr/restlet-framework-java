@@ -1,21 +1,21 @@
 {
-  this.handler=null;
-  this.handlerClass=handlerClass;
+  this.restlet=null;
+  this.restletClass=restletClass;
   this.setParent=false;
-  Constructor[] constructors=handlerClass.getConstructors();
+  Constructor[] constructors=restletClass.getConstructors();
   Class[] parameters;
-  for (int i=0; (this.handlerConstructor == null) && (i < constructors.length); i++) {
+  for (int i=0; (this.restletConstructor == null) && (i < constructors.length); i++) {
     parameters=constructors[i].getParameterTypes();
     if (parameters.length == 1) {
       if (Component.class.isAssignableFrom(parameters[0])) {
-        this.handlerConstructor=constructors[i];
+        this.restletConstructor=constructors[i];
         this.setParent=true;
       }
     }
   }
-  if (this.handlerConstructor == null) {
+  if (this.restletConstructor == null) {
     try {
-      this.handlerConstructor=handlerClass.getConstructor(new Class[]{});
+      this.restletConstructor=restletClass.getConstructor(new Class[]{});
     }
  catch (    NoSuchMethodException nsme) {
     }
