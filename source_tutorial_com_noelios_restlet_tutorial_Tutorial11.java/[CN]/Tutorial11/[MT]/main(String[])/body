@@ -1,6 +1,6 @@
 {
   try {
-    RestletContainer myContainer=new DefaultRestletContainer("My container");
+    DefaultRestletContainer myContainer=new DefaultRestletContainer("My container");
     Server server=Manager.createServer(Protocols.HTTP,"My server",myContainer,null,8182);
     myContainer.addServer(server);
     LogChainlet log=new LogChainlet(myContainer,"com.noelios.restlet.tutorial");
@@ -26,7 +26,7 @@
     Maplet userMaplet=new DefaultMaplet(myContainer){
       public void handle(      RestletCall call){
         if (call.getResourcePath().equals("")) {
-          String output="Account of user named: " + call.getHandlerRef().getLastSegment();
+          String output="Account of user named: " + call.getRestletRef().getLastSegment();
           call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
         }
  else {
@@ -38,7 +38,7 @@
     usersMaplet.attach("/[a-z]+",userMaplet);
     Restlet ordersRestlet=new AbstractRestlet(myContainer){
       public void handle(      RestletCall call){
-        List<String> segments=call.getHandlerRef().getSegments();
+        List<String> segments=call.getRestletRef().getSegments();
         String output="Orders of user named: " + segments.get(segments.size() - 2);
         call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
       }

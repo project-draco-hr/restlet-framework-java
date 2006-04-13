@@ -1,3 +1,18 @@
 {
-  delegate.handle(call);
+  if (getDefaultTarget() != null) {
+    if (getDefaultTarget().isStopped()) {
+      try {
+        getDefaultTarget().start();
+      }
+ catch (      Exception e) {
+        call.setStatus(Statuses.SERVER_ERROR_INTERNAL);
+        logger.log(Level.SEVERE,"Default Restlet container can't be started",e);
+      }
+    }
+    getDefaultTarget().handle(call);
+  }
+ else {
+    call.setStatus(Statuses.SERVER_ERROR_INTERNAL);
+    logger.log(Level.SEVERE,"No default Restlet container defined");
+  }
 }

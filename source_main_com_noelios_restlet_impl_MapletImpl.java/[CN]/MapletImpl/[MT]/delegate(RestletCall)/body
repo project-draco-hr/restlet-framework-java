@@ -9,7 +9,7 @@
     found=matcher.lookingAt();
   }
   if (found) {
-    String oldHandlerPath=call.getHandlerPath();
+    String oldHandlerPath=call.getRestletPath();
     String handlerPath=resourcePath.substring(0,matcher.end());
     if (oldHandlerPath == null) {
       call.setHandlerPath(handlerPath);
@@ -17,9 +17,9 @@
  else {
       call.setHandlerPath(oldHandlerPath + handlerPath);
     }
-    call.getHandlerMatches().clear();
+    call.getRestletMatches().clear();
     for (int i=0; i < matcher.groupCount(); i++) {
-      call.getHandlerMatches().add(matcher.group(i + 1));
+      call.getRestletMatches().add(matcher.group(i + 1));
     }
     mapping.handle(call,getParent());
   }

@@ -1,15 +1,15 @@
 {
   this.handler=null;
   this.handlerClass=handlerClass;
-  this.setContainer=false;
+  this.setParent=false;
   Constructor[] constructors=handlerClass.getConstructors();
   Class[] parameters;
   for (int i=0; (this.handlerConstructor == null) && (i < constructors.length); i++) {
     parameters=constructors[i].getParameterTypes();
     if (parameters.length == 1) {
-      if (RestletContainer.class.isAssignableFrom(parameters[0])) {
+      if (Component.class.isAssignableFrom(parameters[0])) {
         this.handlerConstructor=constructors[i];
-        this.setContainer=true;
+        this.setParent=true;
       }
     }
   }
