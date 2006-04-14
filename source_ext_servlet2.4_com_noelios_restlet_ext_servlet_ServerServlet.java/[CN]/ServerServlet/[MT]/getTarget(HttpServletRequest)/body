@@ -1,0 +1,57 @@
+{
+  Restlet result=this.target;
+  if (result == null) {
+synchronized (ServerServlet.class) {
+      String targetAttributeName=findInitParameter(NAME_TARGET_ATTRIBUTE);
+      if (targetAttributeName != null) {
+        result=(Restlet)getServletContext().getAttribute(targetAttributeName);
+        if (result == null) {
+          String targetClassName=findInitParameter(NAME_TARGET_CLASS);
+          if (targetClassName != null) {
+            try {
+              Class targetClass=Class.forName(targetClassName);
+              result=(Restlet)targetClass.newInstance();
+              getServletContext().setAttribute(NAME_TARGET_ATTRIBUTE,result);
+              String initContextPathName=findInitParameter(NAME_TARGET_INIT_CONTEXTPATH);
+              if (initContextPathName != null) {
+                Component component=null;
+                if (result instanceof Component) {
+                  component=(Component)result;
+                }
+ else {
+                  component=result.getParent();
+                }
+                if (component != null) {
+                  String scheme=request.getScheme();
+                  String hostName=request.getServerName();
+                  int hostPort=request.getServerPort();
+                  String servletPath=request.getContextPath() + request.getServletPath();
+                  String contextPath=Manager.createReference(scheme,hostName,hostPort,servletPath,null,null).toString();
+                  component.getInitParameters().add(Manager.createParameter(initContextPathName,contextPath));
+                  log("[Noelios Restlet Engine] - This context path has been provided to the target's init parameter \"" + initContextPathName + "\": "+ contextPath);
+                }
+              }
+            }
+ catch (            ClassNotFoundException e) {
+              log("[Noelios Restlet Engine] - The ServerServlet couldn't find the class. Please check that your classpath includes " + targetClassName);
+            }
+catch (            InstantiationException e) {
+              log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the class. Please check this class has an empty constructor " + targetClassName);
+            }
+catch (            IllegalAccessException e) {
+              log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the class. Please check that you have to proper access rights to " + targetClassName);
+            }
+          }
+ else {
+            log("[Noelios Restlet Engine] - The ServerServlet couldn't find the class name of the target Restlet. Please set the initialization parameter called " + NAME_TARGET_CLASS);
+          }
+        }
+      }
+ else {
+        log("[Noelios Restlet Engine] - The ServerServlet couldn't find the attribute name of the target Restlet. Please set the initialization parameter called " + NAME_TARGET_ATTRIBUTE);
+      }
+      this.target=result;
+    }
+  }
+  return result;
+}
