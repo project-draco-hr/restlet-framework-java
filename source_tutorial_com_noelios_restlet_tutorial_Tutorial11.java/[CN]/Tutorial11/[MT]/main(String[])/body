@@ -26,7 +26,7 @@
     Maplet userMaplet=new DefaultMaplet(myContainer){
       public void handle(      RestletCall call){
         if (call.getResourcePath().equals("")) {
-          String output="Account of user named: " + call.getRestletRef().getLastSegment();
+          String output="Account of user named: " + call.getContextRef().getLastSegment();
           call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
         }
  else {
@@ -38,7 +38,7 @@
     usersMaplet.attach("/[a-z]+",userMaplet);
     Restlet ordersRestlet=new AbstractRestlet(myContainer){
       public void handle(      RestletCall call){
-        List<String> segments=call.getRestletRef().getSegments();
+        List<String> segments=call.getContextRef().getSegments();
         String output="Orders of user named: " + segments.get(segments.size() - 2);
         call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
       }

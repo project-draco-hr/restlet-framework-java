@@ -9,17 +9,17 @@
     found=matcher.lookingAt();
   }
   if (found) {
-    String oldHandlerPath=call.getRestletPath();
-    String handlerPath=resourcePath.substring(0,matcher.end());
-    if (oldHandlerPath == null) {
-      call.setHandlerPath(handlerPath);
+    String oldRestletPath=call.getContextPath();
+    String restletPath=resourcePath.substring(0,matcher.end());
+    if (oldRestletPath == null) {
+      call.setContextPath(restletPath);
     }
  else {
-      call.setHandlerPath(oldHandlerPath + handlerPath);
+      call.setContextPath(oldRestletPath + restletPath);
     }
-    call.getRestletMatches().clear();
+    call.getContextMatches().clear();
     for (int i=0; i < matcher.groupCount(); i++) {
-      call.getRestletMatches().add(matcher.group(i + 1));
+      call.getContextMatches().add(matcher.group(i + 1));
     }
     mapping.handle(call,getParent());
   }
