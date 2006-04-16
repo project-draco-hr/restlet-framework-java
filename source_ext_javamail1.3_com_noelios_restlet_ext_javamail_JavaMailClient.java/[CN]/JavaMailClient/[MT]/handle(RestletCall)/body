@@ -34,10 +34,27 @@
     Properties props=System.getProperties();
     props.put("mail.smtp.host",smtpHost);
     props.put("mail.smtp.port",Integer.toString(smtpPort));
-    props.put("mail.smtp.auth","false");
+    SecurityData sd=call.getSecurity();
+    boolean authenticate=((sd.getLogin() != null) && (sd.getPassword() != null));
+    props.put("mail.smtp.auth",Boolean.toString(authenticate).toLowerCase());
     Session session=Session.getDefaultInstance(props);
-    Transport transport=session.getTransport("smtp");
-    transport.connect();
+    Transport transport=null;
+    if (getProtocol().equals(Protocols.SMTP)) {
+      transport=session.getTransport("smtp");
+    }
+ else     if (getProtocol().equals(Protocols.SMTP_STARTTLS)) {
+      transport=session.getTransport("smtp");
+      props.put("mail.smtp.starttls.enable","true");
+    }
+ else     if (getProtocol().equals(Protocols.SMTPS)) {
+      transport=session.getTransport("smtps");
+    }
+    if (authenticate) {
+      transport.connect(smtpHost,sd.getLogin(),sd.getPassword());
+    }
+ else {
+      transport.connect();
+    }
     if (transport.isConnected()) {
       Message msg=new MimeMessage(session);
       msg.setFrom(new InternetAddress(from));
