@@ -4,7 +4,12 @@
     String smtpHost=smtpURI.getHost();
     int smtpPort=smtpURI.getPort();
     if (smtpPort == -1) {
-      smtpPort=25;
+      if ((getProtocol().equals(Protocols.SMTP)) || (getProtocol().equals(Protocols.SMTP_STARTTLS))) {
+        smtpPort=25;
+      }
+ else       if (getProtocol().equals(Protocols.SMTPS)) {
+        smtpPort=465;
+      }
     }
     if ((smtpHost == null) || (smtpHost.equals(""))) {
       throw new IllegalArgumentException("Invalid SMTP host specified");
@@ -31,22 +36,24 @@
       bcc[i]=bccList.item(i).getTextContent();
     }
     String text=root.getElementsByTagName("body").item(0).getTextContent();
+    Session session=null;
+    Transport transport=null;
     Properties props=System.getProperties();
-    props.put("mail.smtp.host",smtpHost);
-    props.put("mail.smtp.port",Integer.toString(smtpPort));
     SecurityData sd=call.getSecurity();
     boolean authenticate=((sd.getLogin() != null) && (sd.getPassword() != null));
-    props.put("mail.smtp.auth",Boolean.toString(authenticate).toLowerCase());
-    Session session=Session.getDefaultInstance(props);
-    Transport transport=null;
-    if (getProtocol().equals(Protocols.SMTP)) {
+    if (getProtocol().equals(Protocols.SMTP) || getProtocol().equals(Protocols.SMTP_STARTTLS)) {
+      props.put("mail.smtp.host",smtpHost);
+      props.put("mail.smtp.port",Integer.toString(smtpPort));
+      props.put("mail.smtp.auth",Boolean.toString(authenticate).toLowerCase());
+      props.put("mail.smtp.starttls.enable",Boolean.toString(getProtocol().equals(Protocols.SMTP_STARTTLS)).toLowerCase());
+      session=Session.getDefaultInstance(props);
       transport=session.getTransport("smtp");
-    }
- else     if (getProtocol().equals(Protocols.SMTP_STARTTLS)) {
-      transport=session.getTransport("smtp");
-      props.put("mail.smtp.starttls.enable","true");
     }
  else     if (getProtocol().equals(Protocols.SMTPS)) {
+      props.put("mail.smtps.host",smtpHost);
+      props.put("mail.smtps.port",Integer.toString(smtpPort));
+      props.put("mail.smtps.auth",Boolean.toString(authenticate).toLowerCase());
+      session=Session.getDefaultInstance(props);
       transport=session.getTransport("smtps");
     }
     if (authenticate) {
@@ -56,6 +63,7 @@
       transport.connect();
     }
     if (transport.isConnected()) {
+      logger.info("JavaMail client connection successfully established. Attempting to send the message");
       Message msg=new MimeMessage(session);
       msg.setFrom(new InternetAddress(from));
       for (int i=0; i < to.length; i++) {
@@ -78,9 +86,10 @@
       msg.saveChanges();
       transport.sendMessage(msg,msg.getAllRecipients());
       transport.close();
+      logger.info("JavaMail client successfully sent the message.");
     }
   }
  catch (  Exception e) {
-    e.printStackTrace();
+    logger.log(Level.WARNING,"JavaMail client error",e);
   }
 }
