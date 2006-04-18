@@ -1,0 +1,18 @@
+{
+  try {
+    RestletContainer myContainer=new RestletContainer("My container");
+    Server server=Manager.createServer(Protocols.HTTP,"My server",myContainer,null,8182);
+    myContainer.addServer(server);
+    LogChainlet log=new LogChainlet(myContainer,"com.noelios.restlet.example");
+    myContainer.attach("http://localhost:8182/",log);
+    DirectoryRestlet dirRestlet=new DirectoryRestlet(myContainer,"D:/Restlet/www/docs/api/",true,"index");
+    dirRestlet.addExtension("html",MediaTypes.TEXT_HTML);
+    dirRestlet.addExtension("css",MediaTypes.TEXT_CSS);
+    dirRestlet.addExtension("gif",MediaTypes.IMAGE_GIF);
+    log.attach(dirRestlet);
+    myContainer.start();
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+}

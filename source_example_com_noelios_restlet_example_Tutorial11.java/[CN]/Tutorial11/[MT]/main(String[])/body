@@ -1,0 +1,53 @@
+{
+  try {
+    RestletContainer myContainer=new RestletContainer("My container");
+    Server server=Manager.createServer(Protocols.HTTP,"My server",myContainer,null,8182);
+    myContainer.addServer(server);
+    LogChainlet log=new LogChainlet(myContainer,"com.noelios.restlet.example");
+    myContainer.attach("http://localhost:8182",log);
+    StatusChainlet status=new StatusChainlet(myContainer,true,"webmaster@mysite.org","http://www.mysite.org");
+    log.attach(status);
+    Maplet rootMaplet=new DefaultMaplet(myContainer);
+    status.attach(rootMaplet);
+    GuardChainlet guard=new GuardChainlet(myContainer,"com.noelios.restlet.example",true,ChallengeSchemes.HTTP_BASIC,"Restlet tutorial",true){
+      protected boolean authorize(      RestletCall call){
+        return "scott".equals(call.getSecurity().getLogin()) && "tiger".equals(call.getSecurity().getPassword());
+      }
+    }
+;
+    rootMaplet.attach("/docs/",guard);
+    DirectoryRestlet dirRestlet=new DirectoryRestlet(myContainer,"D:/Restlet/www/docs/api/",true,"index");
+    dirRestlet.addExtension("html",MediaTypes.TEXT_HTML);
+    dirRestlet.addExtension("css",MediaTypes.TEXT_CSS);
+    dirRestlet.addExtension("gif",MediaTypes.IMAGE_GIF);
+    guard.attach(dirRestlet);
+    Maplet usersMaplet=new DefaultMaplet(myContainer);
+    rootMaplet.attach("/users",usersMaplet);
+    Maplet userMaplet=new DefaultMaplet(myContainer){
+      public void handle(      RestletCall call){
+        if (call.getResourcePath().equals("")) {
+          String output="Account of user named: " + call.getContextRef().getLastSegment();
+          call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
+        }
+ else {
+          delegate(call);
+        }
+      }
+    }
+;
+    usersMaplet.attach("/[a-z]+",userMaplet);
+    Restlet ordersRestlet=new AbstractRestlet(myContainer){
+      public void handle(      RestletCall call){
+        List<String> segments=call.getContextRef().getSegments();
+        String output="Orders of user named: " + segments.get(segments.size() - 2);
+        call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
+      }
+    }
+;
+    userMaplet.attach("/orders$",ordersRestlet);
+    myContainer.start();
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+}
