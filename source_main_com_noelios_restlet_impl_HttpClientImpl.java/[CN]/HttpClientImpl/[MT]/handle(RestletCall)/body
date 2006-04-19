@@ -73,8 +73,19 @@
       header=iter.next();
       clientCall.addRequestHeader(header.getName(),header.getValue());
     }
-    if (hasInput(call) && (call.getInput().getSize() > 0)) {
-      clientCall.addRequestHeader(ConnectorCall.HEADER_CONTENT_LENGTH,Long.toString(call.getInput().getSize()));
+    if (hasInput(call)) {
+      if (call.getInput().getSize() > 0) {
+        clientCall.addRequestHeader(ConnectorCall.HEADER_CONTENT_LENGTH,Long.toString(call.getInput().getSize()));
+      }
+      if (call.getInput().getMetadata().getMediaType() != null) {
+        clientCall.addRequestHeader(ConnectorCall.HEADER_CONTENT_TYPE,call.getInput().getMetadata().getMediaType().toString());
+      }
+      if (call.getInput().getMetadata().getEncoding() != null) {
+        clientCall.addRequestHeader(ConnectorCall.HEADER_CONTENT_ENCODING,call.getInput().getMetadata().getEncoding().toString());
+      }
+      if (call.getInput().getMetadata().getLanguage() != null) {
+        clientCall.addRequestHeader(ConnectorCall.HEADER_CONTENT_LANGUAGE,call.getInput().getMetadata().getLanguage().toString());
+      }
     }
     clientCall.sendRequestHeaders();
     if (hasInput(call)) {
