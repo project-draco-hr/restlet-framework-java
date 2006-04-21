@@ -10,7 +10,7 @@
     Maplet rootMaplet=new DefaultMaplet(myContainer);
     status.attach(rootMaplet);
     GuardChainlet guard=new GuardChainlet(myContainer,"com.noelios.restlet.example",true,ChallengeSchemes.HTTP_BASIC,"Restlet tutorial",true){
-      protected boolean authorize(      RestletCall call){
+      protected boolean authorize(      Call call){
         return "scott".equals(call.getSecurity().getLogin()) && "tiger".equals(call.getSecurity().getPassword());
       }
     }
@@ -24,7 +24,7 @@
     Maplet usersMaplet=new DefaultMaplet(myContainer);
     rootMaplet.attach("/users",usersMaplet);
     Maplet userMaplet=new DefaultMaplet(myContainer){
-      public void handle(      RestletCall call){
+      public void handle(      Call call){
         if (call.getResourcePath().equals("")) {
           String output="Account of user named: " + call.getContextRef().getLastSegment();
           call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
@@ -37,7 +37,7 @@
 ;
     usersMaplet.attach("/[a-z]+",userMaplet);
     Restlet ordersRestlet=new AbstractRestlet(myContainer){
-      public void handle(      RestletCall call){
+      public void handle(      Call call){
         List<String> segments=call.getContextRef().getSegments();
         String output="Orders of user named: " + segments.get(segments.size() - 2);
         call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
