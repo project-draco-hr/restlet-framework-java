@@ -68,8 +68,8 @@
     if (response != null) {
       clientCall.addRequestHeader(ConnectorCall.HEADER_AUTHORIZATION,SecurityUtils.format(response));
     }
-    Parameter header;
-    for (Iterator<Parameter> iter=call.getConnectorCall().getRequestHeaders().iterator(); iter.hasNext(); ) {
+    ParameterImpl header;
+    for (Iterator<ParameterImpl> iter=call.getConnectorCall().getRequestHeaders().iterator(); iter.hasNext(); ) {
       header=iter.next();
       clientCall.addRequestHeader(header.getName(),header.getValue());
     }
@@ -100,7 +100,7 @@
     Encoding encoding=null;
     Language language=null;
     Tag tag=null;
-    for (Iterator<Parameter> iter=clientCall.getResponseHeaders().iterator(); iter.hasNext(); ) {
+    for (Iterator<ParameterImpl> iter=clientCall.getResponseHeaders().iterator(); iter.hasNext(); ) {
       header=iter.next();
       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_TYPE)) {
         contentType=new ContentType(header.getValue());
