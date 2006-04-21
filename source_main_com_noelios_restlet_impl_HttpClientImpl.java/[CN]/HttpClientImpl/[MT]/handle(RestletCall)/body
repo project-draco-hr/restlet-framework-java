@@ -91,7 +91,7 @@
     if (hasInput(call)) {
       clientCall.sendRequestInput(call.getInput());
     }
-    call.setStatus(new StatusImpl(clientCall.getResponseStatusCode(),null,clientCall.getResponseReasonPhrase(),null));
+    call.setStatus(new DefaultStatus(clientCall.getResponseStatusCode(),null,clientCall.getResponseReasonPhrase(),null));
     call.setServerAddress(clientCall.getResponseAddress());
     call.setConnectorCall(clientCall);
     ContentType contentType=null;
@@ -109,10 +109,10 @@
         expires=clientCall.parseDate(header.getValue(),false);
       }
  else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_ENCODING)) {
-        encoding=Manager.createEncoding(header.getValue());
+        encoding=new DefaultEncoding(header.getValue());
       }
  else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_LANGUAGE)) {
-        language=Manager.createLanguage(header.getValue());
+        language=new DefaultLanguage(header.getValue());
       }
  else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_LAST_MODIFIED)) {
         lastModified=clientCall.parseDate(header.getValue(),false);
