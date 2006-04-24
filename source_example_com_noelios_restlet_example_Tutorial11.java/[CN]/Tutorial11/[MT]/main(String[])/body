@@ -7,7 +7,7 @@
     myContainer.attach("http://localhost:8182",log);
     StatusChainlet status=new StatusChainlet(myContainer,true,"webmaster@mysite.org","http://www.mysite.org");
     log.attach(status);
-    Maplet rootMaplet=new DefaultMaplet(myContainer);
+    Maplet rootMaplet=new GenericMaplet(myContainer);
     status.attach(rootMaplet);
     GuardChainlet guard=new GuardChainlet(myContainer,"com.noelios.restlet.example",true,ChallengeSchemes.HTTP_BASIC,"Restlet tutorial",true){
       protected boolean authorize(      Call call){
@@ -21,9 +21,9 @@
     dirRestlet.addExtension("css",MediaTypes.TEXT_CSS);
     dirRestlet.addExtension("gif",MediaTypes.IMAGE_GIF);
     guard.attach(dirRestlet);
-    Maplet usersMaplet=new DefaultMaplet(myContainer);
+    Maplet usersMaplet=new GenericMaplet(myContainer);
     rootMaplet.attach("/users",usersMaplet);
-    Maplet userMaplet=new DefaultMaplet(myContainer){
+    Maplet userMaplet=new GenericMaplet(myContainer){
       public void handle(      Call call){
         if (call.getResourcePath().equals("")) {
           String output="Account of user named: " + call.getContextRef().getLastSegment();
