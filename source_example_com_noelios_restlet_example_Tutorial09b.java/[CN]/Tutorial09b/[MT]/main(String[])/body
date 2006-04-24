@@ -3,9 +3,9 @@
     DefaultCall call=new DefaultCall();
     call.setResourceRef("http://localhost:8182/");
     call.setMethod(Methods.GET);
-    ChallengeResponse authentication=Manager.createChallengeResponse(ChallengeSchemes.HTTP_BASIC,"scott","tiger");
+    ChallengeResponse authentication=new ChallengeResponse(ChallengeSchemes.HTTP_BASIC,"scott","tiger");
     call.getSecurity().setChallengeResponse(authentication);
-    Client client=Manager.createClient(Protocols.HTTP,"My client");
+    Client client=new GenericClient(Protocols.HTTP,"My client");
     client.handle(call);
     if (call.getStatus().equals(Statuses.SUCCESS_OK)) {
       Representation output=call.getOutput();
