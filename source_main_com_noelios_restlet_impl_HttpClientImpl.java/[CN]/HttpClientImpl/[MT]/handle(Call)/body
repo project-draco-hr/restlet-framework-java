@@ -159,7 +159,12 @@
       }
     }
   }
- catch (  Exception e) {
-    logger.log(Level.WARNING,"An error occured during the handling of an HTTP client call.",e);
+ catch (  ConnectException ce) {
+    logger.log(Level.FINE,"An error occured during the connection to the remote HTTP server.",ce);
+    call.setStatus(new DefaultStatus(Statuses.SERVER_ERROR_SERVICE_UNAVAILABLE,"Unable to connect to the remote server. " + ce.getMessage()));
+  }
+catch (  Exception e) {
+    logger.log(Level.FINE,"An error occured during the handling of the HTTP client call.",e);
+    call.setStatus(new DefaultStatus(Statuses.SERVER_ERROR_INTERNAL,"Unable to complete the call. " + e.getMessage()));
   }
 }
