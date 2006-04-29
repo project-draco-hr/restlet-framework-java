@@ -1,13 +1,15 @@
 {
   try {
     RestletContainer myContainer=new RestletContainer("My container");
-    Server server=new GenericServer(Protocols.HTTP,"My server",myContainer,null,8182);
+    Server server=new GenericServer(Protocols.HTTP,"My server",myContainer,8182);
     myContainer.addServer(server);
+    HostMaplet rootMaplet=new HostMaplet(myContainer,8182);
+    myContainer.attach(rootMaplet);
     DirectoryRestlet dirRestlet=new DirectoryRestlet(myContainer,"D:/Restlet/www/docs/api/",true,"index");
     dirRestlet.addExtension("html",MediaTypes.TEXT_HTML);
     dirRestlet.addExtension("css",MediaTypes.TEXT_CSS);
     dirRestlet.addExtension("gif",MediaTypes.IMAGE_GIF);
-    myContainer.attach("http://localhost:8182/",dirRestlet);
+    rootMaplet.attach("/",dirRestlet);
     myContainer.start();
   }
  catch (  Exception e) {

@@ -1,17 +1,19 @@
 {
   try {
     RestletContainer myContainer=new RestletContainer("My container");
-    Server server=new GenericServer(Protocols.HTTP,"My server",myContainer,null,8182);
+    Server server=new GenericServer(Protocols.HTTP,"My server",myContainer,8182);
     myContainer.addServer(server);
     LogChainlet log=new LogChainlet(myContainer,"com.noelios.restlet.example");
-    myContainer.attach("http://localhost:8182/",log);
+    myContainer.attach(log);
     StatusChainlet status=new StatusChainlet(myContainer,true,"webmaster@mysite.org","http://www.mysite.org");
     log.attach(status);
+    HostMaplet host=new HostMaplet(myContainer,8182);
+    status.attach(host);
     DirectoryRestlet dirRestlet=new DirectoryRestlet(myContainer,"D:/Restlet/www/docs/api/",true,"index");
     dirRestlet.addExtension("html",MediaTypes.TEXT_HTML);
     dirRestlet.addExtension("css",MediaTypes.TEXT_CSS);
     dirRestlet.addExtension("gif",MediaTypes.IMAGE_GIF);
-    status.attach(dirRestlet);
+    host.attach("/",dirRestlet);
     myContainer.start();
   }
  catch (  Exception e) {

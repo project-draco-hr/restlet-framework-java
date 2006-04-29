@@ -1,0 +1,28 @@
+{
+  boolean handle=true;
+  if (isRedirectClient() || isWarnClient()) {
+    if (!call.getRedirectionRef().toString(false,false).startsWith(getPreferredUri())) {
+      if (isRedirectClient()) {
+        call.setRedirectionRef(getPreferredUri() + call.getResourcePath());
+        call.setStatus(Statuses.REDIRECTION_FOUND);
+      }
+ else       if (isWarnClient()) {
+        String description="Used this URI instead: " + getPreferredUri() + call.getResourcePath();
+        call.setStatus(new DefaultStatus(Statuses.CLIENT_ERROR_BAD_REQUEST,description));
+      }
+      handle=false;
+    }
+  }
+  if (handle) {
+    if (getMode() == AttachmentMode.CHAINLET) {
+      if (this.frontMaplet == null) {
+        this.frontMaplet=Factory.getInstance().createMaplet(getParent());
+        this.frontMaplet.attach(getPattern(),this.delegate);
+      }
+      this.frontMaplet.handle(call);
+    }
+ else     if (getMode() == AttachmentMode.MAPLET) {
+      this.delegate.handle(call);
+    }
+  }
+}
