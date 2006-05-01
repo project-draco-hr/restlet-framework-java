@@ -1,6 +1,7 @@
 {
+  ClientCall clientCall=null;
   try {
-    ClientCall clientCall=createCall(call.getMethod().getName(),call.getResourceRef().toString(),hasInput(call));
+    clientCall=createCall(call.getMethod().getName(),call.getResourceRef().toString(),hasInput(call));
     if (call.getClientName() != null) {
       clientCall.addRequestHeader(ConnectorCall.HEADER_USER_AGENT,call.getClientName());
     }
@@ -87,10 +88,34 @@
         clientCall.addRequestHeader(ConnectorCall.HEADER_CONTENT_LANGUAGE,call.getInput().getMetadata().getLanguage().toString());
       }
     }
+  }
+ catch (  Exception e) {
+    logger.log(Level.FINE,"An unexpected error occured during the preparation of the HTTP client call.",e);
+    call.setStatus(new DefaultStatus(Statuses.CONNECTOR_ERROR_INTERNAL,"Unable to create the HTTP call and its headers. " + e.getMessage()));
+  }
+  try {
     clientCall.sendRequestHeaders();
     if (hasInput(call)) {
       clientCall.sendRequestInput(call.getInput());
     }
+  }
+ catch (  ConnectException ce) {
+    logger.log(Level.FINE,"An error occured during the connection to the remote HTTP server.",ce);
+    call.setStatus(new DefaultStatus(Statuses.CONNECTOR_ERROR_CONNECTION,"Unable to connect to the remote server. " + ce.getMessage()));
+  }
+catch (  SocketTimeoutException ste) {
+    logger.log(Level.FINE,"An timeout error occured during the communication with the remote HTTP server.",ste);
+    call.setStatus(new DefaultStatus(Statuses.CONNECTOR_ERROR_COMMUNICATION,"Unable to complete the HTTP call due to a communication timeout error. " + ste.getMessage()));
+  }
+catch (  IOException ioe) {
+    logger.log(Level.FINE,"An error occured during the communication with the remote HTTP server.",ioe);
+    call.setStatus(new DefaultStatus(Statuses.CONNECTOR_ERROR_COMMUNICATION,"Unable to complete the HTTP call due to a communication error with the remote server. " + ioe.getMessage()));
+  }
+catch (  Exception e) {
+    logger.log(Level.FINE,"An unexpected error occured during the sending of the HTTP request.",e);
+    call.setStatus(new DefaultStatus(Statuses.CONNECTOR_ERROR_INTERNAL,"Unable to send the HTTP request. " + e.getMessage()));
+  }
+  try {
     call.setStatus(new DefaultStatus(clientCall.getResponseStatusCode(),null,clientCall.getResponseReasonPhrase(),null));
     call.setServerAddress(clientCall.getResponseAddress());
     call.setConnectorCall(clientCall);
@@ -100,6 +125,7 @@
     Encoding encoding=null;
     Language language=null;
     Tag tag=null;
+    Parameter header=null;
     for (Iterator<Parameter> iter=clientCall.getResponseHeaders().iterator(); iter.hasNext(); ) {
       header=iter.next();
       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_TYPE)) {
@@ -159,12 +185,8 @@
       }
     }
   }
- catch (  ConnectException ce) {
-    logger.log(Level.FINE,"An error occured during the connection to the remote HTTP server.",ce);
-    call.setStatus(new DefaultStatus(Statuses.SERVER_ERROR_SERVICE_UNAVAILABLE,"Unable to connect to the remote server. " + ce.getMessage()));
-  }
-catch (  Exception e) {
-    logger.log(Level.FINE,"An error occured during the handling of the HTTP client call.",e);
-    call.setStatus(new DefaultStatus(Statuses.SERVER_ERROR_INTERNAL,"Unable to complete the call. " + e.getMessage()));
+ catch (  Exception e) {
+    logger.log(Level.FINE,"An error occured during the processing of the HTTP response.",e);
+    call.setStatus(new DefaultStatus(Statuses.CONNECTOR_ERROR_INTERNAL,"Unable to process the response. " + e.getMessage()));
   }
 }
