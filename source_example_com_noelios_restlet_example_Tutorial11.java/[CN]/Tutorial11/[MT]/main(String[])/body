@@ -36,8 +36,8 @@
     }
 ;
     usersMaplet.attach("/[a-z]+",userMaplet);
-    Restlet ordersRestlet=new AbstractRestlet(myContainer){
-      public void handle(      Call call){
+    Restlet ordersRestlet=new DefaultRestlet(myContainer){
+      public void handleGet(      Call call){
         List<String> segments=call.getContextRef().getSegments();
         String output="Orders of user named: " + segments.get(segments.size() - 2);
         call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
