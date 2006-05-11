@@ -119,9 +119,7 @@ catch (  Exception e) {
     Encoding encoding=null;
     Language language=null;
     Tag tag=null;
-    Parameter header=null;
-    for (Iterator<Parameter> iter=clientCall.getResponseHeaders().iterator(); iter.hasNext(); ) {
-      header=iter.next();
+    for (    Parameter header : clientCall.getResponseHeaders()) {
       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_TYPE)) {
         contentType=new ContentType(header.getValue());
       }
@@ -163,24 +161,24 @@ catch (  Exception e) {
         call.setServerName(header.getValue());
       }
     }
-    if (contentType != null) {
-      Representation output=null;
-      if (clientCall.getResponseStream() != null) {
-        output=new InputRepresentation(clientCall.getResponseStream(),contentType.getMediaType());
-      }
- else       if (clientCall.getResponseChannel() != null) {
-        output=new ReadableRepresentation(clientCall.getResponseChannel(),contentType.getMediaType());
-      }
-      if (output != null) {
-        if (contentType != null)         output.getMetadata().setCharacterSet(contentType.getCharacterSet());
-        output.setSize(size);
-        output.getMetadata().setEncoding(encoding);
-        output.getMetadata().setExpirationDate(expires);
-        output.getMetadata().setLanguage(language);
-        output.getMetadata().setModificationDate(lastModified);
-        output.getMetadata().setTag(tag);
-        call.setOutput(output);
-      }
+    Representation output=null;
+    if (clientCall.getResponseStream() != null) {
+      MediaType mediaType=null;
+      if (contentType != null)       mediaType=contentType.getMediaType();
+      output=new InputRepresentation(clientCall.getResponseStream(),mediaType);
+    }
+ else     if (clientCall.getResponseChannel() != null) {
+      output=new ReadableRepresentation(clientCall.getResponseChannel(),contentType.getMediaType());
+    }
+    if (output != null) {
+      if (contentType != null)       output.getMetadata().setCharacterSet(contentType.getCharacterSet());
+      output.setSize(size);
+      output.getMetadata().setEncoding(encoding);
+      output.getMetadata().setExpirationDate(expires);
+      output.getMetadata().setLanguage(language);
+      output.getMetadata().setModificationDate(lastModified);
+      output.getMetadata().setTag(tag);
+      call.setOutput(output);
     }
   }
  catch (  Exception e) {
