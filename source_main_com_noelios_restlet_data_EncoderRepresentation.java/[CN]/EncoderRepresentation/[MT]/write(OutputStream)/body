@@ -1,0 +1,20 @@
+{
+  DeflaterOutputStream encoderOutputStream=null;
+  if (getEncoding().equals(Encodings.GZIP)) {
+    encoderOutputStream=new GZIPOutputStream(out);
+  }
+ else   if (getEncoding().equals(Encodings.DEFLATE)) {
+    encoderOutputStream=new DeflaterOutputStream(out);
+  }
+ else   if (getEncoding().equals(Encodings.ZIP)) {
+    encoderOutputStream=new ZipOutputStream(out);
+  }
+ else   if (getEncoding().equals(Encodings.IDENTITY)) {
+    throw new IOException("Encoder unecessary for identity encoding");
+  }
+ else {
+    throw new IOException("Unsupported encoding");
+  }
+  this.wrappedRepresentation.write(encoderOutputStream);
+  encoderOutputStream.finish();
+}
