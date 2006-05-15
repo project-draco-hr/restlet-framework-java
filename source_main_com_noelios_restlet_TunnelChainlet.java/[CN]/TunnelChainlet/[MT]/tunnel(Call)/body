@@ -1,0 +1,36 @@
+{
+  if (isMethodTunnel()) {
+    String methodName=(String)call.getAttributes().get(getMethodAttribute());
+    if (methodName != null) {
+      call.setMethod(Methods.create(methodName));
+    }
+  }
+  if (isPreferencesTunnel()) {
+    String acceptCharset=(String)call.getAttributes().get(getCharacterSetsAttribute());
+    String acceptEncoding=(String)call.getAttributes().get(getCharacterSetsAttribute());
+    String acceptLanguage=(String)call.getAttributes().get(getCharacterSetsAttribute());
+    String acceptMediaType=(String)call.getAttributes().get(getCharacterSetsAttribute());
+    if (acceptCharset != null) {
+      call.getPreference().getCharacterSets().clear();
+      PreferenceUtils.parseCharacterSets(acceptCharset,call.getPreference());
+    }
+    if (acceptEncoding != null) {
+      call.getPreference().getEncodings().clear();
+      PreferenceUtils.parseEncodings(acceptEncoding,call.getPreference());
+    }
+    if (acceptLanguage != null) {
+      call.getPreference().getLanguages().clear();
+      PreferenceUtils.parseLanguages(acceptLanguage,call.getPreference());
+    }
+    if (acceptMediaType != null) {
+      call.getPreference().getMediaTypes().clear();
+      PreferenceUtils.parseMediaTypes(acceptMediaType,call.getPreference());
+    }
+  }
+  if (isUriTunnel()) {
+    String uri=(String)call.getAttributes().get(getUriAttribute());
+    if (uri != null) {
+      call.setResourceRef(uri);
+    }
+  }
+}

@@ -5,75 +5,10 @@
     String acceptEncoding=getConnectorCall().getRequestHeaderValue(ConnectorCall.HEADER_ACCEPT_ENCODING);
     String acceptLanguage=getConnectorCall().getRequestHeaderValue(ConnectorCall.HEADER_ACCEPT_LANGUAGE);
     String acceptMediaType=getConnectorCall().getRequestHeaderValue(ConnectorCall.HEADER_ACCEPT);
-    if (acceptCharset != null) {
-      if (acceptCharset.length() == 0) {
-        this.preference.getCharacterSets().add(new CharacterSetPref(CharacterSets.ISO_8859_1));
-      }
- else {
-        try {
-          PreferenceReader pr=new PreferenceReader(PreferenceReader.TYPE_CHARACTER_SET,acceptCharset);
-          CharacterSetPref currentPref=(CharacterSetPref)pr.readPreference();
-          while (currentPref != null) {
-            this.preference.getCharacterSets().add(currentPref);
-            currentPref=(CharacterSetPref)pr.readPreference();
-          }
-        }
- catch (        IOException ioe) {
-          logger.log(Level.WARNING,"An exception occured during character set preferences parsing. Header: " + acceptCharset + ". Ignoring header.");
-        }
-      }
-    }
- else {
-      this.preference.getCharacterSets().add(new CharacterSetPref(CharacterSets.ALL));
-    }
-    if (acceptEncoding != null) {
-      try {
-        PreferenceReader pr=new PreferenceReader(PreferenceReader.TYPE_ENCODING,acceptEncoding);
-        EncodingPref currentPref=(EncodingPref)pr.readPreference();
-        while (currentPref != null) {
-          this.preference.getEncodings().add(currentPref);
-          currentPref=(EncodingPref)pr.readPreference();
-        }
-      }
- catch (      IOException ioe) {
-        logger.log(Level.WARNING,"An exception occured during encoding preferences parsing. Header: " + acceptEncoding + ". Ignoring header.");
-      }
-    }
- else {
-      this.preference.getEncodings().add(new EncodingPref(Encodings.ALL));
-    }
-    if (acceptLanguage != null) {
-      try {
-        PreferenceReader pr=new PreferenceReader(PreferenceReader.TYPE_LANGUAGE,acceptLanguage);
-        LanguagePref currentPref=(LanguagePref)pr.readPreference();
-        while (currentPref != null) {
-          this.preference.getLanguages().add(currentPref);
-          currentPref=(LanguagePref)pr.readPreference();
-        }
-      }
- catch (      IOException ioe) {
-        logger.log(Level.WARNING,"An exception occured during language preferences parsing. Header: " + acceptLanguage + ". Ignoring header.");
-      }
-    }
- else {
-      this.preference.getLanguages().add(new LanguagePref(Languages.ALL));
-    }
-    if (acceptMediaType != null) {
-      try {
-        PreferenceReader pr=new PreferenceReader(PreferenceReader.TYPE_MEDIA_TYPE,acceptMediaType);
-        MediaTypePref currentPref=(MediaTypePref)pr.readPreference();
-        while (currentPref != null) {
-          this.preference.getMediaTypes().add(currentPref);
-          currentPref=(MediaTypePref)pr.readPreference();
-        }
-      }
- catch (      IOException ioe) {
-        logger.log(Level.WARNING,"An exception occured during media type preferences parsing. Header: " + acceptMediaType + ". Ignoring header.");
-      }
-    }
- else {
-      this.preference.getMediaTypes().add(new MediaTypePref(MediaTypes.ALL));
-    }
+    PreferenceUtils.parseCharacterSets(acceptCharset,this.preference);
+    PreferenceUtils.parseEncodings(acceptEncoding,this.preference);
+    PreferenceUtils.parseLanguages(acceptLanguage,this.preference);
+    PreferenceUtils.parseMediaTypes(acceptMediaType,this.preference);
   }
   return this.preference;
 }
