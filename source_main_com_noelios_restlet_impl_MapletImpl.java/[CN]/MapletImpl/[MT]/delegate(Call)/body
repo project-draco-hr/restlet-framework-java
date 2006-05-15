@@ -3,10 +3,12 @@
   Matcher matcher=null;
   boolean found=false;
   String resourcePath=call.getResourcePath();
-  for (Iterator<RestletMapping> iter=getMappings().iterator(); !found && iter.hasNext(); ) {
-    mapping=iter.next();
-    matcher=mapping.getPattern().matcher(resourcePath);
-    found=matcher.lookingAt();
+synchronized (this) {
+    for (Iterator<RestletMapping> iter=getMappings().iterator(); !found && iter.hasNext(); ) {
+      mapping=iter.next();
+      matcher=mapping.getPattern().matcher(resourcePath);
+      found=matcher.lookingAt();
+    }
   }
   if (found) {
     String oldRestletPath=call.getContextPath();
