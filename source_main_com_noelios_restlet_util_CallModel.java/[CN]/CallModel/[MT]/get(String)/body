@@ -30,6 +30,38 @@
  else     if (name.equals(NAME_CLIENT_NAME)) {
       result=call.getClientName();
     }
+ else     if (name.startsWith(NAME_CONNECTOR_REQUEST_HEADER)) {
+      String rest=name.substring(NAME_CONNECTOR_REQUEST_HEADER.length());
+      if ((rest.charAt(0) == '[') && (rest.charAt(rest.length() - 1) == ']')) {
+        rest=rest.substring(1,rest.length() - 1);
+        if ((rest.charAt(0) == '"') && (rest.charAt(rest.length() - 1) == '"')) {
+          rest=rest.substring(1,rest.length() - 1);
+          result=call.getConnectorCall().getRequestHeaderValue(rest);
+        }
+ else {
+          result=defaultValue;
+        }
+      }
+ else {
+        result=defaultValue;
+      }
+    }
+ else     if (name.startsWith(NAME_CONNECTOR_RESPONSE_HEADER)) {
+      String rest=name.substring(NAME_CONNECTOR_RESPONSE_HEADER.length());
+      if ((rest.charAt(0) == '[') && (rest.charAt(rest.length() - 1) == ']')) {
+        rest=rest.substring(1,rest.length() - 1);
+        if ((rest.charAt(0) == '"') && (rest.charAt(rest.length() - 1) == '"')) {
+          rest=rest.substring(1,rest.length() - 1);
+          result=call.getConnectorCall().getResponseHeaderValue(rest);
+        }
+ else {
+          result=defaultValue;
+        }
+      }
+ else {
+        result=defaultValue;
+      }
+    }
  else     if (name.startsWith(NAME_COOKIE)) {
       String rest=name.substring(NAME_COOKIE.length());
       if ((rest.charAt(0) == '[') && (rest.charAt(rest.length() - 1) == ']')) {
