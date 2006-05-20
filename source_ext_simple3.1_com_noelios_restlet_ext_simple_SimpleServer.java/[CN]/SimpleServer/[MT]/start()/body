@@ -1,25 +1,24 @@
 {
-  if (super.started) {
-    return;
-  }
-  if (Protocols.HTTP.equals(super.protocol)) {
-    socket=new ServerSocket(port);
-  }
- else   if (Protocols.HTTPS.equals(super.protocol)) {
-    KeyStore keyStore=KeyStore.getInstance("JKS");
-    keyStore.load(new FileInputStream(keystorePath),keystorePassword.toCharArray());
-    KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance("SunX509");
-    keyManagerFactory.init(keyStore,keyPassword.toCharArray());
-    SSLContext sslContext=SSLContext.getInstance("TLS");
-    sslContext.init(keyManagerFactory.getKeyManagers(),null,null);
-    socket=sslContext.getServerSocketFactory().createServerSocket(port);
-    socket.setSoTimeout(60000);
-  }
+  if (!isStarted()) {
+    if (Protocols.HTTP.equals(super.protocol)) {
+      socket=new ServerSocket(port);
+    }
+ else     if (Protocols.HTTPS.equals(super.protocol)) {
+      KeyStore keyStore=KeyStore.getInstance("JKS");
+      keyStore.load(new FileInputStream(keystorePath),keystorePassword.toCharArray());
+      KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance("SunX509");
+      keyManagerFactory.init(keyStore,keyPassword.toCharArray());
+      SSLContext sslContext=SSLContext.getInstance("TLS");
+      sslContext.init(keyManagerFactory.getKeyManagers(),null,null);
+      socket=sslContext.getServerSocketFactory().createServerSocket(port);
+      socket.setSoTimeout(60000);
+    }
  else {
-    throw new RuntimeException("Unsupported protocol: " + super.protocol);
+      throw new RuntimeException("Unsupported protocol: " + super.protocol);
+    }
+    this.confidential=Protocols.HTTPS.equals(getProtocol());
+    this.connection=ConnectionFactory.getConnection(this,new BufferedPipelineFactory());
+    this.connection.connect(socket);
+    super.start();
   }
-  this.confidential=Protocols.HTTPS.equals(getProtocol());
-  this.connection=ConnectionFactory.getConnection(this,new BufferedPipelineFactory());
-  this.connection.connect(socket);
-  super.started=true;
 }
