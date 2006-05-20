@@ -7,12 +7,8 @@
     myContainer.attach(log);
     StatusChainlet status=new StatusChainlet(myContainer,true,"webmaster@mysite.org","http://www.mysite.org");
     log.attach(status);
-    GuardChainlet guard=new GuardChainlet(myContainer,"com.noelios.restlet.example",true,ChallengeSchemes.HTTP_BASIC,"Restlet tutorial",true){
-      protected boolean authorize(      Call call){
-        return "scott".equals(call.getSecurity().getLogin()) && "tiger".equals(call.getSecurity().getPassword());
-      }
-    }
-;
+    GuardChainlet guard=new GuardChainlet(myContainer,"com.noelios.restlet.example",true,ChallengeSchemes.HTTP_BASIC,"Restlet tutorial",true);
+    guard.getAuthorizations().put("scott","tiger");
     status.attach(guard);
     HostMaplet host=new HostMaplet(myContainer,8182);
     guard.attach(host);

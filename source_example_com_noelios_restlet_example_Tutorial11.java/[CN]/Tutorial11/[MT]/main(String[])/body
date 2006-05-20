@@ -9,12 +9,8 @@
     log.attach(status);
     HostMaplet host=new HostMaplet(myContainer,8182);
     status.attach(host);
-    GuardChainlet guard=new GuardChainlet(myContainer,"com.noelios.restlet.example",true,ChallengeSchemes.HTTP_BASIC,"Restlet tutorial",true){
-      protected boolean authorize(      Call call){
-        return "scott".equals(call.getSecurity().getLogin()) && "tiger".equals(call.getSecurity().getPassword());
-      }
-    }
-;
+    GuardChainlet guard=new GuardChainlet(myContainer,"com.noelios.restlet.example",true,ChallengeSchemes.HTTP_BASIC,"Restlet tutorial",true);
+    guard.getAuthorizations().put("scott","tiger");
     host.attach("/docs/",guard);
     DirectoryRestlet dirRestlet=new DirectoryRestlet(myContainer,"D:/Restlet/www/docs/api/",true,"index");
     dirRestlet.addExtension("html",MediaTypes.TEXT_HTML);
