@@ -4,37 +4,33 @@
   if (instruction.startsWith("if ")) {
     String condition=template.subSequence(tokenStart + 3,tokenEnd).toString();
     if (evaluateCondition(condition,model)) {
-      state=STATE_INSTRUCTION_CONDITION_APPEND;
+      textState=TEXT_APPEND;
     }
  else {
-      state=STATE_INSTRUCTION_CONDITION_SKIP;
+      textState=TEXT_SKIP;
     }
   }
  else   if (instruction.startsWith("else if ")) {
-    if (state == STATE_INSTRUCTION_CONDITION_SKIP) {
+    if (textState == TEXT_SKIP) {
       String condition=template.subSequence(tokenStart + 4,tokenEnd).toString();
       if (evaluateCondition(condition,model)) {
-        state=STATE_INSTRUCTION_CONDITION_APPEND;
+        textState=TEXT_APPEND;
       }
     }
   }
  else   if (instruction.equals("else")) {
-    if (state == STATE_INSTRUCTION_CONDITION_SKIP) {
-      state=STATE_INSTRUCTION_CONDITION_APPEND;
+    if (textState == TEXT_SKIP) {
+      textState=TEXT_APPEND;
     }
- else     if (state == STATE_INSTRUCTION_CONDITION_APPEND) {
-      state=STATE_INSTRUCTION_CONDITION_SKIP;
+ else     if (textState == TEXT_APPEND) {
+      textState=TEXT_SKIP;
     }
   }
  else   if (instruction.equals("end")) {
-    state=STATE_INSTRUCTION_APPEND;
+    textState=TEXT_APPEND;
   }
  else {
-    if ((state == STATE_INSTRUCTION_APPEND) || (state == STATE_INSTRUCTION_CONDITION_APPEND)) {
-      if (model != null) {
-        buffer.append(model.get(instruction));
-      }
-    }
+    logger.log(Level.WARNING,"Unsupported instruction ignored: ",instruction);
   }
-  return state;
+  return textState;
 }
