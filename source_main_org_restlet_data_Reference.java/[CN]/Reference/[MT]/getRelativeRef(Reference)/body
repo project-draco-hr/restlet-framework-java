@@ -61,19 +61,29 @@
           }
  else {
             StringBuilder sb=new StringBuilder();
-            sb.append("..");
+            boolean firstAdd=true;
             boolean canAdd=false;
             for (int j=i; j < basePath.length(); j++) {
               if (basePath.charAt(j) == '/') {
                 canAdd=true;
               }
  else               if (canAdd) {
-                sb.append("/..");
+                if (firstAdd) {
+                  firstAdd=false;
+                }
+ else {
+                  sb.append("/");
+                }
+                sb.append("..");
                 canAdd=false;
               }
             }
-            sb.append('/').append(localPath.substring(lastSlashIndex + 1));
+            if (lastSlashIndex + 1 < localPath.length()) {
+              if (!firstAdd)               sb.append('/');
+              sb.append(localPath.substring(lastSlashIndex + 1));
+            }
             relativePath=sb.toString();
+            if (relativePath.equals(""))             relativePath=".";
           }
         }
  else         if (i == basePath.length()) {
@@ -97,22 +107,43 @@
       }
  else {
         StringBuilder sb=new StringBuilder();
-        sb.append("..");
         boolean canAdd=false;
+        boolean firstAdd=true;
         for (int j=i; j < basePath.length(); j++) {
           if (basePath.charAt(j) == '/') {
             canAdd=true;
           }
  else           if (canAdd) {
-            sb.append("/..");
+            if (firstAdd) {
+              firstAdd=false;
+            }
+ else {
+              sb.append("/");
+            }
+            sb.append("..");
             canAdd=false;
           }
         }
-        sb.append('/').append(localPath.substring(lastSlashIndex + 1));
+        if (!firstAdd)         sb.append('/');
+        sb.append(localPath.substring(lastSlashIndex + 1));
         relativePath=sb.toString();
       }
     }
-    result=new Reference(relativePath);
+    result=new Reference();
+    String query=getQuery();
+    String fragment=getFragment();
+    boolean modified=false;
+    if ((query != null) && (!query.equals(base.getQuery()))) {
+      result.setQuery(query);
+      modified=true;
+    }
+    if ((fragment != null) && (!fragment.equals(base.getFragment()))) {
+      result.setFragment(fragment);
+      modified=true;
+    }
+    if (!modified || !relativePath.equals(".")) {
+      result.setPath(relativePath);
+    }
   }
   return result;
 }

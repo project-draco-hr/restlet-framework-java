@@ -1,13 +1,20 @@
 {
   if (schemeIndex != -1) {
-    this.uri=scheme + this.uri.substring(schemeIndex);
-  }
- else {
-    if (this.uri == null) {
-      this.uri=scheme + ':';
+    if (scheme != null) {
+      this.uri=scheme + this.uri.substring(schemeIndex);
     }
  else {
-      this.uri=scheme + ':' + this.uri;
+      this.uri=this.uri.substring(schemeIndex + 1);
+    }
+  }
+ else {
+    if (scheme != null) {
+      if (this.uri == null) {
+        this.uri=scheme + ':';
+      }
+ else {
+        this.uri=scheme + ':' + this.uri;
+      }
     }
   }
   updateIndexes();

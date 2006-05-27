@@ -1,22 +1,29 @@
 {
-  String ssp=getSchemeSpecificPart();
+  String oldPart=isRelative() ? getRelativePart() : getSchemeSpecificPart();
+  String newPart;
   String newAuthority=(authority == null) ? "" : "//" + authority;
-  if (ssp.startsWith("//")) {
-    int index=ssp.indexOf('/',2);
+  if (oldPart.startsWith("//")) {
+    int index=oldPart.indexOf('/',2);
     if (index != -1) {
-      setSchemeSpecificPart(newAuthority + ssp.substring(index));
+      newPart=newAuthority + oldPart.substring(index);
     }
  else {
-      index=ssp.indexOf('?');
+      index=oldPart.indexOf('?');
       if (index != -1) {
-        setSchemeSpecificPart(newAuthority + ssp.substring(index));
+        newPart=newAuthority + oldPart.substring(index);
       }
  else {
-        setSchemeSpecificPart(newAuthority);
+        newPart=newAuthority;
       }
     }
   }
  else {
-    setSchemeSpecificPart(newAuthority + ssp);
+    newPart=newAuthority + oldPart;
+  }
+  if (isAbsolute()) {
+    setSchemeSpecificPart(newPart);
+  }
+ else {
+    setRelativePart(newPart);
   }
 }

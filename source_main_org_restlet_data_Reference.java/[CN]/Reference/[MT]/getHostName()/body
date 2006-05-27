@@ -1,21 +1,25 @@
 {
+  String result=null;
   String authority=getAuthority();
-  int index1=authority.indexOf('@');
-  int index2=authority.indexOf(':');
-  if (index1 != -1) {
-    if (index2 != -1) {
-      return authority.substring(index1 + 1,index2);
+  if (authority != null) {
+    int index1=authority.indexOf('@');
+    int index2=authority.indexOf(':');
+    if (index1 != -1) {
+      if (index2 != -1) {
+        result=authority.substring(index1 + 1,index2);
+      }
+ else {
+        result=authority.substring(index1 + 1);
+      }
     }
  else {
-      return authority.substring(index1 + 1);
+      if (index2 != -1) {
+        result=authority.substring(0,index2);
+      }
+ else {
+        result=authority;
+      }
     }
   }
- else {
-    if (index2 != -1) {
-      return authority.substring(2,index2);
-    }
- else {
-      return authority.substring(2);
-    }
-  }
+  return result;
 }

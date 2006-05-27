@@ -1,11 +1,16 @@
 {
   String authority=getAuthority();
-  String newPort=(port == null) ? "" : ":" + port;
-  int index=authority.indexOf(':');
-  if (index != -1) {
-    setAuthority(authority.substring(0,index) + newPort);
+  if (authority != null) {
+    int index=authority.indexOf(':');
+    String newPort=(port == null) ? "" : ":" + port;
+    if (index != -1) {
+      setAuthority(authority.substring(0,index) + newPort);
+    }
+ else {
+      setAuthority(authority + newPort);
+    }
   }
  else {
-    setAuthority(authority + newPort);
+    throw new IllegalArgumentException("No authority defined, please define a host name first");
   }
 }

@@ -1,17 +1,17 @@
 {
-  String ssp=getSchemeSpecificPart();
-  if (ssp.startsWith("//")) {
-    int index=ssp.indexOf('/',2);
+  String part=isRelative() ? getRelativePart() : getSchemeSpecificPart();
+  if (part.startsWith("//")) {
+    int index=part.indexOf('/',2);
     if (index != -1) {
-      return ssp.substring(2,index);
+      return part.substring(2,index);
     }
  else {
-      index=ssp.indexOf('?');
+      index=part.indexOf('?');
       if (index != -1) {
-        return ssp.substring(2,index);
+        return part.substring(2,index);
       }
  else {
-        return ssp.substring(2);
+        return part.substring(2);
       }
     }
   }

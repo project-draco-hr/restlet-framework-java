@@ -1,33 +1,46 @@
 {
-  String ssp=getSchemeSpecificPart();
-  if (ssp.startsWith("//")) {
-    int index1=ssp.indexOf('/',2);
-    if (index1 != -1) {
-      int index2=ssp.indexOf('?');
-      if (index2 != -1) {
-        setSchemeSpecificPart(ssp.substring(0,index1) + path + ssp.substring(index2));
+  String oldPart=isRelative() ? getRelativePart() : getSchemeSpecificPart();
+  String newPart=null;
+  if (oldPart != null) {
+    if (path == null)     path="";
+    if (oldPart.startsWith("//")) {
+      int index1=oldPart.indexOf('/',2);
+      if (index1 != -1) {
+        int index2=oldPart.indexOf('?');
+        if (index2 != -1) {
+          newPart=oldPart.substring(0,index1) + path + oldPart.substring(index2);
+        }
+ else {
+          newPart=oldPart.substring(0,index1) + path;
+        }
       }
  else {
-        setSchemeSpecificPart(ssp.substring(0,index1) + path);
+        int index2=oldPart.indexOf('?');
+        if (index2 != -1) {
+          newPart=oldPart.substring(0,index2) + path + oldPart.substring(index2);
+        }
+ else {
+          newPart=oldPart + path;
+        }
       }
     }
  else {
-      int index2=ssp.indexOf('?');
-      if (index2 != -1) {
-        setSchemeSpecificPart(ssp.substring(0,index2) + path + ssp.substring(index2));
+      int index=oldPart.indexOf('?');
+      if (index != -1) {
+        newPart=path + oldPart.substring(index);
       }
  else {
-        setSchemeSpecificPart(ssp + path);
+        newPart=path;
       }
     }
   }
  else {
-    int index=ssp.indexOf('?');
-    if (index != -1) {
-      setSchemeSpecificPart(path + ssp.substring(index));
-    }
+    newPart=path;
+  }
+  if (isAbsolute()) {
+    setSchemeSpecificPart(newPart);
+  }
  else {
-      setSchemeSpecificPart(path);
-    }
+    setRelativePart(newPart);
   }
 }
