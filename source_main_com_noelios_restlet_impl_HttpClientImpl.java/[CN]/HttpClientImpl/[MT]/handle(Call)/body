@@ -87,6 +87,7 @@
     if (hasInput(call)) {
       clientCall.sendRequestInput(call.getInput());
     }
+    call.setStatus(new DefaultStatus(clientCall.getResponseStatusCode(),null,clientCall.getResponseReasonPhrase(),null));
   }
  catch (  ConnectException ce) {
     logger.log(Level.FINE,"An error occured during the connection to the remote HTTP server.",ce);
@@ -109,7 +110,6 @@ catch (  Exception e) {
     call.setStatus(new DefaultStatus(Statuses.CONNECTOR_ERROR_INTERNAL,"Unable to send the HTTP request. " + e.getMessage()));
   }
   try {
-    call.setStatus(new DefaultStatus(clientCall.getResponseStatusCode(),null,clientCall.getResponseReasonPhrase(),null));
     call.setServerAddress(clientCall.getResponseAddress());
     call.setConnectorCall(clientCall);
     ContentType contentType=null;
