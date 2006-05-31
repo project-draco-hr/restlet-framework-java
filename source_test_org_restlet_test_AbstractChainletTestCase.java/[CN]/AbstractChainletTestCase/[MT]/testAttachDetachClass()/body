@@ -1,0 +1,13 @@
+{
+  Chainlet chainlet=getChainlet();
+  assertFalse(chainlet.hasTarget());
+  chainlet.attach(getRestletClass());
+  chainlet.start();
+  assertTrue(chainlet.isStarted());
+  assertFalse(chainlet.isStopped());
+  Call call=getCall();
+  chainlet.handle(call);
+  assertTrue(chainlet.hasTarget());
+  chainlet.detach();
+  assertFalse(chainlet.hasTarget());
+}
