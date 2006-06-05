@@ -1,11 +1,11 @@
 {
   try {
     RestletContainer myContainer=new RestletContainer();
-    Server server=new DefaultServer(Protocols.HTTP,"My server",myContainer,8182);
-    myContainer.addServer(server);
+    myContainer.addServer("HTTP Server",Protocols.HTTP,8182);
+    myContainer.addClient("File Client",Protocols.FILE);
     HostMaplet rootMaplet=new HostMaplet(myContainer,8182);
     myContainer.attach(rootMaplet);
-    DirectoryRestlet dirRestlet=new DirectoryRestlet(myContainer,"D:/Restlet/www/docs/api/",true,"index",true);
+    DirectoryRestlet dirRestlet=new DirectoryRestlet(myContainer,"File Client","D:/Restlet/www/docs/api/",true,"index");
     rootMaplet.attach("/",dirRestlet);
     myContainer.start();
   }

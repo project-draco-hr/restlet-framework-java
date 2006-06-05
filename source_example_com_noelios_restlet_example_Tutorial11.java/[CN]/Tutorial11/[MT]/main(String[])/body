@@ -1,8 +1,8 @@
 {
   try {
     RestletContainer myContainer=new RestletContainer();
-    Server server=new DefaultServer(Protocols.HTTP,"My server",myContainer,8182);
-    myContainer.addServer(server);
+    myContainer.addServer("HTTP Server",Protocols.HTTP,8182);
+    myContainer.addClient("File Client",Protocols.FILE);
     LogChainlet log=new LogChainlet(myContainer,"com.noelios.restlet.example");
     myContainer.attach(log);
     StatusChainlet status=new StatusChainlet(myContainer,true,"webmaster@mysite.org","http://www.mysite.org");
@@ -12,7 +12,7 @@
     GuardChainlet guard=new GuardChainlet(myContainer,"com.noelios.restlet.example",true,ChallengeSchemes.HTTP_BASIC,"Restlet tutorial",true);
     guard.getAuthorizations().put("scott","tiger");
     host.attach("/docs/",guard);
-    DirectoryRestlet dirRestlet=new DirectoryRestlet(myContainer,"D:/Restlet/www/docs/api/",true,"index",true);
+    DirectoryRestlet dirRestlet=new DirectoryRestlet(myContainer,"File Client","D:/Restlet/www/docs/api/",true,"index");
     guard.attach(dirRestlet);
     Maplet usersMaplet=new DefaultMaplet(myContainer);
     host.attach("/users",usersMaplet);
