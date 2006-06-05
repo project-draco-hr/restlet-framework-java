@@ -1,13 +1,12 @@
 {
-  try {
-    StringTemplate te=new StringTemplate(this.targetPattern);
-    String targetUri=te.process(new CallModel(call,null));
-    Reference target=new Reference(targetUri);
+  StringTemplate te=new StringTemplate(this.targetPattern);
+  String targetUri=te.process(new CallModel(call,null));
+  Reference target=new Reference(targetUri);
 switch (this.mode) {
 case MODE_CLIENT_PERMANENT:
-      logger.log(Level.INFO,"Permanently redirecting client to: " + targetUri);
-    call.setRedirectionRef(target);
-  call.setStatus(Statuses.REDIRECTION_MOVED_PERMANENTLY);
+    logger.log(Level.INFO,"Permanently redirecting client to: " + targetUri);
+  call.setRedirectionRef(target);
+call.setStatus(Statuses.REDIRECTION_MOVED_PERMANENTLY);
 break;
 case MODE_CLIENT_FOUND:
 logger.log(Level.INFO,"Redirecting client to found location: " + targetUri);
@@ -29,9 +28,5 @@ logger.log(Level.INFO,"Redirecting internally: " + targetUri);
 call.setResourceRef(target);
 getOwner().handle(call);
 break;
-}
-}
- catch (IOException ioe) {
-logger.log(Level.WARNING,"Error during redirection",ioe);
 }
 }
