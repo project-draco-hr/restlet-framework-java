@@ -1,7 +1,7 @@
 {
-  super(method);
-  if (resourceUri.startsWith("http")) {
-    URL url=new URL(resourceUri);
+  super(method,requestUri);
+  if (requestUri.startsWith("http")) {
+    URL url=new URL(requestUri);
     this.connection=(HttpURLConnection)url.openConnection();
     if (client.getTimeout() != -1) {
       this.connection.setConnectTimeout(client.getTimeout());
@@ -10,7 +10,6 @@
     this.connection.setAllowUserInteraction(false);
     this.connection.setDoOutput(hasInput);
     this.connection.setInstanceFollowRedirects(false);
-    this.requestUri=resourceUri;
     this.confidential=(this.connection instanceof HttpsURLConnection);
   }
  else {
