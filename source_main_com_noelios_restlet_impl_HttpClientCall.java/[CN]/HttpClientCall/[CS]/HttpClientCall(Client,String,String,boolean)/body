@@ -1,0 +1,19 @@
+{
+  super(method);
+  if (resourceUri.startsWith("http")) {
+    URL url=new URL(resourceUri);
+    this.connection=(HttpURLConnection)url.openConnection();
+    if (client.getTimeout() != -1) {
+      this.connection.setConnectTimeout(client.getTimeout());
+      this.connection.setReadTimeout(client.getTimeout());
+    }
+    this.connection.setAllowUserInteraction(false);
+    this.connection.setDoOutput(hasInput);
+    this.connection.setInstanceFollowRedirects(false);
+    this.requestUri=resourceUri;
+    this.confidential=(this.connection instanceof HttpsURLConnection);
+  }
+ else {
+    throw new IllegalArgumentException("Only HTTP or HTTPS resource URIs are allowed here");
+  }
+}
