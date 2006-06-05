@@ -1,33 +1,6 @@
 {
-  InputStream requestStream=((ServerCall)getConnectorCall()).getRequestStream();
-  ReadableByteChannel requestChannel=((ServerCall)getConnectorCall()).getRequestChannel();
-  if ((this.input == null) && (requestStream != null || requestChannel != null)) {
-    Encoding contentEncoding=null;
-    Language contentLanguage=null;
-    MediaType contentType=null;
-    long contentLength=-1L;
-    for (    Parameter header : getConnectorCall().getRequestHeaders()) {
-      if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_ENCODING)) {
-        contentEncoding=new DefaultEncoding(header.getValue());
-      }
- else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_LANGUAGE)) {
-        contentLanguage=new DefaultLanguage(header.getValue());
-      }
- else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_TYPE)) {
-        contentType=new DefaultMediaType(header.getValue());
-      }
- else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_LENGTH)) {
-        contentLength=Long.parseLong(header.getValue());
-      }
-    }
-    if (requestStream != null) {
-      this.input=new InputRepresentation(requestStream,contentType,contentLength);
-    }
- else     if (requestChannel != null) {
-      this.input=new ReadableRepresentation(requestChannel,contentType,contentLength);
-    }
-    this.input.getMetadata().setEncoding(contentEncoding);
-    this.input.getMetadata().setLanguage(contentLanguage);
+  if (this.input == null) {
+    this.input=((ServerCall)getConnectorCall()).getRequestInput();
   }
   return this.input;
 }
