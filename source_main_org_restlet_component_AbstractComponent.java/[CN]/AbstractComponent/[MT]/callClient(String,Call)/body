@@ -1,7 +1,12 @@
 {
   Client connector=getClients().get(name);
   if (connector == null) {
-    throw new IllegalArgumentException("Client connector \"" + name + "\" couldn't be found.");
+    if (getOwner() != null) {
+      getOwner().callClient(name,call);
+    }
+ else {
+      throw new IllegalArgumentException("Client connector \"" + name + "\" couldn't be found in the components hierarchy.");
+    }
   }
  else {
     connector.handle(call);
