@@ -1,7 +1,7 @@
 {
-  this.directoryRestlet=directoryRestlet;
-  logger.info("Parameter base path: " + basePath);
-  StringBuilder filePath=new StringBuilder(directoryRestlet.getRootPath());
+  this.contextClient=fileClient;
+  logger.info("File base path: " + basePath);
+  StringBuilder filePath=new StringBuilder();
   int lastIndex=-1;
   if (!basePath.equals(".")) {
     char nextChar;
@@ -18,11 +18,6 @@
   }
   this.basePath=filePath.toString();
   if (new File(this.basePath).isDirectory()) {
-    String indexName=getDirectoryRestlet().getIndexName();
-    if (indexName != null) {
-      this.basePath=this.basePath + indexName;
-      this.baseName=indexName;
-    }
   }
  else {
     if (lastIndex == -1) {

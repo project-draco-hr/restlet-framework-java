@@ -31,15 +31,19 @@ synchronized (ServerServlet.class) {
                   log("[Noelios Restlet Engine] - This context path has been provided to the target's init parameter \"" + initContextPathName + "\": "+ contextPath);
                 }
               }
+              result.start();
             }
  catch (            ClassNotFoundException e) {
-              log("[Noelios Restlet Engine] - The ServerServlet couldn't find the class. Please check that your classpath includes " + targetClassName);
+              log("[Noelios Restlet Engine] - The ServerServlet couldn't find the class. Please check that your classpath includes " + targetClassName,e);
             }
 catch (            InstantiationException e) {
-              log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the class. Please check this class has an empty constructor " + targetClassName);
+              log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the class. Please check this class has an empty constructor " + targetClassName,e);
             }
 catch (            IllegalAccessException e) {
-              log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the class. Please check that you have to proper access rights to " + targetClassName);
+              log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the class. Please check that you have to proper access rights to " + targetClassName,e);
+            }
+catch (            Exception e) {
+              log("[Noelios Restlet Engine] - The ServerServlet couldn't start the target Restlet.",e);
             }
           }
  else {

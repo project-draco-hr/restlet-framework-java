@@ -16,7 +16,7 @@
         String[] tokens=currentFile.getName().split("\\.");
         if (tokens[0].equals(getBaseName())) {
           for (int j=1; j < tokens.length; j++) {
-            metadata=getDirectoryRestlet().getMetadata(tokens[j]);
+            metadata=getContextClient().getMetadata(tokens[j]);
             if (metadata instanceof MediaType)             mediaType=(MediaType)metadata;
             if (metadata instanceof CharacterSet)             characterSet=(CharacterSet)metadata;
             if (metadata instanceof Encoding)             encoding=(Encoding)metadata;
@@ -24,15 +24,15 @@
             int dashIndex=tokens[j].indexOf('-');
             if ((metadata == null) && (dashIndex != -1)) {
               String primaryPart=tokens[j].substring(0,dashIndex);
-              metadata=getDirectoryRestlet().getMetadata(primaryPart);
+              metadata=getContextClient().getMetadata(primaryPart);
               if (metadata instanceof Language)               language=(Language)metadata;
             }
           }
           if (result == null)           result=new ArrayList<RepresentationMetadata>();
-          if (encoding == null)           encoding=getDirectoryRestlet().getDefaultEncoding();
-          if (mediaType == null)           mediaType=getDirectoryRestlet().getDefaultMediaType();
-          if (language == null)           language=getDirectoryRestlet().getDefaultLanguage();
-          FileRepresentation fr=new FileRepresentation(currentFile.getAbsolutePath(),mediaType,getDirectoryRestlet().getTimeToLive());
+          if (encoding == null)           encoding=getContextClient().getDefaultEncoding();
+          if (mediaType == null)           mediaType=getContextClient().getDefaultMediaType();
+          if (language == null)           language=getContextClient().getDefaultLanguage();
+          FileRepresentation fr=new FileRepresentation(currentFile.getAbsolutePath(),mediaType,getContextClient().getTimeToLive());
           fr.setCharacterSet(characterSet);
           fr.setEncoding(encoding);
           fr.setLanguage(language);
