@@ -1,9 +1,32 @@
 {
+  ClientCall result=null;
   try {
-    return null;
+    if (getProtocol().equals(Protocols.FILE)) {
+      result=new FileCall(method,requestUri);
+    }
+ else     if (getProtocol().equals(Protocols.CONTEXT)) {
+      ContextReference cr=new ContextReference(requestUri);
+      if (cr.getScheme().equalsIgnoreCase("context")) {
+        if (cr.getAuthorityType() == AuthorityType.CLASS) {
+          result=new ClassLoaderCall(method,requestUri,getClass().getClassLoader());
+        }
+ else         if (cr.getAuthorityType() == AuthorityType.SYSTEM) {
+          result=new ClassLoaderCall(method,requestUri,ClassLoader.getSystemClassLoader());
+        }
+ else         if (cr.getAuthorityType() == AuthorityType.THREAD) {
+          result=new ClassLoaderCall(method,requestUri,Thread.currentThread().getContextClassLoader());
+        }
+ else         if (cr.getAuthorityType() == AuthorityType.WEB_APPLICATION) {
+          result=null;
+        }
+      }
+ else {
+        throw new IllegalArgumentException("Only CONTEXT resource URIs are allowed here");
+      }
+    }
   }
  catch (  Exception e) {
     logger.log(Level.WARNING,"Unable to create the call",e);
-    return null;
   }
+  return result;
 }

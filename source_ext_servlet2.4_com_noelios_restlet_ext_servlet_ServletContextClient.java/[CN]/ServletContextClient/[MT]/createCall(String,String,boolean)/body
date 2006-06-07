@@ -1,0 +1,26 @@
+{
+  ClientCall result=null;
+  try {
+    if (getProtocol().equals(Protocols.CONTEXT)) {
+      ContextReference cr=new ContextReference(requestUri);
+      if (cr.getScheme().equalsIgnoreCase("context")) {
+        if (cr.getAuthorityType() == AuthorityType.WEB_APPLICATION) {
+          result=new ServletContextCall(method,requestUri,getContext());
+        }
+ else {
+          throw new IllegalArgumentException("Only the Web application authority type is allowed here");
+        }
+      }
+ else {
+        throw new IllegalArgumentException("Only CONTEXT resource URIs are allowed here");
+      }
+    }
+ else {
+      throw new IllegalArgumentException("Only the CONTEXT protocol is supported by this connector");
+    }
+  }
+ catch (  Exception e) {
+    logger.log(Level.WARNING,"Unable to create the call",e);
+  }
+  return result;
+}
