@@ -3,14 +3,25 @@
   Matcher matcher=null;
   boolean found=false;
   String resourcePath=call.getResourcePath();
+  if (logger.isLoggable(Level.FINE)) {
+    logger.fine("The Maplet implementation starts the delegation of a call");
+    logger.fine("Current context path: " + call.getContextPath());
+    logger.fine("Current resource path: " + resourcePath);
+  }
 synchronized (this) {
     for (Iterator<RestletMapping> iter=getMappings().iterator(); !found && iter.hasNext(); ) {
       mapping=iter.next();
       matcher=mapping.getPattern().matcher(resourcePath);
       found=matcher.lookingAt();
+      if (logger.isLoggable(Level.FINER)) {
+        logger.finer("Attempting to match this pattern: " + mapping.getPattern().toString() + " >> "+ found);
+      }
     }
   }
   if (found) {
+    if (logger.isLoggable(Level.FINER)) {
+      logger.finer("A matching target was found");
+    }
     String oldRestletPath=call.getContextPath();
     String restletPath=resourcePath.substring(0,matcher.end());
     if (oldRestletPath == null) {
@@ -19,14 +30,22 @@ synchronized (this) {
  else {
       call.setContextPath(oldRestletPath + restletPath);
     }
+    if (logger.isLoggable(Level.FINE)) {
+      logger.fine("New context path: " + call.getContextPath());
+      logger.fine("New resource path: " + call.getResourcePath());
+    }
     call.getContextMatches().clear();
     for (int i=0; i < matcher.groupCount(); i++) {
       call.getContextMatches().add(matcher.group(i + 1));
+    }
+    if (logger.isLoggable(Level.FINE)) {
+      logger.fine("Delegating the call to the target Restlet");
     }
     mapping.handle(call,getOwner());
   }
  else {
     call.setStatus(Statuses.CLIENT_ERROR_NOT_FOUND);
+    logger.fine("No matching target was found");
   }
   return found;
 }
