@@ -1,0 +1,158 @@
+{
+  FileReference fr=new FileReference(call.getResourcePath());
+  File file=null;
+  if (fr.getScheme().equalsIgnoreCase("file")) {
+    file=fr.getFile();
+  }
+ else {
+    throw new IllegalArgumentException("Only FILE resource URIs are allowed here");
+  }
+  if (call.getMethod().equals(Methods.GET) || call.getMethod().equals(Methods.HEAD)) {
+    if ((file != null) && file.exists()) {
+      Representation output=null;
+      if (file.isDirectory()) {
+        File[] files=file.listFiles();
+        ReferenceList rl=new ReferenceList(files.length);
+        for (        File entry : files) {
+          try {
+            rl.add(new FileReference(entry));
+          }
+ catch (          IOException ioe) {
+            logger.log(Level.WARNING,"Unable to create file reference",ioe);
+          }
+        }
+        output=rl.getRepresentation();
+      }
+ else {
+        output=new FileRepresentation(file,getDefaultMediaType(),getTimeToLive());
+        String[] tokens=file.getName().split("\\.");
+        Metadata metadata;
+        for (int j=1; j < tokens.length; j++) {
+          metadata=getMetadata(tokens[j]);
+          if (metadata instanceof MediaType)           output.getMetadata().setMediaType((MediaType)metadata);
+          if (metadata instanceof CharacterSet)           output.getMetadata().setCharacterSet((CharacterSet)metadata);
+          if (metadata instanceof Encoding)           output.getMetadata().setEncoding((Encoding)metadata);
+          if (metadata instanceof Language)           output.getMetadata().setLanguage((Language)metadata);
+          int dashIndex=tokens[j].indexOf('-');
+          if ((metadata == null) && (dashIndex != -1)) {
+            String primaryPart=tokens[j].substring(0,dashIndex);
+            metadata=getMetadata(primaryPart);
+            if (metadata instanceof Language)             output.getMetadata().setLanguage((Language)metadata);
+          }
+        }
+      }
+      call.setOutput(output);
+      call.setStatus(Statuses.SUCCESS_OK);
+    }
+ else {
+      call.setStatus(Statuses.CLIENT_ERROR_NOT_FOUND);
+    }
+  }
+ else   if (call.getMethod().equals(Methods.POST)) {
+    call.setStatus(Statuses.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+  }
+ else   if (call.getMethod().equals(Methods.PUT)) {
+    File tmp=null;
+    if (file.exists()) {
+      if (file.isDirectory()) {
+        call.setStatus(new DefaultStatus(Statuses.SERVER_ERROR_INTERNAL,"Can't put a new representation of a directory"));
+      }
+ else {
+        try {
+          tmp=File.createTempFile("restlet-upload","bin");
+          if (call.getInput() != null) {
+            ByteUtils.write(call.getInput().getStream(),new FileOutputStream(tmp));
+          }
+        }
+ catch (        IOException ioe) {
+          logger.log(Level.WARNING,"Unable to create the temporary file",ioe);
+          call.setStatus(new DefaultStatus(Statuses.SERVER_ERROR_INTERNAL,"Unable to create a temporary file"));
+        }
+        if (file.delete()) {
+          if (tmp.renameTo(file)) {
+            if (call.getInput() == null) {
+              call.setStatus(Statuses.SUCCESS_NO_CONTENT);
+            }
+ else {
+              call.setStatus(Statuses.SUCCESS_OK);
+            }
+          }
+ else {
+            logger.log(Level.WARNING,"Unable to move the temporary file to replace the existing file");
+            call.setStatus(new DefaultStatus(Statuses.SERVER_ERROR_INTERNAL,"Unable to move the temporary file to replace the existing file"));
+          }
+        }
+ else {
+          logger.log(Level.WARNING,"Unable to delete the existing file");
+          call.setStatus(new DefaultStatus(Statuses.SERVER_ERROR_INTERNAL,"Unable to delete the existing file"));
+        }
+      }
+    }
+ else {
+      if (fr.getPath().endsWith("/")) {
+        if (file.mkdirs()) {
+          call.setStatus(Statuses.SUCCESS_NO_CONTENT);
+        }
+ else {
+          logger.log(Level.WARNING,"Unable to create the new directory");
+          call.setStatus(new DefaultStatus(Statuses.SERVER_ERROR_INTERNAL,"Unable to create the new directory"));
+        }
+      }
+ else {
+        File parent=file.getParentFile();
+        if ((parent != null) && parent.isDirectory()) {
+          if (!parent.exists()) {
+            if (!parent.mkdirs()) {
+              logger.log(Level.WARNING,"Unable to create the parent directory");
+              call.setStatus(new DefaultStatus(Statuses.SERVER_ERROR_INTERNAL,"Unable to create the parent directory"));
+            }
+          }
+        }
+        try {
+          if (file.createNewFile()) {
+            if (call.getInput() == null) {
+              call.setStatus(Statuses.SUCCESS_NO_CONTENT);
+            }
+ else {
+              ByteUtils.write(call.getInput().getStream(),new FileOutputStream(tmp));
+              call.setStatus(Statuses.SUCCESS_OK);
+            }
+          }
+ else {
+            logger.log(Level.WARNING,"Unable to create the new file");
+            call.setStatus(new DefaultStatus(Statuses.SERVER_ERROR_INTERNAL,"Unable to create the new file"));
+          }
+        }
+ catch (        FileNotFoundException fnfe) {
+          logger.log(Level.WARNING,"Unable to create the new file",fnfe);
+          call.setStatus(new DefaultStatus(Statuses.SERVER_ERROR_INTERNAL,"Unable to create the new file"));
+        }
+catch (        IOException ioe) {
+          logger.log(Level.WARNING,"Unable to create the new file",ioe);
+          call.setStatus(new DefaultStatus(Statuses.SERVER_ERROR_INTERNAL,"Unable to create the new file"));
+        }
+      }
+    }
+  }
+ else   if (call.getMethod().equals(Methods.DELETE)) {
+    if (file.delete()) {
+      call.setStatus(Statuses.SUCCESS_NO_CONTENT);
+    }
+ else {
+      if (file.isDirectory()) {
+        if (file.listFiles().length == 0) {
+          call.setStatus(new DefaultStatus(Statuses.SERVER_ERROR_INTERNAL,"Couldn't delete the empty directory"));
+        }
+ else {
+          call.setStatus(new DefaultStatus(Statuses.SERVER_ERROR_INTERNAL,"Couldn't delete the non-empty directory"));
+        }
+      }
+ else {
+        call.setStatus(new DefaultStatus(Statuses.SERVER_ERROR_INTERNAL,"Couldn't delete the file"));
+      }
+    }
+  }
+ else {
+    call.setStatus(Statuses.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+  }
+}
