@@ -14,21 +14,16 @@
     host.attach("/docs/",guard);
     DirectoryRestlet dirRestlet=new DirectoryRestlet(myContainer,"File Client","D:/Restlet/www/docs/api/",true,"index");
     guard.attach(dirRestlet);
-    Maplet usersMaplet=new DefaultMaplet(myContainer);
-    host.attach("/users",usersMaplet);
-    Maplet userMaplet=new DefaultMaplet(myContainer){
-      public void handle(      Call call){
-        if (call.getResourcePath().equals("")) {
-          String output="Account of user named: " + call.getContextRef().getLastSegment();
-          call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
-        }
- else {
-          delegate(call);
-        }
+    Maplet userMaplet=new DefaultMaplet(myContainer);
+    host.attach("/users/[a-z]+",userMaplet);
+    Restlet accountRestlet=new AbstractRestlet(){
+      public void handleGet(      Call call){
+        String output="Account of user named: " + call.getContextRef().getLastSegment();
+        call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
       }
     }
 ;
-    usersMaplet.attach("/[a-z]+",userMaplet);
+    userMaplet.attach("$",accountRestlet);
     Restlet ordersRestlet=new AbstractRestlet(myContainer){
       public void handleGet(      Call call){
         List<String> segments=call.getContextRef().getSegments();
