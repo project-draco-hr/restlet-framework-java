@@ -1,0 +1,27 @@
+{
+  if (isStarted()) {
+    return;
+  }
+  if (Protocols.HTTPS.equals(super.protocol)) {
+    throw new UnsupportedOperationException("HTTPS is currenly not supported");
+  }
+ else   if (Protocols.HTTP.equals(super.protocol)) {
+    if (transport == null) {
+      transport=new NIOTransport();
+      transport.setPort(super.port);
+      transport.setServiceContainer(this);
+    }
+  }
+ else {
+    throw new RuntimeException("Unsupported protocol: " + super.protocol);
+  }
+  try {
+    transport.start();
+  }
+ catch (  TransportException ex) {
+    logger.log(Level.WARNING,"Failed to start the transport",ex);
+    throw new ContainerLifecycleException("Failed to start the transport",ex);
+  }
+  this.confidential=Protocols.HTTPS.equals(super.protocol);
+  super.started=true;
+}
