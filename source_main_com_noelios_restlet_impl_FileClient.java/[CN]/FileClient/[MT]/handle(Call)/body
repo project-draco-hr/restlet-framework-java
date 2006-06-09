@@ -1,5 +1,5 @@
 {
-  FileReference fr=new FileReference(call.getResourcePath());
+  FileReference fr=new FileReference(call.getResourceRef());
   File file=null;
   if (fr.getScheme().equalsIgnoreCase("file")) {
     file=fr.getFile();
@@ -13,6 +13,7 @@
       if (file.isDirectory()) {
         File[] files=file.listFiles();
         ReferenceList rl=new ReferenceList(files.length);
+        rl.setListRef(fr);
         for (        File entry : files) {
           try {
             rl.add(new FileReference(entry));
@@ -114,7 +115,7 @@
               call.setStatus(Statuses.SUCCESS_NO_CONTENT);
             }
  else {
-              ByteUtils.write(call.getInput().getStream(),new FileOutputStream(tmp));
+              ByteUtils.write(call.getInput().getStream(),new FileOutputStream(file));
               call.setStatus(Statuses.SUCCESS_OK);
             }
           }
@@ -144,7 +145,7 @@ catch (        IOException ioe) {
           call.setStatus(new DefaultStatus(Statuses.SERVER_ERROR_INTERNAL,"Couldn't delete the empty directory"));
         }
  else {
-          call.setStatus(new DefaultStatus(Statuses.SERVER_ERROR_INTERNAL,"Couldn't delete the non-empty directory"));
+          call.setStatus(new DefaultStatus(Statuses.CLIENT_ERROR_FORBIDDEN,"Couldn't delete the non-empty directory"));
         }
       }
  else {
