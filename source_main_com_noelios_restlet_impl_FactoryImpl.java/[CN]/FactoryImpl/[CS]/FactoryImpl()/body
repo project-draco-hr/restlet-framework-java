@@ -1,6 +1,6 @@
 {
-  this.clients=new TreeMap<Protocol,Class<? extends Client>>();
-  this.servers=new TreeMap<Protocol,Class<? extends Server>>();
+  this.clients=new ArrayList<Client>();
+  this.servers=new ArrayList<Server>();
   String providerName=null;
   String providerClassName=null;
   ClassLoader cl=Thread.currentThread().getContextClassLoader();
@@ -19,13 +19,7 @@
  else {
             try {
               Class<? extends Client> providerClass=(Class<? extends Client>)Class.forName(providerClassName);
-              java.lang.reflect.Method getMethod=providerClass.getMethod("getProtocols",(Class[])null);
-              List<Protocol> supportedProtocols=(List<Protocol>)getMethod.invoke(null,(Object[])null);
-              for (              Protocol protocol : supportedProtocols) {
-                if (!this.clients.containsKey(protocol)) {
-                  this.clients.put(protocol,providerClass);
-                }
-              }
+              this.clients.add(providerClass.newInstance());
             }
  catch (            Exception e) {
               logger.log(Level.SEVERE,"Unable to register the client connector " + providerClassName,e);
@@ -59,13 +53,7 @@
  else {
         try {
           Class<? extends Server> providerClass=(Class<? extends Server>)Class.forName(providerClassName);
-          java.lang.reflect.Method getMethod=providerClass.getMethod("getProtocols",(Class[])null);
-          List<Protocol> supportedProtocols=(List<Protocol>)getMethod.invoke(null,(Object[])null);
-          for (          Protocol protocol : supportedProtocols) {
-            if (!this.servers.containsKey(protocol)) {
-              this.servers.put(protocol,providerClass);
-            }
-          }
+          this.servers.add(providerClass.newInstance());
         }
  catch (        Exception e) {
           logger.log(Level.SEVERE,"Unable to register the server connector " + providerClassName,e);

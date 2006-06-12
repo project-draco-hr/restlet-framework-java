@@ -1,12 +1,11 @@
 {
-  if (!isStarted()) {
-    return;
+  if (isStarted()) {
+    try {
+      transport.stop();
+      this.started=false;
+    }
+ catch (    TransportException ex) {
+      logger.log(Level.WARNING,"Failed to stop transport",ex);
+    }
   }
-  try {
-    transport.stop();
-  }
- catch (  TransportException ex) {
-    logger.log(Level.WARNING,"Failed to stop transport",ex);
-  }
-  super.started=false;
 }

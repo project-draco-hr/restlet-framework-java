@@ -26,21 +26,7 @@
       }
  else {
         output=new FileRepresentation(file,getDefaultMediaType(),getTimeToLive());
-        String[] tokens=file.getName().split("\\.");
-        Metadata metadata;
-        for (int j=1; j < tokens.length; j++) {
-          metadata=getMetadata(tokens[j]);
-          if (metadata instanceof MediaType)           output.getMetadata().setMediaType((MediaType)metadata);
-          if (metadata instanceof CharacterSet)           output.getMetadata().setCharacterSet((CharacterSet)metadata);
-          if (metadata instanceof Encoding)           output.getMetadata().setEncoding((Encoding)metadata);
-          if (metadata instanceof Language)           output.getMetadata().setLanguage((Language)metadata);
-          int dashIndex=tokens[j].indexOf('-');
-          if ((metadata == null) && (dashIndex != -1)) {
-            String primaryPart=tokens[j].substring(0,dashIndex);
-            metadata=getMetadata(primaryPart);
-            if (metadata instanceof Language)             output.getMetadata().setLanguage((Language)metadata);
-          }
-        }
+        updateMetadata(file.getName(),output.getMetadata());
       }
       call.setOutput(output);
       call.setStatus(Statuses.SUCCESS_OK);

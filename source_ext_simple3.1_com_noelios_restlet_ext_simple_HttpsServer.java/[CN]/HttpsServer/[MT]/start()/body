@@ -1,0 +1,17 @@
+{
+  if (!isStarted()) {
+    KeyStore keyStore=KeyStore.getInstance("JKS");
+    keyStore.load(new FileInputStream(keystorePath),keystorePassword.toCharArray());
+    KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance("SunX509");
+    keyManagerFactory.init(keyStore,keyPassword.toCharArray());
+    SSLContext sslContext=SSLContext.getInstance("TLS");
+    sslContext.init(keyManagerFactory.getKeyManagers(),null,null);
+    socket=sslContext.getServerSocketFactory().createServerSocket(port);
+    socket.setSoTimeout(60000);
+    this.confidential=true;
+    this.handler=PipelineHandlerFactory.getInstance(this,20,200);
+    this.connection=ConnectionFactory.getConnection(handler,new BufferedPipelineFactory());
+    this.connection.connect(socket);
+    super.start();
+  }
+}

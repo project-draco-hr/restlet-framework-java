@@ -4,10 +4,10 @@
     String smtpHost=smtpURI.getHost();
     int smtpPort=smtpURI.getPort();
     if (smtpPort == -1) {
-      if ((getProtocol().equals(Protocols.SMTP)) || (getProtocol().equals(Protocols.SMTP_STARTTLS))) {
+      if ((getProtocols().equals(Protocols.SMTP)) || (getProtocols().equals(Protocols.SMTP_STARTTLS))) {
         smtpPort=25;
       }
- else       if (getProtocol().equals(Protocols.SMTPS)) {
+ else       if (getProtocols().equals(Protocols.SMTPS)) {
         smtpPort=465;
       }
     }
@@ -41,15 +41,15 @@
     Properties props=System.getProperties();
     SecurityData sd=call.getSecurity();
     boolean authenticate=((sd.getLogin() != null) && (sd.getPassword() != null));
-    if (getProtocol().equals(Protocols.SMTP) || getProtocol().equals(Protocols.SMTP_STARTTLS)) {
+    if (getProtocols().equals(Protocols.SMTP) || getProtocols().equals(Protocols.SMTP_STARTTLS)) {
       props.put("mail.smtp.host",smtpHost);
       props.put("mail.smtp.port",Integer.toString(smtpPort));
       props.put("mail.smtp.auth",Boolean.toString(authenticate).toLowerCase());
-      props.put("mail.smtp.starttls.enable",Boolean.toString(getProtocol().equals(Protocols.SMTP_STARTTLS)).toLowerCase());
+      props.put("mail.smtp.starttls.enable",Boolean.toString(getProtocols().equals(Protocols.SMTP_STARTTLS)).toLowerCase());
       session=Session.getDefaultInstance(props);
       transport=session.getTransport("smtp");
     }
- else     if (getProtocol().equals(Protocols.SMTPS)) {
+ else     if (getProtocols().equals(Protocols.SMTPS)) {
       props.put("mail.smtps.host",smtpHost);
       props.put("mail.smtps.port",Integer.toString(smtpPort));
       props.put("mail.smtps.auth",Boolean.toString(authenticate).toLowerCase());
