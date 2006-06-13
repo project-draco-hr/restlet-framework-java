@@ -1,0 +1,16 @@
+{
+  if (call.getMethod().equals(Methods.GET) || call.getMethod().equals(Methods.HEAD)) {
+    getOwner().callClient(getContextName(),call);
+  }
+ else   if (call.getMethod().equals(Methods.PUT) || call.getMethod().equals(Methods.DELETE)) {
+    if (isReadOnly()) {
+      call.setStatus(Statuses.CLIENT_ERROR_FORBIDDEN);
+    }
+ else {
+      getOwner().callClient(getContextName(),call);
+    }
+  }
+ else {
+    call.setStatus(Statuses.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+  }
+}
