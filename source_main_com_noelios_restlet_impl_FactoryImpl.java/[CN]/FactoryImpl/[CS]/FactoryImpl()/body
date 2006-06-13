@@ -19,7 +19,7 @@
  else {
             try {
               Class<? extends Client> providerClass=(Class<? extends Client>)Class.forName(providerClassName);
-              this.clients.add(providerClass.newInstance());
+              this.clients.add(providerClass.getConstructor(Component.class,ParameterList.class).newInstance(null,null));
             }
  catch (            Exception e) {
               logger.log(Level.SEVERE,"Unable to register the client connector " + providerClassName,e);
@@ -53,7 +53,7 @@
  else {
         try {
           Class<? extends Server> providerClass=(Class<? extends Server>)Class.forName(providerClassName);
-          this.servers.add(providerClass.newInstance());
+          this.servers.add(providerClass.getConstructor(Component.class,ParameterList.class,String.class,int.class).newInstance(null,null,null,new Integer(-1)));
         }
  catch (        Exception e) {
           logger.log(Level.SEVERE,"Unable to register the server connector " + providerClassName,e);
