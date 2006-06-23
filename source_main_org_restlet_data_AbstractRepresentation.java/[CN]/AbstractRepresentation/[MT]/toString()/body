@@ -1,11 +1,18 @@
 {
   String result=null;
-  try {
-    ByteArrayOutputStream baos=new ByteArrayOutputStream();
-    write(baos);
-    result=baos.toString();
-  }
- catch (  Exception ioe) {
+  if (isContentAvailable()) {
+    try {
+      ByteArrayOutputStream baos=new ByteArrayOutputStream();
+      write(baos);
+      if (getCharacterSet() != null) {
+        result=baos.toString(getCharacterSet().getName());
+      }
+ else {
+        result=baos.toString();
+      }
+    }
+ catch (    Exception ioe) {
+    }
   }
   return result;
 }

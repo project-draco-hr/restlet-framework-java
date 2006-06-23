@@ -1,51 +1,33 @@
 {
-  T genericCall=(T)call;
-  if (call.getMethod().equals(Methods.GET)) {
-    handleGet(genericCall);
+  Method method=call.getMethod();
+  if (method == null) {
+    handleOthers(call);
   }
- else   if (call.getMethod().equals(Methods.POST)) {
-    handlePost(genericCall);
+ else   if (method.equals(Methods.GET)) {
+    handleGet(call);
   }
- else   if (call.getMethod().equals(Methods.PUT)) {
-    handlePut(genericCall);
+ else   if (method.equals(Methods.POST)) {
+    handlePost(call);
   }
- else   if (call.getMethod().equals(Methods.DELETE)) {
-    handleDelete(genericCall);
+ else   if (method.equals(Methods.PUT)) {
+    handlePut(call);
   }
- else   if (call.getMethod().equals(Methods.HEAD)) {
-    handleHead(genericCall);
+ else   if (method.equals(Methods.DELETE)) {
+    handleDelete(call);
   }
- else   if (call.getMethod().equals(Methods.CONNECT)) {
-    handleConnect(genericCall);
+ else   if (method.equals(Methods.HEAD)) {
+    handleHead(call);
   }
- else   if (call.getMethod().equals(Methods.OPTIONS)) {
-    handleOptions(genericCall);
+ else   if (method.equals(Methods.CONNECT)) {
+    handleConnect(call);
   }
- else   if (call.getMethod().equals(Methods.TRACE)) {
-    handleTrace(genericCall);
+ else   if (method.equals(Methods.OPTIONS)) {
+    handleOptions(call);
   }
- else   if (call.getMethod().equals(Methods.MOVE)) {
-    handleMove(genericCall);
-  }
- else   if (call.getMethod().equals(Methods.COPY)) {
-    handleCopy(genericCall);
-  }
- else   if (call.getMethod().equals(Methods.LOCK)) {
-    handleLock(genericCall);
-  }
- else   if (call.getMethod().equals(Methods.MKCOL)) {
-    handleMakeCollection(genericCall);
-  }
- else   if (call.getMethod().equals(Methods.PROPFIND)) {
-    handleFindProperties(genericCall);
-  }
- else   if (call.getMethod().equals(Methods.PROPPATCH)) {
-    handlePatchProperties(genericCall);
-  }
- else   if (call.getMethod().equals(Methods.UNLOCK)) {
-    handleUnlock(genericCall);
+ else   if (method.equals(Methods.TRACE)) {
+    handleTrace(call);
   }
  else {
-    defaultHandle(genericCall);
+    handleOthers(call);
   }
 }
