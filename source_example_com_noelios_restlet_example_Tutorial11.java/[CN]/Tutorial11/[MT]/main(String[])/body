@@ -3,28 +3,28 @@
     RestletContainer myContainer=new RestletContainer();
     myContainer.addServer("HTTP Server",Protocols.HTTP,8182);
     myContainer.addClient("File Client",Protocols.FILE);
-    LogChainlet log=new LogChainlet(myContainer,"com.noelios.restlet.example");
+    LogFilter log=new LogFilter(myContainer,"com.noelios.restlet.example");
     myContainer.attach(log);
-    StatusChainlet status=new StatusChainlet(myContainer,true,"webmaster@mysite.org","http://www.mysite.org");
+    StatusFilter status=new StatusFilter(myContainer,true,"webmaster@mysite.org","http://www.mysite.org");
     log.attach(status);
-    HostMaplet host=new HostMaplet(myContainer,8182);
+    HostRouter host=new HostRouter(myContainer,8182);
     status.attach(host);
-    GuardChainlet guard=new GuardChainlet(myContainer,"com.noelios.restlet.example",true,ChallengeSchemes.HTTP_BASIC,"Restlet tutorial",true);
+    GuardFilter guard=new GuardFilter(myContainer,"com.noelios.restlet.example",true,ChallengeSchemes.HTTP_BASIC,"Restlet tutorial",true);
     guard.getAuthorizations().put("scott","tiger");
     host.attach("/docs/",guard);
-    DirectoryRestlet dirRestlet=new DirectoryRestlet(myContainer,"file:///D:/Restlet/www/docs/api/",true,"index");
-    guard.attach(dirRestlet);
-    Maplet userMaplet=new DefaultMaplet(myContainer);
-    host.attach("/users/[a-z]+",userMaplet);
-    Restlet accountRestlet=new AbstractRestlet(){
+    DirectoryRestlet directory=new DirectoryRestlet(myContainer,"file:///D:/Restlet/www/docs/api/",true,"index");
+    guard.attach(directory);
+    Router user=new DefaultRouter(myContainer);
+    host.attach("/users/[a-z]+",user);
+    Restlet account=new AbstractRestlet(){
       public void handleGet(      Call call){
         String output="Account of user named: " + call.getContextRef().getLastSegment();
         call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
       }
     }
 ;
-    userMaplet.attach("$",accountRestlet);
-    Restlet ordersRestlet=new AbstractRestlet(myContainer){
+    user.attach("$",account);
+    Restlet orders=new AbstractRestlet(myContainer){
       public void handleGet(      Call call){
         List<String> segments=call.getContextRef().getSegments();
         String output="Orders of user named: " + segments.get(segments.size() - 2);
@@ -32,7 +32,7 @@
       }
     }
 ;
-    userMaplet.attach("/orders$",ordersRestlet);
+    user.attach("/orders$",orders);
     myContainer.start();
   }
  catch (  Exception e) {

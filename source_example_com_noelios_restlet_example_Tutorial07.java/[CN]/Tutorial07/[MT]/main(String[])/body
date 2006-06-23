@@ -3,12 +3,12 @@
     RestletContainer myContainer=new RestletContainer();
     myContainer.addServer("HTTP Server",Protocols.HTTP,8182);
     myContainer.addClient("File Client",Protocols.FILE);
-    LogChainlet log=new LogChainlet(myContainer,"com.noelios.restlet.example");
+    LogFilter log=new LogFilter(myContainer,"com.noelios.restlet.example");
     myContainer.attach(log);
-    HostMaplet host=new HostMaplet(myContainer,8182);
+    HostRouter host=new HostRouter(myContainer,8182);
     log.attach(host);
-    DirectoryRestlet dirRestlet=new DirectoryRestlet(myContainer,"file:///D:/Restlet/www/docs/api/",true,"index");
-    host.attach("/",dirRestlet);
+    DirectoryRestlet directory=new DirectoryRestlet(myContainer,"file:///D:/Restlet/www/docs/api/",true,"index");
+    host.attach("/",directory);
     myContainer.start();
   }
  catch (  Exception e) {

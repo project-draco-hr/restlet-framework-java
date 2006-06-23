@@ -2,8 +2,8 @@
   try {
     RestletContainer myContainer=new RestletContainer();
     myContainer.addServer("My connector",Protocols.HTTP,9876);
-    HostMaplet rootMaplet=new HostMaplet(myContainer,9876);
-    myContainer.attach(rootMaplet);
+    HostRouter host=new HostRouter(myContainer,9876);
+    myContainer.attach(host);
     Restlet testRestlet=new AbstractRestlet(myContainer){
       public void handlePut(      Call call){
         System.out.println("Handling the call...");
@@ -24,7 +24,7 @@
       }
     }
 ;
-    rootMaplet.attach("/test",testRestlet);
+    host.attach("/test",testRestlet);
     myContainer.start();
   }
  catch (  Exception e) {

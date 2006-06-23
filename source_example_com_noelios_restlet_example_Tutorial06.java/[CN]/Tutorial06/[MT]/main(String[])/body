@@ -3,10 +3,10 @@
     RestletContainer myContainer=new RestletContainer();
     myContainer.addServer("HTTP Server",Protocols.HTTP,8182);
     myContainer.addClient("File Client",Protocols.FILE);
-    HostMaplet rootMaplet=new HostMaplet(myContainer,8182);
-    myContainer.attach(rootMaplet);
-    DirectoryRestlet dirRestlet=new DirectoryRestlet(myContainer,"file:///D:/Restlet/www/docs/api/",true,"index");
-    rootMaplet.attach("/",dirRestlet);
+    HostRouter host=new HostRouter(myContainer,8182);
+    myContainer.attach(host);
+    DirectoryRestlet directory=new DirectoryRestlet(myContainer,"file:///D:/Restlet/www/docs/api/",true,"index");
+    host.attach("/",directory);
     myContainer.start();
   }
  catch (  Exception e) {

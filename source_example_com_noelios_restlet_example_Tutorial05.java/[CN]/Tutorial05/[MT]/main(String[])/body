@@ -2,8 +2,8 @@
   try {
     RestletContainer myContainer=new RestletContainer();
     myContainer.addServer("HTTP Server",Protocols.HTTP,8182);
-    HostMaplet rootMaplet=new HostMaplet(myContainer,8182);
-    myContainer.attach(rootMaplet);
+    HostRouter host=new HostRouter(myContainer,8182);
+    myContainer.attach(host);
     Restlet myRestlet=new AbstractRestlet(myContainer){
       public void handleGet(      Call call){
         String output="Resource URI:  " + call.getResourceRef() + '\n'+ "Context path:  "+ call.getContextPath()+ '\n'+ "Resource path: "+ call.getResourcePath()+ '\n'+ "Query string:  "+ call.getResourceRef().getQuery();
@@ -11,7 +11,7 @@
       }
     }
 ;
-    rootMaplet.attach("/trace",myRestlet);
+    host.attach("/trace",myRestlet);
     myContainer.start();
   }
  catch (  Exception e) {

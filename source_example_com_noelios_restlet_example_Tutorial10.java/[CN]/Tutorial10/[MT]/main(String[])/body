@@ -2,11 +2,11 @@
   try {
     RestletContainer myContainer=new RestletContainer();
     myContainer.addServer("HTTP Server",Protocols.HTTP,8182);
-    HostMaplet host=new HostMaplet(myContainer,8182);
+    HostRouter host=new HostRouter(myContainer,8182);
     myContainer.attach(host);
     String target="http://www.google.com/search?q=site:mysite.org+${query['query']}";
-    RedirectRestlet searchRedirect=new RedirectRestlet(myContainer,target,RedirectRestlet.MODE_CLIENT_TEMPORARY);
-    host.attach("/search",searchRedirect);
+    RedirectRestlet redirect=new RedirectRestlet(myContainer,target,RedirectRestlet.MODE_CLIENT_TEMPORARY);
+    host.attach("/search",redirect);
     myContainer.start();
   }
  catch (  Exception e) {
