@@ -1,17 +1,17 @@
 {
-  List<RepresentationMetadata> variants=resource.getVariants();
+  List<Representation> variants=resource.getVariants();
   if ((variants == null) || (variants.size() < 1)) {
     setStatus(Statuses.CLIENT_ERROR_NOT_FOUND);
   }
  else {
-    RepresentationMetadata bestVariant=getBestVariant(variants,fallbackLanguage);
+    Representation bestVariant=getBestVariant(variants,fallbackLanguage);
     if (bestVariant == null) {
       setStatus(Statuses.CLIENT_ERROR_NOT_ACCEPTABLE);
     }
  else {
       Date modifiedSince=(getCondition() == null) ? null : getCondition().getModifiedSince();
       if ((modifiedSince == null) || DateUtils.after(modifiedSince,bestVariant.getModificationDate())) {
-        setOutput(resource.getRepresentation(bestVariant));
+        setOutput(bestVariant);
         setStatus(Statuses.SUCCESS_OK);
       }
  else {

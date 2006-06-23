@@ -4,8 +4,8 @@
     for (int i=0; i < cookies.size(); i++) {
       getResponseHeaders().add(ConnectorCall.HEADER_SET_COOKIE,CookieUtils.format(cookies.get(i)));
     }
-    if (call.getRedirectionRef() != null) {
-      getResponseHeaders().add(HEADER_LOCATION,call.getRedirectionRef().toString());
+    if (call.getOutputRef() != null) {
+      getResponseHeaders().add(HEADER_LOCATION,call.getOutputRef().toString());
     }
     if (call.getSecurity().getChallengeRequest() != null) {
       getResponseHeaders().add(HEADER_WWW_AUTHENTICATE,SecurityUtils.format(call.getSecurity().getChallengeRequest()));
@@ -15,28 +15,28 @@
       setResponseStatus(call.getStatus().getCode(),call.getStatus().getDescription());
     }
     if (call.getOutput() != null) {
-      RepresentationMetadata meta=call.getOutput().getMetadata();
-      if (meta.getExpirationDate() != null) {
-        getResponseHeaders().add(HEADER_EXPIRES,formatDate(meta.getExpirationDate(),false));
+      Representation output=call.getOutput();
+      if (output.getExpirationDate() != null) {
+        getResponseHeaders().add(HEADER_EXPIRES,formatDate(output.getExpirationDate(),false));
       }
-      if ((meta.getEncoding() != null) && (!meta.getEncoding().equals(Encodings.IDENTITY))) {
-        getResponseHeaders().add(HEADER_CONTENT_ENCODING,meta.getEncoding().getName());
+      if ((output.getEncoding() != null) && (!output.getEncoding().equals(Encodings.IDENTITY))) {
+        getResponseHeaders().add(HEADER_CONTENT_ENCODING,output.getEncoding().getName());
       }
-      if (meta.getLanguage() != null) {
-        getResponseHeaders().add(HEADER_CONTENT_LANGUAGE,meta.getLanguage().getName());
+      if (output.getLanguage() != null) {
+        getResponseHeaders().add(HEADER_CONTENT_LANGUAGE,output.getLanguage().getName());
       }
-      if (meta.getMediaType() != null) {
-        StringBuilder contentType=new StringBuilder(meta.getMediaType().getName());
-        if (meta.getCharacterSet() != null) {
-          contentType.append("; charset=").append(meta.getCharacterSet().getName());
+      if (output.getMediaType() != null) {
+        StringBuilder contentType=new StringBuilder(output.getMediaType().getName());
+        if (output.getCharacterSet() != null) {
+          contentType.append("; charset=").append(output.getCharacterSet().getName());
         }
         getResponseHeaders().add(HEADER_CONTENT_TYPE,contentType.toString());
       }
-      if (meta.getModificationDate() != null) {
-        getResponseHeaders().add(HEADER_LAST_MODIFIED,formatDate(meta.getModificationDate(),false));
+      if (output.getModificationDate() != null) {
+        getResponseHeaders().add(HEADER_LAST_MODIFIED,formatDate(output.getModificationDate(),false));
       }
-      if (meta.getTag() != null) {
-        getResponseHeaders().add(HEADER_ETAG,meta.getTag().getName());
+      if (output.getTag() != null) {
+        getResponseHeaders().add(HEADER_ETAG,output.getTag().getName());
       }
       if (call.getOutput().getSize() != Representation.UNKNOWN_SIZE) {
         getResponseHeaders().add(HEADER_CONTENT_LENGTH,Long.toString(call.getOutput().getSize()));

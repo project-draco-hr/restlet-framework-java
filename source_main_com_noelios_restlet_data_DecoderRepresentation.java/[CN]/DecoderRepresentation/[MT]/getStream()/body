@@ -1,19 +1,19 @@
 {
   InputStream result=null;
-  if (getEncoding().equals(Encodings.GZIP)) {
-    result=new GZIPInputStream(this.wrappedRepresentation.getStream());
-  }
- else   if (getEncoding().equals(Encodings.DEFLATE)) {
-    result=new InflaterInputStream(this.wrappedRepresentation.getStream());
-  }
- else   if (getEncoding().equals(Encodings.ZIP)) {
-    result=new ZipInputStream(this.wrappedRepresentation.getStream());
-  }
- else   if (getEncoding().equals(Encodings.IDENTITY)) {
-    throw new IOException("Decoder unecessary for identity decoding");
-  }
- else {
-    throw new IOException("Unsupported decoding");
+  if (canDecode()) {
+    Encoding we=getWrappedRepresentation().getEncoding();
+    if (we.equals(Encodings.GZIP)) {
+      result=new GZIPInputStream(getWrappedRepresentation().getStream());
+    }
+ else     if (we.equals(Encodings.DEFLATE)) {
+      result=new InflaterInputStream(getWrappedRepresentation().getStream());
+    }
+ else     if (we.equals(Encodings.ZIP)) {
+      result=new ZipInputStream(getWrappedRepresentation().getStream());
+    }
+ else     if (we.equals(Encodings.IDENTITY)) {
+      throw new IOException("Decoder unecessary for identity decoding");
+    }
   }
   return result;
 }

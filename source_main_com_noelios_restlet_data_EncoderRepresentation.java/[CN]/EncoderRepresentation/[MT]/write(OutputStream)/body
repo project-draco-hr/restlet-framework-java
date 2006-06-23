@@ -1,20 +1,26 @@
 {
-  DeflaterOutputStream encoderOutputStream=null;
-  if (getEncoding().equals(Encodings.GZIP)) {
-    encoderOutputStream=new GZIPOutputStream(outputStream);
-  }
- else   if (getEncoding().equals(Encodings.DEFLATE)) {
-    encoderOutputStream=new DeflaterOutputStream(outputStream);
-  }
- else   if (getEncoding().equals(Encodings.ZIP)) {
-    encoderOutputStream=new ZipOutputStream(outputStream);
-  }
- else   if (getEncoding().equals(Encodings.IDENTITY)) {
-    throw new IOException("Encoder unecessary for identity encoding");
+  if (canEncode()) {
+    DeflaterOutputStream encoderOutputStream=null;
+    if (getEncoding().equals(Encodings.GZIP)) {
+      encoderOutputStream=new GZIPOutputStream(outputStream);
+    }
+ else     if (getEncoding().equals(Encodings.DEFLATE)) {
+      encoderOutputStream=new DeflaterOutputStream(outputStream);
+    }
+ else     if (getEncoding().equals(Encodings.ZIP)) {
+      encoderOutputStream=new ZipOutputStream(outputStream);
+    }
+ else     if (getEncoding().equals(Encodings.IDENTITY)) {
+    }
+    if (encoderOutputStream != null) {
+      getWrappedRepresentation().write(encoderOutputStream);
+      encoderOutputStream.finish();
+    }
+ else {
+      getWrappedRepresentation().write(outputStream);
+    }
   }
  else {
-    throw new IOException("Unsupported encoding");
+    getWrappedRepresentation().write(outputStream);
   }
-  this.wrappedRepresentation.write(encoderOutputStream);
-  encoderOutputStream.finish();
 }

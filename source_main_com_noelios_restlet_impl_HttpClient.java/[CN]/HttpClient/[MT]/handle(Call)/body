@@ -67,14 +67,14 @@
       if (call.getInput().getSize() > 0) {
         clientCall.getRequestHeaders().add(ConnectorCall.HEADER_CONTENT_LENGTH,Long.toString(call.getInput().getSize()));
       }
-      if (call.getInput().getMetadata().getMediaType() != null) {
-        clientCall.getRequestHeaders().add(ConnectorCall.HEADER_CONTENT_TYPE,call.getInput().getMetadata().getMediaType().toString());
+      if (call.getInput().getMediaType() != null) {
+        clientCall.getRequestHeaders().add(ConnectorCall.HEADER_CONTENT_TYPE,call.getInput().getMediaType().toString());
       }
-      if (call.getInput().getMetadata().getEncoding() != null) {
-        clientCall.getRequestHeaders().add(ConnectorCall.HEADER_CONTENT_ENCODING,call.getInput().getMetadata().getEncoding().toString());
+      if (call.getInput().getEncoding() != null) {
+        clientCall.getRequestHeaders().add(ConnectorCall.HEADER_CONTENT_ENCODING,call.getInput().getEncoding().toString());
       }
-      if (call.getInput().getMetadata().getLanguage() != null) {
-        clientCall.getRequestHeaders().add(ConnectorCall.HEADER_CONTENT_LANGUAGE,call.getInput().getMetadata().getLanguage().toString());
+      if (call.getInput().getLanguage() != null) {
+        clientCall.getRequestHeaders().add(ConnectorCall.HEADER_CONTENT_LANGUAGE,call.getInput().getLanguage().toString());
       }
     }
   }
@@ -114,7 +114,7 @@ catch (  Exception e) {
     call.setConnectorCall(clientCall);
     for (    Parameter header : clientCall.getResponseHeaders()) {
       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_LOCATION)) {
-        call.setRedirectionRef(header.getValue());
+        call.setOutputRef(header.getValue());
       }
  else       if ((header.getName().equalsIgnoreCase(ConnectorCall.HEADER_SET_COOKIE)) || (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_SET_COOKIE2))) {
         try {
