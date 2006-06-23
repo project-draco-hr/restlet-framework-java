@@ -1,0 +1,38 @@
+{
+  this.directory=directory;
+  logger.info("Context base path: " + basePath);
+  StringBuilder filePath=new StringBuilder();
+  int lastIndex=-1;
+  if (!basePath.equals(".")) {
+    char nextChar;
+    for (int i=0; i < basePath.length(); i++) {
+      nextChar=basePath.charAt(i);
+      if (nextChar == '/') {
+        lastIndex=i;
+        filePath.append(File.separatorChar);
+      }
+ else {
+        filePath.append(nextChar);
+      }
+    }
+  }
+  this.basePath=filePath.toString();
+  if (new File(this.basePath).isDirectory()) {
+    if (getDirectory().getIndexName() != null) {
+      this.basePath=this.basePath + getDirectory().getIndexName();
+      this.baseName=getDirectory().getIndexName();
+    }
+  }
+ else {
+    if (lastIndex == -1) {
+      this.baseName=basePath;
+    }
+ else {
+      this.baseName=basePath.substring(lastIndex + 1);
+    }
+  }
+  int dotIndex=this.baseName.indexOf('.');
+  if (dotIndex != -1)   this.baseName=this.baseName.substring(0,dotIndex);
+  logger.info("Converted base path: " + this.basePath);
+  logger.info("Converted base name: " + this.baseName);
+}
