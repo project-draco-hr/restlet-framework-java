@@ -1,16 +1,22 @@
 {
   logger.info("Getting variants for : " + getBasePath());
   List<Representation> result=super.getVariants();
-  getDirectory().getContextClient().get(getBasePath());
-  File baseDirectory=new File(getBasePath()).getParentFile();
-  if (baseDirectory != null) {
-    File[] files=baseDirectory.listFiles();
-    File currentFile=null;
-    for (int i=0; (files != null) && (i < files.length); i++) {
-      currentFile=files[i];
-      if (currentFile.getAbsolutePath().startsWith(getBasePath())) {
+  if (getBasePath().startsWith("/")) {
+    int lastSlashIndex=getBasePath().lastIndexOf('/');
+    String directoryPath=getBasePath().substring(0,lastSlashIndex + 1);
+    getDirectory().getContextClient().get(directoryPath);
+    File baseDirectory=new File(getBasePath()).getParentFile();
+    if (baseDirectory != null) {
+      File[] files=baseDirectory.listFiles();
+      File currentFile=null;
+      for (int i=0; (files != null) && (i < files.length); i++) {
+        currentFile=files[i];
+        if (currentFile.getAbsolutePath().startsWith(getBasePath())) {
+        }
       }
     }
+  }
+ else {
   }
   return result;
 }

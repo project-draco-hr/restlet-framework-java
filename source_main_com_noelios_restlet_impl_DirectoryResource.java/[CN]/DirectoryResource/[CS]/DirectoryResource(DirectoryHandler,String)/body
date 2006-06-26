@@ -1,40 +1,27 @@
 {
   this.directory=directory;
-  logger.info("Directory resource's base path: " + basePath);
-  StringBuilder filePath=new StringBuilder();
-  int lastIndex=-1;
-  if (!basePath.equals(".")) {
-    char nextChar;
-    for (int i=0; i < basePath.length(); i++) {
-      nextChar=basePath.charAt(i);
-      if (nextChar == '/') {
-        lastIndex=i;
-        filePath.append(File.separatorChar);
-      }
- else {
-        filePath.append(nextChar);
-      }
-    }
+  this.baseUri=new Reference(directory.getRootUri() + resourcePath).getTargetRef().toString();
+  if (!this.baseUri.startsWith(directory.getRootUri())) {
+    this.baseUri=directory.getRootUri();
   }
-  this.basePath=filePath.toString();
-  Call call=getDirectory().getContextClient().get(this.basePath);
+  Call call=getDirectory().getContextClient().get(this.baseUri);
   boolean isDirectory=(call.getOutput() != null) && (call.getOutput().getMediaType().equals(MediaTypes.TEXT_URI_LIST));
   if (isDirectory) {
     if (getDirectory().getIndexName() != null) {
-      this.basePath=this.basePath + getDirectory().getIndexName();
+      this.baseUri=this.baseUri + getDirectory().getIndexName();
       this.baseName=getDirectory().getIndexName();
     }
   }
  else {
     if (lastIndex == -1) {
-      this.baseName=basePath;
+      this.baseName=baseUri;
     }
  else {
-      this.baseName=basePath.substring(lastIndex + 1);
+      this.baseName=baseUri.substring(lastIndex + 1);
     }
   }
   int dotIndex=this.baseName.indexOf('.');
   if (dotIndex != -1)   this.baseName=this.baseName.substring(0,dotIndex);
-  logger.info("Converted base path: " + this.basePath);
+  logger.info("Converted base path: " + this.baseUri);
   logger.info("Converted base name: " + this.baseName);
 }
