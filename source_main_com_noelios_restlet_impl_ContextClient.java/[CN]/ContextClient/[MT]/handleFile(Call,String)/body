@@ -1,19 +1,12 @@
 {
-  FileReference fr=new FileReference(call.getResourceRef());
-  File file=null;
-  if (fr.getScheme().equalsIgnoreCase("file")) {
-    file=fr.getFile();
-  }
- else {
-    throw new IllegalArgumentException("Only FILE resource URIs are allowed here");
-  }
+  File file=new File(path);
   if (call.getMethod().equals(Methods.GET) || call.getMethod().equals(Methods.HEAD)) {
     if ((file != null) && file.exists()) {
       Representation output=null;
       if (file.isDirectory()) {
         File[] files=file.listFiles();
         ReferenceList rl=new ReferenceList(files.length);
-        rl.setListRef(fr);
+        rl.setListRef(call.getResourceRef());
         for (        File entry : files) {
           try {
             rl.add(new FileReference(entry));
@@ -75,7 +68,7 @@
       }
     }
  else {
-      if (fr.getPath().endsWith("/")) {
+      if (path.endsWith("/")) {
         if (file.mkdirs()) {
           call.setStatus(Statuses.SUCCESS_NO_CONTENT);
         }

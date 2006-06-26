@@ -1,6 +1,6 @@
 {
   this.directory=directory;
-  logger.info("Context base path: " + basePath);
+  logger.info("Directory resource's base path: " + basePath);
   StringBuilder filePath=new StringBuilder();
   int lastIndex=-1;
   if (!basePath.equals(".")) {
@@ -17,7 +17,9 @@
     }
   }
   this.basePath=filePath.toString();
-  if (new File(this.basePath).isDirectory()) {
+  Call call=getDirectory().getContextClient().get(this.basePath);
+  boolean isDirectory=(call.getOutput() != null) && (call.getOutput().getMediaType().equals(MediaTypes.TEXT_URI_LIST));
+  if (isDirectory) {
     if (getDirectory().getIndexName() != null) {
       this.basePath=this.basePath + getDirectory().getIndexName();
       this.baseName=getDirectory().getIndexName();
