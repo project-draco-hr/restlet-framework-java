@@ -32,6 +32,11 @@ synchronized (ServerServlet.class) {
                   component.getClients().remove(ContextClient.DEFAULT_NAME);
                   component.addClient(ContextClient.DEFAULT_NAME,new ServletContextClient(component,null,getServletContext()));
                   log("[Noelios Restlet Engine] - The special ServletContextClient has been set on the target component under this name: " + ContextClient.DEFAULT_NAME);
+                  String name;
+                  for (Enumeration names=getServletContext().getInitParameterNames(); names.hasMoreElements(); ) {
+                    name=(String)names.nextElement();
+                    component.getParameters().add(name,getServletContext().getInitParameter(name));
+                  }
                 }
               }
               result.start();
