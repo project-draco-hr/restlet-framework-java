@@ -1,23 +1,47 @@
 {
-  logger.info("Getting variants for : " + getBasePath());
   List<Representation> result=super.getVariants();
-  if (getBasePath().startsWith("/")) {
-    int lastSlashIndex=getBasePath().lastIndexOf('/');
-    String directoryPath=getBasePath().substring(0,lastSlashIndex + 1);
-    getDirectory().getContextClient().get(directoryPath);
-    File baseDirectory=new File(getBasePath()).getParentFile();
-    if (baseDirectory != null) {
-      File[] files=baseDirectory.listFiles();
-      File currentFile=null;
-      for (int i=0; (files != null) && (i < files.length); i++) {
-        currentFile=files[i];
-        if (currentFile.getAbsolutePath().startsWith(getBasePath())) {
+  logger.info("Getting variants for : " + getTargetUri());
+  if (this.directoryContent != null) {
+    Call call=getDirectory().getContextClient().get(getDirectoryUri());
+    if ((call.getOutput() != null) && call.getOutput().getMediaType().equals(MediaTypes.TEXT_URI_LIST)) {
+      try {
+        Set<String> extensions=null;
+        String entryUri;
+        String fullEntryName;
+        String baseEntryName;
+        int lastSlashIndex;
+        int firstDotIndex;
+        for (        Reference ref : new ReferenceList(call.getOutput())) {
+          entryUri=ref.toString();
+          lastSlashIndex=entryUri.lastIndexOf('/');
+          fullEntryName=(lastSlashIndex == -1) ? entryUri : entryUri.substring(lastSlashIndex + 1);
+          firstDotIndex=fullEntryName.indexOf('.');
+          if (firstDotIndex != -1) {
+            baseEntryName=fullEntryName.substring(0,firstDotIndex);
+          }
+ else {
+            baseEntryName=fullEntryName;
+          }
+          if (baseEntryName.equals(this.baseName)) {
+            extensions=getExtensions(fullEntryName);
+            if (((extensions == null) && (this.baseExtensions == null)) || (this.baseExtensions == null) || extensions.containsAll(this.baseExtensions)) {
+              call=getDirectory().getContextClient().get(entryUri);
+              if (call.getStatus().isSuccess() && (call.getOutput() != null)) {
+                result.add(call.getOutput());
+              }
+            }
+          }
+        }
+        if (result.size() == 0) {
+          if (getDirectory().isListingAllowed()) {
+            result=getDirectory().getDirectoryVariants(this.directoryContent);
+          }
         }
       }
+ catch (      IOException e) {
+        logger.log(Level.WARNING,"Exception while looking up the list of variant representations for: " + this.targetUri);
+      }
     }
-  }
- else {
-    logger.warning("Unable to find the variant representations for: " + getBasePath());
   }
   return result;
 }
