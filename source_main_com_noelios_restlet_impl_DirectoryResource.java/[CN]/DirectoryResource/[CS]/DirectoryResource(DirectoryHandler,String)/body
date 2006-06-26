@@ -5,19 +5,20 @@
     this.baseUri=directory.getRootUri();
   }
   Call call=getDirectory().getContextClient().get(this.baseUri);
-  boolean isDirectory=(call.getOutput() != null) && (call.getOutput().getMediaType().equals(MediaTypes.TEXT_URI_LIST));
-  if (isDirectory) {
+  if ((call.getOutput() != null) && call.getOutput().getMediaType().equals(MediaTypes.TEXT_URI_LIST)) {
+    this.directoryContent=new ReferenceList(call.getOutput());
     if (getDirectory().getIndexName() != null) {
       this.baseUri=this.baseUri + getDirectory().getIndexName();
       this.baseName=getDirectory().getIndexName();
     }
   }
  else {
-    if (lastIndex == -1) {
+    int lastSlashIndex=baseUri.lastIndexOf('/');
+    if (lastSlashIndex == -1) {
       this.baseName=baseUri;
     }
  else {
-      this.baseName=baseUri.substring(lastIndex + 1);
+      this.baseName=baseUri.substring(lastSlashIndex + 1);
     }
   }
   int dotIndex=this.baseName.indexOf('.');

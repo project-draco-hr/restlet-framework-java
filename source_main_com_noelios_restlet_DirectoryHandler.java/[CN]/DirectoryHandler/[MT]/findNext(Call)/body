@@ -1,3 +1,9 @@
 {
-  return new DirectoryResource(this,call.getResourcePath());
+  try {
+    return new DirectoryResource(this,call.getResourcePath());
+  }
+ catch (  IOException ioe) {
+    logger.log(Level.WARNING,"Unable to find the directory's resource",ioe);
+    return null;
+  }
 }
