@@ -1,0 +1,20 @@
+{
+  float result=0F;
+  String resourcePath=call.getResourcePath();
+  Matcher matcher=getPattern().matcher(resourcePath);
+  boolean matched=matcher.lookingAt();
+  if (logger.isLoggable(Level.FINER)) {
+    logger.finer("Attempting to match this pattern: " + getPattern().toString() + " >> "+ matched);
+  }
+  if (matched) {
+    float totalLength=resourcePath.length();
+    if (totalLength > 0.0F) {
+      float matchedLength=matcher.end();
+      result=getRouter().getRequiredScore() + (1.0F - getRouter().getRequiredScore()) * (matchedLength / totalLength);
+    }
+ else {
+      result=1.0F;
+    }
+  }
+  return result;
+}

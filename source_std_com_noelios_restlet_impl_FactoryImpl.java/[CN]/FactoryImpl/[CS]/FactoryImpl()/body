@@ -1,0 +1,67 @@
+{
+  this.clients=new ArrayList<Client>();
+  this.servers=new ArrayList<Server>();
+  String providerName=null;
+  String providerClassName=null;
+  ClassLoader cl=Thread.currentThread().getContextClassLoader();
+  URL configURL;
+  try {
+    for (Enumeration<URL> configUrls=cl.getResources("meta-inf/services/org.restlet.connector.Client"); configUrls.hasMoreElements(); ) {
+      configURL=configUrls.nextElement();
+      try {
+        BufferedReader reader=new BufferedReader(new InputStreamReader(configURL.openStream(),"utf-8"));
+        providerName=reader.readLine();
+        while (providerName != null) {
+          providerClassName=providerName.substring(0,providerName.indexOf('#')).trim();
+          if (providerClassName == null) {
+            logger.log(Level.SEVERE,"Unable to process the following connector provider: " + providerName + ". Please check your JAR file metadata.");
+          }
+ else {
+            try {
+              Class<? extends Client> providerClass=(Class<? extends Client>)Class.forName(providerClassName);
+              this.clients.add(providerClass.getConstructor(Component.class,ParameterList.class).newInstance(null,null));
+            }
+ catch (            Exception e) {
+              logger.log(Level.SEVERE,"Unable to register the client connector " + providerClassName,e);
+            }
+          }
+          providerName=reader.readLine();
+        }
+      }
+ catch (      Exception e) {
+        logger.log(Level.SEVERE,"Unable to read the provider descriptor: " + configURL.toString());
+      }
+    }
+  }
+ catch (  IOException ioe) {
+    logger.log(Level.SEVERE,"Exception while detecting the client connectors.",ioe);
+  }
+  try {
+    for (Enumeration<URL> configUrls=cl.getResources("meta-inf/services/org.restlet.connector.Server"); configUrls.hasMoreElements(); ) {
+      configURL=configUrls.nextElement();
+      try {
+        BufferedReader reader=new BufferedReader(new InputStreamReader(configURL.openStream(),"utf-8"));
+        providerName=reader.readLine();
+        providerClassName=providerName.substring(0,providerName.indexOf('#')).trim();
+      }
+ catch (      Exception e) {
+        logger.log(Level.SEVERE,"Unable to read the provider descriptor: " + configURL.toString());
+      }
+      if (providerClassName == null) {
+        logger.log(Level.SEVERE,"Unable to process the following connector provider: " + providerName + ". Please check your JAR file metadata.");
+      }
+ else {
+        try {
+          Class<? extends Server> providerClass=(Class<? extends Server>)Class.forName(providerClassName);
+          this.servers.add(providerClass.getConstructor(Component.class,ParameterList.class,String.class,int.class).newInstance(null,null,null,new Integer(-1)));
+        }
+ catch (        Exception e) {
+          logger.log(Level.SEVERE,"Unable to register the server connector " + providerClassName,e);
+        }
+      }
+    }
+  }
+ catch (  IOException ioe) {
+    logger.log(Level.SEVERE,"Exception while detecting the client connectors.",ioe);
+  }
+}

@@ -1,0 +1,13 @@
+{
+  if (this.security == null) {
+    this.security=new SecurityData();
+    if (getConnectorCall().isConfidential()) {
+      getSecurity().setConfidential(true);
+    }
+ else {
+    }
+    String authorization=getConnectorCall().getRequestHeaders().getValues(ConnectorCall.HEADER_AUTHORIZATION);
+    getSecurity().setChallengeResponse(SecurityUtils.parseResponse(authorization));
+  }
+  return this.security;
+}

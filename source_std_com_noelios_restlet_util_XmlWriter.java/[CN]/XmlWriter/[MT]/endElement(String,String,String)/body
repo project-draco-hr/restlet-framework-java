@@ -1,0 +1,21 @@
+{
+  if (isDataFormat()) {
+    depth--;
+    if (state == SEEN_ELEMENT) {
+      characters(false,"\n");
+      doIndent();
+    }
+  }
+  write("</");
+  writeName(uri,localName,qName,true);
+  write('>');
+  if (elementLevel == 1) {
+    write('\n');
+  }
+  super.endElement(uri,localName,qName);
+  nsSupport.popContext();
+  elementLevel--;
+  if (isDataFormat()) {
+    state=stateStack.pop();
+  }
+}

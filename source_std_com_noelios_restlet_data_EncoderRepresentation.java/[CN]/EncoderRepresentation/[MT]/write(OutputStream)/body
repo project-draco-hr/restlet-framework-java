@@ -1,0 +1,26 @@
+{
+  if (canEncode()) {
+    DeflaterOutputStream encoderOutputStream=null;
+    if (getEncoding().equals(Encodings.GZIP)) {
+      encoderOutputStream=new GZIPOutputStream(outputStream);
+    }
+ else     if (getEncoding().equals(Encodings.DEFLATE)) {
+      encoderOutputStream=new DeflaterOutputStream(outputStream);
+    }
+ else     if (getEncoding().equals(Encodings.ZIP)) {
+      encoderOutputStream=new ZipOutputStream(outputStream);
+    }
+ else     if (getEncoding().equals(Encodings.IDENTITY)) {
+    }
+    if (encoderOutputStream != null) {
+      getWrappedRepresentation().write(encoderOutputStream);
+      encoderOutputStream.finish();
+    }
+ else {
+      getWrappedRepresentation().write(outputStream);
+    }
+  }
+ else {
+    getWrappedRepresentation().write(outputStream);
+  }
+}

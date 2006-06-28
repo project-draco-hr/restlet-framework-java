@@ -1,0 +1,36 @@
+{
+  String instruction=template.subSequence(tokenStart,tokenEnd).toString();
+  logger.log(Level.FINER,"processInstruction: " + instruction,buffer);
+  if (instruction.startsWith("if ")) {
+    String condition=template.subSequence(tokenStart + 3,tokenEnd).toString();
+    if (evaluateCondition(condition,model)) {
+      textState=TEXT_APPEND;
+    }
+ else {
+      textState=TEXT_SKIP;
+    }
+  }
+ else   if (instruction.startsWith("else if ")) {
+    if (textState == TEXT_SKIP) {
+      String condition=template.subSequence(tokenStart + 4,tokenEnd).toString();
+      if (evaluateCondition(condition,model)) {
+        textState=TEXT_APPEND;
+      }
+    }
+  }
+ else   if (instruction.equals("else")) {
+    if (textState == TEXT_SKIP) {
+      textState=TEXT_APPEND;
+    }
+ else     if (textState == TEXT_APPEND) {
+      textState=TEXT_SKIP;
+    }
+  }
+ else   if (instruction.equals("end")) {
+    textState=TEXT_APPEND;
+  }
+ else {
+    logger.log(Level.WARNING,"Unsupported instruction ignored: ",instruction);
+  }
+  return textState;
+}

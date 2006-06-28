@@ -1,0 +1,23 @@
+{
+  if (acceptCharsetHeader != null) {
+    if (acceptCharsetHeader.length() == 0) {
+      preference.getCharacterSets().add(new CharacterSetPref(CharacterSets.ISO_8859_1));
+    }
+ else {
+      try {
+        PreferenceReader pr=new PreferenceReader(PreferenceReader.TYPE_CHARACTER_SET,acceptCharsetHeader);
+        CharacterSetPref currentPref=(CharacterSetPref)pr.readPreference();
+        while (currentPref != null) {
+          preference.getCharacterSets().add(currentPref);
+          currentPref=(CharacterSetPref)pr.readPreference();
+        }
+      }
+ catch (      IOException ioe) {
+        throw new IllegalArgumentException("An exception occured during character set preferences parsing. Header: " + acceptCharsetHeader + ". Ignoring header.");
+      }
+    }
+  }
+ else {
+    preference.getCharacterSets().add(new CharacterSetPref(CharacterSets.ALL));
+  }
+}
