@@ -10,11 +10,11 @@
     status.setTarget(host);
     GuardFilter guard=new GuardFilter(myContainer,"com.noelios.restlet.example",true,ChallengeSchemes.HTTP_BASIC,"Restlet tutorial",true);
     guard.getAuthorizations().put("scott","tiger");
-    host.attach("/docs/",guard);
+    host.addOption("/docs/",guard);
     DirectoryHandler directory=new DirectoryHandler(myContainer,"file:///D:/Restlet/standard/www/docs/api/",true,"index");
     guard.setTarget(directory);
     Router user=new DefaultRouter(myContainer);
-    host.attach("/users/[a-z]+",user);
+    host.addOption("/users/[a-z]+",user);
     Restlet account=new AbstractRestlet(){
       public void handleGet(      Call call){
         String output="Account of user named: " + call.getContextRef().getLastSegment();
@@ -22,7 +22,7 @@
       }
     }
 ;
-    user.attach("$",account);
+    user.addOption("$",account);
     Restlet orders=new AbstractRestlet(myContainer){
       public void handleGet(      Call call){
         List<String> segments=call.getContextRef().getSegments();
@@ -31,7 +31,7 @@
       }
     }
 ;
-    user.attach("/orders$",orders);
+    user.addOption("/orders$",orders);
     myContainer.start();
   }
  catch (  Exception e) {
