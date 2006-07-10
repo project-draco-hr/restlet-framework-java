@@ -1,0 +1,29 @@
+{
+  String resourcePath=call.getResourcePath();
+  Matcher matcher=getPattern().matcher(resourcePath);
+  boolean matched=matcher.lookingAt();
+  if (logger.isLoggable(Level.FINER)) {
+    logger.finer("Attempting to match this pattern: " + getPattern().toString() + " >> "+ matched);
+  }
+  if (matched) {
+    if (logger.isLoggable(Level.FINER)) {
+      logger.finer("A matching target was found");
+    }
+    String oldContextPath=call.getContextPath();
+    String newContextPath=resourcePath.substring(0,matcher.end());
+    if (oldContextPath == null) {
+      call.setContextPath(newContextPath);
+    }
+ else {
+      call.setContextPath(oldContextPath + newContextPath);
+    }
+    if (logger.isLoggable(Level.FINE)) {
+      logger.fine("New context path: " + call.getContextPath());
+      logger.fine("New resource path: " + call.getResourcePath());
+    }
+    if (logger.isLoggable(Level.FINE)) {
+      logger.fine("Delegating the call to the target Restlet");
+    }
+    super.handle(call);
+  }
+}

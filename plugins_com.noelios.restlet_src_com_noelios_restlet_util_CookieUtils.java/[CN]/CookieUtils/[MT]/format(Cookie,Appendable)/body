@@ -1,0 +1,30 @@
+{
+  String name=cookie.getName();
+  String value=cookie.getValue();
+  int version=cookie.getVersion();
+  if ((name == null) || (name.length() == 0)) {
+    throw new IllegalArgumentException("Can't write cookie. Invalid name detected");
+  }
+ else {
+    try {
+      appendValue(name,0,destination).append('=');
+      if ((value != null) && (value.length() > 0)) {
+        appendValue(value,version,destination);
+      }
+      if (version > 0) {
+        String path=cookie.getPath();
+        if ((path != null) && (path.length() > 0)) {
+          destination.append("; $Path=");
+          HeaderUtils.appendQuote(path,destination);
+        }
+        String domain=cookie.getDomain();
+        if ((domain != null) && (domain.length() > 0)) {
+          destination.append("; $Domain=");
+          HeaderUtils.appendQuote(domain,destination);
+        }
+      }
+    }
+ catch (    IOException e) {
+    }
+  }
+}
