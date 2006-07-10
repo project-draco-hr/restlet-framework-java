@@ -1,0 +1,31 @@
+{
+  if (call.getMethod().equals(Methods.GET) || call.getMethod().equals(Methods.HEAD)) {
+    String basePath=call.getResourceRef().toString();
+    int lastSlashIndex=basePath.lastIndexOf('/');
+    String entry=(lastSlashIndex == -1) ? basePath : basePath.substring(lastSlashIndex + 1);
+    Representation output=null;
+    if (basePath.endsWith("/")) {
+      Set entries=getContext().getResourcePaths(basePath);
+      ReferenceList rl=new ReferenceList(entries.size());
+      rl.setListRef(call.getResourceRef());
+      for (Iterator iter=entries.iterator(); iter.hasNext(); ) {
+        entry=(String)iter.next();
+        rl.add(new Reference(basePath + entry.substring(basePath.length())));
+      }
+      output=rl.getRepresentation();
+    }
+ else {
+      output=new InputRepresentation(getContext().getResourceAsStream(basePath),getDefaultMediaType());
+      updateMetadata(entry,output);
+      String mediaType=getContext().getMimeType(basePath);
+      if (mediaType != null) {
+        output.setMediaType(new DefaultMediaType(mediaType));
+      }
+    }
+    call.setOutput(output);
+    call.setStatus(Statuses.SUCCESS_OK);
+  }
+ else {
+    call.setStatus(Statuses.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+  }
+}

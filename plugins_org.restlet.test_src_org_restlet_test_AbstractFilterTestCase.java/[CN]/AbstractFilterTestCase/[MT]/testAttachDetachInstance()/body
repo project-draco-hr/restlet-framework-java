@@ -1,0 +1,13 @@
+{
+  Filter filter=getFilter();
+  assertFalse(filter.hasTarget());
+  filter.setTarget(getRestlet());
+  filter.start();
+  assertTrue(filter.isStarted());
+  assertFalse(filter.isStopped());
+  Call call=getCall();
+  filter.handle(call);
+  assertTrue(filter.hasTarget());
+  filter.setTarget(null);
+  assertFalse(filter.hasTarget());
+}

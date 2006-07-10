@@ -1,0 +1,16 @@
+{
+  try {
+    String text="Test content\r\nLine 2\r\nLine2";
+    Client fc=new DefaultClient(Protocols.FILE);
+    FileReference fr=new FileReference(File.createTempFile("Restlet",".txt"));
+    Call call=fc.put(fr.toString(),new StringRepresentation(text));
+    assertTrue(call.getStatus().equals(Statuses.SUCCESS_OK));
+    call=fc.get(fr.toString());
+    assertTrue(call.getStatus().equals(Statuses.SUCCESS_OK));
+    call=fc.delete(fr.toString());
+    assertTrue(call.getStatus().equals(Statuses.SUCCESS_NO_CONTENT));
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+}
