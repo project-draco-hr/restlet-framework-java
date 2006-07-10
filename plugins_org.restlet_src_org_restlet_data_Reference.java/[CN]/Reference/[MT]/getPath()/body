@@ -1,0 +1,30 @@
+{
+  String result=null;
+  String part=isRelative() ? getRelativePart() : getSchemeSpecificPart();
+  if (part != null) {
+    if (part.startsWith("//")) {
+      int index1=part.indexOf('/',2);
+      if (index1 != -1) {
+        int index2=part.indexOf('?');
+        if (index2 != -1) {
+          result=part.substring(index1,index2);
+        }
+ else {
+          result=part.substring(index1);
+        }
+      }
+ else {
+      }
+    }
+ else {
+      int index=part.indexOf('?');
+      if (index != -1) {
+        result=part.substring(0,index);
+      }
+ else {
+        result=part;
+      }
+    }
+  }
+  return result;
+}
