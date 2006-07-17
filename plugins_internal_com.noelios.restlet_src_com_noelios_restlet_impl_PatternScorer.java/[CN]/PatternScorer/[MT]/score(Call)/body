@@ -3,9 +3,6 @@
   String resourcePath=call.getResourcePath();
   Matcher matcher=getPattern().matcher(resourcePath);
   boolean matched=matcher.lookingAt();
-  if (logger.isLoggable(Level.FINER)) {
-    logger.finer("Attempting to match this pattern: " + getPattern().toString() + " >> "+ matched);
-  }
   if (matched) {
     float totalLength=resourcePath.length();
     if (totalLength > 0.0F) {
@@ -15,6 +12,9 @@
  else {
       result=1.0F;
     }
+  }
+  if (logger.isLoggable(Level.FINER)) {
+    logger.finer("Scoring this pattern: " + getPattern().toString() + " >> "+ result);
   }
   return result;
 }
