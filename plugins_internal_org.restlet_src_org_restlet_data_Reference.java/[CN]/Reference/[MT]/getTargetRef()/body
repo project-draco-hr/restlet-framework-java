@@ -1,10 +1,7 @@
 {
   Reference result=null;
   String scheme=getScheme();
-  if (scheme != null) {
-    result=new Reference(this);
-  }
- else {
+  if ((scheme == null) && (baseRef != null)) {
     String authority=getAuthority();
     String path=getPath();
     String query=getQuery();
@@ -52,6 +49,9 @@
       }
     }
     result.setFragment(fragment);
+  }
+ else {
+    result=new Reference(this);
   }
   result.normalize();
   return result;
