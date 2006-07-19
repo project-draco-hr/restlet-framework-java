@@ -1,3 +1,13 @@
 {
-  getResponse().setStatus(code);
+  if (Statuses.isError(code)) {
+    try {
+      getResponse().sendError(code,reason);
+    }
+ catch (    IOException ioe) {
+      logger.log(Level.WARNING,"Unable to set the response error status",ioe);
+    }
+  }
+ else {
+    getResponse().setStatus(code);
+  }
 }
