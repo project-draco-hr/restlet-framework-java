@@ -1,15 +1,19 @@
 {
-  HttpsListener httpsListener=null;
+  HttpsListener listener=null;
   if (this.address != null) {
-    httpsListener=new HttpsListener(this,new InetAddrPort(this.address,this.port));
+    listener=new HttpsListener(this,new InetAddrPort(this.address,this.port));
   }
  else {
-    httpsListener=new HttpsListener(this);
-    httpsListener.setPort(port);
+    listener=new HttpsListener(this);
+    listener.setPort(port);
   }
-  httpsListener.setKeystore(this.keystorePath);
-  httpsListener.setPassword(this.keystorePassword);
-  httpsListener.setKeyPassword(this.keyPassword);
-  this.listener=httpsListener;
+  listener.setMinThreads(getMinThreads());
+  listener.setMaxThreads(getMaxThreads());
+  listener.setLowResourcePersistTimeMs(getLowResourcePersistTimeMs());
+  listener.setMaxIdleTimeMs(getMaxIdleTimeMs());
+  listener.setKeystore(getKeystorePath());
+  listener.setPassword(getKeystorePassword());
+  listener.setKeyPassword(getKeyPassword());
+  this.listener=listener;
   super.start();
 }
