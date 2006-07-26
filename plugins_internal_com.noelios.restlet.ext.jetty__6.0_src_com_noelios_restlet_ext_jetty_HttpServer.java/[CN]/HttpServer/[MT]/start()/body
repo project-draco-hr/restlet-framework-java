@@ -1,6 +1,6 @@
 {
   if (!isStarted()) {
-    Connector connector=null;
+    AbstractConnector connector=null;
 switch (getType()) {
 case 1:
       connector=new SelectChannelConnector();
@@ -12,8 +12,7 @@ case 3:
 connector=new SocketConnector();
 break;
 }
-if (address != null) connector.setHost(this.address);
-connector.setPort(this.port);
+configure(connector);
 this.wrappedServer.addConnector(connector);
 super.start();
 }
