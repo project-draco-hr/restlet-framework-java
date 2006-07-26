@@ -1,10 +1,10 @@
 {
   if (!isStarted()) {
-    KeyStore keyStore=KeyStore.getInstance("JKS");
+    KeyStore keyStore=KeyStore.getInstance(getKeystoreType());
     keyStore.load(new FileInputStream(getKeystorePath()),getKeystorePassword().toCharArray());
-    KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance("SunX509");
+    KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(getCertAlgorithm());
     keyManagerFactory.init(keyStore,getKeyPassword().toCharArray());
-    SSLContext sslContext=SSLContext.getInstance("TLS");
+    SSLContext sslContext=SSLContext.getInstance(getSslProtocol());
     sslContext.init(keyManagerFactory.getKeyManagers(),null,null);
     socket=sslContext.getServerSocketFactory().createServerSocket(port);
     socket.setSoTimeout(60000);
