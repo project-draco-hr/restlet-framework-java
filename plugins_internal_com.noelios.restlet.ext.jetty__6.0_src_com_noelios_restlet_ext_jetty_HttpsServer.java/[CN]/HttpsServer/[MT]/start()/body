@@ -1,0 +1,16 @@
+{
+  if (!isStarted()) {
+    SslSocketConnector connector=new SslSocketConnector();
+    if (address != null)     connector.setHost(this.address);
+    connector.setPort(this.port);
+    connector.setAlgorithm(getCertAlgorithm());
+    connector.setKeyPassword(getKeyPassword());
+    connector.setKeystore(getKeystorePath());
+    connector.setKeystoreType(getKeystoreType());
+    connector.setPassword(getKeystorePassword());
+    connector.setProtocol(getSslProtocol());
+    connector.setProvider(getSecurityProvider());
+    this.wrappedServer.addConnector(connector);
+    super.start();
+  }
+}

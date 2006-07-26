@@ -1,9 +1,20 @@
 {
   if (!isStarted()) {
-    Connector connector=new SelectChannelConnector();
-    if (address != null)     connector.setHost(this.address);
-    connector.setPort(this.port);
-    this.wrappedServer.addConnector(connector);
-    super.start();
-  }
+    Connector connector=null;
+switch (getType()) {
+case 1:
+      connector=new SelectChannelConnector();
+    break;
+case 2:
+  connector=new BlockingChannelConnector();
+break;
+case 3:
+connector=new SocketConnector();
+break;
+}
+if (address != null) connector.setHost(this.address);
+connector.setPort(this.port);
+this.wrappedServer.addConnector(connector);
+super.start();
+}
 }
