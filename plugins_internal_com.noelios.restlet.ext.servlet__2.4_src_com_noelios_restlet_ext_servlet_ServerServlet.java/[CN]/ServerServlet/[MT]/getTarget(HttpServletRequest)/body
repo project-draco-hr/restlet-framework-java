@@ -2,17 +2,17 @@
   Restlet result=this.target;
   if (result == null) {
 synchronized (ServerServlet.class) {
-      String targetAttributeName=findInitParameter(NAME_TARGET_ATTRIBUTE);
+      String targetAttributeName=getParameters().getFirstValue(NAME_TARGET_ATTRIBUTE);
       if (targetAttributeName != null) {
         result=(Restlet)getServletContext().getAttribute(targetAttributeName);
         if (result == null) {
-          String targetClassName=findInitParameter(NAME_TARGET_CLASS);
+          String targetClassName=getParameters().getFirstValue(NAME_TARGET_CLASS);
           if (targetClassName != null) {
             try {
               Class targetClass=Class.forName(targetClassName);
               result=(Restlet)targetClass.newInstance();
               getServletContext().setAttribute(NAME_TARGET_ATTRIBUTE,result);
-              String initContextPathName=findInitParameter(NAME_TARGET_INIT_CONTEXTPATH);
+              String initContextPathName=getParameters().getFirstValue(NAME_TARGET_INIT_CONTEXTPATH);
               if (initContextPathName != null) {
                 Component component=null;
                 if (result instanceof Component) {
