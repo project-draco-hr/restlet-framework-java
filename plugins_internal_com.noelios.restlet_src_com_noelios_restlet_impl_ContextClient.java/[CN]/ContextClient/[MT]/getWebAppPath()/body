@@ -1,3 +1,19 @@
 {
+  if (this.webAppPath == null) {
+    this.webAppPath=getParameters().getFirstValue("webAppPath",System.getProperty("user.home") + File.separator + "restlet.war");
+    File file=new File(this.webAppPath);
+    if (file.exists()) {
+      if (file.isDirectory()) {
+        this.webAppArchive=false;
+        if (webAppPath.endsWith("/"))         this.webAppPath=this.webAppPath.substring(0,this.webAppPath.length() - 1);
+      }
+ else {
+        this.webAppArchive=true;
+      }
+    }
+ else {
+      logger.warning("Unable to find an existing directory or archive at: " + this.webAppPath);
+    }
+  }
   return this.webAppPath;
 }
