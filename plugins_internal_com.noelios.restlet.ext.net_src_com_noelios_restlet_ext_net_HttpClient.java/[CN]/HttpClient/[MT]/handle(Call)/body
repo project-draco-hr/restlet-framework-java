@@ -2,8 +2,8 @@
   AbstractHttpClientCall clientCall=null;
   try {
     clientCall=createCall(call.getMethod().getName(),call.getResourceRef().toString(),hasInput(call));
-    if (call.getClientName() != null) {
-      clientCall.getRequestHeaders().add(ConnectorCall.HEADER_USER_AGENT,call.getClientName());
+    if (call.getClient().getName() != null) {
+      clientCall.getRequestHeaders().add(ConnectorCall.HEADER_USER_AGENT,call.getClient().getName());
     }
  else {
       clientCall.getRequestHeaders().add(ConnectorCall.HEADER_USER_AGENT,Factory.VERSION_HEADER);
@@ -40,21 +40,21 @@
     if (call.getReferrerRef() != null) {
       clientCall.getRequestHeaders().add(ConnectorCall.HEADER_REFERRER,call.getReferrerRef().toString());
     }
-    PreferenceData pref=call.getPreference();
-    if (pref.getMediaTypes().size() > 0) {
-      clientCall.getRequestHeaders().add(ConnectorCall.HEADER_ACCEPT,PreferenceUtils.format(pref.getMediaTypes()));
+    ClientData client=call.getClient();
+    if (client.getMediaTypePrefs().size() > 0) {
+      clientCall.getRequestHeaders().add(ConnectorCall.HEADER_ACCEPT,PreferenceUtils.format(client.getMediaTypePrefs()));
     }
  else {
       clientCall.getRequestHeaders().add(ConnectorCall.HEADER_ACCEPT,MediaTypes.ALL.getName());
     }
-    if (pref.getCharacterSets().size() > 0) {
-      clientCall.getRequestHeaders().add(ConnectorCall.HEADER_ACCEPT_CHARSET,PreferenceUtils.format(pref.getCharacterSets()));
+    if (client.getCharacterSetPrefs().size() > 0) {
+      clientCall.getRequestHeaders().add(ConnectorCall.HEADER_ACCEPT_CHARSET,PreferenceUtils.format(client.getCharacterSetPrefs()));
     }
-    if (pref.getEncodings().size() > 0) {
-      clientCall.getRequestHeaders().add(ConnectorCall.HEADER_ACCEPT_ENCODING,PreferenceUtils.format(pref.getEncodings()));
+    if (client.getEncodingPrefs().size() > 0) {
+      clientCall.getRequestHeaders().add(ConnectorCall.HEADER_ACCEPT_ENCODING,PreferenceUtils.format(client.getEncodingPrefs()));
     }
-    if (pref.getLanguages().size() > 0) {
-      clientCall.getRequestHeaders().add(ConnectorCall.HEADER_ACCEPT_LANGUAGE,PreferenceUtils.format(pref.getLanguages()));
+    if (client.getLanguagePrefs().size() > 0) {
+      clientCall.getRequestHeaders().add(ConnectorCall.HEADER_ACCEPT_LANGUAGE,PreferenceUtils.format(client.getLanguagePrefs()));
     }
     ChallengeResponse response=call.getSecurity().getChallengeResponse();
     if (response != null) {

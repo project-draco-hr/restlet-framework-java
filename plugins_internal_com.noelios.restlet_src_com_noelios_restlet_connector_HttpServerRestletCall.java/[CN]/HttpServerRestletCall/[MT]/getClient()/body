@@ -1,0 +1,26 @@
+{
+  if (this.client == null) {
+    this.client=new ClientData();
+    String acceptCharset=getConnectorCall().getRequestHeaders().getValues(ConnectorCall.HEADER_ACCEPT_CHARSET);
+    String acceptEncoding=getConnectorCall().getRequestHeaders().getValues(ConnectorCall.HEADER_ACCEPT_ENCODING);
+    String acceptLanguage=getConnectorCall().getRequestHeaders().getValues(ConnectorCall.HEADER_ACCEPT_LANGUAGE);
+    String acceptMediaType=getConnectorCall().getRequestHeaders().getValues(ConnectorCall.HEADER_ACCEPT);
+    PreferenceUtils.parseCharacterSets(acceptCharset,this.client);
+    PreferenceUtils.parseEncodings(acceptEncoding,this.client);
+    PreferenceUtils.parseLanguages(acceptLanguage,this.client);
+    PreferenceUtils.parseMediaTypes(acceptMediaType,this.client);
+    this.client.setName(getConnectorCall().getRequestHeaders().getValues(ConnectorCall.HEADER_USER_AGENT));
+    this.client.setAddress(getConnectorCall().getRequestAddress());
+    boolean useForwardedForHeader=Boolean.parseBoolean(this.httpServer.getParameters().getFirstValue("useForwardedForHeader",false));
+    if (useForwardedForHeader) {
+      String header=getConnectorCall().getRequestHeaders().getValues(ConnectorCall.HEADER_X_FORWARDED_FOR);
+      if (header != null) {
+        String[] addresses=header.split(",");
+        for (int i=addresses.length - 1; i >= 0; i--) {
+          this.client.getAddresses().add(addresses[i].trim());
+        }
+      }
+    }
+  }
+  return this.client;
+}
