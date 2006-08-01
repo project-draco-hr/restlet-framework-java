@@ -30,38 +30,6 @@
  else     if (name.equals(NAME_CLIENT_NAME)) {
       result=call.getClient().getName();
     }
- else     if (name.startsWith(NAME_CONNECTOR_REQUEST_HEADER)) {
-      String rest=name.substring(NAME_CONNECTOR_REQUEST_HEADER.length());
-      if ((rest.charAt(0) == '(') && (rest.charAt(rest.length() - 1) == ')')) {
-        rest=rest.substring(1,rest.length() - 1);
-        if (isVariableName(rest)) {
-          rest=getVariableName(rest);
-          result=call.getConnectorCall().getRequestHeaders().getValues(rest);
-        }
- else {
-          result=defaultValue;
-        }
-      }
- else {
-        result=defaultValue;
-      }
-    }
- else     if (name.startsWith(NAME_CONNECTOR_RESPONSE_HEADER)) {
-      String rest=name.substring(NAME_CONNECTOR_RESPONSE_HEADER.length());
-      if ((rest.charAt(0) == '(') && (rest.charAt(rest.length() - 1) == ')')) {
-        rest=rest.substring(1,rest.length() - 1);
-        if (isVariableName(rest)) {
-          rest=getVariableName(rest);
-          result=call.getConnectorCall().getRequestHeaders().getValues(rest);
-        }
- else {
-          result=defaultValue;
-        }
-      }
- else {
-        result=defaultValue;
-      }
-    }
  else     if (name.startsWith(NAME_COOKIE)) {
       String rest=name.substring(NAME_COOKIE.length());
       if ((rest.charAt(0) == '(') && (rest.charAt(rest.length() - 1) == ')')) {
@@ -152,10 +120,10 @@
       result=call.getResourceRef().getUserInfo();
     }
  else     if (name.equals(NAME_SERVER_ADDRESS)) {
-      result=call.getServerAddress();
+      result=call.getServer().getAddress();
     }
  else     if (name.equals(NAME_SERVER_NAME)) {
-      result=call.getServerName();
+      result=call.getServer().getName();
     }
  else     if (name.equals(NAME_STATUS)) {
       result=Integer.toString(call.getStatus().getCode());

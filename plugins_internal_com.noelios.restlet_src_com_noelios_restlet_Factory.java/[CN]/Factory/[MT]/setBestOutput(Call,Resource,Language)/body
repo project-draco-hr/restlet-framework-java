@@ -1,0 +1,22 @@
+{
+  List<Representation> variants=resource.getVariants();
+  if ((variants == null) || (variants.size() < 1)) {
+    call.setStatus(Statuses.CLIENT_ERROR_NOT_FOUND);
+  }
+ else {
+    Representation bestVariant=call.getClient().getBestVariant(variants,fallbackLanguage);
+    if (bestVariant == null) {
+      call.setStatus(Statuses.CLIENT_ERROR_NOT_ACCEPTABLE);
+    }
+ else {
+      Date modifiedSince=(call.getCondition() == null) ? null : call.getCondition().getModifiedSince();
+      if ((modifiedSince == null) || DateUtils.after(modifiedSince,bestVariant.getModificationDate())) {
+        call.setOutput(bestVariant);
+        call.setStatus(Statuses.SUCCESS_OK);
+      }
+ else {
+        call.setStatus(Statuses.REDIRECTION_NOT_MODIFIED);
+      }
+    }
+  }
+}

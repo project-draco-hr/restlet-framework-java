@@ -60,9 +60,6 @@
     if (response != null) {
       clientCall.getRequestHeaders().add(ConnectorCall.HEADER_AUTHORIZATION,SecurityUtils.format(response));
     }
-    for (    Parameter header : call.getConnectorCall().getRequestHeaders()) {
-      clientCall.getRequestHeaders().add(header.getName(),header.getValue());
-    }
     if (hasInput(call)) {
       if (call.getInput().getSize() > 0) {
         clientCall.getRequestHeaders().add(ConnectorCall.HEADER_CONTENT_LENGTH,Long.toString(call.getInput().getSize()));
@@ -110,8 +107,7 @@ catch (  Exception e) {
     call.setStatus(new DefaultStatus(Statuses.CONNECTOR_ERROR_INTERNAL,"Unable to send the HTTP request. " + e.getMessage()));
   }
   try {
-    call.setServerAddress(clientCall.getResponseAddress());
-    call.setConnectorCall(clientCall);
+    call.getServer().setAddress(clientCall.getResponseAddress());
     for (    Parameter header : clientCall.getResponseHeaders()) {
       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_LOCATION)) {
         call.setRedirectRef(header.getValue());
@@ -130,7 +126,7 @@ catch (  Exception e) {
         call.getSecurity().setChallengeRequest(request);
       }
  else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_SERVER)) {
-        call.setServerName(header.getValue());
+        call.getServer().setName(header.getValue());
       }
     }
     call.setOutput(clientCall.getResponseOutput());
