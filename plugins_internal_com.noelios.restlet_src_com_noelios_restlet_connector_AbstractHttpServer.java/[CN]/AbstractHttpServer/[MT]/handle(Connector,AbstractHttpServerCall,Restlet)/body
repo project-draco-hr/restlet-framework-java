@@ -3,5 +3,7 @@
   target.handle(restletCall);
   call.setResponse(restletCall);
   call.sendResponseHeaders();
-  call.sendResponseOutput(restletCall.getOutput());
+  if (!restletCall.getMethod().equals(Methods.HEAD)) {
+    call.sendResponseOutput(restletCall.getOutput());
+  }
 }

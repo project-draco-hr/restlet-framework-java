@@ -1,11 +1,12 @@
 {
-  this.directory=directory;
-  this.targetUri=new Reference(directory.getRootUri() + resourcePath).getTargetRef().toString();
-  if (!this.targetUri.startsWith(directory.getRootUri())) {
-    this.targetUri=directory.getRootUri();
+  this.handler=handler;
+  this.targetUri=new Reference(handler.getRootUri() + resourcePath).getTargetRef().toString();
+  if (!this.targetUri.startsWith(handler.getRootUri())) {
+    this.targetUri=handler.getRootUri();
   }
   Call call=getDirectory().getContextClient().get(this.targetUri);
   if ((call.getOutput() != null) && call.getOutput().getMediaType().equals(MediaTypes.TEXT_URI_LIST)) {
+    this.targetDirectory=true;
     this.directoryContent=new ReferenceList(call.getOutput());
     if (getDirectory().getIndexName() != null) {
       this.directoryUri=this.targetUri;
@@ -14,6 +15,7 @@
     }
   }
  else {
+    this.targetDirectory=false;
     int lastSlashIndex=targetUri.lastIndexOf('/');
     if (lastSlashIndex == -1) {
       this.directoryUri="";
