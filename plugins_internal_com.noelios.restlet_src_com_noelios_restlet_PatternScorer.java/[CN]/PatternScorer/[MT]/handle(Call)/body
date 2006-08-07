@@ -1,22 +1,24 @@
 {
-  String resourcePath=call.getResourcePath();
+  String resourcePath=call.getContext().getRelativePath();
   Matcher matcher=getPattern().matcher(resourcePath);
   boolean matched=matcher.lookingAt();
   if (logger.isLoggable(Level.FINER)) {
     logger.finer("Attempting to match this pattern: " + getPattern().toString() + " >> "+ matched);
   }
   if (matched) {
-    String oldContextPath=call.getContextPath();
-    String newContextPath=resourcePath.substring(0,matcher.end());
-    if (oldContextPath == null) {
-      call.setContextPath(newContextPath);
+    String matchedPath=resourcePath.substring(0,matcher.end());
+    Reference baseRef=call.getContext().getBaseRef();
+    if (baseRef == null) {
+      baseRef=new Reference(call.getResourceRef());
+      baseRef.setPath(matchedPath);
+      call.getContext().setBaseRef(baseRef);
     }
  else {
-      call.setContextPath(oldContextPath + newContextPath);
+      baseRef.setPath(baseRef.getPath() + matchedPath);
     }
     if (logger.isLoggable(Level.FINE)) {
-      logger.fine("New context path: " + call.getContextPath());
-      logger.fine("New resource path: " + call.getResourcePath());
+      logger.fine("New base URI: " + call.getContext().getBaseRef());
+      logger.fine("New relative path: " + call.getContext().getRelativePath());
     }
     if (logger.isLoggable(Level.FINE)) {
       logger.fine("Delegating the call to the target Restlet");

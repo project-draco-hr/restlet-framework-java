@@ -1,4 +1,9 @@
 {
-  this.resourceRef=resourceRef;
-  setContextPath(null);
+  if ((resourceRef != null) && resourceRef.isRelative() && (resourceRef.getBaseRef() != null)) {
+    this.resourceRef=resourceRef.getTargetRef();
+  }
+ else {
+    this.resourceRef=resourceRef.normalize();
+  }
+  getContext().setBaseRef((Reference)null);
 }

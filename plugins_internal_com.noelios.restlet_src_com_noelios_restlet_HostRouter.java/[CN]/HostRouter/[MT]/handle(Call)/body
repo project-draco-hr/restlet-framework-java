@@ -3,11 +3,11 @@
   if (isRedirectClient() || isWarnClient()) {
     if (!call.getResourceRef().toString(false,false).startsWith(getPreferredUri())) {
       if (isRedirectClient()) {
-        call.setRedirectRef(getPreferredUri() + call.getResourcePath());
+        call.setRedirectRef(getPreferredUri() + call.getContext().getRelativeRef());
         call.setStatus(getRedirectStatus());
       }
  else       if (isWarnClient()) {
-        String description="Used this URI instead: " + getPreferredUri() + call.getResourcePath();
+        String description="Used this URI instead: " + getPreferredUri() + call.getContext().getRelativeRef();
         call.setStatus(new DefaultStatus(Statuses.CLIENT_ERROR_BAD_REQUEST,description));
       }
       handle=false;
