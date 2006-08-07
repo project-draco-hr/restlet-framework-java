@@ -2,29 +2,35 @@
   List<Representation> result=super.getVariants();
   logger.info("Getting variants for : " + getTargetUri());
   if (this.directoryContent != null) {
-    Set<String> extensions=null;
-    String entryUri;
-    String fullEntryName;
-    String baseEntryName;
-    int lastSlashIndex;
-    int firstDotIndex;
-    for (    Reference ref : this.directoryContent) {
-      entryUri=ref.toString();
-      lastSlashIndex=entryUri.lastIndexOf('/');
-      fullEntryName=(lastSlashIndex == -1) ? entryUri : entryUri.substring(lastSlashIndex + 1);
-      firstDotIndex=fullEntryName.indexOf('.');
-      if (firstDotIndex != -1) {
-        baseEntryName=fullEntryName.substring(0,firstDotIndex);
-      }
- else {
+    if (this.baseName != null) {
+      Set<String> extensions=null;
+      String entryUri;
+      String fullEntryName;
+      String baseEntryName;
+      int lastSlashIndex;
+      int firstDotIndex;
+      for (      Reference ref : this.directoryContent) {
+        entryUri=ref.toString();
+        lastSlashIndex=entryUri.lastIndexOf('/');
+        fullEntryName=(lastSlashIndex == -1) ? entryUri : entryUri.substring(lastSlashIndex + 1);
         baseEntryName=fullEntryName;
-      }
-      if (baseEntryName.equals(this.baseName)) {
-        extensions=getExtensions(fullEntryName);
-        if (((extensions == null) && (this.baseExtensions == null)) || (this.baseExtensions == null) || extensions.containsAll(this.baseExtensions)) {
-          Call call=getDirectory().getContextClient().get(entryUri);
-          if (call.getStatus().isSuccess() && (call.getOutput() != null)) {
-            result.add(call.getOutput());
+        if (this.handler.isNegotiationEnabled()) {
+          firstDotIndex=fullEntryName.indexOf('.');
+          if (firstDotIndex != -1) {
+            baseEntryName=fullEntryName.substring(0,firstDotIndex);
+          }
+        }
+        if (baseEntryName.equals(this.baseName)) {
+          boolean validVariant=true;
+          if (this.handler.isNegotiationEnabled()) {
+            extensions=getExtensions(fullEntryName);
+            validVariant=(((extensions == null) && (this.baseExtensions == null)) || (this.baseExtensions == null) || extensions.containsAll(this.baseExtensions));
+          }
+          if (validVariant) {
+            Call call=getDirectory().getContextClient().get(entryUri);
+            if (call.getStatus().isSuccess() && (call.getOutput() != null)) {
+              result.add(call.getOutput());
+            }
           }
         }
       }

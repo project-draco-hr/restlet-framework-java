@@ -1,20 +1,20 @@
 {
-  String resourcePath=call.getContext().getRelativePath();
-  Matcher matcher=getPattern().matcher(resourcePath);
+  String relativeRef=call.getContext().getRelativeRef().toString();
+  ;
+  Matcher matcher=getPattern().matcher(relativeRef);
   boolean matched=matcher.lookingAt();
   if (logger.isLoggable(Level.FINER)) {
     logger.finer("Attempting to match this pattern: " + getPattern().toString() + " >> "+ matched);
   }
   if (matched) {
-    String matchedPath=resourcePath.substring(0,matcher.end());
+    String matchedPart=relativeRef.substring(0,matcher.end());
     Reference baseRef=call.getContext().getBaseRef();
     if (baseRef == null) {
-      baseRef=new Reference(call.getResourceRef());
-      baseRef.setPath(matchedPath);
+      baseRef=new Reference(matchedPart);
       call.getContext().setBaseRef(baseRef);
     }
  else {
-      baseRef.setPath(baseRef.getPath() + matchedPath);
+      baseRef=new Reference(baseRef.toString(false,false) + matchedPart);
     }
     if (logger.isLoggable(Level.FINE)) {
       logger.fine("New base URI: " + call.getContext().getBaseRef());

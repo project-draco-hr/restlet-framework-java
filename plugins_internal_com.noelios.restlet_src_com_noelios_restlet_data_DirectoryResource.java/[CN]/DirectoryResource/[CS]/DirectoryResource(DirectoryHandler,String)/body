@@ -1,6 +1,9 @@
 {
   this.handler=handler;
-  this.targetUri=new Reference(handler.getRootUri() + resourcePath).getTargetRef().toString();
+  if (handler.getRootUri().endsWith("/") && resourcePath.startsWith("/")) {
+    resourcePath=resourcePath.substring(1);
+  }
+  this.targetUri=new Reference(handler.getRootUri() + resourcePath).normalize().toString();
   if (!this.targetUri.startsWith(handler.getRootUri())) {
     this.targetUri=handler.getRootUri();
   }
@@ -12,6 +15,10 @@
       this.directoryUri=this.targetUri;
       this.baseName=getDirectory().getIndexName();
       this.targetUri=this.directoryUri + this.baseName;
+    }
+ else {
+      this.directoryUri=this.targetUri;
+      this.baseName=null;
     }
   }
  else {
@@ -30,10 +37,12 @@
       this.directoryContent=new ReferenceList(call.getOutput());
     }
   }
-  int firstDotIndex=this.baseName.indexOf('.');
-  if (firstDotIndex != -1) {
-    this.baseExtensions=getExtensions(this.baseName);
-    this.baseName=this.baseName.substring(0,firstDotIndex);
+  if (this.handler.isNegotiationEnabled()) {
+    int firstDotIndex=this.baseName.indexOf('.');
+    if (firstDotIndex != -1) {
+      this.baseExtensions=getExtensions(this.baseName);
+      this.baseName=this.baseName.substring(0,firstDotIndex);
+    }
   }
   logger.info("Converted base path: " + this.targetUri);
   logger.info("Converted base name: " + this.baseName);
