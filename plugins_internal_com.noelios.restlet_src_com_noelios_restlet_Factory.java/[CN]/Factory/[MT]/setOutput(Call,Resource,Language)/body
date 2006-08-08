@@ -9,8 +9,23 @@
       call.setStatus(Statuses.CLIENT_ERROR_NOT_ACCEPTABLE);
     }
  else {
-      Date modifiedSince=(call.getCondition() == null) ? null : call.getCondition().getModifiedSince();
-      if ((modifiedSince == null) || DateUtils.after(modifiedSince,bestVariant.getModificationDate())) {
+      boolean send=true;
+      if ((call.getCondition().getNoneMatch() != null) && (call.getCondition().getNoneMatch().size() > 0)) {
+        boolean matched=false;
+        if (bestVariant.getTag() != null) {
+          Tag tag;
+          for (Iterator<Tag> iter=call.getCondition().getNoneMatch().iterator(); !matched && iter.hasNext(); ) {
+            tag=iter.next();
+            matched=tag.equals(bestVariant.getTag()) || tag.equals(Tag.ALL);
+          }
+        }
+        send=!matched;
+      }
+ else {
+        Date modifiedSince=call.getCondition().getModifiedSince();
+        send=((modifiedSince == null) || (bestVariant.getModificationDate() == null) || DateUtils.after(modifiedSince,bestVariant.getModificationDate()));
+      }
+      if (send) {
         call.setOutput(bestVariant);
         call.setStatus(Statuses.SUCCESS_OK);
       }
