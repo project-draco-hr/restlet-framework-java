@@ -1,10 +1,10 @@
 {
   float result=0F;
-  String relativeRef=call.getContext().getRelativeRef().toString();
-  Matcher matcher=getPattern().matcher(relativeRef);
+  String remainingRef=getRemainingRef(call);
+  Matcher matcher=getPattern().matcher(remainingRef);
   boolean matched=matcher.lookingAt();
   if (matched) {
-    float totalLength=relativeRef.length();
+    float totalLength=remainingRef.length();
     if (totalLength > 0.0F) {
       float matchedLength=matcher.end();
       result=getRouter().getRequiredScore() + (1.0F - getRouter().getRequiredScore()) * (matchedLength / totalLength);
