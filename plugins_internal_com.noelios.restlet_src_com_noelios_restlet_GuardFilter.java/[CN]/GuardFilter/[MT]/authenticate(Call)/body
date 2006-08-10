@@ -1,11 +1,11 @@
 {
   SecurityData security=call.getSecurity();
   ChallengeResponse resp=security.getChallengeResponse();
-  if (this.scheme.equals(ChallengeSchemes.HTTP_BASIC)) {
+  if (this.scheme.equals(ChallengeScheme.HTTP_BASIC)) {
     if (resp == null) {
       logger.log(Level.INFO,"Authentication failed: no challenge response provided.");
     }
- else     if (resp.getScheme().equals(ChallengeSchemes.HTTP_BASIC)) {
+ else     if (resp.getScheme().equals(ChallengeScheme.HTTP_BASIC)) {
       try {
         String credentials=new String(Base64.decode(resp.getCredentials()),"US-ASCII");
         int separator=credentials.indexOf(':');

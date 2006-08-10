@@ -1,12 +1,12 @@
 {
   try {
     RestletContainer myContainer=new RestletContainer();
-    myContainer.getServers().put("HTTP Server",Protocols.HTTP,8182);
+    myContainer.getServers().put("HTTP Server",Protocol.HTTP,8182);
     LogFilter log=new LogFilter(myContainer,"com.noelios.restlet.example");
     myContainer.setRoot(log);
     StatusFilter status=new StatusFilter(myContainer,true,"webmaster@mysite.org","http://www.mysite.org");
     log.setTarget(status);
-    GuardFilter guard=new GuardFilter(myContainer,"com.noelios.restlet.example",true,ChallengeSchemes.HTTP_BASIC,"Restlet tutorial",true);
+    GuardFilter guard=new GuardFilter(myContainer,"com.noelios.restlet.example",true,ChallengeScheme.HTTP_BASIC,"Restlet tutorial",true);
     guard.getAuthorizations().put("scott","tiger");
     status.setTarget(guard);
     HostRouter host=new HostRouter(myContainer,8182);

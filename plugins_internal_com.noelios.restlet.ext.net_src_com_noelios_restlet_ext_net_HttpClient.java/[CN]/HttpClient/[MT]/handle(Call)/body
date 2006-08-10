@@ -45,7 +45,7 @@
       clientCall.getRequestHeaders().add(ConnectorCall.HEADER_ACCEPT,PreferenceUtils.format(client.getMediaTypePrefs()));
     }
  else {
-      clientCall.getRequestHeaders().add(ConnectorCall.HEADER_ACCEPT,MediaTypes.ALL.getName());
+      clientCall.getRequestHeaders().add(ConnectorCall.HEADER_ACCEPT,MediaType.ALL.getName());
     }
     if (client.getCharacterSetPrefs().size() > 0) {
       clientCall.getRequestHeaders().add(ConnectorCall.HEADER_ACCEPT_CHARSET,PreferenceUtils.format(client.getCharacterSetPrefs()));
@@ -77,34 +77,34 @@
   }
  catch (  Exception e) {
     logger.log(Level.FINE,"An unexpected error occured during the preparation of the HTTP client call.",e);
-    call.setStatus(new DefaultStatus(Statuses.CONNECTOR_ERROR_INTERNAL,"Unable to create the HTTP call and its headers. " + e.getMessage()));
+    call.setStatus(new Status(Status.CONNECTOR_ERROR_INTERNAL,"Unable to create the HTTP call and its headers. " + e.getMessage()));
   }
   try {
     clientCall.sendRequestHeaders();
     if (hasInput(call)) {
       clientCall.sendRequestInput(call.getInput());
     }
-    call.setStatus(new DefaultStatus(clientCall.getResponseStatusCode(),null,clientCall.getResponseReasonPhrase(),null));
+    call.setStatus(new Status(clientCall.getResponseStatusCode(),null,clientCall.getResponseReasonPhrase(),null));
   }
  catch (  ConnectException ce) {
     logger.log(Level.FINE,"An error occured during the connection to the remote HTTP server.",ce);
-    call.setStatus(new DefaultStatus(Statuses.CONNECTOR_ERROR_CONNECTION,"Unable to connect to the remote server. " + ce.getMessage()));
+    call.setStatus(new Status(Status.CONNECTOR_ERROR_CONNECTION,"Unable to connect to the remote server. " + ce.getMessage()));
   }
 catch (  SocketTimeoutException ste) {
     logger.log(Level.FINE,"An timeout error occured during the communication with the remote HTTP server.",ste);
-    call.setStatus(new DefaultStatus(Statuses.CONNECTOR_ERROR_COMMUNICATION,"Unable to complete the HTTP call due to a communication timeout error. " + ste.getMessage()));
+    call.setStatus(new Status(Status.CONNECTOR_ERROR_COMMUNICATION,"Unable to complete the HTTP call due to a communication timeout error. " + ste.getMessage()));
   }
 catch (  FileNotFoundException fnfe) {
     logger.log(Level.FINE,"An unexpected error occured during the sending of the HTTP request.",fnfe);
-    call.setStatus(new DefaultStatus(Statuses.CONNECTOR_ERROR_INTERNAL,"Unable to find a local file for sending. " + fnfe.getMessage()));
+    call.setStatus(new Status(Status.CONNECTOR_ERROR_INTERNAL,"Unable to find a local file for sending. " + fnfe.getMessage()));
   }
 catch (  IOException ioe) {
     logger.log(Level.FINE,"An error occured during the communication with the remote HTTP server.",ioe);
-    call.setStatus(new DefaultStatus(Statuses.CONNECTOR_ERROR_COMMUNICATION,"Unable to complete the HTTP call due to a communication error with the remote server. " + ioe.getMessage()));
+    call.setStatus(new Status(Status.CONNECTOR_ERROR_COMMUNICATION,"Unable to complete the HTTP call due to a communication error with the remote server. " + ioe.getMessage()));
   }
 catch (  Exception e) {
     logger.log(Level.FINE,"An unexpected error occured during the sending of the HTTP request.",e);
-    call.setStatus(new DefaultStatus(Statuses.CONNECTOR_ERROR_INTERNAL,"Unable to send the HTTP request. " + e.getMessage()));
+    call.setStatus(new Status(Status.CONNECTOR_ERROR_INTERNAL,"Unable to send the HTTP request. " + e.getMessage()));
   }
   try {
     call.getServer().setAddress(clientCall.getResponseAddress());
@@ -133,6 +133,6 @@ catch (  Exception e) {
   }
  catch (  Exception e) {
     logger.log(Level.FINE,"An error occured during the processing of the HTTP response.",e);
-    call.setStatus(new DefaultStatus(Statuses.CONNECTOR_ERROR_INTERNAL,"Unable to process the response. " + e.getMessage()));
+    call.setStatus(new Status(Status.CONNECTOR_ERROR_INTERNAL,"Unable to process the response. " + e.getMessage()));
   }
 }

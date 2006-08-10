@@ -1,31 +1,31 @@
 {
   RestletContainer myContainer=new RestletContainer();
-  myContainer.getClients().put("TestClient",Protocols.HTTP);
-  myContainer.getClients().put("ProxyClient",Protocols.HTTP);
+  myContainer.getClients().put("TestClient",Protocol.HTTP);
+  myContainer.getClients().put("ProxyClient",Protocol.HTTP);
   String target="http://localhost:9090${path}#[if query]?${query}#[end]";
   RedirectRestlet proxy=new RedirectRestlet(myContainer,target,RedirectRestlet.MODE_CONNECTOR);
   proxy.setConnectorName("ProxyClient");
   Restlet trace=new AbstractRestlet(myContainer){
     public void handle(    Call call){
       String output="Resource URI:  " + call.getResourceRef() + '\n'+ "Base URI:      "+ call.getContext().getBaseRef()+ '\n'+ "Relative path: "+ call.getContext().getRelativePath()+ '\n'+ "Query string:  "+ call.getResourceRef().getQuery()+ '\n'+ "Method name:   "+ call.getMethod()+ '\n';
-      call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
+      call.setOutput(new StringRepresentation(output,MediaType.TEXT_PLAIN));
     }
   }
 ;
-  myContainer.getServers().put("ProxyServer",new DefaultServer(Protocols.HTTP,proxy,8080));
-  myContainer.getServers().put("OriginServer",new DefaultServer(Protocols.HTTP,trace,9090));
+  myContainer.getServers().put("ProxyServer",new DefaultServer(Protocol.HTTP,proxy,8080));
+  myContainer.getServers().put("OriginServer",new DefaultServer(Protocol.HTTP,trace,9090));
   myContainer.start();
   String uri="http://localhost:8080/?foo=bar";
-  testCall(myContainer,Methods.GET,uri);
-  testCall(myContainer,Methods.POST,uri);
-  testCall(myContainer,Methods.PUT,uri);
-  testCall(myContainer,Methods.DELETE,uri);
+  testCall(myContainer,Method.GET,uri);
+  testCall(myContainer,Method.POST,uri);
+  testCall(myContainer,Method.PUT,uri);
+  testCall(myContainer,Method.DELETE,uri);
   uri="http://localhost:8080/abcd/efgh/ijkl?foo=bar&foo=beer";
-  testCall(myContainer,Methods.GET,uri);
-  testCall(myContainer,Methods.POST,uri);
-  testCall(myContainer,Methods.PUT,uri);
-  testCall(myContainer,Methods.DELETE,uri);
+  testCall(myContainer,Method.GET,uri);
+  testCall(myContainer,Method.POST,uri);
+  testCall(myContainer,Method.PUT,uri);
+  testCall(myContainer,Method.DELETE,uri);
   uri="http://localhost:8080/v1/client/kwse/CnJlNUQV9%252BNNqbUf7Lhs2BYEK2Y%253D/user/johnm/uVGYTDK4kK4zsu96VHGeTCzfwso%253D/";
-  testCall(myContainer,Methods.GET,uri);
+  testCall(myContainer,Method.GET,uri);
   myContainer.stop();
 }

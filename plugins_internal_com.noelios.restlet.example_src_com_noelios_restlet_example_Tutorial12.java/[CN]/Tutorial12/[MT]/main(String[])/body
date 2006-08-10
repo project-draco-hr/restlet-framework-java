@@ -3,7 +3,7 @@
     Restlet userRestlet=new AbstractRestlet(){
       public void handleGet(      Call call){
         String output="Account of user named: " + call.getContext().getBaseRef().getLastSegment();
-        call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
+        call.setOutput(new StringRepresentation(output,MediaType.TEXT_PLAIN));
       }
     }
 ;
@@ -11,11 +11,11 @@
       public void handleGet(      Call call){
         List<String> segments=call.getContext().getBaseRef().getSegments();
         String output="Orders of user named: " + segments.get(segments.size() - 2);
-        call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
+        call.setOutput(new StringRepresentation(output,MediaType.TEXT_PLAIN));
       }
     }
 ;
-    Builders.buildContainer().addServer("HTTP server",Protocols.HTTP,8182).attachLog("com.noelios.restlet.example").attachStatus(true,"webmaster@mysite.org","http://www.mysite.org").attachHost(8182).attachGuard("/docs/","com.noelios.restlet.example",true,ChallengeSchemes.HTTP_BASIC,"Restlet tutorial",true).authorize("scott","tiger").attachDirectory(ROOT_URI,"index.html").upRouter().attachRouter("/users/[a-z]+").attach("$",userRestlet).upRouter().attach("/orders$",ordersRestlet).owner().start();
+    Builders.buildContainer().addServer("HTTP server",Protocol.HTTP,8182).attachLog("com.noelios.restlet.example").attachStatus(true,"webmaster@mysite.org","http://www.mysite.org").attachHost(8182).attachGuard("/docs/","com.noelios.restlet.example",true,ChallengeScheme.HTTP_BASIC,"Restlet tutorial",true).authorize("scott","tiger").attachDirectory(ROOT_URI,"index.html").upRouter().attachRouter("/users/[a-z]+").attach("$",userRestlet).upRouter().attach("/orders$",ordersRestlet).owner().start();
   }
  catch (  Exception e) {
     e.printStackTrace();

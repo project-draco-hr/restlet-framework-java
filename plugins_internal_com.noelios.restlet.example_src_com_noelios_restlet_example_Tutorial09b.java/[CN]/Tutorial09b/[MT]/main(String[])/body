@@ -1,15 +1,15 @@
 {
   try {
-    Call call=new Call(Methods.GET,"http://localhost:8182/");
-    ChallengeResponse authentication=new ChallengeResponse(ChallengeSchemes.HTTP_BASIC,"scott","tiger");
+    Call call=new Call(Method.GET,"http://localhost:8182/");
+    ChallengeResponse authentication=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"scott","tiger");
     call.getSecurity().setChallengeResponse(authentication);
-    Client client=new DefaultClient(Protocols.HTTP);
+    Client client=new DefaultClient(Protocol.HTTP);
     client.handle(call);
     if (call.getStatus().isSuccess()) {
       Representation output=call.getOutput();
       output.write(System.out);
     }
- else     if (call.getStatus().equals(Statuses.CLIENT_ERROR_UNAUTHORIZED)) {
+ else     if (call.getStatus().equals(Status.CLIENT_ERROR_UNAUTHORIZED)) {
       System.out.println("Your access was not authorized by the server, check your credentials");
     }
  else {

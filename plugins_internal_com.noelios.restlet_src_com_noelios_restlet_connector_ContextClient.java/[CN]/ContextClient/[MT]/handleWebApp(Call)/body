@@ -19,29 +19,29 @@
           }
         }
         call.setOutput(rl.getRepresentation());
-        call.setStatus(Statuses.SUCCESS_OK);
+        call.setStatus(Status.SUCCESS_OK);
       }
  else {
         Representation output=new InputRepresentation(war.getInputStream(entry),null);
         updateMetadata(path,output);
         call.setOutput(output);
-        call.setStatus(Statuses.SUCCESS_OK);
+        call.setStatus(Status.SUCCESS_OK);
       }
     }
  catch (    IOException e) {
       logger.log(Level.WARNING,"Unable to access to the WAR file",e);
-      call.setStatus(Statuses.SERVER_ERROR_INTERNAL);
+      call.setStatus(Status.SERVER_ERROR_INTERNAL);
     }
   }
  else {
     String path=call.getResourceRef().getPath();
     if (path.toUpperCase().startsWith("/WEB-INF/")) {
       logger.warning("Forbidden access to the WEB-INF directory detected. Path requested: " + path);
-      call.setStatus(Statuses.CLIENT_ERROR_NOT_FOUND);
+      call.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
     }
  else     if (path.toUpperCase().startsWith("/META-INF/")) {
       logger.warning("Forbidden access to the META-INF directory detected. Path requested: " + path);
-      call.setStatus(Statuses.CLIENT_ERROR_NOT_FOUND);
+      call.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
     }
  else {
       path=getWebAppPath() + path;

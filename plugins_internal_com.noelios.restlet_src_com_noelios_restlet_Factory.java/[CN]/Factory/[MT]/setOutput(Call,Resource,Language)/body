@@ -1,12 +1,12 @@
 {
   List<Representation> variants=resource.getVariants();
   if ((variants == null) || (variants.size() < 1)) {
-    call.setStatus(Statuses.CLIENT_ERROR_NOT_FOUND);
+    call.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
   }
  else {
     Representation bestVariant=call.getClient().getBestVariant(variants,fallbackLanguage);
     if (bestVariant == null) {
-      call.setStatus(Statuses.CLIENT_ERROR_NOT_ACCEPTABLE);
+      call.setStatus(Status.CLIENT_ERROR_NOT_ACCEPTABLE);
     }
  else {
       boolean send=true;
@@ -27,10 +27,10 @@
       }
       if (send) {
         call.setOutput(bestVariant);
-        call.setStatus(Statuses.SUCCESS_OK);
+        call.setStatus(Status.SUCCESS_OK);
       }
  else {
-        call.setStatus(Statuses.REDIRECTION_NOT_MODIFIED);
+        call.setStatus(Status.REDIRECTION_NOT_MODIFIED);
       }
     }
   }

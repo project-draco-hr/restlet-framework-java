@@ -1,14 +1,14 @@
 {
   try {
     RestletContainer myContainer=new RestletContainer();
-    myContainer.getServers().put("HTTP Server",Protocols.HTTP,8182);
+    myContainer.getServers().put("HTTP Server",Protocol.HTTP,8182);
     LogFilter log=new LogFilter(myContainer,"com.noelios.restlet.example");
     myContainer.setRoot(log);
     StatusFilter status=new StatusFilter(myContainer,true,"webmaster@mysite.org","http://www.mysite.org");
     log.setTarget(status);
     HostRouter host=new HostRouter(myContainer,8182);
     status.setTarget(host);
-    GuardFilter guard=new GuardFilter(myContainer,"com.noelios.restlet.example",true,ChallengeSchemes.HTTP_BASIC,"Restlet tutorial",true);
+    GuardFilter guard=new GuardFilter(myContainer,"com.noelios.restlet.example",true,ChallengeScheme.HTTP_BASIC,"Restlet tutorial",true);
     guard.getAuthorizations().put("scott","tiger");
     host.getScorers().add("/docs/",guard);
     DirectoryHandler directory=new DirectoryHandler(myContainer,ROOT_URI,"index.html");
@@ -18,7 +18,7 @@
     Restlet account=new AbstractRestlet(){
       public void handleGet(      Call call){
         String output="Account of user named: " + call.getContext().getBaseRef().getLastSegment();
-        call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
+        call.setOutput(new StringRepresentation(output,MediaType.TEXT_PLAIN));
       }
     }
 ;
@@ -27,7 +27,7 @@
       public void handleGet(      Call call){
         List<String> segments=call.getContext().getBaseRef().getSegments();
         String output="Orders of user named: " + segments.get(segments.size() - 2);
-        call.setOutput(new StringRepresentation(output,MediaTypes.TEXT_PLAIN));
+        call.setOutput(new StringRepresentation(output,MediaType.TEXT_PLAIN));
       }
     }
 ;
