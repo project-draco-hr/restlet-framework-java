@@ -5,7 +5,7 @@
     String entry=(lastSlashIndex == -1) ? basePath : basePath.substring(lastSlashIndex + 1);
     Representation output=null;
     if (basePath.endsWith("/")) {
-      Set entries=getContext().getResourcePaths(basePath);
+      Set entries=getServletContext().getResourcePaths(basePath);
       ReferenceList rl=new ReferenceList(entries.size());
       rl.setListRef(call.getResourceRef());
       for (Iterator iter=entries.iterator(); iter.hasNext(); ) {
@@ -15,9 +15,9 @@
       output=rl.getRepresentation();
     }
  else {
-      output=new InputRepresentation(getContext().getResourceAsStream(basePath),getDefaultMediaType());
+      output=new InputRepresentation(getServletContext().getResourceAsStream(basePath),getDefaultMediaType());
       updateMetadata(entry,output);
-      String mediaType=getContext().getMimeType(basePath);
+      String mediaType=getServletContext().getMimeType(basePath);
       if (mediaType != null) {
         output.setMediaType(new MediaType(mediaType));
       }

@@ -3,11 +3,11 @@
   if (isRedirectClient() || isWarnClient()) {
     if (!call.getResourceRef().toString(false,false).startsWith(getPreferredUri())) {
       if (isRedirectClient()) {
-        call.setRedirectRef(getPreferredUri() + call.getContext().getRelativeRef());
+        call.setRedirectRef(getPreferredUri() + call.getRelativePart());
         call.setStatus(getRedirectStatus());
       }
  else       if (isWarnClient()) {
-        String description="Used this URI instead: " + getPreferredUri() + call.getContext().getRelativeRef();
+        String description="Used this URI instead: " + getPreferredUri() + call.getRelativePart();
         call.setStatus(new Status(Status.CLIENT_ERROR_BAD_REQUEST,description));
       }
       handle=false;
@@ -18,7 +18,7 @@
       if (this.frontRouter == null) {
 synchronized (this) {
           if (this.frontRouter == null) {
-            this.frontRouter=new DefaultRouter(getOwner());
+            this.frontRouter=new Router(getContext());
             this.frontRouter.getScorers().add(getPattern(),this.backRouter);
           }
         }

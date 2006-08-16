@@ -1,23 +1,23 @@
 {
-  if (this.condition == null) {
-    this.condition=new ConditionData();
-    String ifMatchHeader=getConnectorCall().getRequestHeaders().getValues(ConnectorCall.HEADER_IF_MATCH);
-    String ifNoneMatchHeader=getConnectorCall().getRequestHeaders().getValues(ConnectorCall.HEADER_IF_NONE_MATCH);
+  ConditionData result=super.getCondition();
+  if (!this.conditionAdded) {
+    String ifMatchHeader=getConnectorCall().getRequestHeaders().getValues(HttpConstants.HEADER_IF_MATCH);
+    String ifNoneMatchHeader=getConnectorCall().getRequestHeaders().getValues(HttpConstants.HEADER_IF_NONE_MATCH);
     Date ifModifiedSince=null;
     Date ifUnmodifiedSince=null;
     for (    Parameter header : getConnectorCall().getRequestHeaders()) {
-      if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_IF_MODIFIED_SINCE)) {
+      if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_IF_MODIFIED_SINCE)) {
         ifModifiedSince=getConnectorCall().parseDate(header.getValue(),false);
       }
- else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_IF_UNMODIFIED_SINCE)) {
+ else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_IF_UNMODIFIED_SINCE)) {
         ifUnmodifiedSince=getConnectorCall().parseDate(header.getValue(),false);
       }
     }
     if ((ifModifiedSince != null) && (ifModifiedSince.getTime() != -1)) {
-      getCondition().setModifiedSince(ifModifiedSince);
+      result.setModifiedSince(ifModifiedSince);
     }
     if ((ifUnmodifiedSince != null) && (ifUnmodifiedSince.getTime() != -1)) {
-      getCondition().setUnmodifiedSince(ifUnmodifiedSince);
+      result.setUnmodifiedSince(ifUnmodifiedSince);
     }
     List<Tag> match=null;
     Tag current=null;
@@ -28,7 +28,7 @@
           current=new Tag(tags[i]);
           if (match == null) {
             match=new ArrayList<Tag>();
-            getCondition().setMatch(match);
+            result.setMatch(match);
           }
           match.add(current);
         }
@@ -45,7 +45,7 @@
           current=new Tag(tags[i]);
           if (noneMatch == null) {
             noneMatch=new ArrayList<Tag>();
-            getCondition().setNoneMatch(noneMatch);
+            result.setNoneMatch(noneMatch);
           }
           noneMatch.add(current);
         }
@@ -54,6 +54,7 @@
         logger.log(Level.WARNING,"Unable to process the if-none-match header: " + ifNoneMatchHeader);
       }
     }
+    this.conditionAdded=true;
   }
-  return this.condition;
+  return result;
 }

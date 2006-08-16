@@ -1,11 +1,14 @@
 {
   if (isStarted()) {
     try {
-      transport.stop();
-      this.started=false;
+      getTransport().stop();
+      super.stop();
     }
  catch (    TransportException ex) {
       logger.log(Level.WARNING,"Failed to stop transport",ex);
+    }
+catch (    Exception e) {
+      logger.log(Level.WARNING,"Failed to start the AsyncWeb HTTP Server",e);
     }
   }
 }

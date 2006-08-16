@@ -6,12 +6,12 @@
     keyManagerFactory.init(keyStore,getKeyPassword().toCharArray());
     SSLContext sslContext=SSLContext.getInstance(getSslProtocol());
     sslContext.init(keyManagerFactory.getKeyManagers(),null,null);
-    socket=sslContext.getServerSocketFactory().createServerSocket(port);
-    socket.setSoTimeout(60000);
-    this.confidential=true;
-    this.handler=PipelineHandlerFactory.getInstance(this,getDefaultThreads(),getMaxWaitTimeMs());
-    this.connection=ConnectionFactory.getConnection(handler,new BufferedPipelineFactory());
-    this.connection.connect(socket);
+    setSocket(sslContext.getServerSocketFactory().createServerSocket(getPort()));
+    getSocket().setSoTimeout(60000);
+    setConfidential(true);
+    setHandler(PipelineHandlerFactory.getInstance(this,getDefaultThreads(),getMaxWaitTimeMs()));
+    setConnection(ConnectionFactory.getConnection(getHandler(),new BufferedPipelineFactory()));
+    getConnection().connect(getSocket());
     super.start();
   }
 }

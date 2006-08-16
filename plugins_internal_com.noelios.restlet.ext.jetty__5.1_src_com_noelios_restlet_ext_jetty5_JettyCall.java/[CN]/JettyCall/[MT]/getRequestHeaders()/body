@@ -1,15 +1,16 @@
 {
-  if (this.requestHeaders == null) {
-    this.requestHeaders=new ParameterList();
+  ParameterList result=super.getRequestHeaders();
+  if (!requestHeadersAdded) {
     String headerName;
     String headerValue;
     for (Enumeration names=getRequest().getFieldNames(); names.hasMoreElements(); ) {
       headerName=(String)names.nextElement();
       for (Enumeration values=getRequest().getFieldValues(headerName); values.hasMoreElements(); ) {
         headerValue=(String)values.nextElement();
-        this.requestHeaders.add(new Parameter(headerName,headerValue));
+        result.add(new Parameter(headerName,headerValue));
       }
     }
+    requestHeadersAdded=true;
   }
-  return this.requestHeaders;
+  return result;
 }

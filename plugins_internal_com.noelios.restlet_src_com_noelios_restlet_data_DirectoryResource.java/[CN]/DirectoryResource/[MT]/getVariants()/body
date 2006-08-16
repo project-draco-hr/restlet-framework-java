@@ -27,7 +27,7 @@
             validVariant=(((extensions == null) && (this.baseExtensions == null)) || (this.baseExtensions == null) || extensions.containsAll(this.baseExtensions));
           }
           if (validVariant) {
-            Call contextCall=getDirectory().getContextClient().get(entryUri);
+            Call contextCall=getDirectory().getContext().get(entryUri);
             if (contextCall.getStatus().isSuccess() && (contextCall.getOutput() != null)) {
               result.add(contextCall.getOutput());
             }
@@ -38,11 +38,11 @@
     if (result.size() == 0) {
       if (this.targetDirectory && getDirectory().isListingAllowed()) {
         ReferenceList userList=new ReferenceList(this.directoryContent.size());
-        String baseRef=this.call.getContext().getBaseRef().toString(false,false);
+        String baseRef=this.call.getBaseRef().toString(false,false);
         if (!baseRef.endsWith("/")) {
           baseRef+="/";
         }
-        baseRef+=this.resourcePath;
+        baseRef+=this.relativePart;
         userList.setListRef(baseRef);
         String filePath;
         int rootLength=getDirectoryUri().length();

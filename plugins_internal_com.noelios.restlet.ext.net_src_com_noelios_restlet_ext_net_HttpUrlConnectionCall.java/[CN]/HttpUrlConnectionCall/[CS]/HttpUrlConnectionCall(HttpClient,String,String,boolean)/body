@@ -9,7 +9,8 @@
     this.connection.setDoOutput(hasInput);
     this.connection.setInstanceFollowRedirects(client.isFollowRedirects());
     this.connection.setUseCaches(client.isUseCaches());
-    this.confidential=(this.connection instanceof HttpsURLConnection);
+    this.responseHeadersAdded=false;
+    setConfidential(this.connection instanceof HttpsURLConnection);
   }
  else {
     throw new IllegalArgumentException("Only HTTP or HTTPS resource URIs are allowed here");

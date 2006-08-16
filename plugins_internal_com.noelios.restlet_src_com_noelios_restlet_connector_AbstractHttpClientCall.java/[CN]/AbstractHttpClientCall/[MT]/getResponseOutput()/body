@@ -8,32 +8,32 @@
   }
   if (result != null) {
     for (    Parameter header : getResponseHeaders()) {
-      if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_TYPE)) {
+      if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_TYPE)) {
         ContentType contentType=new ContentType(header.getValue());
         if (contentType != null) {
           result.setMediaType(contentType.getMediaType());
           result.setCharacterSet(contentType.getCharacterSet());
         }
       }
- else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_LENGTH)) {
+ else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LENGTH)) {
         result.setSize(Long.parseLong(header.getValue()));
       }
- else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_EXPIRES)) {
+ else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_EXPIRES)) {
         result.setExpirationDate(parseDate(header.getValue(),false));
       }
- else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_ENCODING)) {
+ else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_ENCODING)) {
         result.setEncoding(new Encoding(header.getValue()));
       }
- else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_LANGUAGE)) {
+ else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LANGUAGE)) {
         result.setLanguage(new Language(header.getValue()));
       }
- else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_LAST_MODIFIED)) {
+ else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_LAST_MODIFIED)) {
         result.setModificationDate(parseDate(header.getValue(),false));
       }
- else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_ETAG)) {
+ else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_ETAG)) {
         result.setTag(new Tag(header.getValue()));
       }
- else       if (header.getName().equalsIgnoreCase(ConnectorCall.HEADER_CONTENT_LOCATION)) {
+ else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LOCATION)) {
         result.setIdentifier(header.getValue());
       }
     }

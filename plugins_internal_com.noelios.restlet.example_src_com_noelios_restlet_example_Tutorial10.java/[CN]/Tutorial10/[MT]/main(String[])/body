@@ -1,11 +1,12 @@
 {
   try {
-    RestletContainer myContainer=new RestletContainer();
-    myContainer.getServers().put("HTTP Server",Protocol.HTTP,8182);
-    HostRouter host=new HostRouter(myContainer,8182);
+    Container myContainer=new Container();
+    Context myContext=myContainer.getContext();
+    myContainer.getServers().add(Protocol.HTTP,8182);
+    HostRouter host=new HostRouter(myContext,8182);
     myContainer.setRoot(host);
     String target="http://www.google.com/search?q=site:mysite.org+${query('query')}";
-    RedirectRestlet redirect=new RedirectRestlet(myContainer,target,RedirectRestlet.MODE_CLIENT_TEMPORARY);
+    RedirectHandler redirect=new RedirectHandler(myContext,target,RedirectHandler.MODE_CLIENT_TEMPORARY);
     host.getScorers().add("/search",redirect);
     myContainer.start();
   }

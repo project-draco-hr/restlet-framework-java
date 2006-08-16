@@ -1,11 +1,11 @@
 {
   HttpsListener listener=null;
-  if (this.address != null) {
-    listener=new HttpsListener(this,new InetAddrPort(this.address,this.port));
+  if (getAddress() != null) {
+    listener=new HttpsListener(this,new InetAddrPort(getAddress(),getPort()));
   }
  else {
     listener=new HttpsListener(this);
-    listener.setPort(port);
+    listener.setPort(getPort());
   }
   listener.setMinThreads(getMinThreads());
   listener.setMaxThreads(getMaxThreads());
@@ -14,6 +14,6 @@
   listener.setKeystore(getKeystorePath());
   listener.setPassword(getKeystorePassword());
   listener.setKeyPassword(getKeyPassword());
-  this.listener=listener;
+  setListener(listener);
   super.start();
 }

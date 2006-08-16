@@ -1,21 +1,21 @@
 {
   try {
-    Restlet userRestlet=new AbstractRestlet(){
+    Restlet userRestlet=new Restlet(){
       public void handleGet(      Call call){
-        String output="Account of user named: " + call.getContext().getBaseRef().getLastSegment();
+        String output="Account of user named: " + call.getBaseRef().getLastSegment();
         call.setOutput(new StringRepresentation(output,MediaType.TEXT_PLAIN));
       }
     }
 ;
-    Restlet ordersRestlet=new AbstractRestlet(){
+    Restlet ordersRestlet=new Restlet(){
       public void handleGet(      Call call){
-        List<String> segments=call.getContext().getBaseRef().getSegments();
+        List<String> segments=call.getBaseRef().getSegments();
         String output="Orders of user named: " + segments.get(segments.size() - 2);
         call.setOutput(new StringRepresentation(output,MediaType.TEXT_PLAIN));
       }
     }
 ;
-    Builders.buildContainer().addServer("HTTP server",Protocol.HTTP,8182).attachLog("com.noelios.restlet.example").attachStatus(true,"webmaster@mysite.org","http://www.mysite.org").attachHost(8182).attachGuard("/docs/","com.noelios.restlet.example",true,ChallengeScheme.HTTP_BASIC,"Restlet tutorial",true).authorize("scott","tiger").attachDirectory(ROOT_URI,"index.html").upRouter().attachRouter("/users/[a-z]+").attach("$",userRestlet).upRouter().attach("/orders$",ordersRestlet).owner().start();
+    Builders.buildContainer().addServer(Protocol.HTTP,8182).attachLog("com.noelios.restlet.example").attachStatus(true,"webmaster@mysite.org","http://www.mysite.org").attachHost(8182).attachGuard("/docs/","com.noelios.restlet.example",true,ChallengeScheme.HTTP_BASIC,"Restlet tutorial",true).authorize("scott","tiger").attachDirectory(ROOT_URI,"index.html").upRouter().attachRouter("/users/[a-z]+").attach("$",userRestlet).upRouter().attach("/orders$",ordersRestlet).owner().start();
   }
  catch (  Exception e) {
     e.printStackTrace();

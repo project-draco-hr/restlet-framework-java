@@ -1,12 +1,13 @@
 {
   try {
-    RestletContainer myContainer=new RestletContainer();
-    myContainer.getServers().put("HTTP Server",Protocol.HTTP,8182);
-    LogFilter log=new LogFilter(myContainer,"com.noelios.restlet.example");
+    Container myContainer=new Container();
+    Context myContext=myContainer.getContext();
+    myContainer.getServers().add(Protocol.HTTP,8182);
+    LogFilter log=new LogFilter(myContext,"com.noelios.restlet.example");
     myContainer.setRoot(log);
-    HostRouter host=new HostRouter(myContainer,8182);
-    log.setTarget(host);
-    DirectoryHandler directory=new DirectoryHandler(myContainer,ROOT_URI,"index.html");
+    HostRouter host=new HostRouter(myContext,8182);
+    log.setNext(host);
+    DirectoryHandler directory=new DirectoryHandler(myContext,ROOT_URI,"index.html");
     host.getScorers().add("/",directory);
     myContainer.start();
   }

@@ -1,13 +1,14 @@
 {
-  if (this.security == null) {
-    this.security=new SecurityData();
+  SecurityData result=super.getSecurity();
+  if (!this.securityAdded) {
     if (getConnectorCall().isConfidential()) {
       getSecurity().setConfidential(true);
     }
  else {
     }
-    String authorization=getConnectorCall().getRequestHeaders().getValues(ConnectorCall.HEADER_AUTHORIZATION);
-    getSecurity().setChallengeResponse(SecurityUtils.parseResponse(authorization));
+    String authorization=getConnectorCall().getRequestHeaders().getValues(HttpConstants.HEADER_AUTHORIZATION);
+    result.setChallengeResponse(SecurityUtils.parseResponse(authorization));
+    this.securityAdded=true;
   }
-  return this.security;
+  return result;
 }

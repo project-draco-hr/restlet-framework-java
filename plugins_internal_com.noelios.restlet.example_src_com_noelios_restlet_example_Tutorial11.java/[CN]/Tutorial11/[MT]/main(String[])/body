@@ -1,31 +1,32 @@
 {
   try {
-    RestletContainer myContainer=new RestletContainer();
-    myContainer.getServers().put("HTTP Server",Protocol.HTTP,8182);
-    LogFilter log=new LogFilter(myContainer,"com.noelios.restlet.example");
+    Container myContainer=new Container();
+    Context myContext=myContainer.getContext();
+    myContainer.getServers().add(Protocol.HTTP,8182);
+    LogFilter log=new LogFilter(myContext,"com.noelios.restlet.example");
     myContainer.setRoot(log);
-    StatusFilter status=new StatusFilter(myContainer,true,"webmaster@mysite.org","http://www.mysite.org");
-    log.setTarget(status);
-    HostRouter host=new HostRouter(myContainer,8182);
-    status.setTarget(host);
-    GuardFilter guard=new GuardFilter(myContainer,"com.noelios.restlet.example",true,ChallengeScheme.HTTP_BASIC,"Restlet tutorial",true);
+    StatusFilter status=new StatusFilter(myContext,true,"webmaster@mysite.org","http://www.mysite.org");
+    log.setNext(status);
+    HostRouter host=new HostRouter(myContext,8182);
+    status.setNext(host);
+    GuardFilter guard=new GuardFilter(myContext,"com.noelios.restlet.example",true,ChallengeScheme.HTTP_BASIC,"Restlet tutorial",true);
     guard.getAuthorizations().put("scott","tiger");
     host.getScorers().add("/docs/",guard);
-    DirectoryHandler directory=new DirectoryHandler(myContainer,ROOT_URI,"index.html");
-    guard.setTarget(directory);
-    Router user=new DefaultRouter(myContainer);
+    DirectoryHandler directory=new DirectoryHandler(myContext,ROOT_URI,"index.html");
+    guard.setNext(directory);
+    Router user=new Router(myContext);
     host.getScorers().add("/users/[a-z]+",user);
-    Restlet account=new AbstractRestlet(){
+    Restlet account=new Restlet(){
       public void handleGet(      Call call){
-        String output="Account of user named: " + call.getContext().getBaseRef().getLastSegment();
+        String output="Account of user named: " + call.getBaseRef().getLastSegment();
         call.setOutput(new StringRepresentation(output,MediaType.TEXT_PLAIN));
       }
     }
 ;
     user.getScorers().add("$",account);
-    Restlet orders=new AbstractRestlet(myContainer){
+    Restlet orders=new Restlet(myContext){
       public void handleGet(      Call call){
-        List<String> segments=call.getContext().getBaseRef().getSegments();
+        List<String> segments=call.getBaseRef().getSegments();
         String output="Orders of user named: " + segments.get(segments.size() - 2);
         call.setOutput(new StringRepresentation(output,MediaType.TEXT_PLAIN));
       }

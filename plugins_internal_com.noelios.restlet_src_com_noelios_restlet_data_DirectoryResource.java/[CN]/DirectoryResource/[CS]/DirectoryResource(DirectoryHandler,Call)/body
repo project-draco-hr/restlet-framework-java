@@ -1,21 +1,21 @@
 {
   this.handler=handler;
   this.call=call;
-  this.resourcePath=call.getContext().getRelativePath();
-  if (this.resourcePath.startsWith("/")) {
-    this.resourcePath=this.resourcePath.substring(1);
+  this.relativePart=call.getRelativePart();
+  if (this.relativePart.startsWith("/")) {
+    this.relativePart=this.relativePart.substring(1);
   }
-  this.targetUri=new Reference(handler.getRootUri() + this.resourcePath).normalize().toString();
+  this.targetUri=new Reference(handler.getRootUri() + this.relativePart).normalize().toString();
   if (!this.targetUri.startsWith(handler.getRootUri())) {
     this.targetUri=handler.getRootUri();
   }
-  Call contextCall=getDirectory().getContextClient().get(this.targetUri);
+  Call contextCall=getDirectory().getContext().get(this.targetUri);
   if ((contextCall.getOutput() != null) && contextCall.getOutput().getMediaType().equals(MediaType.TEXT_URI_LIST)) {
     this.targetDirectory=true;
     this.directoryContent=new ReferenceList(contextCall.getOutput());
     if (!this.targetUri.endsWith("/")) {
       this.targetUri+="/";
-      this.resourcePath+="/";
+      this.relativePart+="/";
     }
     if (getDirectory().getIndexName() != null) {
       this.directoryUri=this.targetUri;
@@ -38,7 +38,7 @@
       this.directoryUri=targetUri.substring(0,lastSlashIndex + 1);
       this.baseName=targetUri.substring(lastSlashIndex + 1);
     }
-    contextCall=getDirectory().getContextClient().get(this.directoryUri);
+    contextCall=getDirectory().getContext().get(this.directoryUri);
     if ((contextCall.getOutput() != null) && contextCall.getOutput().getMediaType().equals(MediaType.TEXT_URI_LIST)) {
       this.directoryContent=new ReferenceList(contextCall.getOutput());
     }

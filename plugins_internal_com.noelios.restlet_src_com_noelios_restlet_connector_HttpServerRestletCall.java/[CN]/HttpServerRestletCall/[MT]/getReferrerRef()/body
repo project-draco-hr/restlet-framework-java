@@ -1,9 +1,10 @@
 {
-  if (this.referrerRef == null) {
-    String referrerValue=getConnectorCall().getRequestHeaders().getValues(ConnectorCall.HEADER_REFERRER);
+  if (!this.referrerAdded) {
+    String referrerValue=getConnectorCall().getRequestHeaders().getValues(HttpConstants.HEADER_REFERRER);
     if (referrerValue != null) {
-      this.referrerRef=new Reference(referrerValue);
+      setReferrerRef(new Reference(referrerValue));
     }
+    this.referrerAdded=true;
   }
-  return this.referrerRef;
+  return super.getReferrerRef();
 }

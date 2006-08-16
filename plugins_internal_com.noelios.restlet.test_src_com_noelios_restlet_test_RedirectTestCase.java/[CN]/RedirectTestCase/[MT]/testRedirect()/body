@@ -1,31 +1,37 @@
 {
-  RestletContainer myContainer=new RestletContainer();
-  myContainer.getClients().put("TestClient",Protocol.HTTP);
-  myContainer.getClients().put("ProxyClient",Protocol.HTTP);
+  Container clientContainer=new Container();
+  Container proxyContainer=new Container();
+  Container originContainer=new Container();
+  clientContainer.getClients().add(Protocol.HTTP);
+  proxyContainer.getClients().add(Protocol.HTTP);
   String target="http://localhost:9090${path}#[if query]?${query}#[end]";
-  RedirectRestlet proxy=new RedirectRestlet(myContainer,target,RedirectRestlet.MODE_CONNECTOR);
-  proxy.setConnectorName("ProxyClient");
-  Restlet trace=new AbstractRestlet(myContainer){
+  RedirectHandler proxy=new RedirectHandler(proxyContainer.getContext(),target,RedirectHandler.MODE_CONNECTOR);
+  Restlet trace=new Restlet(originContainer.getContext()){
     public void handle(    Call call){
-      String output="Resource URI:  " + call.getResourceRef() + '\n'+ "Base URI:      "+ call.getContext().getBaseRef()+ '\n'+ "Relative path: "+ call.getContext().getRelativePath()+ '\n'+ "Query string:  "+ call.getResourceRef().getQuery()+ '\n'+ "Method name:   "+ call.getMethod()+ '\n';
+      String output="Resource URI:  " + call.getResourceRef() + '\n'+ "Base URI:      "+ call.getBaseRef()+ '\n'+ "Relative path: "+ call.getRelativePart()+ '\n'+ "Query string:  "+ call.getResourceRef().getQuery()+ '\n'+ "Method name:   "+ call.getMethod()+ '\n';
       call.setOutput(new StringRepresentation(output,MediaType.TEXT_PLAIN));
     }
   }
 ;
-  myContainer.getServers().put("ProxyServer",new DefaultServer(Protocol.HTTP,proxy,8080));
-  myContainer.getServers().put("OriginServer",new DefaultServer(Protocol.HTTP,trace,9090));
-  myContainer.start();
+  proxyContainer.getServers().add(new GenericServer(Protocol.HTTP,8080,proxy));
+  originContainer.getServers().add(new GenericServer(Protocol.HTTP,9090,trace));
+  originContainer.start();
+  proxyContainer.start();
+  clientContainer.start();
+  Context context=clientContainer.getContext();
   String uri="http://localhost:8080/?foo=bar";
-  testCall(myContainer,Method.GET,uri);
-  testCall(myContainer,Method.POST,uri);
-  testCall(myContainer,Method.PUT,uri);
-  testCall(myContainer,Method.DELETE,uri);
+  testCall(context,Method.GET,uri);
+  testCall(context,Method.POST,uri);
+  testCall(context,Method.PUT,uri);
+  testCall(context,Method.DELETE,uri);
   uri="http://localhost:8080/abcd/efgh/ijkl?foo=bar&foo=beer";
-  testCall(myContainer,Method.GET,uri);
-  testCall(myContainer,Method.POST,uri);
-  testCall(myContainer,Method.PUT,uri);
-  testCall(myContainer,Method.DELETE,uri);
+  testCall(context,Method.GET,uri);
+  testCall(context,Method.POST,uri);
+  testCall(context,Method.PUT,uri);
+  testCall(context,Method.DELETE,uri);
   uri="http://localhost:8080/v1/client/kwse/CnJlNUQV9%252BNNqbUf7Lhs2BYEK2Y%253D/user/johnm/uVGYTDK4kK4zsu96VHGeTCzfwso%253D/";
-  testCall(myContainer,Method.GET,uri);
-  myContainer.stop();
+  testCall(context,Method.GET,uri);
+  clientContainer.stop();
+  originContainer.stop();
+  proxyContainer.stop();
 }

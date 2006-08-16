@@ -1,10 +1,11 @@
 {
   try {
-    RestletContainer myContainer=new RestletContainer();
-    myContainer.getServers().put("My connector",Protocol.HTTP,9876);
-    HostRouter host=new HostRouter(myContainer,9876);
+    Container myContainer=new Container();
+    Context myContext=myContainer.getContext();
+    myContainer.getServers().add(Protocol.HTTP,9876);
+    HostRouter host=new HostRouter(myContext,9876);
     myContainer.setRoot(host);
-    Restlet testRestlet=new AbstractRestlet(myContainer){
+    Restlet testRestlet=new Restlet(myContext){
       public void handlePut(      Call call){
         System.out.println("Handling the call...");
         System.out.println("Trying to get the input as a form...");

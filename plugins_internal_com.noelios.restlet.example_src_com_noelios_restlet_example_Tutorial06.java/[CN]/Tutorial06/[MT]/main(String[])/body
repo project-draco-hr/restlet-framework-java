@@ -1,10 +1,10 @@
 {
   try {
-    RestletContainer myContainer=new RestletContainer();
-    myContainer.getServers().put("HTTP Server",Protocol.HTTP,8182);
-    HostRouter host=new HostRouter(myContainer,8182);
+    Container myContainer=new Container();
+    myContainer.getServers().add(Protocol.HTTP,8182);
+    HostRouter host=new HostRouter(myContainer.getContext(),8182);
     myContainer.setRoot(host);
-    DirectoryHandler directory=new DirectoryHandler(myContainer,ROOT_URI,"index.html");
+    DirectoryHandler directory=new DirectoryHandler(myContainer.getContext(),ROOT_URI,"index.html");
     host.getScorers().add("/",directory);
     myContainer.start();
   }

@@ -1,5 +1,5 @@
 {
-  String remainingRef=getRemainingRef(call);
+  String remainingRef=call.getRelativePart();
   Matcher matcher=getPattern().matcher(remainingRef);
   boolean matched=matcher.lookingAt();
   if (logger.isLoggable(Level.FINER)) {
@@ -7,17 +7,17 @@
   }
   if (matched) {
     String matchedPart=remainingRef.substring(0,matcher.end());
-    Reference baseRef=call.getContext().getBaseRef();
+    Reference baseRef=call.getBaseRef();
     if (baseRef == null) {
       baseRef=new Reference(matchedPart);
     }
  else {
       baseRef=new Reference(baseRef.toString(false,false) + matchedPart);
     }
-    call.getContext().setBaseRef(baseRef);
+    call.setBaseRef(baseRef);
     if (logger.isLoggable(Level.FINE)) {
-      logger.fine("New base URI: " + call.getContext().getBaseRef());
-      logger.fine("New relative path: " + call.getContext().getRelativePath());
+      logger.fine("New base URI: " + call.getBaseRef());
+      logger.fine("New relative part: " + call.getRelativePart());
     }
     if (logger.isLoggable(Level.FINE)) {
       logger.fine("Delegating the call to the target Restlet");

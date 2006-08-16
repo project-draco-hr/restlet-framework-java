@@ -1,12 +1,16 @@
 {
   if (!isStarted()) {
     try {
-      transport.start();
-      this.started=true;
+      getTransport().start();
+      super.start();
     }
  catch (    TransportException ex) {
       logger.log(Level.WARNING,"Failed to start the transport",ex);
       throw new ContainerLifecycleException("Failed to start the transport",ex);
+    }
+catch (    Exception e) {
+      logger.log(Level.WARNING,"Failed to start the AsyncWeb HTTP Server",e);
+      throw new ContainerLifecycleException("Failed to start the AsyncWeb HTTP Server",e);
     }
   }
 }
