@@ -5,7 +5,7 @@
   clientContainer.getClients().add(Protocol.HTTP);
   proxyContainer.getClients().add(Protocol.HTTP);
   String target="http://localhost:9090${path}#[if query]?${query}#[end]";
-  RedirectHandler proxy=new RedirectHandler(proxyContainer.getContext(),target,RedirectHandler.MODE_CONNECTOR);
+  RedirectRestlet proxy=new RedirectRestlet(proxyContainer.getContext(),target,RedirectRestlet.MODE_CONNECTOR);
   Restlet trace=new Restlet(originContainer.getContext()){
     public void handle(    Call call){
       String output="Resource URI:  " + call.getResourceRef() + '\n'+ "Base URI:      "+ call.getBaseRef()+ '\n'+ "Relative path: "+ call.getRelativePart()+ '\n'+ "Query string:  "+ call.getResourceRef().getQuery()+ '\n'+ "Method name:   "+ call.getMethod()+ '\n';
