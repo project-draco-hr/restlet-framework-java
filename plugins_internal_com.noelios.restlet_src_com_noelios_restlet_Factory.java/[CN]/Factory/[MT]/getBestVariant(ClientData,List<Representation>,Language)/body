@@ -13,10 +13,10 @@
     boolean compatibleMediaType=false;
     Representation currentVariant=null;
     Representation bestVariant=null;
-    LanguagePref currentLanguagePref=null;
-    LanguagePref bestLanguagePref=null;
-    MediaTypePref currentMediaTypePref=null;
-    MediaTypePref bestMediaTypePref=null;
+    Preference<Language> currentLanguagePref=null;
+    Preference<Language> bestLanguagePref=null;
+    Preference<MediaType> currentMediaTypePref=null;
+    Preference<MediaType> bestMediaTypePref=null;
     float bestQuality=0;
     float currentScore=0;
     float bestLanguageScore=0;
@@ -25,11 +25,11 @@
       currentVariant=(Representation)iter1.next();
       variantLanguage=currentVariant.getLanguage();
       variantMediaType=currentVariant.getMediaType();
-      List<LanguagePref> languagePrefs=client.getLanguagePrefs();
-      if (languagePrefs.size() == 0)       languagePrefs.add(new LanguagePref(Language.ALL));
-      for (Iterator<LanguagePref> iter2=languagePrefs.iterator(); (variantLanguage != null) && iter2.hasNext(); ) {
+      List<Preference<Language>> languagePrefs=client.getLanguagePrefs();
+      if (languagePrefs.size() == 0)       languagePrefs.add(new Preference<Language>(Language.ALL));
+      for (Iterator<Preference<Language>> iter2=languagePrefs.iterator(); (variantLanguage != null) && iter2.hasNext(); ) {
         currentLanguagePref=iter2.next();
-        currentLanguage=currentLanguagePref.getLanguage();
+        currentLanguage=currentLanguagePref.getMetadata();
         compatiblePref=true;
         currentScore=0;
         if (variantLanguage.getMainTag().equals(currentLanguage.getMainTag())) {
@@ -65,11 +65,11 @@
         }
       }
       compatibleLanguage=(variantLanguage == null) || (bestLanguagePref != null) || (variantLanguage.equals(fallbackLanguage));
-      List<MediaTypePref> mediaTypePrefs=client.getMediaTypePrefs();
-      if (mediaTypePrefs.size() == 0)       mediaTypePrefs.add(new MediaTypePref(MediaType.ALL));
-      for (Iterator<MediaTypePref> iter2=mediaTypePrefs.iterator(); compatibleLanguage && iter2.hasNext(); ) {
+      List<Preference<MediaType>> mediaTypePrefs=client.getMediaTypePrefs();
+      if (mediaTypePrefs.size() == 0)       mediaTypePrefs.add(new Preference<MediaType>(MediaType.ALL));
+      for (Iterator<Preference<MediaType>> iter2=mediaTypePrefs.iterator(); compatibleLanguage && iter2.hasNext(); ) {
         currentMediaTypePref=iter2.next();
-        currentMediaType=currentMediaTypePref.getMediaType();
+        currentMediaType=currentMediaTypePref.getMetadata();
         compatiblePref=true;
         currentScore=0;
         if (currentMediaType.getMainType().equals(variantMediaType.getMainType())) {

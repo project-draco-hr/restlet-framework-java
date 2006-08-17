@@ -1,15 +1,15 @@
 {
   if (acceptCharsetHeader != null) {
     if (acceptCharsetHeader.length() == 0) {
-      client.getCharacterSetPrefs().add(new CharacterSetPref(CharacterSet.ISO_8859_1));
+      client.getCharacterSetPrefs().add(new Preference<CharacterSet>(CharacterSet.ISO_8859_1));
     }
  else {
       try {
         PreferenceReader pr=new PreferenceReader(PreferenceReader.TYPE_CHARACTER_SET,acceptCharsetHeader);
-        CharacterSetPref currentPref=(CharacterSetPref)pr.readPreference();
+        Preference currentPref=pr.readPreference();
         while (currentPref != null) {
           client.getCharacterSetPrefs().add(currentPref);
-          currentPref=(CharacterSetPref)pr.readPreference();
+          currentPref=pr.readPreference();
         }
       }
  catch (      IOException ioe) {
@@ -18,6 +18,6 @@
     }
   }
  else {
-    client.getCharacterSetPrefs().add(new CharacterSetPref(CharacterSet.ALL));
+    client.getCharacterSetPrefs().add(new Preference(CharacterSet.ALL));
   }
 }

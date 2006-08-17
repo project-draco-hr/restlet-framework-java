@@ -1,36 +1,38 @@
 {
-  Preference result=null;
+  Preference<T> result;
   if (parameters == null) {
+    result=new Preference<T>();
 switch (type) {
 case TYPE_CHARACTER_SET:
-      result=new CharacterSetPref(new CharacterSet(metadata.toString()));
+      result.setMetadata((T)new CharacterSet(metadata.toString()));
     break;
 case TYPE_ENCODING:
-  result=new EncodingPref(new Encoding(metadata.toString()));
+  result.setMetadata((T)new Encoding(metadata.toString()));
 break;
 case TYPE_LANGUAGE:
-result=new LanguagePref(new Language(metadata.toString()));
+result.setMetadata((T)new Language(metadata.toString()));
 break;
 case TYPE_MEDIA_TYPE:
-result=new MediaTypePref(new MediaType(metadata.toString()));
+result.setMetadata((T)new MediaType(metadata.toString()));
 break;
 }
 }
  else {
 ParameterList mediaParams=extractMediaParams(parameters);
 float quality=extractQuality(parameters);
+result=new Preference<T>(null,quality,parameters);
 switch (type) {
 case TYPE_CHARACTER_SET:
-result=new CharacterSetPref(new CharacterSet(metadata.toString()),quality,parameters);
+result.setMetadata((T)new CharacterSet(metadata.toString()));
 break;
 case TYPE_ENCODING:
-result=new EncodingPref(new Encoding(metadata.toString()),quality,parameters);
+result.setMetadata((T)new Encoding(metadata.toString()));
 break;
 case TYPE_LANGUAGE:
-result=new LanguagePref(new Language(metadata.toString()),quality,parameters);
+result.setMetadata((T)new Language(metadata.toString()));
 break;
 case TYPE_MEDIA_TYPE:
-result=new MediaTypePref(new MediaType(metadata.toString(),mediaParams),quality,parameters);
+result.setMetadata((T)new MediaType(metadata.toString(),mediaParams));
 break;
 }
 }
