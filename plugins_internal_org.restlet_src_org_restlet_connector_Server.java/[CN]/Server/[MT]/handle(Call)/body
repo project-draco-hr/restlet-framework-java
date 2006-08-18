@@ -1,3 +1,9 @@
 {
-  getNext().handle(call);
+  if (getNext() != null) {
+    getNext().handle(call);
+  }
+ else {
+    call.setStatus(Status.SERVER_ERROR_INTERNAL);
+    getContext().getLogger().warning("Unable to find a chained Restlet for the Server connector.");
+  }
 }
