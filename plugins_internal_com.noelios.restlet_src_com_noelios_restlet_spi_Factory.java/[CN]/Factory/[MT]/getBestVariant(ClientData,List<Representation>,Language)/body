@@ -25,7 +25,7 @@
       currentVariant=(Representation)iter1.next();
       variantLanguage=currentVariant.getLanguage();
       variantMediaType=currentVariant.getMediaType();
-      List<Preference<Language>> languagePrefs=client.getLanguagePrefs();
+      List<Preference<Language>> languagePrefs=client.getAcceptedLanguages();
       if (languagePrefs.size() == 0)       languagePrefs.add(new Preference<Language>(Language.ALL));
       for (Iterator<Preference<Language>> iter2=languagePrefs.iterator(); (variantLanguage != null) && iter2.hasNext(); ) {
         currentLanguagePref=iter2.next();
@@ -65,7 +65,7 @@
         }
       }
       compatibleLanguage=(variantLanguage == null) || (bestLanguagePref != null) || (variantLanguage.equals(fallbackLanguage));
-      List<Preference<MediaType>> mediaTypePrefs=client.getMediaTypePrefs();
+      List<Preference<MediaType>> mediaTypePrefs=client.getAcceptedMediaTypes();
       if (mediaTypePrefs.size() == 0)       mediaTypePrefs.add(new Preference<MediaType>(MediaType.ALL));
       for (Iterator<Preference<MediaType>> iter2=mediaTypePrefs.iterator(); compatibleLanguage && iter2.hasNext(); ) {
         currentMediaTypePref=iter2.next();
