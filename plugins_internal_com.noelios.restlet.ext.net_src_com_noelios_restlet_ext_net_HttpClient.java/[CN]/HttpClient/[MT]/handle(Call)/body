@@ -1,7 +1,7 @@
 {
-  AbstractHttpClientCall clientCall=null;
+  HttpUrlConnectionCall clientCall=null;
   try {
-    clientCall=createCall(call.getMethod().getName(),call.getResourceRef().toString(),hasInput(call));
+    clientCall=new HttpUrlConnectionCall(this,call.getMethod().toString(),call.getResourceRef().toString(),hasInput(call));
     if (call.getClient().getName() != null) {
       clientCall.getRequestHeaders().add(HttpConstants.HEADER_USER_AGENT,call.getClient().getName());
     }
@@ -62,7 +62,14 @@
     }
     if (hasInput(call)) {
       if (call.getInput().getSize() > 0) {
-        clientCall.getRequestHeaders().add(HttpConstants.HEADER_CONTENT_LENGTH,Long.toString(call.getInput().getSize()));
+        clientCall.getConnection().setFixedLengthStreamingMode((int)call.getInput().getSize());
+      }
+ else {
+        if (getChunkLength() >= 0) {
+          clientCall.getConnection().setChunkedStreamingMode(getChunkLength());
+        }
+ else {
+        }
       }
       if (call.getInput().getMediaType() != null) {
         clientCall.getRequestHeaders().add(HttpConstants.HEADER_CONTENT_TYPE,call.getInput().getMediaType().toString());
