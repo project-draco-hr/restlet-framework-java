@@ -1,0 +1,24 @@
+{
+  if (this.converter == null) {
+    String converterClassName=getInitParameter(NAME_CONVERTER_CLASS);
+    if (converterClassName != null) {
+      try {
+        Class converterClass=Class.forName(converterClassName);
+        this.converter=(HttpServerConverter)converterClass.newInstance();
+      }
+ catch (      ClassNotFoundException e) {
+        log("[Noelios Restlet Engine] - The ServerServlet couldn't find the converter class. Please check that your classpath includes " + converterClassName,e);
+      }
+catch (      InstantiationException e) {
+        log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the converter class. Please check this class has an empty constructor " + converterClassName,e);
+      }
+catch (      IllegalAccessException e) {
+        log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the converter class. Please check that you have to proper access rights to " + converterClassName,e);
+      }
+    }
+    if (this.converter == null) {
+      this.converter=new HttpServerConverter();
+    }
+  }
+  return this.converter;
+}

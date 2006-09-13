@@ -1,12 +1,12 @@
 {
   SecurityData result=super.getSecurity();
   if (!this.securityAdded) {
-    if (getConnectorCall().isConfidential()) {
+    if (getHttpCall().isConfidential()) {
       getSecurity().setConfidential(true);
     }
  else {
     }
-    String authorization=getConnectorCall().getRequestHeaders().getValues(HttpConstants.HEADER_AUTHORIZATION);
+    String authorization=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_AUTHORIZATION);
     result.setChallengeResponse(SecurityUtils.parseResponse(authorization));
     this.securityAdded=true;
   }

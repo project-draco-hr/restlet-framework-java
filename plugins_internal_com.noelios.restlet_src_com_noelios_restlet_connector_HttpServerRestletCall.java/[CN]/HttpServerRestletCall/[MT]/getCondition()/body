@@ -1,16 +1,16 @@
 {
   ConditionData result=super.getCondition();
   if (!this.conditionAdded) {
-    String ifMatchHeader=getConnectorCall().getRequestHeaders().getValues(HttpConstants.HEADER_IF_MATCH);
-    String ifNoneMatchHeader=getConnectorCall().getRequestHeaders().getValues(HttpConstants.HEADER_IF_NONE_MATCH);
+    String ifMatchHeader=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_IF_MATCH);
+    String ifNoneMatchHeader=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_IF_NONE_MATCH);
     Date ifModifiedSince=null;
     Date ifUnmodifiedSince=null;
-    for (    Parameter header : getConnectorCall().getRequestHeaders()) {
+    for (    Parameter header : getHttpCall().getRequestHeaders()) {
       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_IF_MODIFIED_SINCE)) {
-        ifModifiedSince=getConnectorCall().parseDate(header.getValue(),false);
+        ifModifiedSince=getHttpCall().parseDate(header.getValue(),false);
       }
  else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_IF_UNMODIFIED_SINCE)) {
-        ifUnmodifiedSince=getConnectorCall().parseDate(header.getValue(),false);
+        ifUnmodifiedSince=getHttpCall().parseDate(header.getValue(),false);
       }
     }
     if ((ifModifiedSince != null) && (ifModifiedSince.getTime() != -1)) {

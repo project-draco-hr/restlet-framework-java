@@ -1,0 +1,29 @@
+{
+  try {
+    for (    Parameter header : httpCall.getResponseHeaders()) {
+      if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_LOCATION)) {
+        call.setRedirectRef(header.getValue());
+      }
+ else       if ((header.getName().equalsIgnoreCase(HttpConstants.HEADER_SET_COOKIE)) || (header.getName().equalsIgnoreCase(HttpConstants.HEADER_SET_COOKIE2))) {
+        try {
+          CookieReader cr=new CookieReader(header.getValue());
+          call.getCookieSettings().add(cr.readCookieSetting());
+        }
+ catch (        Exception e) {
+          logger.log(Level.WARNING,"Error during cookie setting parsing. Header: " + header.getValue(),e);
+        }
+      }
+ else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_WWW_AUTHENTICATE)) {
+        ChallengeRequest request=SecurityUtils.parseRequest(header.getValue());
+        call.getSecurity().setChallengeRequest(request);
+      }
+ else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_SERVER)) {
+        call.getServer().setName(header.getValue());
+      }
+    }
+  }
+ catch (  Exception e) {
+    logger.log(Level.FINE,"An error occured during the processing of the HTTP response.",e);
+    call.setStatus(new Status(Status.CONNECTOR_ERROR_INTERNAL,"Unable to process the response. " + e.getMessage()));
+  }
+}

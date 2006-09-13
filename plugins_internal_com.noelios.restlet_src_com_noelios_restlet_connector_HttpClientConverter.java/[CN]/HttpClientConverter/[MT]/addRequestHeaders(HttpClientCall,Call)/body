@@ -1,0 +1,91 @@
+{
+  if (call.getClient().getName() != null) {
+    httpCall.getRequestHeaders().add(HttpConstants.HEADER_USER_AGENT,call.getClient().getName());
+  }
+ else {
+    httpCall.getRequestHeaders().add(HttpConstants.HEADER_USER_AGENT,Factory.VERSION_HEADER);
+  }
+  ConditionData condition=call.getCondition();
+  if (condition.getMatch() != null) {
+    StringBuilder value=new StringBuilder();
+    for (int i=0; i < condition.getMatch().size(); i++) {
+      if (i > 0)       value.append(", ");
+      value.append(condition.getMatch().get(i).getName());
+    }
+    httpCall.getRequestHeaders().add(HttpConstants.HEADER_IF_MATCH,value.toString());
+  }
+  if (condition.getModifiedSince() != null) {
+    String imsDate=DateUtils.format(condition.getModifiedSince(),DateUtils.FORMAT_RFC_1123[0]);
+    httpCall.getRequestHeaders().add(HttpConstants.HEADER_IF_MODIFIED_SINCE,imsDate);
+  }
+  if (condition.getNoneMatch() != null) {
+    StringBuilder value=new StringBuilder();
+    for (int i=0; i < condition.getNoneMatch().size(); i++) {
+      if (i > 0)       value.append(", ");
+      value.append(condition.getNoneMatch().get(i).getName());
+    }
+    httpCall.getRequestHeaders().add(HttpConstants.HEADER_IF_NONE_MATCH,value.toString());
+  }
+  if (condition.getUnmodifiedSince() != null) {
+    String iusDate=DateUtils.format(condition.getUnmodifiedSince(),DateUtils.FORMAT_RFC_1123[0]);
+    httpCall.getRequestHeaders().add(HttpConstants.HEADER_IF_UNMODIFIED_SINCE,iusDate);
+  }
+  if (call.getCookies().size() > 0) {
+    String cookies=CookieUtils.format(call.getCookies());
+    httpCall.getRequestHeaders().add(HttpConstants.HEADER_COOKIE,cookies);
+  }
+  if (call.getReferrerRef() != null) {
+    httpCall.getRequestHeaders().add(HttpConstants.HEADER_REFERRER,call.getReferrerRef().toString());
+  }
+  ClientData client=call.getClient();
+  if (client.getAcceptedMediaTypes().size() > 0) {
+    try {
+      httpCall.getRequestHeaders().add(HttpConstants.HEADER_ACCEPT,PreferenceUtils.format(client.getAcceptedMediaTypes()));
+    }
+ catch (    IOException ioe) {
+      logger.log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
+    }
+  }
+ else {
+    httpCall.getRequestHeaders().add(HttpConstants.HEADER_ACCEPT,MediaType.ALL.getName());
+  }
+  if (client.getAcceptedCharacterSets().size() > 0) {
+    try {
+      httpCall.getRequestHeaders().add(HttpConstants.HEADER_ACCEPT_CHARSET,PreferenceUtils.format(client.getAcceptedCharacterSets()));
+    }
+ catch (    IOException ioe) {
+      logger.log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
+    }
+  }
+  if (client.getAcceptedEncodings().size() > 0) {
+    try {
+      httpCall.getRequestHeaders().add(HttpConstants.HEADER_ACCEPT_ENCODING,PreferenceUtils.format(client.getAcceptedEncodings()));
+    }
+ catch (    IOException ioe) {
+      logger.log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
+    }
+  }
+  if (client.getAcceptedLanguages().size() > 0) {
+    try {
+      httpCall.getRequestHeaders().add(HttpConstants.HEADER_ACCEPT_LANGUAGE,PreferenceUtils.format(client.getAcceptedLanguages()));
+    }
+ catch (    IOException ioe) {
+      logger.log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
+    }
+  }
+  ChallengeResponse response=call.getSecurity().getChallengeResponse();
+  if (response != null) {
+    httpCall.getRequestHeaders().add(HttpConstants.HEADER_AUTHORIZATION,SecurityUtils.format(response));
+  }
+  if (call.getInput() != null) {
+    if (call.getInput().getMediaType() != null) {
+      httpCall.getRequestHeaders().add(HttpConstants.HEADER_CONTENT_TYPE,call.getInput().getMediaType().toString());
+    }
+    if (call.getInput().getEncoding() != null) {
+      httpCall.getRequestHeaders().add(HttpConstants.HEADER_CONTENT_ENCODING,call.getInput().getEncoding().toString());
+    }
+    if (call.getInput().getLanguage() != null) {
+      httpCall.getRequestHeaders().add(HttpConstants.HEADER_CONTENT_LANGUAGE,call.getInput().getLanguage().toString());
+    }
+  }
+}

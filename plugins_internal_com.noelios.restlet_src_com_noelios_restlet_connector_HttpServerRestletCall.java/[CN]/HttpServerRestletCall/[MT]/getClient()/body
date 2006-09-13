@@ -1,19 +1,19 @@
 {
   ClientData result=super.getClient();
   if (!this.clientAdded) {
-    String acceptCharset=getConnectorCall().getRequestHeaders().getValues(HttpConstants.HEADER_ACCEPT_CHARSET);
-    String acceptEncoding=getConnectorCall().getRequestHeaders().getValues(HttpConstants.HEADER_ACCEPT_ENCODING);
-    String acceptLanguage=getConnectorCall().getRequestHeaders().getValues(HttpConstants.HEADER_ACCEPT_LANGUAGE);
-    String acceptMediaType=getConnectorCall().getRequestHeaders().getValues(HttpConstants.HEADER_ACCEPT);
+    String acceptCharset=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_ACCEPT_CHARSET);
+    String acceptEncoding=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_ACCEPT_ENCODING);
+    String acceptLanguage=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_ACCEPT_LANGUAGE);
+    String acceptMediaType=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_ACCEPT);
     PreferenceUtils.parseCharacterSets(acceptCharset,result);
     PreferenceUtils.parseEncodings(acceptEncoding,result);
     PreferenceUtils.parseLanguages(acceptLanguage,result);
     PreferenceUtils.parseMediaTypes(acceptMediaType,result);
-    result.setName(getConnectorCall().getRequestHeaders().getValues(HttpConstants.HEADER_USER_AGENT));
-    result.setAddress(getConnectorCall().getRequestAddress());
-    boolean useForwardedForHeader=Boolean.parseBoolean(this.connectorContext.getParameters().getFirstValue("useForwardedForHeader",false));
+    result.setName(getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_USER_AGENT));
+    result.setAddress(getHttpCall().getRequestAddress());
+    boolean useForwardedForHeader=Boolean.parseBoolean(this.context.getParameters().getFirstValue("useForwardedForHeader",false));
     if (useForwardedForHeader) {
-      String header=getConnectorCall().getRequestHeaders().getValues(HttpConstants.HEADER_X_FORWARDED_FOR);
+      String header=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_X_FORWARDED_FOR);
       if (header != null) {
         String[] addresses=header.split(",");
         for (int i=addresses.length - 1; i >= 0; i--) {

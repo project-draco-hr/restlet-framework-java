@@ -1,0 +1,16 @@
+{
+  if (getRequestStream() != null) {
+    if (input != null) {
+      input.write(getRequestStream());
+    }
+    getRequestStream().flush();
+    getRequestStream().close();
+  }
+ else   if (getRequestChannel() != null) {
+    if (input != null) {
+      input.write(getRequestChannel());
+    }
+    getRequestChannel().close();
+  }
+  return new Status(getResponseStatusCode(),null,getResponseReasonPhrase(),null);
+}
