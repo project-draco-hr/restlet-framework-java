@@ -1,0 +1,73 @@
+{
+  HttpServer result=this.server;
+  if (result == null) {
+synchronized (ServerServlet.class) {
+      String serverAttributeName=getInitParameter(NAME_SERVER_ATTRIBUTE,NAME_SERVER_ATTRIBUTE_DEFAULT);
+      result=(HttpServer)getServletContext().getAttribute(serverAttributeName);
+      if (result == null) {
+        result=new HttpServer();
+        result.setConverterName(getInitParameter(NAME_CONVERTER_CLASS,NAME_CONVERTER_CLASS_DEFAULT));
+        getServletContext().setAttribute(NAME_SERVER_ATTRIBUTE,result);
+        String targetClassName=getInitParameter(NAME_TARGET_CLASS,null);
+        if (targetClassName != null) {
+          try {
+            Class targetClass=Class.forName(targetClassName);
+            Restlet target=null;
+            try {
+              target=(Restlet)targetClass.getConstructor(Context.class).newInstance((Context)null);
+            }
+ catch (            NoSuchMethodException nsme) {
+              target=(Restlet)targetClass.newInstance();
+            }
+            Container container=null;
+            if (target instanceof Container) {
+              container=(Container)target;
+            }
+ else {
+              container=new Container(null);
+              container.setRoot(target);
+            }
+            if (container != null) {
+              container.getServers().add(result);
+              container.getClients().add(new ServletLocalClient(getServletContext()));
+              container.setContext(new ServletContext(this,container));
+              result.setContext(container.getContext());
+              if (target != container)               target.setContext(container.getContext());
+              String initContextPathName=getInitParameter(NAME_TARGET_INIT_CONTEXTPATH);
+              if (initContextPathName != null) {
+                String scheme=request.getScheme();
+                String hostName=request.getServerName();
+                int hostPort=request.getServerPort();
+                String servletPath=request.getContextPath() + request.getServletPath();
+                String contextPath=Reference.toString(scheme,hostName,hostPort,servletPath,null,null);
+                container.getContext().getParameters().add(initContextPathName,contextPath);
+                log("[Noelios Restlet Engine] - This context path has been provided to the target's init parameter \"" + initContextPathName + "\": "+ contextPath);
+              }
+              result.start();
+            }
+ else {
+              log("[Noelios Restlet Engine] - The Restlet container couldn't be instantiated.");
+            }
+          }
+ catch (          ClassNotFoundException e) {
+            log("[Noelios Restlet Engine] - The ServerServlet couldn't find the target class. Please check that your classpath includes " + targetClassName,e);
+          }
+catch (          InstantiationException e) {
+            log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check this class has an empty constructor " + targetClassName,e);
+          }
+catch (          IllegalAccessException e) {
+            log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check that you have to proper access rights to " + targetClassName,e);
+          }
+catch (          Exception e) {
+            log("[Noelios Restlet Engine] - The ServerServlet couldn't start the target Restlet.",e);
+          }
+        }
+ else {
+          log("[Noelios Restlet Engine] - The ServerServlet couldn't find the target class name. Please set the initialization parameter called " + NAME_TARGET_CLASS);
+        }
+      }
+      this.server=result;
+    }
+  }
+  return result;
+}

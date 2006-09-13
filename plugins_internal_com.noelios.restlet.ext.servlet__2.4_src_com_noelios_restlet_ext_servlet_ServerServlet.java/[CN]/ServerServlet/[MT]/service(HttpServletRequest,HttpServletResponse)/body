@@ -1,11 +1,4 @@
 {
-  if (getTarget(request) != null) {
-    ServletCall httpCall=new ServletCall(request,response);
-    Call call=getConverter().toUniform(httpCall,getContext());
-    handle(call);
-    getConverter().commit(httpCall,call);
-  }
- else {
-    log("Unable to service the Servlet request, no Restlet target is available");
-  }
+  ServletCall httpCall=new ServletCall(request,response);
+  getServer(request).handle(httpCall);
 }
