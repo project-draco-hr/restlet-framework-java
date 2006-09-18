@@ -1,0 +1,10 @@
+{
+  Protocol protocol=call.getResourceRef().getSchemeProtocol();
+  for (  Client client : getContainer().getClients()) {
+    if (client.getProtocols().contains(protocol)) {
+      client.handle(call);
+      return;
+    }
+  }
+  throw new UnsupportedOperationException("The " + protocol + " protocol is not available to this application");
+}
