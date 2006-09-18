@@ -1,0 +1,14 @@
+{
+  SecurityData result=super.getSecurity();
+  if (!this.securityAdded) {
+    if (getHttpCall().isConfidential()) {
+      getSecurity().setConfidential(true);
+    }
+ else {
+    }
+    String authorization=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_AUTHORIZATION);
+    result.setChallengeResponse(SecurityUtils.parseResponse(authorization));
+    this.securityAdded=true;
+  }
+  return result;
+}
