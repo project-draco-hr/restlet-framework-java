@@ -27,7 +27,8 @@
             validVariant=(((extensions == null) && (this.baseExtensions == null)) || (this.baseExtensions == null) || extensions.containsAll(this.baseExtensions));
           }
           if (validVariant) {
-            Call contextCall=getDirectory().getContext().get(entryUri);
+            Call contextCall=new Call(Method.GET,entryUri);
+            getDirectory().getContext().handle(call);
             if (contextCall.getStatus().isSuccess() && (contextCall.getOutput() != null)) {
               result.add(contextCall.getOutput());
             }
