@@ -1,24 +1,7 @@
 {
   if (this.converter == null) {
-    if (getConverterName() != null) {
-      try {
-        Class converterClass=Class.forName(getConverterName());
-        this.converter=(HttpServerConverter)converterClass.newInstance();
-      }
- catch (      ClassNotFoundException e) {
-        getContext().getLogger().log(Level.WARNING,"Couldn't find the converter class. Please check that your classpath includes " + converterName,e);
-      }
-catch (      InstantiationException e) {
-        getContext().getLogger().log(Level.WARNING,"Couldn't instantiate the converter class. Please check this class has an empty constructor " + converterName,e);
-      }
-catch (      IllegalAccessException e) {
-        getContext().getLogger().log(Level.WARNING,"Couldn't instantiate the converter class. Please check that you have to proper access rights to " + converterName,e);
-      }
-    }
-    if (this.converter == null) {
-      getContext().getLogger().log(Level.WARNING,"Instantiating the default HTTP call converter");
-      this.converter=new HttpServerConverter();
-    }
+    getContext().getLogger().log(Level.WARNING,"Instantiating the default HTTP call converter");
+    this.converter=new HttpServerConverter();
   }
   return this.converter;
 }
