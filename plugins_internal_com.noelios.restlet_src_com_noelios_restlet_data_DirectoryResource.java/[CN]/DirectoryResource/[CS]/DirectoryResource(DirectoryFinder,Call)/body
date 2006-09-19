@@ -10,7 +10,7 @@
     this.targetUri=handler.getRootUri();
   }
   Call contextCall=new Call(Method.GET,this.targetUri);
-  getDirectory().getContext().handle(call);
+  getDirectory().getContext().handle(contextCall);
   if ((contextCall.getOutput() != null) && contextCall.getOutput().getMediaType().equals(MediaType.TEXT_URI_LIST)) {
     this.targetDirectory=true;
     this.directoryContent=new ReferenceList(contextCall.getOutput());
@@ -40,7 +40,7 @@
       this.baseName=targetUri.substring(lastSlashIndex + 1);
     }
     contextCall=new Call(Method.GET,this.directoryUri);
-    getDirectory().getContext().handle(call);
+    getDirectory().getContext().handle(contextCall);
     if ((contextCall.getOutput() != null) && contextCall.getOutput().getMediaType().equals(MediaType.TEXT_URI_LIST)) {
       this.directoryContent=new ReferenceList(contextCall.getOutput());
     }
