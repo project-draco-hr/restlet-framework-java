@@ -2,11 +2,11 @@
   try {
     Restlet handler=new Restlet(){
       public void handleGet(      Call call){
-        ParameterList requestHeaders=(ParameterList)call.getAttributes().get("requestHeaders");
-        call.setOutput("Accept header: " + requestHeaders.getFirstValue("accept",true),MediaType.TEXT_PLAIN);
-        ParameterList responseHeaders=new ParameterList();
-        responseHeaders.add("X-Test","Test value");
-        call.getAttributes().put("responseHeaders",responseHeaders);
+        ParameterList headers=(ParameterList)call.getAttributes().get("restlet.http.requestHeaders");
+        call.setOutput("Accept header: " + headers.getFirstValue("accept",true),MediaType.TEXT_PLAIN);
+        headers=new ParameterList();
+        headers.add("X-Test","Test value");
+        call.getAttributes().put("restlet.http.responseHeaders",headers);
       }
     }
 ;
