@@ -1,8 +1,24 @@
 {
-  Parameter param=readNextParameter();
-  while (param != null) {
-    form.add(param);
-    param=readNextParameter();
+  boolean readNext=true;
+  Parameter param=null;
+  while (readNext) {
+    try {
+      param=readNextParameter();
+      if (param != null) {
+        form.add(param);
+      }
+ else {
+        readNext=false;
+      }
+    }
+ catch (    IOException ioe) {
+      logger.log(Level.WARNING,"Unable to parse a form parameter. Skipping it.",ioe);
+    }
   }
-  this.stream.close();
+  try {
+    this.stream.close();
+  }
+ catch (  IOException ioe) {
+    logger.log(Level.WARNING,"Unable to close the form input stream",ioe);
+  }
 }

@@ -1,33 +1,48 @@
 {
-  Method method=call.getMethod();
-  if (method == null) {
-    handleOthers(call);
+  if (isStopped()) {
+    try {
+      start();
+    }
+ catch (    Exception e) {
+      getContext().getLogger().log(Level.WARNING,UNABLE_TO_START,e);
+      call.setStatus(Status.SERVER_ERROR_INTERNAL);
+    }
   }
- else   if (method.equals(Method.GET)) {
-    handleGet(call);
-  }
- else   if (method.equals(Method.POST)) {
-    handlePost(call);
-  }
- else   if (method.equals(Method.PUT)) {
-    handlePut(call);
-  }
- else   if (method.equals(Method.DELETE)) {
-    handleDelete(call);
-  }
- else   if (method.equals(Method.HEAD)) {
-    handleHead(call);
-  }
- else   if (method.equals(Method.CONNECT)) {
-    handleConnect(call);
-  }
- else   if (method.equals(Method.OPTIONS)) {
-    handleOptions(call);
-  }
- else   if (method.equals(Method.TRACE)) {
-    handleTrace(call);
+  if (isStarted()) {
+    Method method=call.getMethod();
+    if (method == null) {
+      handleOthers(call);
+    }
+ else     if (method.equals(Method.GET)) {
+      handleGet(call);
+    }
+ else     if (method.equals(Method.POST)) {
+      handlePost(call);
+    }
+ else     if (method.equals(Method.PUT)) {
+      handlePut(call);
+    }
+ else     if (method.equals(Method.DELETE)) {
+      handleDelete(call);
+    }
+ else     if (method.equals(Method.HEAD)) {
+      handleHead(call);
+    }
+ else     if (method.equals(Method.CONNECT)) {
+      handleConnect(call);
+    }
+ else     if (method.equals(Method.OPTIONS)) {
+      handleOptions(call);
+    }
+ else     if (method.equals(Method.TRACE)) {
+      handleTrace(call);
+    }
+ else {
+      handleOthers(call);
+    }
   }
  else {
-    handleOthers(call);
+    getContext().getLogger().log(Level.WARNING,UNABLE_TO_START);
+    call.setStatus(Status.SERVER_ERROR_INTERNAL);
   }
 }

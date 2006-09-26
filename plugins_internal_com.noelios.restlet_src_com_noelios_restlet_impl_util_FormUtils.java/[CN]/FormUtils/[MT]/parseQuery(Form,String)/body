@@ -1,3 +1,12 @@
 {
-  new FormReader(query).addParameters(form);
+  FormReader fr=null;
+  try {
+    fr=new FormReader(query);
+  }
+ catch (  IOException ioe) {
+    logger.log(Level.WARNING,"Unable to create a form reader. Parsing aborted.",ioe);
+  }
+  if (fr != null) {
+    fr.addParameters(form);
+  }
 }
