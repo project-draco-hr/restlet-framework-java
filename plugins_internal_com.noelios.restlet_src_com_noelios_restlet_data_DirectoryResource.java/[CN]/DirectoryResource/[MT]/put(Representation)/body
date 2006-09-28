@@ -1,0 +1,25 @@
+{
+  Call contextCall=new Call(Method.PUT,this.targetUri);
+  if (!getDirectory().isModifiable()) {
+    contextCall.setStatus(Status.CLIENT_ERROR_FORBIDDEN);
+  }
+ else {
+    contextCall.setInput(variant);
+    if (targetDirectory) {
+      contextCall.setResourceRef(this.targetUri);
+      getDirectory().getContext().handle(contextCall);
+    }
+ else {
+      ReferenceList references=getVariantsReferences(true);
+      if (!references.isEmpty()) {
+        contextCall.setResourceRef(references.get(0));
+        getDirectory().getContext().handle(contextCall);
+      }
+ else {
+        contextCall.setResourceRef(this.targetUri);
+        getDirectory().getContext().handle(contextCall);
+      }
+    }
+  }
+  return new Result(contextCall.getStatus());
+}

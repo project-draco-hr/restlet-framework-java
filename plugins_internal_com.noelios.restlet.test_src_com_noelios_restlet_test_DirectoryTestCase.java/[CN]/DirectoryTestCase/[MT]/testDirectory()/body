@@ -1,0 +1,17 @@
+{
+  try {
+    File testDir=new File(System.getProperty("java.io.tmpdir"),"DirectoryTestCase");
+    testDir.mkdir();
+    File testFile=File.createTempFile("test",".txt",testDir);
+    testFileUrl=webSiteURL.concat(testFile.getName());
+    Container clientContainer=new Container();
+    clientContainer.start();
+    DirectoryFinder directory=new DirectoryFinder(clientContainer.getContext(),testDir.toURI().toString(),"");
+    testDirectory(directory);
+    clientContainer.stop();
+    testFile.delete();
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+}

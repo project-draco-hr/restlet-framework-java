@@ -3,36 +3,11 @@
   logger.info("Getting variants for : " + getTargetUri());
   if (this.directoryContent != null) {
     if (this.baseName != null) {
-      Set<String> extensions=null;
-      String entryUri;
-      String fullEntryName;
-      String baseEntryName;
-      int lastSlashIndex;
-      int firstDotIndex;
-      for (      Reference ref : this.directoryContent) {
-        entryUri=ref.toString();
-        lastSlashIndex=entryUri.lastIndexOf('/');
-        fullEntryName=(lastSlashIndex == -1) ? entryUri : entryUri.substring(lastSlashIndex + 1);
-        baseEntryName=fullEntryName;
-        if (this.handler.isNegotiationEnabled()) {
-          firstDotIndex=fullEntryName.indexOf('.');
-          if (firstDotIndex != -1) {
-            baseEntryName=fullEntryName.substring(0,firstDotIndex);
-          }
-        }
-        if (baseEntryName.equals(this.baseName)) {
-          boolean validVariant=true;
-          if (this.handler.isNegotiationEnabled()) {
-            extensions=getExtensions(fullEntryName);
-            validVariant=(((extensions == null) && (this.baseExtensions == null)) || (this.baseExtensions == null) || extensions.containsAll(this.baseExtensions));
-          }
-          if (validVariant) {
-            Call contextCall=new Call(Method.GET,entryUri);
-            getDirectory().getContext().handle(contextCall);
-            if (contextCall.getStatus().isSuccess() && (contextCall.getOutput() != null)) {
-              result.add(contextCall.getOutput());
-            }
-          }
+      for (      Reference ref : getVariantsReferences(false)) {
+        Call contextCall=new Call(Method.GET,ref.toString());
+        getDirectory().getContext().handle(contextCall);
+        if (contextCall.getStatus().isSuccess() && (contextCall.getOutput() != null)) {
+          result.add(contextCall.getOutput());
         }
       }
     }
