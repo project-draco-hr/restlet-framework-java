@@ -4,7 +4,7 @@
     header=iter.next();
     getResponse().addHeader(header.getName(),header.getValue());
   }
-  if (Status.isError(getStatusCode())) {
+  if (Status.isError(getStatusCode()) && (output == null)) {
     try {
       getResponse().sendError(getStatusCode(),getReasonPhrase());
     }
@@ -14,6 +14,6 @@
   }
  else {
     getResponse().setStatus(getStatusCode());
+    super.sendResponse(output);
   }
-  super.sendResponse(output);
 }
