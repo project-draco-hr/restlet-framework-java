@@ -10,9 +10,17 @@
   this.httpCall=httpCall;
   setStatus(Status.SUCCESS_OK);
   setMethod(Method.valueOf(httpCall.getMethod()));
-  setProtocol(httpCall.isConfidential() ? Protocol.HTTP : Protocol.HTTPS);
-  String resource=httpCall.getRequestUri();
-  if (resource != null) {
-    setResourceRef(resource);
+  setProtocol(httpCall.isConfidential() ? Protocol.HTTPS : Protocol.HTTP);
+  Reference resource=new Reference(httpCall.getRequestUri());
+  if (resource.isRelative()) {
+    StringBuilder sb=new StringBuilder();
+    sb.append(getProtocol().getSchemeName()).append("://");
+    sb.append(httpCall.getServerName());
+    if (httpCall.getServerPort() != getProtocol().getDefaultPort()) {
+      sb.append(':').append(httpCall.getServerPort());
+    }
+    resource.setBaseRef(new Reference(sb.toString()));
+    resource=resource.getTargetRef();
   }
+  setResourceRef(resource);
 }
