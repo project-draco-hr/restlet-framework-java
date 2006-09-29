@@ -6,11 +6,11 @@
   this.inputAdded=false;
   this.referrerAdded=false;
   this.securityAdded=false;
+  this.serverAdded=false;
   this.httpCall=httpCall;
-  getServer().setAddress(httpCall.getResponseAddress());
-  getServer().setName(Factory.VERSION_HEADER);
   setStatus(Status.SUCCESS_OK);
-  setMethod(Method.valueOf(httpCall.getRequestMethod()));
+  setMethod(Method.valueOf(httpCall.getMethod()));
+  setProtocol(httpCall.isConfidential() ? Protocol.HTTP : Protocol.HTTPS);
   String resource=httpCall.getRequestUri();
   if (resource != null) {
     setResourceRef(resource);

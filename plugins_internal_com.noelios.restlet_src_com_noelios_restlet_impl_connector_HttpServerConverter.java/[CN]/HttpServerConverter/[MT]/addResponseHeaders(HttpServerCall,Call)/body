@@ -11,10 +11,10 @@
     if (call.getSecurity().getChallengeRequest() != null) {
       responseHeaders.add(HttpConstants.HEADER_WWW_AUTHENTICATE,SecurityUtils.format(call.getSecurity().getChallengeRequest()));
     }
-    httpCall.getResponseHeaders().add(HttpConstants.HEADER_SERVER,call.getServer().getName());
+    httpCall.getResponseHeaders().add(HttpConstants.HEADER_SERVER,call.getServer().getAgent());
     if (call.getStatus() != null) {
-      httpCall.setResponseStatusCode(call.getStatus().getCode());
-      httpCall.setResponseReasonPhrase(call.getStatus().getDescription());
+      httpCall.setStatusCode(call.getStatus().getCode());
+      httpCall.setReasonPhrase(call.getStatus().getDescription());
     }
     if (call.getOutput() != null) {
       Representation output=call.getOutput();
@@ -61,7 +61,7 @@
   }
  catch (  Exception e) {
     logger.log(Level.INFO,"Exception intercepted while adding the response headers",e);
-    httpCall.setResponseStatusCode(Status.SERVER_ERROR_INTERNAL.getCode());
-    httpCall.setResponseReasonPhrase(Status.SERVER_ERROR_INTERNAL.getDescription());
+    httpCall.setStatusCode(Status.SERVER_ERROR_INTERNAL.getCode());
+    httpCall.setReasonPhrase(Status.SERVER_ERROR_INTERNAL.getDescription());
   }
 }

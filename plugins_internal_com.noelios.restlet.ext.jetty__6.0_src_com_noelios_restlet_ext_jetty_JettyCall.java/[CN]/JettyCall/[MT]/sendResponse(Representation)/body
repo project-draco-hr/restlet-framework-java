@@ -4,16 +4,16 @@
     header=iter.next();
     getConnection().getResponse().addHeader(header.getName(),header.getValue());
   }
-  if (Status.isError(getResponseStatusCode())) {
+  if (Status.isError(getStatusCode())) {
     try {
-      getConnection().getResponse().sendError(getResponseStatusCode(),getResponseReasonPhrase());
+      getConnection().getResponse().sendError(getStatusCode(),getReasonPhrase());
     }
  catch (    IOException ioe) {
       logger.log(Level.WARNING,"Unable to set the response error status",ioe);
     }
   }
  else {
-    getConnection().getResponse().setStatus(getResponseStatusCode());
+    getConnection().getResponse().setStatus(getStatusCode());
   }
   super.sendResponse(output);
   this.connection.completeResponse();

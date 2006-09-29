@@ -9,8 +9,8 @@
     PreferenceUtils.parseEncodings(acceptEncoding,result);
     PreferenceUtils.parseLanguages(acceptLanguage,result);
     PreferenceUtils.parseMediaTypes(acceptMediaType,result);
-    result.setName(getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_USER_AGENT));
-    result.setAddress(getHttpCall().getRequestAddress());
+    result.setAgent(getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_USER_AGENT));
+    result.setAddress(getHttpCall().getClientAddress());
     boolean useForwardedForHeader=Boolean.parseBoolean(this.context.getParameters().getFirstValue("useForwardedForHeader",false));
     if (useForwardedForHeader) {
       String header=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_X_FORWARDED_FOR);

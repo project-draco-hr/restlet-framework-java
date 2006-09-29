@@ -4,16 +4,16 @@
     header=iter.next();
     getResponse().addHeader(header.getName(),header.getValue());
   }
-  if (Status.isError(getResponseStatusCode())) {
+  if (Status.isError(getStatusCode())) {
     try {
-      getResponse().sendError(getResponseStatusCode(),getResponseReasonPhrase());
+      getResponse().sendError(getStatusCode(),getReasonPhrase());
     }
  catch (    IOException ioe) {
       logger.log(Level.WARNING,"Unable to set the response error status",ioe);
     }
   }
  else {
-    getResponse().setStatus(getResponseStatusCode());
+    getResponse().setStatus(getStatusCode());
   }
   super.sendResponse(output);
 }
