@@ -1,3 +1,15 @@
 {
-  this(null);
+  super((Container)null);
+  this.context=new ContainerContext(this,logger);
+  this.hosts=new ArrayList<VirtualHost>();
+  this.localHost=new LocalHost(getContext());
+  this.clientRouter=new ClientRouter(this);
+  this.hostRouter=new HostRouter(this);
+  this.clients=null;
+  this.servers=null;
+  this.started=false;
+  List<Protocol> protocols=new ArrayList<Protocol>();
+  protocols.add(Protocol.CONTEXT);
+  protocols.add(Protocol.FILE);
+  getClients().add(Factory.getInstance().createClient(protocols));
 }

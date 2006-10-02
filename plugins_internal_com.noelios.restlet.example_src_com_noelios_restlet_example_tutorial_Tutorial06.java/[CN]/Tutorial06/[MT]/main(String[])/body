@@ -2,10 +2,8 @@
   try {
     Container myContainer=new Container();
     myContainer.getServers().add(Protocol.HTTP,8182);
-    HostRouter host=new HostRouter(myContainer.getContext(),8182);
-    myContainer.setRoot(host);
     DirectoryFinder directory=new DirectoryFinder(myContainer.getContext(),ROOT_URI,"index.html");
-    host.getScorers().add("/",directory);
+    myContainer.getLocalHost().attach("/",directory);
     myContainer.start();
   }
  catch (  Exception e) {

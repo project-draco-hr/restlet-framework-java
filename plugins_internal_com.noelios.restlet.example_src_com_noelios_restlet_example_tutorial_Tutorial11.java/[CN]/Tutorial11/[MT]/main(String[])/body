@@ -4,18 +4,18 @@
     Context myContext=myContainer.getContext();
     myContainer.getServers().add(Protocol.HTTP,8182);
     LogFilter log=new LogFilter(myContext,"com.noelios.restlet.example");
-    myContainer.setRoot(log);
+    myContainer.getLocalHost().attach("/",log);
     StatusFilter status=new StatusFilter(myContext,true,"webmaster@mysite.org","http://www.mysite.org");
     log.setNext(status);
-    HostRouter host=new HostRouter(myContext,8182);
-    status.setNext(host);
+    Router router=new Router(myContext);
+    status.setNext(router);
     GuardFilter guard=new GuardFilter(myContext,"com.noelios.restlet.example",true,ChallengeScheme.HTTP_BASIC,"Restlet tutorial",true);
     guard.getAuthorizations().put("scott","tiger");
-    host.getScorers().add("/docs/",guard);
+    router.getScorers().add("/docs/",guard);
     DirectoryFinder directory=new DirectoryFinder(myContext,ROOT_URI,"index.html");
     guard.setNext(directory);
     Router user=new Router(myContext);
-    host.getScorers().add("/users/[a-z]+",user);
+    router.attach("/users/[a-z]+",user);
     Restlet account=new Restlet(){
       public void handleGet(      Call call){
         String output="Account of user named: " + call.getBaseRef().getLastSegment();
@@ -23,7 +23,7 @@
       }
     }
 ;
-    user.getScorers().add("$",account);
+    user.attach("$",account);
     Restlet orders=new Restlet(myContext){
       public void handleGet(      Call call){
         List<String> segments=call.getBaseRef().getSegments();
@@ -32,7 +32,7 @@
       }
     }
 ;
-    user.getScorers().add("/orders$",orders);
+    user.attach("/orders$",orders);
     myContainer.start();
   }
  catch (  Exception e) {

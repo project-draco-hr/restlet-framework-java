@@ -3,8 +3,6 @@
     Container myContainer=new Container();
     Context myContext=myContainer.getContext();
     myContainer.getServers().add(Protocol.HTTP,9876);
-    HostRouter host=new HostRouter(myContext,9876);
-    myContainer.setRoot(host);
     Restlet testRestlet=new Restlet(myContext){
       public void handlePut(      Call call){
         System.out.println("Handling the call...");
@@ -21,11 +19,11 @@
           sb.append("\n");
           System.out.println(sb.toString());
         }
-        call.setOutput(new StringRepresentation(sb.toString(),MediaType.TEXT_PLAIN));
+        call.setOutput(sb.toString(),MediaType.TEXT_PLAIN);
       }
     }
 ;
-    host.getScorers().add("/test",testRestlet);
+    myContainer.getLocalHost().attach("/test",testRestlet);
     myContainer.start();
   }
  catch (  Exception e) {

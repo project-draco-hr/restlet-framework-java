@@ -4,16 +4,14 @@
     Context myContext=myContainer.getContext();
     myContainer.getServers().add(Protocol.HTTP,8182);
     LogFilter log=new LogFilter(myContext,"com.noelios.restlet.example");
-    myContainer.setRoot(log);
+    myContainer.getLocalHost().attach("/",log);
     StatusFilter status=new StatusFilter(myContext,true,"webmaster@mysite.org","http://www.mysite.org");
     log.setNext(status);
     GuardFilter guard=new GuardFilter(myContext,"com.noelios.restlet.example",true,ChallengeScheme.HTTP_BASIC,"Restlet tutorial",true);
     guard.getAuthorizations().put("scott","tiger");
     status.setNext(guard);
-    HostRouter host=new HostRouter(myContext,8182);
-    guard.setNext(host);
     DirectoryFinder directory=new DirectoryFinder(myContext,ROOT_URI,"index.html");
-    host.getScorers().add("/",directory);
+    guard.setNext(directory);
     myContainer.start();
   }
  catch (  Exception e) {

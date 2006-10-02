@@ -1,0 +1,54 @@
+{
+  float result=0F;
+  boolean incompatible=false;
+  Protocol protocol=call.getProtocol();
+  if (protocol == null) {
+    protocol=call.getResourceRef().getSchemeProtocol();
+  }
+  if (protocol == null) {
+    logger.warning("Unable to determine the protocol to use for this call.");
+    incompatible=true;
+  }
+ else {
+    if (getHost().getAllowedProtocols().contains(protocol) || getHost().getAllowedProtocols().contains(Protocol.ALL)) {
+      result+=0.25F;
+    }
+ else {
+      incompatible=true;
+    }
+  }
+  if (!incompatible) {
+    Integer port=call.getServer().getPort();
+    if (getHost().getAllowedPorts().contains(VirtualHost.ALL_PORTS) || ((port != null) && getHost().getAllowedPorts().contains(port))) {
+      result+=0.25F;
+    }
+ else {
+      incompatible=true;
+    }
+  }
+  if (!incompatible) {
+    String address=call.getServer().getAddress();
+    if (getHost().getAllowedAddresses().contains(VirtualHost.ALL_ADDRESSES) || ((address != null) && getHost().getAllowedAddresses().contains(address))) {
+      result+=0.25F;
+    }
+ else {
+      incompatible=true;
+    }
+  }
+  if (!incompatible) {
+    String name=call.getServer().getName();
+    if (getHost().getAllowedNames().contains(VirtualHost.ALL_NAMES) || ((name != null) && getHost().getAllowedNames().contains(name))) {
+      result+=0.25F;
+    }
+ else {
+      incompatible=true;
+    }
+  }
+  if (incompatible) {
+    result=0F;
+  }
+  if (logger.isLoggable(Level.FINER)) {
+    logger.finer("Call score for the \"" + getHost().getName() + "\" host: "+ result);
+  }
+  return result;
+}

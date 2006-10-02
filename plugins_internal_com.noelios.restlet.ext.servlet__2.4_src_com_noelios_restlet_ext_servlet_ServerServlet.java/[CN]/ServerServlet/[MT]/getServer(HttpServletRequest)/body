@@ -18,13 +18,8 @@ synchronized (ServerServlet.class) {
  catch (            NoSuchMethodException nsme) {
               target=targetClass.newInstance();
             }
-            Container container=null;
-            if (target instanceof Container) {
-              container=(Container)target;
-            }
- else             if (target instanceof Restlet) {
-              container=new Container(null);
-              container.setRoot((Restlet)target);
+            ContainerImpl container=new ContainerImpl();
+            if (target instanceof Application) {
             }
             if (container != null) {
               container.getServers().add(result);

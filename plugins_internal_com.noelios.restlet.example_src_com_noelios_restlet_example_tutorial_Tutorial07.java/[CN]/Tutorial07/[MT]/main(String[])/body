@@ -4,11 +4,9 @@
     Context myContext=myContainer.getContext();
     myContainer.getServers().add(Protocol.HTTP,8182);
     LogFilter log=new LogFilter(myContext,"com.noelios.restlet.example");
-    myContainer.setRoot(log);
-    HostRouter host=new HostRouter(myContext,8182);
-    log.setNext(host);
+    myContainer.getLocalHost().attach("/",log);
     DirectoryFinder directory=new DirectoryFinder(myContext,ROOT_URI,"index.html");
-    host.getScorers().add("/",directory);
+    log.setNext(directory);
     myContainer.start();
   }
  catch (  Exception e) {

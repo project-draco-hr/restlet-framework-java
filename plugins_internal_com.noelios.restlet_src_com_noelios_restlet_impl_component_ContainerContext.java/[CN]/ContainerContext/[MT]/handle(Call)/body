@@ -7,12 +7,11 @@
     throw new UnsupportedOperationException("Unable to determine the protocol to use for this call.");
   }
  else {
-    for (    Client client : getContainer().getClients()) {
-      if (client.getProtocols().contains(protocol)) {
-        client.handle(call);
-        return;
-      }
+    if (protocol.equals(Protocol.CONTEXT) || protocol.equals(Protocol.FILE)) {
+      getLocalClient().handle(call);
+    }
+ else {
+      getContainer().getClientRouter().handle(call);
     }
   }
-  throw new UnsupportedOperationException("The " + protocol + " protocol is not available in this context.");
 }

@@ -1,0 +1,20 @@
+{
+  float result=0F;
+  String remainingRef=call.getRelativePart();
+  Matcher matcher=getPattern().matcher(remainingRef);
+  boolean matched=matcher.lookingAt();
+  if (matched) {
+    float totalLength=remainingRef.length();
+    if (totalLength > 0.0F) {
+      float matchedLength=matcher.end();
+      result=getRouter().getRequiredScore() + (1.0F - getRouter().getRequiredScore()) * (matchedLength / totalLength);
+    }
+ else {
+      result=1.0F;
+    }
+  }
+  if (logger.isLoggable(Level.FINER)) {
+    logger.finer("Call score for the \"" + getPattern().toString() + "\" URI pattern: "+ result);
+  }
+  return result;
+}
