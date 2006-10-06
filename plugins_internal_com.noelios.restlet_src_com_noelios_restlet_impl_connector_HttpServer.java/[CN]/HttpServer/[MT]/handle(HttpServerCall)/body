@@ -1,8 +1,9 @@
 {
   try {
-    Call call=getConverter().toUniform(httpCall,getContext());
-    handle(call);
-    getConverter().commit(httpCall,call);
+    Request request=getConverter().toUniform(httpCall,getContext());
+    Response response=new HttpResponse(httpCall,request);
+    handle(request,response);
+    getConverter().commit(httpCall,response);
   }
  catch (  Exception e) {
     logger.log(Level.WARNING,"Error while handling an HTTP server call: ",e.getMessage());

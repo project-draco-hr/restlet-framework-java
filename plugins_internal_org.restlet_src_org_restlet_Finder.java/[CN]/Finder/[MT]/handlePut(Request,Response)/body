@@ -1,0 +1,20 @@
+{
+  Resource target=findTarget(request,response);
+  if (target != null) {
+    if (target.allowPut()) {
+      if (request.isInputAvailable()) {
+        response.setStatus(target.put(request.getInput()).getStatus());
+      }
+ else {
+        response.setStatus(new Status(Status.CLIENT_ERROR_NOT_ACCEPTABLE,"Missing input representation"));
+      }
+    }
+ else {
+      response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+    }
+    setAllowedMethods(target,response);
+  }
+ else {
+    response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+  }
+}

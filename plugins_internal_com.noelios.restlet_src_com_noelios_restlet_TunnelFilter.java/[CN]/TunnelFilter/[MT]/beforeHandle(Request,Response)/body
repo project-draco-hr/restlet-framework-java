@@ -1,0 +1,37 @@
+{
+  super.beforeHandle(request,response);
+  if (isMethodTunnel()) {
+    String methodName=(String)request.getAttributes().get(getMethodAttribute());
+    if (methodName != null) {
+      request.setMethod(Method.valueOf(methodName));
+    }
+  }
+  if (isPreferencesTunnel()) {
+    String acceptCharset=(String)request.getAttributes().get(getCharacterSetsAttribute());
+    String acceptEncoding=(String)request.getAttributes().get(getEncodingsAttribute());
+    String acceptLanguage=(String)request.getAttributes().get(getLanguagesAttribute());
+    String acceptMediaType=(String)request.getAttributes().get(getMediaTypesAttribute());
+    if (acceptCharset != null) {
+      request.getClient().getAcceptedCharacterSets().clear();
+      PreferenceUtils.parseCharacterSets(acceptCharset,request.getClient());
+    }
+    if (acceptEncoding != null) {
+      request.getClient().getAcceptedEncodings().clear();
+      PreferenceUtils.parseEncodings(acceptEncoding,request.getClient());
+    }
+    if (acceptLanguage != null) {
+      request.getClient().getAcceptedLanguages().clear();
+      PreferenceUtils.parseLanguages(acceptLanguage,request.getClient());
+    }
+    if (acceptMediaType != null) {
+      request.getClient().getAcceptedMediaTypes().clear();
+      PreferenceUtils.parseMediaTypes(acceptMediaType,request.getClient());
+    }
+  }
+  if (isUriTunnel()) {
+    String uri=(String)request.getAttributes().get(getUriAttribute());
+    if (uri != null) {
+      request.setResourceRef(uri);
+    }
+  }
+}

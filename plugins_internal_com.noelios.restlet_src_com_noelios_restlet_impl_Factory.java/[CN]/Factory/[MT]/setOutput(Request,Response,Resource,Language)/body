@@ -1,0 +1,37 @@
+{
+  List<Representation> variants=resource.getVariants();
+  if ((variants == null) || (variants.size() < 1)) {
+    response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+  }
+ else {
+    Representation bestVariant=request.getClient().getPreferredVariant(variants,fallbackLanguage);
+    if (bestVariant == null) {
+      response.setStatus(Status.CLIENT_ERROR_NOT_ACCEPTABLE);
+    }
+ else {
+      boolean send=true;
+      if ((request.getCondition().getNoneMatch() != null) && (request.getCondition().getNoneMatch().size() > 0)) {
+        boolean matched=false;
+        if (bestVariant.getTag() != null) {
+          Tag tag;
+          for (Iterator<Tag> iter=request.getCondition().getNoneMatch().iterator(); !matched && iter.hasNext(); ) {
+            tag=iter.next();
+            matched=tag.equals(bestVariant.getTag()) || tag.equals(Tag.ALL);
+          }
+        }
+        send=!matched;
+      }
+ else {
+        Date modifiedSince=request.getCondition().getModifiedSince();
+        send=((modifiedSince == null) || (bestVariant.getModificationDate() == null) || DateUtils.after(modifiedSince,bestVariant.getModificationDate()));
+      }
+      if (send) {
+        response.setOutput(bestVariant);
+        response.setStatus(Status.SUCCESS_OK);
+      }
+ else {
+        response.setStatus(Status.REDIRECTION_NOT_MODIFIED);
+      }
+    }
+  }
+}

@@ -1,22 +1,17 @@
 {
-  try {
-    Restlet userRestlet=new Restlet(){
-      public void handleGet(      Call call){
-        String output="Account of user named: " + call.getBaseRef().getLastSegment();
-        call.setOutput(output,MediaType.TEXT_PLAIN);
-      }
+  Restlet userRestlet=new Restlet(){
+    public void handleGet(    Request request,    Response response){
+      String output="Account of user named: " + request.getBaseRef().getLastSegment();
+      response.setOutput(output,MediaType.TEXT_PLAIN);
     }
+  }
 ;
-    Restlet ordersRestlet=new Restlet(){
-      public void handleGet(      Call call){
-        List<String> segments=call.getBaseRef().getSegments();
-        String output="Orders of user named: " + segments.get(segments.size() - 2);
-        call.setOutput(output,MediaType.TEXT_PLAIN);
-      }
+  Restlet ordersRestlet=new Restlet(){
+    public void handleGet(    Request request,    Response response){
+      List<String> segments=request.getBaseRef().getSegments();
+      String output="Orders of user named: " + segments.get(segments.size() - 2);
+      response.setOutput(output,MediaType.TEXT_PLAIN);
     }
+  }
 ;
-  }
- catch (  Exception e) {
-    e.printStackTrace();
-  }
 }

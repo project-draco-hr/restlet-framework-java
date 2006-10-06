@@ -1,0 +1,48 @@
+{
+  if (isStopped()) {
+    try {
+      start();
+    }
+ catch (    Exception e) {
+      getContext().getLogger().log(Level.WARNING,UNABLE_TO_START,e);
+      response.setStatus(Status.SERVER_ERROR_INTERNAL);
+    }
+  }
+  if (isStarted()) {
+    Method method=request.getMethod();
+    if (method == null) {
+      handleOthers(request,response);
+    }
+ else     if (method.equals(Method.GET)) {
+      handleGet(request,response);
+    }
+ else     if (method.equals(Method.POST)) {
+      handlePost(request,response);
+    }
+ else     if (method.equals(Method.PUT)) {
+      handlePut(request,response);
+    }
+ else     if (method.equals(Method.DELETE)) {
+      handleDelete(request,response);
+    }
+ else     if (method.equals(Method.HEAD)) {
+      handleHead(request,response);
+    }
+ else     if (method.equals(Method.CONNECT)) {
+      handleConnect(request,response);
+    }
+ else     if (method.equals(Method.OPTIONS)) {
+      handleOptions(request,response);
+    }
+ else     if (method.equals(Method.TRACE)) {
+      handleTrace(request,response);
+    }
+ else {
+      handleOthers(request,response);
+    }
+  }
+ else {
+    getContext().getLogger().log(Level.WARNING,UNABLE_TO_START);
+    response.setStatus(Status.SERVER_ERROR_INTERNAL);
+  }
+}

@@ -1,0 +1,27 @@
+{
+  StringTemplate te=new StringTemplate(this.targetPattern);
+  String targetUri=te.process(new CallModel(request,response,""));
+  Reference target=new Reference(targetUri);
+switch (this.mode) {
+case MODE_CLIENT_PERMANENT:
+    logger.log(Level.INFO,"Permanently redirecting client to: " + targetUri);
+  response.setRedirectRef(target);
+response.setStatus(Status.REDIRECTION_MOVED_PERMANENTLY);
+break;
+case MODE_CLIENT_FOUND:
+logger.log(Level.INFO,"Redirecting client to found location: " + targetUri);
+response.setRedirectRef(target);
+response.setStatus(Status.REDIRECTION_FOUND);
+break;
+case MODE_CLIENT_TEMPORARY:
+logger.log(Level.INFO,"Temporarily redirecting client to: " + targetUri);
+response.setRedirectRef(target);
+response.setStatus(Status.REDIRECTION_MOVED_TEMPORARILY);
+break;
+case MODE_CONNECTOR:
+logger.log(Level.INFO,"Redirecting via client connector to: " + targetUri);
+request.setResourceRef(target);
+getContext().getClient().handle(request,response);
+break;
+}
+}

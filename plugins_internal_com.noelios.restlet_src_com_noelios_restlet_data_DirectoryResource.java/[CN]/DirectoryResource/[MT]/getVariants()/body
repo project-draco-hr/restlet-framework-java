@@ -4,16 +4,16 @@
   if (this.directoryContent != null) {
     if (this.baseName != null) {
       for (      Reference ref : getVariantsReferences(false)) {
-        Call contextCall=getClient().get(ref.toString());
-        if (contextCall.getStatus().isSuccess() && (contextCall.getOutput() != null)) {
-          result.add(contextCall.getOutput());
+        Response contextResponse=getClient().get(ref.toString());
+        if (contextResponse.getStatus().isSuccess() && (contextResponse.getOutput() != null)) {
+          result.add(contextResponse.getOutput());
         }
       }
     }
     if (result.size() == 0) {
       if (this.targetDirectory && getDirectory().isListingAllowed()) {
         ReferenceList userList=new ReferenceList(this.directoryContent.size());
-        String baseRef=this.call.getBaseRef().toString(false,false);
+        String baseRef=this.request.getBaseRef().toString(false,false);
         if (!baseRef.endsWith("/")) {
           baseRef+="/";
         }

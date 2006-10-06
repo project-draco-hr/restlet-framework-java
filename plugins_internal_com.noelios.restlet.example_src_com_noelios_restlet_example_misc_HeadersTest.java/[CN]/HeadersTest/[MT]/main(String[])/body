@@ -1,20 +1,15 @@
 {
-  try {
-    Restlet handler=new Restlet(){
-      public void handleGet(      Call call){
-        ParameterList headers=(ParameterList)call.getAttributes().get("org.restlet.http.requestHeaders");
-        call.setOutput("Accept header: " + headers.getFirstValue("accept",true),MediaType.TEXT_PLAIN);
-        headers=new ParameterList();
-        headers.add("X-Test","Test value");
-        headers.add("Location","http://www.restlet.org");
-        call.getAttributes().put("org.restlet.http.responseHeaders",headers);
-      }
+  Restlet handler=new Restlet(){
+    public void handleGet(    Request request,    Response response){
+      ParameterList headers=(ParameterList)request.getAttributes().get("org.restlet.http.headers");
+      response.setOutput("Accept header: " + headers.getFirstValue("accept",true),MediaType.TEXT_PLAIN);
+      headers=new ParameterList();
+      headers.add("X-Test","Test value");
+      headers.add("Location","http://www.restlet.org");
+      response.getAttributes().put("org.restlet.http.headers",headers);
     }
+  }
 ;
-    Server server=new Server(Protocol.HTTP,8182,handler);
-    server.start();
-  }
- catch (  Exception e) {
-    e.printStackTrace();
-  }
+  Server server=new Server(Protocol.HTTP,8182,handler);
+  server.start();
 }

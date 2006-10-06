@@ -1,0 +1,30 @@
+{
+  String remainingRef=request.getRelativePart();
+  Matcher matcher=getPattern().matcher(remainingRef);
+  boolean matched=matcher.lookingAt();
+  if (logger.isLoggable(Level.FINER)) {
+    logger.finer("Attempting to match this pattern: " + getPattern().toString() + " >> "+ matched);
+  }
+  if (matched) {
+    String matchedPart=remainingRef.substring(0,matcher.end());
+    Reference baseRef=request.getBaseRef();
+    if (baseRef == null) {
+      baseRef=new Reference(matchedPart);
+    }
+ else {
+      baseRef=new Reference(baseRef.toString(false,false) + matchedPart);
+    }
+    request.setBaseRef(baseRef);
+    if (logger.isLoggable(Level.FINE)) {
+      logger.fine("New base URI: " + request.getBaseRef());
+      logger.fine("New relative part: " + request.getRelativePart());
+    }
+    if (logger.isLoggable(Level.FINE)) {
+      logger.fine("Delegating the call to the target Restlet");
+    }
+    super.handle(request,response);
+  }
+ else {
+    response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+  }
+}

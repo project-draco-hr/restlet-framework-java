@@ -1,13 +1,10 @@
 {
-  Call post=new Call();
-  post.setMethod(Method.POST);
-  post.setResourceRef(getHref());
-  post.setInput(member);
-  getWorkspace().getService().getClient().handle(post);
-  if (post.getStatus().equals(Status.SUCCESS_CREATED)) {
-    return post.getRedirectRef();
+  Request request=new Request(Method.POST,getHref(),member);
+  Response response=getWorkspace().getService().getClient().handle(request);
+  if (response.getStatus().equals(Status.SUCCESS_CREATED)) {
+    return response.getRedirectRef();
   }
  else {
-    throw new Exception("Couldn't post the member representation. Status returned: " + post.getStatus().getDescription());
+    throw new Exception("Couldn't post the member representation. Status returned: " + response.getStatus().getDescription());
   }
 }

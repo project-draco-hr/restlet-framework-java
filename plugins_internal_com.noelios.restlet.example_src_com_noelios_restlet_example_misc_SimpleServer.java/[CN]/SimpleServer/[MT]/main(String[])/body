@@ -4,10 +4,10 @@
     Context myContext=myContainer.getContext();
     myContainer.getServers().add(Protocol.HTTP,9876);
     Restlet testRestlet=new Restlet(myContext){
-      public void handlePut(      Call call){
+      public void handlePut(      Request request,      Response response){
         System.out.println("Handling the call...");
         System.out.println("Trying to get the input as a form...");
-        Form form=call.getInputAsForm();
+        Form form=request.getInputAsForm();
         System.out.println("Trying to getParameters...");
         StringBuffer sb=new StringBuffer("foo");
         for (        Parameter p : form) {
@@ -19,7 +19,7 @@
           sb.append("\n");
           System.out.println(sb.toString());
         }
-        call.setOutput(sb.toString(),MediaType.TEXT_PLAIN);
+        response.setOutput(sb.toString(),MediaType.TEXT_PLAIN);
       }
     }
 ;

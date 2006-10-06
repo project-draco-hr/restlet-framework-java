@@ -1,0 +1,51 @@
+{
+  if (this.webAppArchive) {
+    try {
+      String path=request.getResourceRef().getPath();
+      JarFile war=new JarFile(getWebAppPath());
+      JarEntry entry=war.getJarEntry(path);
+      if (entry.isDirectory()) {
+        if (warEntries == null) {
+          warEntries=new ArrayList<String>();
+          for (Enumeration<JarEntry> entries=war.entries(); entries.hasMoreElements(); ) {
+            warEntries.add(entries.nextElement().getName());
+          }
+        }
+        ReferenceList rl=new ReferenceList();
+        rl.setListRef(request.getResourceRef());
+        for (        String warEntry : warEntries) {
+          if (warEntry.startsWith(path)) {
+            rl.add(new Reference(warEntry));
+          }
+        }
+        response.setOutput(rl.getRepresentation());
+        response.setStatus(Status.SUCCESS_OK);
+      }
+ else {
+        Representation output=new InputRepresentation(war.getInputStream(entry),null);
+        updateMetadata(path,output);
+        response.setOutput(output);
+        response.setStatus(Status.SUCCESS_OK);
+      }
+    }
+ catch (    IOException e) {
+      logger.log(Level.WARNING,"Unable to access to the WAR file",e);
+      response.setStatus(Status.SERVER_ERROR_INTERNAL);
+    }
+  }
+ else {
+    String path=request.getResourceRef().getPath();
+    if (path.toUpperCase().startsWith("/WEB-INF/")) {
+      logger.warning("Forbidden access to the WEB-INF directory detected. Path requested: " + path);
+      response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+    }
+ else     if (path.toUpperCase().startsWith("/META-INF/")) {
+      logger.warning("Forbidden access to the META-INF directory detected. Path requested: " + path);
+      response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+    }
+ else {
+      path=getWebAppPath() + path;
+      handleFile(request,response,path);
+    }
+  }
+}

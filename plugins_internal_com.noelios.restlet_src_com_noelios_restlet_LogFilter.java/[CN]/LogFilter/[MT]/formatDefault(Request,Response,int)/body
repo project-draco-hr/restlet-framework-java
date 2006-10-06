@@ -1,0 +1,40 @@
+{
+  StringBuilder sb=new StringBuilder();
+  long currentTime=System.currentTimeMillis();
+  sb.append(String.format("%tF",currentTime));
+  sb.append('\t');
+  sb.append(String.format("%tT",currentTime));
+  sb.append('\t');
+  String methodName=request.getMethod().getName();
+  sb.append((methodName == null) ? "-" : methodName);
+  sb.append('\t');
+  String resourcePath=request.getResourceRef().getPath();
+  sb.append((resourcePath == null) ? "-" : resourcePath);
+  sb.append("\t-");
+  sb.append('\t');
+  String clientAddress=request.getClient().getAddress();
+  sb.append((clientAddress == null) ? "-" : clientAddress);
+  sb.append("\t-");
+  sb.append('\t');
+  String agentName=request.getClient().getAgent();
+  sb.append((agentName == null) ? "-" : agentName);
+  sb.append('\t');
+  sb.append((request.getReferrerRef() == null) ? "-" : request.getReferrerRef().getIdentifier());
+  sb.append('\t');
+  sb.append((response.getStatus() == null) ? "-" : Integer.toString(response.getStatus().getCode()));
+  sb.append('\t');
+  if (response.getOutput() == null) {
+    sb.append('0');
+  }
+ else {
+    sb.append((response.getOutput().getSize() == -1) ? "-" : Long.toString(response.getOutput().getSize()));
+  }
+  sb.append('\t');
+  String query=request.getResourceRef().getQuery();
+  sb.append((query == null) ? "-" : query);
+  sb.append('\t');
+  sb.append((request.getResourceRef() == null) ? "-" : request.getResourceRef().getHostIdentifier());
+  sb.append('\t');
+  sb.append(duration);
+  return sb.toString();
+}

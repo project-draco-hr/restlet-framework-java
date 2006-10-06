@@ -1,22 +1,17 @@
 {
-  try {
-    Call call=new Call(Method.GET,"http://localhost:8182/");
-    ChallengeResponse authentication=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"scott","tiger");
-    call.getSecurity().setChallengeResponse(authentication);
-    Client client=new Client(Protocol.HTTP);
-    client.handle(call);
-    if (call.getStatus().isSuccess()) {
-      Representation output=call.getOutput();
-      output.write(System.out);
-    }
- else     if (call.getStatus().equals(Status.CLIENT_ERROR_UNAUTHORIZED)) {
-      System.out.println("Your access was not authorized by the server, check your credentials");
-    }
- else {
-      System.out.println("An unexpected status was returned: " + call.getStatus());
-    }
+  Request request=new Request(Method.GET,"http://localhost:8182/");
+  ChallengeResponse authentication=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"scott","tiger");
+  request.setChallengeResponse(authentication);
+  Client client=new Client(Protocol.HTTP);
+  Response response=client.handle(request);
+  if (response.getStatus().isSuccess()) {
+    Representation output=response.getOutput();
+    output.write(System.out);
   }
- catch (  IOException e) {
-    e.printStackTrace();
+ else   if (response.getStatus().equals(Status.CLIENT_ERROR_UNAUTHORIZED)) {
+    System.out.println("Your access was not authorized by the server, check your credentials");
+  }
+ else {
+    System.out.println("An unexpected status was returned: " + response.getStatus());
   }
 }

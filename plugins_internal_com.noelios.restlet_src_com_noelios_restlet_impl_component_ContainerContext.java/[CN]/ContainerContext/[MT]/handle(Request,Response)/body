@@ -1,0 +1,17 @@
+{
+  Protocol protocol=request.getProtocol();
+  if (protocol == null) {
+    protocol=request.getResourceRef().getSchemeProtocol();
+  }
+  if (protocol == null) {
+    throw new UnsupportedOperationException("Unable to determine the protocol to use for this call.");
+  }
+ else {
+    if (protocol.equals(Protocol.CONTEXT) || protocol.equals(Protocol.FILE)) {
+      getLocalClient().handle(request,response);
+    }
+ else {
+      getContainer().getClientRouter().handle(request,response);
+    }
+  }
+}

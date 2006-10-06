@@ -1,11 +1,11 @@
 {
   ReferenceList result=new ReferenceList(0);
   try {
-    Call contextCall=new Call(Method.GET,this.targetUri);
+    Request contextCall=new Request(Method.GET,this.targetUri);
     contextCall.getClient().getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.TEXT_URI_LIST));
-    getClient().handle(contextCall);
-    if (contextCall.getOutput() != null) {
-      ReferenceList listVariants=new ReferenceList(contextCall.getOutput());
+    Response contextResponse=getClient().handle(contextCall);
+    if (contextResponse.getOutput() != null) {
+      ReferenceList listVariants=new ReferenceList(contextResponse.getOutput());
       Set<String> extensions=null;
       String entryUri;
       String fullEntryName;

@@ -1,27 +1,22 @@
 {
-  try {
-    Call call=new Call();
-    call.setReferrerRef("http://www.foo.com/");
-    call.setResourceRef("http://127.0.0.1:9876/test");
-    call.setMethod(Method.PUT);
-    Form form=new Form();
-    form.add("name","John D. Mitchell");
-    form.add("email","john@bob.net");
-    form.add("email2","joe@bob.net");
-    call.setInput(form.getWebForm());
-    Client client=new Client(Protocol.HTTP);
-    client.handle(call);
-    if (call.getStatus().isSuccess()) {
-      Representation output=call.getOutput();
-      output.write(System.out);
-      System.out.println("client: success!");
-    }
- else {
-      System.out.println("client: failure!");
-      System.out.println(call.getStatus().getDescription());
-    }
+  Request request=new Request();
+  request.setReferrerRef("http://www.foo.com/");
+  request.setResourceRef("http://127.0.0.1:9876/test");
+  request.setMethod(Method.PUT);
+  Form form=new Form();
+  form.add("name","John D. Mitchell");
+  form.add("email","john@bob.net");
+  form.add("email2","joe@bob.net");
+  request.setInput(form.getWebForm());
+  Client client=new Client(Protocol.HTTP);
+  Response response=client.handle(request);
+  if (response.getStatus().isSuccess()) {
+    Representation output=response.getOutput();
+    output.write(System.out);
+    System.out.println("client: success!");
   }
- catch (  Exception ex) {
-    ex.printStackTrace();
+ else {
+    System.out.println("client: failure!");
+    System.out.println(response.getStatus().getDescription());
   }
 }

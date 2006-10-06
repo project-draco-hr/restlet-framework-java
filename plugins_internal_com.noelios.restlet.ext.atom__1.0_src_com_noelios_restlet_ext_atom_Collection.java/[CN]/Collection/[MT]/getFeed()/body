@@ -1,12 +1,10 @@
 {
-  Call get=new Call();
-  get.setMethod(Method.GET);
-  get.setResourceRef(getHref());
-  getWorkspace().getService().getClient().handle(get);
-  if (get.getStatus().equals(Status.SUCCESS_OK)) {
-    return new Feed(get.getOutput());
+  Request request=new Request(Method.GET,getHref());
+  Response response=getWorkspace().getService().getClient().handle(request);
+  if (response.getStatus().equals(Status.SUCCESS_OK)) {
+    return new Feed(response.getOutput());
   }
  else {
-    throw new Exception("Couldn't get the feed representation. Status returned: " + get.getStatus().getDescription());
+    throw new Exception("Couldn't get the feed representation. Status returned: " + response.getStatus().getDescription());
   }
 }

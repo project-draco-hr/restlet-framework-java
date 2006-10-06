@@ -1,17 +1,12 @@
 {
-  try {
-    Container myContainer=new Container();
-    Context myContext=myContainer.getContext();
-    myContainer.getServers().add(Protocol.HTTP,8182);
-    LogFilter log=new LogFilter(myContext,"com.noelios.restlet.example");
-    myContainer.getLocalHost().attach("/",log);
-    StatusFilter status=new StatusFilter(myContext,true,"webmaster@mysite.org","http://www.mysite.org");
-    log.setNext(status);
-    DirectoryFinder directory=new DirectoryFinder(myContext,ROOT_URI,"index.html");
-    status.setNext(directory);
-    myContainer.start();
-  }
- catch (  Exception e) {
-    e.printStackTrace();
-  }
+  Container myContainer=new Container();
+  Context myContext=myContainer.getContext();
+  myContainer.getServers().add(Protocol.HTTP,8182);
+  LogFilter log=new LogFilter(myContext,"com.noelios.restlet.example");
+  myContainer.getLocalHost().attach("/",log);
+  StatusFilter status=new StatusFilter(myContext,true,"webmaster@mysite.org","http://www.mysite.org");
+  log.setNext(status);
+  DirectoryFinder directory=new DirectoryFinder(myContext,ROOT_URI,"index.html");
+  status.setNext(directory);
+  myContainer.start();
 }
