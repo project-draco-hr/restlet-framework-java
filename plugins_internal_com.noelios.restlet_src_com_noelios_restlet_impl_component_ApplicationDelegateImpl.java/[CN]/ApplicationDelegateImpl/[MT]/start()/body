@@ -1,0 +1,22 @@
+{
+  this.root=null;
+  Filter lastFilter=null;
+  if (isLoggingEnabled()) {
+    lastFilter=new LogFilter(getContext(),getLoggingName(),getLoggingFormat());
+    this.root=lastFilter;
+  }
+  if (isStatusEnabled()) {
+    Filter statusFilter=new StatusFilter(getContext(),isStatusOverwrite(),getContactEmail(),"/");
+    if (lastFilter != null)     lastFilter.setNext(statusFilter);
+    if (this.root == null)     this.root=statusFilter;
+    lastFilter=statusFilter;
+  }
+  UniformInterface applicationRoot=getApplication().createRoot(getContext());
+  if (this.root == null) {
+    this.root=applicationRoot;
+  }
+ else {
+    lastFilter.setNext(applicationRoot);
+  }
+  this.started=true;
+}
