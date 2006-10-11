@@ -1,7 +1,12 @@
 {
-  Container myContainer=new Container();
-  myContainer.getServers().add(Protocol.HTTP,8182);
-  DirectoryFinder directory=new DirectoryFinder(myContainer.getContext(),ROOT_URI,"index.html");
-  myContainer.getLocalHost().attach("/",directory);
-  myContainer.start();
+  Container container=new Container();
+  container.getServers().add(Protocol.HTTP,8182);
+  Application application=new Application(){
+    public UniformInterface createRoot(    Context context){
+      return new DirectoryFinder(context,ROOT_URI,"index.html");
+    }
+  }
+;
+  container.getDefaultHost().attach("",application);
+  container.start();
 }

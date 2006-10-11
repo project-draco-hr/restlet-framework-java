@@ -2,32 +2,32 @@
   ChallengeResponse resp=request.getChallengeResponse();
   if (this.scheme.equals(ChallengeScheme.HTTP_BASIC)) {
     if (resp == null) {
-      logger.log(Level.INFO,"Authentication failed: no challenge response provided.");
+      getContext().getLogger().log(Level.INFO,"Authentication failed: no challenge response provided.");
     }
  else     if (resp.getScheme().equals(ChallengeScheme.HTTP_BASIC)) {
       try {
         String credentials=new String(Base64.decode(resp.getCredentials()),"US-ASCII");
         int separator=credentials.indexOf(':');
         if (separator == -1) {
-          logger.warning("Invalid credentials given by client with IP: " + request.getClient().getAddress());
+          getContext().getLogger().warning("Invalid credentials given by client with IP: " + request.getClient().getAddress());
         }
  else {
           String login=credentials.substring(0,separator);
           String password=credentials.substring(separator + 1);
           request.getAttributes().put(getLoginAttribute(),login);
           request.getAttributes().put(getPasswordAttribute(),password);
-          logger.info("Basic HTTP authentication succeeded: login=" + login + ".");
+          getContext().getLogger().info("Basic HTTP authentication succeeded: login=" + login + ".");
         }
       }
  catch (      UnsupportedEncodingException e) {
-        logger.log(Level.WARNING,"Unsupported encoding error",e);
+        getContext().getLogger().log(Level.WARNING,"Unsupported encoding error",e);
       }
     }
  else {
-      logger.log(Level.WARNING,"Authentication failed: invalid authentication mechanism used: " + resp.getScheme().getName() + " instead of :"+ this.scheme.getName()+ ".");
+      getContext().getLogger().log(Level.WARNING,"Authentication failed: invalid authentication mechanism used: " + resp.getScheme().getName() + " instead of :"+ this.scheme.getName()+ ".");
     }
   }
  else {
-    logger.log(Level.WARNING,"Authentication failed: unsupported scheme used: " + this.scheme.getName() + ". Please override the authenticate method.");
+    getContext().getLogger().log(Level.WARNING,"Authentication failed: unsupported scheme used: " + this.scheme.getName() + ". Please override the authenticate method.");
   }
 }

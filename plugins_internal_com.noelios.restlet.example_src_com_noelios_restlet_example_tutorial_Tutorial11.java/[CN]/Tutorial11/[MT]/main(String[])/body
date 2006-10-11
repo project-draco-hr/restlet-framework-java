@@ -1,36 +1,37 @@
 {
-  Container myContainer=new Container();
-  Context myContext=myContainer.getContext();
-  myContainer.getServers().add(Protocol.HTTP,8182);
-  LogFilter log=new LogFilter(myContext,"com.noelios.restlet.example");
-  myContainer.getLocalHost().attach("/",log);
-  StatusFilter status=new StatusFilter(myContext,true,"webmaster@mysite.org","http://www.mysite.org");
-  log.setNext(status);
-  Router router=new Router(myContext);
-  status.setNext(router);
-  GuardFilter guard=new GuardFilter(myContext,"com.noelios.restlet.example",true,ChallengeScheme.HTTP_BASIC,"Restlet tutorial",true);
-  guard.getAuthorizations().put("scott","tiger");
-  router.getScorers().add("/docs/",guard);
-  DirectoryFinder directory=new DirectoryFinder(myContext,ROOT_URI,"index.html");
-  guard.setNext(directory);
-  Router user=new Router(myContext);
-  router.attach("/users/[a-z]+",user);
-  Restlet account=new Restlet(){
-    public void handleGet(    Request request,    Response response){
-      String output="Account of user named: " + request.getBaseRef().getLastSegment();
-      response.setOutput(output,MediaType.TEXT_PLAIN);
+  Container container=new Container();
+  container.getServers().add(Protocol.HTTP,8182);
+  Application application=new Application(){
+    public UniformInterface createRoot(    Context context){
+      Router router=new Router(context);
+      GuardFilter guard=new GuardFilter(context,true,ChallengeScheme.HTTP_BASIC,"Restlet tutorial",true);
+      guard.getAuthorizations().put("scott","tiger");
+      router.getScorers().add("/docs/",guard);
+      DirectoryFinder directory=new DirectoryFinder(context,ROOT_URI,"index.html");
+      guard.setNext(directory);
+      Router user=new Router(context);
+      router.attach("/users/[a-z]+",user);
+      Restlet account=new Restlet(){
+        public void handleGet(        Request request,        Response response){
+          String output="Account of user named: " + request.getBaseRef().getLastSegment();
+          response.setOutput(output,MediaType.TEXT_PLAIN);
+        }
+      }
+;
+      user.attach("$",account);
+      Restlet orders=new Restlet(context){
+        public void handleGet(        Request request,        Response response){
+          List<String> segments=request.getBaseRef().getSegments();
+          String output="Orders of user named: " + segments.get(segments.size() - 2);
+          response.setOutput(output,MediaType.TEXT_PLAIN);
+        }
+      }
+;
+      user.attach("/orders$",orders);
+      return router;
     }
   }
 ;
-  user.attach("$",account);
-  Restlet orders=new Restlet(myContext){
-    public void handleGet(    Request request,    Response response){
-      List<String> segments=request.getBaseRef().getSegments();
-      String output="Orders of user named: " + segments.get(segments.size() - 2);
-      response.setOutput(output,MediaType.TEXT_PLAIN);
-    }
-  }
-;
-  user.attach("/orders$",orders);
-  myContainer.start();
+  container.getDefaultHost().attach("",application);
+  container.start();
 }

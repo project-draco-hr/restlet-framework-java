@@ -11,17 +11,13 @@ synchronized (ServerServlet.class) {
         if (applicationClassName != null) {
           try {
             Class targetClass=Class.forName(applicationClassName);
-            Object target=null;
-            target=targetClass.newInstance();
-            ContainerImpl container=new ContainerImpl();
-            if (target instanceof Application) {
-            }
+            Application application=null;
+            application=(Application)targetClass.newInstance();
+            Container container=new Container();
             if (container != null) {
               container.getServers().add(result);
-              container.getClients().add(new ServletLocalClient(getServletContext()));
-              container.setContext(new ServletContext(this,container));
-              result.setContext(container.getContext());
-              if (target != container)               ((Restlet)target).setContext(container.getContext());
+              String uriPattern=request.getContextPath() + request.getServletPath();
+              container.getDefaultHost().attach(uriPattern,application);
               result.start();
             }
  else {

@@ -1,9 +1,13 @@
 {
-  Container myContainer=new Container();
-  Context myContext=myContainer.getContext();
-  myContainer.getServers().add(Protocol.HTTP,8182);
-  String target="http://www.google.com/search?q=site:mysite.org+${query('query')}";
-  RedirectRestlet redirect=new RedirectRestlet(myContext,target,RedirectRestlet.MODE_CLIENT_TEMPORARY);
-  myContainer.getLocalHost().attach("/search",redirect);
-  myContainer.start();
+  Container container=new Container();
+  container.getServers().add(Protocol.HTTP,8182);
+  Application application=new Application(){
+    public UniformInterface createRoot(    Context context){
+      String target="http://www.google.com/search?q=site:mysite.org+${query('query')}";
+      return new RedirectRestlet(context,target,RedirectRestlet.MODE_CLIENT_TEMPORARY);
+    }
+  }
+;
+  container.getDefaultHost().attach("/search",application);
+  container.start();
 }

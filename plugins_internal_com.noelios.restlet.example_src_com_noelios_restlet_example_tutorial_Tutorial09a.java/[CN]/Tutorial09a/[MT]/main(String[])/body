@@ -1,15 +1,16 @@
 {
-  Container myContainer=new Container();
-  Context myContext=myContainer.getContext();
-  myContainer.getServers().add(Protocol.HTTP,8182);
-  LogFilter log=new LogFilter(myContext,"com.noelios.restlet.example");
-  myContainer.getLocalHost().attach("/",log);
-  StatusFilter status=new StatusFilter(myContext,true,"webmaster@mysite.org","http://www.mysite.org");
-  log.setNext(status);
-  GuardFilter guard=new GuardFilter(myContext,"com.noelios.restlet.example",true,ChallengeScheme.HTTP_BASIC,"Restlet tutorial",true);
-  guard.getAuthorizations().put("scott","tiger");
-  status.setNext(guard);
-  DirectoryFinder directory=new DirectoryFinder(myContext,ROOT_URI,"index.html");
-  guard.setNext(directory);
-  myContainer.start();
+  Container container=new Container();
+  container.getServers().add(Protocol.HTTP,8182);
+  Application application=new Application(){
+    public UniformInterface createRoot(    Context context){
+      GuardFilter guard=new GuardFilter(context,true,ChallengeScheme.HTTP_BASIC,"Tutorial",true);
+      guard.getAuthorizations().put("scott","tiger");
+      DirectoryFinder directory=new DirectoryFinder(context,ROOT_URI,"index.html");
+      guard.setNext(directory);
+      return guard;
+    }
+  }
+;
+  container.getDefaultHost().attach("",application);
+  container.start();
 }

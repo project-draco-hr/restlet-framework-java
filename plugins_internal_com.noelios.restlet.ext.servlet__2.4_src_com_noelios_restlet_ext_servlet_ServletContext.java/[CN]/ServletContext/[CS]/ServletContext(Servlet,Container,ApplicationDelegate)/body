@@ -1,6 +1,7 @@
 {
-  super(container,new ServletLogger(servlet.getServletConfig().getServletContext()));
+  super(container,applicationDelegate,new ServletLogger(servlet.getServletConfig().getServletContext()));
   this.servlet=servlet;
+  setLocalClient(new ServletLocalClient(servlet.getServletConfig().getServletContext()));
   String initParam;
   javax.servlet.ServletConfig servletConfig=getServlet().getServletConfig();
   for (Enumeration enum1=servletConfig.getInitParameterNames(); enum1.hasMoreElements(); ) {
