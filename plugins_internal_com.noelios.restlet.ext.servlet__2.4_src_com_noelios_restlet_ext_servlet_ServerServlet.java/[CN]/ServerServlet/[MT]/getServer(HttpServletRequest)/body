@@ -7,7 +7,7 @@ synchronized (ServerServlet.class) {
       if (result == null) {
         result=new HttpServer();
         getServletContext().setAttribute(NAME_SERVER_ATTRIBUTE,result);
-        String targetClassName=getInitParameter(NAME_TARGET_CLASS,null);
+        String targetClassName=getInitParameter(NAME_APPLICATION_CLASS,null);
         if (targetClassName != null) {
           try {
             Class targetClass=Class.forName(targetClassName);
@@ -27,16 +27,6 @@ synchronized (ServerServlet.class) {
               container.setContext(new ServletContext(this,container));
               result.setContext(container.getContext());
               if (target != container)               ((Restlet)target).setContext(container.getContext());
-              String initContextPathName=getInitParameter(NAME_TARGET_INIT_CONTEXTPATH);
-              if (initContextPathName != null) {
-                String scheme=request.getScheme();
-                String hostName=request.getServerName();
-                int hostPort=request.getServerPort();
-                String servletPath=request.getContextPath() + request.getServletPath();
-                String contextPath=Reference.toString(scheme,hostName,hostPort,servletPath,null,null);
-                container.getContext().getParameters().add(initContextPathName,contextPath);
-                log("[Noelios Restlet Engine] - This context path has been provided to the target's init parameter \"" + initContextPathName + "\": "+ contextPath);
-              }
               result.start();
             }
  else {
@@ -57,7 +47,7 @@ catch (          Exception e) {
           }
         }
  else {
-          log("[Noelios Restlet Engine] - The ServerServlet couldn't find the target class name. Please set the initialization parameter called " + NAME_TARGET_CLASS);
+          log("[Noelios Restlet Engine] - The ServerServlet couldn't find the target class name. Please set the initialization parameter called " + NAME_APPLICATION_CLASS);
         }
       }
       this.server=result;

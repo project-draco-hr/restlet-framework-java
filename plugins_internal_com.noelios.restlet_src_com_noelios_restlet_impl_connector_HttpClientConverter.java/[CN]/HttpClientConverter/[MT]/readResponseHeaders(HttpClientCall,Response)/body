@@ -21,6 +21,12 @@
  else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_SERVER)) {
         response.getServer().setAgent(header.getValue());
       }
+ else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_ALLOW)) {
+        StringTokenizer st=new StringTokenizer(header.getValue(),",\\s");
+        while (st.hasMoreTokens()) {
+          response.getAllowedMethods().add(Method.valueOf(st.nextToken()));
+        }
+      }
     }
   }
  catch (  Exception e) {
