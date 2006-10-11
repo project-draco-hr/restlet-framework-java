@@ -7,17 +7,12 @@ synchronized (ServerServlet.class) {
       if (result == null) {
         result=new HttpServer();
         getServletContext().setAttribute(NAME_SERVER_ATTRIBUTE,result);
-        String targetClassName=getInitParameter(NAME_APPLICATION_CLASS,null);
-        if (targetClassName != null) {
+        String applicationClassName=getInitParameter(NAME_APPLICATION_CLASS,null);
+        if (applicationClassName != null) {
           try {
-            Class targetClass=Class.forName(targetClassName);
+            Class targetClass=Class.forName(applicationClassName);
             Object target=null;
-            try {
-              target=targetClass.getConstructor(Context.class).newInstance((Context)null);
-            }
- catch (            NoSuchMethodException nsme) {
-              target=targetClass.newInstance();
-            }
+            target=targetClass.newInstance();
             ContainerImpl container=new ContainerImpl();
             if (target instanceof Application) {
             }
@@ -34,13 +29,13 @@ synchronized (ServerServlet.class) {
             }
           }
  catch (          ClassNotFoundException e) {
-            log("[Noelios Restlet Engine] - The ServerServlet couldn't find the target class. Please check that your classpath includes " + targetClassName,e);
+            log("[Noelios Restlet Engine] - The ServerServlet couldn't find the target class. Please check that your classpath includes " + applicationClassName,e);
           }
 catch (          InstantiationException e) {
-            log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check this class has an empty constructor " + targetClassName,e);
+            log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check this class has an empty constructor " + applicationClassName,e);
           }
 catch (          IllegalAccessException e) {
-            log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check that you have to proper access rights to " + targetClassName,e);
+            log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check that you have to proper access rights to " + applicationClassName,e);
           }
 catch (          Exception e) {
             log("[Noelios Restlet Engine] - The ServerServlet couldn't start the target Restlet.",e);
