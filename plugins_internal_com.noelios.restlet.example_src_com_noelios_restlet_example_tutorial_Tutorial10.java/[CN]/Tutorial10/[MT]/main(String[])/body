@@ -1,10 +1,10 @@
 {
   Container container=new Container();
   container.getServers().add(Protocol.HTTP,8182);
-  Application application=new Application(){
-    public UniformInterface createRoot(    Context context){
+  Application application=new Application(container){
+    public Handler createRoot(){
       String target="http://www.google.com/search?q=site:mysite.org+${query('query')}";
-      return new RedirectRestlet(context,target,RedirectRestlet.MODE_CLIENT_TEMPORARY);
+      return new RedirectRestlet(getContext(),target,RedirectRestlet.MODE_CLIENT_TEMPORARY);
     }
   }
 ;

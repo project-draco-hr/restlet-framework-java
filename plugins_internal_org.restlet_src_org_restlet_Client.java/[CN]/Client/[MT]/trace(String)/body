@@ -1,3 +1,8 @@
 {
-  return (getWrappedClient() != null) ? getWrappedClient().trace(resourceUri) : null;
+  if (getWrappedClient() != null) {
+    return getWrappedClient().trace(resourceUri);
+  }
+ else {
+    return handle(new Request(Method.TRACE,resourceUri));
+  }
 }

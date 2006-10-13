@@ -1,10 +1,15 @@
 {
-  response.getAllowedMethods().clear();
-  if (resource.allowGet()) {
-    response.getAllowedMethods().add(Method.HEAD);
-    response.getAllowedMethods().add(Method.GET);
+  if (getWrappedFinder() != null) {
+    getWrappedFinder().setAllowedMethods(resource,response);
   }
-  if (resource.allowDelete())   response.getAllowedMethods().add(Method.DELETE);
-  if (resource.allowPost())   response.getAllowedMethods().add(Method.POST);
-  if (resource.allowPut())   response.getAllowedMethods().add(Method.PUT);
+ else {
+    response.getAllowedMethods().clear();
+    if (resource.allowGet()) {
+      response.getAllowedMethods().add(Method.HEAD);
+      response.getAllowedMethods().add(Method.GET);
+    }
+    if (resource.allowDelete())     response.getAllowedMethods().add(Method.DELETE);
+    if (resource.allowPost())     response.getAllowedMethods().add(Method.POST);
+    if (resource.allowPut())     response.getAllowedMethods().add(Method.PUT);
+  }
 }

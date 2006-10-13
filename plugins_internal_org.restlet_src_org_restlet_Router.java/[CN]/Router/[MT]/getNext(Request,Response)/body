@@ -1,23 +1,27 @@
 {
-  Scorer result=null;
-  if (this.scorers != null) {
-    for (int i=0; (result == null) && (i < getMaxAttempts()); i++) {
-      if (i > 0) {
-        try {
-          Thread.sleep(getRetryDelay());
+  if (getWrappedRouter() != null) {
+    return getWrappedRouter().getNext(request,response);
+  }
+ else {
+    Scorer result=null;
+    if (this.scorers != null) {
+      for (int i=0; (result == null) && (i < getMaxAttempts()); i++) {
+        if (i > 0) {
+          try {
+            Thread.sleep(getRetryDelay());
+          }
+ catch (          InterruptedException e) {
+          }
         }
- catch (        InterruptedException e) {
-        }
-      }
 switch (getRoutingMode()) {
 case BEST:
-        result=getScorers().getBest(request,response,this.requiredScore);
-      break;
+          result=getScorers().getBest(request,response,this.requiredScore);
+        break;
 case FIRST:
-    result=getScorers().getFirst(request,response,this.requiredScore);
-  break;
+      result=getScorers().getFirst(request,response,this.requiredScore);
+    break;
 case LAST:
-result=getScorers().getLast(request,response,this.requiredScore);
+  result=getScorers().getLast(request,response,this.requiredScore);
 break;
 case NEXT:
 result=getScorers().getNext(request,response,this.requiredScore);
@@ -35,4 +39,5 @@ if (result == null) {
 response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
 }
 return result;
+}
 }

@@ -1,3 +1,8 @@
 {
-  return (getWrappedClient() != null) ? getWrappedClient().head(resourceUri) : null;
+  if (getWrappedClient() != null) {
+    return getWrappedClient().head(resourceUri);
+  }
+ else {
+    return handle(new Request(Method.HEAD,resourceUri));
+  }
 }

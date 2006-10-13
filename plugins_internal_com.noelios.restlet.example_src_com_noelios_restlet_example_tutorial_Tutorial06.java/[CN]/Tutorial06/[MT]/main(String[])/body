@@ -1,9 +1,9 @@
 {
   Container container=new Container();
   container.getServers().add(Protocol.HTTP,8182);
-  Application application=new Application(){
-    public UniformInterface createRoot(    Context context){
-      return new DirectoryFinder(context,ROOT_URI,"index.html");
+  Application application=new Application(container){
+    public Handler createRoot(){
+      return new DirectoryFinder(getContext(),ROOT_URI,"index.html");
     }
   }
 ;

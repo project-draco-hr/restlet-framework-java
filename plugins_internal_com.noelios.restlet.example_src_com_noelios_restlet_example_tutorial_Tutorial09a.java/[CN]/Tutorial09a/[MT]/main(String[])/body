@@ -1,11 +1,11 @@
 {
   Container container=new Container();
   container.getServers().add(Protocol.HTTP,8182);
-  Application application=new Application(){
-    public UniformInterface createRoot(    Context context){
-      GuardFilter guard=new GuardFilter(context,true,ChallengeScheme.HTTP_BASIC,"Tutorial",true);
+  Application application=new Application(container){
+    public Handler createRoot(){
+      GuardFilter guard=new GuardFilter(getContext(),true,ChallengeScheme.HTTP_BASIC,"Tutorial",true);
       guard.getAuthorizations().put("scott","tiger");
-      DirectoryFinder directory=new DirectoryFinder(context,ROOT_URI,"index.html");
+      DirectoryFinder directory=new DirectoryFinder(getContext(),ROOT_URI,"index.html");
       guard.setNext(directory);
       return guard;
     }

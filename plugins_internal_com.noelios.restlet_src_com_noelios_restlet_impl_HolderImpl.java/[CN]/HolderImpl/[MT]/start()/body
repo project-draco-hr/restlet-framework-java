@@ -1,0 +1,20 @@
+{
+  Filter lastFilter=null;
+  if (isLoggingEnabled()) {
+    lastFilter=new LogFilter(getContext(),getLoggingName(),getLoggingFormat());
+    setFirst(lastFilter);
+  }
+  if (isStatusEnabled()) {
+    Filter statusFilter=new ApplicationStatusFilter(this);
+    if (lastFilter != null)     lastFilter.setNext(statusFilter);
+    if (getFirst() == null)     setFirst(statusFilter);
+    lastFilter=statusFilter;
+  }
+  if (getFirst() == null) {
+    setFirst(getNext());
+  }
+ else {
+    lastFilter.setNext(getNext());
+  }
+  super.start();
+}

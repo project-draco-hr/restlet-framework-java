@@ -5,8 +5,6 @@ synchronized (ServerServlet.class) {
       String serverAttributeName=getInitParameter(NAME_SERVER_ATTRIBUTE,NAME_SERVER_ATTRIBUTE_DEFAULT);
       result=(HttpServer)getServletContext().getAttribute(serverAttributeName);
       if (result == null) {
-        result=new HttpServer();
-        getServletContext().setAttribute(NAME_SERVER_ATTRIBUTE,result);
         String applicationClassName=getInitParameter(NAME_APPLICATION_CLASS,null);
         if (applicationClassName != null) {
           try {
@@ -14,6 +12,8 @@ synchronized (ServerServlet.class) {
             Application application=null;
             application=(Application)targetClass.newInstance();
             Container container=new Container();
+            result=new HttpServer(container.getContext());
+            getServletContext().setAttribute(NAME_SERVER_ATTRIBUTE,result);
             if (container != null) {
               container.getServers().add(result);
               String uriPattern=request.getContextPath() + request.getServletPath();

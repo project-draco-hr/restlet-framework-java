@@ -1,15 +1,15 @@
 {
   Container container=new Container();
   container.getServers().add(Protocol.HTTP,8182);
-  Application application=new Application(){
-    public UniformInterface createRoot(    Context context){
-      Router router=new Router(context);
-      GuardFilter guard=new GuardFilter(context,true,ChallengeScheme.HTTP_BASIC,"Restlet tutorial",true);
+  Application application=new Application(container){
+    public Handler createRoot(){
+      Router router=new Router(getContext());
+      GuardFilter guard=new GuardFilter(getContext(),true,ChallengeScheme.HTTP_BASIC,"Restlet tutorial",true);
       guard.getAuthorizations().put("scott","tiger");
       router.getScorers().add("/docs/",guard);
-      DirectoryFinder directory=new DirectoryFinder(context,ROOT_URI,"index.html");
+      DirectoryFinder directory=new DirectoryFinder(getContext(),ROOT_URI,"index.html");
       guard.setNext(directory);
-      Router user=new Router(context);
+      Router user=new Router(getContext());
       router.attach("/users/[a-z]+",user);
       Restlet account=new Restlet(){
         public void handleGet(        Request request,        Response response){
@@ -19,7 +19,7 @@
       }
 ;
       user.attach("$",account);
-      Restlet orders=new Restlet(context){
+      Restlet orders=new Restlet(getContext()){
         public void handleGet(        Request request,        Response response){
           List<String> segments=request.getBaseRef().getSegments();
           String output="Orders of user named: " + segments.get(segments.size() - 2);

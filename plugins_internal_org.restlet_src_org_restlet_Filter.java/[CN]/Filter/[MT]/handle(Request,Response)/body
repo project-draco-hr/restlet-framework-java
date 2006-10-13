@@ -1,5 +1,11 @@
 {
-  beforeHandle(request,response);
-  doHandle(request,response);
-  afterHandle(request,response);
+  if (getWrappedFilter() != null) {
+    getWrappedFilter().handle(request,response);
+  }
+ else {
+    super.handle(request,response);
+    beforeHandle(request,response);
+    doHandle(request,response);
+    afterHandle(request,response);
+  }
 }

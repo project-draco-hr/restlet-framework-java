@@ -1,0 +1,12 @@
+{
+  if (getWrappedServer() != null) {
+    getWrappedServer().handle(request,response);
+  }
+ else {
+    super.handle(request,response);
+    if (getTarget() != null) {
+      response.setStatus(Status.SUCCESS_OK);
+      getTarget().handle(request,response);
+    }
+  }
+}

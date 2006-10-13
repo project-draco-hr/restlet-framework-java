@@ -1,3 +1,8 @@
 {
-  return (getWrappedClient() != null) ? getWrappedClient().post(resourceUri,input) : null;
+  if (getWrappedClient() != null) {
+    return getWrappedClient().post(resourceUri,input);
+  }
+ else {
+    return handle(new Request(Method.POST,resourceUri,input));
+  }
 }

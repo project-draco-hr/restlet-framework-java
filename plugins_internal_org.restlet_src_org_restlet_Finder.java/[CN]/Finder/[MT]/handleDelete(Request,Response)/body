@@ -1,15 +1,20 @@
 {
-  Resource target=findTarget(request,response);
-  if (target != null) {
-    if (target.allowDelete()) {
-      response.setStatus(target.delete().getStatus());
-    }
- else {
-      response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
-    }
-    setAllowedMethods(target,response);
+  if (getWrappedFinder() != null) {
+    getWrappedFinder().handleDelete(request,response);
   }
  else {
-    response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+    Resource target=findTarget(request,response);
+    if (target != null) {
+      if (target.allowDelete()) {
+        response.setStatus(target.delete().getStatus());
+      }
+ else {
+        response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+      }
+      setAllowedMethods(target,response);
+    }
+ else {
+      response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+    }
   }
 }

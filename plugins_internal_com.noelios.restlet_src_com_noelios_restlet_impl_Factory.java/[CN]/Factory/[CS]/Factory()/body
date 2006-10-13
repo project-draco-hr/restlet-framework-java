@@ -16,7 +16,7 @@
           if ((provider != null) && (!provider.equals(""))) {
             try {
               Class<? extends Client> providerClass=(Class<? extends Client>)Class.forName(provider);
-              this.clients.add(providerClass.newInstance());
+              this.clients.add(providerClass.getConstructor(Context.class).newInstance(new Context()));
             }
  catch (            Exception e) {
               logger.log(Level.SEVERE,"Unable to register the client connector " + provider,e);
@@ -44,7 +44,7 @@
           if ((provider != null) && (!provider.equals(""))) {
             try {
               Class<? extends Server> providerClass=(Class<? extends Server>)Class.forName(provider);
-              this.servers.add(providerClass.getConstructor(String.class,int.class).newInstance(null,new Integer(-1)));
+              this.servers.add(providerClass.getConstructor(Context.class,String.class,int.class).newInstance(new Context(),null,new Integer(-1)));
             }
  catch (            Exception e) {
               logger.log(Level.SEVERE,"Unable to register the server connector " + provider,e);

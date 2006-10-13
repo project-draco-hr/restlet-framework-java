@@ -1,3 +1,8 @@
 {
-  return (getWrappedClient() != null) ? getWrappedClient().delete(resourceUri) : null;
+  if (getWrappedClient() != null) {
+    return getWrappedClient().delete(resourceUri);
+  }
+ else {
+    return handle(new Request(Method.DELETE,resourceUri));
+  }
 }

@@ -1,0 +1,16 @@
+{
+  super(container,applicationDelegate,new ServletLogger(servlet.getServletConfig().getServletContext()));
+  this.servlet=servlet;
+  setLocalClient(new ServletLocalClient(container.getContext(),servlet.getServletConfig().getServletContext()));
+  String initParam;
+  javax.servlet.ServletConfig servletConfig=getServlet().getServletConfig();
+  for (Enumeration enum1=servletConfig.getInitParameterNames(); enum1.hasMoreElements(); ) {
+    initParam=(String)enum1.nextElement();
+    getParameters().add(initParam,servletConfig.getInitParameter(initParam));
+  }
+  javax.servlet.ServletContext servletContext=getServlet().getServletConfig().getServletContext();
+  for (Enumeration enum1=servletContext.getInitParameterNames(); enum1.hasMoreElements(); ) {
+    initParam=(String)enum1.nextElement();
+    getParameters().add(initParam,servletContext.getInitParameter(initParam));
+  }
+}
