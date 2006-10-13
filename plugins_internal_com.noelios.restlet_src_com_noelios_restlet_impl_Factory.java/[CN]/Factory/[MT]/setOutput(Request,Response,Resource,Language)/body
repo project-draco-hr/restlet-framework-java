@@ -4,7 +4,7 @@
     response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
   }
  else {
-    Representation bestVariant=request.getClient().getPreferredVariant(variants,fallbackLanguage);
+    Representation bestVariant=request.getClientInfo().getPreferredVariant(variants,fallbackLanguage);
     if (bestVariant == null) {
       response.setStatus(Status.CLIENT_ERROR_NOT_ACCEPTABLE);
     }
@@ -26,7 +26,7 @@
         send=((modifiedSince == null) || (bestVariant.getModificationDate() == null) || DateUtils.after(modifiedSince,bestVariant.getModificationDate()));
       }
       if (send) {
-        response.setOutput(bestVariant);
+        response.setEntity(bestVariant);
         response.setStatus(Status.SUCCESS_OK);
       }
  else {

@@ -25,13 +25,13 @@
     if (response.getChallengeRequest() != null) {
       responseHeaders.add(HttpConstants.HEADER_WWW_AUTHENTICATE,SecurityUtils.format(response.getChallengeRequest()));
     }
-    httpCall.getResponseHeaders().add(HttpConstants.HEADER_SERVER,response.getServer().getAgent());
+    httpCall.getResponseHeaders().add(HttpConstants.HEADER_SERVER,response.getServerInfo().getAgent());
     if (response.getStatus() != null) {
       httpCall.setStatusCode(response.getStatus().getCode());
       httpCall.setReasonPhrase(response.getStatus().getDescription());
     }
-    if (response.getOutput() != null) {
-      Representation output=response.getOutput();
+    if (response.getEntity() != null) {
+      Representation output=response.getEntity();
       if (output.getExpirationDate() != null) {
         responseHeaders.add(HttpConstants.HEADER_EXPIRES,httpCall.formatDate(output.getExpirationDate(),false));
       }
@@ -54,11 +54,11 @@
       if (output.getTag() != null) {
         responseHeaders.add(HttpConstants.HEADER_ETAG,output.getTag().getName());
       }
-      if (response.getOutput().getSize() != Representation.UNKNOWN_SIZE) {
-        responseHeaders.add(HttpConstants.HEADER_CONTENT_LENGTH,Long.toString(response.getOutput().getSize()));
+      if (response.getEntity().getSize() != Representation.UNKNOWN_SIZE) {
+        responseHeaders.add(HttpConstants.HEADER_CONTENT_LENGTH,Long.toString(response.getEntity().getSize()));
       }
-      if (response.getOutput().getIdentifier() != null) {
-        responseHeaders.add(HttpConstants.HEADER_CONTENT_LOCATION,response.getOutput().getIdentifier().toString());
+      if (response.getEntity().getIdentifier() != null) {
+        responseHeaders.add(HttpConstants.HEADER_CONTENT_LOCATION,response.getEntity().getIdentifier().toString());
       }
     }
     ParameterList additionalHeaders=(ParameterList)response.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);

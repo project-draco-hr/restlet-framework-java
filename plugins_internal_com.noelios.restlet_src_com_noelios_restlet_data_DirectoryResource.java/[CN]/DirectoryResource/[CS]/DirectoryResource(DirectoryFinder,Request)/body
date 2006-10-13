@@ -10,9 +10,9 @@
     this.targetUri=handler.getRootUri();
   }
   Response contextResponse=getClient().get(this.targetUri);
-  if ((contextResponse.getOutput() != null) && contextResponse.getOutput().getMediaType().equals(MediaType.TEXT_URI_LIST)) {
+  if ((contextResponse.getEntity() != null) && contextResponse.getEntity().getMediaType().equals(MediaType.TEXT_URI_LIST)) {
     this.targetDirectory=true;
-    this.directoryContent=new ReferenceList(contextResponse.getOutput());
+    this.directoryContent=new ReferenceList(contextResponse.getEntity());
     if (!this.targetUri.endsWith("/")) {
       this.targetUri+="/";
       this.relativePart+="/";
@@ -39,8 +39,8 @@
       this.baseName=targetUri.substring(lastSlashIndex + 1);
     }
     contextResponse=getClient().get(this.directoryUri);
-    if ((contextResponse.getOutput() != null) && contextResponse.getOutput().getMediaType().equals(MediaType.TEXT_URI_LIST)) {
-      this.directoryContent=new ReferenceList(contextResponse.getOutput());
+    if ((contextResponse.getEntity() != null) && contextResponse.getEntity().getMediaType().equals(MediaType.TEXT_URI_LIST)) {
+      this.directoryContent=new ReferenceList(contextResponse.getEntity());
     }
   }
   if (this.handler.isNegotiationEnabled()) {

@@ -3,23 +3,23 @@
   try {
     if (name.startsWith(NAME_CLIENT_ADDRESS)) {
       if (name.equals(NAME_CLIENT_ADDRESS)) {
-        result=request.getClient().getAddress();
+        result=request.getClientInfo().getAddress();
       }
  else {
         String rest=name.substring(NAME_CLIENT_ADDRESS.length());
         if ((rest.charAt(0) == '(') && (rest.charAt(rest.length() - 1) == ')')) {
           rest=rest.substring(1,rest.length() - 1);
           if (rest.equals("first")) {
-            result=request.getClient().getAddresses().get(0);
+            result=request.getClientInfo().getAddresses().get(0);
           }
  else           if (rest.equals("last")) {
-            result=request.getClient().getAddresses().get(request.getClient().getAddresses().size() - 1);
+            result=request.getClientInfo().getAddresses().get(request.getClientInfo().getAddresses().size() - 1);
           }
  else           if (isVariableName(rest)) {
             result=defaultValue;
           }
  else {
-            result=request.getClient().getAddresses().get(Integer.parseInt(rest));
+            result=request.getClientInfo().getAddresses().get(Integer.parseInt(rest));
           }
         }
  else {
@@ -28,7 +28,7 @@
       }
     }
  else     if (name.equals(NAME_CLIENT_AGENT)) {
-      result=request.getClient().getAgent();
+      result=request.getClientInfo().getAgent();
     }
  else     if (name.startsWith(NAME_COOKIE)) {
       String rest=name.substring(NAME_COOKIE.length());
@@ -120,10 +120,10 @@
       result=request.getResourceRef().getUserInfo();
     }
  else     if (name.equals(NAME_SERVER_ADDRESS)) {
-      result=response.getServer().getAddress();
+      result=response.getServerInfo().getAddress();
     }
  else     if (name.equals(NAME_SERVER_AGENT)) {
-      result=response.getServer().getAgent();
+      result=response.getServerInfo().getAgent();
     }
  else     if (name.equals(NAME_STATUS)) {
       result=Integer.toString(response.getStatus().getCode());

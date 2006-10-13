@@ -3,7 +3,7 @@
   if (request.getMethod().equals(Method.GET) || request.getMethod().equals(Method.HEAD)) {
     Representation output=null;
     boolean found=false;
-    Iterator<Preference<MediaType>> iterator=request.getClient().getAcceptedMediaTypes().iterator();
+    Iterator<Preference<MediaType>> iterator=request.getClientInfo().getAcceptedMediaTypes().iterator();
     while (iterator.hasNext() && !found) {
       Preference<MediaType> pref=iterator.next();
       found=pref.getMetadata().equals(MediaType.TEXT_URI_LIST);
@@ -59,7 +59,7 @@
       response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
     }
  else {
-      response.setOutput(output);
+      response.setEntity(output);
       response.setStatus(Status.SUCCESS_OK);
     }
   }
@@ -72,9 +72,9 @@
  else {
         try {
           tmp=File.createTempFile("restlet-upload","bin");
-          if (request.isInputAvailable()) {
+          if (request.isEntityAvailable()) {
             FileOutputStream fos=new FileOutputStream(tmp);
-            ByteUtils.write(request.getInput().getStream(),fos);
+            ByteUtils.write(request.getEntity().getStream(),fos);
             fos.close();
           }
         }
@@ -84,7 +84,7 @@
         }
         if (file.delete()) {
           if (tmp.renameTo(file)) {
-            if (request.getInput() == null) {
+            if (request.getEntity() == null) {
               response.setStatus(Status.SUCCESS_NO_CONTENT);
             }
  else {
@@ -124,12 +124,12 @@
         }
         try {
           if (file.createNewFile()) {
-            if (request.getInput() == null) {
+            if (request.getEntity() == null) {
               response.setStatus(Status.SUCCESS_NO_CONTENT);
             }
  else {
               FileOutputStream fos=new FileOutputStream(file);
-              ByteUtils.write(request.getInput().getStream(),fos);
+              ByteUtils.write(request.getEntity().getStream(),fos);
               fos.close();
               response.setStatus(Status.SUCCESS_OK);
             }

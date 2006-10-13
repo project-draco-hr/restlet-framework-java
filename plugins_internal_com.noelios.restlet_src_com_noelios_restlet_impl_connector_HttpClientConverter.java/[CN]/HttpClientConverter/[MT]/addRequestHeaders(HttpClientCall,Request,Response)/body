@@ -1,17 +1,17 @@
 {
   ParameterList requestHeaders=httpCall.getRequestHeaders();
-  if (response.getServer().getName() != null) {
+  if (response.getServerInfo().getName() != null) {
     String host;
-    if (response.getServer().getPort() != null) {
-      host=response.getServer().getName() + ':' + response.getServer().getPort();
+    if (response.getServerInfo().getPort() != null) {
+      host=response.getServerInfo().getName() + ':' + response.getServerInfo().getPort();
     }
  else {
-      host=response.getServer().getName();
+      host=response.getServerInfo().getName();
     }
     requestHeaders.add(HttpConstants.HEADER_HOST,host);
   }
-  if (request.getClient().getAgent() != null) {
-    requestHeaders.add(HttpConstants.HEADER_USER_AGENT,request.getClient().getAgent());
+  if (request.getClientInfo().getAgent() != null) {
+    requestHeaders.add(HttpConstants.HEADER_USER_AGENT,request.getClientInfo().getAgent());
   }
  else {
     requestHeaders.add(HttpConstants.HEADER_USER_AGENT,Factory.VERSION_HEADER);
@@ -48,7 +48,7 @@
   if (request.getReferrerRef() != null) {
     requestHeaders.add(HttpConstants.HEADER_REFERRER,request.getReferrerRef().toString());
   }
-  ClientInfo client=request.getClient();
+  ClientInfo client=request.getClientInfo();
   if (client.getAcceptedMediaTypes().size() > 0) {
     try {
       requestHeaders.add(HttpConstants.HEADER_ACCEPT,PreferenceUtils.format(client.getAcceptedMediaTypes()));
@@ -88,15 +88,15 @@
   if (challengeResponse != null) {
     requestHeaders.add(HttpConstants.HEADER_AUTHORIZATION,SecurityUtils.format(challengeResponse));
   }
-  if (request.getInput() != null) {
-    if (request.getInput().getMediaType() != null) {
-      requestHeaders.add(HttpConstants.HEADER_CONTENT_TYPE,request.getInput().getMediaType().toString());
+  if (request.getEntity() != null) {
+    if (request.getEntity().getMediaType() != null) {
+      requestHeaders.add(HttpConstants.HEADER_CONTENT_TYPE,request.getEntity().getMediaType().toString());
     }
-    if (request.getInput().getEncoding() != null) {
-      requestHeaders.add(HttpConstants.HEADER_CONTENT_ENCODING,request.getInput().getEncoding().toString());
+    if (request.getEntity().getEncoding() != null) {
+      requestHeaders.add(HttpConstants.HEADER_CONTENT_ENCODING,request.getEntity().getEncoding().toString());
     }
-    if (request.getInput().getLanguage() != null) {
-      requestHeaders.add(HttpConstants.HEADER_CONTENT_LANGUAGE,request.getInput().getLanguage().toString());
+    if (request.getEntity().getLanguage() != null) {
+      requestHeaders.add(HttpConstants.HEADER_CONTENT_LANGUAGE,request.getEntity().getLanguage().toString());
     }
   }
   ParameterList additionalHeaders=(ParameterList)request.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
