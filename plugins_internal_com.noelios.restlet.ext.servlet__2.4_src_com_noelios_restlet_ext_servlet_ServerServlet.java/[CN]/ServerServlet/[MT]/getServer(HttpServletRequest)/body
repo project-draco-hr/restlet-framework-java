@@ -9,13 +9,12 @@ synchronized (ServerServlet.class) {
         if (applicationClassName != null) {
           try {
             Class targetClass=Class.forName(applicationClassName);
-            Application application=null;
-            application=(Application)targetClass.newInstance();
             Container container=new Container();
             result=new HttpServer(container.getContext());
             getServletContext().setAttribute(NAME_SERVER_ATTRIBUTE,result);
             if (container != null) {
               container.getServers().add(result);
+              Application application=(Application)targetClass.getConstructor(Context.class).newInstance(container.getContext());
               String uriPattern=request.getContextPath() + request.getServletPath();
               container.getDefaultHost().attach(uriPattern,application);
               result.start();
