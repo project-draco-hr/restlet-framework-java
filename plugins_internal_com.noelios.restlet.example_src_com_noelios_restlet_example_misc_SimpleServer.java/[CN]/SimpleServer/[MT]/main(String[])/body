@@ -1,9 +1,8 @@
 {
   try {
-    Container myContainer=new Container();
-    Context myContext=myContainer.getContext();
-    myContainer.getServers().add(Protocol.HTTP,9876);
-    Restlet testRestlet=new Restlet(myContext){
+    Container container=new Container();
+    container.getServers().add(Protocol.HTTP,9876);
+    Restlet handler=new Restlet(container.getContext()){
       public void handlePut(      Request request,      Response response){
         System.out.println("Handling the call...");
         System.out.println("Trying to get the input as a form...");
@@ -23,8 +22,8 @@
       }
     }
 ;
-    myContainer.getDefaultHost().attach("/test",testRestlet);
-    myContainer.start();
+    container.getDefaultHost().attach("/test",handler);
+    container.start();
   }
  catch (  Exception e) {
     e.printStackTrace();
