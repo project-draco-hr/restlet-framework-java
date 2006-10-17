@@ -1,26 +1,26 @@
 {
   if (this.queryExtracts != null) {
-    Form input=request.getResourceRef().getQueryAsForm();
-    if (input != null) {
+    Form form=request.getResourceRef().getQueryAsForm();
+    if (form != null) {
       for (      ExtractInfo qe : getQueryExtracts()) {
         if (qe.multiple) {
-          request.getAttributes().put(qe.attribute,input.subList(qe.value));
+          request.getAttributes().put(qe.attribute,form.subList(qe.value));
         }
  else {
-          request.getAttributes().put(qe.attribute,input.getFirst(qe.value));
+          request.getAttributes().put(qe.attribute,form.getFirst(qe.value));
         }
       }
     }
   }
-  if (this.inputExtracts != null) {
-    Form input=request.getEntityAsForm();
-    if (input != null) {
-      for (      ExtractInfo ie : getInputExtracts()) {
+  if (this.entityExtracts != null) {
+    Form form=request.getEntityAsForm();
+    if (form != null) {
+      for (      ExtractInfo ie : getEntityExtracts()) {
         if (ie.multiple) {
-          request.getAttributes().put(ie.attribute,input.subList(ie.value));
+          request.getAttributes().put(ie.attribute,form.subList(ie.value));
         }
  else {
-          request.getAttributes().put(ie.attribute,input.getFirst(ie.value));
+          request.getAttributes().put(ie.attribute,form.getFirst(ie.value));
         }
       }
     }

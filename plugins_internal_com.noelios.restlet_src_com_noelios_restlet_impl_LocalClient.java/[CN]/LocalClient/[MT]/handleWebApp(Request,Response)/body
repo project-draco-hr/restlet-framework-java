@@ -29,18 +29,18 @@
       }
     }
  catch (    IOException e) {
-      logger.log(Level.WARNING,"Unable to access to the WAR file",e);
+      getLogger().log(Level.WARNING,"Unable to access to the WAR file",e);
       response.setStatus(Status.SERVER_ERROR_INTERNAL);
     }
   }
  else {
     String path=request.getResourceRef().getPath();
     if (path.toUpperCase().startsWith("/WEB-INF/")) {
-      logger.warning("Forbidden access to the WEB-INF directory detected. Path requested: " + path);
+      getLogger().warning("Forbidden access to the WEB-INF directory detected. Path requested: " + path);
       response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
     }
  else     if (path.toUpperCase().startsWith("/META-INF/")) {
-      logger.warning("Forbidden access to the META-INF directory detected. Path requested: " + path);
+      getLogger().warning("Forbidden access to the META-INF directory detected. Path requested: " + path);
       response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
     }
  else {

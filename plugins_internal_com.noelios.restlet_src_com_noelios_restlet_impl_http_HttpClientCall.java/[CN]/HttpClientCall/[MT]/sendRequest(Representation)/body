@@ -1,20 +1,22 @@
 {
-  if (getRequestStream() != null) {
-    if (input != null) {
-      input.write(getRequestStream());
+  OutputStream rs=getRequestStream();
+  WritableByteChannel wbc=getRequestChannel();
+  if (rs != null) {
+    if (entity != null) {
+      entity.write(rs);
     }
-    getRequestStream().flush();
+    rs.flush();
   }
- else   if (getRequestChannel() != null) {
-    if (input != null) {
-      input.write(getRequestChannel());
+ else   if (wbc != null) {
+    if (entity != null) {
+      entity.write(wbc);
     }
   }
-  if (getRequestStream() != null) {
-    getRequestStream().close();
+  if (rs != null) {
+    rs.close();
   }
- else   if (getRequestChannel() != null) {
-    getRequestChannel().close();
+ else   if (wbc != null) {
+    wbc.close();
   }
   Status result=new Status(getStatusCode(),null,getReasonPhrase(),null);
   return result;

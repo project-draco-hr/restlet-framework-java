@@ -1,18 +1,23 @@
 {
-  String result=null;
-  if (isAvailable()) {
-    try {
-      ByteArrayOutputStream baos=new ByteArrayOutputStream();
-      write(baos);
-      if (getCharacterSet() != null) {
-        result=baos.toString(getCharacterSet().getName());
-      }
- else {
-        result=baos.toString();
-      }
-    }
- catch (    Exception ioe) {
-    }
+  if (getWrappedRepresentation() != null) {
+    return getWrappedRepresentation().toString();
   }
-  return result;
+ else {
+    String result=null;
+    if (isAvailable()) {
+      try {
+        ByteArrayOutputStream baos=new ByteArrayOutputStream();
+        write(baos);
+        if (getCharacterSet() != null) {
+          result=baos.toString(getCharacterSet().getName());
+        }
+ else {
+          result=baos.toString();
+        }
+      }
+ catch (      Exception ioe) {
+      }
+    }
+    return result;
+  }
 }

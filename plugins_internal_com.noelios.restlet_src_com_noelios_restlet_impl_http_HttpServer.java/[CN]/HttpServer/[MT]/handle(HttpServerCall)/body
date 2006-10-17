@@ -1,12 +1,12 @@
 {
   try {
-    Request request=getConverter().toUniform(httpCall,getContext());
+    Request request=getConverter().toUniform(httpCall);
     Response response=new HttpResponse(httpCall,request);
     handle(request,response);
     getConverter().commit(httpCall,response);
   }
  catch (  Exception e) {
-    logger.log(Level.WARNING,"Error while handling an HTTP server call: ",e.getMessage());
-    logger.log(Level.INFO,"Error while handling an HTTP server call",e);
+    getLogger().log(Level.WARNING,"Error while handling an HTTP server call: ",e.getMessage());
+    getLogger().log(Level.INFO,"Error while handling an HTTP server call",e);
   }
 }

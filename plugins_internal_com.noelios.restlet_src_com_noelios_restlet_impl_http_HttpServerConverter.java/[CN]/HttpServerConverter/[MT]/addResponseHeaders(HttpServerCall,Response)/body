@@ -31,28 +31,28 @@
       httpCall.setReasonPhrase(response.getStatus().getDescription());
     }
     if (response.getEntity() != null) {
-      Representation output=response.getEntity();
-      if (output.getExpirationDate() != null) {
-        responseHeaders.add(HttpConstants.HEADER_EXPIRES,httpCall.formatDate(output.getExpirationDate(),false));
+      Representation entity=response.getEntity();
+      if (entity.getExpirationDate() != null) {
+        responseHeaders.add(HttpConstants.HEADER_EXPIRES,httpCall.formatDate(entity.getExpirationDate(),false));
       }
-      if ((output.getEncoding() != null) && (!output.getEncoding().equals(Encoding.IDENTITY))) {
-        responseHeaders.add(HttpConstants.HEADER_CONTENT_ENCODING,output.getEncoding().getName());
+      if ((entity.getEncoding() != null) && (!entity.getEncoding().equals(Encoding.IDENTITY))) {
+        responseHeaders.add(HttpConstants.HEADER_CONTENT_ENCODING,entity.getEncoding().getName());
       }
-      if (output.getLanguage() != null) {
-        responseHeaders.add(HttpConstants.HEADER_CONTENT_LANGUAGE,output.getLanguage().getName());
+      if (entity.getLanguage() != null) {
+        responseHeaders.add(HttpConstants.HEADER_CONTENT_LANGUAGE,entity.getLanguage().getName());
       }
-      if (output.getMediaType() != null) {
-        StringBuilder contentType=new StringBuilder(output.getMediaType().getName());
-        if (output.getCharacterSet() != null) {
-          contentType.append("; charset=").append(output.getCharacterSet().getName());
+      if (entity.getMediaType() != null) {
+        StringBuilder contentType=new StringBuilder(entity.getMediaType().getName());
+        if (entity.getCharacterSet() != null) {
+          contentType.append("; charset=").append(entity.getCharacterSet().getName());
         }
         responseHeaders.add(HttpConstants.HEADER_CONTENT_TYPE,contentType.toString());
       }
-      if (output.getModificationDate() != null) {
-        responseHeaders.add(HttpConstants.HEADER_LAST_MODIFIED,httpCall.formatDate(output.getModificationDate(),false));
+      if (entity.getModificationDate() != null) {
+        responseHeaders.add(HttpConstants.HEADER_LAST_MODIFIED,httpCall.formatDate(entity.getModificationDate(),false));
       }
-      if (output.getTag() != null) {
-        responseHeaders.add(HttpConstants.HEADER_ETAG,output.getTag().getName());
+      if (entity.getTag() != null) {
+        responseHeaders.add(HttpConstants.HEADER_ETAG,entity.getTag().getName());
       }
       if (response.getEntity().getSize() != Representation.UNKNOWN_SIZE) {
         responseHeaders.add(HttpConstants.HEADER_CONTENT_LENGTH,Long.toString(response.getEntity().getSize()));
@@ -65,7 +65,7 @@
     if (additionalHeaders != null) {
       for (      Parameter param : additionalHeaders) {
         if (param.getName().equalsIgnoreCase(HttpConstants.HEADER_ACCEPT) || param.getName().equalsIgnoreCase(HttpConstants.HEADER_ACCEPT_CHARSET) || param.getName().equalsIgnoreCase(HttpConstants.HEADER_ACCEPT_ENCODING)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_ACCEPT_LANGUAGE)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_ACCEPT_RANGES)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_AGE)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_ALLOW)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_AUTHORIZATION)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_CACHE_CONTROL)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_CONNECTION)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_ENCODING)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LANGUAGE)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LENGTH)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LOCATION)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_MD5)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_RANGE)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_TYPE)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_COOKIE)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_DATE)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_ETAG)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_EXPECT)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_EXPIRES)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_FROM)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_HOST)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_IF_MATCH)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_IF_MODIFIED_SINCE)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_IF_NONE_MATCH)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_IF_RANGE)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_IF_UNMODIFIED_SINCE)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_LAST_MODIFIED)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_LOCATION)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_MAX_FORWARDS)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_PRAGMA)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_PROXY_AUTHENTICATE)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_PROXY_AUTHORIZATION)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_RANGE)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_REFERRER)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_RETRY_AFTER)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_SERVER)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_SET_COOKIE)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_SET_COOKIE2)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_TRAILER)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_TRANSFER_ENCODING)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_TRANSFER_EXTENSION)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_UPGRADE)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_USER_AGENT)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_VARY)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_VIA)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_WARNING)|| param.getName().equalsIgnoreCase(HttpConstants.HEADER_WWW_AUTHENTICATE)) {
-          logger.warning("Addition of the standard header \"" + param.getName() + "\" is not allowed.");
+          this.context.getLogger().warning("Addition of the standard header \"" + param.getName() + "\" is not allowed.");
         }
  else {
           responseHeaders.add(param);
@@ -74,7 +74,7 @@
     }
   }
  catch (  Exception e) {
-    logger.log(Level.INFO,"Exception intercepted while adding the response headers",e);
+    this.context.getLogger().log(Level.INFO,"Exception intercepted while adding the response headers",e);
     httpCall.setStatusCode(Status.SERVER_ERROR_INTERNAL.getCode());
     httpCall.setReasonPhrase(Status.SERVER_ERROR_INTERNAL.getDescription());
   }

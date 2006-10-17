@@ -7,11 +7,11 @@
       }
  else       if ((header.getName().equalsIgnoreCase(HttpConstants.HEADER_SET_COOKIE)) || (header.getName().equalsIgnoreCase(HttpConstants.HEADER_SET_COOKIE2))) {
         try {
-          CookieReader cr=new CookieReader(header.getValue());
+          CookieReader cr=new CookieReader(this.logger,header.getValue());
           response.getCookieSettings().add(cr.readCookieSetting());
         }
  catch (        Exception e) {
-          logger.log(Level.WARNING,"Error during cookie setting parsing. Header: " + header.getValue(),e);
+          this.logger.log(Level.WARNING,"Error during cookie setting parsing. Header: " + header.getValue(),e);
         }
       }
  else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_WWW_AUTHENTICATE)) {
@@ -30,7 +30,7 @@
     }
   }
  catch (  Exception e) {
-    logger.log(Level.FINE,"An error occured during the processing of the HTTP response.",e);
+    this.logger.log(Level.FINE,"An error occured during the processing of the HTTP response.",e);
     response.setStatus(new Status(Status.CONNECTOR_ERROR_INTERNAL,"Unable to process the response. " + e.getMessage()));
   }
 }

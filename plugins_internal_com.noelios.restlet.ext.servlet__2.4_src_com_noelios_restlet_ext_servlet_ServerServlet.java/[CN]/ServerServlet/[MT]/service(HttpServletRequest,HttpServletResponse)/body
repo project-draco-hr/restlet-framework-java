@@ -1,8 +1,7 @@
 {
-  ServletCall httpCall=new ServletCall(request,response);
   HttpServer server=getServer(request);
   if (server != null) {
-    server.handle(httpCall);
+    server.handle(new ServletCall(server.getLogger(),request,response));
   }
  else {
     log("[Noelios Restlet Engine] - Unable to get the Restlet HTTP server connector. Status code 500 returned.");

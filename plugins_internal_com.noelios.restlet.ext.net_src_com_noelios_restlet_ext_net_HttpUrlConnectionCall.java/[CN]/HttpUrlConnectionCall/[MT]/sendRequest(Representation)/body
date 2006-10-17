@@ -1,9 +1,9 @@
 {
   Status result=null;
   try {
-    if (input != null) {
-      if (input.getSize() > 0) {
-        getConnection().setFixedLengthStreamingMode((int)input.getSize());
+    if (entity != null) {
+      if (entity.getSize() > 0) {
+        getConnection().setFixedLengthStreamingMode((int)entity.getSize());
       }
  else {
         if (this.client.getChunkLength() >= 0) {
@@ -18,26 +18,26 @@
       getConnection().addRequestProperty(header.getName(),header.getValue());
     }
     getConnection().connect();
-    result=super.sendRequest(input);
+    result=super.sendRequest(entity);
   }
  catch (  ConnectException ce) {
-    logger.log(Level.FINE,"An error occured during the connection to the remote HTTP server.",ce);
+    client.getLogger().log(Level.FINE,"An error occured during the connection to the remote HTTP server.",ce);
     result=new Status(Status.CONNECTOR_ERROR_CONNECTION,"Unable to connect to the remote server. " + ce.getMessage());
   }
 catch (  SocketTimeoutException ste) {
-    logger.log(Level.FINE,"An timeout error occured during the communication with the remote HTTP server.",ste);
+    client.getLogger().log(Level.FINE,"An timeout error occured during the communication with the remote HTTP server.",ste);
     result=new Status(Status.CONNECTOR_ERROR_COMMUNICATION,"Unable to complete the HTTP call due to a communication timeout error. " + ste.getMessage());
   }
 catch (  FileNotFoundException fnfe) {
-    logger.log(Level.FINE,"An unexpected error occured during the sending of the HTTP request.",fnfe);
+    client.getLogger().log(Level.FINE,"An unexpected error occured during the sending of the HTTP request.",fnfe);
     result=new Status(Status.CONNECTOR_ERROR_INTERNAL,"Unable to find a local file for sending. " + fnfe.getMessage());
   }
 catch (  IOException ioe) {
-    logger.log(Level.FINE,"An error occured during the communication with the remote HTTP server.",ioe);
+    client.getLogger().log(Level.FINE,"An error occured during the communication with the remote HTTP server.",ioe);
     result=new Status(Status.CONNECTOR_ERROR_COMMUNICATION,"Unable to complete the HTTP call due to a communication error with the remote server. " + ioe.getMessage());
   }
 catch (  Exception e) {
-    logger.log(Level.FINE,"An unexpected error occured during the sending of the HTTP request.",e);
+    client.getLogger().log(Level.FINE,"An unexpected error occured during the sending of the HTTP request.",e);
     result=new Status(Status.CONNECTOR_ERROR_INTERNAL,"Unable to send the HTTP request. " + e.getMessage());
   }
   return result;

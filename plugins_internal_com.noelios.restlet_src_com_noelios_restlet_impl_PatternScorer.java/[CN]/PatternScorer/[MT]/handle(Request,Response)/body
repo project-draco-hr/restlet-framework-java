@@ -2,8 +2,8 @@
   String remainingRef=request.getRelativePart();
   Matcher matcher=getPattern().matcher(remainingRef);
   boolean matched=matcher.lookingAt();
-  if (logger.isLoggable(Level.FINER)) {
-    logger.finer("Attempting to match this pattern: " + getPattern().toString() + " >> "+ matched);
+  if (getLogger().isLoggable(Level.FINER)) {
+    getLogger().finer("Attempting to match this pattern: " + getPattern().toString() + " >> "+ matched);
   }
   if (matched) {
     String matchedPart=remainingRef.substring(0,matcher.end());
@@ -15,12 +15,12 @@
       baseRef=new Reference(baseRef.toString(false,false) + matchedPart);
     }
     request.setBaseRef(baseRef);
-    if (logger.isLoggable(Level.FINE)) {
-      logger.fine("New base URI: " + request.getBaseRef());
-      logger.fine("New relative part: " + request.getRelativePart());
+    if (getLogger().isLoggable(Level.FINE)) {
+      getLogger().fine("New base URI: " + request.getBaseRef());
+      getLogger().fine("New relative part: " + request.getRelativePart());
     }
-    if (logger.isLoggable(Level.FINE)) {
-      logger.fine("Delegating the call to the target handler");
+    if (getLogger().isLoggable(Level.FINE)) {
+      getLogger().fine("Delegating the call to the target handler");
     }
     super.handle(request,response);
   }

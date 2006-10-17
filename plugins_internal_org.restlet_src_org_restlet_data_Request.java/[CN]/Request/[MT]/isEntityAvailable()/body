@@ -1,8 +1,13 @@
 {
-  if (getMethod().equals(Method.GET) || getMethod().equals(Method.HEAD) || getMethod().equals(Method.DELETE)) {
-    return false;
+  if (getWrappedRequest() != null) {
+    return getWrappedRequest().isEntityAvailable();
   }
  else {
-    return super.isEntityAvailable();
+    if (getMethod().equals(Method.GET) || getMethod().equals(Method.HEAD) || getMethod().equals(Method.DELETE)) {
+      return false;
+    }
+ else {
+      return super.isEntityAvailable();
+    }
   }
 }

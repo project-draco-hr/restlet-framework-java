@@ -1,9 +1,14 @@
 {
-  if ((resourceRef != null) && resourceRef.isRelative() && (resourceRef.getBaseRef() != null)) {
-    this.resourceRef=resourceRef.getTargetRef();
+  if (getWrappedRequest() != null) {
+    getWrappedRequest().setResourceRef(resourceRef);
   }
  else {
-    this.resourceRef=resourceRef.normalize();
+    if ((resourceRef != null) && resourceRef.isRelative() && (resourceRef.getBaseRef() != null)) {
+      this.resourceRef=resourceRef.getTargetRef();
+    }
+ else {
+      this.resourceRef=resourceRef.normalize();
+    }
+    setBaseRef((Reference)null);
   }
-  setBaseRef((Reference)null);
 }
