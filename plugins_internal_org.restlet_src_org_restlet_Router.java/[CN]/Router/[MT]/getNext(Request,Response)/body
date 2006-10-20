@@ -1,34 +1,37 @@
 {
   Scorer result=null;
-  if (this.scorers != null) {
-    for (int i=0; (result == null) && (i < getMaxAttempts()); i++) {
-      if (i > 0) {
-        try {
-          Thread.sleep(getRetryDelay());
-        }
- catch (        InterruptedException e) {
-        }
+  for (int i=0; (result == null) && (i < getMaxAttempts()); i++) {
+    if (i > 0) {
+      try {
+        Thread.sleep(getRetryDelay());
       }
+ catch (      InterruptedException e) {
+      }
+    }
+    if (this.scorers != null) {
 switch (getRoutingMode()) {
 case BEST:
-        result=getScorers().getBest(request,response,this.requiredScore);
+        result=getScorers().getBest(request,response,getRequiredScore());
       break;
 case FIRST:
-    result=getScorers().getFirst(request,response,this.requiredScore);
+    result=getScorers().getFirst(request,response,getRequiredScore());
   break;
 case LAST:
-result=getScorers().getLast(request,response,this.requiredScore);
+result=getScorers().getLast(request,response,getRequiredScore());
 break;
 case NEXT:
-result=getScorers().getNext(request,response,this.requiredScore);
+result=getScorers().getNext(request,response,getRequiredScore());
 break;
 case RANDOM:
-result=getScorers().getRandom(request,response,this.requiredScore);
+result=getScorers().getRandom(request,response,getRequiredScore());
 break;
 case CUSTOM:
 result=getCustom(request,response);
 break;
 }
+}
+if ((result == null) && (getDefaultScorer() != null) && (getDefaultScorer().score(request,response) >= getRequiredScore())) {
+result=getDefaultScorer();
 }
 }
 if (result == null) {
