@@ -1,15 +1,10 @@
 {
-  if (getWrappedChainer() != null) {
-    getWrappedChainer().handle(request,response);
+  init(request,response);
+  Restlet next=getNext(request,response);
+  if (next != null) {
+    next.handle(request,response);
   }
  else {
-    init(request,response);
-    Handler next=getNext(request,response);
-    if (next != null) {
-      next.handle(request,response);
-    }
- else {
-      response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
-    }
+    response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
   }
 }

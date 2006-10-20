@@ -1,0 +1,19 @@
+{
+  String scheme=request.getResourceRef().getScheme();
+  request.getResourceRef().normalize();
+  if (scheme.equalsIgnoreCase(Protocol.CLAP.getSchemeName())) {
+    ClapReference cr=new ClapReference(request.getResourceRef());
+    if (cr.getAuthorityType() == ClapReference.CLASS) {
+      handleClassLoader(request,response,getClass().getClassLoader());
+    }
+ else     if (cr.getAuthorityType() == ClapReference.SYSTEM) {
+      handleClassLoader(request,response,ClassLoader.getSystemClassLoader());
+    }
+ else     if (cr.getAuthorityType() == ClapReference.THREAD) {
+      handleClassLoader(request,response,Thread.currentThread().getContextClassLoader());
+    }
+  }
+ else {
+    throw new IllegalArgumentException("Protocol \"" + scheme + "\" not supported by the connector. Only CLAP is supported.");
+  }
+}

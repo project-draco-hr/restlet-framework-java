@@ -1,0 +1,19 @@
+{
+  super(method,requestUri);
+  this.clientHelper=client;
+  if (requestUri.startsWith("http")) {
+    URL url=new URL(requestUri);
+    this.connection=(HttpURLConnection)url.openConnection();
+    this.connection.setConnectTimeout(client.getConnectTimeout());
+    this.connection.setReadTimeout(client.getReadTimeout());
+    this.connection.setAllowUserInteraction(client.isAllowUserInteraction());
+    this.connection.setDoOutput(hasEntity);
+    this.connection.setInstanceFollowRedirects(client.isFollowRedirects());
+    this.connection.setUseCaches(client.isUseCaches());
+    this.responseHeadersAdded=false;
+    setConfidential(this.connection instanceof HttpsURLConnection);
+  }
+ else {
+    throw new IllegalArgumentException("Only HTTP or HTTPS resource URIs are allowed here");
+  }
+}

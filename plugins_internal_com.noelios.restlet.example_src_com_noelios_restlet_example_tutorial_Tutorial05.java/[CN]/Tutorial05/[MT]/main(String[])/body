@@ -1,13 +1,13 @@
 {
   Container container=new Container();
   container.getServers().add(Protocol.HTTP,8182);
-  Restlet handler=new Restlet(){
-    public void handleGet(    Request request,    Response response){
+  Restlet restlet=new Restlet(){
+    public void handle(    Request request,    Response response){
       String message="Resource URI:  " + request.getResourceRef() + '\n'+ "Base URI:      "+ request.getBaseRef()+ '\n'+ "Relative path: "+ request.getRelativePart()+ '\n'+ "Query string:  "+ request.getResourceRef().getQuery();
       response.setEntity(message,MediaType.TEXT_PLAIN);
     }
   }
 ;
-  container.getDefaultHost().attach("/trace",handler);
+  container.getDefaultHost().attach("/trace",restlet);
   container.start();
 }

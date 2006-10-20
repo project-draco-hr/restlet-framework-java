@@ -1,0 +1,51 @@
+{
+  Connection connection=null;
+  try {
+    String connectionURI=request.getResourceRef().toString();
+    DocumentBuilder docBuilder=DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    Document requestDoc=docBuilder.parse(request.getEntity().getStream());
+    Element rootElt=(Element)requestDoc.getElementsByTagName("request").item(0);
+    Element headerElt=(Element)rootElt.getElementsByTagName("header").item(0);
+    Element connectionElt=(Element)headerElt.getElementsByTagName("connection").item(0);
+    Node usePoolingNode=connectionElt.getElementsByTagName("usePooling").item(0);
+    boolean usePooling=usePoolingNode.getTextContent().equals("true") ? true : false;
+    NodeList propertyNodes=connectionElt.getElementsByTagName("property");
+    Node propertyNode=null;
+    Properties properties=null;
+    String name=null;
+    String value=null;
+    for (int i=0; i < propertyNodes.getLength(); i++) {
+      propertyNode=propertyNodes.item(i);
+      if (properties == null)       properties=new Properties();
+      name=propertyNode.getAttributes().getNamedItem("name").getTextContent();
+      value=propertyNode.getTextContent();
+      properties.setProperty(name,value);
+    }
+    Node returnGeneratedKeysNode=headerElt.getElementsByTagName("returnGeneratedKeys").item(0);
+    boolean returnGeneratedKeys=returnGeneratedKeysNode.getTextContent().equals("true") ? true : false;
+    Node sqlRequestNode=rootElt.getElementsByTagName("body").item(0);
+    String sqlRequest=sqlRequestNode.getTextContent();
+    if (request.getMethod().equals(Method.POST)) {
+      connection=getConnection(connectionURI,properties,usePooling);
+      Statement statement=connection.createStatement();
+      statement.execute(sqlRequest,returnGeneratedKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
+      JdbcResult result=new JdbcResult(statement);
+      response.setEntity(new ObjectRepresentation(result));
+      connection.commit();
+    }
+ else {
+      throw new IllegalArgumentException("Only the POST method is supported");
+    }
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+ finally {
+    try {
+      if (connection != null)       connection.close();
+    }
+ catch (    SQLException se) {
+      getLogger().log(Level.WARNING,"An error occured while trying to close a database connection",se);
+    }
+  }
+}

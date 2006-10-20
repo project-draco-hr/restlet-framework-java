@@ -1,0 +1,21 @@
+{
+  Helper result=null;
+  for (  ConnectorHelper registeredServer : this.registeredServers) {
+    if (registeredServer.getSupportedProtocols().containsAll(server.getProtocols())) {
+      try {
+        result=registeredServer.getClass().getConstructor(Server.class).newInstance(server);
+        return result;
+      }
+ catch (      Exception e) {
+        logger.log(Level.SEVERE,"Exception while instantiation the server connector.",e);
+      }
+    }
+  }
+  StringBuilder sb=new StringBuilder();
+  sb.append("No available server connector supports the required protocols: ");
+  for (  Protocol p : server.getProtocols()) {
+    sb.append(p.getName()).append(" ");
+  }
+  logger.log(Level.WARNING,sb.toString());
+  return null;
+}

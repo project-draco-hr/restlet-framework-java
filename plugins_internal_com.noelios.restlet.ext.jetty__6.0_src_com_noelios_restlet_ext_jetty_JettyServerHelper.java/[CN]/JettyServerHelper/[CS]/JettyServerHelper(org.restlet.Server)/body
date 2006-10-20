@@ -1,0 +1,10 @@
+{
+  super(server);
+  this.setWrappedServer(new WrappedServer(this));
+  BoundedThreadPool btp=new BoundedThreadPool();
+  btp.setLowThreads(getLowThreads());
+  btp.setMaxIdleTimeMs(getThreadMaxIdleTimeMs());
+  btp.setMaxThreads(getMaxThreads());
+  btp.setMinThreads(getMinThreads());
+  getWrappedServer().setThreadPool(btp);
+}

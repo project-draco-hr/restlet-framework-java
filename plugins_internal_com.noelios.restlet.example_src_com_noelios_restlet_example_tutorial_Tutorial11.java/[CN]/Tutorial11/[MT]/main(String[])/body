@@ -2,7 +2,7 @@
   Container container=new Container();
   container.getServers().add(Protocol.HTTP,8182);
   Application application=new Application(container){
-    public Handler createRoot(){
+    public Restlet createRoot(){
       Router router=new Router(getContext());
       GuardFilter guard=new GuardFilter(getContext(),true,ChallengeScheme.HTTP_BASIC,"Restlet tutorial",true);
       guard.getAuthorizations().put("scott","tiger");
@@ -12,7 +12,7 @@
       Router user=new Router(getContext());
       router.attach("/users/[a-z]+",user);
       Restlet account=new Restlet(){
-        public void handleGet(        Request request,        Response response){
+        public void handle(        Request request,        Response response){
           String message="Account of user named: " + request.getBaseRef().getLastSegment();
           response.setEntity(message,MediaType.TEXT_PLAIN);
         }
@@ -20,7 +20,7 @@
 ;
       user.attach("$",account);
       Restlet orders=new Restlet(getContext()){
-        public void handleGet(        Request request,        Response response){
+        public void handle(        Request request,        Response response){
           List<String> segments=request.getBaseRef().getSegments();
           String message="Orders of user named: " + segments.get(segments.size() - 2);
           response.setEntity(message,MediaType.TEXT_PLAIN);

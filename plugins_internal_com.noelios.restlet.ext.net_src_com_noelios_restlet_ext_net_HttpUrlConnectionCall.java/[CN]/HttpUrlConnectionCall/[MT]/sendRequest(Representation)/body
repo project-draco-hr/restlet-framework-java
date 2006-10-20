@@ -6,8 +6,8 @@
         getConnection().setFixedLengthStreamingMode((int)entity.getSize());
       }
  else {
-        if (this.client.getChunkLength() >= 0) {
-          getConnection().setChunkedStreamingMode(this.client.getChunkLength());
+        if (this.clientHelper.getChunkLength() >= 0) {
+          getConnection().setChunkedStreamingMode(this.clientHelper.getChunkLength());
         }
  else {
         }
@@ -21,23 +21,23 @@
     result=super.sendRequest(entity);
   }
  catch (  ConnectException ce) {
-    client.getLogger().log(Level.FINE,"An error occured during the connection to the remote HTTP server.",ce);
+    this.clientHelper.getLogger().log(Level.FINE,"An error occured during the connection to the remote HTTP server.",ce);
     result=new Status(Status.CONNECTOR_ERROR_CONNECTION,"Unable to connect to the remote server. " + ce.getMessage());
   }
 catch (  SocketTimeoutException ste) {
-    client.getLogger().log(Level.FINE,"An timeout error occured during the communication with the remote HTTP server.",ste);
+    this.clientHelper.getLogger().log(Level.FINE,"An timeout error occured during the communication with the remote HTTP server.",ste);
     result=new Status(Status.CONNECTOR_ERROR_COMMUNICATION,"Unable to complete the HTTP call due to a communication timeout error. " + ste.getMessage());
   }
 catch (  FileNotFoundException fnfe) {
-    client.getLogger().log(Level.FINE,"An unexpected error occured during the sending of the HTTP request.",fnfe);
+    this.clientHelper.getLogger().log(Level.FINE,"An unexpected error occured during the sending of the HTTP request.",fnfe);
     result=new Status(Status.CONNECTOR_ERROR_INTERNAL,"Unable to find a local file for sending. " + fnfe.getMessage());
   }
 catch (  IOException ioe) {
-    client.getLogger().log(Level.FINE,"An error occured during the communication with the remote HTTP server.",ioe);
+    this.clientHelper.getLogger().log(Level.FINE,"An error occured during the communication with the remote HTTP server.",ioe);
     result=new Status(Status.CONNECTOR_ERROR_COMMUNICATION,"Unable to complete the HTTP call due to a communication error with the remote server. " + ioe.getMessage());
   }
 catch (  Exception e) {
-    client.getLogger().log(Level.FINE,"An unexpected error occured during the sending of the HTTP request.",e);
+    this.clientHelper.getLogger().log(Level.FINE,"An unexpected error occured during the sending of the HTTP request.",e);
     result=new Status(Status.CONNECTOR_ERROR_INTERNAL,"Unable to send the HTTP request. " + e.getMessage());
   }
   return result;

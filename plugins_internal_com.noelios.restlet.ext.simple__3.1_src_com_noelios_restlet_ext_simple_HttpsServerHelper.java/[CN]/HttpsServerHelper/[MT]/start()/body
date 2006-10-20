@@ -1,0 +1,15 @@
+{
+  KeyStore keyStore=KeyStore.getInstance(getKeystoreType());
+  keyStore.load(new FileInputStream(getKeystorePath()),getKeystorePassword().toCharArray());
+  KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(getCertAlgorithm());
+  keyManagerFactory.init(keyStore,getKeyPassword().toCharArray());
+  SSLContext sslContext=SSLContext.getInstance(getSslProtocol());
+  sslContext.init(keyManagerFactory.getKeyManagers(),null,null);
+  setSocket(sslContext.getServerSocketFactory().createServerSocket(getServer().getPort()));
+  getSocket().setSoTimeout(60000);
+  setConfidential(true);
+  setHandler(PipelineHandlerFactory.getInstance(this,getDefaultThreads(),getMaxWaitTimeMs()));
+  setConnection(ConnectionFactory.getConnection(getHandler(),new BufferedPipelineFactory()));
+  getConnection().connect(getSocket());
+  super.start();
+}

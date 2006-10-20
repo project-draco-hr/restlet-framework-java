@@ -1,0 +1,10 @@
+{
+  String scheme=request.getResourceRef().getScheme();
+  request.getResourceRef().normalize();
+  if (scheme.equalsIgnoreCase("file")) {
+    handleFile(request,response,request.getResourceRef().getPath());
+  }
+ else {
+    throw new IllegalArgumentException("Protocol \"" + scheme + "\" not supported by the connector. Only FILE and CONTEXT are supported.");
+  }
+}
