@@ -4,6 +4,9 @@
     response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
   }
  else {
+    for (    Representation variant : variants) {
+      variant.setResource(resource);
+    }
     Representation bestVariant=request.getClientInfo().getPreferredVariant(variants,fallbackLanguage);
     if (bestVariant == null) {
       response.setStatus(Status.CLIENT_ERROR_NOT_ACCEPTABLE);

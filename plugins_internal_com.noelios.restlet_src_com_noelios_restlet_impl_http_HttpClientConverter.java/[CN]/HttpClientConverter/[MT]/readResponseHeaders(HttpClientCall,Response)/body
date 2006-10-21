@@ -7,11 +7,11 @@
       }
  else       if ((header.getName().equalsIgnoreCase(HttpConstants.HEADER_SET_COOKIE)) || (header.getName().equalsIgnoreCase(HttpConstants.HEADER_SET_COOKIE2))) {
         try {
-          CookieReader cr=new CookieReader(this.logger,header.getValue());
+          CookieReader cr=new CookieReader(getLogger(),header.getValue());
           response.getCookieSettings().add(cr.readCookieSetting());
         }
  catch (        Exception e) {
-          this.logger.log(Level.WARNING,"Error during cookie setting parsing. Header: " + header.getValue(),e);
+          getLogger().log(Level.WARNING,"Error during cookie setting parsing. Header: " + header.getValue(),e);
         }
       }
  else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_WWW_AUTHENTICATE)) {
@@ -23,14 +23,15 @@
       }
  else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_ALLOW)) {
         StringTokenizer st=new StringTokenizer(header.getValue(),",\\s");
+        List<Method> allowedMethods=response.getEntity().getResource().getAllowedMethods();
         while (st.hasMoreTokens()) {
-          response.getAllowedMethods().add(Method.valueOf(st.nextToken()));
+          allowedMethods.add(Method.valueOf(st.nextToken()));
         }
       }
     }
   }
  catch (  Exception e) {
-    this.logger.log(Level.FINE,"An error occured during the processing of the HTTP response.",e);
+    getLogger().log(Level.FINE,"An error occured during the processing of the HTTP response.",e);
     response.setStatus(new Status(Status.CONNECTOR_ERROR_INTERNAL,"Unable to process the response. " + e.getMessage()));
   }
 }

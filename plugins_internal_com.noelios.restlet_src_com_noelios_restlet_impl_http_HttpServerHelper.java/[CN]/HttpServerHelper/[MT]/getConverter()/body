@@ -1,6 +1,12 @@
 {
   if (this.converter == null) {
-    this.converter=new HttpServerConverter(getContext());
+    try {
+      String converterClass=getParameters().getFirstValue("converter","com.noelios.restlet.impl.http.HttpServerConverter");
+      this.converter=(HttpServerConverter)Class.forName(converterClass).getConstructor(Context.class).newInstance(getContext());
+    }
+ catch (    Exception e) {
+      getLogger().log(Level.SEVERE,"Unable to create the HTTP server converter");
+    }
   }
   return this.converter;
 }
