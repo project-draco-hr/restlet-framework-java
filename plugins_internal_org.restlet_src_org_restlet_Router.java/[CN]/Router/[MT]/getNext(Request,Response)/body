@@ -30,12 +30,14 @@ result=getCustom(request,response);
 break;
 }
 }
-if ((result == null) && (getDefaultScorer() != null) && (getDefaultScorer().score(request,response) >= getRequiredScore())) {
-result=getDefaultScorer();
-}
 }
 if (result == null) {
+if ((getDefaultScorer() != null) && (getDefaultScorer().score(request,response) >= getRequiredScore())) {
+result=getDefaultScorer();
+}
+ else {
 response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+}
 }
 return result;
 }
