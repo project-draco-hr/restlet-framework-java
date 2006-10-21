@@ -2,18 +2,20 @@
   try {
     ParameterList responseHeaders=httpCall.getResponseHeaders();
     if (response.getStatus().equals(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED) || response.getRequest().getMethod().equals(Method.PUT)) {
-      StringBuilder sb=new StringBuilder();
-      boolean first=true;
-      for (      Method method : response.getEntity().getResource().getAllowedMethods()) {
-        if (first) {
-          first=false;
-        }
+      if ((response.getEntity() != null) && (response.getEntity().getResource() != null)) {
+        StringBuilder sb=new StringBuilder();
+        boolean first=true;
+        for (        Method method : response.getEntity().getResource().getAllowedMethods()) {
+          if (first) {
+            first=false;
+          }
  else {
-          sb.append(", ");
+            sb.append(", ");
+          }
+          sb.append(method.getName());
         }
-        sb.append(method.getName());
+        responseHeaders.add(HttpConstants.HEADER_ALLOW,sb.toString());
       }
-      responseHeaders.add(HttpConstants.HEADER_ALLOW,sb.toString());
     }
     List<CookieSetting> cookies=response.getCookieSettings();
     for (int i=0; i < cookies.size(); i++) {
