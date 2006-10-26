@@ -1,0 +1,19 @@
+{
+  boolean b=false;
+  Iterator keys=o.keys();
+  String s;
+  StringBuffer sb=new StringBuffer();
+  while (keys.hasNext()) {
+    s=keys.next().toString();
+    if (!o.isNull(s)) {
+      if (b) {
+        sb.append(';');
+      }
+      sb.append(Cookie.escape(s));
+      sb.append("=");
+      sb.append(Cookie.escape(o.getString(s)));
+      b=true;
+    }
+  }
+  return sb.toString();
+}
