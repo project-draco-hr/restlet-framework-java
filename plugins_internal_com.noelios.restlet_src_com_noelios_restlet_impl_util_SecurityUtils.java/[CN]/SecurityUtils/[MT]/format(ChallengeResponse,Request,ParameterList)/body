@@ -1,0 +1,49 @@
+{
+  StringBuilder sb=new StringBuilder();
+  sb.append(challenge.getScheme().getTechnicalName()).append(' ');
+  if (challenge.getCredentials() != null) {
+    sb.append(challenge.getCredentials());
+  }
+ else   if (challenge.getScheme().equals(ChallengeScheme.HTTP_AWS)) {
+    String methodName=request.getMethod().getName();
+    String date=httpHeaders.getFirstValue("X-Amz-Date",true);
+    if (date == null) {
+      date=httpHeaders.getFirstValue(HttpConstants.HEADER_DATE,true);
+    }
+    if (date == null) {
+      date=DateUtils.format(new Date(),DateUtils.FORMAT_RFC_1123[0]);
+      httpHeaders.add(HttpConstants.HEADER_DATE,date);
+    }
+    String contentMd5=httpHeaders.getFirstValue(HttpConstants.HEADER_CONTENT_MD5,true);
+    if (contentMd5 == null)     contentMd5="";
+    String contentType=httpHeaders.getFirstValue(HttpConstants.HEADER_CONTENT_TYPE);
+    if (contentType == null)     contentType="";
+    String canonicalizedAmzHeaders=getCanonicalizedAmzHeaders(httpHeaders);
+    String canonicalizedResource=getCanonicalizedResourceName(request.getResourceRef());
+    StringBuilder rest=new StringBuilder();
+    rest.append(methodName).append('\n').append(contentMd5).append('\n').append(contentType).append('\n').append(date).append('\n').append(canonicalizedAmzHeaders).append('\n').append(canonicalizedResource);
+    sb.append(challenge.getIdentifier()).append(':').append(Base64.encodeBytes(toHMac(rest.toString(),challenge.getSecret())));
+  }
+ else   if (challenge.getScheme().equals(ChallengeScheme.HTTP_BASIC)) {
+    try {
+      String credentials=challenge.getIdentifier() + ':' + challenge.getSecret();
+      sb.append(Base64.encodeBytes(credentials.getBytes("US-ASCII")));
+    }
+ catch (    UnsupportedEncodingException e) {
+      throw new RuntimeException("Unsupported encoding, unable to encode credentials");
+    }
+  }
+ else   if (challenge.getScheme().equals(ChallengeScheme.SMTP_PLAIN)) {
+    try {
+      String credentials="^@" + challenge.getIdentifier() + "^@"+ challenge.getSecret();
+      sb.append(Base64.encodeBytes(credentials.getBytes("US-ASCII")));
+    }
+ catch (    UnsupportedEncodingException e) {
+      throw new RuntimeException("Unsupported encoding, unable to encode credentials");
+    }
+  }
+ else {
+    throw new IllegalArgumentException("Challenge scheme not supported by this implementation, or credentials not set for custom schemes.");
+  }
+  return sb.toString();
+}

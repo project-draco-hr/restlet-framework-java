@@ -84,10 +84,6 @@
       getLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
     }
   }
-  ChallengeResponse challengeResponse=request.getChallengeResponse();
-  if (challengeResponse != null) {
-    requestHeaders.add(HttpConstants.HEADER_AUTHORIZATION,SecurityUtils.format(challengeResponse));
-  }
   if (request.getEntity() != null) {
     if (request.getEntity().getMediaType() != null) {
       requestHeaders.add(HttpConstants.HEADER_CONTENT_TYPE,request.getEntity().getMediaType().toString());
@@ -101,4 +97,8 @@
   }
   ParameterList additionalHeaders=(ParameterList)request.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
   addAdditionalHeaders(requestHeaders,additionalHeaders);
+  ChallengeResponse challengeResponse=request.getChallengeResponse();
+  if (challengeResponse != null) {
+    requestHeaders.add(HttpConstants.HEADER_AUTHORIZATION,SecurityUtils.format(challengeResponse,request,requestHeaders));
+  }
 }
