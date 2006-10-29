@@ -1,11 +1,11 @@
 {
   Filter lastFilter=null;
   if (getContainer().getLogService().isEnabled()) {
-    lastFilter=new LogFilter(getContainer().getContext(),getContainer().getLogService().getLoggerName(),getContainer().getLogService().getFormat());
+    lastFilter=createLogFilter(getContainer().getContext(),getContainer().getLogService().getLoggerName(),getContainer().getLogService().getFormat());
     setFirst(lastFilter);
   }
   if (getContainer().getStatusService().isEnabled()) {
-    Filter statusFilter=new ContainerStatusFilter(getContainer());
+    Filter statusFilter=createStatusFilter(getContainer());
     if (lastFilter != null)     lastFilter.setNext(statusFilter);
     if (getFirst() == null)     setFirst(statusFilter);
     lastFilter=statusFilter;
