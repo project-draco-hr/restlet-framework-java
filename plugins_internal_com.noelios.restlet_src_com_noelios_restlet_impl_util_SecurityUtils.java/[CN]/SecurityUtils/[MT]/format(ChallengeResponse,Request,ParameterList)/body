@@ -17,7 +17,15 @@
     String contentMd5=httpHeaders.getFirstValue(HttpConstants.HEADER_CONTENT_MD5,true);
     if (contentMd5 == null)     contentMd5="";
     String contentType=httpHeaders.getFirstValue(HttpConstants.HEADER_CONTENT_TYPE);
-    if (contentType == null)     contentType="";
+    if (contentType == null) {
+      String javaVersion=System.getProperty("java.version");
+      if (!request.getMethod().equals(Method.PUT) && (javaVersion.startsWith("1.5") || javaVersion.startsWith("1.4"))) {
+        contentType="application/x-www-form-urlencoded";
+      }
+ else {
+        contentType="";
+      }
+    }
     String canonicalizedAmzHeaders=getCanonicalizedAmzHeaders(httpHeaders);
     String canonicalizedResource=getCanonicalizedResourceName(request.getResourceRef());
     StringBuilder rest=new StringBuilder();
