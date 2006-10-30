@@ -1,7 +1,7 @@
 {
   Filter lastFilter=null;
   if (getApplication().getLogService().isEnabled()) {
-    lastFilter=createLogFilter(getApplication().getContext(),getApplication().getLogService().getLoggerName(),getApplication().getLogService().getFormat());
+    lastFilter=createLogFilter(getApplication().getContext(),getApplication().getLogService().getAccessLoggerName(),getApplication().getLogService().getAccessLogFormat());
     setFirst(lastFilter);
   }
   if (getApplication().getStatusService().isEnabled()) {
@@ -9,6 +9,12 @@
     if (lastFilter != null)     lastFilter.setNext(statusFilter);
     if (getFirst() == null)     setFirst(statusFilter);
     lastFilter=statusFilter;
+  }
+  if (getApplication().getDecoderService().isEnabled()) {
+    Filter decoderFilter=createDecoderFilter(getApplication());
+    if (lastFilter != null)     lastFilter.setNext(decoderFilter);
+    if (getFirst() == null)     setFirst(decoderFilter);
+    lastFilter=decoderFilter;
   }
   if (getFirst() == null) {
     setFirst(getApplication().getRoot());

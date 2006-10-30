@@ -1,0 +1,49 @@
+{
+  super.beforeHandle(request,response);
+  if (isMethodTunnel()) {
+    String methodName=(String)request.getAttributes().get(getMethodAttribute());
+    if (methodName != null) {
+      request.setMethod(Method.valueOf(methodName));
+    }
+  }
+  if (isPreferencesTunnel()) {
+    String acceptCharset=(String)request.getAttributes().get(getCharacterSetsAttribute());
+    String acceptEncoding=(String)request.getAttributes().get(getEncodingsAttribute());
+    String acceptLanguage=(String)request.getAttributes().get(getLanguagesAttribute());
+    String acceptMediaType=(String)request.getAttributes().get(getMediaTypesAttribute());
+    if (acceptCharset != null) {
+      request.getClientInfo().getAcceptedCharacterSets().clear();
+      CharacterSet cs=CharacterSet.valueOf(acceptCharset);
+      if (cs != null) {
+        request.getClientInfo().getAcceptedCharacterSets().add(new Preference<CharacterSet>(cs));
+      }
+    }
+    if (acceptEncoding != null) {
+      request.getClientInfo().getAcceptedEncodings().clear();
+      Encoding enc=Encoding.valueOf(acceptEncoding);
+      if (enc != null) {
+        request.getClientInfo().getAcceptedEncodings().add(new Preference<Encoding>(enc));
+      }
+    }
+    if (acceptLanguage != null) {
+      request.getClientInfo().getAcceptedLanguages().clear();
+      Language lang=Language.valueOf(acceptLanguage);
+      if (lang != null) {
+        request.getClientInfo().getAcceptedLanguages().add(new Preference<Language>(lang));
+      }
+    }
+    if (acceptMediaType != null) {
+      request.getClientInfo().getAcceptedMediaTypes().clear();
+      MediaType mt=MediaType.valueOf(acceptMediaType);
+      if (mt != null) {
+        request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(mt));
+      }
+    }
+  }
+  if (isUriTunnel()) {
+    String uri=(String)request.getAttributes().get(getUriAttribute());
+    if (uri != null) {
+      request.setResourceRef(uri);
+    }
+  }
+}

@@ -1,3 +1,7 @@
 {
-  return new ApplicationContext(getApplication(),getParentContext(),Logger.getLogger(Application.class.getCanonicalName() + "." + getApplication().getName()+ "("+ getApplication().hashCode()+ ")"));
+  String loggerName=getApplication().getLogService().getContextLoggerName();
+  if (loggerName == null) {
+    loggerName=Application.class.getCanonicalName() + "." + getApplication().getName()+ "("+ getApplication().hashCode()+ ")";
+  }
+  return new ApplicationContext(getApplication(),getParentContext(),Logger.getLogger(loggerName));
 }

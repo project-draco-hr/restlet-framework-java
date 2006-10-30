@@ -2,8 +2,16 @@
   Factory result=instance;
   if (result == null) {
     String factoryClassName=null;
-    ClassLoader cl=Thread.currentThread().getContextClassLoader();
-    URL configURL=cl.getResource("META-INF/services/org.restlet.spi.Factory");
+    ClassLoader cl=getClassLoader();
+    URL configURL=cl.getResource(providerResource);
+    if (configURL == null) {
+      cl=Thread.currentThread().getContextClassLoader();
+      configURL=cl.getResource(providerResource);
+    }
+    if (configURL == null) {
+      cl=ClassLoader.getSystemClassLoader();
+      configURL=cl.getResource(providerResource);
+    }
     if (configURL != null) {
       try {
         BufferedReader reader=new BufferedReader(new InputStreamReader(configURL.openStream(),"utf-8"));

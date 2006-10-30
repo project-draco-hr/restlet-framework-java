@@ -6,6 +6,9 @@
  else   if (getResponseChannel() != null) {
     result=new ReadableRepresentation(getResponseChannel(),null);
   }
+ else   if (getMethod().equals(Method.HEAD.getName())) {
+    result=new Representation();
+  }
   if (result != null) {
     for (    Parameter header : getResponseHeaders()) {
       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_TYPE)) {

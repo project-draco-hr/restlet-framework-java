@@ -2,7 +2,36 @@
   Resource target=findTarget(request,response);
   if (target != null) {
     if (target.allowGet()) {
-      response.setEntity(target,getFallbackLanguage());
+      if (isNegotiateContent()) {
+        response.setEntity(target,getFallbackLanguage());
+      }
+ else {
+        List<Representation> variants=target.getVariants();
+        if (variants.size() == 0) {
+          response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+        }
+ else         if (variants.size() == 1) {
+          response.setEntity(variants.get(0));
+        }
+ else {
+          ReferenceList variantRefs=new ReferenceList();
+          for (          Representation variant : variants) {
+            if (variant.getIdentifier() != null) {
+              variantRefs.add(variant.getIdentifier());
+            }
+ else {
+              getLogger().warning("A resource with multiple variants should provide and identifier for each variants when content negotiation is turned off");
+            }
+          }
+          if (variantRefs.size() > 0) {
+            response.setStatus(Status.REDIRECTION_MULTIPLE_CHOICES);
+            response.setEntity(variantRefs.getRepresentation());
+          }
+ else {
+            response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+          }
+        }
+      }
     }
  else {
       response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
