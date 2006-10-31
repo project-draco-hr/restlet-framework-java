@@ -1,17 +1,12 @@
 {
   Parameter result=null;
-  try {
-    if (name != null) {
-      if (value != null) {
-        result=new Parameter(URLDecoder.decode(name.toString(),"UTF-8"),URLDecoder.decode(value.toString(),"UTF-8"));
-      }
- else {
-        result=new Parameter(URLDecoder.decode(name.toString(),"UTF-8"),null);
-      }
+  if (name != null) {
+    if (value != null) {
+      result=new Parameter(Reference.decode(name.toString()),Reference.decode(value.toString()));
     }
-  }
- catch (  UnsupportedEncodingException uee) {
-    throw new IOException("Unsupported encoding exception. Please contact the administrator");
+ else {
+      result=new Parameter(Reference.decode(name.toString()),null);
+    }
   }
   return result;
 }

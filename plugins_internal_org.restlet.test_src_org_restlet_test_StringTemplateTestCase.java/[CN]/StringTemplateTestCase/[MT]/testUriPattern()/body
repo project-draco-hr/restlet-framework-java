@@ -5,12 +5,12 @@
   String pattern="http://www.target.org";
   pattern+="${path}#[if query('query')]?${query('query')}#[end]";
   StringTemplate te=new StringTemplate(pattern);
-  String targetUri=te.process(new CallModel(request,response,null));
+  String targetUri=te.format(new CallModel(request,response,null));
   assertEquals("http://www.target.org/path1/path2/path3?abc",targetUri);
   request.setResourceRef("http://www.domain.com:8080/path1/path2/path3?param1&param2=123");
-  targetUri=te.process(new CallModel(request,response,null));
+  targetUri=te.format(new CallModel(request,response,null));
   assertEquals("http://www.target.org/path1/path2/path3",targetUri);
   te=new StringTemplate("${segment(last)}");
-  targetUri=te.process(new CallModel(request,response,null));
+  targetUri=te.format(new CallModel(request,response,null));
   assertEquals("path3",targetUri);
 }
