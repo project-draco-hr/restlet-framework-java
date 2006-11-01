@@ -1,6 +1,7 @@
 {
   Request request=new Request(Method.GET,"http://localhost:8182/");
-  ChallengeResponse authentication=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"scott","tiger");
+  ChallengeScheme scheme=ChallengeScheme.HTTP_BASIC;
+  ChallengeResponse authentication=new ChallengeResponse(scheme,"scott","tiger");
   request.setChallengeResponse(authentication);
   Client client=new Client(Protocol.HTTP);
   Response response=client.handle(request);
@@ -8,7 +9,7 @@
     response.getEntity().write(System.out);
   }
  else   if (response.getStatus().equals(Status.CLIENT_ERROR_UNAUTHORIZED)) {
-    System.out.println("Your access was not authorized by the server, check your credentials");
+    System.out.println("Access authorized by the server, check your credentials");
   }
  else {
     System.out.println("An unexpected status was returned: " + response.getStatus());

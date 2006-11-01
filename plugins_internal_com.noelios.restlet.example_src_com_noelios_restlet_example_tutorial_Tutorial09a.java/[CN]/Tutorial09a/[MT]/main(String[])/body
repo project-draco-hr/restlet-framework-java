@@ -4,9 +4,9 @@
   container.getClients().add(Protocol.FILE);
   Application application=new Application(container){
     @Override public Restlet createRoot(){
-      GuardFilter guard=new GuardFilter(getContext(),ChallengeScheme.HTTP_BASIC,"Tutorial");
+      Guard guard=new Guard(getContext(),ChallengeScheme.HTTP_BASIC,"Tutorial");
       guard.getAuthorizations().put("scott","tiger");
-      DirectoryHandler directory=new DirectoryHandler(getContext(),ROOT_URI,"index.html");
+      Directory directory=new Directory(getContext(),ROOT_URI,"index.html");
       guard.setNext(directory);
       return guard;
     }
