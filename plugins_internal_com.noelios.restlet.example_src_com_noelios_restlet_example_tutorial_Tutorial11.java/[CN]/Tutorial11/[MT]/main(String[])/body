@@ -3,7 +3,7 @@
   container.getServers().add(Protocol.HTTP,8182);
   container.getClients().add(Protocol.FILE);
   Application application=new Application(container){
-    public Restlet createRoot(){
+    @Override public Restlet createRoot(){
       Router router=new Router(getContext());
       GuardFilter guard=new GuardFilter(getContext(),ChallengeScheme.HTTP_BASIC,"Restlet tutorial");
       guard.getAuthorizations().put("scott","tiger");
@@ -13,7 +13,7 @@
       Router user=new Router(getContext());
       router.attach("/users/[a-z]+",user);
       Restlet account=new Restlet(){
-        public void handle(        Request request,        Response response){
+        @Override public void handle(        Request request,        Response response){
           String message="Account of user named: " + request.getBaseRef().getLastSegment();
           response.setEntity(message,MediaType.TEXT_PLAIN);
         }
@@ -21,7 +21,7 @@
 ;
       user.attach("$",account);
       Restlet orders=new Restlet(getContext()){
-        public void handle(        Request request,        Response response){
+        @Override public void handle(        Request request,        Response response){
           List<String> segments=request.getBaseRef().getSegments();
           String message="Orders of user named: " + segments.get(segments.size() - 2);
           response.setEntity(message,MediaType.TEXT_PLAIN);
