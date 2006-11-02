@@ -1,0 +1,183 @@
+{
+  String result=null;
+  String name=key.toString();
+  try {
+    if (name.equals(NAME_ATTRIBUTE)) {
+      String rest=name.substring(NAME_ATTRIBUTE.length());
+      if ((rest.charAt(0) == '(') && (rest.charAt(rest.length() - 1) == ')')) {
+        rest=rest.substring(1,rest.length() - 1);
+        if (isVariableName(rest)) {
+          rest=getVariableName(rest);
+          result=request.getAttributes().get(rest).toString();
+          if (result == null) {
+            result=response.getAttributes().get(rest).toString();
+          }
+        }
+ else {
+          result=request.getResourceRef().getQueryAsForm().get(Integer.parseInt(rest)).getValue();
+        }
+      }
+ else {
+        result=defaultValue;
+      }
+    }
+ else     if (name.equals(NAME_BASE_URI)) {
+      result=request.getBaseRef().toString();
+    }
+ else     if (name.startsWith(NAME_CLIENT_ADDRESS)) {
+      if (name.equals(NAME_CLIENT_ADDRESS)) {
+        result=request.getClientInfo().getAddress();
+      }
+ else {
+        String rest=name.substring(NAME_CLIENT_ADDRESS.length());
+        if ((rest.charAt(0) == '(') && (rest.charAt(rest.length() - 1) == ')')) {
+          rest=rest.substring(1,rest.length() - 1);
+          if (rest.equals("first")) {
+            result=request.getClientInfo().getAddresses().get(0);
+          }
+ else           if (rest.equals("last")) {
+            result=request.getClientInfo().getAddresses().get(request.getClientInfo().getAddresses().size() - 1);
+          }
+ else           if (isVariableName(rest)) {
+            result=defaultValue;
+          }
+ else {
+            result=request.getClientInfo().getAddresses().get(Integer.parseInt(rest));
+          }
+        }
+ else {
+          result=defaultValue;
+        }
+      }
+    }
+ else     if (name.equals(NAME_CLIENT_AGENT)) {
+      result=request.getClientInfo().getAgent();
+    }
+ else     if (name.startsWith(NAME_COOKIE)) {
+      String rest=name.substring(NAME_COOKIE.length());
+      if ((rest.charAt(0) == '(') && (rest.charAt(rest.length() - 1) == ')')) {
+        rest=rest.substring(1,rest.length() - 1);
+        if (rest.equals("first")) {
+          result=request.getCookies().get(0).getValue();
+        }
+ else         if (rest.equals("last")) {
+          result=request.getCookies().get(request.getCookies().size() - 1).getValue();
+        }
+ else         if (isVariableName(rest)) {
+          rest=getVariableName(rest);
+          result=getFirstCookie(request.getCookies(),rest).getValue();
+        }
+ else {
+          result=request.getCookies().get(Integer.parseInt(rest)).getValue();
+        }
+      }
+ else {
+        result=defaultValue;
+      }
+    }
+ else     if (name.equals(NAME_METHOD)) {
+      result=request.getMethod().getName();
+    }
+ else     if (name.equals(NAME_REDIRECT_URI)) {
+      result=response.getRedirectRef().toString();
+    }
+ else     if (name.equals(NAME_REFERRER_URI)) {
+      result=request.getReferrerRef().toString();
+    }
+ else     if (name.equals(NAME_RELATIVE_URI)) {
+      result=request.getRelativePart();
+    }
+ else     if (name.equals(NAME_RESOURCE_AUTHORITY)) {
+      result=request.getResourceRef().getAuthority();
+    }
+ else     if (name.equals(NAME_RESOURCE_FRAGMENT)) {
+      result=request.getResourceRef().getFragment();
+    }
+ else     if (name.equals(NAME_RESOURCE_HOST_DOMAIN)) {
+      result=request.getResourceRef().getHostDomain();
+    }
+ else     if (name.equals(NAME_RESOURCE_HOST_PORT)) {
+      result=request.getResourceRef().getHostPort().toString();
+    }
+ else     if (name.equals(NAME_RESOURCE_HOST_IDENTIFIER)) {
+      result=request.getResourceRef().getHostIdentifier();
+    }
+ else     if (name.equals(NAME_RESOURCE_IDENTIFIER)) {
+      result=request.getResourceRef().getIdentifier();
+    }
+ else     if (name.equals(NAME_RESOURCE_PATH)) {
+      result=request.getResourceRef().getPath();
+    }
+ else     if (name.startsWith(NAME_RESOURCE_QUERY)) {
+      if (name.equals(NAME_RESOURCE_QUERY)) {
+        result=request.getResourceRef().getQuery();
+      }
+ else {
+        String rest=name.substring(NAME_RESOURCE_QUERY.length());
+        if ((rest.charAt(0) == '(') && (rest.charAt(rest.length() - 1) == ')')) {
+          rest=rest.substring(1,rest.length() - 1);
+          if (rest.equals("first")) {
+            result=request.getResourceRef().getQueryAsForm().get(0).getValue();
+          }
+ else           if (rest.equals("last")) {
+            Form form=request.getResourceRef().getQueryAsForm();
+            result=form.get(form.size() - 1).getValue();
+          }
+ else           if (isVariableName(rest)) {
+            rest=getVariableName(rest);
+            result=request.getResourceRef().getQueryAsForm().getFirst(rest).getValue();
+          }
+ else {
+            result=request.getResourceRef().getQueryAsForm().get(Integer.parseInt(rest)).getValue();
+          }
+        }
+ else {
+          result=defaultValue;
+        }
+      }
+    }
+ else     if (name.equals(NAME_RESOURCE_SCHEME)) {
+      result=request.getResourceRef().getScheme();
+    }
+ else     if (name.startsWith(NAME_RESOURCE_SEGMENT)) {
+      String rest=name.substring(NAME_RESOURCE_SEGMENT.length());
+      if ((rest.charAt(0) == '(') && (rest.charAt(rest.length() - 1) == ')')) {
+        rest=rest.substring(1,rest.length() - 1);
+        if (rest.equals("first")) {
+          result=request.getResourceRef().getSegments().get(0);
+        }
+ else         if (rest.equals("last")) {
+          result=request.getResourceRef().getSegments().get(request.getResourceRef().getSegments().size() - 1);
+        }
+ else {
+          result=request.getResourceRef().getSegments().get(Integer.parseInt(rest));
+        }
+      }
+ else {
+        result=defaultValue;
+      }
+    }
+ else     if (name.equals(NAME_RESOURCE_URI)) {
+      result=request.getResourceRef().toString();
+    }
+ else     if (name.equals(NAME_RESOURCE_USER_INFO)) {
+      result=request.getResourceRef().getUserInfo();
+    }
+ else     if (name.equals(NAME_SERVER_ADDRESS)) {
+      result=response.getServerInfo().getAddress();
+    }
+ else     if (name.equals(NAME_SERVER_AGENT)) {
+      result=response.getServerInfo().getAgent();
+    }
+ else     if (name.equals(NAME_STATUS)) {
+      result=Integer.toString(response.getStatus().getCode());
+    }
+    if (result == null) {
+      result=this.defaultValue;
+    }
+  }
+ catch (  Exception e) {
+    result=this.defaultValue;
+  }
+  return result;
+}
