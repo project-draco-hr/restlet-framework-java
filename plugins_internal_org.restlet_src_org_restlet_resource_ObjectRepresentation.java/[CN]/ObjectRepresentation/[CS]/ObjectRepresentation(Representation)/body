@@ -1,0 +1,11 @@
+{
+  super(MediaType.APPLICATION_JAVA_OBJECT);
+  if (serializedRepresentation.getMediaType().equals(MediaType.APPLICATION_JAVA_OBJECT)) {
+    ObjectInputStream ois=new ObjectInputStream(getStream());
+    this.object=ois.readObject();
+    ois.close();
+  }
+ else {
+    throw new IllegalArgumentException("The serialized representation must have this media type: " + MediaType.APPLICATION_JAVA_OBJECT.toString());
+  }
+}
