@@ -1,5 +1,6 @@
 {
   File file=new File(FileReference.localizePath(path));
+  MetadataService metadataService=getMetadataService(request);
   if (request.getMethod().equals(Method.GET) || request.getMethod().equals(Method.HEAD)) {
     Representation output=null;
     boolean found=false;
@@ -13,7 +14,7 @@
       String baseName=result[0];
       boolean extensionFound=false;
       for (int i=1; i < result.length && !extensionFound; i++) {
-        extensionFound=getMetadata(result[i]) != null;
+        extensionFound=metadataService.getMetadata(result[i]) != null;
         if (!extensionFound) {
           baseName+="." + result[i];
         }
@@ -50,8 +51,8 @@
           output=rl.getRepresentation();
         }
  else {
-          output=new FileRepresentation(file,getDefaultMediaType(),getTimeToLive());
-          updateMetadata(file.getName(),output);
+          output=new FileRepresentation(file,metadataService.getDefaultMediaType(),getTimeToLive());
+          updateMetadata(metadataService,file.getName(),output);
         }
       }
     }

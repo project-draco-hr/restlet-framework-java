@@ -16,6 +16,12 @@
     if (getFirst() == null)     setFirst(decoderFilter);
     lastFilter=decoderFilter;
   }
+  if (getApplication().getTunnelService().isEnabled()) {
+    Filter tunnelFilter=createTunnelFilter(getApplication());
+    if (lastFilter != null)     lastFilter.setNext(tunnelFilter);
+    if (getFirst() == null)     setFirst(tunnelFilter);
+    lastFilter=tunnelFilter;
+  }
   if (getFirst() == null) {
     setFirst(getApplication().getRoot());
   }

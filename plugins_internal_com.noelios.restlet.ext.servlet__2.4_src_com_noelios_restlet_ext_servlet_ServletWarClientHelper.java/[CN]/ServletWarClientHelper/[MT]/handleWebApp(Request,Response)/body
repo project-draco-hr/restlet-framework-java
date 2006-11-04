@@ -15,8 +15,9 @@
       output=rl.getRepresentation();
     }
  else {
-      output=new InputRepresentation(getServletContext().getResourceAsStream(basePath),getDefaultMediaType());
-      updateMetadata(entry,output);
+      MetadataService metadataService=getMetadataService(request);
+      output=new InputRepresentation(getServletContext().getResourceAsStream(basePath),metadataService.getDefaultMediaType());
+      updateMetadata(metadataService,entry,output);
       String mediaType=getServletContext().getMimeType(basePath);
       if (mediaType != null) {
         output.setMediaType(new MediaType(mediaType));

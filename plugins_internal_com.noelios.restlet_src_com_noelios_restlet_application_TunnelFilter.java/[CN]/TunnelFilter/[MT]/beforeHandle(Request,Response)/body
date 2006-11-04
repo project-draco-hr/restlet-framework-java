@@ -1,0 +1,45 @@
+{
+  super.beforeHandle(request,response);
+  Form query=request.getResourceRef().getQueryAsForm();
+  if (getApplication().getTunnelService().isMethodTunnel() && request.getMethod().equals(Method.POST)) {
+    String methodName=(String)query.getFirstValue(getApplication().getTunnelService().getMethodAttribute());
+    if (methodName != null) {
+      request.setMethod(Method.valueOf(methodName));
+    }
+  }
+  if (getApplication().getTunnelService().isPreferencesTunnel()) {
+    String acceptCharset=(String)query.getFirstValue(getApplication().getTunnelService().getCharacterSetAttribute());
+    String acceptEncoding=(String)query.getFirstValue(getApplication().getTunnelService().getEncodingAttribute());
+    String acceptLanguage=(String)query.getFirstValue(getApplication().getTunnelService().getLanguageAttribute());
+    String acceptMediaType=(String)query.getFirstValue(getApplication().getTunnelService().getMediaTypeAttribute());
+    Metadata metadata=null;
+    if (acceptCharset != null) {
+      metadata=getApplication().getMetadataService().getMetadata(acceptCharset);
+      if (metadata instanceof CharacterSet) {
+        request.getClientInfo().getAcceptedCharacterSets().clear();
+        request.getClientInfo().getAcceptedCharacterSets().add(new Preference<CharacterSet>((CharacterSet)metadata));
+      }
+    }
+    if (acceptEncoding != null) {
+      metadata=getApplication().getMetadataService().getMetadata(acceptEncoding);
+      if (metadata instanceof Encoding) {
+        request.getClientInfo().getAcceptedEncodings().clear();
+        request.getClientInfo().getAcceptedEncodings().add(new Preference<Encoding>((Encoding)metadata));
+      }
+    }
+    if (acceptLanguage != null) {
+      metadata=getApplication().getMetadataService().getMetadata(acceptLanguage);
+      if (metadata instanceof Language) {
+        request.getClientInfo().getAcceptedLanguages().clear();
+        request.getClientInfo().getAcceptedLanguages().add(new Preference<Language>((Language)metadata));
+      }
+    }
+    if (acceptMediaType != null) {
+      metadata=getApplication().getMetadataService().getMetadata(acceptMediaType);
+      if (metadata instanceof MediaType) {
+        request.getClientInfo().getAcceptedMediaTypes().clear();
+        request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>((MediaType)metadata));
+      }
+    }
+  }
+}
