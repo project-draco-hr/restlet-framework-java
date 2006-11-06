@@ -1,0 +1,18 @@
+{
+  Protocol protocol=request.getProtocol();
+  if (protocol == null) {
+    protocol=request.getResourceRef().getSchemeProtocol();
+  }
+  if (protocol == null) {
+    throw new UnsupportedOperationException("Unable to determine the protocol to use for this call.");
+  }
+ else {
+    request.getAttributes().put(Application.class.getCanonicalName(),this.applicationContext.getApplication());
+    if (protocol.equals(Protocol.WAR)) {
+      this.applicationContext.getWarClient().handle(request,response);
+    }
+ else {
+      this.applicationContext.getParentContext().getDispatcher().handle(request,response);
+    }
+  }
+}

@@ -8,13 +8,13 @@
     Response contextResponse=new Response(contextRequest);
     if (targetDirectory) {
       contextRequest.setResourceRef(this.targetUri);
-      getClient().handle(contextRequest,contextResponse);
+      getDispatcher().handle(contextRequest,contextResponse);
     }
  else {
       ReferenceList references=getVariantsReferences(true);
       if (!references.isEmpty()) {
         contextRequest.setResourceRef(references.get(0));
-        getClient().handle(contextRequest,contextResponse);
+        getDispatcher().handle(contextRequest,contextResponse);
       }
  else {
         contextResponse.setStatus(Status.CLIENT_ERROR_NOT_FOUND);

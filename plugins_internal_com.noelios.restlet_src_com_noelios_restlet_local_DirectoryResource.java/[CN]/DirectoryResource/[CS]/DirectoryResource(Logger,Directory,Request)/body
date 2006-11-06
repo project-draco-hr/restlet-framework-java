@@ -10,7 +10,7 @@
   if (!this.targetUri.startsWith(handler.getRootUri())) {
     this.targetUri=handler.getRootUri();
   }
-  Response contextResponse=getClient().get(this.targetUri);
+  Response contextResponse=getDispatcher().get(this.targetUri);
   if ((contextResponse.getEntity() != null) && contextResponse.getEntity().getMediaType().equals(MediaType.TEXT_URI_LIST)) {
     this.targetDirectory=true;
     this.directoryContent=new ReferenceList(contextResponse.getEntity());
@@ -39,7 +39,7 @@
       this.directoryUri=targetUri.substring(0,lastSlashIndex + 1);
       this.baseName=targetUri.substring(lastSlashIndex + 1);
     }
-    contextResponse=getClient().get(this.directoryUri);
+    contextResponse=getDispatcher().get(this.directoryUri);
     if ((contextResponse.getEntity() != null) && contextResponse.getEntity().getMediaType().equals(MediaType.TEXT_URI_LIST)) {
       this.directoryContent=new ReferenceList(contextResponse.getEntity());
     }
