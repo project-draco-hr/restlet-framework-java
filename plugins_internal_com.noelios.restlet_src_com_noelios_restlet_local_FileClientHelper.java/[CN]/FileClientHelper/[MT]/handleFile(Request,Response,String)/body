@@ -1,5 +1,5 @@
 {
-  File file=new File(FileReference.localizePath(path));
+  File file=new File(LocalReference.localizePath(path));
   MetadataService metadataService=getMetadataService(request);
   if (request.getMethod().equals(Method.GET) || request.getMethod().equals(Method.HEAD)) {
     Representation output=null;
@@ -25,7 +25,7 @@
       for (      File entry : files) {
         try {
           if (entry.getName().startsWith(baseName)) {
-            rl.add(new FileReference(entry));
+            rl.add(LocalReference.createFileReference(entry));
           }
         }
  catch (        IOException ioe) {
@@ -42,7 +42,7 @@
           rl.setListRef(request.getResourceRef());
           for (          File entry : files) {
             try {
-              rl.add(new FileReference(entry));
+              rl.add(LocalReference.createFileReference(entry));
             }
  catch (            IOException ioe) {
               getLogger().log(Level.WARNING,"Unable to create file reference",ioe);

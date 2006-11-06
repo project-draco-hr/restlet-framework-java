@@ -2,14 +2,14 @@
   String scheme=request.getResourceRef().getScheme();
   request.getResourceRef().normalize();
   if (scheme.equalsIgnoreCase(Protocol.CLAP.getSchemeName())) {
-    ClapReference cr=new ClapReference(request.getResourceRef());
-    if (cr.getAuthorityType() == ClapReference.CLASS) {
+    LocalReference cr=new LocalReference(request.getResourceRef());
+    if (cr.getClapAuthorityType() == LocalReference.CLAP_CLASS) {
       handleClassLoader(request,response,getClass().getClassLoader());
     }
- else     if (cr.getAuthorityType() == ClapReference.SYSTEM) {
+ else     if (cr.getClapAuthorityType() == LocalReference.CLAP_SYSTEM) {
       handleClassLoader(request,response,ClassLoader.getSystemClassLoader());
     }
- else     if (cr.getAuthorityType() == ClapReference.THREAD) {
+ else     if (cr.getClapAuthorityType() == LocalReference.CLAP_THREAD) {
       handleClassLoader(request,response,Thread.currentThread().getContextClassLoader());
     }
   }
