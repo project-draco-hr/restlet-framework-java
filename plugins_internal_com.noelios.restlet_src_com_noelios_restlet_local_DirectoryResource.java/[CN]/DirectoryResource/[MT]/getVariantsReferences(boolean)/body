@@ -17,7 +17,7 @@
         lastSlashIndex=entryUri.lastIndexOf('/');
         fullEntryName=(lastSlashIndex == -1) ? entryUri : entryUri.substring(lastSlashIndex + 1);
         baseEntryName=fullEntryName;
-        if (this.handler.isNegotiateContent()) {
+        if (this.directory.isNegotiateContent()) {
           firstDotIndex=fullEntryName.indexOf('.');
           if (firstDotIndex != -1) {
             baseEntryName=fullEntryName.substring(0,firstDotIndex);
@@ -25,7 +25,7 @@
         }
         if (baseEntryName.equals(this.baseName)) {
           boolean validVariant=true;
-          if (this.handler.isNegotiateContent()) {
+          if (this.directory.isNegotiateContent()) {
             extensions=getExtensions(fullEntryName);
             validVariant=(((extensions == null) && (this.baseExtensions == null)) || (this.baseExtensions == null) || extensions.containsAll(this.baseExtensions));
             if (unique && validVariant) {

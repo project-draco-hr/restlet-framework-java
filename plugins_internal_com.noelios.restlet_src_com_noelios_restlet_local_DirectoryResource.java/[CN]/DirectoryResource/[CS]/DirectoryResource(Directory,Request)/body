@@ -1,14 +1,14 @@
 {
-  super(logger);
-  this.handler=handler;
+  super(directory.getLogger());
+  this.directory=directory;
   this.request=request;
   this.relativePart=request.getRelativePart();
   if (this.relativePart.startsWith("/")) {
     this.relativePart=this.relativePart.substring(1);
   }
-  this.targetUri=new Reference(handler.getRootUri() + this.relativePart).normalize().toString();
-  if (!this.targetUri.startsWith(handler.getRootUri())) {
-    this.targetUri=handler.getRootUri();
+  this.targetUri=new Reference(directory.getRootUri() + this.relativePart).normalize().toString();
+  if (!this.targetUri.startsWith(directory.getRootUri())) {
+    this.targetUri=directory.getRootUri();
   }
   Response contextResponse=getDispatcher().get(this.targetUri);
   if ((contextResponse.getEntity() != null) && contextResponse.getEntity().getMediaType().equals(MediaType.TEXT_URI_LIST)) {
@@ -18,9 +18,9 @@
       this.targetUri+="/";
       this.relativePart+="/";
     }
-    if (getDirectory().getIndexName() != null) {
+    if (getMetadataService().getIndexName() != null) {
       this.directoryUri=this.targetUri;
-      this.baseName=getDirectory().getIndexName();
+      this.baseName=getMetadataService().getIndexName();
       this.targetUri=this.directoryUri + this.baseName;
     }
  else {
@@ -44,13 +44,13 @@
       this.directoryContent=new ReferenceList(contextResponse.getEntity());
     }
   }
-  if (this.handler.isNegotiateContent()) {
+  if (this.directory.isNegotiateContent()) {
     int firstDotIndex=this.baseName.indexOf('.');
     if (firstDotIndex != -1) {
       this.baseExtensions=getExtensions(this.baseName);
       this.baseName=this.baseName.substring(0,firstDotIndex);
     }
   }
-  logger.info("Converted base path: " + this.targetUri);
-  logger.info("Converted base name: " + this.baseName);
+  getLogger().info("Converted base path: " + this.targetUri);
+  getLogger().info("Converted base name: " + this.baseName);
 }
