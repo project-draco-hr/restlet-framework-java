@@ -1,0 +1,16 @@
+{
+  StringBuilder sb=new StringBuilder();
+  sb.append("<html><body>\n");
+  sb.append("<h1>Listing of directory \"" + directoryContent.getListRef().getPath() + "\"</h1>\n");
+  Reference parentRef=directoryContent.getListRef().getParentRef();
+  if (!parentRef.equals(directoryContent.getListRef())) {
+    sb.append("<a href=\"" + parentRef + "\">..</a><br/>\n");
+  }
+  for (  Reference ref : directoryContent) {
+    sb.append("<a href=\"" + ref.toString() + "\">"+ ref.getRelativeRef(directoryContent.getListRef())+ "</a><br/>\n");
+  }
+  sb.append("</body></html>\n");
+  List<Representation> result=new ArrayList<Representation>();
+  result.add(new StringRepresentation(sb.toString(),MediaType.TEXT_HTML));
+  return result;
+}
