@@ -1,31 +1,20 @@
 {
-  Filter lastFilter=null;
+  if (getApplication().getTunnelService().isEnabled()) {
+    addFilter(createTunnelFilter(getApplication()));
+  }
   if (getApplication().getLogService().isEnabled()) {
-    lastFilter=createLogFilter(getApplication().getContext(),getApplication().getLogService().getAccessLoggerName(),getApplication().getLogService().getAccessLogFormat());
-    setFirst(lastFilter);
+    addFilter(createLogFilter(getApplication().getContext(),getApplication().getLogService().getAccessLoggerName(),getApplication().getLogService().getAccessLogFormat()));
   }
   if (getApplication().getStatusService().isEnabled()) {
-    Filter statusFilter=createStatusFilter(getApplication());
-    if (lastFilter != null)     lastFilter.setNext(statusFilter);
-    if (getFirst() == null)     setFirst(statusFilter);
-    lastFilter=statusFilter;
+    addFilter(createStatusFilter(getApplication()));
   }
   if (getApplication().getDecoderService().isEnabled()) {
-    Filter decoderFilter=createDecoderFilter(getApplication());
-    if (lastFilter != null)     lastFilter.setNext(decoderFilter);
-    if (getFirst() == null)     setFirst(decoderFilter);
-    lastFilter=decoderFilter;
-  }
-  if (getApplication().getTunnelService().isEnabled()) {
-    Filter tunnelFilter=createTunnelFilter(getApplication());
-    if (lastFilter != null)     lastFilter.setNext(tunnelFilter);
-    if (getFirst() == null)     setFirst(tunnelFilter);
-    lastFilter=tunnelFilter;
+    addFilter(createDecoderFilter(getApplication()));
   }
   if (getFirst() == null) {
     setFirst(getApplication().getRoot());
   }
  else {
-    lastFilter.setNext(getApplication().getRoot());
+    getLast().setNext(getApplication().getRoot());
   }
 }

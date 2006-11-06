@@ -1,0 +1,19 @@
+{
+  if (response != null) {
+    Representation entity=response.getEntity();
+    if ((entity != null) && !getMethod().equals(Method.HEAD.getName())) {
+      ConnectorService connectorService=getConnectorService(response.getRequest());
+      if (connectorService != null)       connectorService.beforeSend(entity);
+      if (getResponseStream() != null) {
+        entity.write(getResponseStream());
+      }
+ else       if (getResponseChannel() != null) {
+        entity.write(getResponseChannel());
+      }
+      if (connectorService != null)       connectorService.afterSend(entity);
+    }
+    if (getResponseStream() != null) {
+      getResponseStream().flush();
+    }
+  }
+}

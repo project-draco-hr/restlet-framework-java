@@ -1,7 +1,7 @@
 {
   Writer tmplWriter=null;
   try {
-    Template template=loadTemplate(templateName,config);
+    Template template=config.getTemplate(templateName);
     if (getCharacterSet() != null) {
       tmplWriter=new BufferedWriter(new OutputStreamWriter(outputStream,getCharacterSet().getName()));
     }
@@ -12,6 +12,6 @@
     tmplWriter.flush();
   }
  catch (  TemplateException te) {
-    throw new IOException("Template processing error");
+    throw new IOException("Template processing error " + te.getMessage());
   }
 }
