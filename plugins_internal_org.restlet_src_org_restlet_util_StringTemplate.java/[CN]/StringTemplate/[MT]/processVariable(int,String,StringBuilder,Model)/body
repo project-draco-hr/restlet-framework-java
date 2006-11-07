@@ -1,0 +1,16 @@
+{
+  getLogger().log(Level.FINER,"processVariable: " + variable,buffer);
+  int conditionIndex=variable.indexOf('?');
+  boolean append=true;
+  if (conditionIndex != -1) {
+    String condition=variable.substring(conditionIndex + 1);
+    variable=variable.substring(0,conditionIndex);
+    if (condition.equals("exists")) {
+      append=model.containsKey(variable);
+    }
+  }
+  if (append && (textState == TEXT_APPEND)) {
+    buffer.append(model.get(variable).toString());
+  }
+  return textState;
+}

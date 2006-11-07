@@ -1,6 +1,12 @@
 {
   if (getValue() != null) {
-    setSize(getValue().length());
+    try {
+      setSize(getValue().getBytes(getCharacterSet().getName()).length);
+    }
+ catch (    UnsupportedEncodingException e) {
+      Logger.getLogger(StringRepresentation.class.getCanonicalName());
+      setSize(UNKNOWN_SIZE);
+    }
   }
  else {
     setSize(UNKNOWN_SIZE);

@@ -6,6 +6,13 @@
     getLogger().finer("Attempting to match this pattern: " + getPattern().toString() + " >> "+ matched);
   }
   if (matched) {
+    String attributeName=null;
+    String attributeValue=null;
+    for (int i=0; i < getVariables().size(); i++) {
+      attributeName=getVariables().get(i);
+      attributeValue=matcher.group(i + 1);
+      request.getAttributes().put(attributeName,attributeValue);
+    }
     String matchedPart=remainingRef.substring(0,matcher.end());
     Reference baseRef=request.getBaseRef();
     if (baseRef == null) {
