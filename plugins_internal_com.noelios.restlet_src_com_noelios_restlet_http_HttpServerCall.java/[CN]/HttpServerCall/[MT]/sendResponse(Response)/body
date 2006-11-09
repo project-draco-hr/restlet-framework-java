@@ -4,11 +4,11 @@
     if ((entity != null) && !getMethod().equals(Method.HEAD.getName())) {
       ConnectorService connectorService=getConnectorService(response.getRequest());
       if (connectorService != null)       connectorService.beforeSend(entity);
-      if (getResponseStream() != null) {
-        entity.write(getResponseStream());
-      }
- else       if (getResponseChannel() != null) {
+      if (getResponseChannel() != null) {
         entity.write(getResponseChannel());
+      }
+ else       if (getResponseStream() != null) {
+        entity.write(getResponseStream());
       }
       if (connectorService != null)       connectorService.afterSend(entity);
     }

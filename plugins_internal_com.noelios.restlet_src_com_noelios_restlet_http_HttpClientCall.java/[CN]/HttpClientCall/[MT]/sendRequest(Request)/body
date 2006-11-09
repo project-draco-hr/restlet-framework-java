@@ -5,16 +5,16 @@
     if (connectorService != null)     connectorService.beforeSend(entity);
     OutputStream rs=getRequestStream();
     WritableByteChannel wbc=getRequestChannel();
-    if (rs != null) {
+    if (wbc != null) {
+      if (entity != null) {
+        entity.write(wbc);
+      }
+    }
+ else     if (rs != null) {
       if (entity != null) {
         entity.write(rs);
       }
       rs.flush();
-    }
- else     if (wbc != null) {
-      if (entity != null) {
-        entity.write(wbc);
-      }
     }
     if (connectorService != null)     connectorService.afterSend(entity);
     if (rs != null) {
