@@ -1,9 +1,13 @@
 {
   super(null);
-  this.helper=Factory.getInstance().createHelper(this);
-  setContext(this.helper.createContext());
-  this.hosts=null;
-  this.defaultHost=VirtualHost.createDefaultHost(getContext());
-  this.logService=null;
-  this.statusService=null;
+  if (Factory.getInstance() != null) {
+    this.helper=Factory.getInstance().createHelper(this);
+    if (this.helper != null) {
+      setContext(this.helper.createContext());
+      this.hosts=null;
+      this.defaultHost=VirtualHost.createDefaultHost(getContext());
+      this.logService=null;
+      this.statusService=null;
+    }
+  }
 }
