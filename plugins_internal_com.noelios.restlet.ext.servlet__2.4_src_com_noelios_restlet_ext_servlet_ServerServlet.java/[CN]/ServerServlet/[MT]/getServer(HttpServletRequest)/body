@@ -15,6 +15,7 @@ synchronized (ServerServlet.class) {
             getServletContext().setAttribute(NAME_SERVER_ATTRIBUTE,result);
             if (container != null) {
               Application application=(Application)targetClass.getConstructor(Context.class).newInstance(container.getContext());
+              application.setContext(new ServletContext(this,application,container.getContext()));
               String uriPattern=request.getContextPath() + request.getServletPath();
               container.getDefaultHost().attach(uriPattern,application);
               result.start();
