@@ -1,18 +1,18 @@
 {
-  boolean result=object instanceof Parameter;
-  if (result) {
-    Parameter param=(Parameter)object;
-    if (getName() == null) {
-      result=(param.getName() == null);
+  boolean result=false;
+  if (object instanceof Parameter && object != null) {
+    final Parameter that=(Parameter)object;
+    final String thisName=this.getName();
+    final String thatName=that.getName();
+    if (!(thisName == thatName)) {
+      result=(thisName != null && thisName.equals(thatName));
     }
- else {
-      result=getName().equals(param.getName());
-    }
-    if (getValue() == null) {
-      result&=(param.getValue() == null);
-    }
- else {
-      result&=getValue().equals(param.getValue());
+    if (result) {
+      final String thisValue=this.getValue();
+      final String thatValue=that.getValue();
+      if (!(thisValue == thatValue)) {
+        result=(thisValue != null && thisValue.equals(thatValue));
+      }
     }
   }
   return result;
