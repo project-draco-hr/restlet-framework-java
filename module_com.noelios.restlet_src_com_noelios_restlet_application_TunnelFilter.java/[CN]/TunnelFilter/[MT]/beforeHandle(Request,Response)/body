@@ -2,16 +2,16 @@
   super.beforeHandle(request,response);
   Form query=request.getResourceRef().getQueryAsForm();
   if (getApplication().getTunnelService().isMethodTunnel() && request.getMethod().equals(Method.POST)) {
-    String methodName=(String)query.getFirstValue(getApplication().getTunnelService().getMethodParameter());
+    String methodName=query.getFirstValue(getApplication().getTunnelService().getMethodParameter());
     if (methodName != null) {
       request.setMethod(Method.valueOf(methodName));
     }
   }
   if (request.getMethod().equals(Method.GET) && getApplication().getTunnelService().isPreferencesTunnel()) {
-    String acceptCharset=(String)query.getFirstValue(getApplication().getTunnelService().getCharacterSetAttribute());
-    String acceptEncoding=(String)query.getFirstValue(getApplication().getTunnelService().getEncodingAttribute());
-    String acceptLanguage=(String)query.getFirstValue(getApplication().getTunnelService().getLanguageAttribute());
-    String acceptMediaType=(String)query.getFirstValue(getApplication().getTunnelService().getMediaTypeAttribute());
+    String acceptCharset=query.getFirstValue(getApplication().getTunnelService().getCharacterSetAttribute());
+    String acceptEncoding=query.getFirstValue(getApplication().getTunnelService().getEncodingAttribute());
+    String acceptLanguage=query.getFirstValue(getApplication().getTunnelService().getLanguageAttribute());
+    String acceptMediaType=query.getFirstValue(getApplication().getTunnelService().getMediaTypeAttribute());
     Metadata metadata=null;
     if (acceptCharset != null) {
       metadata=getApplication().getMetadataService().getMetadata(acceptCharset);
