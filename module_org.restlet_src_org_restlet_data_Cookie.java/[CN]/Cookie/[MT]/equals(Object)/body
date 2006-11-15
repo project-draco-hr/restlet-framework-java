@@ -1,26 +1,26 @@
 {
-  boolean result=super.equals(object);
-  if (result) {
-    result=object instanceof Cookie;
-    if (result) {
-      Cookie otherCookie=(Cookie)object;
-      if (otherCookie != null) {
-        result&=(getVersion() == otherCookie.getVersion());
-        if (getPath() == null) {
-          result&=(otherCookie.getPath() == null);
-        }
+  boolean result=(obj == this);
+  if (!result) {
+    if (super.equals(obj)) {
+      if ((obj instanceof Cookie) && obj != null) {
+        Cookie that=(Cookie)obj;
+        result=(this.version == that.version);
+        if (result) {
+          if (!(this.domain == null)) {
+            result=(this.domain.equals(that.domain));
+          }
  else {
-          result&=getPath().equals(otherCookie.getPath());
-        }
-        if (getDomain() == null) {
-          result&=(otherCookie.getDomain() == null);
-        }
+            result=(that.domain == null);
+          }
+          if (result) {
+            if (!(this.path == null)) {
+              result=(this.path.equals(that.path));
+            }
  else {
-          result&=getDomain().equals(otherCookie.getDomain());
+              result=(that.path == null);
+            }
+          }
         }
-      }
- else {
-        result=false;
       }
     }
   }
