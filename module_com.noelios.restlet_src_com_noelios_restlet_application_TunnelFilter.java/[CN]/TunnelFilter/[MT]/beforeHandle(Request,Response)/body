@@ -2,12 +2,12 @@
   super.beforeHandle(request,response);
   Form query=request.getResourceRef().getQueryAsForm();
   if (getApplication().getTunnelService().isMethodTunnel() && request.getMethod().equals(Method.POST)) {
-    String methodName=(String)query.getFirstValue(getApplication().getTunnelService().getMethodAttribute());
+    String methodName=(String)query.getFirstValue(getApplication().getTunnelService().getMethodParameter());
     if (methodName != null) {
       request.setMethod(Method.valueOf(methodName));
     }
   }
-  if (getApplication().getTunnelService().isPreferencesTunnel()) {
+  if (request.getMethod().equals(Method.GET) && getApplication().getTunnelService().isPreferencesTunnel()) {
     String acceptCharset=(String)query.getFirstValue(getApplication().getTunnelService().getCharacterSetAttribute());
     String acceptEncoding=(String)query.getFirstValue(getApplication().getTunnelService().getEncodingAttribute());
     String acceptLanguage=(String)query.getFirstValue(getApplication().getTunnelService().getLanguageAttribute());
