@@ -26,7 +26,7 @@
           line=reader.readLine();
         }
       }
- catch (      Exception e) {
+ catch (      IOException e) {
         logger.log(Level.SEVERE,"Unable to read the provider descriptor: " + configURL.toString());
       }
  finally {
@@ -40,8 +40,9 @@
   try {
     for (Enumeration<URL> configUrls=cl.getResources("META-INF/services/com.noelios.restlet.ServerHelper"); configUrls.hasMoreElements(); ) {
       configURL=configUrls.nextElement();
+      BufferedReader reader=null;
       try {
-        BufferedReader reader=new BufferedReader(new InputStreamReader(configURL.openStream(),"utf-8"));
+        reader=new BufferedReader(new InputStreamReader(configURL.openStream(),"utf-8"));
         line=reader.readLine();
         while (line != null) {
           provider=getProviderClassName(line);
@@ -57,8 +58,11 @@
           line=reader.readLine();
         }
       }
- catch (      Exception e) {
+ catch (      IOException e) {
         logger.log(Level.SEVERE,"Unable to read the provider descriptor: " + configURL.toString());
+      }
+ finally {
+        if (reader != null)         reader.close();
       }
     }
   }
