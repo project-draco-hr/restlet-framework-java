@@ -37,7 +37,16 @@
       throw new IllegalArgumentException("Only the POST method is supported");
     }
   }
- catch (  Exception e) {
+ catch (  SQLException se) {
+    getLogger().log(Level.WARNING,"Error while processing the SQL request",se);
+  }
+catch (  ParserConfigurationException pce) {
+    getLogger().log(Level.WARNING,"Error with XML parser configuration",pce);
+  }
+catch (  SAXException se) {
+    getLogger().log(Level.WARNING,"Error while parsing the XML document",se);
+  }
+catch (  IOException e) {
     e.printStackTrace();
   }
  finally {
