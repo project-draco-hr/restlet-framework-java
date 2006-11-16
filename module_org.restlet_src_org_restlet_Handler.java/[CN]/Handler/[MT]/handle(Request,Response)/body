@@ -3,10 +3,13 @@
   if (isStarted()) {
     Method method=request.getMethod();
     if (method == null) {
-      handleOthers(request,response);
+      defaultHandle(request,response);
     }
  else     if (method.equals(Method.GET)) {
       handleGet(request,response);
+    }
+ else     if (method.equals(Method.HEAD)) {
+      handleHead(request,response);
     }
  else     if (method.equals(Method.POST)) {
       handlePost(request,response);
@@ -17,26 +20,25 @@
  else     if (method.equals(Method.DELETE)) {
       handleDelete(request,response);
     }
- else     if (method.equals(Method.HEAD)) {
-      handleHead(request,response);
-    }
- else     if (method.equals(Method.CONNECT)) {
-      handleConnect(request,response);
-    }
- else     if (method.equals(Method.OPTIONS)) {
-      handleOptions(request,response);
-    }
- else     if (method.equals(Method.TRACE)) {
-      handleTrace(request,response);
-    }
- else     if (method.equals(Method.COPY)) {
-      handleCopy(request,response);
-    }
- else     if (method.equals(Method.MOVE)) {
-      handleMove(request,response);
-    }
  else {
-      handleOthers(request,response);
+      java.lang.reflect.Method handleMethod=getHandleMethod(method);
+      if (handleMethod != null) {
+        try {
+          handleMethod.invoke(this,request,response);
+        }
+ catch (        IllegalArgumentException e) {
+          getLogger().log(Level.WARNING,"Couldn't invoke the handle method for \"" + method + "\"",e);
+        }
+catch (        IllegalAccessException e) {
+          getLogger().log(Level.WARNING,"Couldn't access the handle method for \"" + method + "\"",e);
+        }
+catch (        InvocationTargetException e) {
+          getLogger().log(Level.WARNING,"Couldn't invoke the handle method for \"" + method + "\"",e);
+        }
+      }
+ else {
+        defaultHandle(request,response);
+      }
     }
   }
 }
