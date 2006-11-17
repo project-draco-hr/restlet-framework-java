@@ -1,2 +1,13 @@
 {
+  for (  VirtualHost host : getContainer().getHosts()) {
+    for (    Scorer scorer : host.getScorers()) {
+      Restlet next=scorer.getNext();
+      if (next instanceof Application) {
+        Application application=(Application)next;
+        if (application.isStarted()) {
+          application.stop();
+        }
+      }
+    }
+  }
 }
