@@ -1,0 +1,28 @@
+{
+  Status result=null;
+  final Representation entity=request.getEntity();
+  for (  Parameter header : getRequestHeaders()) {
+    getHttpMethod().setRequestHeader(header.getName(),header.getValue());
+  }
+  if ((entity != null) && (getHttpMethod() instanceof EntityEnclosingMethod)) {
+    EntityEnclosingMethod eem=(EntityEnclosingMethod)getHttpMethod();
+    eem.setRequestEntity(new RequestEntity(){
+      public long getContentLength(){
+        return entity.getSize();
+      }
+      public String getContentType(){
+        return entity.getMediaType().toString();
+      }
+      public boolean isRepeatable(){
+        return !entity.isTransient();
+      }
+      public void writeRequest(      OutputStream os) throws IOException {
+        entity.write(os);
+      }
+    }
+);
+  }
+  this.clientHelper.getHttpClient().executeMethod(getHttpMethod());
+  result=new Status(getStatusCode(),null,getReasonPhrase(),null);
+  return result;
+}
