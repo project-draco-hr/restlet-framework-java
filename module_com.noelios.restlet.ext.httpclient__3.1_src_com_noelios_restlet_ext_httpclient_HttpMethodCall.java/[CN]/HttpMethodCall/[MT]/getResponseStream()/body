@@ -1,7 +1,13 @@
 {
   InputStream result=null;
   try {
-    result=getHttpMethod().getResponseBodyAsStream();
+    result=new FilterInputStream(getHttpMethod().getResponseBodyAsStream()){
+      public void close() throws IOException {
+        super.close();
+        getHttpMethod().releaseConnection();
+      }
+    }
+;
   }
  catch (  IOException ioe) {
     result=null;

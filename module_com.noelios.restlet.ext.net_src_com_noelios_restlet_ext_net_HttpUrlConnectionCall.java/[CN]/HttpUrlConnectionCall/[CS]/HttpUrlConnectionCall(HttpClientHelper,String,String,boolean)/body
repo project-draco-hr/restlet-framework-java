@@ -1,15 +1,14 @@
 {
-  super(method,requestUri);
-  this.clientHelper=client;
+  super(helper,method,requestUri);
   if (requestUri.startsWith("http")) {
     URL url=new URL(requestUri);
     this.connection=(HttpURLConnection)url.openConnection();
-    this.connection.setConnectTimeout(client.getConnectTimeout());
-    this.connection.setReadTimeout(client.getReadTimeout());
-    this.connection.setAllowUserInteraction(client.isAllowUserInteraction());
+    this.connection.setConnectTimeout(getHelper().getConnectTimeout());
+    this.connection.setReadTimeout(getHelper().getReadTimeout());
+    this.connection.setAllowUserInteraction(getHelper().isAllowUserInteraction());
     this.connection.setDoOutput(hasEntity);
-    this.connection.setInstanceFollowRedirects(client.isFollowRedirects());
-    this.connection.setUseCaches(client.isUseCaches());
+    this.connection.setInstanceFollowRedirects(getHelper().isFollowRedirects());
+    this.connection.setUseCaches(getHelper().isUseCaches());
     this.responseHeadersAdded=false;
     setConfidential(this.connection instanceof HttpsURLConnection);
   }
