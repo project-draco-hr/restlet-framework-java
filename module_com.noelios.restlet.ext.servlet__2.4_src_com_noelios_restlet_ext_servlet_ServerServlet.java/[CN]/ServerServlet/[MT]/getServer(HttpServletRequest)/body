@@ -12,6 +12,7 @@ synchronized (ServerServlet.class) {
             Container container=new Container();
             Server server=new Server(container.getContext(),(List<Protocol>)null,request.getLocalAddr(),request.getLocalPort(),container);
             result=new HttpServerHelper(server);
+            result.setConverter(new ServletServerConverter(container.getContext(),getServletContext()));
             getServletContext().setAttribute(NAME_SERVER_ATTRIBUTE,result);
             if (container != null) {
               Application application=(Application)targetClass.getConstructor(Context.class).newInstance(container.getContext());
