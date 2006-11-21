@@ -1,9 +1,13 @@
 {
-  if (getRequest().getConditions().isModified(entity)) {
-    setStatus(Status.SUCCESS_OK);
-    super.setEntity(entity);
+  if (getStatus().equals(Status.SUCCESS_OK)) {
+    if (getRequest().getConditions().isModified(entity)) {
+      super.setEntity(entity);
+    }
+ else {
+      setStatus(Status.REDIRECTION_NOT_MODIFIED);
+    }
   }
  else {
-    setStatus(Status.REDIRECTION_NOT_MODIFIED);
+    super.setEntity(entity);
   }
 }
