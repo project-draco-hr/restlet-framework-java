@@ -1,20 +1,30 @@
 {
   Status status;
+  if (directoryRedirection && !targetIndex) {
+    Result result=new Result(Status.REDIRECTION_SEE_OTHER);
+    result.setRedirectionRef(new Reference(this.targetUri));
+    return result;
+  }
   if (!getDirectory().isModifiable()) {
     status=Status.CLIENT_ERROR_FORBIDDEN;
   }
  else {
     Request contextRequest=new Request(Method.DELETE,this.targetUri);
     Response contextResponse=new Response(contextRequest);
-    if (targetDirectory) {
+    if (targetDirectory && !targetIndex) {
       contextRequest.setResourceRef(this.targetUri);
       getDispatcher().handle(contextRequest,contextResponse);
     }
  else {
-      ReferenceList references=getVariantsReferences(true);
+      ReferenceList references=getVariantsReferences();
       if (!references.isEmpty()) {
-        contextRequest.setResourceRef(references.get(0));
-        getDispatcher().handle(contextRequest,contextResponse);
+        if (uniqueReference != null) {
+          contextRequest.setResourceRef(uniqueReference);
+          getDispatcher().handle(contextRequest,contextResponse);
+        }
+ else {
+          contextResponse.setStatus(new Status(Status.CLIENT_ERROR_UNAUTHORIZED,"Unable to process properly the request. Several variants exist but none of them suits precisely. "));
+        }
       }
  else {
         contextResponse.setStatus(Status.CLIENT_ERROR_NOT_FOUND);

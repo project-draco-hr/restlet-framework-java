@@ -15,13 +15,15 @@
     this.targetDirectory=true;
     this.directoryContent=new ReferenceList(contextResponse.getEntity());
     if (!this.targetUri.endsWith("/")) {
+      this.directoryRedirection=true;
       this.targetUri+="/";
       this.relativePart+="/";
     }
-    if (getMetadataService(request).getIndexName() != null) {
+    if (getMetadataService(request).getIndexName() != null && getMetadataService(request).getIndexName().length() > 0) {
       this.directoryUri=this.targetUri;
       this.baseName=getMetadataService(request).getIndexName();
       this.targetUri=this.directoryUri + this.baseName;
+      this.targetIndex=true;
     }
  else {
       this.directoryUri=this.targetUri;
@@ -44,7 +46,7 @@
       this.directoryContent=new ReferenceList(contextResponse.getEntity());
     }
   }
-  if (this.directory.isNegotiateContent()) {
+  if (this.baseName != null) {
     int firstDotIndex=this.baseName.indexOf('.');
     if (firstDotIndex != -1) {
       this.baseExtensions=getExtensions(this.baseName);

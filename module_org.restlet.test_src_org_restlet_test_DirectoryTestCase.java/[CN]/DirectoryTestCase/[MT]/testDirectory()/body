@@ -1,16 +1,15 @@
 {
   try {
-    File testDir=new File(System.getProperty("java.io.tmpdir"),"DirectoryTestCase");
+    testDir=new File(System.getProperty("java.io.tmpdir"),"DirectoryTestCase");
     testDir.mkdir();
-    File testFile=File.createTempFile("test",".txt",testDir);
-    testFileUrl=webSiteURL.concat(testFile.getName());
     Container clientContainer=new Container();
     clientContainer.getClients().add(Protocol.FILE);
+    MyApplication application=new MyApplication(clientContainer,testDir);
+    clientContainer.getDefaultHost().attach("",application);
     clientContainer.start();
-    Directory directory=new Directory(clientContainer.getContext(),testDir.toURI().toString());
-    testDirectory(directory);
+    testDirectory(application,application.getDirectory(),"index");
+    testDirectory(application,application.getDirectory(),"");
     clientContainer.stop();
-    testFile.delete();
   }
  catch (  Exception e) {
     e.printStackTrace();

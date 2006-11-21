@@ -1,3 +1,18 @@
 {
-  Factory.getInstance().setResponseEntity(getRequest(),this,resource);
+  List<Representation> variants=resource.getVariants();
+  if ((variants == null) || (variants.size() < 1)) {
+    setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+  }
+ else {
+    for (    Representation variant : variants) {
+      variant.setResource(resource);
+    }
+    Representation preferredVariant=getRequest().getClientInfo().getPreferredVariant(variants);
+    if (preferredVariant == null) {
+      setStatus(Status.CLIENT_ERROR_NOT_ACCEPTABLE);
+    }
+ else {
+      setEntity(preferredVariant);
+    }
+  }
 }
