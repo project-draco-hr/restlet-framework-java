@@ -23,14 +23,16 @@
     Tag current=null;
     if (ifMatchHeader != null) {
       try {
-        String[] tags=ifMatchHeader.split(",");
-        for (        String element : tags) {
-          current=Tag.parse(element);
+        HeaderReader hr=new HeaderReader(ifMatchHeader);
+        String value=hr.readValue();
+        while (value != null) {
+          current=Tag.parse(value);
           if (match == null) {
             match=new ArrayList<Tag>();
             result.setMatch(match);
           }
           match.add(current);
+          value=hr.readValue();
         }
       }
  catch (      Exception e) {
@@ -40,14 +42,16 @@
     List<Tag> noneMatch=null;
     if (ifNoneMatchHeader != null) {
       try {
-        String[] tags=ifNoneMatchHeader.split(",");
-        for (        String element : tags) {
-          current=Tag.parse(element);
+        HeaderReader hr=new HeaderReader(ifNoneMatchHeader);
+        String value=hr.readValue();
+        while (value != null) {
+          current=Tag.parse(value);
           if (noneMatch == null) {
             noneMatch=new ArrayList<Tag>();
             result.setNoneMatch(noneMatch);
           }
           noneMatch.add(current);
+          value=hr.readValue();
         }
       }
  catch (      Exception e) {

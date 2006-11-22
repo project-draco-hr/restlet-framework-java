@@ -22,10 +22,38 @@
         response.getServerInfo().setAgent(header.getValue());
       }
  else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_ALLOW)) {
-        StringTokenizer st=new StringTokenizer(header.getValue(),",\\s");
+        HeaderReader hr=new HeaderReader(header.getValue());
+        String value=hr.readValue();
         List<Method> allowedMethods=response.getEntity().getResource().getAllowedMethods();
-        while (st.hasMoreTokens()) {
-          allowedMethods.add(Method.valueOf(st.nextToken()));
+        while (value != null) {
+          allowedMethods.add(Method.valueOf(value));
+          value=hr.readValue();
+        }
+      }
+ else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_VARY)) {
+        HeaderReader hr=new HeaderReader(header.getValue());
+        String value=hr.readValue();
+        Set<Dimension> dimensions=response.getDimensions();
+        while (value != null) {
+          if (value.equalsIgnoreCase(HttpConstants.HEADER_ACCEPT)) {
+            dimensions.add(Dimension.MEDIA_TYPE);
+          }
+ else           if (value.equalsIgnoreCase(HttpConstants.HEADER_ACCEPT_CHARSET)) {
+            dimensions.add(Dimension.CHARACTER_SET);
+          }
+ else           if (value.equalsIgnoreCase(HttpConstants.HEADER_ACCEPT_ENCODING)) {
+            dimensions.add(Dimension.ENCODING);
+          }
+ else           if (value.equalsIgnoreCase(HttpConstants.HEADER_ACCEPT_LANGUAGE)) {
+            dimensions.add(Dimension.LANGUAGE);
+          }
+ else           if (value.equalsIgnoreCase(HttpConstants.HEADER_USER_AGENT)) {
+            dimensions.add(Dimension.CLIENT_AGENT);
+          }
+ else           if (value.equals("*")) {
+            dimensions.add(Dimension.UNSPECIFIED);
+          }
+          value=hr.readValue();
         }
       }
     }
