@@ -1,0 +1,18 @@
+{
+  StreamSource sourceDocument=new StreamSource(getSourceRepresentation().getStream());
+  StreamSource transformSheet=new StreamSource(getTransformer().getTransformSheet().getStream());
+  StreamResult resultDocument=new StreamResult(outputStream);
+  try {
+    javax.xml.transform.Transformer transformer=TransformerFactory.newInstance().newTransformer(transformSheet);
+    transformer.transform(sourceDocument,resultDocument);
+  }
+ catch (  TransformerConfigurationException tce) {
+    getTransformer().getContext().getLogger().log(Level.WARNING,"Transformer configuration exception",tce);
+  }
+catch (  TransformerFactoryConfigurationError tfce) {
+    getTransformer().getContext().getLogger().log(Level.WARNING,"Transformer factory configuration exception",tfce);
+  }
+catch (  TransformerException te) {
+    getTransformer().getContext().getLogger().log(Level.WARNING,"Transformer exception",te);
+  }
+}
