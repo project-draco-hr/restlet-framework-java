@@ -31,7 +31,9 @@
       statement.execute(sqlRequest,returnGeneratedKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
       JdbcResult result=new JdbcResult(statement);
       response.setEntity(new ObjectRepresentation(result));
-      connection.commit();
+      if (!connection.getAutoCommit()) {
+        connection.commit();
+      }
     }
  else {
       throw new IllegalArgumentException("Only the POST method is supported");
@@ -46,15 +48,7 @@ catch (  ParserConfigurationException pce) {
 catch (  SAXException se) {
     getLogger().log(Level.WARNING,"Error while parsing the XML document",se);
   }
-catch (  IOException e) {
-    e.printStackTrace();
-  }
- finally {
-    try {
-      if (connection != null)       connection.close();
-    }
- catch (    SQLException se) {
-      getLogger().log(Level.WARNING,"An error occured while trying to close a database connection",se);
-    }
+catch (  IOException ioe) {
+    getLogger().log(Level.WARNING,"Input/Output exception",ioe);
   }
 }
