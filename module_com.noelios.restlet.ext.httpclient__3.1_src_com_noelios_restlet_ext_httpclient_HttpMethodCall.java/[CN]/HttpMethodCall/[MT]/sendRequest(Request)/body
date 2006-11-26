@@ -12,7 +12,7 @@
           return entity.getSize();
         }
         public String getContentType(){
-          return entity.getMediaType().toString();
+          return (entity.getMediaType() != null) ? entity.getMediaType().toString() : null;
         }
         public boolean isRepeatable(){
           return !entity.isTransient();
@@ -30,7 +30,7 @@
     }
   }
  catch (  IOException ioe) {
-    this.clientHelper.getLogger().log(Level.FINE,"An error occured during the communication with the remote HTTP server.",ioe);
+    this.clientHelper.getLogger().log(Level.WARNING,"An error occured during the communication with the remote HTTP server.",ioe);
     result=new Status(Status.CONNECTOR_ERROR_COMMUNICATION,"Unable to complete the HTTP call due to a communication error with the remote server. " + ioe.getMessage());
     getHttpMethod().releaseConnection();
   }
