@@ -1,51 +1,20 @@
 {
   float result=0F;
-  boolean incompatible=false;
-  Protocol protocol=request.getProtocol();
-  if (protocol == null) {
-    protocol=request.getResourceRef().getSchemeProtocol();
+  String baseDomain="";
+  String basePort="";
+  String baseScheme="";
+  if (request.getBaseRef() != null) {
+    baseDomain=request.getBaseRef().getHostDomain();
+    basePort=request.getBaseRef().getHostPort().toString();
+    baseScheme=request.getBaseRef().getScheme();
   }
-  if (protocol == null) {
-    getLogger().warning("Unable to determine the protocol to use for this call.");
-    incompatible=true;
-  }
- else {
-    if (getHost().getAllowedProtocols().contains(protocol) || getHost().getAllowedProtocols().contains(Protocol.ALL)) {
-      result+=0.25F;
-    }
- else {
-      incompatible=true;
-    }
-  }
-  if (!incompatible) {
-    Integer port=response.getServerInfo().getPort();
-    if (getHost().getAllowedPorts().contains(VirtualHost.ALL_PORTS) || ((port != null) && getHost().getAllowedPorts().contains(port))) {
-      result+=0.25F;
-    }
- else {
-      incompatible=true;
-    }
-  }
-  if (!incompatible) {
-    String address=response.getServerInfo().getAddress();
-    if (getHost().getAllowedAddresses().contains(VirtualHost.ALL_ADDRESSES) || ((address != null) && getHost().getAllowedAddresses().contains(address))) {
-      result+=0.25F;
-    }
- else {
-      incompatible=true;
-    }
-  }
-  if (!incompatible) {
-    String domain=response.getServerInfo().getDomain();
-    if (getHost().getAllowedDomains().contains(VirtualHost.ALL_DOMAINS) || ((domain != null) && getHost().getAllowedDomains().contains(domain))) {
-      result+=0.25F;
-    }
- else {
-      incompatible=true;
-    }
-  }
-  if (incompatible) {
-    result=0F;
+  String resourceDomain=request.getResourceRef().getHostDomain();
+  String resourcePort=request.getResourceRef().getHostPort().toString();
+  String resourceScheme=request.getResourceRef().getScheme();
+  String serverAddress=response.getServerInfo().getAddress();
+  String serverPort=response.getServerInfo().getPort().toString();
+  if (Pattern.matches(getHost().getBaseDomain(),baseDomain) && Pattern.matches(getHost().getBasePort(),basePort) && Pattern.matches(getHost().getBaseScheme(),baseScheme)&& Pattern.matches(getHost().getResourceDomain(),resourceDomain)&& Pattern.matches(getHost().getResourcePort(),resourcePort)&& Pattern.matches(getHost().getResourceScheme(),resourceScheme)&& Pattern.matches(getHost().getServerAddress(),serverAddress)&& Pattern.matches(getHost().getServerPort(),serverPort)) {
+    result=1F;
   }
   if (getLogger().isLoggable(Level.FINER)) {
     getLogger().finer("Call score for the \"" + getHost().getName() + "\" host: "+ result);
