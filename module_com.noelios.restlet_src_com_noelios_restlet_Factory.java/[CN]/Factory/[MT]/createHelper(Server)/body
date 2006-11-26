@@ -1,15 +1,13 @@
 {
   Helper result=null;
   if (server.getProtocols().size() > 0) {
-    if (this.registeredServers != null) {
-      for (      ConnectorHelper registeredServer : this.registeredServers) {
-        if (registeredServer.getProtocols().containsAll(server.getProtocols())) {
-          try {
-            result=registeredServer.getClass().getConstructor(Server.class).newInstance(server);
-          }
- catch (          Exception e) {
-            logger.log(Level.SEVERE,"Exception while instantiation the server connector.",e);
-          }
+    for (    ConnectorHelper registeredServer : getRegisteredServers()) {
+      if (registeredServer.getProtocols().containsAll(server.getProtocols())) {
+        try {
+          result=registeredServer.getClass().getConstructor(Server.class).newInstance(server);
+        }
+ catch (        Exception e) {
+          logger.log(Level.SEVERE,"Exception while instantiation the server connector.",e);
         }
       }
     }
