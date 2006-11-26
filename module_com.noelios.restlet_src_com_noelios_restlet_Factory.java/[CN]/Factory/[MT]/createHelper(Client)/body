@@ -1,13 +1,15 @@
 {
-  for (  ConnectorHelper registeredClient : this.registeredClients) {
-    if (registeredClient.getProtocols().containsAll(client.getProtocols())) {
-      try {
-        return registeredClient.getClass().getConstructor(Client.class).newInstance(client);
+  if (this.registeredClients != null) {
+    for (    ConnectorHelper registeredClient : this.registeredClients) {
+      if (registeredClient.getProtocols().containsAll(client.getProtocols())) {
+        try {
+          return registeredClient.getClass().getConstructor(Client.class).newInstance(client);
+        }
+ catch (        Exception e) {
+          logger.log(Level.SEVERE,"Exception while instantiation the client connector.",e);
+        }
+        return registeredClient;
       }
- catch (      Exception e) {
-        logger.log(Level.SEVERE,"Exception while instantiation the client connector.",e);
-      }
-      return registeredClient;
     }
   }
   logger.log(Level.WARNING,"No available client connector supports the required protocols: " + client.getProtocols());
