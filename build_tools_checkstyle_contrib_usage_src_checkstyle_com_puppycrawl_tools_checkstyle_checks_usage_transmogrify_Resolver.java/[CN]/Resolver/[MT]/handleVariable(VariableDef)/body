@@ -1,0 +1,12 @@
+{
+  SymTabAST node=variable.getTreeNode();
+  Scope location=variable.getParentScope();
+  SymTabAST nameNode=node.findFirstToken(TokenTypes.IDENT);
+  nameNode.setDefinition(variable,location,true);
+  SymTabAST typeNode=node.findFirstToken(TokenTypes.TYPE);
+  resolveType(typeNode,location,null,true);
+  SymTabAST assignmentNode=node.findFirstToken(TokenTypes.ASSIGN);
+  if (assignmentNode != null) {
+    resolveExpression((SymTabAST)(assignmentNode.getFirstChild()),variable.getParentScope(),null,true);
+  }
+}

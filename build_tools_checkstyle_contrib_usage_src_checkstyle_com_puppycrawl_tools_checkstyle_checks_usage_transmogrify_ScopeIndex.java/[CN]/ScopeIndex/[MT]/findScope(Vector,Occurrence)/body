@@ -1,0 +1,17 @@
+{
+  int i=0;
+  Scope bestSoFar=(Scope)scopeList.elementAt(i);
+  while (!bestSoFar.getTreeNode().getSpan().contains(occ.getLine(),occ.getColumn())) {
+    i++;
+    bestSoFar=(Scope)scopeList.elementAt(i);
+  }
+  for (; i < scopeList.size(); i++) {
+    Scope currentScope=(Scope)scopeList.elementAt(i);
+    if (currentScope.getTreeNode().getSpan().contains(occ.getLine(),occ.getColumn())) {
+      if (bestSoFar.getTreeNode().getSpan().contains(currentScope.getTreeNode().getSpan())) {
+        bestSoFar=currentScope;
+      }
+    }
+  }
+  return bestSoFar;
+}

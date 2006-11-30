@@ -1,0 +1,17 @@
+{
+  final String className=aInvokeRef.getClassName();
+  JavaClass javaClass=Repository.lookupClass(className);
+  final String methodName=aInvokeRef.getName();
+  final Type[] argTypes=aInvokeRef.getArgTypes();
+  MethodDefinition narrowest=null;
+  while ((javaClass != null) && (narrowest == null)) {
+    final JavaClassDefinition javaClassDef=(JavaClassDefinition)mJavaClasses.get(javaClass);
+    if (javaClassDef != null) {
+      narrowest=javaClassDef.findNarrowestMethod(className,methodName,argTypes);
+      if (narrowest != null) {
+        narrowest.addReference(aInvokeRef);
+      }
+    }
+    javaClass=javaClass.getSuperClass();
+  }
+}

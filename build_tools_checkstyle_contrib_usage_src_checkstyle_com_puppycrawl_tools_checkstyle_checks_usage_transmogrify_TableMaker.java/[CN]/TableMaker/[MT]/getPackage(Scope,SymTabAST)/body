@@ -1,0 +1,15 @@
+{
+  String name=tree.getText();
+  PackageDef result=null;
+  if (!(parent instanceof BaseScope)) {
+    result=symbolTable.getPackage(parent.getQualifiedName() + "." + name);
+  }
+ else {
+    result=symbolTable.getPackage(name);
+  }
+  if (result == null) {
+    result=new PackageDef(tree.getText(),parent,tree);
+    symbolTable.definePackage(result,parent);
+  }
+  return result;
+}

@@ -1,0 +1,21 @@
+{
+  IMethod result=null;
+  Constructor[] constructors=_javaClass.getConstructors();
+  for (int i=0; i < constructors.length; i++) {
+    IMethod constructor=new ExternalConstructor(constructors[i]);
+    if (constructor.hasSameSignature(signature)) {
+      result=constructor;
+      break;
+    }
+  }
+  if (result == null) {
+    for (int i=0; i < constructors.length; i++) {
+      IMethod constructor=new ExternalConstructor(constructors[i]);
+      if (constructor.hasCompatibleSignature(signature)) {
+        result=constructor;
+        break;
+      }
+    }
+  }
+  return result;
+}

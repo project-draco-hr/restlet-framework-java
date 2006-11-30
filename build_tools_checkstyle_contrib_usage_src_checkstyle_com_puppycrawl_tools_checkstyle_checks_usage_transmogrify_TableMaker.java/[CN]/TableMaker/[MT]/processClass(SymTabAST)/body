@@ -1,0 +1,13 @@
+{
+  String name=tree.findFirstToken(TokenTypes.IDENT).getText();
+  makeClass(name,tree);
+  final SymTabAST objblock=tree.findFirstToken(TokenTypes.OBJBLOCK);
+  SymTabAST start=(SymTabAST)objblock.getFirstChild();
+  if (start != null) {
+    if (start.getType() == TokenTypes.LPAREN) {
+      start=(SymTabAST)start.getNextSibling();
+    }
+    walkSiblings(start,false);
+  }
+  symbolTable.popScope();
+}

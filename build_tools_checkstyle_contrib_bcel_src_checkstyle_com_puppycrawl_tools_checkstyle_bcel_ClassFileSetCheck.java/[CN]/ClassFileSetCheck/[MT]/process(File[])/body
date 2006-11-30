@@ -1,0 +1,16 @@
+{
+  registerVisitors();
+  final Set javaClasses=extractJavaClasses(aFiles);
+  visitSet(javaClasses);
+  final JavaClassWalker walker=new JavaClassWalker();
+  walker.setVisitor(getTreeVisitor());
+  final Iterator it=javaClasses.iterator();
+  while (it.hasNext()) {
+    final JavaClass clazz=(JavaClass)it.next();
+    visitObject(clazz);
+    walker.walk(clazz);
+    leaveObject(clazz);
+  }
+  leaveSet(javaClasses);
+  fireErrors();
+}

@@ -1,0 +1,10 @@
+{
+  SymTabAST firstChild=(SymTabAST)tree.getFirstChild();
+  String name=ASTUtil.constructDottedName(firstChild);
+  firstChild.ignoreChildren();
+  PackageDef pkg=symbolTable.getPackage(name);
+  if (pkg == null) {
+    pkg=createPackage((SymTabAST)(tree.getFirstChild()));
+  }
+  symbolTable.pushScope(pkg);
+}

@@ -1,0 +1,22 @@
+{
+  final Set result=new HashSet();
+  final String fileName=aFile.getPath();
+  if (fileName.endsWith(".jar") || fileName.endsWith(".zip")) {
+    final ZipFile zipFile=new ZipFile(fileName);
+    final Enumeration entries=zipFile.entries();
+    while (entries.hasMoreElements()) {
+      final ZipEntry entry=(ZipEntry)entries.nextElement();
+      final String entryName=entry.getName();
+      if (entryName.endsWith(".class")) {
+        final InputStream in=zipFile.getInputStream(entry);
+        final JavaClass javaClass=new ClassParser(in,entryName).parse();
+        result.add(javaClass);
+      }
+    }
+  }
+ else {
+    final JavaClass javaClass=new ClassParser(fileName).parse();
+    result.add(javaClass);
+  }
+  return result;
+}

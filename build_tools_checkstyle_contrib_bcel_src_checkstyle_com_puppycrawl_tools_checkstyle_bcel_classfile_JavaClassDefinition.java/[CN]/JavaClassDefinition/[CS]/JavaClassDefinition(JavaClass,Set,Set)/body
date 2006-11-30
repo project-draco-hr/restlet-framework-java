@@ -1,0 +1,19 @@
+{
+  mJavaClass=aJavaClass;
+  final Method[] methods=aJavaClass.getMethods();
+  final Set methodSet=new HashSet();
+  mMethodDefs=new MethodDefinition[methods.length];
+  for (int i=0; i < methods.length; i++) {
+    if (Utils.inScope(methods[i],aMethodScopes)) {
+      methodSet.add(new MethodDefinition(methods[i]));
+    }
+  }
+  mMethodDefs=(MethodDefinition[])methodSet.toArray(new MethodDefinition[methodSet.size()]);
+  final Field[] fields=aJavaClass.getFields();
+  mFieldDefs=new HashMap(fields.length);
+  for (int i=0; i < fields.length; i++) {
+    if (Utils.inScope(fields[i],aFieldScopes)) {
+      mFieldDefs.put(fields[i].getName(),new FieldDefinition(fields[i]));
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  boolean result=false;
+  if (isPrimitive() && type.isPrimitive()) {
+    result=PrimitiveClasses.typesAreCompatible((ExternalClass)type,this);
+  }
+ else {
+    if (type.equals(this)) {
+      result=true;
+    }
+ else     if (getSuperclass() != null && getSuperclass().isCompatibleWith(type)) {
+      result=true;
+    }
+ else     if (_javaClass.getInterfaces().length > 0) {
+      Class[] interfaces=_javaClass.getInterfaces();
+      for (int i=0; i < interfaces.length; i++) {
+        if (new ExternalClass(interfaces[i]).isCompatibleWith(type)) {
+          result=true;
+          break;
+        }
+      }
+    }
+  }
+  return result;
+}

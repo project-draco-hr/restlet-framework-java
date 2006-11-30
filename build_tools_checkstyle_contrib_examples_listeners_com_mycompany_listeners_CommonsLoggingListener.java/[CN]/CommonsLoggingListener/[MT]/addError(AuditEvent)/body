@@ -1,0 +1,24 @@
+{
+  final SeverityLevel severityLevel=aEvt.getSeverityLevel();
+  if (mInitialized && !SeverityLevel.IGNORE.equals(severityLevel)) {
+    final Log log=mLogFactory.getInstance(aEvt.getSourceName());
+    final String fileName=aEvt.getFileName();
+    final String message=aEvt.getMessage();
+    final int bufLen=message.length() + BUFFER_CUSHION;
+    final StringBuffer sb=new StringBuffer(bufLen);
+    sb.append("Line: ").append(aEvt.getLine());
+    if (aEvt.getColumn() > 0) {
+      sb.append(" Column: ").append(aEvt.getColumn());
+    }
+    sb.append(" Message: ").append(message);
+    if (aEvt.getSeverityLevel().equals(SeverityLevel.WARNING)) {
+      log.warn(sb.toString());
+    }
+ else     if (aEvt.getSeverityLevel().equals(SeverityLevel.INFO)) {
+      log.info(sb.toString());
+    }
+ else {
+      log.error(sb.toString());
+    }
+  }
+}

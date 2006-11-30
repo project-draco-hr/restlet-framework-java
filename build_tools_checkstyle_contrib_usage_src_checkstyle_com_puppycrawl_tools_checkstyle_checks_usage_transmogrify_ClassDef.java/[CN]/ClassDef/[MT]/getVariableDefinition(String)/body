@@ -1,0 +1,21 @@
+{
+  IVariable result=null;
+  result=(VariableDef)(elements.get(name));
+  if (result == null) {
+    IClass[] superinterfaces=getInterfaces();
+    for (int i=0; i < superinterfaces.length && result == null; i++) {
+      result=superinterfaces[i].getVariableDefinition(name);
+    }
+  }
+  if (result == null) {
+    if (superclass != null) {
+      result=superclass.getVariableDefinition(name);
+    }
+  }
+  if (result == null) {
+    if (getParentScope() != null) {
+      result=getParentScope().getVariableDefinition(name);
+    }
+  }
+  return result;
+}

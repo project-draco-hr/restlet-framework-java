@@ -1,0 +1,14 @@
+{
+  IClass arrayType;
+  SymTabAST typeNode=(SymTabAST)(newNode.getFirstChild());
+  SymTabAST declaratorNode=(SymTabAST)(typeNode.getNextSibling());
+  SymTabAST initializerNode=(SymTabAST)(declaratorNode.getNextSibling());
+  arrayType=resolveClass(typeNode,location,context,referencePhase);
+  if (declaratorNode.getFirstChild() != null) {
+    resolveExpression(((SymTabAST)declaratorNode.getFirstChild()),location,context,referencePhase);
+  }
+  if (initializerNode != null) {
+    resolveArrayInitializer(initializerNode,location,context,referencePhase);
+  }
+  return new ArrayDef(arrayType);
+}

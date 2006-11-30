@@ -1,0 +1,12 @@
+{
+  Vector parameters=new Vector();
+  SymTabAST expr=(SymTabAST)(elist.getFirstChild());
+  while (expr != null) {
+    if (expr.getType() != TokenTypes.COMMA) {
+      IClass parameter=resolveExpression((SymTabAST)(expr.getFirstChild()),location,context,referencePhase);
+      parameters.add(parameter);
+    }
+    expr=(SymTabAST)(expr.getNextSibling());
+  }
+  return new MethodSignature(parameters);
+}

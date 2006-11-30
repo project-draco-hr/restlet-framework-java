@@ -1,0 +1,13 @@
+{
+  IClass result=null;
+  String qualifiedName=getQualifiedName() + "$" + name;
+  Class[] classes=getJavaClass().getClasses();
+  for (int i=0; i < classes.length; i++) {
+    String candidateQualifiedName=classes[i].getName();
+    if (qualifiedName.equals(candidateQualifiedName)) {
+      result=new ExternalClass(classes[i]);
+      break;
+    }
+  }
+  return result;
+}

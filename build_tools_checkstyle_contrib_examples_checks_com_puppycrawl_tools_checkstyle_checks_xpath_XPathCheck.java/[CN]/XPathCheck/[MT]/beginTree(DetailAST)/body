@@ -1,0 +1,18 @@
+{
+  if (mXPath != null) {
+    final ASTFactory factory=new ASTFactory();
+    factory.setASTNodeType(DetailAST.class.getName());
+    final DetailAST root=(DetailAST)factory.create(TokenTypes.EOF,"ROOT");
+    root.setFirstChild(aAST);
+    try {
+      final Iterator it=mXPath.selectNodes(aAST).iterator();
+      while (it.hasNext()) {
+        final DetailAST node=(DetailAST)it.next();
+        log(node.getLineNo(),node.getColumnNo(),mMessage,new String[]{node.getText()});
+      }
+    }
+ catch (    JaxenException e) {
+      e.printStackTrace();
+    }
+  }
+}

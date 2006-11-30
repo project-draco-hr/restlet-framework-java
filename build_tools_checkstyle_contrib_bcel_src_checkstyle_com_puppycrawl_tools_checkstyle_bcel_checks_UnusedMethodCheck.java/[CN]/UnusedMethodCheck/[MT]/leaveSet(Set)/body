@@ -1,0 +1,17 @@
+{
+  final Iterator it=aJavaClasses.iterator();
+  while (it.hasNext()) {
+    final JavaClass javaClass=(JavaClass)it.next();
+    final String className=javaClass.getClassName();
+    final JavaClassDefinition classDef=findJavaClassDef(javaClass);
+    final MethodDefinition[] methodDefs=classDef.getMethodDefs();
+    for (int i=0; i < methodDefs.length; i++) {
+      if (!classDef.hasReference(methodDefs[i],getReferenceDAO())) {
+        final Method method=methodDefs[i].getMethod();
+        if (!ignore(className,method)) {
+          log(javaClass,0,"unused.method",new Object[]{methodDefs[i]});
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  IClass classConstructed=null;
+  SymTabAST nameNode=(SymTabAST)(constructor.getFirstChild());
+  SymTabAST parametersNode=constructor.findFirstToken(TokenTypes.ELIST);
+  SymTabAST nameIdent=null;
+  if (nameNode.getType() == TokenTypes.IDENT) {
+    nameIdent=nameNode;
+  }
+ else {
+    nameIdent=(SymTabAST)nameNode.getFirstChild().getNextSibling();
+  }
+  classConstructed=resolveClass(nameNode,location,context,false);
+  if (classConstructed != null) {
+    MethodSignature signature=resolveParameters(parametersNode,location,context,referencePhase);
+    IMethod constructorDef=classConstructed.getMethodDefinition(nameIdent.getText(),signature);
+    if (constructorDef != null && referencePhase) {
+      nameIdent.setDefinition(constructorDef,location,referencePhase);
+    }
+  }
+  return classConstructed;
+}

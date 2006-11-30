@@ -1,0 +1,16 @@
+{
+  final String methodName=aMethodDef.getName();
+  final Type[] argTypes=aMethodDef.getArgumentTypes();
+  JavaClass currentJavaClass=getJavaClass();
+  while (currentJavaClass != null) {
+    final JavaClassDefinition javaClassDef=aReferenceDAO.findJavaClassDef(currentJavaClass);
+    if (javaClassDef != null) {
+      final MethodDefinition methodDef=javaClassDef.findNarrowestMethod(getJavaClass().getClassName(),methodName,argTypes);
+      if ((methodDef != null) && (methodDef.hasReference(getJavaClass()))) {
+        return true;
+      }
+    }
+    currentJavaClass=currentJavaClass.getSuperClass();
+  }
+  return false;
+}

@@ -1,0 +1,34 @@
+{
+  final JavaClass javaClass=(JavaClass)aJavaClass;
+  final String className=javaClass.getClassName();
+  final JavaClass[] superClasses=javaClass.getSuperClasses();
+  final Method[] methods=javaClass.getMethods();
+  for (int i=0; i < methods.length; i++) {
+    final Method method=methods[i];
+    if (!method.isPrivate() && method.isStatic()) {
+      for (int j=0; j < superClasses.length; j++) {
+        final JavaClass superClass=superClasses[j];
+        final String superClassName=superClass.getClassName();
+        final Method[] superClassMethods=superClass.getMethods();
+        for (int k=0; k < superClassMethods.length; k++) {
+          final Method superClassMethod=superClassMethods[k];
+          if (superClassMethod.getName().equals(method.getName()) && !ignore(className,method)) {
+            Type[] methodTypes=method.getArgumentTypes();
+            Type[] superTypes=superClassMethod.getArgumentTypes();
+            if (methodTypes.length == superTypes.length) {
+              boolean match=true;
+              for (int arg=0; arg < methodTypes.length; arg++) {
+                if (!methodTypes[arg].equals(superTypes[arg])) {
+                  match=false;
+                }
+              }
+              if (match) {
+                log(javaClass,0,"hidden.static.method",new Object[]{method,superClassName});
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

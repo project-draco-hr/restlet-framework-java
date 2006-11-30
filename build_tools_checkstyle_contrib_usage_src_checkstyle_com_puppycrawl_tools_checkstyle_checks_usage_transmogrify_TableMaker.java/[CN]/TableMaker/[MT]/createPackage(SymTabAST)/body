@@ -1,0 +1,13 @@
+{
+  PackageDef result=null;
+  if (tree.getType() == TokenTypes.DOT) {
+    SymTabAST leftChild=(SymTabAST)tree.getFirstChild();
+    SymTabAST rightChild=(SymTabAST)leftChild.getNextSibling();
+    PackageDef context=createPackage(leftChild);
+    result=getPackage(context,rightChild);
+  }
+ else {
+    result=getPackage(symbolTable.getBaseScope(),tree);
+  }
+  return result;
+}

@@ -1,0 +1,12 @@
+{
+  final String name=aChildConf.getName();
+  final Object module=mModuleFactory.createModule(name);
+  if (!(module instanceof AbstractCheckVisitor)) {
+    throw new CheckstyleException("ClassFileSet is not allowed as a parent of " + name);
+  }
+  final AbstractCheckVisitor c=(AbstractCheckVisitor)module;
+  c.contextualize(mChildContext);
+  c.configure(aChildConf);
+  c.init();
+  registerCheck(c);
+}

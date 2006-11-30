@@ -1,0 +1,10 @@
+{
+  SymTabAST typeNode=_node.findFirstToken(TokenTypes.TYPE);
+  SymTabAST typeTextNode=(SymTabAST)(typeNode.getFirstChild());
+  if (typeTextNode.getType() == TokenTypes.ARRAY_DECLARATOR) {
+    typeTextNode=(SymTabAST)(typeTextNode.getFirstChild());
+  }
+  typeTextNode.setLine(ASTUtil.getLine(_def.getTreeNode()));
+  IClass varType=getType(_def,typeNode);
+  _def.setType(varType);
+}

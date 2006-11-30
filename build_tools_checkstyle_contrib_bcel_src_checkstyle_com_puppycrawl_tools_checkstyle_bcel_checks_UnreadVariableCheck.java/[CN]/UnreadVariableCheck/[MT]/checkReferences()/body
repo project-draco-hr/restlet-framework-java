@@ -1,0 +1,12 @@
+{
+  if (mLocalVariableTable != null) {
+    for (int i=0; i < mLocalVariableTable.getLength(); i++) {
+      if (!mLocalVariableBitSet.get(i)) {
+        final LocalVariable localVariable=mLocalVariableTable.getLocalVariable(i);
+        if (localVariable != null && !localVariable.getName().equals("this")) {
+          log(0,"unread.variable",new Object[]{mCurrentJavaClass.getClassName(),mCurrentMethod.getName(),localVariable.getName()});
+        }
+      }
+    }
+  }
+}
