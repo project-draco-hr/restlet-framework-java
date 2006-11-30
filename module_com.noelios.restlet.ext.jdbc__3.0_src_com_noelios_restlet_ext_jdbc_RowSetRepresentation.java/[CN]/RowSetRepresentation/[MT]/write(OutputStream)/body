@@ -5,4 +5,21 @@
  catch (  SQLException se) {
     throw new IOException(se.getMessage());
   }
+  try {
+    if (this.jdbcResult != null) {
+      this.jdbcResult.release();
+    }
+  }
+ catch (  SQLException se) {
+    getLogger().log(Level.WARNING,"Error while releasing the JdbcResult instance after writing the representation",se);
+  }
+  try {
+    if (this.webRowSet != null) {
+      this.webRowSet.release();
+      this.webRowSet.close();
+    }
+  }
+ catch (  SQLException se) {
+    getLogger().log(Level.WARNING,"Error while releasing the WebRowSet instance after writing the representation",se);
+  }
 }
