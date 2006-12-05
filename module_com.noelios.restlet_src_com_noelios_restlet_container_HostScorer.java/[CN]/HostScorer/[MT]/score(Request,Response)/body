@@ -9,8 +9,10 @@
     baseScheme=request.getBaseRef().getScheme();
   }
   String resourceDomain=request.getResourceRef().getHostDomain();
-  String resourcePort=request.getResourceRef().getHostPort().toString();
   String resourceScheme=request.getResourceRef().getScheme();
+  Integer hostPort=request.getResourceRef().getHostPort();
+  if (hostPort == null)   hostPort=request.getResourceRef().getSchemeProtocol().getDefaultPort();
+  String resourcePort=hostPort.toString();
   String serverAddress=response.getServerInfo().getAddress();
   String serverPort=response.getServerInfo().getPort().toString();
   if (Pattern.matches(getHost().getBaseDomain(),baseDomain) && Pattern.matches(getHost().getBasePort(),basePort) && Pattern.matches(getHost().getBaseScheme(),baseScheme)&& Pattern.matches(getHost().getResourceDomain(),resourceDomain)&& Pattern.matches(getHost().getResourcePort(),resourcePort)&& Pattern.matches(getHost().getResourceScheme(),resourceScheme)&& Pattern.matches(getHost().getServerAddress(),serverAddress)&& Pattern.matches(getHost().getServerPort(),serverPort)) {
