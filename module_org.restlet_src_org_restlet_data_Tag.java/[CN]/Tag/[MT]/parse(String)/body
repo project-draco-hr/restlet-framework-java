@@ -1,20 +1,21 @@
 {
   Tag result=new Tag();
-  if (httpTag.startsWith("W")) {
-    result.setWeak(true);
-    httpTag=httpTag.substring(1);
+  String httpTagCopy=httpTag;
+  if (httpTagCopy.startsWith("W")) {
+    result.weak=true;
+    httpTagCopy=httpTagCopy.substring(1);
   }
  else {
-    result.setWeak(false);
+    result.weak=false;
   }
-  if (httpTag.startsWith("\"") && httpTag.endsWith("\"")) {
-    result.setOpaqueTag(httpTag.substring(1,httpTag.length() - 1));
+  if (httpTagCopy.startsWith("\"") && httpTagCopy.endsWith("\"")) {
+    result.opaqueTag=httpTagCopy.substring(1,httpTagCopy.length() - 1);
   }
- else   if (httpTag.equals("*")) {
-    result.setOpaqueTag("*");
+ else   if (httpTagCopy.equals("*")) {
+    result.opaqueTag="*";
   }
  else {
-    throw new IllegalArgumentException("Invalid tag format detected: " + httpTag);
+    throw new IllegalArgumentException("Invalid tag format detected: " + httpTagCopy);
   }
   return result;
 }
