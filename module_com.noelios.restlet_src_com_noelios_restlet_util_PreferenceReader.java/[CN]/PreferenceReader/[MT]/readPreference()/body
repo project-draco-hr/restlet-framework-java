@@ -7,100 +7,102 @@
   StringBuilder paramNameBuffer=null;
   StringBuilder paramValueBuffer=null;
   ParameterList parameters=null;
-  int nextChar=0;
-  while ((result == null) && (nextChar != -1)) {
-    nextChar=read();
-    if (readingMetadata) {
-      if ((nextChar == ',') || (nextChar == -1)) {
-        if (metadataBuffer.length() > 0) {
-          result=createPreference(metadataBuffer,null);
-          paramNameBuffer=new StringBuilder();
+  String nextValue=readValue();
+  int nextIndex=0;
+  if (nextValue != null) {
+    int nextChar=nextValue.charAt(nextIndex++);
+    while (result == null) {
+      if (readingMetadata) {
+        if (nextChar == -1) {
+          if (metadataBuffer.length() > 0) {
+            result=createPreference(metadataBuffer,null);
+            paramNameBuffer=new StringBuilder();
+          }
+ else {
+          }
+        }
+ else         if (nextChar == ';') {
+          if (metadataBuffer.length() > 0) {
+            readingMetadata=false;
+            readingParamName=true;
+            paramNameBuffer=new StringBuilder();
+            parameters=new ParameterList();
+          }
+ else {
+            throw new IOException("Empty metadata name detected.");
+          }
+        }
+ else         if (HeaderUtils.isSpace(nextChar)) {
+        }
+ else         if (HeaderUtils.isText(nextChar)) {
+          metadataBuffer.append((char)nextChar);
+        }
+ else {
+          throw new IOException("Control characters are not allowed within a metadata name.");
+        }
+      }
+ else       if (readingParamName) {
+        if (nextChar == '=') {
+          if (paramNameBuffer.length() > 0) {
+            readingParamName=false;
+            readingParamValue=true;
+            paramValueBuffer=new StringBuilder();
+          }
+ else {
+            throw new IOException("Empty parameter name detected.");
+          }
         }
  else         if (nextChar == -1) {
-        }
+          if (paramNameBuffer.length() > 0) {
+            parameters.add(HeaderUtils.createParameter(paramNameBuffer,null));
+            result=createPreference(metadataBuffer,parameters);
+          }
  else {
+            throw new IOException("Empty parameter name detected.");
+          }
         }
-      }
- else       if (nextChar == ';') {
-        if (metadataBuffer.length() > 0) {
-          readingMetadata=false;
-          readingParamName=true;
-          paramNameBuffer=new StringBuilder();
-          parameters=new ParameterList();
-        }
- else {
-          throw new IOException("Empty metadata name detected.");
-        }
-      }
- else       if (nextChar == ' ') {
-      }
- else       if (HeaderUtils.isText(nextChar)) {
-        metadataBuffer.append((char)nextChar);
-      }
- else {
-        throw new IOException("Control characters are not allowed within a metadata name.");
-      }
-    }
- else     if (readingParamName) {
-      if (nextChar == '=') {
-        if (paramNameBuffer.length() > 0) {
-          readingParamName=false;
-          readingParamValue=true;
-          paramValueBuffer=new StringBuilder();
-        }
- else {
-          throw new IOException("Empty parameter name detected.");
-        }
-      }
- else       if ((nextChar == ',') || (nextChar == -1)) {
-        if (paramNameBuffer.length() > 0) {
+ else         if (nextChar == ';') {
           parameters.add(HeaderUtils.createParameter(paramNameBuffer,null));
-          result=createPreference(metadataBuffer,parameters);
+          paramNameBuffer=new StringBuilder();
+          readingParamName=true;
+          readingParamValue=false;
+        }
+ else         if (HeaderUtils.isSpace(nextChar) && (paramNameBuffer.length() == 0)) {
+        }
+ else         if (HeaderUtils.isTokenChar(nextChar)) {
+          paramNameBuffer.append((char)nextChar);
         }
  else {
-          throw new IOException("Empty parameter name detected.");
+          throw new IOException("Separator and control characters are not allowed within a token.");
         }
       }
- else       if (nextChar == ';') {
-        parameters.add(HeaderUtils.createParameter(paramNameBuffer,null));
-        paramNameBuffer=new StringBuilder();
-        readingParamName=true;
-        readingParamValue=false;
-      }
- else       if ((nextChar == ' ') && (paramNameBuffer.length() == 0)) {
-      }
- else       if (HeaderUtils.isTokenChar(nextChar)) {
-        paramNameBuffer.append((char)nextChar);
-      }
+ else       if (readingParamValue) {
+        if (nextChar == -1) {
+          if (paramValueBuffer.length() > 0) {
+            parameters.add(HeaderUtils.createParameter(paramNameBuffer,paramValueBuffer));
+            result=createPreference(metadataBuffer,parameters);
+          }
  else {
-        throw new IOException("Separator and control characters are not allowed within a token.");
-      }
-    }
- else     if (readingParamValue) {
-      if ((nextChar == ',') || (nextChar == -1)) {
-        if (paramValueBuffer.length() > 0) {
+            throw new IOException("Empty parameter value detected");
+          }
+        }
+ else         if (nextChar == ';') {
           parameters.add(HeaderUtils.createParameter(paramNameBuffer,paramValueBuffer));
-          result=createPreference(metadataBuffer,parameters);
+          paramNameBuffer=new StringBuilder();
+          readingParamName=true;
+          readingParamValue=false;
+        }
+ else         if ((nextChar == '"') && (paramValueBuffer.length() == 0)) {
+          paramValueBuffer.append(readQuotedString());
+        }
+ else         if (HeaderUtils.isTokenChar(nextChar)) {
+          paramValueBuffer.append((char)nextChar);
         }
  else {
-          throw new IOException("Empty parameter value detected");
+          throw new IOException("Separator and control characters are not allowed within a token");
         }
       }
- else       if (nextChar == ';') {
-        parameters.add(HeaderUtils.createParameter(paramNameBuffer,paramValueBuffer));
-        paramNameBuffer=new StringBuilder();
-        readingParamName=true;
-        readingParamValue=false;
-      }
- else       if ((nextChar == '"') && (paramValueBuffer.length() == 0)) {
-        paramValueBuffer.append(readQuotedString());
-      }
- else       if (HeaderUtils.isTokenChar(nextChar)) {
-        paramValueBuffer.append((char)nextChar);
-      }
- else {
-        throw new IOException("Separator and control characters are not allowed within a token");
-      }
+      nextChar=(nextIndex < nextValue.length()) ? nextValue.charAt(nextIndex++) : -1;
     }
   }
   return result;

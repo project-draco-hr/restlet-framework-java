@@ -5,18 +5,25 @@
   String baseScheme="";
   if (request.getBaseRef() != null) {
     baseDomain=request.getBaseRef().getHostDomain();
+    if (baseDomain == null)     baseDomain="";
     Integer basePortValue=request.getBaseRef().getHostPort();
     if (basePortValue == null)     basePortValue=request.getBaseRef().getSchemeProtocol().getDefaultPort();
     basePort=basePortValue.toString();
     baseScheme=request.getBaseRef().getScheme();
+    if (baseScheme == null)     baseScheme="";
   }
   String resourceDomain=request.getResourceRef().getHostDomain();
-  String resourceScheme=request.getResourceRef().getScheme();
+  if (resourceDomain == null)   resourceDomain="";
   Integer resourcePortValue=request.getResourceRef().getHostPort();
   if (resourcePortValue == null)   resourcePortValue=request.getResourceRef().getSchemeProtocol().getDefaultPort();
   String resourcePort=resourcePortValue.toString();
+  String resourceScheme=request.getResourceRef().getScheme();
+  if (resourceScheme == null)   resourceScheme="";
   String serverAddress=response.getServerInfo().getAddress();
-  String serverPort=response.getServerInfo().getPort().toString();
+  if (serverAddress == null)   serverAddress="";
+  String serverPort="";
+  Integer serverPortValue=response.getServerInfo().getPort();
+  if (serverPortValue != null)   serverPort=serverPortValue.toString();
   if (Pattern.matches(getHost().getBaseDomain(),baseDomain) && Pattern.matches(getHost().getBasePort(),basePort) && Pattern.matches(getHost().getBaseScheme(),baseScheme)&& Pattern.matches(getHost().getResourceDomain(),resourceDomain)&& Pattern.matches(getHost().getResourcePort(),resourcePort)&& Pattern.matches(getHost().getResourceScheme(),resourceScheme)&& Pattern.matches(getHost().getServerAddress(),serverAddress)&& Pattern.matches(getHost().getServerPort(),serverPort)) {
     result=1F;
   }
