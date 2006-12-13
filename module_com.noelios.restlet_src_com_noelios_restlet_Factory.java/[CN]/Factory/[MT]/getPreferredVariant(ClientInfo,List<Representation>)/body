@@ -32,31 +32,36 @@
         currentLanguage=currentLanguagePref.getMetadata();
         compatiblePref=true;
         currentScore=0;
-        if (variantLanguage.getMainTag().equalsIgnoreCase(currentLanguage.getMainTag())) {
+        if (variantLanguage.getPrimaryTag().equalsIgnoreCase(currentLanguage.getPrimaryTag())) {
           currentScore+=100;
         }
- else         if (!currentLanguage.getMainTag().equals("*")) {
+ else         if (!currentLanguage.getPrimaryTag().equals("*")) {
           compatiblePref=false;
         }
- else         if (currentLanguage.getSubTag() != null) {
+ else         if (!currentLanguage.getSubTags().isEmpty()) {
           compatiblePref=false;
         }
  else {
           currentScore++;
         }
         if (compatiblePref) {
-          if ((currentLanguage.getSubTag() == null) || (variantLanguage.getSubTag() == null)) {
-            if (variantLanguage.getSubTag() == currentLanguage.getSubTag()) {
+          if ((currentLanguage.getSubTags().isEmpty()) || (variantLanguage.getSubTags().isEmpty())) {
+            if (variantLanguage.getSubTags().isEmpty() && currentLanguage.getSubTags().isEmpty()) {
               currentScore+=10;
             }
  else {
             }
           }
- else           if (currentLanguage.getSubTag().equalsIgnoreCase(variantLanguage.getSubTag())) {
-            currentScore+=10;
-          }
  else {
-            compatiblePref=false;
+            int maxSize=Math.min(currentLanguage.getSubTags().size(),variantLanguage.getSubTags().size());
+            for (int i=0; i < maxSize && compatiblePref; i++) {
+              if (currentLanguage.getSubTags().get(i).equalsIgnoreCase(variantLanguage.getSubTags().get(i))) {
+                currentScore+=Math.pow(10,1 - i);
+              }
+ else {
+                compatiblePref=false;
+              }
+            }
           }
           if (compatiblePref && ((bestLanguagePref == null) || (currentScore > bestLanguageScore))) {
             bestLanguagePref=currentLanguagePref;
