@@ -20,9 +20,9 @@
     sb.append(':').append(httpCall.getServerPort());
   }
   setHostRef(new Reference(sb.toString()));
-  setResourceRef(new Reference(httpCall.getRequestUri()));
+  setResourceRef(new Reference(getHostRef(),httpCall.getRequestUri()));
   if (getResourceRef().isRelative()) {
-    getResourceRef().setBaseRef(getResourceRef().getBaseRef());
     setResourceRef(getResourceRef().getTargetRef());
+    getResourceRef().setBaseRef(getHostRef());
   }
 }
