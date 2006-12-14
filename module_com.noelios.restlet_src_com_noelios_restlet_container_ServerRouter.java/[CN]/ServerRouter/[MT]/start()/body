@@ -1,9 +1,9 @@
 {
   for (  VirtualHost host : getContainer().getHosts()) {
-    getScorers().add(new HostScorer(this,host));
+    getRoutes().add(new HostRoute(this,host));
   }
   if (getContainer().getDefaultHost() != null) {
-    getScorers().add(new HostScorer(this,getContainer().getDefaultHost()));
+    getRoutes().add(new HostRoute(this,getContainer().getDefaultHost()));
   }
   Restlet noHostMatched=new Restlet(getContainer().getContext()){
     public void handle(    Request request,    Response response){
@@ -11,6 +11,6 @@
     }
   }
 ;
-  setDefaultScorer(new Scorer(this,noHostMatched));
+  setDefaultRoute(new Route(this,"",noHostMatched));
   super.start();
 }

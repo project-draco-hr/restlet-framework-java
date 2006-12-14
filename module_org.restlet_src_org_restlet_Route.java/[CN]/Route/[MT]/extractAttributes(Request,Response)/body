@@ -1,0 +1,30 @@
+{
+  if (this.queryExtracts != null) {
+    Form form=request.getResourceRef().getQueryAsForm();
+    if (form != null) {
+      for (      ExtractInfo qe : getQueryExtracts()) {
+        if (qe.first) {
+          request.getAttributes().put(qe.attribute,form.subList(qe.value));
+        }
+ else {
+          request.getAttributes().put(qe.attribute,form.getFirst(qe.value));
+        }
+      }
+    }
+  }
+  if (this.entityExtracts != null) {
+    Form form=request.getEntityAsForm();
+    if (form != null) {
+      for (      ExtractInfo ie : getEntityExtracts()) {
+        if (ie.first) {
+          request.getAttributes().put(ie.attribute,form.subList(ie.value));
+        }
+ else {
+          request.getAttributes().put(ie.attribute,form.getFirst(ie.value));
+        }
+      }
+    }
+  }
+  if (this.modelExtracts != null) {
+  }
+}

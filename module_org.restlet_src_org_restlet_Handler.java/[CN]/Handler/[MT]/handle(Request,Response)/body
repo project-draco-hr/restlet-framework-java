@@ -1,43 +1,49 @@
 {
   init(request,response);
   if (isStarted()) {
-    Method method=request.getMethod();
-    if (method == null) {
-      defaultHandle(request,response);
-    }
- else     if (method.equals(Method.GET)) {
-      handleGet(request,response);
-    }
- else     if (method.equals(Method.HEAD)) {
-      handleHead(request,response);
-    }
- else     if (method.equals(Method.POST)) {
-      handlePost(request,response);
-    }
- else     if (method.equals(Method.PUT)) {
-      handlePut(request,response);
-    }
- else     if (method.equals(Method.DELETE)) {
-      handleDelete(request,response);
+    Resource target=findTarget(request,response);
+    if (target == null) {
+      response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
     }
  else {
-      java.lang.reflect.Method handleMethod=getHandleMethod(method);
-      if (handleMethod != null) {
-        try {
-          handleMethod.invoke(this,request,response);
-        }
- catch (        IllegalArgumentException e) {
-          getLogger().log(Level.WARNING,"Couldn't invoke the handle method for \"" + method + "\"",e);
-        }
-catch (        IllegalAccessException e) {
-          getLogger().log(Level.WARNING,"Couldn't access the handle method for \"" + method + "\"",e);
-        }
-catch (        InvocationTargetException e) {
-          getLogger().log(Level.WARNING,"Couldn't invoke the handle method for \"" + method + "\"",e);
-        }
+      Method method=request.getMethod();
+      if (method == null) {
+        response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,"No method specified");
       }
  else {
-        defaultHandle(request,response);
+        if (!allowMethod(method,target)) {
+          response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+          updateAllowedMethods(response,target);
+        }
+ else {
+          if (method.equals(Method.GET)) {
+            handleGet(target,request,response);
+          }
+ else           if (method.equals(Method.HEAD)) {
+            handleHead(target,request,response);
+          }
+ else           if (method.equals(Method.POST)) {
+            handlePost(target,request,response);
+          }
+ else           if (method.equals(Method.PUT)) {
+            handlePut(target,request,response);
+          }
+ else           if (method.equals(Method.DELETE)) {
+            handleDelete(target,request,response);
+          }
+ else           if (method.equals(Method.OPTIONS)) {
+            handleOptions(target,request,response);
+          }
+ else {
+            java.lang.reflect.Method handleMethod=getHandleMethod(method);
+            if (handleMethod != null) {
+              invoke(this,handleMethod,request,response);
+            }
+ else {
+              response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+            }
+          }
+        }
       }
     }
   }

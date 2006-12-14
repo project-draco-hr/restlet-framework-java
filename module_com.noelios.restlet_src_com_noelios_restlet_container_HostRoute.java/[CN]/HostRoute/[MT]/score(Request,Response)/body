@@ -1,0 +1,34 @@
+{
+  float result=0F;
+  String baseDomain="";
+  String basePort="";
+  String baseScheme="";
+  if (request.getResourceRef().getBaseRef() != null) {
+    baseDomain=request.getResourceRef().getBaseRef().getHostDomain();
+    if (baseDomain == null)     baseDomain="";
+    Integer basePortValue=request.getResourceRef().getBaseRef().getHostPort();
+    if (basePortValue == null)     basePortValue=request.getResourceRef().getBaseRef().getSchemeProtocol().getDefaultPort();
+    basePort=basePortValue.toString();
+    baseScheme=request.getResourceRef().getBaseRef().getScheme();
+    if (baseScheme == null)     baseScheme="";
+  }
+  String resourceDomain=request.getResourceRef().getHostDomain();
+  if (resourceDomain == null)   resourceDomain="";
+  Integer resourcePortValue=request.getResourceRef().getHostPort();
+  if (resourcePortValue == null)   resourcePortValue=request.getResourceRef().getSchemeProtocol().getDefaultPort();
+  String resourcePort=resourcePortValue.toString();
+  String resourceScheme=request.getResourceRef().getScheme();
+  if (resourceScheme == null)   resourceScheme="";
+  String serverAddress=response.getServerInfo().getAddress();
+  if (serverAddress == null)   serverAddress="";
+  String serverPort="";
+  Integer serverPortValue=response.getServerInfo().getPort();
+  if (serverPortValue != null)   serverPort=serverPortValue.toString();
+  if (Pattern.matches(getVirtualHost().getHostDomain(),baseDomain) && Pattern.matches(getVirtualHost().getHostPort(),basePort) && Pattern.matches(getVirtualHost().getHostScheme(),baseScheme)&& Pattern.matches(getVirtualHost().getResourceDomain(),resourceDomain)&& Pattern.matches(getVirtualHost().getResourcePort(),resourcePort)&& Pattern.matches(getVirtualHost().getResourceScheme(),resourceScheme)&& Pattern.matches(getVirtualHost().getServerAddress(),serverAddress)&& Pattern.matches(getVirtualHost().getServerPort(),serverPort)) {
+    result=1F;
+  }
+  if (getLogger().isLoggable(Level.FINER)) {
+    getLogger().finer("Call score for the \"" + getVirtualHost().getName() + "\" host: "+ result);
+  }
+  return result;
+}

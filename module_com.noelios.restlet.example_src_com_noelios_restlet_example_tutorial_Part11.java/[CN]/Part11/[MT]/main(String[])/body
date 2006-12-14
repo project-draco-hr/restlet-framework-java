@@ -10,22 +10,22 @@
       router.attach("/docs/",guard);
       Directory directory=new Directory(getContext(),ROOT_URI);
       guard.setNext(directory);
-      Handler account=new Handler(){
-        @Override public void handleGet(        Request request,        Response response){
+      Restlet account=new Restlet(){
+        @Override public void handle(        Request request,        Response response){
           String message="Account of user \"" + request.getAttributes().get("user") + "\"";
           response.setEntity(message,MediaType.TEXT_PLAIN);
         }
       }
 ;
-      Handler orders=new Handler(getContext()){
-        @Override public void handleGet(        Request request,        Response response){
+      Restlet orders=new Restlet(getContext()){
+        @Override public void handle(        Request request,        Response response){
           String message="Orders of user \"" + request.getAttributes().get("user") + "\"";
           response.setEntity(message,MediaType.TEXT_PLAIN);
         }
       }
 ;
-      Handler order=new Handler(getContext()){
-        @Override public void handleGet(        Request request,        Response response){
+      Restlet order=new Restlet(getContext()){
+        @Override public void handle(        Request request,        Response response){
           String message="Order \"" + request.getAttributes().get("order") + "\" for user \""+ request.getAttributes().get("user")+ "\"";
           response.setEntity(message,MediaType.TEXT_PLAIN);
         }
