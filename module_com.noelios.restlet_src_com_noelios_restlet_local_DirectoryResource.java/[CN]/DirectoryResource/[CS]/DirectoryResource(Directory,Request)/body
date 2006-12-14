@@ -6,9 +6,9 @@
   if (this.relativePart.startsWith("/")) {
     this.relativePart=this.relativePart.substring(1);
   }
-  this.targetUri=new Reference(directory.getRootUri() + this.relativePart).normalize().toString();
-  if (!this.targetUri.startsWith(directory.getRootUri())) {
-    this.targetUri=directory.getRootUri();
+  this.targetUri=new Reference(directory.getRootRef().toString() + this.relativePart).normalize().toString();
+  if (!this.targetUri.startsWith(directory.getRootRef().toString())) {
+    this.targetUri=directory.getRootRef().toString();
   }
   Response contextResponse=getDispatcher().get(this.targetUri);
   if ((contextResponse.getEntity() != null) && contextResponse.getEntity().getMediaType().equals(MediaType.TEXT_URI_LIST)) {
