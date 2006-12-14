@@ -1,8 +1,8 @@
 {
-  Container container=new Container();
-  container.getServers().add(Protocol.HTTP,8182);
-  container.getClients().add(Protocol.FILE);
-  Application application=new Application(container){
+  Component component=new Component();
+  component.getServers().add(Protocol.HTTP,8182);
+  component.getClients().add(Protocol.FILE);
+  Application application=new Application(component){
     @Override public Restlet createRoot(){
       Guard guard=new Guard(getContext(),ChallengeScheme.HTTP_BASIC,"Tutorial");
       guard.getAuthorizations().put("scott","tiger");
@@ -12,6 +12,6 @@
     }
   }
 ;
-  container.getDefaultHost().attach("",application);
-  container.start();
+  component.getDefaultHost().attach("",application);
+  component.start();
 }

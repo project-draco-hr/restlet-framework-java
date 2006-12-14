@@ -1,26 +1,26 @@
 {
-  Container clientContainer=new Container();
-  Container proxyContainer=new Container();
-  Container originContainer=new Container();
-  clientContainer.getClients().add(Protocol.HTTP);
-  proxyContainer.getClients().add(Protocol.HTTP);
+  Component clientComponent=new Component();
+  Component proxyComponent=new Component();
+  Component originComponent=new Component();
+  clientComponent.getClients().add(Protocol.HTTP);
+  proxyComponent.getClients().add(Protocol.HTTP);
   String target="http://localhost:9090${path}#[if query]?${query}#[end]";
-  Redirector proxy=new Redirector(proxyContainer.getContext(),target,Redirector.MODE_CONNECTOR);
-  Restlet trace=new Restlet(originContainer.getContext()){
+  Redirector proxy=new Redirector(proxyComponent.getContext(),target,Redirector.MODE_CONNECTOR);
+  Restlet trace=new Restlet(originComponent.getContext()){
     public void handle(    Request request,    Response response){
       String message="Resource URI:  " + request.getResourceRef() + '\n'+ "Base URI:      "+ request.getResourceRef().getBaseRef()+ '\n'+ "Relative path: "+ request.getResourceRef().getRemainingPart()+ '\n'+ "Query string:  "+ request.getResourceRef().getQuery()+ '\n'+ "Method name:   "+ request.getMethod()+ '\n';
       response.setEntity(new StringRepresentation(message,MediaType.TEXT_PLAIN));
     }
   }
 ;
-  proxyContainer.getDefaultHost().attach("",proxy);
-  originContainer.getDefaultHost().attach("",trace);
-  proxyContainer.getServers().add(Protocol.HTTP,8080);
-  originContainer.getServers().add(Protocol.HTTP,9090);
-  originContainer.start();
-  proxyContainer.start();
-  clientContainer.start();
-  Context context=clientContainer.getContext();
+  proxyComponent.getDefaultHost().attach("",proxy);
+  originComponent.getDefaultHost().attach("",trace);
+  proxyComponent.getServers().add(Protocol.HTTP,8080);
+  originComponent.getServers().add(Protocol.HTTP,9090);
+  originComponent.start();
+  proxyComponent.start();
+  clientComponent.start();
+  Context context=clientComponent.getContext();
   String uri="http://localhost:8080/?foo=bar";
   testCall(context,Method.GET,uri);
   testCall(context,Method.DELETE,uri);
@@ -29,7 +29,7 @@
   testCall(context,Method.DELETE,uri);
   uri="http://localhost:8080/v1/client/kwse/CnJlNUQV9%252BNNqbUf7Lhs2BYEK2Y%253D/user/johnm/uVGYTDK4kK4zsu96VHGeTCzfwso%253D/";
   testCall(context,Method.GET,uri);
-  clientContainer.stop();
-  originContainer.stop();
-  proxyContainer.stop();
+  clientComponent.stop();
+  originComponent.stop();
+  proxyComponent.stop();
 }

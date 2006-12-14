@@ -9,15 +9,15 @@ synchronized (ServerServlet.class) {
         if (applicationClassName != null) {
           try {
             Class targetClass=Class.forName(applicationClassName);
-            Container container=new Container();
-            Server server=new Server(container.getContext(),(List<Protocol>)null,request.getLocalAddr(),request.getLocalPort(),container);
+            Component component=new Component();
+            Server server=new Server(component.getContext(),(List<Protocol>)null,request.getLocalAddr(),request.getLocalPort(),component);
             result=new HttpServerHelper(server);
             getServletContext().setAttribute(NAME_SERVER_ATTRIBUTE,result);
-            if (container != null) {
-              Application application=(Application)targetClass.getConstructor(Context.class).newInstance(container.getContext());
-              application.setContext(new ServletContextAdapter(this,application,container.getContext()));
+            if (component != null) {
+              Application application=(Application)targetClass.getConstructor(Context.class).newInstance(component.getContext());
+              application.setContext(new ServletContextAdapter(this,application,component.getContext()));
               String uriPattern=request.getContextPath() + request.getServletPath();
-              container.getDefaultHost().attach(uriPattern,application);
+              component.getDefaultHost().attach(uriPattern,application);
               result.start();
             }
  else {
