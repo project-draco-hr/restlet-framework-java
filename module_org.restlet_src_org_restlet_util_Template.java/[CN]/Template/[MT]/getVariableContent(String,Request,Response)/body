@@ -67,6 +67,12 @@
           result=request.getEntity().getTag().getName();
         }
       }
+ else       if (variableName.startsWith("f")) {
+        result=getReferenceContent(variableName.substring(1),request.getReferrerRef());
+      }
+ else       if (variableName.startsWith("h")) {
+        result=getReferenceContent(variableName.substring(1),request.getHostRef());
+      }
  else       if (variableName.equals("m")) {
         if (request.getMethod() != null) {
           result=request.getMethod().getName();
@@ -76,6 +82,9 @@
         if (request.getProtocol() != null) {
           result=request.getProtocol().getName();
         }
+      }
+ else       if (variableName.startsWith("r")) {
+        result=getReferenceContent(variableName.substring(1),request.getResourceRef());
       }
     }
     if ((result == null) && (response != null)) {
@@ -119,9 +128,12 @@
           result=response.getEntity().getTag().getName();
         }
       }
+ else       if (variableName.startsWith("R")) {
+        result=getReferenceContent(variableName.substring(1),response.getRedirectRef());
+      }
  else       if (variableName.equals("S")) {
         if (response.getStatus() != null) {
-          result=response.getStatus().getName();
+          result=Integer.toString(response.getStatus().getCode());
         }
       }
  else       if (variableName.equals("SIA")) {
