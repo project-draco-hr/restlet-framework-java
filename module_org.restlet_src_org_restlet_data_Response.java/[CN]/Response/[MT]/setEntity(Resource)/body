@@ -11,6 +11,13 @@
     getDimensions().add(Dimension.MEDIA_TYPE);
     if (preferredVariant == null) {
       setStatus(Status.CLIENT_ERROR_NOT_ACCEPTABLE);
+      ReferenceList refs=new ReferenceList(variants.size());
+      for (      Representation variant : variants) {
+        if (variant.getIdentifier() != null) {
+          refs.add(variant.getIdentifier());
+        }
+      }
+      this.setEntity(refs.getTextRepresentation());
     }
  else {
       setEntity(preferredVariant);
