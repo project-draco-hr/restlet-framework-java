@@ -1,6 +1,6 @@
 {
   float result=0F;
-  if ((request.getResourceRef() != null) && (getTemplate() != null)) {
+  if ((getRouter() != null) && (request.getResourceRef() != null) && (getTemplate() != null)) {
     String remainingPart=request.getResourceRef().getRemainingPart();
     int matchedLength=getTemplate().match(remainingPart);
     if (matchedLength > 0) {
@@ -12,9 +12,9 @@
         result=1.0F;
       }
     }
-  }
-  if (getLogger().isLoggable(Level.FINER)) {
-    getLogger().finer("Call score for the \"" + getTemplate().getPattern() + "\" URI pattern: "+ result);
+    if (getLogger().isLoggable(Level.FINER)) {
+      getLogger().finer("Call score for the \"" + getTemplate().getPattern() + "\" URI pattern: "+ result);
+    }
   }
   return result;
 }
