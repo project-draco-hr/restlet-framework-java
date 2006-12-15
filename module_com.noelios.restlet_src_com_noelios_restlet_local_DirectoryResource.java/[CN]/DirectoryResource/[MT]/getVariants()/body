@@ -1,26 +1,33 @@
 {
   List<Representation> result=super.getVariants();
   getLogger().info("Getting variants for : " + getTargetUri());
+  String baseRef=this.request.getResourceRef().getBaseRef().toString(false,false);
+  if (!baseRef.endsWith("/")) {
+    baseRef+="/";
+  }
+  int lastIndex=this.relativePart.lastIndexOf("/");
+  if (lastIndex != -1) {
+    baseRef+=this.relativePart.substring(0,lastIndex);
+  }
+  int rootLength=getDirectoryUri().length();
   if (this.directoryContent != null) {
     if (this.baseName != null) {
+      String filePath;
       for (      Reference ref : getVariantsReferences()) {
         Response contextResponse=getDispatcher().get(ref.toString());
         if (contextResponse.getStatus().isSuccess() && (contextResponse.getEntity() != null)) {
-          result.add(contextResponse.getEntity());
+          filePath=ref.toString(false,false).substring(rootLength);
+          Representation rep=contextResponse.getEntity();
+          rep.setIdentifier(baseRef + filePath);
+          result.add(rep);
         }
       }
     }
     if (result.size() == 0) {
       if (this.targetDirectory && getDirectory().isListingAllowed()) {
         ReferenceList userList=new ReferenceList(this.directoryContent.size());
-        String baseRef=this.request.getResourceRef().getBaseRef().toString(false,false);
-        if (!baseRef.endsWith("/")) {
-          baseRef+="/";
-        }
-        baseRef+=this.relativePart;
         userList.setIdentifier(baseRef);
         String filePath;
-        int rootLength=getDirectoryUri().length();
         for (        Reference ref : this.directoryContent) {
           filePath=ref.toString(false,false).substring(rootLength);
           userList.add(baseRef + filePath);
