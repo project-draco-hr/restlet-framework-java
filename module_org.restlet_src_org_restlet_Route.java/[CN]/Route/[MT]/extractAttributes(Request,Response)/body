@@ -25,6 +25,19 @@
       }
     }
   }
+  if (this.cookieExtracts != null) {
+    Series<Cookie> cookies=request.getCookies();
+    if (cookies != null) {
+      for (      ExtractInfo qe : getCookieExtracts()) {
+        if (qe.first) {
+          request.getAttributes().put(qe.attribute,cookies.subList(qe.value));
+        }
+ else {
+          request.getAttributes().put(qe.attribute,cookies.getFirst(qe.value));
+        }
+      }
+    }
+  }
   if (this.modelExtracts != null) {
   }
 }

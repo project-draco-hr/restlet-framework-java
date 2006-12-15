@@ -1,5 +1,5 @@
 {
-  ParameterList requestHeaders=httpCall.getRequestHeaders();
+  Series<Parameter> requestHeaders=httpCall.getRequestHeaders();
   Reference hostRef=(request.getResourceRef().getBaseRef() != null) ? request.getResourceRef().getBaseRef() : request.getResourceRef();
   if (hostRef.getHostDomain() != null) {
     String host=hostRef.getHostDomain();
@@ -93,7 +93,7 @@
       requestHeaders.add(HttpConstants.HEADER_CONTENT_LANGUAGE,request.getEntity().getLanguage().toString());
     }
   }
-  ParameterList additionalHeaders=(ParameterList)request.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
+  Series<Parameter> additionalHeaders=(Series<Parameter>)request.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
   addAdditionalHeaders(requestHeaders,additionalHeaders);
   ChallengeResponse challengeResponse=request.getChallengeResponse();
   if (challengeResponse != null) {
