@@ -93,7 +93,32 @@
           readingParamValue=false;
         }
  else         if ((nextChar == '"') && (paramValueBuffer.length() == 0)) {
-          paramValueBuffer.append(readQuotedString());
+          boolean done=false;
+          boolean quotedPair=false;
+          while ((!done) && (nextChar != -1)) {
+            nextChar=(nextIndex < nextValue.length()) ? nextValue.charAt(nextIndex++) : -1;
+            if (quotedPair) {
+              if (HeaderUtils.isText(nextChar)) {
+                paramValueBuffer.append((char)nextChar);
+                quotedPair=false;
+              }
+ else {
+                throw new IOException("Invalid character detected in quoted string. Please check your value");
+              }
+            }
+ else             if (HeaderUtils.isDoubleQuote(nextChar)) {
+              done=true;
+            }
+ else             if (nextChar == '\\') {
+              quotedPair=true;
+            }
+ else             if (HeaderUtils.isText(nextChar)) {
+              paramValueBuffer.append((char)nextChar);
+            }
+ else {
+              throw new IOException("Invalid character detected in quoted string. Please check your value");
+            }
+          }
         }
  else         if (HeaderUtils.isTokenChar(nextChar)) {
           paramValueBuffer.append((char)nextChar);
