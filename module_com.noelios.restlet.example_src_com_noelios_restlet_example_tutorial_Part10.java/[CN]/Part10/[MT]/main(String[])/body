@@ -3,12 +3,12 @@
   component.getServers().add(Protocol.HTTP,8182);
   Application application=new Application(component){
     @Override public Restlet createRoot(){
-      String target="http://www.google.com/search?q=site:mysite.org+{terms}";
+      String target="http://www.google.com/search?q=site:mysite.org+{keywords}";
       return new Redirector(getContext(),target,Redirector.MODE_CLIENT_TEMPORARY);
     }
   }
 ;
   Route route=component.getDefaultHost().attach("/search",application);
-  route.extractQuery("terms","q",true);
+  route.extractQuery("keywords","q",true);
   component.start();
 }
