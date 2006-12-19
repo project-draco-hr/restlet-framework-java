@@ -1,7 +1,7 @@
 {
   if (response != null) {
     Representation entity=response.getEntity();
-    if ((entity != null) && !getMethod().equals(Method.HEAD.getName())) {
+    if ((entity != null) && !response.getRequest().getMethod().equals(Method.HEAD) && !response.getStatus().equals(Status.SUCCESS_NO_CONTENT)&& !response.getStatus().equals(Status.SUCCESS_RESET_CONTENT)) {
       ConnectorService connectorService=getConnectorService(response.getRequest());
       if (connectorService != null)       connectorService.beforeSend(entity);
       if (getResponseChannel() != null) {
