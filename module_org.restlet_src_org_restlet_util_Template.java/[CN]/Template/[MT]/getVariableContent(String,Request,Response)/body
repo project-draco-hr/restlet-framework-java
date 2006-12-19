@@ -2,9 +2,11 @@
   String result=null;
   Variable var=getVariables().get(variableName);
   if (var == null)   var=getDefaultVariable();
-  Object variable=request.getAttributes().get(variableName);
-  if ((request != null) && (variable != null)) {
-    result=variable.toString();
+  if (request != null) {
+    Object variable=request.getAttributes().get(variableName);
+    if (variable != null) {
+      result=variable.toString();
+    }
   }
   if ((result == null) && (response != null) && response.getAttributes().containsKey(variableName)) {
     result=response.getAttributes().get(variableName).toString();
