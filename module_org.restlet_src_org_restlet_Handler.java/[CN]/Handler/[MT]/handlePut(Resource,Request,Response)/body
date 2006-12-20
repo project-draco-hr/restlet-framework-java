@@ -1,12 +1,23 @@
 {
-  if (request.isEntityAvailable()) {
-    Result result=target.put(request.getEntity());
-    response.setStatus(result.getStatus());
-    response.setRedirectRef(result.getRedirectRef());
-    response.setEntity(result.getEntity());
-    updateAllowedMethods(response,target);
+  boolean bContinue=true;
+  Object oHeaders=request.getAttributes().get("org.restlet.http.headers");
+  if (oHeaders != null) {
+    Series headers=(Series)oHeaders;
+    if (headers.getFirst("Content-Range",true) != null) {
+      response.setStatus(new Status(Status.SERVER_ERROR_NOT_IMPLEMENTED,"the Content-Range header is not understood"));
+      bContinue=false;
+    }
   }
+  if (bContinue) {
+    if (request.isEntityAvailable()) {
+      Result result=target.put(request.getEntity());
+      response.setStatus(result.getStatus());
+      response.setRedirectRef(result.getRedirectRef());
+      response.setEntity(result.getEntity());
+      updateAllowedMethods(response,target);
+    }
  else {
-    response.setStatus(new Status(Status.CLIENT_ERROR_BAD_REQUEST,"Missing request entity"));
+      response.setStatus(new Status(Status.CLIENT_ERROR_BAD_REQUEST,"Missing request entity"));
+    }
   }
 }
