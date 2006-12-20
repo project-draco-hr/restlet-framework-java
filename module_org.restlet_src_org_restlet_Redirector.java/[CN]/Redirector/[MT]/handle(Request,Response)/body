@@ -1,26 +1,25 @@
 {
-  Template rt=new Template(getLogger(),this.targetTemplate);
-  String targetUri=rt.format(request,response);
-  Reference targetRef=new Reference(targetUri);
+  Reference targetRef=getTargetRef(request,response);
 switch (this.mode) {
 case MODE_CLIENT_PERMANENT:
-    getLogger().log(Level.INFO,"Permanently redirecting client to: " + targetUri);
+    getLogger().log(Level.INFO,"Permanently redirecting client to: " + targetRef);
   response.redirectPermanent(targetRef);
 break;
 case MODE_CLIENT_FOUND:
-getLogger().log(Level.INFO,"Redirecting client to found location: " + targetUri);
+getLogger().log(Level.INFO,"Redirecting client to found location: " + targetRef);
 response.setRedirectRef(targetRef);
 response.setStatus(Status.REDIRECTION_FOUND);
 break;
 case MODE_CLIENT_TEMPORARY:
-getLogger().log(Level.INFO,"Temporarily redirecting client to: " + targetUri);
+getLogger().log(Level.INFO,"Temporarily redirecting client to: " + targetRef);
 response.redirectTemporary(targetRef);
 break;
 case MODE_CONNECTOR:
-getLogger().log(Level.INFO,"Redirecting via client connector to: " + targetUri);
+getLogger().log(Level.INFO,"Redirecting via client connector to: " + targetRef);
 request.setResourceRef(targetRef);
 request.getAttributes().remove("org.restlet.http.headers");
 getContext().getDispatcher().handle(request,response);
+response.setEntity(rewrite(response.getEntity()));
 response.getAttributes().remove("org.restlet.http.headers");
 break;
 }
