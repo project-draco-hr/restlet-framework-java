@@ -5,21 +5,31 @@
   sb.append('\t');
   sb.append(String.format("%tT",currentTime));
   sb.append('\t');
+  String clientAddress=request.getClientInfo().getAddress();
+  sb.append((clientAddress == null) ? "-" : clientAddress);
+  sb.append('\t');
+  if (this.logService.isIdentityCheck()) {
+    IdentClient ic=new IdentClient(getLogger(),request.getClientInfo().getAddress(),request.getClientInfo().getPort(),response.getServerInfo().getPort());
+    sb.append((ic.getUserIdentifier() == null) ? "-" : ic.getUserIdentifier());
+  }
+ else {
+    sb.append('-');
+  }
+  sb.append('\t');
+  String serverAddress=response.getServerInfo().getAddress();
+  sb.append((serverAddress == null) ? "-" : serverAddress);
+  sb.append('\t');
+  Integer serverport=response.getServerInfo().getPort();
+  sb.append((serverport == null) ? "-" : serverport.toString());
+  sb.append('\t');
   String methodName=request.getMethod().getName();
   sb.append((methodName == null) ? "-" : methodName);
   sb.append('\t');
   String resourcePath=request.getResourceRef().getPath();
   sb.append((resourcePath == null) ? "-" : resourcePath);
-  sb.append("\t-");
   sb.append('\t');
-  String clientAddress=request.getClientInfo().getAddress();
-  sb.append((clientAddress == null) ? "-" : clientAddress);
-  sb.append("\t-");
-  sb.append('\t');
-  String agentName=request.getClientInfo().getAgent();
-  sb.append((agentName == null) ? "-" : agentName);
-  sb.append('\t');
-  sb.append((request.getReferrerRef() == null) ? "-" : request.getReferrerRef().getIdentifier());
+  String resourceQuery=request.getResourceRef().getQuery();
+  sb.append((resourceQuery == null) ? "-" : resourceQuery);
   sb.append('\t');
   sb.append((response.getStatus() == null) ? "-" : Integer.toString(response.getStatus().getCode()));
   sb.append('\t');
@@ -30,14 +40,20 @@
     sb.append((response.getEntity().getSize() == -1) ? "-" : Long.toString(response.getEntity().getSize()));
   }
   sb.append('\t');
-  String query=request.getResourceRef().getQuery();
-  sb.append((query == null) ? "-" : query);
-  sb.append('\t');
-  sb.append((request.getResourceRef() == null) ? "-" : request.getResourceRef().getHostIdentifier());
+  if (request.getEntity() == null) {
+    sb.append('0');
+  }
+ else {
+    sb.append((request.getEntity().getSize() == -1) ? "-" : Long.toString(request.getEntity().getSize()));
+  }
   sb.append('\t');
   sb.append(duration);
   sb.append('\t');
-  IdentClient ic=new IdentClient(getLogger(),request.getClientInfo().getAddress(),request.getClientInfo().getPort(),response.getServerInfo().getPort());
-  sb.append((ic.getUserIdentifier() == null) ? "-" : ic.getUserIdentifier());
+  sb.append((request.getHostRef() == null) ? "-" : request.getHostRef().toString());
+  sb.append('\t');
+  String agentName=request.getClientInfo().getAgent();
+  sb.append((agentName == null) ? "-" : agentName);
+  sb.append('\t');
+  sb.append((request.getReferrerRef() == null) ? "-" : request.getReferrerRef().getIdentifier());
   return sb.toString();
 }
