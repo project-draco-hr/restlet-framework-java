@@ -1,11 +1,39 @@
 {
   boolean bContinue=true;
-  Object oHeaders=request.getAttributes().get("org.restlet.http.headers");
-  if (oHeaders != null) {
-    Series headers=(Series)oHeaders;
-    if (headers.getFirst("Content-Range",true) != null) {
-      response.setStatus(new Status(Status.SERVER_ERROR_NOT_IMPLEMENTED,"the Content-Range header is not understood"));
-      bContinue=false;
+  if (hasPreconditions(request.getConditions())) {
+    Representation representation=null;
+    if (isNegotiateContent()) {
+      List<Representation> variants=target.getVariants();
+      if ((variants != null) && (!variants.isEmpty())) {
+        representation=response.getRequest().getClientInfo().getPreferredVariant(variants);
+      }
+    }
+ else {
+      List<Representation> variants=target.getVariants();
+      if (variants.size() == 1) {
+        representation=variants.get(0);
+      }
+ else {
+        response.setStatus(Status.CLIENT_ERROR_PRECONDITION_FAILED);
+        bContinue=false;
+      }
+    }
+    if (representation != null && bContinue) {
+      Status status=getConditionalStatus(request.getConditions(),request.getMethod(),representation);
+      if (status != null) {
+        response.setStatus(status);
+        bContinue=false;
+      }
+    }
+  }
+  if (bContinue) {
+    Object oHeaders=request.getAttributes().get("org.restlet.http.headers");
+    if (oHeaders != null) {
+      Series headers=(Series)oHeaders;
+      if (headers.getFirst("Content-Range",true) != null) {
+        response.setStatus(new Status(Status.SERVER_ERROR_NOT_IMPLEMENTED,"the Content-Range header is not understood"));
+        bContinue=false;
+      }
     }
   }
   if (bContinue) {

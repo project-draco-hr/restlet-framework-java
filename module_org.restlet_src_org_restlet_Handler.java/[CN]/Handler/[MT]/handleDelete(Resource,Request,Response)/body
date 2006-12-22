@@ -1,6 +1,35 @@
 {
-  Result result=target.delete();
-  response.setStatus(result.getStatus());
-  response.setRedirectRef(result.getRedirectRef());
-  response.setEntity(result.getEntity());
+  boolean bContinue=true;
+  if (hasPreconditions(request.getConditions())) {
+    Representation representation=null;
+    if (isNegotiateContent()) {
+      List<Representation> variants=target.getVariants();
+      if ((variants != null) && (!variants.isEmpty())) {
+        representation=response.getRequest().getClientInfo().getPreferredVariant(variants);
+      }
+    }
+ else {
+      List<Representation> variants=target.getVariants();
+      if (variants.size() == 1) {
+        representation=variants.get(0);
+      }
+ else {
+        response.setStatus(Status.CLIENT_ERROR_PRECONDITION_FAILED);
+        bContinue=false;
+      }
+    }
+    if (representation != null && bContinue) {
+      Status status=getConditionalStatus(request.getConditions(),request.getMethod(),representation);
+      if (status != null) {
+        response.setStatus(status);
+        bContinue=false;
+      }
+    }
+  }
+  if (bContinue) {
+    Result result=target.delete();
+    response.setStatus(result.getStatus());
+    response.setRedirectRef(result.getRedirectRef());
+    response.setEntity(result.getEntity());
+  }
 }
