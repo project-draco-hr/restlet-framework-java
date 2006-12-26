@@ -2,7 +2,9 @@
   super(null);
   if (Factory.getInstance() != null) {
     this.helper=Factory.getInstance().createHelper(this,parentContext);
-    setContext(this.helper.createContext());
+    String applicationName=(getName() == null) ? Integer.toString(hashCode()) : getName();
+    String loggerName=Application.class.getCanonicalName() + "." + applicationName;
+    setContext(this.helper.createContext(loggerName));
   }
   this.name=null;
   this.description=null;
@@ -12,7 +14,6 @@
   this.connectorService=null;
   this.decoderService=null;
   this.metadataService=null;
-  this.logService=null;
   this.statusService=null;
   this.tunnelService=null;
 }
