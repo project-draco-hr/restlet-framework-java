@@ -5,10 +5,10 @@
  else {
     String term=Reference.encode(args[0]);
     String uri=BASE_URI + "?appid=restbook&query=" + term;
-    Client client=new Client(Protocol.HTTP);
-    SaxRepresentation document=client.get(uri).getEntityAsSax();
-    document.putNamespace("y","urn:yahoo:srch");
+    Response response=new Client(Protocol.HTTP).get(uri);
+    SaxRepresentation document=response.getEntityAsSax();
     String expr="/y:ResultSet/y:Result/y:Title/text()";
+    document.putNamespace("y","urn:yahoo:srch");
     for (    Node node : document.getNodes(expr)) {
       System.out.println(node.getNodeValue());
     }

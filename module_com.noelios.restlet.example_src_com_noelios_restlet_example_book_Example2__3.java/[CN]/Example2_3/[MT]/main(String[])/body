@@ -1,0 +1,17 @@
+{
+  if (args.length != 2) {
+    System.err.println("You need to pass your del.icio.us user name and password");
+  }
+ else {
+    Request request=new Request(Method.GET,"https://api.del.icio.us/v1/posts/recent");
+    request.setChallengeResponse(new ChallengeResponse(ChallengeScheme.HTTP_BASIC,args[0],args[1]));
+    Response response=new Client(Protocol.HTTPS).handle(request);
+    SaxRepresentation document=response.getEntityAsSax();
+    for (    Node node : document.getNodes("/posts/post")) {
+      NamedNodeMap attrs=node.getAttributes();
+      String desc=attrs.getNamedItem("description").getNodeValue();
+      String href=attrs.getNamedItem("href").getNodeValue();
+      System.out.println(desc + ": " + href);
+    }
+  }
+}
