@@ -1,0 +1,13 @@
+{
+  Object result=null;
+  XPath xpath=XPathFactory.newInstance().newXPath();
+  xpath.setNamespaceContext(this);
+  if (this.xmlDocument != null) {
+    result=xpath.evaluate(expression,this.xmlDocument,returnType);
+  }
+ else   if (this.xmlRepresentation != null) {
+    InputSource source=new InputSource(this.xmlRepresentation.getStream());
+    result=xpath.evaluate(expression,source,returnType);
+  }
+  return result;
+}
