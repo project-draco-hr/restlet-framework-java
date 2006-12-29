@@ -1,0 +1,63 @@
+{
+  Status result=null;
+  if (conditions.getMatch() != null && conditions.getMatch().size() != 0) {
+    boolean matched=false;
+    if (variant != null) {
+      if (variant.getTag() != null) {
+        Tag tag;
+        for (Iterator<Tag> iter=conditions.getMatch().iterator(); !matched && iter.hasNext(); ) {
+          tag=iter.next();
+          matched=tag.equals(variant.getTag(),false);
+        }
+      }
+    }
+ else {
+      matched=conditions.getMatch().get(0).equals(Tag.ALL);
+    }
+    if (!matched) {
+      result=Status.CLIENT_ERROR_PRECONDITION_FAILED;
+    }
+  }
+  if (result == null && conditions.getNoneMatch() != null && conditions.getNoneMatch().size() != 0) {
+    boolean matched=false;
+    if (variant != null) {
+      if (variant.getTag() != null) {
+        Tag tag;
+        for (Iterator<Tag> iter=conditions.getNoneMatch().iterator(); !matched && iter.hasNext(); ) {
+          tag=iter.next();
+          matched=tag.equals(variant.getTag(),(Method.GET.equals(method) || Method.HEAD.equals(method)));
+        }
+        if (!matched) {
+          Date modifiedSince=conditions.getModifiedSince();
+          matched=((modifiedSince == null) || (variant.getModificationDate() == null) || DateUtils.after(modifiedSince,variant.getModificationDate()));
+        }
+      }
+    }
+ else {
+      matched=conditions.getNoneMatch().get(0).equals(Tag.ALL);
+    }
+    if (matched) {
+      if (Method.GET.equals(method) || Method.HEAD.equals(method)) {
+        result=Status.REDIRECTION_NOT_MODIFIED;
+      }
+ else {
+        result=Status.CLIENT_ERROR_PRECONDITION_FAILED;
+      }
+    }
+  }
+  if (result == null && conditions.getModifiedSince() != null) {
+    Date modifiedSince=conditions.getModifiedSince();
+    boolean isModifiedSince=((modifiedSince == null) || (variant.getModificationDate() == null) || DateUtils.after(modifiedSince,variant.getModificationDate()));
+    if (!isModifiedSince) {
+      result=Status.REDIRECTION_NOT_MODIFIED;
+    }
+  }
+  if (result == null && conditions.getUnmodifiedSince() != null) {
+    Date unModifiedSince=conditions.getUnmodifiedSince();
+    boolean isUnModifiedSince=((unModifiedSince == null) || (variant.getModificationDate() == null) || DateUtils.after(variant.getModificationDate(),unModifiedSince));
+    if (!isUnModifiedSince) {
+      result=Status.CLIENT_ERROR_PRECONDITION_FAILED;
+    }
+  }
+  return result;
+}
