@@ -27,9 +27,13 @@
       if (this.targetDirectory && getDirectory().isListingAllowed()) {
         ReferenceList userList=new ReferenceList(this.directoryContent.size());
         userList.setIdentifier(baseRef);
-        String filePath;
         for (        Reference ref : this.directoryContent) {
-          filePath=ref.toString(false,false).substring(rootLength);
+          String filePart=ref.toString(false,false).substring(rootLength);
+          StringBuilder filePath=new StringBuilder();
+          if ((!baseRef.endsWith("/")) && (!filePart.startsWith("/"))) {
+            filePath.append('/');
+          }
+          filePath.append(filePart);
           userList.add(baseRef + filePath);
         }
         result=getDirectory().getDirectoryVariants(userList);
