@@ -5,31 +5,38 @@
   if (((requestStream != null) || (requestChannel != null))) {
     Encoding contentEncoding=null;
     Language contentLanguage=null;
-    MediaType contentType=null;
+    MediaType contentMediaType=null;
+    CharacterSet contentCharacterSet=null;
     long contentLength=-1L;
     for (    Parameter header : getRequestHeaders()) {
       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_ENCODING)) {
-        contentEncoding=new Encoding(header.getValue());
+        contentEncoding=Encoding.valueOf(header.getValue());
       }
  else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LANGUAGE)) {
-        contentLanguage=new Language(header.getValue());
+        contentLanguage=Language.valueOf(header.getValue());
       }
  else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_TYPE)) {
-        contentType=new MediaType(header.getValue());
+        ContentType contentType=new ContentType(header.getValue());
+        if (contentType != null) {
+          contentMediaType=contentType.getMediaType();
+          contentCharacterSet=contentType.getCharacterSet();
+        }
+        contentMediaType=MediaType.valueOf(header.getValue());
       }
  else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LENGTH)) {
         contentLength=Long.parseLong(header.getValue());
       }
     }
     if (requestStream != null) {
-      result=new InputRepresentation(requestStream,contentType,contentLength);
+      result=new InputRepresentation(requestStream,contentMediaType,contentLength);
     }
  else     if (requestChannel != null) {
-      result=new ReadableRepresentation(requestChannel,contentType,contentLength);
+      result=new ReadableRepresentation(requestChannel,contentMediaType,contentLength);
     }
     if (result != null) {
       result.setEncoding(contentEncoding);
       result.setLanguage(contentLanguage);
+      result.setCharacterSet(contentCharacterSet);
     }
   }
   return result;
