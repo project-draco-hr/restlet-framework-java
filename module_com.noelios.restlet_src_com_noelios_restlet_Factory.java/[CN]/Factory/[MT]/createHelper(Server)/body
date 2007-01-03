@@ -1,10 +1,10 @@
 {
   Helper result=null;
   if (server.getProtocols().size() > 0) {
-    for (    ConnectorHelper registeredServer : getRegisteredServers()) {
-      if (registeredServer.getProtocols().containsAll(server.getProtocols())) {
+    for (    ConnectorHelper connector : getRegisteredServers()) {
+      if (connector.getProtocols().containsAll(server.getProtocols())) {
         try {
-          result=registeredServer.getClass().getConstructor(Server.class).newInstance(server);
+          result=connector.getClass().getConstructor(Server.class).newInstance(server);
         }
  catch (        Exception e) {
           logger.log(Level.SEVERE,"Exception while instantiation the server connector.",e);
@@ -17,6 +17,7 @@
       for (      Protocol p : server.getProtocols()) {
         sb.append(p.getName()).append(" ");
       }
+      sb.append(". Please add the JAR of a matching connector to your classpath.");
       logger.log(Level.WARNING,sb.toString());
     }
   }
