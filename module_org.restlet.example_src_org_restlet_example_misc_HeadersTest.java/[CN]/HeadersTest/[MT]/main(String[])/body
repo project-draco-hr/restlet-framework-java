@@ -1,0 +1,15 @@
+{
+  Restlet restlet=new Restlet(){
+    @Override public void handle(    Request request,    Response response){
+      Series headers=(Series)request.getAttributes().get("org.restlet.http.headers");
+      response.setEntity("Accept header: " + headers.getFirstValue("accept",true),MediaType.TEXT_PLAIN);
+      headers=new Form();
+      headers.add("X-Test","Test value");
+      headers.add("Location","http://www.restlet.org");
+      response.getAttributes().put("org.restlet.http.headers",headers);
+    }
+  }
+;
+  Server server=new Server(Protocol.HTTP,8182,restlet);
+  server.start();
+}
