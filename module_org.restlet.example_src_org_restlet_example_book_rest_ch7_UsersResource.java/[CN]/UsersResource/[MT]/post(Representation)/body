@@ -1,0 +1,20 @@
+{
+  Result result=null;
+  if (entity.getMediaType().equals(MediaType.APPLICATION_WWW_FORM)) {
+    Form form=new Form(entity);
+    User newUser=new User();
+    newUser.setEmail(form.getFirstValue("user[email]"));
+    newUser.setFullName(form.getFirstValue("user[full_name]"));
+    newUser.setName(form.getFirstValue("user[name]"));
+    newUser.setPassword(form.getFirstValue("user[password]"));
+    if (UserResource.findUser(newUser.getName()) != null) {
+      result=new Result(Status.CLIENT_ERROR_CONFLICT);
+    }
+ else {
+      Application.CONTAINER.set(newUser);
+      Application.CONTAINER.commit();
+      result=new Result(Status.SUCCESS_CREATED,new Reference(this.baseRef.toString() + "/" + newUser.getName()));
+    }
+  }
+  return result;
+}

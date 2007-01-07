@@ -1,16 +1,5 @@
 {
-  Resource result=null;
-  Predicate<User> predicate=new Predicate<User>(){
-    private static final long serialVersionUID=1L;
-    @Override public boolean match(    User candidate){
-      String userName=(String)request.getAttributes().get("username");
-      return (userName != null) && (userName.equals(candidate.getName()));
-    }
-  }
-;
-  List<User> users=Application.CONTAINER.query(predicate);
-  if ((users != null) && (users.size() > 0)) {
-    result=new UserResource(users.get(0));
-  }
-  return result;
+  String userName=(String)request.getAttributes().get("username");
+  User user=UserResource.findUser(userName);
+  return (user == null) ? null : new UserResource(user);
 }

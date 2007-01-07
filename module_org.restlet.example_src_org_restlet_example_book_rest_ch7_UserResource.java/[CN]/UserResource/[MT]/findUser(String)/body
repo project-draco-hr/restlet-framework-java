@@ -1,0 +1,17 @@
+{
+  User result=null;
+  if (userName != null) {
+    Predicate<User> predicate=new Predicate<User>(){
+      private static final long serialVersionUID=1L;
+      @Override public boolean match(      User candidate){
+        return userName.equals(candidate.getName());
+      }
+    }
+;
+    List<User> users=Application.CONTAINER.query(predicate);
+    if ((users != null) && (users.size() > 0)) {
+      result=users.get(0);
+    }
+  }
+  return result;
+}
