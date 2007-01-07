@@ -1,3 +1,14 @@
 {
+  if ((this.dom == null) && (this.xmlRepresentation != null)) {
+    try {
+      this.dom=getDocumentBuilder().parse(xmlRepresentation.getStream());
+    }
+ catch (    SAXException se) {
+      getLogger().log(Level.WARNING,"Couldn't read the XML representation",se);
+    }
+catch (    IOException ioe) {
+      getLogger().log(Level.WARNING,"Couldn't read the XML representation",ioe);
+    }
+  }
   return this.dom;
 }
