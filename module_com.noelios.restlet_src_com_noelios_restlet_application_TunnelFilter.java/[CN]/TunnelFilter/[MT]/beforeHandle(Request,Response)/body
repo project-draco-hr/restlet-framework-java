@@ -1,12 +1,12 @@
 {
   super.beforeHandle(request,response);
-  Form query=request.getResourceRef().getQueryAsForm();
+  Form query=request.getResourceRef().getQueryAsForm(null);
   if (getApplication().getTunnelService().isMethodTunnel() && request.getMethod().equals(Method.POST)) {
     String methodName=query.getFirstValue(getApplication().getTunnelService().getMethodParameter());
     if (methodName != null) {
       request.setMethod(Method.valueOf(methodName));
       query.removeFirst("method");
-      request.getResourceRef().setQuery(query.getQueryString());
+      request.getResourceRef().setQuery(query.getQueryString(null));
     }
   }
   if (request.getMethod().equals(Method.GET) && getApplication().getTunnelService().isPreferencesTunnel()) {
