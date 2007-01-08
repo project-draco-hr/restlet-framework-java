@@ -5,6 +5,8 @@
     String methodName=query.getFirstValue(getApplication().getTunnelService().getMethodParameter());
     if (methodName != null) {
       request.setMethod(Method.valueOf(methodName));
+      query.removeFirst("method");
+      request.getResourceRef().setQuery(query.getQueryString());
     }
   }
   if (request.getMethod().equals(Method.GET) && getApplication().getTunnelService().isPreferencesTunnel()) {
