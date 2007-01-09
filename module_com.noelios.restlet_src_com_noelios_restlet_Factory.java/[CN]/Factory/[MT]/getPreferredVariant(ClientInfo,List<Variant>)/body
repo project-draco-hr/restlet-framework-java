@@ -25,8 +25,14 @@
       currentVariant=(Representation)iter1.next();
       variantLanguage=currentVariant.getLanguage();
       variantMediaType=currentVariant.getMediaType();
+      Preference<Language> fallBackLanguagePref=null;
       List<Preference<Language>> languagePrefs=client.getAcceptedLanguages();
-      if (languagePrefs.size() == 0)       languagePrefs.add(new Preference<Language>(Language.ALL));
+      if (languagePrefs.isEmpty()) {
+        languagePrefs.add(new Preference<Language>(Language.ALL));
+      }
+ else {
+        fallBackLanguagePref=languagePrefs.get(0);
+      }
       for (Iterator<Preference<Language>> iter2=languagePrefs.iterator(); (variantLanguage != null) && iter2.hasNext(); ) {
         currentLanguagePref=iter2.next();
         currentLanguage=currentLanguagePref.getMetadata();
@@ -68,6 +74,9 @@
             bestLanguageScore=currentScore;
           }
         }
+      }
+      if (bestLanguagePref == null) {
+        bestLanguagePref=fallBackLanguagePref;
       }
       compatibleLanguage=(variantLanguage == null) || (bestLanguagePref != null);
       List<Preference<MediaType>> mediaTypePrefs=client.getAcceptedMediaTypes();
