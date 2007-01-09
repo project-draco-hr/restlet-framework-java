@@ -1,16 +1,3 @@
 {
-  int result=-1;
-  Matcher matcher=getRegexPattern().matcher(formattedString);
-  boolean matched=((getMatchingMode() == MODE_EQUALS) && matcher.matches()) || ((getMatchingMode() == MODE_STARTS_WITH) && matcher.lookingAt());
-  if (matched) {
-    result=matcher.end();
-    String attributeName=null;
-    String attributeValue=null;
-    for (int i=0; i < getRegexVariables().size(); i++) {
-      attributeName=getRegexVariables().get(i);
-      attributeValue=matcher.group(i + 1);
-      request.getAttributes().put(attributeName,attributeValue);
-    }
-  }
-  return result;
+  return parse(formattedString,request.getAttributes());
 }
