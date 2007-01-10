@@ -2,19 +2,19 @@
   Result result=null;
   if (entity.getMediaType().equals(MediaType.APPLICATION_WWW_FORM)) {
     Form form=new Form(entity);
-    this.user=new User();
-    this.user.setName(this.userName);
+    if (this.user == null) {
+      this.user=new User();
+      this.user.setName(this.userName);
+      result=new Result(Status.SUCCESS_CREATED);
+    }
+ else {
+      result=new Result(Status.SUCCESS_NO_CONTENT);
+    }
     this.user.setEmail(form.getFirstValue("user[email]"));
     this.user.setFullName(form.getFirstValue("user[full_name]"));
     this.user.setPassword(form.getFirstValue("user[password]"));
-    if (UserResource.findUser(this.user.getName()) != null) {
-      result=new Result(Status.CLIENT_ERROR_CONFLICT);
-    }
- else {
-      Application.CONTAINER.set(this.user);
-      Application.CONTAINER.commit();
-      result=new Result(Status.SUCCESS_CREATED);
-    }
+    Application.CONTAINER.set(this.user);
+    Application.CONTAINER.commit();
   }
   return result;
 }
