@@ -3,9 +3,9 @@
   String userName=(String)request.getAttributes().get("username");
   User user=UserResource.findUser(userName);
   if (user != null) {
-    String tagName=(String)request.getAttributes().get("tag");
-    Tag tag=TagResource.findTag(tagName);
-    result=(tag == null) ? null : new TagResource(user,tag);
+    String uri=(String)request.getAttributes().get("URI");
+    Bookmark bookmark=user.getBookmark(uri);
+    result=(bookmark == null) ? null : new BookmarkResource(bookmark);
   }
   return result;
 }
