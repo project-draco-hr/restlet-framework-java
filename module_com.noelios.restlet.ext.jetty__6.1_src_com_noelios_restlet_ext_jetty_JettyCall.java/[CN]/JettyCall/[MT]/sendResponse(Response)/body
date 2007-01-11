@@ -4,7 +4,7 @@
     header=iter.next();
     getConnection().getResponse().addHeader(header.getName(),header.getValue());
   }
-  if (Status.isError(getStatusCode())) {
+  if (Status.isError(getStatusCode()) && (response == null)) {
     try {
       getConnection().getResponse().sendError(getStatusCode(),getReasonPhrase());
     }
@@ -14,6 +14,7 @@
   }
  else {
     getConnection().getResponse().setStatus(getStatusCode());
+    super.sendResponse(response);
   }
   super.sendResponse(response);
   this.connection.completeResponse();
