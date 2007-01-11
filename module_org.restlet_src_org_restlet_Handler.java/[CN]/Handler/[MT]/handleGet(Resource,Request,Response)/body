@@ -6,7 +6,12 @@
       response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
     }
  else {
-      Variant preferredVariant=response.getRequest().getClientInfo().getPreferredVariant(variants);
+      Language language=null;
+      if (response.getRequest().getAttributes().get(Application.class.getCanonicalName()) != null) {
+        Application application=(Application)response.getRequest().getAttributes().get(Application.class.getCanonicalName());
+        language=application.getMetadataService().getDefaultLanguage();
+      }
+      Variant preferredVariant=response.getRequest().getClientInfo().getPreferredVariant(variants,language);
       response.getDimensions().add(Dimension.CHARACTER_SET);
       response.getDimensions().add(Dimension.ENCODING);
       response.getDimensions().add(Dimension.LANGUAGE);
