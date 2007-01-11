@@ -5,7 +5,7 @@
  else {
     Parameter currentParam=null;
     Language currentLanguage=null;
-    Language variantLanguage=null;
+    List<Language> variantLanguages=null;
     MediaType currentMediaType=null;
     MediaType variantMediaType=null;
     boolean compatiblePref=false;
@@ -23,58 +23,60 @@
     float bestMediaTypeScore=0;
     for (Iterator<Variant> iter1=variants.iterator(); iter1.hasNext(); ) {
       currentVariant=iter1.next();
-      variantLanguage=currentVariant.getLanguage();
+      variantLanguages=currentVariant.getLanguages();
       variantMediaType=currentVariant.getMediaType();
-      List<Preference<Language>> languagePrefs=client.getAcceptedLanguages();
-      if (languagePrefs.isEmpty()) {
-        languagePrefs.add(new Preference<Language>(Language.ALL));
-      }
- else {
-        languagePrefs.add(new Preference<Language>(Language.ALL,0.001F));
-      }
-      for (Iterator<Preference<Language>> iter2=languagePrefs.iterator(); (variantLanguage != null) && iter2.hasNext(); ) {
-        currentLanguagePref=iter2.next();
-        currentLanguage=currentLanguagePref.getMetadata();
-        compatiblePref=true;
-        currentScore=0;
-        if (variantLanguage.getPrimaryTag().equalsIgnoreCase(currentLanguage.getPrimaryTag())) {
-          currentScore+=100;
-        }
- else         if (!currentLanguage.getPrimaryTag().equals("*")) {
-          compatiblePref=false;
-        }
- else         if (!currentLanguage.getSubTags().isEmpty()) {
-          compatiblePref=false;
+      for (      Language variantLanguage : variantLanguages) {
+        List<Preference<Language>> languagePrefs=client.getAcceptedLanguages();
+        if (languagePrefs.isEmpty()) {
+          languagePrefs.add(new Preference<Language>(Language.ALL));
         }
  else {
-          currentScore++;
+          languagePrefs.add(new Preference<Language>(Language.ALL,0.001F));
         }
-        if (compatiblePref) {
-          if ((currentLanguage.getSubTags().isEmpty()) || (variantLanguage.getSubTags().isEmpty())) {
-            if (variantLanguage.getSubTags().isEmpty() && currentLanguage.getSubTags().isEmpty()) {
-              currentScore+=10;
-            }
- else {
-            }
+        for (Iterator<Preference<Language>> iter2=languagePrefs.iterator(); (variantLanguage != null) && iter2.hasNext(); ) {
+          currentLanguagePref=iter2.next();
+          currentLanguage=currentLanguagePref.getMetadata();
+          compatiblePref=true;
+          currentScore=0;
+          if (variantLanguage.getPrimaryTag().equalsIgnoreCase(currentLanguage.getPrimaryTag())) {
+            currentScore+=100;
+          }
+ else           if (!currentLanguage.getPrimaryTag().equals("*")) {
+            compatiblePref=false;
+          }
+ else           if (!currentLanguage.getSubTags().isEmpty()) {
+            compatiblePref=false;
           }
  else {
-            int maxSize=Math.min(currentLanguage.getSubTags().size(),variantLanguage.getSubTags().size());
-            for (int i=0; i < maxSize && compatiblePref; i++) {
-              if (currentLanguage.getSubTags().get(i).equalsIgnoreCase(variantLanguage.getSubTags().get(i))) {
-                currentScore+=Math.pow(10,1 - i);
+            currentScore++;
+          }
+          if (compatiblePref) {
+            if ((currentLanguage.getSubTags().isEmpty()) || (variantLanguage.getSubTags().isEmpty())) {
+              if (variantLanguage.getSubTags().isEmpty() && currentLanguage.getSubTags().isEmpty()) {
+                currentScore+=10;
               }
  else {
-                compatiblePref=false;
               }
             }
-          }
-          if (compatiblePref && ((bestLanguagePref == null) || (currentScore > bestLanguageScore))) {
-            bestLanguagePref=currentLanguagePref;
-            bestLanguageScore=currentScore;
+ else {
+              int maxSize=Math.min(currentLanguage.getSubTags().size(),variantLanguage.getSubTags().size());
+              for (int i=0; i < maxSize && compatiblePref; i++) {
+                if (currentLanguage.getSubTags().get(i).equalsIgnoreCase(variantLanguage.getSubTags().get(i))) {
+                  currentScore+=Math.pow(10,1 - i);
+                }
+ else {
+                  compatiblePref=false;
+                }
+              }
+            }
+            if (compatiblePref && ((bestLanguagePref == null) || (currentScore > bestLanguageScore))) {
+              bestLanguagePref=currentLanguagePref;
+              bestLanguageScore=currentScore;
+            }
           }
         }
       }
-      compatibleLanguage=(variantLanguage == null) || (bestLanguagePref != null);
+      compatibleLanguage=(variantLanguages.isEmpty()) || (bestLanguagePref != null);
       List<Preference<MediaType>> mediaTypePrefs=client.getAcceptedMediaTypes();
       if (mediaTypePrefs.size() == 0)       mediaTypePrefs.add(new Preference<MediaType>(MediaType.ALL));
       for (Iterator<Preference<MediaType>> iter2=mediaTypePrefs.iterator(); compatibleLanguage && iter2.hasNext(); ) {
@@ -118,7 +120,7 @@
         if (bestLanguagePref != null) {
           currentQuality+=(bestLanguagePref.getQuality() * 10F);
         }
- else         if (variantLanguage != null) {
+ else         if (!variantLanguages.isEmpty()) {
           currentQuality+=0.1F * 10F;
         }
         if (bestMediaTypePref != null) {

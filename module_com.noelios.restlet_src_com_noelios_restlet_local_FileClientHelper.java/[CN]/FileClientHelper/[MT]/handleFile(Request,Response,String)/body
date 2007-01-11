@@ -106,8 +106,8 @@
           }
  else {
             updateMetadata(metadataService,file.getName(),request.getEntity());
-            if (request.getEntity().getLanguage() == null) {
-              request.getEntity().setLanguage(metadataService.getDefaultLanguage());
+            if (request.getEntity().getLanguages().isEmpty()) {
+              request.getEntity().getLanguages().add(metadataService.getDefaultLanguage());
             }
             if (request.getEntity().getMediaType() == null) {
               request.getEntity().setMediaType(metadataService.getDefaultMediaType());
@@ -119,8 +119,10 @@
             if (metadataService.getExtension(request.getEntity().getMediaType()) != null) {
               fileName.append("." + metadataService.getExtension(request.getEntity().getMediaType()));
             }
-            if (metadataService.getExtension(request.getEntity().getLanguage()) != null) {
-              fileName.append("." + metadataService.getExtension(request.getEntity().getLanguage()));
+            for (            Language language : request.getEntity().getLanguages()) {
+              if (metadataService.getExtension(language) != null) {
+                fileName.append("." + metadataService.getExtension(language));
+              }
             }
             if (metadataService.getExtension(request.getEntity().getEncoding()) != null) {
               fileName.append("." + metadataService.getExtension(request.getEntity().getEncoding()));

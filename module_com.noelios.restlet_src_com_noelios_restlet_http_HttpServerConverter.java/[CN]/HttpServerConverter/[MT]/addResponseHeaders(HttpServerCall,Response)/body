@@ -39,8 +39,13 @@
       if ((entity.getEncoding() != null) && (!entity.getEncoding().equals(Encoding.IDENTITY))) {
         responseHeaders.add(HttpConstants.HEADER_CONTENT_ENCODING,entity.getEncoding().getName());
       }
-      if (entity.getLanguage() != null) {
-        responseHeaders.add(HttpConstants.HEADER_CONTENT_LANGUAGE,entity.getLanguage().getName());
+      if (!entity.getLanguages().isEmpty()) {
+        StringBuilder value=new StringBuilder();
+        for (int i=0; i < entity.getLanguages().size(); i++) {
+          if (i > 0)           value.append(", ");
+          value.append(entity.getLanguages().get(i).getName());
+        }
+        responseHeaders.add(HttpConstants.HEADER_CONTENT_LANGUAGE,value.toString());
       }
       if (entity.getMediaType() != null) {
         StringBuilder contentType=new StringBuilder(entity.getMediaType().getName());

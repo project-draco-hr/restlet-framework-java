@@ -8,17 +8,17 @@
         if (current instanceof MediaType)         representation.setMediaType((MediaType)current);
         if (current instanceof CharacterSet)         representation.setCharacterSet((CharacterSet)current);
         if (current instanceof Encoding)         representation.setEncoding((Encoding)current);
-        if (current instanceof Language)         representation.setLanguage((Language)current);
+        if (current instanceof Language)         representation.getLanguages().add((Language)current);
       }
       int dashIndex=tokens[j].indexOf('-');
       if (dashIndex != -1) {
         String primaryPart=tokens[j].substring(0,dashIndex);
         current=metadataService.getMetadata(primaryPart);
-        if (current instanceof Language)         representation.setLanguage((Language)current);
+        if (current instanceof Language)         representation.getLanguages().add((Language)current);
       }
     }
-    if (representation.getLanguage() == null) {
-      representation.setLanguage(metadataService.getDefaultLanguage());
+    if (representation.getLanguages().isEmpty()) {
+      representation.getLanguages().add(metadataService.getDefaultLanguage());
     }
   }
 }

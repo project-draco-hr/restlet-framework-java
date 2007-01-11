@@ -90,8 +90,13 @@
       if (request.getEntity().getEncoding() != null) {
         requestHeaders.add(HttpConstants.HEADER_CONTENT_ENCODING,request.getEntity().getEncoding().toString());
       }
-      if (request.getEntity().getLanguage() != null) {
-        requestHeaders.add(HttpConstants.HEADER_CONTENT_LANGUAGE,request.getEntity().getLanguage().toString());
+      if (!request.getEntity().getLanguages().isEmpty()) {
+        StringBuilder value=new StringBuilder();
+        for (int i=0; i < request.getEntity().getLanguages().size(); i++) {
+          if (i > 0)           value.append(", ");
+          value.append(request.getEntity().getLanguages().get(i).getName());
+        }
+        requestHeaders.add(HttpConstants.HEADER_CONTENT_LANGUAGE,value.toString());
       }
     }
     Series<Parameter> additionalHeaders=(Series<Parameter>)request.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
