@@ -1,17 +1,15 @@
 {
-  Router router=new Router();
-  router.attach("/users/{username}",new UserHandler());
-  router.attach("/users/{username}/bookmarks",new BookmarksHandler());
-  Route uriRoute=router.attach("/users/{username}/bookmarks/{URI}",new BookmarkHandler());
+  Router root=new Router(getContext());
+  root.route("/users/{username}",new UserHandler());
+  root.route("/users/{username}/bookmarks",new BookmarksHandler());
+  Route uriRoute=root.route("/users/{username}/bookmarks/{URI}",new BookmarkHandler());
   uriRoute.getTemplate().getVariables().put("URI",new Variable(Variable.TYPE_URI_ALL));
-  router.attach("/users/{username}/tags",null);
-  router.attach("/users/{username}/tags/{tag}",new TagHandler());
-  router.attach("/users/{username}/calendar",null);
-  uriRoute=router.attach("/uris/{URI}",null);
+  root.route("/users/{username}/tags",null);
+  root.route("/users/{username}/tags/{tag}",new TagHandler());
+  root.route("/users/{username}/calendar",null);
+  uriRoute=root.route("/uris/{URI}",null);
   uriRoute.getTemplate().getVariables().put("URI",new Variable(Variable.TYPE_URI_ALL));
-  router.attach("/recent",null);
-  router.attach("/recent/{tag}",null);
-  router.attach("/users/{username}/bundles",null);
-  router.attach("/users/{username}/bundles/{bundle}",null);
-  return router;
+  root.route("/recent",null);
+  root.route("/recent/{tag}",null);
+  return root;
 }

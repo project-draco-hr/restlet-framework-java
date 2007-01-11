@@ -1,0 +1,11 @@
+{
+  Form form=new Form();
+  form.add("bookmark[short_description]",shortDescription);
+  form.add("bookmark[long_description]",longDescription);
+  form.add("bookmark[restrict]",Boolean.toString(restrict));
+  Request request=new Request(Method.PUT,getBookmarkUri(userName,uri),form.getWebRepresentation());
+  request.getChallengeResponse().setIdentifier(userName);
+  request.getChallengeResponse().setSecret(password);
+  Response resp=new Client(Protocol.HTTP).handle(request);
+  System.out.println(resp.getStatus());
+}

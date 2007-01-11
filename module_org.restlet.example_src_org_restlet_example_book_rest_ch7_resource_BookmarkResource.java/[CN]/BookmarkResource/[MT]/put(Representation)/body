@@ -1,3 +1,23 @@
 {
-  return null;
+  Result result=null;
+  if (entity.getMediaType().equals(MediaType.APPLICATION_WWW_FORM)) {
+    Form form=new Form(entity);
+    if (this.bookmark == null) {
+      this.bookmark=new Bookmark();
+      this.user.getBookmarks().add(this.bookmark);
+      this.bookmark.setUri(this.uri);
+      result=new Result(Status.SUCCESS_CREATED);
+    }
+ else {
+      result=new Result(Status.SUCCESS_NO_CONTENT);
+    }
+    this.bookmark.setShortDescription(form.getFirstValue("bookmark[short_description]"));
+    this.bookmark.setLongDescription(form.getFirstValue("bookmark[long_description]"));
+    this.bookmark.setDateTime(new Date());
+    this.bookmark.setRestrict(new Boolean(form.getFirstValue("bookmark[restrict]")));
+    Application.CONTAINER.set(this.bookmark);
+    Application.CONTAINER.set(this.user);
+    Application.CONTAINER.commit();
+  }
+  return result;
 }
