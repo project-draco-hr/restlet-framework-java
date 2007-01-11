@@ -1,0 +1,14 @@
+{
+  HttpServerHelper result=null;
+  Component component=new Component();
+  Application application=createApplication(component.getContext());
+  if (application != null) {
+    Server server=new Server(component.getContext(),(List<Protocol>)null,request.getLocalAddr(),request.getLocalPort(),component);
+    result=new HttpServerHelper(server);
+    getServletContext().setAttribute(NAME_SERVER_ATTRIBUTE,result);
+    application.setContext(new ServletContextAdapter(this,application,component.getContext()));
+    String uriPattern=request.getContextPath() + request.getServletPath();
+    component.getDefaultHost().attach(uriPattern,application);
+  }
+  return result;
+}
