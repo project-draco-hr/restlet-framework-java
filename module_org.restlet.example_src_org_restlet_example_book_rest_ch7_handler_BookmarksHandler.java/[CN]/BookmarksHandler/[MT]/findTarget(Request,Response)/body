@@ -1,5 +1,6 @@
 {
   String userName=(String)request.getAttributes().get("username");
-  User user=UserResource.findUser(userName);
-  return (user == null) ? null : new BookmarksResource(user);
+  String login=request.getChallengeResponse().getIdentifier();
+  String password=request.getChallengeResponse().getSecret();
+  return new BookmarksResource(userName,login,password);
 }
