@@ -1,6 +1,6 @@
 {
   boolean bContinue=true;
-  if (hasPreconditions(request.getConditions())) {
+  if (request.getConditions().hasSome()) {
     Variant preferredVariant=null;
     if (isNegotiateContent()) {
       List<Variant> variants=target.getVariants();
@@ -19,7 +19,7 @@
       }
     }
     if (preferredVariant != null && bContinue) {
-      Status status=getConditionalStatus(request.getConditions(),request.getMethod(),preferredVariant);
+      Status status=request.getConditions().getStatus(request.getMethod(),preferredVariant);
       if (status != null) {
         response.setStatus(status);
         bContinue=false;
@@ -27,9 +27,7 @@
     }
   }
   if (bContinue) {
-    Result result=target.delete();
-    response.setStatus(result.getStatus());
-    response.setRedirectRef(result.getRedirectRef());
-    response.setEntity(result.getEntity());
+    response.copyFrom(target.delete());
+    response.setRequest(request);
   }
 }

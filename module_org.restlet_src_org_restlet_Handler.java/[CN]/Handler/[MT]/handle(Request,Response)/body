@@ -37,7 +37,11 @@
  else {
             java.lang.reflect.Method handleMethod=getHandleMethod(method);
             if (handleMethod != null) {
-              invoke(this,handleMethod,request,response);
+              Object result=invoke(this,handleMethod,request,response);
+              if (result instanceof Response) {
+                response.copyFrom((Response)result);
+                response.setRequest(request);
+              }
             }
  else {
               response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);

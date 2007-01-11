@@ -56,8 +56,8 @@
       }
     }
   }
-  if (selectedVariant != null && hasPreconditions(request.getConditions())) {
-    Status status=getConditionalStatus(request.getConditions(),request.getMethod(),selectedVariant);
+  if (selectedVariant != null && request.getConditions().hasSome()) {
+    Status status=request.getConditions().getStatus(request.getMethod(),selectedVariant);
     if (status != null) {
       response.setStatus(status);
       response.setEntity(null);
