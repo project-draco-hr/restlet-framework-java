@@ -1,7 +1,8 @@
 {
   String userName=(String)request.getAttributes().get("username");
-  String login=request.getChallengeResponse().getIdentifier();
-  String password=request.getChallengeResponse().getSecret();
+  ChallengeResponse cr=request.getChallengeResponse();
+  String login=(cr != null) ? cr.getIdentifier() : null;
+  String password=(cr != null) ? cr.getSecret() : null;
   String uri=(String)request.getAttributes().get("URI");
   return new BookmarkResource(userName,login,password,uri);
 }
