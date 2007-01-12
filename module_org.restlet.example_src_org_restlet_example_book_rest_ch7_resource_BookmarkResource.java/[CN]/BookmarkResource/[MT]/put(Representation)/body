@@ -1,7 +1,9 @@
 {
   Response result=null;
   if (entity.getMediaType().equals(MediaType.APPLICATION_WWW_FORM)) {
-    Form form=new Form(entity);
+switch (checkAuthorization()) {
+case 1:
+      Form form=new Form(entity);
     if (this.bookmark == null) {
       this.bookmark=new Bookmark();
       getUser().getBookmarks().add(this.bookmark);
@@ -11,13 +13,18 @@
  else {
       result=new Response(Status.SUCCESS_NO_CONTENT);
     }
-    this.bookmark.setShortDescription(form.getFirstValue("bookmark[short_description]"));
-    this.bookmark.setLongDescription(form.getFirstValue("bookmark[long_description]"));
-    this.bookmark.setDateTime(new Date());
-    this.bookmark.setRestrict(new Boolean(form.getFirstValue("bookmark[restrict]")));
-    getContainer().set(this.bookmark);
-    getContainer().set(getUser());
-    getContainer().commit();
-  }
-  return result;
+  this.bookmark.setShortDescription(form.getFirstValue("bookmark[short_description]"));
+this.bookmark.setLongDescription(form.getFirstValue("bookmark[long_description]"));
+this.bookmark.setDateTime(new Date());
+this.bookmark.setRestrict(new Boolean(form.getFirstValue("bookmark[restrict]")));
+getContainer().set(this.bookmark);
+getContainer().set(getUser());
+getContainer().commit();
+case 0:
+result=getChallengeResponse();
+case -1:
+result=new Response(Status.CLIENT_ERROR_UNAUTHORIZED);
+}
+}
+return result;
 }

@@ -8,16 +8,25 @@
       result=new Response(Status.SUCCESS_CREATED);
     }
  else {
-      result=new Response(Status.SUCCESS_NO_CONTENT);
-    }
-    if (canSet) {
-      Form form=new Form(entity);
-      this.user.setEmail(form.getFirstValue("user[email]"));
-      this.user.setFullName(form.getFirstValue("user[full_name]"));
-      this.user.setPassword(form.getFirstValue("user[password]"));
-      getContainer().set(this.user);
-      getContainer().commit();
-    }
-  }
-  return result;
+switch (checkAuthorization()) {
+case 1:
+        result=new Response(Status.SUCCESS_NO_CONTENT);
+case 0:
+      result=getChallengeResponse();
+    canSet=false;
+case -1:
+  result=new Response(Status.CLIENT_ERROR_UNAUTHORIZED);
+canSet=false;
+}
+}
+if (canSet) {
+Form form=new Form(entity);
+this.user.setEmail(form.getFirstValue("user[email]"));
+this.user.setFullName(form.getFirstValue("user[full_name]"));
+this.user.setPassword(form.getFirstValue("user[password]"));
+getContainer().set(this.user);
+getContainer().commit();
+}
+}
+return result;
 }
