@@ -1,11 +1,11 @@
 {
   Resource result=null;
   String userName=(String)request.getAttributes().get("username");
-  User user=UserResource.findUser(userName);
+  User user=UserResource.findUser(getContainer(),userName);
   if (user != null) {
     String tagName=(String)request.getAttributes().get("tag");
-    Tag tag=TagResource.findTag(tagName);
-    result=(tag == null) ? null : new TagResource(user,tag);
+    Tag tag=TagResource.findTag(getContainer(),tagName);
+    result=(tag == null) ? null : new TagResource(getApplication(),user,tag);
   }
   return result;
 }
