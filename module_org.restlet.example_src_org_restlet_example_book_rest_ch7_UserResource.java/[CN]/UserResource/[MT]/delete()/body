@@ -1,8 +1,11 @@
 {
 switch (checkAuthorization()) {
 case 1:
-    getContainer().delete(this.user);
-  getContainer().commit();
+    for (    Bookmark bookmark : this.user.getBookmarks()) {
+      getContainer().delete(bookmark);
+    }
+  getContainer().delete(this.user);
+getContainer().commit();
 getResponse().setStatus(Status.SUCCESS_OK);
 case 0:
 challenge();
