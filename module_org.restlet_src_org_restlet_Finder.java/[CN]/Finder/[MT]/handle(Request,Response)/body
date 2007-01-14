@@ -2,7 +2,9 @@
   init(request,response);
   if (isStarted()) {
     Resource target=findTarget(request,response);
-    if ((target == null) && response.getStatus().isSuccess()) {
+    if (!response.getStatus().equals(Status.SUCCESS_OK)) {
+    }
+ else     if (target == null) {
       response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
     }
  else {

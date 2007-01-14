@@ -1,9 +1,9 @@
 {
   if (entity.getMediaType().equals(MediaType.APPLICATION_WWW_FORM)) {
     boolean canSet=true;
-    if (this.user == null) {
-      this.user=new User();
-      this.user.setName(this.userName);
+    if (getUser() == null) {
+      setUser(new User());
+      getUser().setName(this.userName);
       getResponse().setStatus(Status.SUCCESS_CREATED);
     }
  else {
@@ -11,7 +11,7 @@ switch (checkAuthorization()) {
 case 1:
         getResponse().setStatus(Status.SUCCESS_NO_CONTENT);
 case 0:
-      setChallengeResponse();
+      challenge();
     canSet=false;
 case -1:
   getResponse().setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
@@ -20,10 +20,10 @@ canSet=false;
 }
 if (canSet) {
 Form form=new Form(entity);
-this.user.setEmail(form.getFirstValue("user[email]"));
-this.user.setFullName(form.getFirstValue("user[full_name]"));
-this.user.setPassword(form.getFirstValue("user[password]"));
-getContainer().set(this.user);
+getUser().setEmail(form.getFirstValue("user[email]"));
+getUser().setFullName(form.getFirstValue("user[full_name]"));
+getUser().setPassword(form.getFirstValue("user[password]"));
+getContainer().set(getUser());
 getContainer().commit();
 }
 }

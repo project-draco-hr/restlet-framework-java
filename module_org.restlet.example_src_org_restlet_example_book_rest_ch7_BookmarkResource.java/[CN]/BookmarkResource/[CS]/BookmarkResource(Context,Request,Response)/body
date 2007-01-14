@@ -1,8 +1,18 @@
 {
   super(context,request,response);
-  this.uri=(String)request.getAttributes().get("URI");
-  this.bookmark=getUser().getBookmark(uri);
-  if (this.bookmark != null) {
-    getVariants().add(new Variant(MediaType.TEXT_PLAIN));
+  if (getUser() != null) {
+    this.uri=(String)request.getAttributes().get("URI");
+    this.bookmark=getUser().getBookmark(this.uri);
+    if (this.bookmark != null) {
+      if ((checkAuthorization() != 1) && this.bookmark.isRestrict()) {
+        getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+      }
+    }
+ else {
+      getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+    }
+  }
+ else {
+    getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND);
   }
 }
