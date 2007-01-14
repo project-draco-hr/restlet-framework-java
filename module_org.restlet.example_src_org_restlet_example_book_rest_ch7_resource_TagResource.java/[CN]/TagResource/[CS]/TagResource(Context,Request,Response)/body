@@ -1,0 +1,10 @@
+{
+  super(context,request,response);
+  String userName=(String)request.getAttributes().get("username");
+  this.user=UserResource.findUser(null,userName);
+  if (this.user != null) {
+    String tagName=(String)request.getAttributes().get("tag");
+    this.tag=TagResource.findTag(null,tagName);
+  }
+  getVariants().add(new Variant(MediaType.TEXT_PLAIN));
+}

@@ -1,0 +1,57 @@
+{
+  super(directory.getContext(),request,response);
+  this.directory=directory;
+  this.relativePart=request.getResourceRef().getRemainingPart();
+  if (this.relativePart.startsWith("/")) {
+    this.relativePart=this.relativePart.substring(1);
+  }
+  this.targetUri=new Reference(directory.getRootRef().toString() + this.relativePart).normalize().toString(false,false);
+  if (!this.targetUri.startsWith(directory.getRootRef().toString())) {
+    this.targetUri=directory.getRootRef().toString();
+  }
+  Response contextResponse=getDispatcher().get(this.targetUri);
+  if ((contextResponse.getEntity() != null) && contextResponse.getEntity().getMediaType().equals(MediaType.TEXT_URI_LIST)) {
+    this.targetDirectory=true;
+    this.directoryContent=new ReferenceList(contextResponse.getEntity());
+    if (!this.targetUri.endsWith("/")) {
+      this.directoryRedirection=true;
+      this.targetUri+="/";
+      this.relativePart+="/";
+    }
+    if (getMetadataService(request).getIndexName() != null && getMetadataService(request).getIndexName().length() > 0) {
+      this.directoryUri=this.targetUri;
+      this.baseName=getMetadataService(request).getIndexName();
+      this.targetUri=this.directoryUri + this.baseName;
+      this.targetIndex=true;
+    }
+ else {
+      this.directoryUri=this.targetUri;
+      this.baseName=null;
+    }
+  }
+ else {
+    this.targetDirectory=false;
+    int lastSlashIndex=targetUri.lastIndexOf('/');
+    if (lastSlashIndex == -1) {
+      this.directoryUri="";
+      this.baseName=targetUri;
+    }
+ else {
+      this.directoryUri=targetUri.substring(0,lastSlashIndex + 1);
+      this.baseName=targetUri.substring(lastSlashIndex + 1);
+    }
+    contextResponse=getDispatcher().get(this.directoryUri);
+    if ((contextResponse.getEntity() != null) && contextResponse.getEntity().getMediaType().equals(MediaType.TEXT_URI_LIST)) {
+      this.directoryContent=new ReferenceList(contextResponse.getEntity());
+    }
+  }
+  if (this.baseName != null) {
+    int firstDotIndex=this.baseName.indexOf('.');
+    if (firstDotIndex != -1) {
+      this.baseExtensions=getExtensions(this.baseName);
+      this.baseName=this.baseName.substring(0,firstDotIndex);
+    }
+  }
+  getLogger().info("Converted base path: " + this.targetUri);
+  getLogger().info("Converted base name: " + this.baseName);
+}

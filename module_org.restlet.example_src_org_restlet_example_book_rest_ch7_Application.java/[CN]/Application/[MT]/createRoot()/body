@@ -1,15 +1,10 @@
 {
   Router router=new Router(getContext());
-  router.attach("/users/{username}",new UserHandler(this));
-  router.attach("/users/{username}/bookmarks",new BookmarksHandler(this));
-  Route uriRoute=router.attach("/users/{username}/bookmarks/{URI}",new BookmarkHandler(this));
+  router.attach("/users/{username}",UserResource.class);
+  router.attach("/users/{username}/bookmarks",BookmarksResource.class);
+  Route uriRoute=router.attach("/users/{username}/bookmarks/{URI}",BookmarkResource.class);
   uriRoute.getTemplate().getVariables().put("URI",new Variable(Variable.TYPE_URI_ALL));
-  router.attach("/users/{username}/tags",null);
-  router.attach("/users/{username}/tags/{tag}",new TagHandler(this));
-  router.attach("/users/{username}/calendar",null);
-  uriRoute=router.attach("/uris/{URI}",null);
+  router.attach("/users/{username}/tags/{tag}",TagResource.class);
   uriRoute.getTemplate().getVariables().put("URI",new Variable(Variable.TYPE_URI_ALL));
-  router.attach("/recent",null);
-  router.attach("/recent/{tag}",null);
   return router;
 }

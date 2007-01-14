@@ -1,0 +1,37 @@
+{
+  boolean bContinue=true;
+  if (getRequest().getConditions().hasSome()) {
+    Variant preferredVariant=null;
+    if (isNegotiateContent()) {
+      List<Variant> variants=getVariants();
+      if ((variants != null) && (!variants.isEmpty())) {
+        Language language=null;
+        if (getRequest().getAttributes().get(Application.class.getCanonicalName()) != null) {
+          Application application=(Application)getRequest().getAttributes().get(Application.class.getCanonicalName());
+          language=application.getMetadataService().getDefaultLanguage();
+        }
+        preferredVariant=getRequest().getClientInfo().getPreferredVariant(variants,language);
+      }
+    }
+ else {
+      List<Variant> variants=getVariants();
+      if (variants.size() == 1) {
+        preferredVariant=variants.get(0);
+      }
+ else {
+        getResponse().setStatus(Status.CLIENT_ERROR_PRECONDITION_FAILED);
+        bContinue=false;
+      }
+    }
+    if (preferredVariant != null && bContinue) {
+      Status status=getRequest().getConditions().getStatus(getRequest().getMethod(),preferredVariant);
+      if (status != null) {
+        getResponse().setStatus(status);
+        bContinue=false;
+      }
+    }
+  }
+  if (bContinue) {
+    delete();
+  }
+}
