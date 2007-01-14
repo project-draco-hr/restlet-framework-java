@@ -3,15 +3,7 @@
   if (getRequest().getConditions().hasSome()) {
     Variant preferredVariant=null;
     if (isNegotiateContent()) {
-      List<Variant> variants=getVariants();
-      if ((variants != null) && (!variants.isEmpty())) {
-        Language language=null;
-        if (getRequest().getAttributes().get(Application.class.getCanonicalName()) != null) {
-          Application application=(Application)getRequest().getAttributes().get(Application.class.getCanonicalName());
-          language=application.getMetadataService().getDefaultLanguage();
-        }
-        preferredVariant=getRequest().getClientInfo().getPreferredVariant(variants,language);
-      }
+      preferredVariant=getPreferredVariant();
     }
  else {
       List<Variant> variants=getVariants();
