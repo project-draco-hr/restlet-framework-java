@@ -2,11 +2,12 @@
   Variant result=null;
   List<Variant> variants=getVariants();
   if ((variants != null) && (!variants.isEmpty())) {
+    Language language=null;
     Object app=getContext().getAttributes().get("org.restlet.application");
     if (app instanceof Application) {
-      Language language=((Application)app).getMetadataService().getDefaultLanguage();
-      result=getRequest().getClientInfo().getPreferredVariant(getVariants(),language);
+      language=((Application)app).getMetadataService().getDefaultLanguage();
     }
+    result=getRequest().getClientInfo().getPreferredVariant(getVariants(),language);
   }
   return result;
 }
