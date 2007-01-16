@@ -1,3 +1,10 @@
 {
-  return new ResultRepresentation(this,source,new ContextResolver(getContext()));
+  Representation result=new TransformRepresentation(getContext(),source,getTransformSheet());
+  if (this.resultLanguages != null) {
+    result.getLanguages().addAll(getResultLanguages());
+  }
+  result.setCharacterSet(getResultCharacterSet());
+  result.setEncoding(getResultEncoding());
+  result.setMediaType(getResultMediaType());
+  return result;
 }
