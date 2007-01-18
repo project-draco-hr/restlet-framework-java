@@ -5,10 +5,30 @@
     String acceptEncoding=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_ACCEPT_ENCODING);
     String acceptLanguage=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_ACCEPT_LANGUAGE);
     String acceptMediaType=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_ACCEPT);
-    PreferenceUtils.parseCharacterSets(acceptCharset,result);
-    PreferenceUtils.parseEncodings(acceptEncoding,result);
-    PreferenceUtils.parseLanguages(acceptLanguage,result);
-    PreferenceUtils.parseMediaTypes(acceptMediaType,result);
+    try {
+      PreferenceUtils.parseCharacterSets(acceptCharset,result);
+    }
+ catch (    Exception e) {
+      this.context.getLogger().log(Level.INFO,e.getMessage());
+    }
+    try {
+      PreferenceUtils.parseEncodings(acceptEncoding,result);
+    }
+ catch (    Exception e) {
+      this.context.getLogger().log(Level.INFO,e.getMessage());
+    }
+    try {
+      PreferenceUtils.parseLanguages(acceptLanguage,result);
+    }
+ catch (    Exception e) {
+      this.context.getLogger().log(Level.INFO,e.getMessage());
+    }
+    try {
+      PreferenceUtils.parseMediaTypes(acceptMediaType,result);
+    }
+ catch (    Exception e) {
+      this.context.getLogger().log(Level.INFO,e.getMessage());
+    }
     result.setAgent(getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_USER_AGENT));
     result.setAddress(getHttpCall().getClientAddress());
     result.setPort(getHttpCall().getClientPort());
