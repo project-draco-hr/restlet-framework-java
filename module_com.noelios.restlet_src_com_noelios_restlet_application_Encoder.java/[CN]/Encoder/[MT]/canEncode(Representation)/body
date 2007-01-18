@@ -1,5 +1,12 @@
 {
-  boolean result=((representation != null) && (representation.getEncoding() == null)) || ((representation != null) && representation.getEncoding().equals(Encoding.IDENTITY));
+  boolean result=false;
+  if (representation != null) {
+    boolean identity=true;
+    for (Iterator<Encoding> iter=representation.getEncodings().iterator(); identity && iter.hasNext(); ) {
+      identity=(iter.next().equals(Encoding.IDENTITY));
+    }
+    result=identity;
+  }
   if (result) {
     result=(getMinimumSize() == ENCODE_ALL_SIZES) || (representation.getSize() == Representation.UNKNOWN_SIZE) || (representation.getSize() >= getMinimumSize());
   }

@@ -1,3 +1,11 @@
 {
-  return (representation != null) && (representation.getEncoding() != null) && !representation.getEncoding().equals(Encoding.IDENTITY);
+  boolean result=(representation != null) && (!representation.getEncodings().isEmpty());
+  if (result) {
+    boolean found=false;
+    for (Iterator<Encoding> iter=representation.getEncodings().iterator(); !found && iter.hasNext(); ) {
+      found=(!iter.next().equals(Encoding.IDENTITY));
+    }
+    result=found;
+  }
+  return result;
 }

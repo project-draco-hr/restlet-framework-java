@@ -114,8 +114,10 @@
             if (request.getEntity().getMediaType() == null) {
               request.getEntity().setMediaType(metadataService.getDefaultMediaType());
             }
-            if (request.getEntity().getEncoding() == null) {
-              request.getEntity().setEncoding(metadataService.getDefaultEncoding());
+            if (request.getEntity().getEncodings().isEmpty()) {
+              if (metadataService.getDefaultEncoding() != null && !metadataService.getDefaultEncoding().equals(Encoding.IDENTITY)) {
+                request.getEntity().getEncodings().add(metadataService.getDefaultEncoding());
+              }
             }
             StringBuilder fileName=new StringBuilder(baseName);
             if (metadataService.getExtension(request.getEntity().getMediaType()) != null) {
@@ -126,8 +128,10 @@
                 fileName.append("." + metadataService.getExtension(language));
               }
             }
-            if (metadataService.getExtension(request.getEntity().getEncoding()) != null) {
-              fileName.append("." + metadataService.getExtension(request.getEntity().getEncoding()));
+            for (            Encoding encoding : request.getEntity().getEncodings()) {
+              if (metadataService.getExtension(encoding) != null) {
+                fileName.append("." + metadataService.getExtension(encoding));
+              }
             }
             file=new File(file.getParentFile(),fileName.toString());
           }

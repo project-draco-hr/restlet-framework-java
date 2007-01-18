@@ -3,17 +3,30 @@
   InputStream requestStream=getRequestStream();
   ReadableByteChannel requestChannel=getRequestChannel();
   if (((requestStream != null) || (requestChannel != null))) {
-    Encoding contentEncoding=null;
-    Language contentLanguage=null;
+    List<Encoding> contentEncodings=new ArrayList<Encoding>();
+    List<Language> contentLanguages=new ArrayList<Language>();
     MediaType contentMediaType=null;
     CharacterSet contentCharacterSet=null;
     long contentLength=-1L;
     for (    Parameter header : getRequestHeaders()) {
       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_ENCODING)) {
-        contentEncoding=Encoding.valueOf(header.getValue());
+        HeaderReader hr=new HeaderReader(header.getValue());
+        String value=hr.readValue();
+        while (value != null) {
+          Encoding encoding=Encoding.valueOf(value);
+          if (!encoding.equals(Encoding.IDENTITY)) {
+            result.getEncodings().add(encoding);
+          }
+          value=hr.readValue();
+        }
       }
  else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LANGUAGE)) {
-        contentLanguage=Language.valueOf(header.getValue());
+        HeaderReader hr=new HeaderReader(header.getValue());
+        String value=hr.readValue();
+        while (value != null) {
+          contentLanguages.add(Language.valueOf(value));
+          value=hr.readValue();
+        }
       }
  else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_TYPE)) {
         ContentType contentType=new ContentType(header.getValue());
@@ -34,9 +47,13 @@
       result=new ReadableRepresentation(requestChannel,contentMediaType,contentLength);
     }
     if (result != null) {
-      result.setEncoding(contentEncoding);
-      if (contentLanguage != null) {
-        result.getLanguages().add(contentLanguage);
+      for (      Encoding encoding : contentEncodings) {
+        if (!encoding.equals(Encoding.IDENTITY)) {
+          result.getEncodings().add(encoding);
+        }
+      }
+      if (!contentLanguages.isEmpty()) {
+        result.getLanguages().addAll(contentLanguages);
       }
       result.setCharacterSet(contentCharacterSet);
     }

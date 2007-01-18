@@ -1,7 +1,11 @@
 {
-  long result=-1;
+  long result=UNKNOWN_SIZE;
   if (canDecode()) {
-    if (getEncoding().equals(Encoding.IDENTITY)) {
+    boolean identity=true;
+    for (Iterator<Encoding> iter=getEncodings().iterator(); identity && iter.hasNext(); ) {
+      identity=(iter.next().equals(Encoding.IDENTITY));
+    }
+    if (identity) {
       result=getWrappedRepresentation().getSize();
     }
   }

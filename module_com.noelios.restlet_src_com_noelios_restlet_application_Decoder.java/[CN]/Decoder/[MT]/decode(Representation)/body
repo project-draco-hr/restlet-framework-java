@@ -1,11 +1,14 @@
 {
   Representation result=representation;
-  Encoding currentEncoding=null;
-  for (Iterator<Encoding> iter=DecodeRepresentation.getSupportedEncodings().iterator(); (result == representation) && iter.hasNext(); ) {
-    currentEncoding=iter.next();
-    if (!currentEncoding.equals(Encoding.IDENTITY) && representation.getEncoding().equals(currentEncoding)) {
-      result=new DecodeRepresentation(representation);
-    }
+  boolean supported=true;
+  boolean identityEncodings=true;
+  for (Iterator<Encoding> iter=representation.getEncodings().iterator(); supported && iter.hasNext(); ) {
+    Encoding encoding=iter.next();
+    supported=DecodeRepresentation.getSupportedEncodings().contains(encoding);
+    identityEncodings&=encoding.equals(Encoding.IDENTITY);
+  }
+  if (supported && !identityEncodings) {
+    result=new DecodeRepresentation(representation);
   }
   return result;
 }
