@@ -1,9 +1,18 @@
 {
-  int result=authorize(request);
-  if (result == 1) {
-    accept(request,response);
-  }
+switch (authenticate(request)) {
+case 1:
+    if (authorize(request)) {
+      accept(request,response);
+    }
  else {
-    reject(response,(result == 0));
-  }
+      forbid(response);
+    }
+  break;
+case 0:
+challenge(response);
+break;
+case -1:
+forbid(response);
+break;
+}
 }
