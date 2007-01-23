@@ -3,7 +3,10 @@
   String applicationClassName=getInitParameter(NAME_APPLICATION_CLASS,null);
   if (applicationClassName != null) {
     try {
-      Class targetClass=Class.forName(applicationClassName);
+      Class targetClass;
+      ClassLoader loader=Thread.currentThread().getContextClassLoader();
+      if (loader != null)       targetClass=Class.forName(applicationClassName,false,loader);
+ else       targetClass=Class.forName(applicationClassName);
       try {
         application=(Application)targetClass.getConstructor(Context.class).newInstance(context);
       }
