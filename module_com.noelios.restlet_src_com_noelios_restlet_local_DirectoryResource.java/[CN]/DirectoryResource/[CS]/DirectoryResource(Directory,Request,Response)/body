@@ -13,8 +13,10 @@
   if ((contextResponse.getEntity() != null) && contextResponse.getEntity().getMediaType().equals(MediaType.TEXT_URI_LIST)) {
     this.targetDirectory=true;
     this.directoryContent=new ReferenceList(contextResponse.getEntity());
-    if (!this.targetUri.endsWith("/")) {
+    if (!request.getResourceRef().getIdentifier().endsWith("/")) {
       this.directoryRedirection=true;
+    }
+    if (!this.targetUri.endsWith("/")) {
       this.targetUri+="/";
       this.relativePart+="/";
     }
