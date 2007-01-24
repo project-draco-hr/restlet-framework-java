@@ -18,14 +18,18 @@
     if (contentMd5 == null)     contentMd5="";
     String contentType=httpHeaders.getFirstValue(HttpConstants.HEADER_CONTENT_TYPE,true);
     if (contentType == null) {
-      String javaVersion=System.getProperty("java.version");
       boolean applyPatch=false;
-      if (javaVersion.startsWith("1.3") || javaVersion.startsWith("1.4")) {
-        applyPatch=true;
-      }
- else       if (javaVersion.startsWith("1.5")) {
-        int minorVersion=Integer.parseInt(javaVersion.substring(javaVersion.indexOf('_') + 1));
-        applyPatch=(minorVersion < 10);
+      int majorVersionNumber=Factory.getMajorJavaVersion();
+      int minorVersionNumber=Factory.getMinorJavaVersion();
+      if (majorVersionNumber == 1) {
+        if ((minorVersionNumber == 3 || minorVersionNumber == 4)) {
+          applyPatch=true;
+        }
+ else {
+          if (minorVersionNumber == 5) {
+            applyPatch=(Factory.getJavaVersionUpdateRelease() < 10);
+          }
+        }
       }
       if (applyPatch && !request.getMethod().equals(Method.PUT)) {
         contentType="application/x-www-form-urlencoded";
