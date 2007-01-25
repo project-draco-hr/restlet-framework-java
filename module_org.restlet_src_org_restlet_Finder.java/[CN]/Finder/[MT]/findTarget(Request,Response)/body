@@ -7,6 +7,13 @@
       if (constructor != null) {
         result=(Resource)constructor.newInstance(getContext(),request,response);
       }
+ else {
+        constructor=this.targetClass.getConstructor();
+        if (constructor != null) {
+          result=(Resource)constructor.newInstance();
+          result.init(getContext(),request,response);
+        }
+      }
     }
  catch (    Exception e) {
       getLogger().log(Level.WARNING,"Exception while instantiating the target resource.",e);
