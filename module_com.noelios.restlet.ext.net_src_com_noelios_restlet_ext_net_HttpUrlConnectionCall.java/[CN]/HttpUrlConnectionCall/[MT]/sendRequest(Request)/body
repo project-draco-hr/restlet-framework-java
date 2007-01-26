@@ -3,14 +3,18 @@
   try {
     if (request.isEntityAvailable()) {
       Representation entity=request.getEntity();
-      if (entity.getSize() > 0) {
-        getConnection().setFixedLengthStreamingMode((int)entity.getSize());
-      }
- else {
-        if (getHelper().getChunkLength() >= 0) {
-          getConnection().setChunkedStreamingMode(getHelper().getChunkLength());
+      int majorVersionNumber=Engine.getJavaMajorVersion();
+      int minorVersionNumber=Engine.getJavaMinorVersion();
+      if ((majorVersionNumber > 1) || (majorVersionNumber == 1 && minorVersionNumber >= 5)) {
+        if (entity.getSize() > 0) {
+          getConnection().setFixedLengthStreamingMode((int)entity.getSize());
         }
  else {
+          if (getHelper().getChunkLength() >= 0) {
+            getConnection().setChunkedStreamingMode(getHelper().getChunkLength());
+          }
+ else {
+          }
         }
       }
     }
