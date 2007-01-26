@@ -14,13 +14,9 @@ case MODE_CLIENT_TEMPORARY:
 getLogger().log(Level.INFO,"Temporarily redirecting client to: " + targetRef);
 response.redirectTemporary(targetRef);
 break;
-case MODE_CONNECTOR:
+case MODE_DISPATCHER:
 getLogger().log(Level.INFO,"Redirecting via client connector to: " + targetRef);
-request.setResourceRef(targetRef);
-request.getAttributes().remove("org.restlet.http.headers");
-getContext().getDispatcher().handle(request,response);
-response.setEntity(rewrite(response.getEntity()));
-response.getAttributes().remove("org.restlet.http.headers");
+redirectDispatcher(targetRef,request,response);
 break;
 }
 }
