@@ -1,0 +1,23 @@
+{
+  Resource result=null;
+  if (getTargetClass() != null) {
+    Constructor constructor;
+    try {
+      constructor=getTargetClass().getConstructor(Context.class,Request.class,Response.class);
+      if (constructor != null) {
+        result=(Resource)constructor.newInstance(getContext(),request,response);
+      }
+ else {
+        constructor=getTargetClass().getConstructor();
+        if (constructor != null) {
+          result=(Resource)constructor.newInstance();
+          result.init(getContext(),request,response);
+        }
+      }
+    }
+ catch (    Exception e) {
+      getLogger().log(Level.WARNING,"Exception while instantiating the target resource.",e);
+    }
+  }
+  return result;
+}
