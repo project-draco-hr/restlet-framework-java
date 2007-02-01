@@ -6,7 +6,7 @@
   }
  else {
     if (!getDirectory().isModifiable()) {
-      status=Status.CLIENT_ERROR_FORBIDDEN;
+      status=new Status(Status.CLIENT_ERROR_FORBIDDEN,"No modification allowed.");
     }
  else {
       Request contextRequest=new Request(Method.DELETE,this.targetUri);
@@ -23,7 +23,7 @@
             getDispatcher().handle(contextRequest,contextResponse);
           }
  else {
-            contextResponse.setStatus(new Status(Status.CLIENT_ERROR_UNAUTHORIZED,"Unable to process properly the request. Several variants exist but none of them suits precisely. "));
+            contextResponse.setStatus(new Status(Status.CLIENT_ERROR_NOT_ACCEPTABLE,"Unable to process properly the request. Several variants exist but none of them suits precisely. "));
           }
         }
  else {
