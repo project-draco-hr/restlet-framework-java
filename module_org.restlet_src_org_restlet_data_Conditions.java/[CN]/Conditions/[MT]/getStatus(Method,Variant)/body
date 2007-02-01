@@ -2,6 +2,7 @@
   Status result=null;
   if (getMatch() != null && getMatch().size() != 0) {
     boolean matched=false;
+    boolean failed=false;
     if (variant != null) {
       if (variant.getTag() != null) {
         Tag tag;
@@ -12,9 +13,10 @@
       }
     }
  else {
-      matched=getMatch().get(0).equals(Tag.ALL);
+      failed=getMatch().get(0).equals(Tag.ALL);
     }
-    if (!matched) {
+    failed=failed || !matched;
+    if (failed) {
       result=Status.CLIENT_ERROR_PRECONDITION_FAILED;
     }
   }
