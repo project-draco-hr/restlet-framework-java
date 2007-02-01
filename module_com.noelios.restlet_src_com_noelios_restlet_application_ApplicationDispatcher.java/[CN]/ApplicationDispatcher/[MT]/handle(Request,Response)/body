@@ -6,14 +6,9 @@
  else {
     request.getAttributes().put(Application.KEY,this.applicationContext.getApplication());
     response.getAttributes().put(Application.KEY,this.applicationContext.getApplication());
-    if (protocol.equals(Protocol.WAR)) {
-      this.applicationContext.getWarClient().handle(request,response);
+    if (!this.applicationContext.getApplication().getConnectorService().getClientProtocols().contains(protocol)) {
+      this.applicationContext.getLogger().fine("The protocol used by this request is not declared in the application's connector service. " + "Please update the list of client connectors used by your application and restart it.");
     }
- else {
-      if (!this.applicationContext.getApplication().getConnectorService().getClientProtocols().contains(protocol)) {
-        this.applicationContext.getLogger().fine("The protocol used by this request is not declared in the application's connector service. " + "Please update the list of client connectors used by your application and restart it.");
-      }
-      this.applicationContext.getParentContext().getDispatcher().handle(request,response);
-    }
+    this.applicationContext.getParentContext().getDispatcher().handle(request,response);
   }
 }
