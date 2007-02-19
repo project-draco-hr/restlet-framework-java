@@ -1,0 +1,16 @@
+{
+  if (this.transformer == null) {
+    try {
+      StreamSource transformSheet=new StreamSource(getTransformSheet().getStream());
+      this.transformer=TransformerFactory.newInstance().newTransformer(transformSheet);
+      transformer.setURIResolver(getURIResolver());
+    }
+ catch (    TransformerConfigurationException tce) {
+      throw new IOException("Transformer configuration exception. " + tce.getMessage());
+    }
+catch (    TransformerFactoryConfigurationError tfce) {
+      throw new IOException("Transformer factory configuration exception. " + tfce.getMessage());
+    }
+  }
+  return this.transformer;
+}
