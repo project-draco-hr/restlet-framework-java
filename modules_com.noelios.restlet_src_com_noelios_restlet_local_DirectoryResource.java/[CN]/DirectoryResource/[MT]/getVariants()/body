@@ -1,7 +1,7 @@
 {
   List<Variant> results=super.getVariants();
-  SortedSet<Representation> resultSet=new TreeSet<Representation>(getRepresentationsComparator());
   getLogger().info("Getting variants for : " + getTargetUri());
+  SortedSet<Representation> resultSet=new TreeSet<Representation>(getRepresentationsComparator());
   String baseRef=getRequest().getResourceRef().getBaseRef().toString(false,false);
   if (!baseRef.endsWith("/")) {
     baseRef+="/";
@@ -24,11 +24,14 @@
         }
       }
     }
+    results.addAll(resultSet);
     if (resultSet.isEmpty()) {
       if (this.targetDirectory && getDirectory().isListingAllowed()) {
         ReferenceList userList=new ReferenceList(this.directoryContent.size());
         userList.setIdentifier(baseRef);
-        for (        Reference ref : this.directoryContent) {
+        SortedSet<Reference> sortedSet=new TreeSet<Reference>(getReferencesComparator());
+        sortedSet.addAll(this.directoryContent);
+        for (        Reference ref : sortedSet) {
           String filePart=ref.toString(false,false).substring(rootLength);
           StringBuilder filePath=new StringBuilder();
           if ((!baseRef.endsWith("/")) && (!filePart.startsWith("/"))) {
@@ -39,11 +42,10 @@
         }
         List<Variant> list=getDirectory().getIndexVariants(userList);
         for (        Variant variant : list) {
-          resultSet.add(getDirectory().getIndexRepresentation(variant,userList));
+          results.add(getDirectory().getIndexRepresentation(variant,userList));
         }
       }
     }
   }
-  results.addAll(resultSet);
   return results;
 }
