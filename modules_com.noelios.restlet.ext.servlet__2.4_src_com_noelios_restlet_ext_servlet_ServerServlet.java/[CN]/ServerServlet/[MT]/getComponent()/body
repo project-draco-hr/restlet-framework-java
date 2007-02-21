@@ -1,0 +1,15 @@
+{
+  Component result=this.component;
+  if (result == null) {
+synchronized (ServerServlet.class) {
+      String componentAttributeName=getInitParameter(NAME_COMPONENT_ATTRIBUTE,NAME_COMPONENT_ATTRIBUTE_DEFAULT);
+      result=(Component)getServletContext().getAttribute(componentAttributeName);
+      if (result == null) {
+        result=new Component();
+        getServletContext().setAttribute(componentAttributeName,result);
+      }
+      this.component=result;
+    }
+  }
+  return result;
+}

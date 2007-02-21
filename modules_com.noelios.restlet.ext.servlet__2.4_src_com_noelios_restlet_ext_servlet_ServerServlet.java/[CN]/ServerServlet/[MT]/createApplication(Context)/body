@@ -14,7 +14,7 @@
         log("[Noelios Restlet Engine] - The ServerServlet couldn't invoke the constructor of the target class. Please check this class has a constructor with a single parameter of Context. The empty constructor and the context setter wille used instead. " + applicationClassName,e);
         application=(Application)targetClass.getConstructor().newInstance();
         if (application != null) {
-          application.setContext(context);
+          application.setContext(new ServletContextAdapter(this,application,context));
         }
       }
     }

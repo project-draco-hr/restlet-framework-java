@@ -6,17 +6,7 @@ synchronized (ServerServlet.class) {
       result=(HttpServerHelper)getServletContext().getAttribute(serverAttributeName);
       if (result == null) {
         result=createServer(request);
-        if (result != null) {
-          try {
-            result.start();
-          }
- catch (          Exception e) {
-            log("[Noelios Restlet Engine] - The ServerServlet couldn't start the target Restlet.",e);
-          }
-        }
- else {
-          log("[Noelios Restlet Engine] - The ServerServlet couldn't find the target class name. Please set the initialization parameter called " + Application.KEY);
-        }
+        getServletContext().setAttribute(serverAttributeName,result);
       }
       this.helper=result;
     }
