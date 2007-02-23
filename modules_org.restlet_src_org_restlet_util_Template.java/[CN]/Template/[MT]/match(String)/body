@@ -1,13 +1,18 @@
 {
   int result=-1;
-  if (formattedString != null) {
-    Matcher matcher=getRegexPattern().matcher(formattedString);
-    if ((getMatchingMode() == MODE_EQUALS) && matcher.matches()) {
-      result=matcher.end();
+  try {
+    if (formattedString != null) {
+      Matcher matcher=getRegexPattern().matcher(formattedString);
+      if ((getMatchingMode() == MODE_EQUALS) && matcher.matches()) {
+        result=matcher.end();
+      }
+ else       if ((getMatchingMode() == MODE_STARTS_WITH) && matcher.lookingAt()) {
+        result=matcher.end();
+      }
     }
- else     if ((getMatchingMode() == MODE_STARTS_WITH) && matcher.lookingAt()) {
-      result=matcher.end();
-    }
+  }
+ catch (  StackOverflowError soe) {
+    getLogger().warning("StackOverflowError exception encountered while matching this string : " + formattedString);
   }
   return result;
 }

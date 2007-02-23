@@ -1,16 +1,21 @@
 {
   int result=-1;
-  Matcher matcher=getRegexPattern().matcher(formattedString);
-  boolean matched=((getMatchingMode() == MODE_EQUALS) && matcher.matches()) || ((getMatchingMode() == MODE_STARTS_WITH) && matcher.lookingAt());
-  if (matched) {
-    result=matcher.end();
-    String attributeName=null;
-    String attributeValue=null;
-    for (int i=0; i < getRegexVariables().size(); i++) {
-      attributeName=getRegexVariables().get(i);
-      attributeValue=matcher.group(i + 1);
-      variables.put(attributeName,attributeValue);
+  try {
+    Matcher matcher=getRegexPattern().matcher(formattedString);
+    boolean matched=((getMatchingMode() == MODE_EQUALS) && matcher.matches()) || ((getMatchingMode() == MODE_STARTS_WITH) && matcher.lookingAt());
+    if (matched) {
+      result=matcher.end();
+      String attributeName=null;
+      String attributeValue=null;
+      for (int i=0; i < getRegexVariables().size(); i++) {
+        attributeName=getRegexVariables().get(i);
+        attributeValue=matcher.group(i + 1);
+        variables.put(attributeName,attributeValue);
+      }
     }
+  }
+ catch (  StackOverflowError soe) {
+    getLogger().warning("StackOverflowError exception encountered while matching this string : " + formattedString);
   }
   return result;
 }
