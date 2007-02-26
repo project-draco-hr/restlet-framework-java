@@ -22,6 +22,11 @@
   setHostRef(new Reference(sb.toString()));
   setResourceRef(new Reference(getHostRef(),httpCall.getRequestUri()));
   if (getResourceRef().isRelative()) {
-    setResourceRef(new Reference(getHostRef(),getHostRef().toString() + httpCall.getRequestUri()));
+    if (!httpCall.getRequestUri().startsWith("/")) {
+      setResourceRef(new Reference(getHostRef(),getHostRef().toString() + "/" + httpCall.getRequestUri()));
+    }
+ else {
+      setResourceRef(new Reference(getHostRef(),getHostRef().toString() + httpCall.getRequestUri()));
+    }
   }
 }
