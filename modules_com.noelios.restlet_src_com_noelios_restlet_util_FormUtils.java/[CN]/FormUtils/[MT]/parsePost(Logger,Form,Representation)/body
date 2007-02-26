@@ -6,7 +6,12 @@
  catch (  IOException ioe) {
     if (logger != null)     logger.log(Level.WARNING,"Unable to create a form reader. Parsing aborted.",ioe);
   }
-  if (fr != null) {
-    fr.addParameters(form);
+  if (post.isAvailable()) {
+    if (fr != null) {
+      fr.addParameters(form);
+    }
+  }
+ else {
+    throw new IllegalStateException("The Web form cannot be parsed as no fresh content is available. If this entity has been already read once, caching of the entity is required");
   }
 }
