@@ -1,0 +1,25 @@
+{
+  if (network == null) {
+    try {
+      network=new Network(new AbstractConfigurator(new URI(HOME),Profile.get(getClass().getResource(PROFILE_RESOURCE).toURI())){
+        public PlatformConfig createPlatformConfig(        Configurator c) throws ConfiguratorException {
+          c.setName(CONFIG_NAME);
+          c.setSecurity(CONFIG_USER,CONFIG_PASSWORD);
+          return c.getPlatformConfig();
+        }
+      }
+,getNetworkListener());
+    }
+ catch (    URISyntaxException use) {
+      use.printStackTrace();
+    }
+  }
+  if (network != null) {
+    try {
+      network.start();
+    }
+ catch (    NetworkException ne) {
+      ne.printStackTrace();
+    }
+  }
+}
