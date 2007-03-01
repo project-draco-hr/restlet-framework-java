@@ -1,0 +1,16 @@
+{
+  String pid=pipe.getPipeID().toString();
+  String ptype=pipe.getType();
+  int i=pid.lastIndexOf(":") + 1;
+  String scheme=PipeService.UnicastType;
+  if (ptype.equals(PipeService.UnicastType)) {
+    scheme=Constants.Protocol.P2PP.getProtocol();
+  }
+ else   if (ptype.equals(PipeService.UnicastSecureType)) {
+    scheme=Constants.Protocol.P2PSP.getProtocol();
+  }
+ else   if (ptype.equals(PipeService.PropagateType)) {
+    scheme=Constants.Protocol.P2MP.getProtocol();
+  }
+  return new URI(scheme + "://" + pid.substring(i));
+}

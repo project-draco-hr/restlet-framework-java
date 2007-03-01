@@ -1,0 +1,16 @@
+{
+  byte[] sb=null;
+  if (pipeId != null) {
+    String s=pipeId.toString() + ":" + Constants.Http.HTTP_V1_0.getHttp();
+    try {
+      MessageDigest a=MessageDigest.getInstance(MESSAGE_DIGEST);
+      a.reset();
+      a.update(s.getBytes());
+      sb=a.digest();
+    }
+ catch (    NoSuchAlgorithmException nsae) {
+      nsae.printStackTrace();
+    }
+  }
+  return sb != null ? IDFactory.newPipeID(group.getPeerGroupID(),sb) : IDFactory.newPipeID(group.getPeerGroupID());
+}
