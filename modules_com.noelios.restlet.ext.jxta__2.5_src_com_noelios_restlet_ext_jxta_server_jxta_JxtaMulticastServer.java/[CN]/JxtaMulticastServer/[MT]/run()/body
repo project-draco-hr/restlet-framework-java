@@ -1,0 +1,23 @@
+{
+  if (logger.isLoggable(Level.FINE)) {
+    logger.log(Level.FINE,"start listening");
+  }
+  while (!listener.isInterrupted()) {
+    byte[] buf=new byte[BLOCK];
+    DatagramPacket data=new DatagramPacket(buf,buf.length);
+    try {
+      server.receive(data);
+    }
+ catch (    IOException ioe) {
+      listener.interrupt();
+    }
+    ConnectionHandler connectionHandler=new ConnectionHandler(server,data);
+    Thread handler=new Thread(connectionHandler,ConnectionHandler.class.getName() + ":handle-connection");
+    handler.setDaemon(true);
+    handler.start();
+  }
+  listener=null;
+  if (logger.isLoggable(Level.FINE)) {
+    logger.log(Level.FINE,"stop listening");
+  }
+}
