@@ -1,0 +1,22 @@
+{
+  if (logger.isLoggable(Level.FINE)) {
+    logger.log(Level.FINE,"jxta multicast start listening");
+  }
+  while (true) {
+    byte[] buf=new byte[BLOCK];
+    DatagramPacket data=new DatagramPacket(buf,buf.length);
+    try {
+      server.receive(data);
+    }
+ catch (    IOException ioe) {
+    }
+    MulticastSocketConnectionHandler connectionHandler=new MulticastSocketConnectionHandler(server,data);
+    Thread handler=new Thread(connectionHandler,MulticastSocketConnectionHandler.class.getName() + ":handle-connection");
+    handler.setDaemon(true);
+    handler.start();
+    break;
+  }
+  if (logger.isLoggable(Level.FINE)) {
+    logger.log(Level.FINE,"jxta multicast stop listening");
+  }
+}
