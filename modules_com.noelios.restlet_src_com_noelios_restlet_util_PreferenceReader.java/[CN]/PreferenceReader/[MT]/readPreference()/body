@@ -32,9 +32,9 @@
             throw new IOException("Empty metadata name detected.");
           }
         }
- else         if (HeaderUtils.isSpace(nextChar)) {
+ else         if (HttpUtils.isSpace(nextChar)) {
         }
- else         if (HeaderUtils.isText(nextChar)) {
+ else         if (HttpUtils.isText(nextChar)) {
           metadataBuffer.append((char)nextChar);
         }
  else {
@@ -54,7 +54,7 @@
         }
  else         if (nextChar == -1) {
           if (paramNameBuffer.length() > 0) {
-            parameters.add(HeaderUtils.createParameter(paramNameBuffer,null));
+            parameters.add(HttpUtils.createParameter(paramNameBuffer,null));
             result=createPreference(metadataBuffer,parameters);
           }
  else {
@@ -62,14 +62,14 @@
           }
         }
  else         if (nextChar == ';') {
-          parameters.add(HeaderUtils.createParameter(paramNameBuffer,null));
+          parameters.add(HttpUtils.createParameter(paramNameBuffer,null));
           paramNameBuffer=new StringBuilder();
           readingParamName=true;
           readingParamValue=false;
         }
- else         if (HeaderUtils.isSpace(nextChar) && (paramNameBuffer.length() == 0)) {
+ else         if (HttpUtils.isSpace(nextChar) && (paramNameBuffer.length() == 0)) {
         }
- else         if (HeaderUtils.isTokenChar(nextChar)) {
+ else         if (HttpUtils.isTokenChar(nextChar)) {
           paramNameBuffer.append((char)nextChar);
         }
  else {
@@ -79,7 +79,7 @@
  else       if (readingParamValue) {
         if (nextChar == -1) {
           if (paramValueBuffer.length() > 0) {
-            parameters.add(HeaderUtils.createParameter(paramNameBuffer,paramValueBuffer));
+            parameters.add(HttpUtils.createParameter(paramNameBuffer,paramValueBuffer));
             result=createPreference(metadataBuffer,parameters);
           }
  else {
@@ -87,7 +87,7 @@
           }
         }
  else         if (nextChar == ';') {
-          parameters.add(HeaderUtils.createParameter(paramNameBuffer,paramValueBuffer));
+          parameters.add(HttpUtils.createParameter(paramNameBuffer,paramValueBuffer));
           paramNameBuffer=new StringBuilder();
           readingParamName=true;
           readingParamValue=false;
@@ -98,7 +98,7 @@
           while ((!done) && (nextChar != -1)) {
             nextChar=(nextIndex < nextValue.length()) ? nextValue.charAt(nextIndex++) : -1;
             if (quotedPair) {
-              if (HeaderUtils.isText(nextChar)) {
+              if (HttpUtils.isText(nextChar)) {
                 paramValueBuffer.append((char)nextChar);
                 quotedPair=false;
               }
@@ -106,13 +106,13 @@
                 throw new IOException("Invalid character detected in quoted string. Please check your value");
               }
             }
- else             if (HeaderUtils.isDoubleQuote(nextChar)) {
+ else             if (HttpUtils.isDoubleQuote(nextChar)) {
               done=true;
             }
  else             if (nextChar == '\\') {
               quotedPair=true;
             }
- else             if (HeaderUtils.isText(nextChar)) {
+ else             if (HttpUtils.isText(nextChar)) {
               paramValueBuffer.append((char)nextChar);
             }
  else {
@@ -120,7 +120,7 @@
             }
           }
         }
- else         if (HeaderUtils.isTokenChar(nextChar)) {
+ else         if (HttpUtils.isTokenChar(nextChar)) {
           paramValueBuffer.append((char)nextChar);
         }
  else {

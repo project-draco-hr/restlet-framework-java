@@ -5,7 +5,7 @@
   while ((!done) && (nextChar != -1)) {
     nextChar=read();
     if (quotedPair) {
-      if (HeaderUtils.isText(nextChar)) {
+      if (HttpUtils.isText(nextChar)) {
         buffer.append((char)nextChar);
         quotedPair=false;
       }
@@ -13,13 +13,13 @@
         throw new IOException("Invalid character detected in quoted string. Please check your value");
       }
     }
- else     if (HeaderUtils.isDoubleQuote(nextChar)) {
+ else     if (HttpUtils.isDoubleQuote(nextChar)) {
       done=true;
     }
  else     if (nextChar == '\\') {
       quotedPair=true;
     }
- else     if (HeaderUtils.isText(nextChar)) {
+ else     if (HttpUtils.isText(nextChar)) {
       buffer.append((char)nextChar);
     }
  else {
