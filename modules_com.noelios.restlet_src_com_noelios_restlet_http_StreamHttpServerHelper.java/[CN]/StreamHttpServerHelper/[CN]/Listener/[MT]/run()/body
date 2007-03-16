@@ -1,0 +1,18 @@
+{
+  try {
+    executorService=Executors.newFixedThreadPool(10);
+    serverSocket=new ServerSocket();
+    serverSocket.bind(socketAddress);
+    for (; ; ) {
+      executorService.execute(new Handler(helper,serverSocket.accept()));
+    }
+  }
+ catch (  IOException ioe) {
+    try {
+      this.helper.stop();
+    }
+ catch (    Exception e) {
+      getLogger().log(Level.WARNING,"Unexpected error while stopping the connector",e);
+    }
+  }
+}

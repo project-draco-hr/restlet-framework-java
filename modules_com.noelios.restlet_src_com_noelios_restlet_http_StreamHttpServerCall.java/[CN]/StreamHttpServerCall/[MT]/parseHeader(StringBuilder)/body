@@ -1,0 +1,38 @@
+{
+  Parameter result=null;
+  int next=getRequestStream().read();
+  if (HttpUtils.isCarriageReturn(next)) {
+    next=getRequestStream().read();
+    if (!HttpUtils.isLineFeed(next)) {
+      throw new IOException("Invalid end of headers. Line feed missing after the carriage return.");
+    }
+  }
+ else {
+    result=new Parameter();
+    next=getRequestStream().read();
+    while ((next != -1) && (next != ':')) {
+      sb.append(next);
+      next=getRequestStream().read();
+    }
+    if (next == -1) {
+      throw new IOException("Unable to parse the header name. End of stream reached too early.");
+    }
+ else {
+      result.setName(sb.toString());
+      sb.delete(0,sb.length());
+      next=getRequestStream().read();
+      while ((next != -1) && (HttpUtils.isCarriageReturn(next))) {
+        sb.append(next);
+        next=getRequestStream().read();
+      }
+      if (next == -1) {
+        throw new IOException("Unable to parse the header value. End of stream reached too early.");
+      }
+ else {
+        result.setValue(sb.toString());
+        sb.delete(0,sb.length());
+      }
+    }
+  }
+  return result;
+}

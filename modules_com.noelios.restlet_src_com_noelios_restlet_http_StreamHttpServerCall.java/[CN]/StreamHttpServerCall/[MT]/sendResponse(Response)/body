@@ -1,0 +1,19 @@
+{
+  getResponseStream().write(getVersion().getBytes());
+  getResponseStream().write(' ');
+  getResponseStream().write(getStatusCode());
+  getResponseStream().write(' ');
+  getResponseStream().write(getReasonPhrase().getBytes());
+  getResponseStream().write(13);
+  getResponseStream().write(10);
+  for (  Parameter header : getResponseHeaders()) {
+    getResponseStream().write(header.getName().getBytes());
+    getResponseStream().write(':');
+    getResponseStream().write(header.getValue().getBytes());
+    getResponseStream().write(13);
+    getResponseStream().write(10);
+  }
+  getResponseStream().write(13);
+  getResponseStream().write(10);
+  super.sendResponse(response);
+}
