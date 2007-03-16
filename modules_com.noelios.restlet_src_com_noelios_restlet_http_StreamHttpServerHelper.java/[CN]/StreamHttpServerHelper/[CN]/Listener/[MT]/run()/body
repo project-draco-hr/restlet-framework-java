@@ -1,10 +1,18 @@
 {
   try {
+    if (socketAddress == null) {
+      if (getServer().getAddress() == null) {
+        socketAddress=new InetSocketAddress(getServer().getPort());
+      }
+ else {
+        socketAddress=new InetSocketAddress(getServer().getAddress(),getServer().getPort());
+      }
+    }
     executorService=Executors.newFixedThreadPool(10);
     serverSocket=new ServerSocket();
     serverSocket.bind(socketAddress);
     for (; ; ) {
-      executorService.execute(new Handler(helper,serverSocket.accept()));
+      executorService.execute(new Connection(helper,serverSocket.accept()));
     }
   }
  catch (  IOException ioe) {
