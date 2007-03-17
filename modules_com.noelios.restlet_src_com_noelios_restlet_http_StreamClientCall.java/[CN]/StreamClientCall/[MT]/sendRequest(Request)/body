@@ -17,6 +17,11 @@
     getRequestStream().write(13);
     getRequestStream().write(10);
     getRequestHeaders().set(HttpConstants.HEADER_CONNECTION,"close",true);
+    String host=hostDomain;
+    if (request.getResourceRef().getHostPort() != -1) {
+      host+=request.getResourceRef().getHostPort();
+    }
+    getRequestHeaders().set(HttpConstants.HEADER_HOST,host,true);
     for (    Parameter header : getRequestHeaders()) {
       HttpUtils.writeHeader(header,getRequestStream());
     }
@@ -24,7 +29,6 @@
     getRequestStream().write(10);
     super.sendRequest(request);
     parseResponse();
-    getRequestStream().close();
   }
  catch (  IOException ioe) {
     getHelper().getLogger().log(Level.FINE,"An error occured during the communication with the remote HTTP server.",ioe);
