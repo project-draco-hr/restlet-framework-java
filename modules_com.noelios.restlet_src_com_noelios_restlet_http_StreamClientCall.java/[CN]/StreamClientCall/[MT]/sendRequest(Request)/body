@@ -1,0 +1,34 @@
+{
+  Status result=null;
+  try {
+    String hostDomain=request.getResourceRef().getHostDomain();
+    int hostPort=request.getResourceRef().getHostPort();
+    if (hostPort == -1) {
+      hostPort=request.getResourceRef().getSchemeProtocol().getDefaultPort();
+    }
+    Socket socket=new Socket(hostDomain,hostPort);
+    this.requestStream=socket.getOutputStream();
+    this.responseStream=socket.getInputStream();
+    getRequestStream().write(getMethod().getBytes());
+    getRequestStream().write(' ');
+    getRequestStream().write(getRequestUri().getBytes());
+    getRequestStream().write(' ');
+    getRequestStream().write(getVersion().getBytes());
+    getRequestStream().write(13);
+    getRequestStream().write(10);
+    getRequestHeaders().set(HttpConstants.HEADER_CONNECTION,"close",true);
+    for (    Parameter header : getRequestHeaders()) {
+      HttpUtils.writeHeader(header,getRequestStream());
+    }
+    getRequestStream().write(13);
+    getRequestStream().write(10);
+    super.sendRequest(request);
+    parseResponse();
+    getRequestStream().close();
+  }
+ catch (  IOException ioe) {
+    getHelper().getLogger().log(Level.FINE,"An error occured during the communication with the remote HTTP server.",ioe);
+    result=new Status(Status.CONNECTOR_ERROR_COMMUNICATION,"Unable to complete the HTTP call due to a communication error with the remote server. " + ioe.getMessage());
+  }
+  return result;
+}

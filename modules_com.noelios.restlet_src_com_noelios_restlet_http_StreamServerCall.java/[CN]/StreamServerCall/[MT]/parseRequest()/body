@@ -35,10 +35,10 @@
         if (HttpUtils.isLineFeed(next)) {
           setVersion(sb.toString());
           sb.delete(0,sb.length());
-          Parameter header=parseHeader(sb);
+          Parameter header=HttpUtils.readHeader(getRequestStream(),sb);
           while (header != null) {
             getRequestHeaders().add(header);
-            header=parseHeader(sb);
+            header=HttpUtils.readHeader(getRequestStream(),sb);
           }
         }
  else {
