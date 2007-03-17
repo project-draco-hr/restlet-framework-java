@@ -5,18 +5,14 @@
   while (true) {
     byte[] buf=new byte[BLOCK];
     DatagramPacket data=new DatagramPacket(buf,buf.length);
-    try {
-      server.receive(data);
+    server.receive(data);
+    final MulticastSocketHandler handler=new MulticastSocketHandler(server,data);
+    Executors.newSingleThreadExecutor().submit(new Callable<Object>(){
+      public Object call(){
+        handler.handle();
+        return null;
+      }
     }
- catch (    IOException ioe) {
-    }
-    MulticastSocketConnectionHandler connectionHandler=new MulticastSocketConnectionHandler(server,data);
-    Thread handler=new Thread(connectionHandler,MulticastSocketConnectionHandler.class.getName() + ":handle-connection");
-    handler.setDaemon(true);
-    handler.start();
-    break;
-  }
-  if (logger.isLoggable(Level.FINE)) {
-    logger.log(Level.FINE,"jxta multicast stop listening");
+);
   }
 }

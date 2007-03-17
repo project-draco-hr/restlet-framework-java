@@ -5,7 +5,16 @@
   if (logger.isLoggable(Level.FINE)) {
     logger.log(Level.FINE,"jxta multicast server stopping");
   }
+  server.disconnect();
   server.close();
+  executor.shutdown();
+  while (!executor.isTerminated()) {
+    try {
+      Thread.sleep(100);
+    }
+ catch (    InterruptedException ie) {
+    }
+  }
   server=null;
   if (logger.isLoggable(Level.FINE)) {
     logger.log(Level.FINE,"jxta multicast server stoppped");

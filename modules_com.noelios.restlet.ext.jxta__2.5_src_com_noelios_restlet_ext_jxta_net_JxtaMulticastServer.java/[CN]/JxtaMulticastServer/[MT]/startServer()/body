@@ -7,17 +7,18 @@
   }
   try {
     server=new JxtaMulticastSocket(getPeerGroup(),getPipeAdvertisement());
+    server.setSoTimeout(0);
   }
  catch (  IOException ioe) {
     throw new NetworkException("unable to create socket",ioe);
   }
-  Callable listener=new Callable(){
-    public Object call(){
+  executor.submit(new Callable<Object>(){
+    public Object call() throws IOException {
       listen();
       return null;
     }
   }
-;
+);
   if (logger.isLoggable(Level.FINE)) {
     logger.log(Level.FINE,"jxta multicast server started");
   }
