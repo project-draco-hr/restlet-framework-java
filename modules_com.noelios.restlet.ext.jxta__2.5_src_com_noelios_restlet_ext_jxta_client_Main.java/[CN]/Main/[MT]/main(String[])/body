@@ -1,0 +1,30 @@
+{
+  NetworkHandler network=new NetworkHandler(new NetworkListener(){
+    public void notify(    NetworkEvent ne){
+      System.out.println("NetworkEvent");
+      if (ne.getCause() instanceof GroupEvent) {
+        System.out.println("GroupEvent");
+      }
+    }
+  }
+);
+  try {
+    network.start();
+  }
+ catch (  NetworkException ne) {
+    ne.printStackTrace();
+  }
+  MulticastSocket socket=null;
+  try {
+    PipeAdvertisement pipe=PipeUtility.createPipeAdvertisement(Constants.PROTOTYPE_MULTICAST_PIPE_NAME,PipeService.PropagateType,network.getNetwork().getNetPeerGroup(),PipeID.create(Constants.PROTOTYPE_MULTICAST_PIPE_ID));
+    socket=new JxtaMulticastSocket(network.getNetwork().getNetPeerGroup(),pipe);
+    socket.setSoTimeout(0);
+  }
+ catch (  IOException ioe) {
+    ioe.printStackTrace();
+  }
+  socket.disconnect();
+  socket.close();
+  network.stop();
+  System.out.println("exiting");
+}
