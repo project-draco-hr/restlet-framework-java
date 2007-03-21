@@ -86,7 +86,11 @@
     }
     if (request.getEntity() != null) {
       if (request.getEntity().getMediaType() != null) {
-        requestHeaders.add(HttpConstants.HEADER_CONTENT_TYPE,request.getEntity().getMediaType().toString());
+        String contentType=request.getEntity().getMediaType().toString();
+        if ((request.getEntity().getMediaType().getParameters().getFirstValue("charset") == null) && (request.getEntity().getCharacterSet() != null)) {
+          contentType=contentType + "; charset=" + request.getEntity().getCharacterSet().getName();
+        }
+        requestHeaders.add(HttpConstants.HEADER_CONTENT_TYPE,contentType);
       }
       if (!request.getEntity().getEncodings().isEmpty()) {
         StringBuilder value=new StringBuilder();
