@@ -1,0 +1,52 @@
+{
+  init(request,response);
+  if (isStarted()) {
+    Resource target=findTarget(request,response);
+    if (!response.getStatus().equals(Status.SUCCESS_OK)) {
+    }
+ else     if (target == null) {
+      response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+    }
+ else {
+      Method method=request.getMethod();
+      if (method == null) {
+        response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,"No method specified");
+      }
+ else {
+        if (!allowMethod(method,target)) {
+          response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+          updateAllowedMethods(response,target);
+        }
+ else {
+          if (method.equals(Method.GET)) {
+            target.handleGet();
+          }
+ else           if (method.equals(Method.HEAD)) {
+            target.handleHead();
+          }
+ else           if (method.equals(Method.POST)) {
+            target.handlePost();
+          }
+ else           if (method.equals(Method.PUT)) {
+            target.handlePut();
+          }
+ else           if (method.equals(Method.DELETE)) {
+            target.handleDelete();
+          }
+ else           if (method.equals(Method.OPTIONS)) {
+            target.handleOptions();
+          }
+ else {
+            java.lang.reflect.Method handleMethod=getHandleMethod(target,method);
+            if (handleMethod != null) {
+              invoke(target,handleMethod);
+            }
+ else {
+              response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+            }
+          }
+        }
+      }
+    }
+  }
+}

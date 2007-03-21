@@ -1,0 +1,20 @@
+{
+  int len=s.length();
+  StringBuffer b=new StringBuffer();
+  for (int i=0; i < len; ++i) {
+    char c=s.charAt(i);
+    if (c == '+') {
+      c=' ';
+    }
+ else     if (c == '%' && i + 2 < len) {
+      int d=JSONTokener.dehexchar(s.charAt(i + 1));
+      int e=JSONTokener.dehexchar(s.charAt(i + 2));
+      if (d >= 0 && e >= 0) {
+        c=(char)(d * 16 + e);
+        i+=2;
+      }
+    }
+    b.append(c);
+  }
+  return b.toString();
+}

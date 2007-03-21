@@ -1,0 +1,44 @@
+{
+  mLogger.auditFinished(aEvt);
+  final Properties properties=System.getProperties();
+  final Properties fileProperties=new Properties();
+  final String filename=(String)properties.get("MailLogger.properties.file");
+  if (filename != null) {
+    InputStream is=null;
+    try {
+      is=new FileInputStream(filename);
+      fileProperties.load(is);
+    }
+ catch (    IOException ioe) {
+      ;
+    }
+ finally {
+      if (is != null) {
+        try {
+          is.close();
+        }
+ catch (        IOException e) {
+          ;
+        }
+      }
+    }
+  }
+  for (Enumeration e=fileProperties.keys(); e.hasMoreElements(); ) {
+    final String key=(String)e.nextElement();
+    final String value=fileProperties.getProperty(key);
+    properties.put(key,value);
+  }
+  final boolean success=(mErrors == 0);
+  final String prefix=success ? "success" : "failure";
+  try {
+    final String mailhost=getValue(properties,"mailhost","localhost");
+    final String from=getValue(properties,"from",null);
+    final String toList=getValue(properties,prefix + ".to",null);
+    final String subject=getValue(properties,prefix + ".subject",(success) ? "Checkstyle Audit Success" : "Checkstyle Audit Failure");
+    sendMail(mailhost,from,toList,subject,mOutputStream.toString());
+  }
+ catch (  Exception e) {
+    System.out.println("MailLogger failed to send e-mail!");
+    e.printStackTrace(System.err);
+  }
+}

@@ -1,0 +1,20 @@
+{
+  IClass exception=null;
+  SymTabAST throwsNode=_node.findFirstToken(TokenTypes.LITERAL_THROWS);
+  if (throwsNode != null) {
+    SymTabAST exceptionNode=(SymTabAST)(throwsNode.getFirstChild());
+    while (exceptionNode != null) {
+      if (exceptionNode.getType() == TokenTypes.DOT) {
+        PackageDef pkg=symbolTable.getPackage(ASTUtil.constructPackage(exceptionNode));
+        if (pkg != null) {
+          exception=pkg.getClassDefinition(ASTUtil.constructClass(exceptionNode));
+        }
+      }
+ else {
+        exception=_def.getClassDefinition(exceptionNode.getText());
+      }
+      _def.addException(exception);
+      exceptionNode=(SymTabAST)(exceptionNode.getNextSibling());
+    }
+  }
+}

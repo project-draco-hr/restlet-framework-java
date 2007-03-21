@@ -1,0 +1,102 @@
+{
+  File testFile=File.createTempFile("test",".txt",testDir);
+  File testDirectory=new File(testDir,"try");
+  testDirectory.mkdir();
+  String testFileUrl=webSiteURL.concat(testFile.getName());
+  String testDirectoryUrl=webSiteURL.concat(testDirectory.getName());
+  directory.setIndexName(indexName);
+  directory.setListingAllowed(false);
+  Response response=handle(application,webSiteURL,webSiteURL,Method.GET,null,"1a");
+  assertTrue(response.getStatus().equals(Status.CLIENT_ERROR_NOT_FOUND));
+  directory.setListingAllowed(true);
+  response=handle(application,webSiteURL,webSiteURL,Method.GET,null,"1b");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  if (response.getStatus().equals(Status.SUCCESS_OK)) {
+    response.getEntity().write(System.out);
+  }
+  response=handle(application,webSiteURL,testFileUrl,Method.HEAD,null,"2a");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  response=handle(application,webSiteURL,webSiteURL + "123456.txt",Method.GET,null,"2b");
+  assertTrue(response.getStatus().equals(Status.CLIENT_ERROR_NOT_FOUND));
+  directory.setModifiable(false);
+  response=handle(application,webSiteURL,baseFileUrl,Method.PUT,new StringRepresentation("this is test 3a"),"3a");
+  assertTrue(response.getStatus().equals(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED));
+  directory.setModifiable(true);
+  response=handle(application,webSiteURL,baseFileUrl,Method.PUT,new StringRepresentation("this is test 3b"),"3b");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_CREATED));
+  response=handle(application,webSiteURL,baseFileUrl,Method.GET,null,"4");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  if (response.getStatus().equals(Status.SUCCESS_OK)) {
+    response.getEntity().write(System.out);
+    System.out.println("");
+  }
+  response=handle(application,webSiteURL,baseFileUrlEn,Method.PUT,new StringRepresentation("this is a test - En"),"5a");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_CREATED));
+  response=handle(application,webSiteURL,baseFileUrl,Method.HEAD,null,"5b");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  response=handle(application,webSiteURL,baseFileUrlEn,Method.HEAD,null,"5c");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  response=handle(application,webSiteURL,testFileUrl,Method.DELETE,null,"6a-1");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_NO_CONTENT));
+  response=handle(application,webSiteURL,testFileUrl,Method.HEAD,null,"6a-2");
+  assertTrue(response.getStatus().equals(Status.CLIENT_ERROR_NOT_FOUND));
+  response=handle(application,webSiteURL,testFileUrl,Method.DELETE,null,"6b");
+  assertTrue(response.getStatus().equals(Status.CLIENT_ERROR_NOT_FOUND));
+  if (indexName.length() == 0) {
+    response=handle(application,webSiteURL,testDirectoryUrl,Method.DELETE,null,"6c-1");
+    assertTrue(response.getStatus().equals(Status.REDIRECTION_SEE_OTHER));
+    System.out.println(response.getRedirectRef());
+    response=handle(application,response.getRedirectRef().getPath(),response.getRedirectRef().getPath(),Method.DELETE,null,"6c-2");
+    assertTrue(response.getStatus().equals(Status.CLIENT_ERROR_FORBIDDEN));
+    response=handle(application,webSiteURL,webSiteURL,Method.DELETE,null,"6c-3");
+    assertTrue(response.getStatus().equals(Status.CLIENT_ERROR_FORBIDDEN));
+  }
+ else {
+    response=handle(application,webSiteURL,testDirectoryUrl + "/",Method.DELETE,null,"6c-2");
+    assertTrue(response.getStatus().equals(Status.CLIENT_ERROR_NOT_FOUND));
+    response=handle(application,webSiteURL,webSiteURL,Method.DELETE,null,"6c-3");
+    assertTrue(response.getStatus().equals(Status.CLIENT_ERROR_NOT_FOUND));
+  }
+  response=handle(application,webSiteURL,baseFileUrlFr,Method.PUT,new StringRepresentation("message de test"),"7a");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_CREATED));
+  directory.setNegotiateContent(false);
+  response=handle(application,webSiteURL,baseFileUrlFrBis,Method.PUT,new StringRepresentation("message de test"),"7b-1");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  response=handle(application,webSiteURL,baseFileUrlFr,Method.HEAD,null,"7b-2");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  response=handle(application,webSiteURL,baseFileUrlFrBis,Method.HEAD,null,"7b-3");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  response=handle(application,webSiteURL,baseFileUrlFr,Method.DELETE,null,"7c-1");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_NO_CONTENT));
+  response=handle(application,webSiteURL,baseFileUrlFr,Method.HEAD,null,"7c-2");
+  assertTrue(response.getStatus().equals(Status.CLIENT_ERROR_NOT_FOUND));
+  response=handle(application,webSiteURL,baseFileUrlFrBis,Method.HEAD,null,"7c-3");
+  assertTrue(response.getStatus().equals(Status.CLIENT_ERROR_NOT_FOUND));
+  response=handle(application,webSiteURL,baseFileUrlFrBis,Method.DELETE,null,"7c-4");
+  assertTrue(response.getStatus().equals(Status.CLIENT_ERROR_NOT_FOUND));
+  directory.setNegotiateContent(true);
+  response=handle(application,webSiteURL,baseFileUrlFr,Method.PUT,new StringRepresentation("message de test"),"7d-1");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_CREATED));
+  response=handle(application,webSiteURL,baseFileUrlFrBis,Method.PUT,new StringRepresentation("message de test Bis"),"7d-2");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  response=handle(application,webSiteURL,baseFileUrlFr,Method.HEAD,null,"7d-3");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  response=handle(application,webSiteURL,baseFileUrlFrBis,Method.HEAD,null,"7d-4");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  directory.setNegotiateContent(false);
+  response=handle(application,webSiteURL,baseFileUrlFr,Method.HEAD,null,"7d-5");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  directory.setNegotiateContent(true);
+  response=handle(application,webSiteURL,baseFileUrlFr,Method.DELETE,null,"7e-1");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_NO_CONTENT));
+  response=handle(application,webSiteURL,baseFileUrlFr,Method.HEAD,null,"7e-2");
+  assertTrue(response.getStatus().equals(Status.CLIENT_ERROR_NOT_FOUND));
+  response=handle(application,webSiteURL,baseFileUrlFrBis,Method.HEAD,null,"7e-8");
+  assertTrue(response.getStatus().equals(Status.CLIENT_ERROR_NOT_FOUND));
+  response=handle(application,webSiteURL,baseFileUrl,Method.DELETE,null,"8a");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_NO_CONTENT));
+  response=handle(application,webSiteURL,baseFileUrlEn,Method.DELETE,null,"8b");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_NO_CONTENT));
+  testDirectory.delete();
+  System.out.println("End of tests*********************");
+}

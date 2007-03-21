@@ -1,0 +1,18 @@
+{
+  try {
+    testDir=new File(System.getProperty("java.io.tmpdir"),"DirectoryTestCase");
+    deleteDir(testDir);
+    testDir.mkdir();
+    Component clientComponent=new Component();
+    clientComponent.getClients().add(Protocol.FILE);
+    MyApplication application=new MyApplication(clientComponent.getContext(),testDir);
+    clientComponent.getDefaultHost().attach("",application);
+    clientComponent.start();
+    testDirectory(application,application.getDirectory(),"index");
+    testDirectory(application,application.getDirectory(),"");
+    clientComponent.stop();
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+}

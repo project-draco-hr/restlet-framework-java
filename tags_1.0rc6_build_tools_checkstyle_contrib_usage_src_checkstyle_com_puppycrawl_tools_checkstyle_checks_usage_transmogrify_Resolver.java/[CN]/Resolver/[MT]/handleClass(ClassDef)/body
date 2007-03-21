@@ -1,0 +1,22 @@
+{
+  SymTabAST node=classDef.getTreeNode();
+  if (node != null) {
+    SymTabAST nameNode=node.findFirstToken(TokenTypes.IDENT);
+    nameNode.setDefinition(classDef,classDef,true);
+    SymTabAST extendsClause=node.findFirstToken(TokenTypes.EXTENDS_CLAUSE);
+    SymTabAST extendedClassNode=(SymTabAST)extendsClause.getFirstChild();
+    while (extendedClassNode != null) {
+      IClass superClass=resolveClass(extendedClassNode,classDef,null,true);
+      extendedClassNode.setDefinition(superClass,classDef,true);
+      extendedClassNode=(SymTabAST)extendedClassNode.getNextSibling();
+    }
+    SymTabAST implementsNode=node.findFirstToken(TokenTypes.IMPLEMENTS_CLAUSE);
+    if (implementsNode != null) {
+      SymTabAST interfaceNode=(SymTabAST)(implementsNode.getFirstChild());
+      while (interfaceNode != null) {
+        resolveClass(interfaceNode,classDef,null,true);
+        interfaceNode=(SymTabAST)(interfaceNode.getNextSibling());
+      }
+    }
+  }
+}

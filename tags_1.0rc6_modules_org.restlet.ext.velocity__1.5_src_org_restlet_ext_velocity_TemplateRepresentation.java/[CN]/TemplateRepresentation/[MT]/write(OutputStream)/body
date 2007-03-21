@@ -1,0 +1,19 @@
+{
+  Writer tmplWriter=null;
+  try {
+    getEngine().init();
+    VelocityContext context=new VelocityContext(getDataModel());
+    Template template=engine.getTemplate(templateName);
+    if (getCharacterSet() != null) {
+      tmplWriter=new BufferedWriter(new OutputStreamWriter(outputStream,getCharacterSet().getName()));
+    }
+ else {
+      tmplWriter=new BufferedWriter(new OutputStreamWriter(outputStream,template.getEncoding()));
+    }
+    template.merge(context,tmplWriter);
+    tmplWriter.flush();
+  }
+ catch (  Exception e) {
+    throw new IOException("Template processing error. " + e.getMessage());
+  }
+}

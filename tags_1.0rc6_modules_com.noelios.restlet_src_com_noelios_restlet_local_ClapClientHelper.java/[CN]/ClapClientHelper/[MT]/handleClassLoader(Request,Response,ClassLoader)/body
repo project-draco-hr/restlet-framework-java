@@ -1,0 +1,23 @@
+{
+  if (request.getMethod().equals(Method.GET) || request.getMethod().equals(Method.HEAD)) {
+    URL url=classLoader.getResource(request.getResourceRef().getPath());
+    if (url != null) {
+      try {
+        response.setEntity(new InputRepresentation(url.openStream(),null));
+        response.setStatus(Status.SUCCESS_OK);
+      }
+ catch (      IOException ioe) {
+        getLogger().log(Level.WARNING,"Unable to open the representation's input stream",ioe);
+        response.setStatus(Status.SERVER_ERROR_INTERNAL);
+      }
+    }
+ else {
+      response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+    }
+  }
+ else {
+    response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+    response.getAllowedMethods().add(Method.GET);
+    response.getAllowedMethods().add(Method.HEAD);
+  }
+}

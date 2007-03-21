@@ -1,0 +1,47 @@
+{
+  super(helper,method,requestUri);
+  this.clientHelper=helper;
+  if (requestUri.startsWith("http")) {
+    if (method.equalsIgnoreCase(Method.GET.getName())) {
+      this.httpMethod=new GetMethod(requestUri);
+    }
+ else     if (method.equalsIgnoreCase(Method.POST.getName())) {
+      this.httpMethod=new PostMethod(requestUri);
+    }
+ else     if (method.equalsIgnoreCase(Method.PUT.getName())) {
+      this.httpMethod=new PutMethod(requestUri);
+    }
+ else     if (method.equalsIgnoreCase(Method.HEAD.getName())) {
+      this.httpMethod=new HeadMethod(requestUri);
+    }
+ else     if (method.equalsIgnoreCase(Method.DELETE.getName())) {
+      this.httpMethod=new DeleteMethod(requestUri);
+    }
+ else     if (method.equalsIgnoreCase(Method.CONNECT.getName())) {
+      HostConfiguration host=new HostConfiguration();
+      host.setHost(new URI(requestUri,false));
+      this.httpMethod=new ConnectMethod(host);
+    }
+ else     if (method.equalsIgnoreCase(Method.OPTIONS.getName())) {
+      this.httpMethod=new OptionsMethod(requestUri);
+    }
+ else     if (method.equalsIgnoreCase(Method.TRACE.getName())) {
+      this.httpMethod=new TraceMethod(requestUri);
+    }
+ else {
+      this.httpMethod=new EntityEnclosingMethod(requestUri){
+        public String getName(){
+          return method;
+        }
+      }
+;
+    }
+    this.httpMethod.setFollowRedirects(this.clientHelper.isFollowRedirects());
+    this.httpMethod.setDoAuthentication(false);
+    this.responseHeadersAdded=false;
+    setConfidential(this.httpMethod.getURI().getScheme().equalsIgnoreCase(Protocol.HTTPS.getSchemeName()));
+  }
+ else {
+    throw new IllegalArgumentException("Only HTTP or HTTPS resource URIs are allowed here");
+  }
+}

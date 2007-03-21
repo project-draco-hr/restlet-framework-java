@@ -1,0 +1,11 @@
+{
+  if (files != null && files.length > max) {
+    final String path=files[max].getPath();
+    getMessageCollector().reset();
+    MessageDispatcher dispatcher=getMessageDispatcher();
+    dispatcher.fireFileStarted(path);
+    log(0,"max.files.exceeded",new Integer(max));
+    fireErrors(path);
+    dispatcher.fireFileFinished(path);
+  }
+}

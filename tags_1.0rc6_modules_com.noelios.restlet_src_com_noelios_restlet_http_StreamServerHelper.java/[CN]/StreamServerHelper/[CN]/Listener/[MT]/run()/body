@@ -1,0 +1,25 @@
+{
+  try {
+    if (socketAddress == null) {
+      if (getServer().getAddress() == null) {
+        socketAddress=new InetSocketAddress(getServer().getPort());
+      }
+ else {
+        socketAddress=new InetSocketAddress(getServer().getAddress(),getServer().getPort());
+      }
+    }
+    executorService=Executors.newFixedThreadPool(10);
+    serverSocket=createSocket(socketAddress);
+    for (; ; ) {
+      executorService.execute(new Connection(helper,serverSocket.accept()));
+    }
+  }
+ catch (  IOException ioe) {
+    try {
+      this.helper.stop();
+    }
+ catch (    Exception e) {
+      getLogger().log(Level.WARNING,"Unexpected error while stopping the connector",e);
+    }
+  }
+}

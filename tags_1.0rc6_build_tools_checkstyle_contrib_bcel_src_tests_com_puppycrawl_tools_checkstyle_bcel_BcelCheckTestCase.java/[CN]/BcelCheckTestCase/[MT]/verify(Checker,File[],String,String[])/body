@@ -1,0 +1,13 @@
+{
+  mStream.flush();
+  final int errs=aC.process(aProcessedFiles);
+  final ByteArrayInputStream bais=new ByteArrayInputStream(mBAOS.toByteArray());
+  final LineNumberReader lnr=new LineNumberReader(new InputStreamReader(bais));
+  for (int i=0; i < aExpected.length; i++) {
+    final String expected=aMessageFileName + ":" + aExpected[i];
+    final String actual=lnr.readLine();
+    assertEquals("error message " + i,expected,actual);
+  }
+  assertEquals("unexpected output: " + lnr.readLine(),aExpected.length,errs);
+  aC.destroy();
+}

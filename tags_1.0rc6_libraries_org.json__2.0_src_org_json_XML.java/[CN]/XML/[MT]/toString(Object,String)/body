@@ -1,0 +1,78 @@
+{
+  StringBuffer b=new StringBuffer();
+  int i;
+  JSONArray ja;
+  JSONObject jo;
+  String k;
+  Iterator keys;
+  int len;
+  String s;
+  Object v;
+  if (o instanceof JSONObject) {
+    if (tagName != null) {
+      b.append('<');
+      b.append(tagName);
+      b.append('>');
+    }
+    jo=(JSONObject)o;
+    keys=jo.keys();
+    while (keys.hasNext()) {
+      k=keys.next().toString();
+      v=jo.get(k);
+      if (v instanceof String) {
+        s=(String)v;
+      }
+ else {
+        s=null;
+      }
+      if (k.equals("content")) {
+        if (v instanceof JSONArray) {
+          ja=(JSONArray)v;
+          len=ja.length();
+          for (i=0; i < len; i+=1) {
+            if (i > 0) {
+              b.append('\n');
+            }
+            b.append(escape(ja.get(i).toString()));
+          }
+        }
+ else {
+          b.append(escape(v.toString()));
+        }
+      }
+ else       if (v instanceof JSONArray) {
+        ja=(JSONArray)v;
+        len=ja.length();
+        for (i=0; i < len; i+=1) {
+          b.append(toString(ja.get(i),k));
+        }
+      }
+ else       if (v.equals("")) {
+        b.append('<');
+        b.append(k);
+        b.append("/>");
+      }
+ else {
+        b.append(toString(v,k));
+      }
+    }
+    if (tagName != null) {
+      b.append("</");
+      b.append(tagName);
+      b.append('>');
+    }
+    return b.toString();
+  }
+ else   if (o instanceof JSONArray) {
+    ja=(JSONArray)o;
+    len=ja.length();
+    for (i=0; i < len; ++i) {
+      b.append(toString(ja.opt(i),(tagName == null) ? "array" : tagName));
+    }
+    return b.toString();
+  }
+ else {
+    s=(o == null) ? "null" : escape(o.toString());
+    return (tagName == null) ? "\"" + s + "\"" : (s.length() == 0) ? "<" + tagName + "/>" : "<" + tagName + ">"+ s+ "</"+ tagName+ ">";
+  }
+}

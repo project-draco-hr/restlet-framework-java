@@ -1,0 +1,16 @@
+{
+  File testDir=new File(System.getProperty("java.io.tmpdir"),"FreeMarkerTestCase");
+  testDir.mkdir();
+  File testFile=File.createTempFile("test",".ftl",testDir);
+  FileWriter fw=new FileWriter(testFile);
+  fw.write("Value=${value}");
+  fw.close();
+  Configuration fmc=new Configuration();
+  fmc.setDirectoryForTemplateLoading(testDir);
+  Map<String,Object> map=new TreeMap<String,Object>();
+  map.put("value","myValue");
+  String result=new TemplateRepresentation(testFile.getName(),fmc,map,MediaType.TEXT_PLAIN).getText();
+  assertEquals("Value=myValue",result);
+  testFile.delete();
+  testDir.delete();
+}

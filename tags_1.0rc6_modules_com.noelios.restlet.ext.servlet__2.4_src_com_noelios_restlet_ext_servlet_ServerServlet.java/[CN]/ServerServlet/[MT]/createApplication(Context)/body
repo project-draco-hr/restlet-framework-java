@@ -1,0 +1,38 @@
+{
+  Application application=null;
+  String applicationClassName=getInitParameter(Application.KEY,null);
+  if (applicationClassName != null) {
+    try {
+      Class targetClass;
+      ClassLoader loader=Thread.currentThread().getContextClassLoader();
+      if (loader != null)       targetClass=Class.forName(applicationClassName,false,loader);
+ else       targetClass=Class.forName(applicationClassName);
+      try {
+        application=(Application)targetClass.getConstructor(Context.class).newInstance(context);
+      }
+ catch (      NoSuchMethodException e) {
+        log("[Noelios Restlet Engine] - The ServerServlet couldn't invoke the constructor of the target class. Please check this class has a constructor with a single parameter of Context. The empty constructor and the context setter wille used instead. " + applicationClassName,e);
+        application=(Application)targetClass.getConstructor().newInstance();
+      }
+    }
+ catch (    ClassNotFoundException e) {
+      log("[Noelios Restlet Engine] - The ServerServlet couldn't find the target class. Please check that your classpath includes " + applicationClassName,e);
+    }
+catch (    InstantiationException e) {
+      log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check this class has an empty constructor " + applicationClassName,e);
+    }
+catch (    IllegalAccessException e) {
+      log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check that you have to proper access rights to " + applicationClassName,e);
+    }
+catch (    NoSuchMethodException e) {
+      log("[Noelios Restlet Engine] - The ServerServlet couldn't invoke the constructor of the target class. Please check this class has a constructor with a single parameter of Context " + applicationClassName,e);
+    }
+catch (    InvocationTargetException e) {
+      log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. An exception was thrown while creating " + applicationClassName,e);
+    }
+    if (application != null) {
+      application.setContext(new ServletContextAdapter(this,application,context));
+    }
+  }
+  return application;
+}

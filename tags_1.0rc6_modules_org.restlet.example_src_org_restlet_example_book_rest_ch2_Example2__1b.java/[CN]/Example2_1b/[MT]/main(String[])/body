@@ -1,0 +1,17 @@
+{
+  if (args.length != 1) {
+    System.err.println("You need to pass a term to search");
+  }
+ else {
+    String term=Reference.encode(args[0]);
+    String uri=BASE_URI + "?appid=restbook&query=" + term;
+    Response response=new Client(Protocol.HTTP).get(uri);
+    DomRepresentation document=response.getEntityAsDom();
+    document.setNamespaceAware(true);
+    document.putNamespace("y","urn:yahoo:srch");
+    String expr="/y:ResultSet/y:Result/y:Title/text()";
+    for (    Node node : document.getNodes(expr)) {
+      System.out.println(node.getTextContent());
+    }
+  }
+}

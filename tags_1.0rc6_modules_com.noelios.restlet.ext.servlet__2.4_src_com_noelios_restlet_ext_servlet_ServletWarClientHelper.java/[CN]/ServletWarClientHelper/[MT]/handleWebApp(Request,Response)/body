@@ -1,0 +1,34 @@
+{
+  if (request.getMethod().equals(Method.GET) || request.getMethod().equals(Method.HEAD)) {
+    String basePath=request.getResourceRef().toString();
+    int lastSlashIndex=basePath.lastIndexOf('/');
+    String entry=(lastSlashIndex == -1) ? basePath : basePath.substring(lastSlashIndex + 1);
+    Representation output=null;
+    if (basePath.endsWith("/")) {
+      Set entries=getServletContext().getResourcePaths(basePath);
+      ReferenceList rl=new ReferenceList(entries.size());
+      rl.setIdentifier(request.getResourceRef());
+      for (Iterator iter=entries.iterator(); iter.hasNext(); ) {
+        entry=(String)iter.next();
+        rl.add(new Reference(basePath + entry.substring(basePath.length())));
+      }
+      output=rl.getTextRepresentation();
+    }
+ else {
+      MetadataService metadataService=getMetadataService(request);
+      output=new InputRepresentation(getServletContext().getResourceAsStream(basePath),metadataService.getDefaultMediaType());
+      updateMetadata(metadataService,entry,output);
+      String mediaType=getServletContext().getMimeType(basePath);
+      if (mediaType != null) {
+        output.setMediaType(new MediaType(mediaType));
+      }
+    }
+    response.setEntity(output);
+    response.setStatus(Status.SUCCESS_OK);
+  }
+ else {
+    response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+    response.getAllowedMethods().add(Method.GET);
+    response.getAllowedMethods().add(Method.HEAD);
+  }
+}

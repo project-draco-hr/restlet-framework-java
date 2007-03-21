@@ -1,0 +1,8 @@
+{
+  setSocket(new ServerSocket(getServer().getPort()));
+  setConfidential(false);
+  setHandler(PipelineHandlerFactory.getInstance(new SimpleProtocolHandler(this),getDefaultThreads(),getMaxWaitTimeMs()));
+  setConnection(ConnectionFactory.getConnection(getHandler(),new SimplePipelineFactory()));
+  getConnection().connect(getSocket());
+  super.start();
+}

@@ -1,0 +1,30 @@
+{
+  Filter lastFilter=null;
+  boolean success=checkVirtualHost(getComponent().getDefaultHost());
+  if (success) {
+    for (    VirtualHost host : getComponent().getHosts()) {
+      success=success && checkVirtualHost(host);
+    }
+  }
+  if (!success) {
+    getComponent().stop();
+  }
+ else {
+    if (getComponent().getLogService().isEnabled()) {
+      lastFilter=createLogFilter(getComponent().getContext(),getComponent().getLogService());
+      setFirst(lastFilter);
+    }
+    if (getComponent().getStatusService().isEnabled()) {
+      Filter statusFilter=createStatusFilter(getComponent());
+      if (lastFilter != null)       lastFilter.setNext(statusFilter);
+      if (getFirst() == null)       setFirst(statusFilter);
+      lastFilter=statusFilter;
+    }
+    if (getFirst() == null) {
+      setFirst(getServerRouter());
+    }
+ else {
+      lastFilter.setNext(getServerRouter());
+    }
+  }
+}

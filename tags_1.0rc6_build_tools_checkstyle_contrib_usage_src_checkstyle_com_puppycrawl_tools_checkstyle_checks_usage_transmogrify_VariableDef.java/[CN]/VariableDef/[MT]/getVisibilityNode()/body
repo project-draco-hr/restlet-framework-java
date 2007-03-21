@@ -1,0 +1,13 @@
+{
+  SymTabAST result=null;
+  SymTabAST modifiersNode=getTreeNode().findFirstToken(TokenTypes.MODIFIERS);
+  SymTabAST modifier=(SymTabAST)modifiersNode.getFirstChild();
+  while (modifier != null) {
+    if (isVisibilityNode(modifier)) {
+      result=modifier;
+      break;
+    }
+    modifier=(SymTabAST)modifier.getNextSibling();
+  }
+  return result;
+}

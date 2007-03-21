@@ -1,0 +1,51 @@
+{
+  IClass result=new UnknownClass(methodNode.getText(),methodNode);
+  IClass newContext=null;
+  if (context == null) {
+    newContext=location.getEnclosingClass();
+  }
+ else {
+    newContext=context;
+  }
+  String name=null;
+  boolean createReference=true;
+  SymTabAST nameNode=(SymTabAST)(methodNode.getFirstChild());
+  SymTabAST parametersNode=(SymTabAST)(nameNode.getNextSibling());
+  ISignature signature=resolveParameters(parametersNode,location,context,referencePhase);
+  if (nameNode.getType() == TokenTypes.IDENT) {
+    name=nameNode.getText();
+  }
+ else   if (nameNode.getType() == TokenTypes.LITERAL_SUPER || (nameNode.getType() == TokenTypes.SUPER_CTOR_CALL)) {
+    IClass superclass=location.getEnclosingClass().getSuperclass();
+    newContext=superclass;
+    name=superclass.getName();
+    createReference=false;
+  }
+ else   if (nameNode.getType() == TokenTypes.LITERAL_THIS) {
+    newContext=location.getEnclosingClass();
+    name=newContext.getName();
+    createReference=false;
+  }
+ else {
+    SymTabAST contextNode=(SymTabAST)(nameNode.getFirstChild());
+    nameNode=(SymTabAST)contextNode.getNextSibling();
+    while (nameNode.getType() != TokenTypes.IDENT) {
+      nameNode=(SymTabAST)nameNode.getNextSibling();
+    }
+    name=nameNode.getText();
+    newContext=resolveExpression(contextNode,location,context,referencePhase);
+  }
+  if (newContext != null) {
+    IMethod method=newContext.getMethodDefinition(name,signature);
+    if (method != null) {
+      if (createReference && referencePhase) {
+        nameNode.setDefinition(method,location,referencePhase);
+      }
+      result=method.getType();
+    }
+  }
+  if (result == null) {
+    result=new UnknownClass(methodNode.getText(),methodNode);
+  }
+  return result;
+}

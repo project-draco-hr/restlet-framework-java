@@ -1,0 +1,73 @@
+{
+  IPackage java=new ExternalPackage("java",null);
+  IPackage lang=new ExternalPackage("lang",java);
+  java.addDefinition(lang);
+  _def.importPackage(lang);
+  Vector unprocessedImports=_def.getUnprocessedImports();
+  for (int i=0; i < unprocessedImports.size(); i++) {
+    SymTabAST importNode=(SymTabAST)unprocessedImports.get(i);
+    SymTabAST imported=(SymTabAST)importNode.getFirstChild();
+    SymTabAST lastPart=(SymTabAST)imported.getFirstChild().getNextSibling();
+    DotIterator it=new DotIterator(imported);
+    SymTabAST current=null;
+    String className=null;
+    IClass importedClass=null;
+    while (it.hasNext()) {
+      current=it.nextNode();
+      if (className == null) {
+        className=current.getText();
+      }
+ else {
+        if (!current.getText().equals("*")) {
+          className+="." + current.getText();
+        }
+ else {
+          break;
+        }
+      }
+      importedClass=findOrLoadClass(className,importedClass);
+      if (importedClass != null) {
+        break;
+      }
+    }
+    if (it.hasNext()) {
+      boolean isImported=false;
+      while (it.hasNext()) {
+        current=it.nextNode();
+        if (current.getText().equals("*")) {
+          importInnerClasses(importedClass);
+          isImported=true;
+        }
+ else {
+          className+="$" + current.getText();
+          importedClass=findOrLoadClass(className,importedClass);
+        }
+      }
+      if (!isImported) {
+        _def.importClass(importedClass);
+      }
+    }
+ else {
+      if (importedClass != null) {
+        _def.importClass(importedClass);
+      }
+ else {
+        if (current != null && current.getText().equals("*")) {
+          IPackage pkg=symbolTable.getPackage(className);
+          if (pkg == null) {
+            pkg=getPackage(className);
+          }
+          _def.importPackage(pkg);
+        }
+ else {
+          ;
+        }
+      }
+    }
+    imported.ignoreChildren();
+    if ((lastPart.getType() == TokenTypes.IDENT) && (importedClass != null)) {
+      lastPart.setDefinition(importedClass,null,true);
+      lastPart.setMeaningfulness(true);
+    }
+  }
+}

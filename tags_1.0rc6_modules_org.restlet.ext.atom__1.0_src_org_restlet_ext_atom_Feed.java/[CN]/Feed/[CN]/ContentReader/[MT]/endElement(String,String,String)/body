@@ -1,0 +1,133 @@
+{
+  if (currentText != null) {
+    currentText.setContent(contentBuffer.toString());
+  }
+  if (currentDate != null) {
+    String formattedDate=contentBuffer.toString();
+    Date parsedDate=DateUtils.parse(formattedDate,DateUtils.FORMAT_RFC_3339);
+    if (parsedDate != null) {
+      currentDate.setTime(parsedDate.getTime());
+    }
+ else {
+      currentDate=null;
+    }
+  }
+  if (uri.equalsIgnoreCase(ATOM_NAMESPACE)) {
+    if (localName.equals("feed")) {
+      state=State.NONE;
+    }
+ else     if (localName.equals("title")) {
+      if (state == State.FEED_TITLE) {
+        currentFeed.setTitle(currentText);
+        state=State.FEED;
+      }
+ else       if (state == State.FEED_ENTRY_TITLE) {
+        currentEntry.setTitle(currentText);
+        state=State.FEED_ENTRY;
+      }
+ else       if (state == State.FEED_ENTRY_SOURCE_TITLE) {
+        currentEntry.getSource().setTitle(currentText);
+        state=State.FEED_ENTRY_SOURCE;
+      }
+    }
+ else     if (localName.equals("updated")) {
+      if (state == State.FEED_UPDATED) {
+        currentFeed.setUpdated(currentDate);
+        state=State.FEED;
+      }
+ else       if (state == State.FEED_ENTRY_UPDATED) {
+        currentEntry.setUpdated(currentDate);
+        state=State.FEED_ENTRY;
+      }
+ else       if (state == State.FEED_ENTRY_SOURCE_UPDATED) {
+        currentEntry.getSource().setUpdated(currentDate);
+        state=State.FEED_ENTRY_SOURCE;
+      }
+    }
+ else     if (localName.equals("author")) {
+      if (state == State.FEED_AUTHOR) {
+        currentFeed.getAuthors().add(currentPerson);
+        state=State.FEED;
+      }
+ else       if (state == State.FEED_ENTRY_AUTHOR) {
+        currentEntry.getAuthors().add(currentPerson);
+        state=State.FEED_ENTRY;
+      }
+ else       if (state == State.FEED_ENTRY_SOURCE_AUTHOR) {
+        currentEntry.getSource().getAuthors().add(currentPerson);
+        state=State.FEED_ENTRY_SOURCE;
+      }
+    }
+ else     if (localName.equals("name")) {
+      currentPerson.setName(contentBuffer.toString());
+      if (state == State.FEED_AUTHOR_NAME) {
+        state=State.FEED_AUTHOR;
+      }
+ else       if (state == State.FEED_ENTRY_AUTHOR_NAME) {
+        state=State.FEED_ENTRY_AUTHOR;
+      }
+ else       if (state == State.FEED_ENTRY_SOURCE_AUTHOR_NAME) {
+        state=State.FEED_ENTRY_SOURCE_AUTHOR;
+      }
+    }
+ else     if (localName.equals("id")) {
+      if (state == State.FEED_ID) {
+        currentFeed.setId(contentBuffer.toString());
+        state=State.FEED;
+      }
+ else       if (state == State.FEED_ENTRY_ID) {
+        currentEntry.setId(contentBuffer.toString());
+        state=State.FEED_ENTRY;
+      }
+ else       if (state == State.FEED_ENTRY_SOURCE_ID) {
+        currentEntry.getSource().setId(contentBuffer.toString());
+        state=State.FEED_ENTRY_SOURCE;
+      }
+    }
+ else     if (localName.equals("link")) {
+      if (state == State.FEED_LINK) {
+        currentFeed.getLinks().add(currentLink);
+        state=State.FEED;
+      }
+ else       if (state == State.FEED_ENTRY_LINK) {
+        currentEntry.getLinks().add(currentLink);
+        state=State.FEED_ENTRY;
+      }
+ else       if (state == State.FEED_ENTRY_SOURCE_LINK) {
+        currentEntry.getSource().getLinks().add(currentLink);
+        state=State.FEED_ENTRY_SOURCE;
+      }
+    }
+ else     if (localName.equalsIgnoreCase("entry")) {
+      if (state == State.FEED_ENTRY) {
+        currentFeed.getEntries().add(currentEntry);
+        state=State.FEED;
+      }
+    }
+ else     if (localName.equals("category")) {
+      if (state == State.FEED_CATEGORY) {
+        currentFeed.getCategories().add(currentCategory);
+        state=State.FEED;
+      }
+ else       if (state == State.FEED_ENTRY_CATEGORY) {
+        currentEntry.getCategories().add(currentCategory);
+        state=State.FEED_ENTRY;
+      }
+ else       if (state == State.FEED_ENTRY_SOURCE_CATEGORY) {
+        currentEntry.getSource().getCategories().add(currentCategory);
+        state=State.FEED_ENTRY_SOURCE;
+      }
+    }
+ else     if (localName.equalsIgnoreCase("content")) {
+      if (state == State.FEED_ENTRY_CONTENT) {
+        if (currentEntry.getContent().isInline()) {
+          StringRepresentation sr=(StringRepresentation)currentEntry.getContent().getInlineContent();
+          sr.setText(contentBuffer.toString());
+        }
+        state=State.FEED_ENTRY;
+      }
+    }
+  }
+  currentText=null;
+  currentDate=null;
+}

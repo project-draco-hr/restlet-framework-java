@@ -1,0 +1,11 @@
+{
+  super.start();
+  MultiThreadedHttpConnectionManager connectionManager=new MultiThreadedHttpConnectionManager();
+  connectionManager.getParams().setDefaultMaxConnectionsPerHost(getMaxConnectionsPerHost());
+  connectionManager.getParams().setMaxTotalConnections(getMaxTotalConnections());
+  this.httpClient=new HttpClient(connectionManager);
+  getHttpClient().getParams().setAuthenticationPreemptive(false);
+  getHttpClient().getParams().setConnectionManagerTimeout(getConnectionManagerTimeout());
+  getHttpClient().getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
+  getHttpClient().getParams().setSoTimeout(getReadTimeout());
+}

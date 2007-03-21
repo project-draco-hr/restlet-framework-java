@@ -1,0 +1,17 @@
+{
+  IMethod result=null;
+  SortedSet compatibleMethods=new TreeSet(new MethodSpecificityComparator());
+  Iterator it=getMethods().iterator();
+  while (it.hasNext()) {
+    IMethod method=(IMethod)it.next();
+    if (name.equals(method.getName())) {
+      if (method.hasCompatibleSignature(signature)) {
+        compatibleMethods.add(method);
+      }
+    }
+  }
+  if (!compatibleMethods.isEmpty()) {
+    result=(IMethod)compatibleMethods.first();
+  }
+  return result;
+}

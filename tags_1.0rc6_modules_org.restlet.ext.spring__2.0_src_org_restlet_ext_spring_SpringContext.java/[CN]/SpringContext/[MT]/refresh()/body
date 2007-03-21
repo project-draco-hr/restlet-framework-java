@@ -1,0 +1,22 @@
+{
+  if (!this.loaded) {
+    Representation config=null;
+    PropertiesBeanDefinitionReader propReader=null;
+    for (    String ref : getPropertyConfigRefs()) {
+      config=getRestletContext().getDispatcher().get(ref).getEntity();
+      if (config != null) {
+        propReader=new PropertiesBeanDefinitionReader(this);
+        propReader.loadBeanDefinitions(new SpringResource(config));
+      }
+    }
+    XmlBeanDefinitionReader xmlReader=null;
+    for (    String ref : getXmlConfigRefs()) {
+      config=getRestletContext().getDispatcher().get(ref).getEntity();
+      if (config != null) {
+        xmlReader=new XmlBeanDefinitionReader(this);
+        xmlReader.loadBeanDefinitions(new SpringResource(config));
+      }
+    }
+  }
+  super.refresh();
+}

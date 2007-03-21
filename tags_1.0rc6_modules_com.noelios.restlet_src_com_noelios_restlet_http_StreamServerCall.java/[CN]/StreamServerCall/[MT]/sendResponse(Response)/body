@@ -1,0 +1,16 @@
+{
+  getResponseStream().write(getVersion().getBytes());
+  getResponseStream().write(' ');
+  getResponseStream().write(getStatusCode());
+  getResponseStream().write(' ');
+  getResponseStream().write(getReasonPhrase().getBytes());
+  getResponseStream().write(13);
+  getResponseStream().write(10);
+  getResponseHeaders().set(HttpConstants.HEADER_CONNECTION,"close",true);
+  for (  Parameter header : getResponseHeaders()) {
+    HttpUtils.writeHeader(header,getResponseStream());
+  }
+  getResponseStream().write(13);
+  getResponseStream().write(10);
+  super.sendResponse(response);
+}

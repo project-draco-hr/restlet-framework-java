@@ -1,0 +1,29 @@
+{
+  boolean bContinue=true;
+  if (getRequest().getConditions().hasSome()) {
+    Variant preferredVariant=null;
+    if (isNegotiateContent()) {
+      preferredVariant=getPreferredVariant();
+    }
+ else {
+      List<Variant> variants=getVariants();
+      if (variants.size() == 1) {
+        preferredVariant=variants.get(0);
+      }
+ else {
+        getResponse().setStatus(Status.CLIENT_ERROR_PRECONDITION_FAILED);
+        bContinue=false;
+      }
+    }
+    if (bContinue) {
+      Status status=getRequest().getConditions().getStatus(getRequest().getMethod(),preferredVariant);
+      if (status != null) {
+        getResponse().setStatus(status);
+        bContinue=false;
+      }
+    }
+  }
+  if (bContinue) {
+    delete();
+  }
+}

@@ -1,0 +1,36 @@
+{
+  Status result=null;
+  try {
+    Representation entity=request.isEntityAvailable() ? request.getEntity() : null;
+    if (entity != null) {
+      ConnectorService connectorService=getConnectorService(request);
+      if (connectorService != null)       connectorService.beforeSend(entity);
+      OutputStream rs=getRequestStream();
+      WritableByteChannel wbc=getRequestChannel();
+      if (wbc != null) {
+        if (entity != null) {
+          entity.write(wbc);
+        }
+      }
+ else       if (rs != null) {
+        if (entity != null) {
+          entity.write(rs);
+        }
+        rs.flush();
+      }
+      if (connectorService != null)       connectorService.afterSend(entity);
+      if (rs != null) {
+        rs.close();
+      }
+ else       if (wbc != null) {
+        wbc.close();
+      }
+    }
+    result=new Status(getStatusCode(),null,getReasonPhrase(),null);
+  }
+ catch (  IOException ioe) {
+    getHelper().getLogger().log(Level.FINE,"An error occured during the communication with the remote HTTP server.",ioe);
+    result=new Status(Status.CONNECTOR_ERROR_COMMUNICATION,"Unable to complete the HTTP call due to a communication error with the remote server. " + ioe.getMessage());
+  }
+  return result;
+}

@@ -1,0 +1,30 @@
+{
+  final DetailAST ident=aAST.findFirstToken(TokenTypes.IDENT);
+  if (!"readObject".equals(ident.getText())) {
+    return false;
+  }
+  final DetailAST typeAST=(DetailAST)aAST.findFirstToken(TokenTypes.TYPE).getFirstChild();
+  if (typeAST.getType() != TokenTypes.LITERAL_VOID) {
+    return false;
+  }
+  final DetailAST params=aAST.findFirstToken(TokenTypes.PARAMETERS);
+  if (params == null || params.getChildCount() != 1) {
+    return false;
+  }
+  final DetailAST type=(DetailAST)((DetailAST)params.getFirstChild()).findFirstToken(TokenTypes.TYPE).getFirstChild();
+  final String typeName=FullIdent.createFullIdent(type).getText();
+  if (!"java.io.ObjectInputStream".equals(typeName) && !"ObjectInputStream".equals(typeName)) {
+    return false;
+  }
+  final DetailAST throwsAST=aAST.findFirstToken(TokenTypes.LITERAL_THROWS);
+  if (throwsAST == null || throwsAST.getChildCount() != 3) {
+    return false;
+  }
+  final DetailAST excpt1=(DetailAST)throwsAST.getFirstChild();
+  final String exception1=FullIdent.createFullIdent(excpt1).getText();
+  final String exception2=FullIdent.createFullIdent(throwsAST.getLastChild()).getText();
+  if (!"java.io.IOException".equals(exception1) && !"IOException".equals(exception1) && !"java.io.IOException".equals(exception2)&& !"IOException".equals(exception2) || !"java.lang.ClassNotFoundException".equals(exception1) && !"ClassNotFoundException".equals(exception1) && !"java.lang.ClassNotFoundException".equals(exception2)&& !"ClassNotFoundException".equals(exception2)) {
+    return false;
+  }
+  return true;
+}

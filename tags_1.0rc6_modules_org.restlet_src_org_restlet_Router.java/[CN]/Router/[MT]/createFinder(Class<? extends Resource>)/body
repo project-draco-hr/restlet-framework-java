@@ -1,0 +1,15 @@
+{
+  Finder result=null;
+  if (getFinderClass() != null) {
+    try {
+      Constructor<? extends Finder> constructor=getFinderClass().getConstructor(Context.class,Class.class);
+      if (constructor != null) {
+        result=constructor.newInstance(getContext(),targetClass);
+      }
+    }
+ catch (    Exception e) {
+      getLogger().log(Level.WARNING,"Exception while instantiating the finder.",e);
+    }
+  }
+  return result;
+}

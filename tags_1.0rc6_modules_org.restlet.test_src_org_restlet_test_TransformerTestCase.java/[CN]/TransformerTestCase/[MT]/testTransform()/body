@@ -1,0 +1,7 @@
+{
+  Representation source=new StringRepresentation("<?xml version=\"1.0\"?>" + "<purchase id=\"p001\">" + "<customer db=\"cust123\"/>"+ "<product db=\"prod345\">"+ "<amount>23.45</amount>"+ "</product>"+ "</purchase>");
+  Representation xslt=new StringRepresentation("<?xml version=\"1.0\"?>" + "<xsl:transform xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\">" + "<xsl:template match =\"customer\">"+ "<buyer><xsl:value-of select=\"@db\"/></buyer>"+ "</xsl:template>"+ "</xsl:transform>");
+  Transformer transformer=new Transformer(Transformer.MODE_REQUEST,xslt);
+  String result=transformer.transform(source).getText();
+  assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><buyer>cust123</buyer>23.45",result);
+}

@@ -1,0 +1,15 @@
+{
+  Object result=null;
+  XPath xpath=XPathFactory.newInstance().newXPath();
+  xpath.setNamespaceContext(this);
+  if (this.xmlDocument == null) {
+    this.xmlDocument=getDocumentBuilder().parse(this.xmlRepresentation.getStream());
+  }
+  if (this.xmlDocument != null) {
+    result=xpath.evaluate(expression,this.xmlDocument,returnType);
+  }
+ else {
+    throw new Exception("Unable to obtain a DOM document for the SAX representation. " + "XPath evaluation cancelled.");
+  }
+  return result;
+}

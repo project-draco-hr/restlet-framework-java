@@ -1,0 +1,16 @@
+{
+  boolean result=false;
+  final DetailAST parent=aAST.getParent();
+  if (parent != null) {
+    if (parent.getType() == TokenTypes.PARAMETERS) {
+      final DetailAST grandparent=parent.getParent();
+      if (grandparent != null) {
+        result=hasBody(grandparent) && (!mIgnoreNonLocal || isLocal(grandparent));
+      }
+    }
+ else     if (parent.getType() == TokenTypes.LITERAL_CATCH) {
+      result=!mIgnoreCatch;
+    }
+  }
+  return result;
+}

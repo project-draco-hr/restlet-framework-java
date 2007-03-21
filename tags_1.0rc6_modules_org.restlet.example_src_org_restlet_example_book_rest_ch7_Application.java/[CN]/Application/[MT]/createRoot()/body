@@ -1,0 +1,8 @@
+{
+  Router router=new Router(getContext());
+  router.attach("/users/{username}",UserResource.class);
+  router.attach("/users/{username}/bookmarks",BookmarksResource.class);
+  Route uriRoute=router.attach("/users/{username}/bookmarks/{URI}",BookmarkResource.class);
+  uriRoute.getTemplate().getVariables().put("URI",new Variable(Variable.TYPE_URI_ALL));
+  return router;
+}

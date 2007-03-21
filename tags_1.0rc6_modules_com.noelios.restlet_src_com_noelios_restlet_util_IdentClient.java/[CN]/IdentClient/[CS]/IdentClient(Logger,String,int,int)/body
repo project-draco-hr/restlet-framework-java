@@ -1,0 +1,39 @@
+{
+  Socket socket=null;
+  if ((logger != null) && (clientAddress != null) && (clientPort != -1)&& (serverPort != -1)) {
+    try {
+      StringBuilder sb=new StringBuilder();
+      sb.append(clientPort).append(" , ").append(serverPort).append("\r\n");
+      String request=sb.toString();
+      socket=new Socket();
+      socket.setSoTimeout(SO_TIMEOUT);
+      socket.connect(new InetSocketAddress(clientAddress,113),CONNECT_TIMEOUT);
+      socket.getOutputStream().write(request.getBytes());
+      BufferedReader in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+      String response=in.readLine();
+      if (response != null) {
+        StringTokenizer st=new StringTokenizer(response,":");
+        if (st.countTokens() >= 3) {
+          st.nextToken();
+          String command=st.nextToken().trim();
+          if (command.equalsIgnoreCase("USERID") && st.countTokens() >= 2) {
+            this.hostType=st.nextToken().trim();
+            this.userIdentifier=st.nextToken("").substring(1);
+          }
+        }
+      }
+    }
+ catch (    IOException ioe) {
+      logger.log(Level.FINE,"Unable to complete the IDENT request",ioe);
+    }
+ finally {
+      try {
+        if (socket != null)         socket.close();
+      }
+ catch (      IOException ioe) {
+        logger.log(Level.FINE,"Unable to close the socket",ioe);
+      }
+      ;
+    }
+  }
+}

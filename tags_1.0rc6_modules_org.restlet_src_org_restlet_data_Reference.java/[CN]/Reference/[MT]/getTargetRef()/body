@@ -1,0 +1,57 @@
+{
+  Reference result=null;
+  if (isRelative() && (baseRef != null)) {
+    String authority=getAuthority();
+    String path=getPath();
+    String query=getQuery();
+    String fragment=getFragment();
+    result=new Reference();
+    result.setScheme(baseRef.getScheme());
+    if (authority != null) {
+      result.setAuthority(authority);
+      result.setPath(path);
+      result.setQuery(query);
+    }
+ else {
+      result.setAuthority(baseRef.getAuthority());
+      if ((path == null) || (path.equals(""))) {
+        result.setPath(baseRef.getPath());
+        if (query != null) {
+          result.setQuery(query);
+        }
+ else {
+          result.setQuery(baseRef.getQuery());
+        }
+      }
+ else {
+        if (path.startsWith("/")) {
+          result.setPath(path);
+        }
+ else {
+          String basePath=baseRef.getPath();
+          String mergedPath=null;
+          if ((baseRef.getAuthority() != null) && ((basePath == null) || (basePath.equals("")))) {
+            mergedPath="/" + path;
+          }
+ else {
+            int lastSlash=basePath.lastIndexOf('/');
+            if (lastSlash == -1) {
+              mergedPath=path;
+            }
+ else {
+              mergedPath=basePath.substring(0,lastSlash + 1) + path;
+            }
+          }
+          result.setPath(mergedPath);
+        }
+        result.setQuery(query);
+      }
+    }
+    result.setFragment(fragment);
+  }
+ else {
+    result=new Reference(this);
+  }
+  result.normalize();
+  return result;
+}

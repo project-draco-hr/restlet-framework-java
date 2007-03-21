@@ -1,0 +1,22 @@
+{
+  StringBuilder stringBuilder=new StringBuilder(request.getRequestURI());
+  if (request.getParameterNames().hasNext()) {
+    stringBuilder.append("?");
+    for (Iterator iterName=request.getParameterNames(); iterName.hasNext(); ) {
+      String name=(String)iterName.next();
+      if (request.getParameterValues(name).hasNext()) {
+        for (Iterator iterValue=request.getParameterValues(name); iterValue.hasNext(); ) {
+          String value=(String)iterValue.next();
+          stringBuilder.append(Reference.encode(name,CharacterSet.ISO_8859_1)).append("=").append(Reference.encode(value,CharacterSet.ISO_8859_1));
+          if (iterValue.hasNext()) {
+            stringBuilder.append("&");
+          }
+        }
+      }
+      if (iterName.hasNext()) {
+        stringBuilder.append("&");
+      }
+    }
+  }
+  return stringBuilder.toString();
+}
