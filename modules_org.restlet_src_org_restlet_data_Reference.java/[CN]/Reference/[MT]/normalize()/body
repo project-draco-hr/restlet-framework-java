@@ -48,5 +48,12 @@
   setPath(output.toString());
   setScheme(getScheme());
   setHostDomain(getHostDomain());
+  int hostPort=getHostPort();
+  if (hostPort != -1) {
+    int defaultPort=Protocol.valueOf(getScheme()).getDefaultPort();
+    if (hostPort == defaultPort) {
+      setHostPort(null);
+    }
+  }
   return this;
 }
