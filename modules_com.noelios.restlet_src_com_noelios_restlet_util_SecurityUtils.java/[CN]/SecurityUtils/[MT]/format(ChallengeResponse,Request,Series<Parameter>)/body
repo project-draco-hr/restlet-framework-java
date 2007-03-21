@@ -40,11 +40,11 @@
     String canonicalizedResource=getCanonicalizedResourceName(request.getResourceRef());
     StringBuilder rest=new StringBuilder();
     rest.append(methodName).append('\n').append(contentMd5).append('\n').append(contentType).append('\n').append(date).append('\n').append(canonicalizedAmzHeaders).append(canonicalizedResource);
-    sb.append(challenge.getIdentifier()).append(':').append(Base64.encodeBytes(toHMac(rest.toString(),challenge.getSecret())));
+    sb.append(challenge.getIdentifier()).append(':').append(Base64.encodeBytes(toHMac(rest.toString(),new String(challenge.getSecret()))));
   }
  else   if (challenge.getScheme().equals(ChallengeScheme.HTTP_BASIC)) {
     try {
-      String credentials=challenge.getIdentifier() + ':' + challenge.getSecret();
+      String credentials=challenge.getIdentifier() + ':' + new String(challenge.getSecret());
       sb.append(Base64.encodeBytes(credentials.getBytes("US-ASCII")));
     }
  catch (    UnsupportedEncodingException e) {
@@ -53,7 +53,7 @@
   }
  else   if (challenge.getScheme().equals(ChallengeScheme.SMTP_PLAIN)) {
     try {
-      String credentials="^@" + challenge.getIdentifier() + "^@"+ challenge.getSecret();
+      String credentials="^@" + challenge.getIdentifier() + "^@"+ new String(challenge.getSecret());
       sb.append(Base64.encodeBytes(credentials.getBytes("US-ASCII")));
     }
  catch (    UnsupportedEncodingException e) {
