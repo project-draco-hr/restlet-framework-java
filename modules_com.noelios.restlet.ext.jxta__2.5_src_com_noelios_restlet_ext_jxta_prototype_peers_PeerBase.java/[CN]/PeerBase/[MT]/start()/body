@@ -1,0 +1,21 @@
+{
+  System.setProperty(com.noelios.restlet.ext.jxta.util.Constants.JXTA_HOME,home);
+  System.setProperty(com.noelios.restlet.ext.jxta.util.Constants.PROFILE,profile);
+  networkHandler=new NetworkHandler(new NetworkListener(){
+    public void notify(    NetworkEvent ne){
+      System.out.println("NetworkEvent: " + ne.getCause());
+      if (ne.getCause() instanceof GroupEvent) {
+        GroupEvent ge=(GroupEvent)ne.getCause();
+        System.out.println("GroupEvent: " + ge.getType());
+        System.out.println("GroupEvent: " + ge.getPeerGroup());
+      }
+    }
+  }
+);
+  try {
+    networkHandler.start();
+  }
+ catch (  NetworkException ne) {
+    ne.printStackTrace();
+  }
+}

@@ -1,0 +1,29 @@
+{
+  super.start();
+  try {
+    PipeAdvertisement pipe=PipeUtility.createPipeAdvertisement(getName(),PipeService.PropagateType,getNetworkHandler().getNetwork().getNetPeerGroup(),PipeID.create(getId()));
+    socket=new JxtaMulticastSocket(getNetworkHandler().getNetwork().getNetPeerGroup(),pipe);
+    socket.setSoTimeout(0);
+  }
+ catch (  IOException ioe) {
+    ioe.printStackTrace();
+  }
+  for (int i=0; i < 10; i++) {
+    System.out.println("sleeping ...");
+    try {
+      Thread.sleep(3000);
+    }
+ catch (    Exception e) {
+    }
+    System.out.println("send ping");
+    String ping="ping";
+    byte[] bytes=ping.getBytes();
+    DatagramPacket message=new DatagramPacket(bytes,bytes.length);
+    try {
+      socket.send(message);
+    }
+ catch (    IOException ioe) {
+      ioe.printStackTrace();
+    }
+  }
+}
