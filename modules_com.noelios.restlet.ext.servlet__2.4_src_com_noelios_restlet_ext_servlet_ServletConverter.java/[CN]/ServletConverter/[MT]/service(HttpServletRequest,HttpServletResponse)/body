@@ -1,0 +1,20 @@
+{
+  if (getTarget() != null) {
+    ServletCall servletCall=new ServletCall(getLogger(),request.getLocalAddr(),request.getLocalPort(),request,response);
+    HttpRequest httpRequest=toRequest(servletCall);
+    HttpResponse httpResponse=new HttpResponse(servletCall,httpRequest);
+    if (this.baseRef == null) {
+      String baseUri=request.getContextPath() + request.getServletPath();
+      int baseIndex=request.getRequestURI().indexOf(baseUri);
+      if (baseIndex != -1) {
+        this.baseRef=new Reference(request.getRequestURI().substring(0,baseIndex + baseUri.length()));
+      }
+    }
+    httpRequest.getResourceRef().setBaseRef(this.baseRef);
+    getTarget().handle(httpRequest,httpResponse);
+    commit(httpResponse);
+  }
+ else {
+    getLogger().warning("Unable to find the Restlet target");
+  }
+}

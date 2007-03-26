@@ -1,6 +1,6 @@
 {
   try {
-    Series<Parameter> responseHeaders=httpCall.getResponseHeaders();
+    Series<Parameter> responseHeaders=response.getHttpCall().getResponseHeaders();
     if (response.getStatus().equals(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED)) {
       StringBuilder sb=new StringBuilder();
       boolean first=true;
@@ -26,15 +26,15 @@
     if (response.getChallengeRequest() != null) {
       responseHeaders.add(HttpConstants.HEADER_WWW_AUTHENTICATE,SecurityUtils.format(response.getChallengeRequest()));
     }
-    httpCall.getResponseHeaders().add(HttpConstants.HEADER_SERVER,response.getServerInfo().getAgent());
+    response.getHttpCall().getResponseHeaders().add(HttpConstants.HEADER_SERVER,response.getServerInfo().getAgent());
     if (response.getStatus() != null) {
-      httpCall.setStatusCode(response.getStatus().getCode());
-      httpCall.setReasonPhrase(response.getStatus().getDescription());
+      response.getHttpCall().setStatusCode(response.getStatus().getCode());
+      response.getHttpCall().setReasonPhrase(response.getStatus().getDescription());
     }
     if (response.getEntity() != null) {
       Representation entity=response.getEntity();
       if (entity.getExpirationDate() != null) {
-        responseHeaders.add(HttpConstants.HEADER_EXPIRES,httpCall.formatDate(entity.getExpirationDate(),false));
+        responseHeaders.add(HttpConstants.HEADER_EXPIRES,response.getHttpCall().formatDate(entity.getExpirationDate(),false));
       }
       if (!entity.getEncodings().isEmpty()) {
         StringBuilder value=new StringBuilder();
@@ -62,7 +62,7 @@
         responseHeaders.add(HttpConstants.HEADER_CONTENT_TYPE,contentType.toString());
       }
       if (entity.getModificationDate() != null) {
-        responseHeaders.add(HttpConstants.HEADER_LAST_MODIFIED,httpCall.formatDate(entity.getModificationDate(),false));
+        responseHeaders.add(HttpConstants.HEADER_LAST_MODIFIED,response.getHttpCall().formatDate(entity.getModificationDate(),false));
       }
       if (entity.getTag() != null) {
         responseHeaders.add(HttpConstants.HEADER_ETAG,entity.getTag().format());
@@ -115,7 +115,7 @@
   }
  catch (  Exception e) {
     getLogger().log(Level.INFO,"Exception intercepted while adding the response headers",e);
-    httpCall.setStatusCode(Status.SERVER_ERROR_INTERNAL.getCode());
-    httpCall.setReasonPhrase(Status.SERVER_ERROR_INTERNAL.getDescription());
+    response.getHttpCall().setStatusCode(Status.SERVER_ERROR_INTERNAL.getCode());
+    response.getHttpCall().setReasonPhrase(Status.SERVER_ERROR_INTERNAL.getDescription());
   }
 }
