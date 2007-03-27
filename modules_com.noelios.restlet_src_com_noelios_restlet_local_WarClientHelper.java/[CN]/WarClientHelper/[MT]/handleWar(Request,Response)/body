@@ -35,11 +35,11 @@
   }
  else {
     String path=request.getResourceRef().getPath();
-    if (path.toUpperCase().startsWith("/WEB-INF/")) {
+    if (isRestrict() && path.toUpperCase().startsWith("/WEB-INF/")) {
       getLogger().warning("Forbidden access to the WEB-INF directory detected. Path requested: " + path);
       response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
     }
- else     if (path.toUpperCase().startsWith("/META-INF/")) {
+ else     if (isRestrict() && path.toUpperCase().startsWith("/META-INF/")) {
       getLogger().warning("Forbidden access to the META-INF directory detected. Path requested: " + path);
       response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
     }
