@@ -1,0 +1,13 @@
+{
+  super(server);
+  try {
+    ByteBufferInputStream headStream=new ByteBufferInputStream();
+    headStream.setSelectionKey(key);
+    headStream.setByteBuffer(byteBuffer);
+    this.socketChannel=(SocketChannel)key.channel();
+    readRequestHead(headStream);
+  }
+ catch (  IOException ioe) {
+    getLogger().log(Level.WARNING,"Unable to parse the HTTP request",ioe);
+  }
+}

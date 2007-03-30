@@ -1,10 +1,7 @@
 {
   ByteBuffer byteBuffer=((WorkerThread)Thread.currentThread()).getByteBuffer();
-  ByteBufferInputStream is=new ByteBufferInputStream();
   SelectionKey key=context.getSelectionKey();
-  is.setSelectionKey(key);
-  is.setByteBuffer(byteBuffer);
-  StreamServerCall serverCall=new StreamServerCall(null,is,null);
+  GrizzlyServerCall serverCall=new GrizzlyServerCall(this.helper.getServer(),byteBuffer,key);
   boolean keepAlive=false;
   this.helper.handle(serverCall);
   if (keepAlive) {

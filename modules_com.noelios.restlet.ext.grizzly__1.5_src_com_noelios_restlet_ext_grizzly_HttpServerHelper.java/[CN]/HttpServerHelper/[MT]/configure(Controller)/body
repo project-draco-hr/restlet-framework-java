@@ -1,0 +1,22 @@
+{
+  TCPSelectorHandler selectHandler=new TCPSelectorHandler();
+  selectHandler.setPort(getServer().getPort());
+  if (getServer().getAddress() != null) {
+    selectHandler.setInet(InetAddress.getByName(getServer().getAddress()));
+  }
+  final ReadFilter readFilter=new ReadFilter();
+  final HttpParserFilter httpParserFilter=new HttpParserFilter(this);
+  controller.setSelectHandler(selectHandler);
+  controller.setInstanceHandler(new DefaultInstanceHandler(){
+    public ProtocolChain poll(){
+      ProtocolChain protocolChain=protocolChains.poll();
+      if (protocolChain == null) {
+        protocolChain=new DefaultProtocolChain();
+        protocolChain.addFilter(readFilter);
+        protocolChain.addFilter(httpParserFilter);
+      }
+      return protocolChain;
+    }
+  }
+);
+}

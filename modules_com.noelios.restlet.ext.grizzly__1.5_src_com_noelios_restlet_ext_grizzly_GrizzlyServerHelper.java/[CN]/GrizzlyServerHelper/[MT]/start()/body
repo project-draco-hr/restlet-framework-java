@@ -1,31 +1,9 @@
 {
   super.start();
-  int port=getServer().getPort();
-  String address=getServer().getAddress();
-  InetSocketAddress socketAddress;
-  if (address == null) {
-    socketAddress=new InetSocketAddress(port);
+  if (this.controller == null) {
+    this.controller=new Controller();
+    configure(this.controller);
   }
- else {
-    socketAddress=new InetSocketAddress(address,port);
-  }
-  int socketBackLog=50;
-  ServerSocketChannel socketChannel=ServerSocketChannel.open();
-  ServerSocket socket=socketChannel.socket();
-  socket.setReuseAddress(true);
-  socket.bind(socketAddress,socketBackLog);
-  socketChannel.configureBlocking(false);
-  Controller controller=new Controller();
-  controller.setInstanceHandler(new DefaultInstanceHandler(){
-    public ProtocolChain poll(){
-      ProtocolChain protocolChain=protocolChains.poll();
-      if (protocolChain == null) {
-        protocolChain=new DefaultProtocolChain();
-        protocolChain.addFilter(new ReadFilter());
-        protocolChain.addFilter(new HttpParserFilter(GrizzlyServerHelper.this));
-      }
-      return protocolChain;
-    }
-  }
-);
+  getLogger().info("Starting the Grizzly HTTP server");
+  this.controller.start();
 }

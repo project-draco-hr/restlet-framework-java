@@ -1,3 +1,9 @@
 {
-  super.writeResponseBody(entity);
+  ReadableByteChannel channel=entity.getChannel();
+  if ((channel != null) && (channel instanceof FileChannel)) {
+    entity.write(getResponseChannel());
+  }
+ else {
+    entity.write(getResponseStream());
+  }
 }
