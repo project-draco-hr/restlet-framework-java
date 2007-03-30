@@ -166,6 +166,7 @@
               }
             }
             if (file.delete()) {
+              boolean renameSuccessfull=false;
               if ((tmp != null) && tmp.renameTo(file)) {
                 if (request.getEntity() == null) {
                   response.setStatus(Status.SUCCESS_NO_CONTENT);
@@ -173,10 +174,29 @@
  else {
                   response.setStatus(Status.SUCCESS_OK);
                 }
+                renameSuccessfull=true;
               }
  else {
-                getLogger().log(Level.WARNING,"Unable to move the temporary file to replace the existing file");
-                response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to move the temporary file to replace the existing file"));
+                if (tmp != null && tmp.exists()) {
+                  try {
+                    BufferedReader br=new BufferedReader(new FileReader(tmp));
+                    BufferedWriter wr=new BufferedWriter(new FileWriter(file));
+                    String s;
+                    while ((s=br.readLine()) != null)                     wr.append(s);
+                    br.close();
+                    wr.flush();
+                    wr.close();
+                    renameSuccessfull=true;
+                    tmp.delete();
+                  }
+ catch (                  Exception e) {
+                    renameSuccessfull=false;
+                  }
+                }
+                if (!renameSuccessfull) {
+                  getLogger().log(Level.WARNING,"Unable to move the temporary file to replace the existing file");
+                  response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to move the temporary file to replace the existing file"));
+                }
               }
             }
  else {
