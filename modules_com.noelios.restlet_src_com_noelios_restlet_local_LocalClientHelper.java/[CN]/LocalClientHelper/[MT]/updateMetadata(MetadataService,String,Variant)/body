@@ -1,0 +1,24 @@
+{
+  if (variant != null) {
+    String[] tokens=entryName.split("\\.");
+    Metadata current;
+    for (int j=1; j < tokens.length; j++) {
+      current=metadataService.getMetadata(tokens[j]);
+      if (current != null) {
+        if (current instanceof MediaType)         variant.setMediaType((MediaType)current);
+        if (current instanceof CharacterSet)         variant.setCharacterSet((CharacterSet)current);
+        if (current instanceof Encoding)         variant.getEncodings().add((Encoding)current);
+        if (current instanceof Language)         variant.getLanguages().add((Language)current);
+      }
+      int dashIndex=tokens[j].indexOf('-');
+      if (dashIndex != -1) {
+        String primaryPart=tokens[j].substring(0,dashIndex);
+        current=metadataService.getMetadata(primaryPart);
+        if (current instanceof Language)         variant.getLanguages().add((Language)current);
+      }
+    }
+    if (variant.getLanguages().isEmpty()) {
+      variant.getLanguages().add(metadataService.getDefaultLanguage());
+    }
+  }
+}

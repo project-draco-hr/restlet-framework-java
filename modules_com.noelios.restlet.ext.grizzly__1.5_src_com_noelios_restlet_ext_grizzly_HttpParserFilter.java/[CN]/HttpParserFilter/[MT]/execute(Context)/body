@@ -1,0 +1,18 @@
+{
+  ByteBuffer byteBuffer=((WorkerThread)Thread.currentThread()).getByteBuffer();
+  ByteBufferInputStream is=new ByteBufferInputStream();
+  SelectionKey key=context.getSelectionKey();
+  is.setSelectionKey(key);
+  is.setByteBuffer(byteBuffer);
+  StreamServerCall serverCall=new StreamServerCall(null,is,null);
+  boolean keepAlive=false;
+  this.helper.handle(serverCall);
+  if (keepAlive) {
+    context.setKeyRegistrationState(Context.KeyRegistrationState.REGISTER);
+  }
+ else {
+    context.setKeyRegistrationState(Context.KeyRegistrationState.CANCEL);
+  }
+  byteBuffer.clear();
+  return true;
+}

@@ -7,7 +7,19 @@
     result=new ReadableRepresentation(getResponseChannel(),null);
   }
  else   if (getMethod().equals(Method.HEAD.getName())) {
-    result=new Representation();
+    result=new Representation(){
+      @Override public ReadableByteChannel getChannel() throws IOException {
+        return null;
+      }
+      @Override public InputStream getStream() throws IOException {
+        return null;
+      }
+      @Override public void write(      OutputStream outputStream) throws IOException {
+      }
+      @Override public void write(      WritableByteChannel writableChannel) throws IOException {
+      }
+    }
+;
   }
   if (result != null) {
     for (    Parameter header : getResponseHeaders()) {
