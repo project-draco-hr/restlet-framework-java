@@ -1,0 +1,9 @@
+{
+  boolean isServer=options.contains("-" + SERVER);
+  String base=System.getProperty("peer.home",System.getProperty("user.dir")) + File.separator + ".restlet.jxta.";
+  bind(main);
+  bindConstant().annotatedWith(Names.named("peer.name")).to(getProperty("peer.name"));
+  bindConstant().annotatedWith(Names.named("peer.id")).to(getProperty("peer.id"));
+  bindConstant().annotatedWith(Names.named("peer.home")).to(base + (isServer ? "server" : "client"));
+  bindConstant().annotatedWith(Names.named("peer.profile")).to(getProperty(isServer ? "profile.server" : "profile.client"));
+}
