@@ -1,15 +1,13 @@
 {
   try {
     if (socketAddress == null) {
-      if (getServer().getAddress() == null) {
-        socketAddress=new InetSocketAddress(getServer().getPort());
-      }
- else {
-        socketAddress=new InetSocketAddress(getServer().getAddress(),getServer().getPort());
-      }
+      socketAddress=createSocketAddress();
     }
     executorService=Executors.newFixedThreadPool(10);
-    serverSocket=createSocket(socketAddress);
+    serverSocket=createSocket();
+    if (socketAddress != null) {
+      serverSocket.bind(socketAddress);
+    }
     for (; ; ) {
       executorService.execute(new Connection(helper,serverSocket.accept()));
     }
