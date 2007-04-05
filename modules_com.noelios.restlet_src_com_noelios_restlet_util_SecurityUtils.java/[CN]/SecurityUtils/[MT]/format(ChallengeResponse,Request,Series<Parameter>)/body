@@ -19,14 +19,17 @@
     String contentType=httpHeaders.getFirstValue(HttpConstants.HEADER_CONTENT_TYPE,true);
     if (contentType == null) {
       boolean applyPatch=false;
-      int majorVersionNumber=Engine.getJavaMajorVersion();
-      int minorVersionNumber=Engine.getJavaMinorVersion();
-      if (majorVersionNumber == 1) {
-        if (minorVersionNumber < 5) {
-          applyPatch=true;
-        }
- else         if (minorVersionNumber == 5) {
-          applyPatch=(Engine.getJavaUpdateVersion() < 10);
+      String jvmVendor=System.getProperty("java.vm.vendor");
+      if (jvmVendor != null && (jvmVendor.toLowerCase()).startsWith("sun")) {
+        int majorVersionNumber=Engine.getJavaMajorVersion();
+        int minorVersionNumber=Engine.getJavaMinorVersion();
+        if (majorVersionNumber == 1) {
+          if (minorVersionNumber < 5) {
+            applyPatch=true;
+          }
+ else           if (minorVersionNumber == 5) {
+            applyPatch=(Engine.getJavaUpdateVersion() < 10);
+          }
         }
       }
       if (applyPatch && !request.getMethod().equals(Method.PUT)) {
