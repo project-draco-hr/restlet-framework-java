@@ -1,26 +1,36 @@
 {
   Reference result=null;
-  if (isRelative() && (baseRef != null)) {
+  if (isRelative() && (this.baseRef != null)) {
+    Reference baseReference=null;
+    if (this.baseRef.isAbsolute()) {
+      baseReference=this.baseRef;
+    }
+ else {
+      baseReference=this.baseRef.getTargetRef();
+    }
+    if (baseReference.isRelative()) {
+      throw new IllegalArgumentException("The base reference must have an absolute hierarchical path component");
+    }
     String authority=getAuthority();
     String path=getPath();
     String query=getQuery();
     String fragment=getFragment();
     result=new Reference();
-    result.setScheme(baseRef.getScheme());
+    result.setScheme(baseReference.getScheme());
     if (authority != null) {
       result.setAuthority(authority);
       result.setPath(path);
       result.setQuery(query);
     }
  else {
-      result.setAuthority(baseRef.getAuthority());
+      result.setAuthority(baseReference.getAuthority());
       if ((path == null) || (path.equals(""))) {
-        result.setPath(baseRef.getPath());
+        result.setPath(baseReference.getPath());
         if (query != null) {
           result.setQuery(query);
         }
  else {
-          result.setQuery(baseRef.getQuery());
+          result.setQuery(baseReference.getQuery());
         }
       }
  else {
@@ -28,9 +38,9 @@
           result.setPath(path);
         }
  else {
-          String basePath=baseRef.getPath();
+          String basePath=baseReference.getPath();
           String mergedPath=null;
-          if ((baseRef.getAuthority() != null) && ((basePath == null) || (basePath.equals("")))) {
+          if ((baseReference.getAuthority() != null) && ((basePath == null) || (basePath.equals("")))) {
             mergedPath="/" + path;
           }
  else {
