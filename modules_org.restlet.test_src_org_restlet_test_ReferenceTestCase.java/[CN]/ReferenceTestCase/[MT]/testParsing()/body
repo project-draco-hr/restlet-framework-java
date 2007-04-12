@@ -74,6 +74,17 @@
   String uri135="http://a/b/c/h";
   String uri136="http://a/b/c/g;x=1/y";
   String uri137="http://a/b/c/y";
+  Reference host=new Reference("http://host.com");
+  Reference slashdir=new Reference(host,"/dir");
+  Reference dir=new Reference(host,"dir");
+  Reference dirslash=new Reference(host,"dir/");
+  Reference fulldir=new Reference("http://host.com/dir");
+  Reference fulldirsub=new Reference(fulldir,"sub");
+  Reference fulldirslashsub=new Reference(fulldir,"/sub");
+  Reference slashdirsub=new Reference(slashdir,"sub");
+  Reference slashdirslashsub=new Reference(slashdir,"/sub");
+  Reference dirslashsub=new Reference(dirslash,"sub");
+  Reference fullsub=new Reference("http://host.com/dir/sub");
   testRef0("foo://example.com:8042/over/there?name=ferret#nose","foo","example.com:8042","/over/there","name=ferret","nose");
   testRef0("urn:example:animal:ferret:nose","urn",null,"example:animal:ferret:nose",null,null);
   testRef0("mailto:fred@example.com","mailto",null,"fred@example.com",null,null);
@@ -153,4 +164,15 @@
   testRef3("http://localhost/path#fragment?query",true,false,"http://localhost/path");
   testRef3("http://localhost/path#fragment?query",false,true,"http://localhost/path#fragment?query");
   testRef3("http://localhost/path#fragment?query",false,false,"http://localhost/path");
+  testRef4(host,"http","host.com",null,"http://host.com","http://host.com","http://host.com",null,null);
+  testRef4(slashdir,null,null,"/dir",null,"/dir","http://host.com/dir",null,"/dir");
+  testRef4(dir,null,null,"dir",null,"dir","http://host.com/dir",null,"dir");
+  testRef4(dirslash,null,null,"dir/",null,"dir/","http://host.com/dir/",null,"dir/");
+  testRef4(fulldir,"http","host.com","/dir","http://host.com/dir","http://host.com/dir","http://host.com/dir",null,null);
+  testRef4(fulldirsub,null,null,"sub",null,"sub","http://host.com/sub",null,"sub");
+  testRef4(fulldirslashsub,null,null,"/sub",null,"/sub","http://host.com/sub",null,"/sub");
+  testRef4(slashdirsub,null,null,"sub",null,"sub","http://host.com/sub",null,"sub");
+  testRef4(slashdirslashsub,null,null,"/sub","","/sub","http://host.com/sub",null,"/sub");
+  testRef4(dirslashsub,null,null,"sub",null,"sub","http://host.com/dir/sub",null,"sub");
+  testRef4(fullsub,"http","host.com","/dir/sub","http://host.com/dir/sub","http://host.com/dir/sub","http://host.com/dir/sub",null,null);
 }
