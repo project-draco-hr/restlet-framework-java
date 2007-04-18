@@ -2,6 +2,14 @@
   MediaType mt1=new MediaType("application/xml");
   MediaType mt2=new MediaType("application/xml2");
   assertFalse(mt1.equals(mt2));
+  Series<Parameter> mediaParams1=new Form();
+  mediaParams1.add(new Parameter("charset","ISO-8859-1"));
+  MediaType mt1Bis=new MediaType("application/xml",mediaParams1);
+  Series<Parameter> mediaParams3=new Form();
+  mediaParams3.add(new Parameter("charset","ISO-8859-15"));
+  MediaType mt3=new MediaType("application/xml",mediaParams3);
+  assertFalse(mt1Bis.equals(mt1));
+  assertFalse(mt1Bis.equals(mt3));
   mt1=new MediaType("application/1");
   mt2=MediaType.APPLICATION_ALL;
   assertFalse(mt1.equals(mt2));
