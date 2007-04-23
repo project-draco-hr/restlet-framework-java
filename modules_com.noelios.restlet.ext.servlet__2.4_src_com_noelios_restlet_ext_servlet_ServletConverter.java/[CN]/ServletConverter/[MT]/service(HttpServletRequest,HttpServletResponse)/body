@@ -3,15 +3,8 @@
     ServletCall servletCall=new ServletCall(getLogger(),request.getLocalAddr(),request.getLocalPort(),request,response);
     HttpRequest httpRequest=toRequest(servletCall);
     HttpResponse httpResponse=new HttpResponse(servletCall,httpRequest);
-    if (this.baseRef == null) {
-      String basePath=request.getContextPath() + request.getServletPath();
-      String baseUri=request.getRequestURL().toString();
-      int baseIndex=baseUri.indexOf(basePath);
-      if (baseIndex != -1) {
-        this.baseRef=new Reference(baseUri.substring(0,baseIndex + basePath.length()));
-      }
-    }
-    httpRequest.getResourceRef().setBaseRef(this.baseRef);
+    httpRequest.getResourceRef().setBaseRef(getBaseRef(request));
+    httpRequest.setRootRef(getRootRef(request));
     getTarget().handle(httpRequest,httpResponse);
     commit(httpResponse);
   }
