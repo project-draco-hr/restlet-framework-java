@@ -1,0 +1,9 @@
+{
+  Request request=new Request(Method.GET,uri);
+  Client client=new Client(Protocol.HTTP);
+  ChallengeResponse authentication=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,SHORT_USERNAME,SHORT_PASSWORD);
+  request.setChallengeResponse(authentication);
+  Response response=client.handle(request);
+  assertEquals("Short username did not return 200 OK",Status.SUCCESS_OK,response.getStatus());
+  assertEquals(AUTHENTICATED_MSG,response.getEntity().getText());
+}

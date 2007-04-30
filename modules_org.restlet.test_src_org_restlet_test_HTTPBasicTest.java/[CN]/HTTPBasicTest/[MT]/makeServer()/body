@@ -1,0 +1,20 @@
+{
+  int port;
+  if (System.getProperties().containsKey(RESTLET_TEST_PORT)) {
+    port=Integer.parseInt(System.getProperty(RESTLET_TEST_PORT));
+  }
+  port=DEFAULT_PORT;
+  component=new Component();
+  component.getServers().add(Protocol.HTTP,port);
+  uri="http://localhost:" + port + "/";
+  Application application=new Application(component.getContext()){
+    @Override public Restlet createRoot(){
+      guard=new TestGuard(getContext());
+      guard.setNext(new AuthenticatedRestlet());
+      return guard;
+    }
+  }
+;
+  component.getDefaultHost().attach(application);
+  component.start();
+}
