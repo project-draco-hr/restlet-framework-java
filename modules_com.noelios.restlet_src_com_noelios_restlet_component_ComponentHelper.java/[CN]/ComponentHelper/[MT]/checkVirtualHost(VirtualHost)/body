@@ -6,13 +6,25 @@
       if (next instanceof Application) {
         Application application=(Application)next;
         for (        Protocol clientProtocol : application.getConnectorService().getClientProtocols()) {
-          if (!getComponent().getClients().contains(clientProtocol)) {
+          boolean clientFound=false;
+          Client client;
+          for (Iterator<Client> iter=getComponent().getClients().iterator(); !clientFound && iter.hasNext(); ) {
+            client=iter.next();
+            clientFound=client.getProtocols().contains(clientProtocol);
+          }
+          if (!clientFound) {
             getComponent().getLogger().severe("Unable to start the application \"" + application.getName() + "\". Client connector for protocol "+ clientProtocol.getName()+ " is missing.");
             result=false;
           }
         }
         for (        Protocol serverProtocol : application.getConnectorService().getServerProtocols()) {
-          if (!getComponent().getServers().contains(serverProtocol)) {
+          boolean serverFound=false;
+          Server server;
+          for (Iterator<Server> iter=getComponent().getServers().iterator(); !serverFound && iter.hasNext(); ) {
+            server=iter.next();
+            serverFound=server.getProtocols().contains(serverProtocol);
+          }
+          if (!serverFound) {
             getComponent().getLogger().severe("Unable to start the application \"" + application.getName() + "\". Server connector for protocol "+ serverProtocol.getName()+ " is missing.");
             result=false;
           }
