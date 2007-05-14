@@ -1,17 +1,17 @@
 {
   List<Variant> results=super.getVariants();
   getLogger().info("Getting variants for : " + getTargetUri());
-  SortedSet<Representation> resultSet=new TreeSet<Representation>(getRepresentationsComparator());
-  String baseRef=getRequest().getResourceRef().getBaseRef().toString(false,false);
-  if (!baseRef.endsWith("/")) {
-    baseRef+="/";
-  }
-  int lastIndex=this.relativePart.lastIndexOf("/");
-  if (lastIndex != -1) {
-    baseRef+=this.relativePart.substring(0,lastIndex);
-  }
-  int rootLength=getDirectoryUri().length();
   if (this.directoryContent != null) {
+    SortedSet<Representation> resultSet=new TreeSet<Representation>(getRepresentationsComparator());
+    String baseRef=getRequest().getResourceRef().getBaseRef().toString(false,false);
+    if (!baseRef.endsWith("/")) {
+      baseRef+="/";
+    }
+    int lastIndex=this.relativePart.lastIndexOf("/");
+    if (lastIndex != -1) {
+      baseRef+=this.relativePart.substring(0,lastIndex);
+    }
+    int rootLength=getDirectoryUri().length();
     if (this.baseName != null) {
       String filePath;
       for (      Reference ref : getVariantsReferences()) {
@@ -46,6 +46,9 @@
         }
       }
     }
+  }
+ else   if (this.targetFile && (this.fileContent != null)) {
+    results.add(this.fileContent);
   }
   return results;
 }

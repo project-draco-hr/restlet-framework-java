@@ -1,9 +1,15 @@
 {
+  MetadataService metadataService=getMetadataService(request);
   if (request.getMethod().equals(Method.GET) || request.getMethod().equals(Method.HEAD)) {
-    URL url=classLoader.getResource(request.getResourceRef().getPath());
+    String path=request.getResourceRef().getPath();
+    if ((path != null) && path.startsWith("/"))     path=path.substring(1);
+    URL url=classLoader.getResource(path);
     if (url != null) {
       try {
-        response.setEntity(new InputRepresentation(url.openStream(),null));
+        Representation output=new InputRepresentation(url.openStream(),metadataService.getDefaultMediaType());
+        String name=path.substring(path.lastIndexOf('/') + 1);
+        updateMetadata(metadataService,name,output);
+        response.setEntity(output);
         response.setStatus(Status.SUCCESS_OK);
       }
  catch (      IOException ioe) {
