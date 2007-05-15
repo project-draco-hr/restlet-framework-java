@@ -1,12 +1,12 @@
 {
-  TCPSelectorHandler selectHandler=new TCPSelectorHandler();
-  selectHandler.setPort(getServer().getPort());
+  TCPSelectorHandler selectorHandler=new TCPSelectorHandler();
+  selectorHandler.setPort(getServer().getPort());
   if (getServer().getAddress() != null) {
-    selectHandler.setInet(InetAddress.getByName(getServer().getAddress()));
+    selectorHandler.setInet(InetAddress.getByName(getServer().getAddress()));
   }
   final ReadFilter readFilter=new ReadFilter();
   final HttpParserFilter httpParserFilter=new HttpParserFilter(this);
-  controller.setSelectHandler(selectHandler);
+  controller.setSelectorHandler(selectorHandler);
   controller.setProtocolChainInstanceHandler(new DefaultProtocolChainInstanceHandler(){
     public ProtocolChain poll(){
       ProtocolChain protocolChain=protocolChains.poll();
