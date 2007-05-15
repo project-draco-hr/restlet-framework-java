@@ -5,5 +5,16 @@
     configure(this.controller);
   }
   getLogger().info("Starting the Grizzly HTTP server");
-  this.controller.start();
+  final Controller controller=this.controller;
+  new Thread(){
+    public void run(){
+      try {
+        controller.start();
+      }
+ catch (      IOException e) {
+        getLogger().log(Level.WARNING,"Error while starting the Grizzly controller",e);
+      }
+    }
+  }
+.start();
 }
