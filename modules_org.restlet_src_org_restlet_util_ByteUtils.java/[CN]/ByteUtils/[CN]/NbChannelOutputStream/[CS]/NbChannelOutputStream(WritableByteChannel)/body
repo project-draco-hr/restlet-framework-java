@@ -1,0 +1,14 @@
+{
+  this.channel=channel;
+  if (!(channel instanceof SelectableChannel)) {
+    throw new IllegalArgumentException("Invalid channel provided. Please use only selectable channels.");
+  }
+ else {
+    this.selectableChannel=(SelectableChannel)channel;
+    this.selector=null;
+    this.selectionKey=null;
+    if (this.selectableChannel.isBlocking()) {
+      throw new IllegalArgumentException("Invalid blocking channel provided. Please use only non-blocking channels.");
+    }
+  }
+}

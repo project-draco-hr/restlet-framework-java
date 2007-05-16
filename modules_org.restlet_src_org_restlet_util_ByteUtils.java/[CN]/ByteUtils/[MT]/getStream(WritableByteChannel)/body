@@ -1,3 +1,18 @@
 {
-  return (writableChannel != null) ? Channels.newOutputStream(writableChannel) : null;
+  OutputStream result=null;
+  if (writableChannel instanceof SelectableChannel) {
+    SelectableChannel selectableChannel=(SelectableChannel)writableChannel;
+synchronized (selectableChannel.blockingLock()) {
+      if (selectableChannel.isBlocking()) {
+        result=Channels.newOutputStream(writableChannel);
+      }
+ else {
+        result=new NbChannelOutputStream(writableChannel);
+      }
+    }
+  }
+ else {
+    result=new NbChannelOutputStream(writableChannel);
+  }
+  return result;
 }
