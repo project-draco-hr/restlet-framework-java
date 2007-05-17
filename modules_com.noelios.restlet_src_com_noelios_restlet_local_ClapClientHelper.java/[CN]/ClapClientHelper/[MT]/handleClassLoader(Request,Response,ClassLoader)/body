@@ -5,6 +5,14 @@
     if ((path != null) && path.startsWith("/"))     path=path.substring(1);
     URL url=classLoader.getResource(path);
     if (url != null) {
+      if (url.getProtocol().equals("file")) {
+        File file=new File(url.getFile());
+        if (file.isDirectory()) {
+          url=null;
+        }
+      }
+    }
+    if (url != null) {
       try {
         Representation output=new InputRepresentation(url.openStream(),metadataService.getDefaultMediaType());
         String name=path.substring(path.lastIndexOf('/') + 1);
