@@ -1,7 +1,9 @@
 {
   Helper result=null;
   if (server.getProtocols().size() > 0) {
-    for (    ConnectorHelper connector : getRegisteredServers()) {
+    ConnectorHelper connector=null;
+    for (Iterator<ConnectorHelper> iter=getRegisteredServers().iterator(); (result == null) && iter.hasNext(); ) {
+      connector=iter.next();
       if (connector.getProtocols().containsAll(server.getProtocols())) {
         try {
           result=connector.getClass().getConstructor(Server.class).newInstance(server);
