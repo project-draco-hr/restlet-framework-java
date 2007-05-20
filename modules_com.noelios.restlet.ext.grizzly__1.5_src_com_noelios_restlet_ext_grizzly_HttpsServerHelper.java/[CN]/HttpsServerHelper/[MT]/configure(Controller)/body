@@ -1,0 +1,32 @@
+{
+  KeyStore keyStore=KeyStore.getInstance(getKeystoreType());
+  FileInputStream fis=new FileInputStream(getKeystorePath());
+  keyStore.load(fis,getKeystorePassword().toCharArray());
+  KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(getCertAlgorithm());
+  keyManagerFactory.init(keyStore,getKeyPassword().toCharArray());
+  SSLContext sslContext=SSLContext.getInstance(getSslProtocol());
+  sslContext.init(keyManagerFactory.getKeyManagers(),null,null);
+  SslTCPSelectorHandler selectorHandler=new SslTCPSelectorHandler();
+  selectorHandler.setSSLContext(sslContext);
+  selectorHandler.setPort(getServer().getPort());
+  if (getServer().getAddress() != null) {
+    selectorHandler.setInet(InetAddress.getByName(getServer().getAddress()));
+  }
+  final SSLReadFilter readFilter=new SSLReadFilter();
+  final HttpParserFilter httpParserFilter=new HttpParserFilter(this);
+  controller.setPipeline(new SSLPipeline());
+  controller.setSelectionKeyHandler(new SslSelectionKeyHandler());
+  controller.setSelectorHandler(selectorHandler);
+  controller.setProtocolChainInstanceHandler(new DefaultProtocolChainInstanceHandler(){
+    public ProtocolChain poll(){
+      ProtocolChain protocolChain=protocolChains.poll();
+      if (protocolChain == null) {
+        protocolChain=new DefaultProtocolChain();
+        protocolChain.addFilter(readFilter);
+        protocolChain.addFilter(httpParserFilter);
+      }
+      return protocolChain;
+    }
+  }
+);
+}

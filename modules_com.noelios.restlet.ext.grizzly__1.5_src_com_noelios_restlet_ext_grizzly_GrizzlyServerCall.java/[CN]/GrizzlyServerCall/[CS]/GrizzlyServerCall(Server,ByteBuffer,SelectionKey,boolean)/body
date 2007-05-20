@@ -1,7 +1,13 @@
 {
   super(server);
   try {
-    ByteBufferInputStream headStream=new ByteBufferInputStream();
+    ByteBufferInputStream headStream=null;
+    if (secure) {
+      headStream=new SSLByteBufferInputStream();
+    }
+ else {
+      headStream=new ByteBufferInputStream();
+    }
     headStream.setSelectionKey(key);
     headStream.setByteBuffer(byteBuffer);
     this.socketChannel=(SocketChannel)key.channel();
