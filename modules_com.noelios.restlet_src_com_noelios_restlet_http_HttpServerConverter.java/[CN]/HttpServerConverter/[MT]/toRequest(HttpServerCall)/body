@@ -4,5 +4,14 @@
   if (httpCall.getVersion() != null) {
     result.getAttributes().put(HttpConstants.ATTRIBUTE_VERSION,httpCall.getVersion());
   }
+  if (httpCall.isConfidential() && (httpCall.getSslSession() != null)) {
+    try {
+      List<Certificate> clientCertificates=Arrays.asList(httpCall.getSslSession().getPeerCertificates());
+      result.getAttributes().put(HttpConstants.ATTRIBUTE_CLIENT_CERTIFICATES,clientCertificates);
+    }
+ catch (    SSLPeerUnverifiedException e) {
+      getLogger().log(Level.FINE,"Can't get the client certificates.",e);
+    }
+  }
   return result;
 }
