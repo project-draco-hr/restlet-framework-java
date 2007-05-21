@@ -6,8 +6,15 @@
   keyManagerFactory.init(keyStore,getKeyPassword().toCharArray());
   SSLContext sslContext=SSLContext.getInstance(getSslProtocol());
   sslContext.init(keyManagerFactory.getKeyManagers(),null,null);
-  setSocket(sslContext.getServerSocketFactory().createServerSocket(getServer().getPort()));
-  getSocket().setSoTimeout(60000);
+  SSLServerSocket serverSocket=(SSLServerSocket)sslContext.getServerSocketFactory().createServerSocket(getServer().getPort());
+  serverSocket.setSoTimeout(60000);
+  if (isNeedClientAuthentication()) {
+    serverSocket.setNeedClientAuth(true);
+  }
+ else   if (isWantClientAuthentication()) {
+    serverSocket.setWantClientAuth(true);
+  }
+  setSocket(serverSocket);
   fis.close();
   setConfidential(true);
   setHandler(PipelineHandlerFactory.getInstance(new SimpleProtocolHandler(this),getDefaultThreads(),getMaxWaitTimeMs()));

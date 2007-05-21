@@ -8,6 +8,12 @@
   sslContext.init(keyManagerFactory.getKeyManagers(),null,null);
   SslTCPSelectorHandler selectorHandler=new SslTCPSelectorHandler();
   selectorHandler.setSSLContext(sslContext);
+  if (isNeedClientAuthentication()) {
+    selectorHandler.setNeedClientAuth(isNeedClientAuthentication());
+  }
+ else   if (isWantClientAuthentication()) {
+    selectorHandler.setWantClientAuth(isWantClientAuthentication());
+  }
   selectorHandler.setPort(getServer().getPort());
   if (getServer().getAddress() != null) {
     selectorHandler.setInet(InetAddress.getByName(getServer().getAddress()));
