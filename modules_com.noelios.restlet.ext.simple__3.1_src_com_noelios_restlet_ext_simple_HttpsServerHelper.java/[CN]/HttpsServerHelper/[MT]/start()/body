@@ -4,8 +4,10 @@
   keyStore.load(fis,getKeystorePassword().toCharArray());
   KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(getCertAlgorithm());
   keyManagerFactory.init(keyStore,getKeyPassword().toCharArray());
+  TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance(getCertAlgorithm());
+  trustManagerFactory.init(keyStore);
   SSLContext sslContext=SSLContext.getInstance(getSslProtocol());
-  sslContext.init(keyManagerFactory.getKeyManagers(),null,null);
+  sslContext.init(keyManagerFactory.getKeyManagers(),trustManagerFactory.getTrustManagers(),null);
   SSLServerSocket serverSocket=(SSLServerSocket)sslContext.getServerSocketFactory().createServerSocket(getServer().getPort());
   serverSocket.setSoTimeout(60000);
   if (isNeedClientAuthentication()) {
