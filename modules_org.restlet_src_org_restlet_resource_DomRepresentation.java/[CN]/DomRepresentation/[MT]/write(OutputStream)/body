@@ -1,6 +1,8 @@
 {
   try {
-    TransformerFactory.newInstance().newTransformer().transform(new DOMSource(getDocument()),new StreamResult(outputStream));
+    Transformer transformer=TransformerFactory.newInstance().newTransformer();
+    transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM,getDocument().getDoctype().getSystemId());
+    transformer.transform(new DOMSource(getDocument()),new StreamResult(outputStream));
   }
  catch (  TransformerConfigurationException tce) {
     throw new IOException("Couldn't write the XML representation: " + tce.getMessage());
