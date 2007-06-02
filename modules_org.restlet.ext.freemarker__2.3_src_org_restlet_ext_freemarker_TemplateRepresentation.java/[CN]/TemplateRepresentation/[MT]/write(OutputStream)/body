@@ -1,14 +1,13 @@
 {
   Writer tmplWriter=null;
   try {
-    Template template=config.getTemplate(templateName);
     if (getCharacterSet() != null) {
       tmplWriter=new BufferedWriter(new OutputStreamWriter(outputStream,getCharacterSet().getName()));
     }
  else {
-      tmplWriter=new BufferedWriter(new OutputStreamWriter(outputStream,template.getEncoding()));
+      tmplWriter=new BufferedWriter(new OutputStreamWriter(outputStream,this.template.getEncoding()));
     }
-    template.process(getDataModel(),tmplWriter);
+    this.template.process(getDataModel(),tmplWriter);
     tmplWriter.flush();
   }
  catch (  TemplateException te) {
