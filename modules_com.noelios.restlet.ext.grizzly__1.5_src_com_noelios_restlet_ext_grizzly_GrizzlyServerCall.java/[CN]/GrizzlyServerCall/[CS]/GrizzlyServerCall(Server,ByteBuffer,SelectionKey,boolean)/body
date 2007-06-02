@@ -2,12 +2,11 @@
   super(server);
   setConfidential(confidential);
   try {
-    ByteBufferInputStream headStream=null;
     if (confidential) {
-      headStream=new SSLByteBufferInputStream();
+      headStream=secureHeadStream;
     }
  else {
-      headStream=new ByteBufferInputStream();
+      headStream=unsecureHeadStream;
     }
     headStream.setSelectionKey(key);
     headStream.setByteBuffer(byteBuffer);

@@ -2,7 +2,10 @@
   ByteBuffer byteBuffer=((WorkerThread)Thread.currentThread()).getByteBuffer();
   byteBuffer.flip();
   SelectionKey key=context.getSelectionKey();
-  GrizzlyServerCall serverCall=new GrizzlyServerCall(this.helper.getServer(),byteBuffer,key,(helper instanceof HttpsServerHelper));
+  GrizzlyServerCall serverCall=serverCalls.poll();
+  if (serverCall == null) {
+    serverCall=new GrizzlyServerCall(this.helper.getServer(),byteBuffer,key,(helper instanceof HttpsServerHelper));
+  }
   boolean keepAlive=false;
   this.helper.handle(serverCall);
   if (keepAlive) {
@@ -12,5 +15,6 @@
     context.setKeyRegistrationState(Context.KeyRegistrationState.CANCEL);
   }
   byteBuffer.clear();
+  serverCalls.offer(serverCall.recycle());
   return true;
 }
