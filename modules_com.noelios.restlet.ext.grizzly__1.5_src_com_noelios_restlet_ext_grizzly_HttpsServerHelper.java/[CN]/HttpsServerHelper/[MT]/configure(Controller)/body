@@ -6,22 +6,20 @@
   keyManagerFactory.init(keyStore,getKeyPassword().toCharArray());
   SSLContext sslContext=SSLContext.getInstance(getSslProtocol());
   sslContext.init(keyManagerFactory.getKeyManagers(),null,null);
-  SslTCPSelectorHandler selectorHandler=new SslTCPSelectorHandler();
-  selectorHandler.setSSLContext(sslContext);
+  TCPSelectorHandler selectorHandler=new TCPSelectorHandler();
+  final SSLReadFilter readFilter=new SSLReadFilter();
+  readFilter.setSSLContext(sslContext);
   if (isNeedClientAuthentication()) {
-    selectorHandler.setNeedClientAuth(isNeedClientAuthentication());
+    readFilter.setNeedClientAuth(isNeedClientAuthentication());
   }
  else   if (isWantClientAuthentication()) {
-    selectorHandler.setWantClientAuth(isWantClientAuthentication());
+    readFilter.setWantClientAuth(isWantClientAuthentication());
   }
   selectorHandler.setPort(getServer().getPort());
   if (getServer().getAddress() != null) {
     selectorHandler.setInet(InetAddress.getByName(getServer().getAddress()));
   }
-  final SSLReadFilter readFilter=new SSLReadFilter();
   final HttpParserFilter httpParserFilter=new HttpParserFilter(this);
-  controller.setPipeline(new SSLPipeline());
-  controller.setSelectionKeyHandler(new SslSelectionKeyHandler());
   controller.setSelectorHandler(selectorHandler);
   controller.setProtocolChainInstanceHandler(new DefaultProtocolChainInstanceHandler(){
     public ProtocolChain poll(){

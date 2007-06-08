@@ -1,26 +1,3 @@
 {
-  ByteBuffer bb=ByteBuffer.wrap(new byte[]{(byte)b});
-  if ((this.channel != null) && (bb != null)) {
-    try {
-      int bytesWritten;
-      while (bb.hasRemaining()) {
-        bytesWritten=this.channel.write(bb);
-        if (bytesWritten < 0) {
-          throw new IOException("Unexpected negative number of bytes written.");
-        }
- else         if (bytesWritten == 0) {
-          registerSelectionKey();
-          if (getSelector().select(10000) == 0) {
-            throw new IOException("Unable to select the channel to write to it. Selection timed out.");
-          }
-        }
-      }
-    }
- catch (    IOException ioe) {
-      throw new IOException("Unable to write to the non-blocking channel. " + ioe.getLocalizedMessage());
-    }
-  }
- else {
-    throw new IOException("Unable to write. Null byte buffer or channel detected.");
-  }
+  write(new byte[]{(byte)b},0,1);
 }
