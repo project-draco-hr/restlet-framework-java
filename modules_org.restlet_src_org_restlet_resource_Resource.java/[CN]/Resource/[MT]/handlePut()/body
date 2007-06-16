@@ -1,5 +1,5 @@
 {
-  boolean bContinue=true;
+  boolean canPut=true;
   if (getRequest().getConditions().hasSome()) {
     Variant preferredVariant=null;
     if (isNegotiateContent()) {
@@ -12,28 +12,28 @@
       }
  else {
         getResponse().setStatus(Status.CLIENT_ERROR_PRECONDITION_FAILED);
-        bContinue=false;
+        canPut=false;
       }
     }
-    if (bContinue) {
+    if (canPut) {
       Status status=getRequest().getConditions().getStatus(getRequest().getMethod(),preferredVariant);
       if (status != null) {
         getResponse().setStatus(status);
-        bContinue=false;
+        canPut=false;
       }
     }
   }
-  if (bContinue) {
+  if (canPut) {
     Object oHeaders=getRequest().getAttributes().get("org.restlet.http.headers");
     if (oHeaders != null) {
       Series headers=(Series)oHeaders;
       if (headers.getFirst("Content-Range",true) != null) {
         getResponse().setStatus(new Status(Status.SERVER_ERROR_NOT_IMPLEMENTED,"the Content-Range header is not understood"));
-        bContinue=false;
+        canPut=false;
       }
     }
   }
-  if (bContinue) {
+  if (canPut) {
     if (getRequest().isEntityAvailable()) {
       put(getRequest().getEntity());
       updateAllowedMethods();

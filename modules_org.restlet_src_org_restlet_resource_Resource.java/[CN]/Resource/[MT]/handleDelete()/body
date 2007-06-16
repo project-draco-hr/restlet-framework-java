@@ -1,5 +1,5 @@
 {
-  boolean bContinue=true;
+  boolean canDelete=true;
   if (getRequest().getConditions().hasSome()) {
     Variant preferredVariant=null;
     if (isNegotiateContent()) {
@@ -12,18 +12,18 @@
       }
  else {
         getResponse().setStatus(Status.CLIENT_ERROR_PRECONDITION_FAILED);
-        bContinue=false;
+        canDelete=false;
       }
     }
-    if (bContinue) {
+    if (canDelete) {
       Status status=getRequest().getConditions().getStatus(getRequest().getMethod(),preferredVariant);
       if (status != null) {
         getResponse().setStatus(status);
-        bContinue=false;
+        canDelete=false;
       }
     }
   }
-  if (bContinue) {
+  if (canDelete) {
     delete();
   }
 }
