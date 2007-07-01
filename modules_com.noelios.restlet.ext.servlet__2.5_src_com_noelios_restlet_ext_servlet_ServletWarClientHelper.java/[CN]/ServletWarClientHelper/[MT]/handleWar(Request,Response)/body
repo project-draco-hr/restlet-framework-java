@@ -5,11 +5,11 @@
     String entry=(lastSlashIndex == -1) ? basePath : basePath.substring(lastSlashIndex + 1);
     Representation output=null;
     if (basePath.endsWith("/")) {
-      Set entries=getServletContext().getResourcePaths(basePath);
+      Set<String> entries=getServletContext().getResourcePaths(basePath);
       ReferenceList rl=new ReferenceList(entries.size());
       rl.setIdentifier(request.getResourceRef());
-      for (Iterator iter=entries.iterator(); iter.hasNext(); ) {
-        entry=(String)iter.next();
+      for (Iterator<String> iter=entries.iterator(); iter.hasNext(); ) {
+        entry=iter.next();
         rl.add(new Reference(basePath + entry.substring(basePath.length())));
       }
       output=rl.getTextRepresentation();
