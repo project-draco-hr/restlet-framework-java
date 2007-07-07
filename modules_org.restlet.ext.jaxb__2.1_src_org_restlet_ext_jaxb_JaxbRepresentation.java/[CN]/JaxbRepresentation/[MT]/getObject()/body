@@ -1,11 +1,11 @@
 {
-  if (this.object == null) {
+  if ((this.object == null) && (this.xmlRepresentation != null)) {
     try {
-      Unmarshaller u=new Unmarshaller(contextPath);
+      Unmarshaller u=new Unmarshaller(this.contextPath);
       if (getValidationEventHandler() != null) {
         u.setEventHandler(getValidationEventHandler());
       }
-      this.object=u.unmarshal(xmlRepresentation.getStream());
+      this.object=u.unmarshal(this.xmlRepresentation.getStream());
     }
  catch (    Exception e) {
       logger.log(Level.WARNING,"Error while unmarshalling the XML representation with JAXB",e);
