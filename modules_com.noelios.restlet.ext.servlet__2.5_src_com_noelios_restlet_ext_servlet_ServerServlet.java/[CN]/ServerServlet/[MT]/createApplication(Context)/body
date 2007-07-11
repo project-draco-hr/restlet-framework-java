@@ -8,11 +8,12 @@
       if (loader != null)       targetClass=Class.forName(applicationClassName,false,loader);
  else       targetClass=Class.forName(applicationClassName);
       try {
-        application=(Application)targetClass.getConstructor(Context.class).newInstance(context);
+        application=(Application)targetClass.getConstructor(Context.class).newInstance(new ServletContextAdapter(this,application,context));
       }
  catch (      NoSuchMethodException e) {
         log("[Noelios Restlet Engine] - The ServerServlet couldn't invoke the constructor of the target class. Please check this class has a constructor with a single parameter of Context. The empty constructor and the context setter wille used instead. " + applicationClassName,e);
         application=(Application)targetClass.getConstructor().newInstance();
+        application.setContext(new ServletContextAdapter(this,application,context));
       }
     }
  catch (    ClassNotFoundException e) {
@@ -29,9 +30,6 @@ catch (    NoSuchMethodException e) {
     }
 catch (    InvocationTargetException e) {
       log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. An exception was thrown while creating " + applicationClassName,e);
-    }
-    if (application != null) {
-      application.setContext(new ServletContextAdapter(this,application,context));
     }
   }
   return application;
