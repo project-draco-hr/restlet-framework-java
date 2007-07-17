@@ -29,9 +29,10 @@
           tag=iter.next();
           matched=tag.equals(variant.getTag(),(Method.GET.equals(method) || Method.HEAD.equals(method)));
         }
-        if (!matched) {
+        if (matched) {
           Date modifiedSince=getModifiedSince();
-          matched=((modifiedSince == null) || (variant.getModificationDate() == null) || DateUtils.after(modifiedSince,variant.getModificationDate()));
+          boolean isModifiedSince=((modifiedSince == null) || DateUtils.after(new Date(),modifiedSince) || (variant.getModificationDate() == null)|| DateUtils.after(modifiedSince,variant.getModificationDate()));
+          matched=!isModifiedSince;
         }
       }
     }
@@ -50,7 +51,7 @@
   if (result == null && getModifiedSince() != null) {
     if (variant != null) {
       Date modifiedSince=getModifiedSince();
-      boolean isModifiedSince=((modifiedSince == null) || (variant.getModificationDate() == null) || DateUtils.after(modifiedSince,variant.getModificationDate()));
+      boolean isModifiedSince=((modifiedSince == null) || DateUtils.after(new Date(),modifiedSince) || (variant.getModificationDate() == null)|| DateUtils.after(modifiedSince,variant.getModificationDate()));
       if (!isModifiedSince) {
         result=Status.REDIRECTION_NOT_MODIFIED;
       }
