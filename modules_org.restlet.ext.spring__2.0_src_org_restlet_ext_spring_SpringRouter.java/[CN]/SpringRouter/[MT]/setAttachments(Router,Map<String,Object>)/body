@@ -1,0 +1,30 @@
+{
+  Object value;
+  Class resourceClass;
+  try {
+    for (    String key : routes.keySet()) {
+      value=routes.get(key);
+      if (value instanceof Restlet) {
+        router.attach(key,(Restlet)value);
+      }
+ else       if (value instanceof Class) {
+        router.attach(key,(Class<? extends Resource>)value);
+      }
+ else       if (value instanceof String) {
+        resourceClass=Class.forName((String)value);
+        if (Resource.class.isAssignableFrom(resourceClass)) {
+          router.attach(key,(Class<? extends Resource>)resourceClass);
+        }
+ else {
+          router.getLogger().warning("Unknown class found in the mappings. Only subclasses of org.restlet.resource.Resource are allowed.");
+        }
+      }
+ else {
+        router.getLogger().warning("Unknown object found in the mappings. Only instances of Restlet and subclasses of org.restlet.resource.Resource are allowed.");
+      }
+    }
+  }
+ catch (  ClassNotFoundException e) {
+    router.getLogger().log(Level.WARNING,"Unable to set the router mappings",e);
+  }
+}

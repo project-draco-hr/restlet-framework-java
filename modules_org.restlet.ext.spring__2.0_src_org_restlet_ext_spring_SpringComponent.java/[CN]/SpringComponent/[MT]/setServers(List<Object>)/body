@@ -1,0 +1,18 @@
+{
+  for (  Object serverInfo : serversInfo) {
+    if (serverInfo instanceof String) {
+      getServers().add(Protocol.valueOf((String)serverInfo));
+    }
+ else     if (serverInfo instanceof Protocol) {
+      getServers().add((Protocol)serverInfo);
+    }
+ else     if (serverInfo instanceof Server) {
+      Server server=(Server)serverInfo;
+      server.setContext(getContext());
+      getServers().add(server);
+    }
+ else {
+      getLogger().warning("Unknown object found in the servers list. Only instances of String, org.restlet.data.Protocol and org.restlet.Server are allowed.");
+    }
+  }
+}
