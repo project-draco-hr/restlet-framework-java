@@ -15,13 +15,8 @@
       ReferenceList rl=new ReferenceList(files.length);
       rl.setIdentifier(request.getResourceRef());
       for (      File entry : files) {
-        try {
-          if (entry.getName().startsWith(baseName)) {
-            rl.add(LocalReference.createFileReference(entry));
-          }
-        }
- catch (        IOException ioe) {
-          getLogger().log(Level.WARNING,"Unable to create file reference",ioe);
+        if (entry.getName().startsWith(baseName)) {
+          rl.add(LocalReference.createFileReference(entry));
         }
       }
       output=rl.getTextRepresentation();
@@ -33,12 +28,7 @@
           ReferenceList rl=new ReferenceList(files.length);
           rl.setIdentifier(request.getResourceRef());
           for (          File entry : files) {
-            try {
-              rl.add(LocalReference.createFileReference(entry));
-            }
- catch (            IOException ioe) {
-              getLogger().log(Level.WARNING,"Unable to create file reference",ioe);
-            }
+            rl.add(LocalReference.createFileReference(entry));
           }
           output=rl.getTextRepresentation();
         }
