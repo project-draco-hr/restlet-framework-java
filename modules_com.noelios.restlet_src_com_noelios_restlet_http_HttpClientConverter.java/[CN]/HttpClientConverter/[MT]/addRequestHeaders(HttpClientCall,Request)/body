@@ -17,7 +17,7 @@
       requestHeaders.add(HttpConstants.HEADER_USER_AGENT,Engine.VERSION_HEADER);
     }
     Conditions condition=request.getConditions();
-    if (condition.getMatch() != null) {
+    if (!condition.getMatch().isEmpty()) {
       StringBuilder value=new StringBuilder();
       for (int i=0; i < condition.getMatch().size(); i++) {
         if (i > 0)         value.append(", ");
@@ -29,7 +29,7 @@
       String imsDate=DateUtils.format(condition.getModifiedSince(),DateUtils.FORMAT_RFC_1123.get(0));
       requestHeaders.add(HttpConstants.HEADER_IF_MODIFIED_SINCE,imsDate);
     }
-    if (condition.getNoneMatch() != null) {
+    if (!condition.getNoneMatch().isEmpty()) {
       StringBuilder value=new StringBuilder();
       for (int i=0; i < condition.getNoneMatch().size(); i++) {
         if (i > 0)         value.append(", ");
