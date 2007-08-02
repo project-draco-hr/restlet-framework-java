@@ -11,17 +11,17 @@
     }
   }
   if (request.getMethod().equals(Method.GET) && getApplication().getTunnelService().isPreferencesTunnel()) {
-    String acceptCharset=query.getFirstValue(getApplication().getTunnelService().getCharacterSetAttribute());
-    String acceptEncoding=query.getFirstValue(getApplication().getTunnelService().getEncodingAttribute());
-    String acceptLanguage=query.getFirstValue(getApplication().getTunnelService().getLanguageAttribute());
-    String acceptMediaType=query.getFirstValue(getApplication().getTunnelService().getMediaTypeAttribute());
+    String acceptCharset=query.getFirstValue(getApplication().getTunnelService().getCharacterSetParameter());
+    String acceptEncoding=query.getFirstValue(getApplication().getTunnelService().getEncodingParameter());
+    String acceptLanguage=query.getFirstValue(getApplication().getTunnelService().getLanguageParameter());
+    String acceptMediaType=query.getFirstValue(getApplication().getTunnelService().getMediaTypeParameter());
     Metadata metadata=null;
     if (acceptCharset != null) {
       metadata=getApplication().getMetadataService().getMetadata(acceptCharset);
       if (metadata instanceof CharacterSet) {
         request.getClientInfo().getAcceptedCharacterSets().clear();
         request.getClientInfo().getAcceptedCharacterSets().add(new Preference<CharacterSet>((CharacterSet)metadata));
-        query.removeFirst(getApplication().getTunnelService().getCharacterSetAttribute());
+        query.removeFirst(getApplication().getTunnelService().getCharacterSetParameter());
         queryModified=true;
       }
     }
@@ -30,7 +30,7 @@
       if (metadata instanceof Encoding) {
         request.getClientInfo().getAcceptedEncodings().clear();
         request.getClientInfo().getAcceptedEncodings().add(new Preference<Encoding>((Encoding)metadata));
-        query.removeFirst(getApplication().getTunnelService().getEncodingAttribute());
+        query.removeFirst(getApplication().getTunnelService().getEncodingParameter());
         queryModified=true;
       }
     }
@@ -39,7 +39,7 @@
       if (metadata instanceof Language) {
         request.getClientInfo().getAcceptedLanguages().clear();
         request.getClientInfo().getAcceptedLanguages().add(new Preference<Language>((Language)metadata));
-        query.removeFirst(getApplication().getTunnelService().getLanguageAttribute());
+        query.removeFirst(getApplication().getTunnelService().getLanguageParameter());
         queryModified=true;
       }
     }
@@ -48,7 +48,7 @@
       if (metadata instanceof MediaType) {
         request.getClientInfo().getAcceptedMediaTypes().clear();
         request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>((MediaType)metadata));
-        query.removeFirst(getApplication().getTunnelService().getMediaTypeAttribute());
+        query.removeFirst(getApplication().getTunnelService().getMediaTypeParameter());
         queryModified=true;
       }
     }
