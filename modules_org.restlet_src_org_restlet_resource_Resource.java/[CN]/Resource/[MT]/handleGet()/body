@@ -51,7 +51,11 @@
     }
   }
   if (selectedRepresentation == null) {
-    getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+    if ((getResponse().getStatus() == null) || getResponse().getStatus().isSuccess()) {
+      getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+    }
+ else {
+    }
   }
  else {
     if (getRequest().getConditions().hasSome()) {
