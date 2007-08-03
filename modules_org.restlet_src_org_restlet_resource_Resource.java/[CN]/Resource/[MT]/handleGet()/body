@@ -28,7 +28,7 @@
   }
  else {
     if (variants.size() == 1) {
-      getResponse().setEntity(variants.get(0));
+      getResponse().setEntity(getRepresentation(variants.get(0)));
       selectedRepresentation=getResponse().getEntity();
     }
  else {
@@ -50,11 +50,16 @@
       }
     }
   }
-  if (getRequest().getConditions().hasSome()) {
-    Status status=getRequest().getConditions().getStatus(getRequest().getMethod(),selectedRepresentation);
-    if (status != null) {
-      getResponse().setStatus(status);
-      getResponse().setEntity(null);
+  if (selectedRepresentation == null) {
+    getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+  }
+ else {
+    if (getRequest().getConditions().hasSome()) {
+      Status status=getRequest().getConditions().getStatus(getRequest().getMethod(),selectedRepresentation);
+      if (status != null) {
+        getResponse().setStatus(status);
+        getResponse().setEntity(null);
+      }
     }
   }
 }
