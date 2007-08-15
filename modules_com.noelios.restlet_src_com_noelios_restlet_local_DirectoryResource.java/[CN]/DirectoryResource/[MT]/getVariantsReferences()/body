@@ -6,33 +6,38 @@
     contextCall.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.TEXT_URI_LIST));
     Response contextResponse=getDispatcher().handle(contextCall);
     if (contextResponse.getEntity() != null) {
-      ReferenceList listVariants=new ReferenceList(contextResponse.getEntity());
-      Set<String> extensions=null;
-      String entryUri;
-      String fullEntryName;
-      String baseEntryName;
-      int lastSlashIndex;
-      int firstDotIndex;
-      for (      Reference ref : listVariants) {
-        entryUri=ref.toString();
-        lastSlashIndex=entryUri.lastIndexOf('/');
-        fullEntryName=(lastSlashIndex == -1) ? entryUri : entryUri.substring(lastSlashIndex + 1);
-        baseEntryName=fullEntryName;
-        firstDotIndex=fullEntryName.indexOf('.');
-        if (firstDotIndex != -1) {
-          baseEntryName=fullEntryName.substring(0,firstDotIndex);
-        }
-        if (baseEntryName.equals(this.baseName)) {
-          boolean validVariant=true;
-          extensions=getExtensions(fullEntryName);
-          validVariant=(((extensions == null) && (this.baseExtensions == null)) || (this.baseExtensions == null) || extensions.containsAll(this.baseExtensions));
-          if (validVariant && (this.baseExtensions != null) && this.baseExtensions.containsAll(extensions)) {
-            uniqueReference=ref;
+      if (MediaType.TEXT_URI_LIST.equals(contextResponse.getEntity().getMediaType())) {
+        ReferenceList listVariants=new ReferenceList(contextResponse.getEntity());
+        Set<String> extensions=null;
+        String entryUri;
+        String fullEntryName;
+        String baseEntryName;
+        int lastSlashIndex;
+        int firstDotIndex;
+        for (        Reference ref : listVariants) {
+          entryUri=ref.toString();
+          lastSlashIndex=entryUri.lastIndexOf('/');
+          fullEntryName=(lastSlashIndex == -1) ? entryUri : entryUri.substring(lastSlashIndex + 1);
+          baseEntryName=fullEntryName;
+          firstDotIndex=fullEntryName.indexOf('.');
+          if (firstDotIndex != -1) {
+            baseEntryName=fullEntryName.substring(0,firstDotIndex);
           }
-          if (validVariant) {
-            result.add(ref);
+          if (baseEntryName.equals(this.baseName)) {
+            boolean validVariant=true;
+            extensions=getExtensions(fullEntryName);
+            validVariant=(((extensions == null) && (this.baseExtensions == null)) || (this.baseExtensions == null) || extensions.containsAll(this.baseExtensions));
+            if (validVariant && (this.baseExtensions != null) && this.baseExtensions.containsAll(extensions)) {
+              uniqueReference=ref;
+            }
+            if (validVariant) {
+              result.add(ref);
+            }
           }
         }
+      }
+ else {
+        result.add(contextResponse.getEntity().getIdentifier());
       }
     }
   }

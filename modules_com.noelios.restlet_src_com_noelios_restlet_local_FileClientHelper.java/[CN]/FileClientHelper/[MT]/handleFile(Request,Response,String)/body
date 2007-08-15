@@ -13,7 +13,6 @@
       String baseName=getBaseName(file,metadataService);
       File[] files=file.getParentFile().listFiles();
       ReferenceList rl=new ReferenceList(files.length);
-      rl.setIdentifier(request.getResourceRef());
       for (      File entry : files) {
         if (entry.getName().startsWith(baseName)) {
           rl.add(LocalReference.createFileReference(entry));
@@ -26,7 +25,6 @@
         if (file.isDirectory()) {
           File[] files=file.listFiles();
           ReferenceList rl=new ReferenceList(files.length);
-          rl.setIdentifier(request.getResourceRef());
           for (          File entry : files) {
             rl.add(LocalReference.createFileReference(entry));
           }
@@ -42,6 +40,7 @@
       response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
     }
  else {
+      output.setIdentifier(request.getResourceRef());
       response.setEntity(output);
       response.setStatus(Status.SUCCESS_OK);
     }
