@@ -8,7 +8,12 @@
       result=new ChallengeResponse(new ChallengeScheme("HTTP_" + scheme,scheme),credentials);
       if (result.getScheme().equals(ChallengeScheme.HTTP_BASIC)) {
         try {
-          credentials=new String(Base64.decode(result.getCredentials()),"US-ASCII");
+          byte[] credentialsEncoded=Base64.decode(result.getCredentials());
+          if (credentialsEncoded == null) {
+            logger.warning("Cannot decode credentials: " + result.getCredentials());
+            return null;
+          }
+          credentials=new String(credentialsEncoded,"US-ASCII");
           int separator=credentials.indexOf(':');
           if (separator == -1) {
             logger.warning("Invalid credentials given by client with IP: " + ((request != null) ? request.getClientInfo().getAddress() : "?"));
