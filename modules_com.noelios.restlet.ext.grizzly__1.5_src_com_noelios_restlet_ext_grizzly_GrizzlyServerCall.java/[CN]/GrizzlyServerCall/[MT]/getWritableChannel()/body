@@ -2,10 +2,10 @@
   if (isConfidential()) {
     return new WritableByteChannel(){
       public void close() throws IOException {
-        socketChannel.close();
+        getReadableChannel().close();
       }
       public boolean isOpen(){
-        return socketChannel.isOpen();
+        return getReadableChannel().isOpen();
       }
       public int write(      ByteBuffer src) throws IOException {
         int nWrite=src.limit();
@@ -16,6 +16,6 @@
 ;
   }
  else {
-    return socketChannel;
+    return this.socketChannel;
   }
 }
