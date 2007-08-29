@@ -1,15 +1,10 @@
 {
   if ((this.object == null) && (this.xmlRepresentation != null)) {
-    try {
-      Unmarshaller u=new Unmarshaller(this.contextPath);
-      if (getValidationEventHandler() != null) {
-        u.setEventHandler(getValidationEventHandler());
-      }
-      this.object=u.unmarshal(this.xmlRepresentation.getStream());
+    Unmarshaller u=new Unmarshaller(this.contextPath);
+    if (getValidationEventHandler() != null) {
+      u.setEventHandler(getValidationEventHandler());
     }
- catch (    Exception e) {
-      logger.log(Level.WARNING,"Error while unmarshalling the XML representation with JAXB",e);
-    }
+    this.object=u.unmarshal(this.xmlRepresentation.getStream());
   }
   return this.object;
 }
