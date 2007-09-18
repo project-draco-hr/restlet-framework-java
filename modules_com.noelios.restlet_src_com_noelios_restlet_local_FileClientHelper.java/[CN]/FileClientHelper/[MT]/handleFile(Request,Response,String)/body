@@ -25,8 +25,12 @@
         if (file.isDirectory()) {
           File[] files=file.listFiles();
           ReferenceList rl=new ReferenceList(files.length);
+          String directoryUri=request.getResourceRef().toString();
+          if (!directoryUri.endsWith("/")) {
+            directoryUri+="/";
+          }
           for (          File entry : files) {
-            rl.add(LocalReference.createFileReference(entry));
+            rl.add(directoryUri + entry.getName());
           }
           output=rl.getTextRepresentation();
         }
