@@ -15,7 +15,15 @@
         }
       }
     }
- catch (    Exception e) {
+ catch (    InvocationTargetException e) {
+      if (e.getCause() instanceof Error) {
+        throw (Error)e.getCause();
+      }
+ else {
+        getLogger().log(Level.WARNING,"Exception while instantiating the target resource.",e);
+      }
+    }
+catch (    Exception e) {
       getLogger().log(Level.WARNING,"Exception while instantiating the target resource.",e);
     }
   }
