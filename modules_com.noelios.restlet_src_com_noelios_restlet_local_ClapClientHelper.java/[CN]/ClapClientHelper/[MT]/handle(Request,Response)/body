@@ -3,15 +3,23 @@
   request.getResourceRef().normalize();
   if (scheme.equalsIgnoreCase(Protocol.CLAP.getSchemeName())) {
     LocalReference cr=new LocalReference(request.getResourceRef());
+    ClassLoader classLoader=null;
     if (cr.getClapAuthorityType() == LocalReference.CLAP_CLASS) {
-      handleClassLoader(request,response,getClass().getClassLoader());
+      Object classLoaderAttribute=request.getAttributes().get("org.restlet.clap.classloader");
+      if (classLoaderAttribute != null) {
+        classLoader=(ClassLoader)classLoaderAttribute;
+      }
+ else {
+        classLoader=getClass().getClassLoader();
+      }
     }
  else     if (cr.getClapAuthorityType() == LocalReference.CLAP_SYSTEM) {
-      handleClassLoader(request,response,ClassLoader.getSystemClassLoader());
+      classLoader=ClassLoader.getSystemClassLoader();
     }
  else     if (cr.getClapAuthorityType() == LocalReference.CLAP_THREAD) {
-      handleClassLoader(request,response,Thread.currentThread().getContextClassLoader());
+      classLoader=Thread.currentThread().getContextClassLoader();
     }
+    handleClassLoader(request,response,classLoader);
   }
  else {
     throw new IllegalArgumentException("Protocol \"" + scheme + "\" not supported by the connector. Only CLAP is supported.");
