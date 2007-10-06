@@ -1,4 +1,10 @@
 {
-  if (this.secrets == null)   this.secrets=new TreeMap<String,char[]>();
+  if (this.secrets == null) {
+synchronized (this) {
+      if (this.secrets == null) {
+        this.secrets=new ConcurrentHashMap<String,char[]>();
+      }
+    }
+  }
   return this.secrets;
 }
