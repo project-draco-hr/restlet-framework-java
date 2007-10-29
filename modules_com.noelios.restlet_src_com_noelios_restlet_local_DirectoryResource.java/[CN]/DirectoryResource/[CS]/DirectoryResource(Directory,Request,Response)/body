@@ -42,6 +42,20 @@
  else {
     this.targetDirectory=false;
     this.targetFile=false;
+    if (this.targetUri.endsWith("/")) {
+      if (getDirectory().getIndexName() != null && getDirectory().getIndexName().length() > 0) {
+        this.directoryUri=this.targetUri;
+        this.baseName=getDirectory().getIndexName();
+        this.targetUri=this.directoryUri + this.baseName;
+        contextResponse=getDispatcher().get(this.targetUri);
+        if (contextResponse.getEntity() != null) {
+          this.targetDirectory=true;
+          this.directoryContent=new ReferenceList();
+          this.directoryContent.add(new Reference(this.targetUri));
+          this.targetIndex=true;
+        }
+      }
+    }
   }
   if (!this.targetDirectory) {
     int lastSlashIndex=targetUri.lastIndexOf('/');
