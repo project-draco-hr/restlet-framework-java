@@ -2,14 +2,14 @@
   Source result=null;
   if (this.context != null) {
     Reference targetRef=null;
-    if (base != null) {
+    if ((base != null) && !base.equals("")) {
       Reference baseRef=new Reference(base);
       targetRef=new Reference(baseRef,href);
     }
  else {
       targetRef=new Reference(href);
     }
-    Response response=this.context.getDispatcher().get(targetRef.toString());
+    Response response=this.context.getDispatcher().get(targetRef.getTargetRef().toString());
     if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
       try {
         result=new StreamSource(response.getEntity().getStream());

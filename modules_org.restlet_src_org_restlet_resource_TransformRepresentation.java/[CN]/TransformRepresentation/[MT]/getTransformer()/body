@@ -2,8 +2,11 @@
   if (this.transformer == null) {
     try {
       StreamSource transformSheet=new StreamSource(getTransformSheet().getStream());
-      this.transformer=TransformerFactory.newInstance().newTransformer(transformSheet);
-      transformer.setURIResolver(getURIResolver());
+      TransformerFactory transformerFactory=TransformerFactory.newInstance();
+      if (getURIResolver() != null) {
+        transformerFactory.setURIResolver(getURIResolver());
+      }
+      this.transformer=transformerFactory.newTransformer(transformSheet);
     }
  catch (    TransformerConfigurationException tce) {
       throw new IOException("Transformer configuration exception. " + tce.getMessage());
