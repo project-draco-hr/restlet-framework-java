@@ -1,11 +1,12 @@
 {
-  int j=new Random().nextInt(size());
-  if (get(j).score(request,response) >= requiredScore)   return get(j);
+  Route[] routes=toArray();
+  int j=new Random().nextInt(routes.length);
+  if (routes[j].score(request,response) >= requiredScore)   return routes[j];
   for (int initialIndex=j++; initialIndex != j; j++) {
-    if (j == size()) {
+    if (j == routes.length) {
       j=0;
     }
-    if (get(j).score(request,response) >= requiredScore)     return get(j);
+    if (routes[j].score(request,response) >= requiredScore)     return routes[j];
   }
   return null;
 }
