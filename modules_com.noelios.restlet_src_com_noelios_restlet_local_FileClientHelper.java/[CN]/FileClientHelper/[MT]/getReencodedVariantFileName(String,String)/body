@@ -1,0 +1,35 @@
+{
+  int i=0;
+  int j=0;
+  boolean stop=false;
+  for (i=0; i < decodedVariantFileName.length() && (j < encodedFileName.length()) && !stop; i++) {
+    String decodedChar=decodedVariantFileName.substring(i,i + 1);
+    if (decodedChar.equals(encodedFileName.substring(j,j + 1))) {
+      j++;
+    }
+ else {
+      if (encodedFileName.substring(j,j + 1).equals("%")) {
+        if (decodedChar.equals(Reference.decode(encodedFileName.substring(j,j + 3)))) {
+          j+=3;
+        }
+ else {
+          stop=true;
+        }
+      }
+ else {
+        if (decodedChar.equals(Reference.decode(encodedFileName.substring(j,j + 1)))) {
+          j++;
+        }
+ else {
+          stop=true;
+        }
+      }
+    }
+  }
+  if (stop) {
+    return encodedFileName.substring(0,j) + decodedVariantFileName.substring(i - 1);
+  }
+ else {
+    return encodedFileName.substring(0,j);
+  }
+}

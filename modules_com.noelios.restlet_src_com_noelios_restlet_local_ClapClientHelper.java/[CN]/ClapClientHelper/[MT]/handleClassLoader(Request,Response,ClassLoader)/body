@@ -3,7 +3,7 @@
   if (request.getMethod().equals(Method.GET) || request.getMethod().equals(Method.HEAD)) {
     String path=request.getResourceRef().getPath();
     if ((path != null) && path.startsWith("/"))     path=path.substring(1);
-    URL url=classLoader.getResource(path);
+    URL url=classLoader.getResource(Reference.decode(path));
     if (url != null) {
       if (url.getProtocol().equals("file")) {
         File file=new File(url.getFile());

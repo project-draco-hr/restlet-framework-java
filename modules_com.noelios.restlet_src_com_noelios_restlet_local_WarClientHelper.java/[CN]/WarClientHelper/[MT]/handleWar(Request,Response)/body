@@ -1,9 +1,11 @@
 {
+  getWarPath();
   if (this.webAppArchive) {
     try {
       String path=request.getResourceRef().getPath();
       JarFile war=new JarFile(getWarPath());
-      JarEntry entry=war.getJarEntry(path);
+      if ((path != null) && path.startsWith("/"))       path=path.substring(1);
+      JarEntry entry=war.getJarEntry(Reference.decode(path));
       if (entry.isDirectory()) {
         if (warEntries == null) {
           warEntries=new ArrayList<String>();
