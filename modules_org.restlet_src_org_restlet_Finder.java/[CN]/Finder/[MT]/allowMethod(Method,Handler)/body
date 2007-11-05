@@ -1,7 +1,7 @@
 {
   boolean result=false;
   if (target != null) {
-    if (method.equals(Method.GET) || method.equals(Method.HEAD)) {
+    if (method.equals(Method.GET)) {
       result=target.allowGet();
     }
  else     if (method.equals(Method.POST)) {
@@ -13,8 +13,11 @@
  else     if (method.equals(Method.DELETE)) {
       result=target.allowDelete();
     }
+ else     if (method.equals(Method.HEAD)) {
+      result=target.allowHead();
+    }
  else     if (method.equals(Method.OPTIONS)) {
-      result=true;
+      result=target.allowOptions();
     }
  else {
       java.lang.reflect.Method allowMethod=getAllowMethod(method,target);
