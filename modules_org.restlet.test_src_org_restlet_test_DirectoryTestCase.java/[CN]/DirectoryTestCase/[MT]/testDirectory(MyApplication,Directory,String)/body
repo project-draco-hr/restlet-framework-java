@@ -97,6 +97,23 @@
   assertTrue(response.getStatus().equals(Status.SUCCESS_NO_CONTENT));
   response=handle(application,webSiteURL,baseFileUrlEn,Method.DELETE,null,"8b");
   assertTrue(response.getStatus().equals(Status.SUCCESS_NO_CONTENT));
+  directory.setModifiable(true);
+  response=handle(application,webSiteURL,percentEncodedFileUrl,Method.PUT,new StringRepresentation("this is test 9a"),"9a");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_CREATED));
+  response=handle(application,webSiteURL,percentEncodedFileUrl,Method.GET,null,"9b");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  if (response.getStatus().equals(Status.SUCCESS_OK)) {
+    response.getEntity().write(System.out);
+    System.out.println("");
+  }
+  response=handle(application,webSiteURL,percentEncodedFileUrlBis,Method.GET,null,"9c");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  if (response.getStatus().equals(Status.SUCCESS_OK)) {
+    response.getEntity().write(System.out);
+    System.out.println("");
+  }
+  response=handle(application,webSiteURL,percentEncodedFileUrl,Method.DELETE,null,"9d");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_NO_CONTENT));
   testDirectory.delete();
   System.out.println("End of tests*********************");
 }
