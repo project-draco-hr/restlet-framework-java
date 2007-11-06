@@ -13,14 +13,14 @@
       Response contextResponse=new Response(contextRequest);
       if (targetDirectory && !targetIndex) {
         contextRequest.setResourceRef(this.targetUri);
-        getDispatcher().handle(contextRequest,contextResponse);
+        getClientDispatcher().handle(contextRequest,contextResponse);
       }
  else {
         ReferenceList references=getVariantsReferences();
         if (!references.isEmpty()) {
           if (uniqueReference != null) {
             contextRequest.setResourceRef(uniqueReference);
-            getDispatcher().handle(contextRequest,contextResponse);
+            getClientDispatcher().handle(contextRequest,contextResponse);
           }
  else {
             contextResponse.setStatus(new Status(Status.CLIENT_ERROR_NOT_ACCEPTABLE,"Unable to process properly the request. Several variants exist but none of them suits precisely. "));
