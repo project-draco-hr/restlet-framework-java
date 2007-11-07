@@ -58,11 +58,11 @@
     }
  else {
       if (getDirectory().getIndexName() != null && getDirectory().getIndexName().length() > 0) {
-        this.directoryUri=this.targetUri + "/";
-        this.baseName=getDirectory().getIndexName();
-        this.targetUri=this.directoryUri + this.baseName;
-        contextResponse=getClientDispatcher().get(this.targetUri);
+        contextResponse=getDispatcher().get(this.targetUri + "/" + getDirectory().getIndexName());
         if (contextResponse.getEntity() != null) {
+          this.directoryUri=this.targetUri + "/";
+          this.baseName=getDirectory().getIndexName();
+          this.targetUri=this.directoryUri + this.baseName;
           this.targetDirectory=true;
           this.directoryRedirection=true;
           this.directoryContent=new ReferenceList();
