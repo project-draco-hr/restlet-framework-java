@@ -1,4 +1,12 @@
 {
   super(logger);
   this.componentHelper=componentHelper;
+  this.clientDispatcher=new TemplateDispatcher(this,getComponentHelper().getClientRouter());
+  this.serverDispatcher=new TemplateDispatcher(this,getComponentHelper().getServerRouter()){
+    @Override public void handle(    Request request,    Response response){
+      request.getResourceRef().setBaseRef(request.getResourceRef().getHostIdentifier());
+      super.handle(request,response);
+    }
+  }
+;
 }
