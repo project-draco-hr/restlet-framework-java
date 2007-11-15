@@ -3,17 +3,21 @@
   if (this.match != null && !this.match.isEmpty()) {
     boolean matched=false;
     boolean failed=false;
+    boolean all=getMatch().get(0).equals(Tag.ALL);
     if (representation != null) {
-      if (representation.getTag() != null) {
+      if (!all && representation.getTag() != null) {
         Tag tag;
         for (Iterator<Tag> iter=getMatch().iterator(); !matched && iter.hasNext(); ) {
           tag=iter.next();
           matched=tag.equals(representation.getTag(),false);
         }
       }
+ else {
+        matched=all;
+      }
     }
  else {
-      failed=getMatch().get(0).equals(Tag.ALL);
+      failed=all;
     }
     failed=failed || !matched;
     if (failed) {
