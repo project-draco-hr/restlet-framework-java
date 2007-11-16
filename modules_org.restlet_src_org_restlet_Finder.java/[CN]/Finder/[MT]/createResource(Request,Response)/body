@@ -1,34 +1,3 @@
 {
-  Handler result=null;
-  if (getTargetClass() != null) {
-    try {
-      Constructor<?> constructor;
-      try {
-        constructor=getTargetClass().getConstructor(Context.class,Request.class,Response.class);
-        result=(Handler)constructor.newInstance(getContext(),request,response);
-      }
- catch (      NoSuchMethodException nsme) {
-        constructor=getTargetClass().getConstructor();
-        if (constructor != null) {
-          result=(Handler)constructor.newInstance();
-          result.init(getContext(),request,response);
-        }
-      }
-    }
- catch (    InvocationTargetException e) {
-      if (e.getCause() instanceof Error) {
-        throw (Error)e.getCause();
-      }
- else       if (e.getCause() instanceof RuntimeException) {
-        throw (RuntimeException)e.getCause();
-      }
- else {
-        getLogger().log(Level.WARNING,"Exception while instantiating the target handler.",e);
-      }
-    }
-catch (    Exception e) {
-      getLogger().log(Level.WARNING,"Exception while instantiating the target handler.",e);
-    }
-  }
-  return result;
+  return createTarget(getTargetClass(),request,response);
 }
