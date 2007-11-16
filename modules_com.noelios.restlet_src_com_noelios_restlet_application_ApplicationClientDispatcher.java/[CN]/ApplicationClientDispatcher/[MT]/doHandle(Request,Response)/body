@@ -1,0 +1,29 @@
+{
+  request.getAttributes().put(Application.KEY,getApplicationContext().getApplication());
+  response.getAttributes().put(Application.KEY,getApplicationContext().getApplication());
+  Protocol protocol=request.getProtocol();
+  if (protocol.equals(Protocol.WAR)) {
+    getApplicationContext().getWarClient().handle(request,response);
+  }
+ else   if (protocol.equals(Protocol.RIAP)) {
+    LocalReference cr=new LocalReference(request.getResourceRef());
+    if (cr.getRiapAuthorityType() == LocalReference.RIAP_APPLICATION) {
+      request.getResourceRef().setBaseRef(request.getResourceRef().getHostIdentifier());
+      if (getApplicationContext() != null) {
+        getApplicationContext().getApplication().getRoot().handle(request,response);
+      }
+    }
+ else     if (cr.getRiapAuthorityType() == LocalReference.RIAP_COMPONENT) {
+      parentHandle(request,response);
+    }
+ else {
+      Logger.getLogger(ApplicationClientDispatcher.class.getCanonicalName()).warning("Unknown RIAP authority. Only \"component\" and \"application\" are supported.");
+    }
+  }
+ else {
+    if (!getApplicationContext().getApplication().getConnectorService().getClientProtocols().contains(protocol)) {
+      getApplicationContext().getLogger().fine("The protocol used by this request is not declared in the application's connector service. " + "Please update the list of client connectors used by your application and restart it.");
+    }
+    parentHandle(request,response);
+  }
+}

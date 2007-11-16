@@ -1,0 +1,18 @@
+{
+  Protocol protocol=request.getProtocol();
+  if (protocol.equals(Protocol.RIAP)) {
+    LocalReference cr=new LocalReference(request.getResourceRef());
+    if (cr.getRiapAuthorityType() == LocalReference.RIAP_COMPONENT) {
+      request.getResourceRef().setBaseRef(request.getResourceRef().getHostIdentifier());
+      if (getComponentContext() != null) {
+        getComponentContext().getComponentHelper().getComponent().getInternalRouter().handle(request,response);
+      }
+    }
+ else {
+      Logger.getLogger(ComponentClientDispatcher.class.getCanonicalName()).warning("Unknown RIAP authority. Only \"component\" is supported.");
+    }
+  }
+ else {
+    getComponentContext().getComponentHelper().getClientRouter().handle(request,response);
+  }
+}
