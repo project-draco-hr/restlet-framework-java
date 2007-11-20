@@ -2,9 +2,21 @@
   if ((this.object == null) && (this.xmlRepresentation != null)) {
     Unmarshaller u=new Unmarshaller(this.contextPath);
     if (getValidationEventHandler() != null) {
-      u.setEventHandler(getValidationEventHandler());
+      try {
+        u.setEventHandler(getValidationEventHandler());
+      }
+ catch (      JAXBException e) {
+        logger.log(Level.WARNING,"Unable to set the event handler",e);
+        throw new IOException("Unable to set the event handler." + e.getMessage());
+      }
     }
-    this.object=u.unmarshal(this.xmlRepresentation.getStream());
+    try {
+      this.object=u.unmarshal(this.xmlRepresentation.getStream());
+    }
+ catch (    JAXBException e) {
+      logger.log(Level.WARNING,"Unable to unmarshal the XML representation",e);
+      throw new IOException("Unable to unmarshal the XML representation." + e.getMessage());
+    }
   }
   return this.object;
 }
