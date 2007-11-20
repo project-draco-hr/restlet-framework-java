@@ -1,6 +1,9 @@
 {
   try {
     StreamSource sourceDocument=new StreamSource(getSourceRepresentation().getStream());
+    if (getSourceRepresentation().getIdentifier() != null) {
+      sourceDocument.setSystemId(getSourceRepresentation().getIdentifier().getTargetRef().toString());
+    }
     StreamResult resultDocument=new StreamResult(outputStream);
     getTransformer().transform(sourceDocument,resultDocument);
   }

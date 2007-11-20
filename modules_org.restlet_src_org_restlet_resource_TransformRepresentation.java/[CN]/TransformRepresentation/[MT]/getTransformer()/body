@@ -2,6 +2,9 @@
   if (this.transformer == null) {
     try {
       StreamSource transformSheet=new StreamSource(getTransformSheet().getStream());
+      if (getTransformSheet().getIdentifier() != null) {
+        transformSheet.setSystemId(getTransformSheet().getIdentifier().getTargetRef().toString());
+      }
       TransformerFactory transformerFactory=TransformerFactory.newInstance();
       if (getURIResolver() != null) {
         transformerFactory.setURIResolver(getURIResolver());

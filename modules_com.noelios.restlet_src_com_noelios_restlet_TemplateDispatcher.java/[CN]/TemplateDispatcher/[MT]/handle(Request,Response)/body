@@ -10,5 +10,8 @@
       request.setResourceRef(template.format(request,response));
     }
     doHandle(request,response);
+    if ((response.getEntity() != null) && (response.getEntity().getIdentifier() == null)) {
+      response.getEntity().setIdentifier(request.getResourceRef().toString());
+    }
   }
 }
