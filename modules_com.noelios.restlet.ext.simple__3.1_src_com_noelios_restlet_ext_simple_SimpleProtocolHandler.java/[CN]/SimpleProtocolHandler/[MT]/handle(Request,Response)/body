@@ -2,12 +2,16 @@
   getHelper().handle(new SimpleCall(getHelper().getServer(),request,response,getHelper().isConfidential()));
   try {
     if (request.getInputStream() != null) {
-      while (request.getInputStream().read() != -1) {
+      try {
+        while (request.getInputStream().read() != -1) {
+        }
+      }
+ catch (      IOException ioe) {
       }
     }
     response.getOutputStream().close();
   }
  catch (  IOException ioe) {
-    getHelper().getLogger().log(Level.INFO,"Exception while closing the Simple response's output stream",ioe);
+    getHelper().getLogger().log(Level.FINE,"Exception while closing the Simple response's output stream",ioe);
   }
 }
