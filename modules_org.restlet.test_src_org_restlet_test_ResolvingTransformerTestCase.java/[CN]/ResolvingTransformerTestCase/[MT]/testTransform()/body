@@ -1,0 +1,21 @@
+{
+  Component comp=new Component();
+  comp.getClients().add(Protocol.CLAP);
+  final String thirdDocData="<data3>" + ("rnd." + (new Random()).nextInt()) + "</data3>";
+  final String xsl2xmlLink="./3rd.xml";
+  final Representation xml3=new StringRepresentation("<?xml version='1.0' ?>" + thirdDocData,MediaType.TEXT_XML);
+  final Representation xslt3=new StringRepresentation("<?xml version=\"1.0\"?>" + "<xsl:transform xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>" + "  <xsl:template match ='el3'>"+ "    <xsl:variable name='external' select=\"document('" + xsl2xmlLink + "')\" />"+ "    <xsl:copy-of select='$external/data3' />"+ "  </xsl:template>"+ "</xsl:transform>",MediaType.TEXT_XML);
+  SimpleUriMapApplication thirdLevel=new SimpleUriMapApplication();
+  thirdLevel.add("3rd.xsl",xslt3);
+  thirdLevel.add("3rd.xml",xml3);
+  comp.getInternalRouter().attach("/three/",thirdLevel);
+  Representation xmlIn=new StringRepresentation("<?xml version='1.0' ?><input><one/><any attTwo='2'/><el3>drie</el3></input>");
+  Reference xsltOneRef=new LocalReference("clap://thread/" + MY_BASEPATH + "/xslt/one/1st.xsl");
+  Representation xsltOne=comp.getContext().getClientDispatcher().get(xsltOneRef).getEntity();
+  TransformRepresentation tr=new TransformRepresentation(comp.getContext(),xmlIn,xsltOne);
+  ByteArrayOutputStream out=new ByteArrayOutputStream();
+  tr.write(out);
+  String xmlOut=out.toString();
+  final String expectedResult="<?xml version=\"1.0\" encoding=\"UTF-8\"?><output><data1>1st</data1><data2>2nd</data2>" + thirdDocData + "</output>";
+  assertEquals("xslt result doesn't match expectations",expectedResult,xmlOut);
+}

@@ -9,10 +9,12 @@
  else {
       targetRef=new Reference(href);
     }
-    Response response=this.context.getClientDispatcher().get(targetRef.getTargetRef().toString());
+    final String targetUri=targetRef.getTargetRef().toString();
+    Response response=this.context.getClientDispatcher().get(targetUri);
     if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
       try {
         result=new StreamSource(response.getEntity().getStream());
+        result.setSystemId(targetUri);
       }
  catch (      IOException e) {
         this.context.getLogger().log(Level.WARNING,"I/O error while getting the response stream",e);
