@@ -1,17 +1,19 @@
 {
   getHelper().handle(new SimpleCall(getHelper().getServer(),request,response,getHelper().isConfidential()));
   try {
-    if (request.getInputStream() != null) {
-      try {
-        while (request.getInputStream().read() != -1) {
-        }
-      }
- catch (      IOException ioe) {
+    InputStream in=request.getInputStream();
+    if (in != null) {
+      while (in.read() != -1) {
       }
     }
+  }
+ catch (  IOException e) {
+    getHelper().getLogger().log(Level.INFO,"Exception while consuming the Simple request's input stream",e);
+  }
+  try {
     response.getOutputStream().close();
   }
- catch (  IOException ioe) {
-    getHelper().getLogger().log(Level.FINE,"Exception while closing the Simple response's output stream",ioe);
+ catch (  IOException e) {
+    getHelper().getLogger().log(Level.INFO,"Exception while closing the Simple response's output stream",e);
   }
 }
