@@ -11,15 +11,15 @@
       @Override public ReadableByteChannel getChannel() throws IOException {
         return null;
       }
+      @Override public Reader getReader() throws IOException {
+        return null;
+      }
       @Override public InputStream getStream() throws IOException {
         return null;
       }
       @Override public void write(      OutputStream outputStream) throws IOException {
       }
       @Override public void write(      WritableByteChannel writableChannel) throws IOException {
-      }
-      @Override public Reader getReader() throws IOException {
-        return null;
       }
       @Override public void write(      Writer writer) throws IOException {
       }
@@ -68,6 +68,9 @@
       }
  else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LOCATION)) {
         result.setIdentifier(header.getValue());
+      }
+ else       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_DISPOSITION)) {
+        result.setFileName(parseContentDisposition(header.getValue()));
       }
     }
   }
