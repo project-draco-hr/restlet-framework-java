@@ -12,16 +12,20 @@
     }
     if (found) {
       String baseName=getBaseName(file,metadataService);
-      File[] files=file.getParentFile().listFiles();
-      ReferenceList rl=new ReferenceList(files.length);
-      String encodedParentDirectoryURI=path.substring(0,path.lastIndexOf("/"));
-      String encodedFileName=path.substring(path.lastIndexOf("/") + 1);
-      for (      File entry : files) {
-        if (entry.getName().startsWith(baseName)) {
-          rl.add(LocalReference.createFileReference(encodedParentDirectoryURI + "/" + getReencodedVariantFileName(encodedFileName,entry.getName())));
+      if (file.getParentFile() != null) {
+        File[] files=file.getParentFile().listFiles();
+        if (files != null) {
+          ReferenceList rl=new ReferenceList(files.length);
+          String encodedParentDirectoryURI=path.substring(0,path.lastIndexOf("/"));
+          String encodedFileName=path.substring(path.lastIndexOf("/") + 1);
+          for (          File entry : files) {
+            if (entry.getName().startsWith(baseName)) {
+              rl.add(LocalReference.createFileReference(encodedParentDirectoryURI + "/" + getReencodedVariantFileName(encodedFileName,entry.getName())));
+            }
+          }
+          output=rl.getTextRepresentation();
         }
       }
-      output=rl.getTextRepresentation();
     }
  else {
       if ((file != null) && file.exists()) {
