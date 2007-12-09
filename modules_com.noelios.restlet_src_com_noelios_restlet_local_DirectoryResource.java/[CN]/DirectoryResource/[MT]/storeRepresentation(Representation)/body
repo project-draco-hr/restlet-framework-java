@@ -1,0 +1,12 @@
+{
+  if (directoryRedirection && !targetIndex) {
+    getResponse().setStatus(Status.REDIRECTION_SEE_OTHER);
+    getResponse().setLocationRef(this.targetUri);
+  }
+  Request contextRequest=new Request(Method.PUT,this.targetUri);
+  contextRequest.setEntity(entity);
+  Response contextResponse=new Response(contextRequest);
+  contextRequest.setResourceRef(this.targetUri);
+  getClientDispatcher().handle(contextRequest,contextResponse);
+  getResponse().setStatus(contextResponse.getStatus());
+}
