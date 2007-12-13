@@ -1,0 +1,10 @@
+{
+  ByteArrayOutputStream stream=new ByteArrayOutputStream();
+  OutputStream out=new KeepAliveOutputStream(stream);
+  out.write('a');
+  assertEquals("a",new String(stream.toByteArray()));
+  out.write(new byte[]{'b','c'});
+  assertEquals("abc",new String(stream.toByteArray()));
+  out.write(new byte[]{'d','e','f','g'},0,2);
+  assertEquals("abcde",new String(stream.toByteArray()));
+}

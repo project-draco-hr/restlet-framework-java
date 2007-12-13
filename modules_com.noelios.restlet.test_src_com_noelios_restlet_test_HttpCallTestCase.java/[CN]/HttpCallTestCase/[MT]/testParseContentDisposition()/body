@@ -1,5 +1,22 @@
 {
-  HttpClientCall call=new HttpClientCall(null,null,null);
+  HttpClientCall call=new HttpClientCall(null,null,null){
+    @Override public WritableByteChannel getRequestEntityChannel(){
+      return null;
+    }
+    @Override public OutputStream getRequestEntityStream(){
+      return null;
+    }
+    @Override public OutputStream getRequestHeadStream(){
+      return null;
+    }
+    @Override public ReadableByteChannel getResponseEntityChannel(){
+      return null;
+    }
+    @Override public InputStream getResponseEntityStream(){
+      return null;
+    }
+  }
+;
   assertEquals("file.txt",call.parseContentDisposition("attachment; fileName=\"file.txt\""));
   assertEquals("file.txt",call.parseContentDisposition("attachment; fileName=file.txt"));
   assertEquals("file with space.txt",call.parseContentDisposition("attachment; filename=\"file with space.txt\""));

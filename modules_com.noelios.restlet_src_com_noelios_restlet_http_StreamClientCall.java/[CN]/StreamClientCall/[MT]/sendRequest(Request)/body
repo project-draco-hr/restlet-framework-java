@@ -9,13 +9,16 @@
     Socket socket=createSocket(hostDomain,hostPort);
     this.requestStream=socket.getOutputStream();
     this.responseStream=socket.getInputStream();
-    getRequestStream().write(getMethod().getBytes());
-    getRequestStream().write(' ');
-    getRequestStream().write(getRequestUri().getBytes());
-    getRequestStream().write(' ');
-    getRequestStream().write(getVersion().getBytes());
-    getRequestStream().write(13);
-    getRequestStream().write(10);
+    getRequestHeadStream().write(getMethod().getBytes());
+    getRequestHeadStream().write(' ');
+    getRequestHeadStream().write(getRequestUri().getBytes());
+    getRequestHeadStream().write(' ');
+    getRequestHeadStream().write(getVersion().getBytes());
+    HttpUtils.writeCRLF(getRequestHeadStream());
+    if (requestShouldBeChunked(request)) {
+      getRequestHeaders().set(HttpConstants.HEADER_TRANSFER_ENCODING,"chunked",true);
+      setRequestChunked(true);
+    }
     getRequestHeaders().set(HttpConstants.HEADER_CONNECTION,"close",true);
     String host=hostDomain;
     if (request.getResourceRef().getHostPort() != -1) {
@@ -23,10 +26,9 @@
     }
     getRequestHeaders().set(HttpConstants.HEADER_HOST,host,true);
     for (    Parameter header : getRequestHeaders()) {
-      HttpUtils.writeHeader(header,getRequestStream());
+      HttpUtils.writeHeader(header,getRequestHeadStream());
     }
-    getRequestStream().write(13);
-    getRequestStream().write(10);
+    HttpUtils.writeCRLF(getRequestHeadStream());
     super.sendRequest(request);
     parseResponse();
     result=new Status(getStatusCode(),null,getReasonPhrase(),null);
