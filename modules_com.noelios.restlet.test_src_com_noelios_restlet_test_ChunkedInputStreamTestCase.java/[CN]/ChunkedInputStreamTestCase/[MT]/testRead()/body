@@ -1,0 +1,20 @@
+{
+  String data="test data";
+  InputStream input=write(data);
+  InputStream chunked=new ChunkedInputStream(input);
+  assertEquals(data,read(chunked));
+  input=new ByteArrayInputStream("1a; ignore-stuff-here\r\nabcdefghijklmnopqrstuvwxyz\r\n10; other stuff\r\n1234567890abcdef\r\n0\r\n\r\n".getBytes());
+  chunked=new ChunkedInputStream(input);
+  assertEquals("abcdefghijklmnopqrstuvwxyz1234567890abcdef",read(chunked));
+  input=new ByteArrayInputStream("\r\n1a; ignore-stuff-here\r\nabcdefghijklmnopqrstuvwxyz\r\n10; other stuff\r\n1234567890abcdef\r\n0\r\n\r\n".getBytes());
+  chunked=new ChunkedInputStream(input);
+  assertEquals("abcdefghijklmnopqrstuvwxyz1234567890abcdef",read(chunked));
+  data="";
+  input=write(data);
+  chunked=new ChunkedInputStream(input);
+  assertEquals(data,read(chunked));
+  data="\r\n";
+  input=write(data);
+  chunked=new ChunkedInputStream(input);
+  assertEquals(data,read(chunked));
+}
