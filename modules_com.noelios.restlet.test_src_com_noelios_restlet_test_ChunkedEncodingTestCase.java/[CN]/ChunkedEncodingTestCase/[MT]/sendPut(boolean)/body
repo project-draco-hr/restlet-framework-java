@@ -1,0 +1,9 @@
+{
+  Request request=new Request(Method.PUT,uri,createTestXml());
+  Response r=new Client(Protocol.HTTP).handle(request);
+  if (checkedForChunkedResponse) {
+    Series<Parameter> parameters=(Series<Parameter>)r.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
+    checkForChunkedHeader(parameters);
+  }
+  assertXML(r.getEntityAsDom());
+}

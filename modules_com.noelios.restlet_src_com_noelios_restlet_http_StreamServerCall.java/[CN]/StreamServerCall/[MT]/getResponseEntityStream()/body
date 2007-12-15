@@ -1,3 +1,8 @@
 {
-  return getResponseStream();
+  if (isResponseChunked()) {
+    return new ChunkedOutputStream(getResponseStream());
+  }
+ else {
+    return new KeepAliveOutputStream(getResponseStream());
+  }
 }

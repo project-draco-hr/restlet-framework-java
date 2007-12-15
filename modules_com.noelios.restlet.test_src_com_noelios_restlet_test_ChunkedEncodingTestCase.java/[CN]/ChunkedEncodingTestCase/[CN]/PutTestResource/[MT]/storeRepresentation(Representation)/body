@@ -1,0 +1,14 @@
+{
+  Series<Parameter> parameters=(Series<Parameter>)getRequest().getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
+  checkForChunkedHeader(parameters);
+  DomRepresentation dom=new DomRepresentation(entity);
+  try {
+    Document doc=dom.getDocument();
+    assertXML(dom);
+    getResponse().setEntity(new DomRepresentation(MediaType.TEXT_XML,doc));
+  }
+ catch (  IOException ex) {
+    ex.printStackTrace();
+    fail(ex.getMessage());
+  }
+}

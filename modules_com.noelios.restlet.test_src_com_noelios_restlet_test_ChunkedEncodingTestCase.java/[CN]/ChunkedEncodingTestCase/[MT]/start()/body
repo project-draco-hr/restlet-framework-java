@@ -1,0 +1,15 @@
+{
+  component=new Component();
+  component.getServers().add(Protocol.HTTP,port);
+  uri="http://localhost:" + (port++) + "/test/";
+  Application application=new Application(component.getContext()){
+    @Override public Restlet createRoot(){
+      Router router=new Router(getContext());
+      router.attach("/test/",PutTestResource.class);
+      return router;
+    }
+  }
+;
+  component.getDefaultHost().attach(application);
+  component.start();
+}
