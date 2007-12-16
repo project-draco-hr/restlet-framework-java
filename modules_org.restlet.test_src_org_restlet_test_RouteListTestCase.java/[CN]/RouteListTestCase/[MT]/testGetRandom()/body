@@ -1,0 +1,15 @@
+{
+  RouteList list=new RouteList();
+  assertNull(list.getRandom(null,null,1f));
+  list.add(new MockScoringRoute(2));
+  list.add(new MockScoringRoute(3));
+  list.add(new MockScoringRoute(4));
+  assertNull(list.getRandom(null,null,9f));
+  list.add(new MockScoringRoute(6));
+  list.add(new MockScoringRoute(7));
+  list.add(new MockScoringRoute(8));
+  MockScoringRoute r=(MockScoringRoute)list.getRandom(null,null,5f);
+  assertFalse(r == null);
+  assertTrue(r.score > 5);
+  assertNull(list.getRandom(null,null,9f));
+}

@@ -1,10 +1,12 @@
 {
-  Route[] routes=toArray();
-  for (int initialIndex=lastIndex++; initialIndex != lastIndex; lastIndex++) {
-    if (lastIndex >= routes.length) {
-      lastIndex=0;
+  if (!isEmpty()) {
+    for (int initialIndex=lastIndex++; initialIndex != lastIndex; lastIndex++) {
+      if (lastIndex >= size()) {
+        lastIndex=0;
+      }
+      Route route=get(lastIndex);
+      if (route.score(request,response) >= requiredScore)       return route;
     }
-    if (routes[lastIndex].score(request,response) >= requiredScore)     return routes[lastIndex];
   }
   return null;
 }

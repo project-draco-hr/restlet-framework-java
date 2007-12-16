@@ -1,12 +1,19 @@
 {
-  Route[] routes=toArray();
-  int j=new Random().nextInt(routes.length);
-  if (routes[j].score(request,response) >= requiredScore)   return routes[j];
-  for (int initialIndex=j++; initialIndex != j; j++) {
-    if (j == routes.length) {
-      j=0;
+  int length=size();
+  if (length > 0) {
+    int j=new Random().nextInt(length);
+    Route route=get(j);
+    if (route.score(request,response) >= requiredScore)     return route;
+    boolean loopedAround=false;
+    do {
+      if (j == length && loopedAround == false) {
+        j=0;
+        loopedAround=true;
+      }
+      route=get(j++);
+      if (route.score(request,response) >= requiredScore)       return route;
     }
-    if (routes[j].score(request,response) >= requiredScore)     return routes[j];
+ while (j < length || !loopedAround);
   }
   return null;
 }
