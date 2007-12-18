@@ -1,23 +1,17 @@
 {
-  try {
-    if (socketAddress == null) {
-      socketAddress=createSocketAddress();
-    }
-    executorService=Executors.newFixedThreadPool(10);
-    serverSocket=createSocket();
-    if (socketAddress != null) {
-      serverSocket.bind(socketAddress);
-    }
-    for (; ; ) {
-      executorService.execute(new Connection(helper,serverSocket.accept()));
-    }
-  }
- catch (  IOException ioe) {
+  latch.countDown();
+  for (; ; ) {
     try {
-      this.helper.stop();
+      SocketChannel client=(SocketChannel)serverSocket.accept();
+      if (!handlerService.isShutdown()) {
+        handlerService.submit(new ConnectionHandler(helper,client.socket()));
+      }
     }
- catch (    Exception e) {
-      getLogger().log(Level.WARNING,"Unexpected error while stopping the connector",e);
+ catch (    ClosedByInterruptException ex) {
+      break;
+    }
+catch (    IOException ex) {
+      helper.getLogger().log(Level.WARNING,"Unexpected error while accepting new connection",ex);
     }
   }
 }

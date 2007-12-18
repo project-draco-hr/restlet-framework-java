@@ -1,5 +1,16 @@
 {
   super.start();
   getLogger().info("Starting the internal HTTP server");
-  new Listener(this).start();
+  handlerService=Executors.newFixedThreadPool(10);
+  listenerService=Executors.newSingleThreadExecutor();
+  serverSocketChannel=createServerSocket();
+  latch=new CountDownLatch(1);
+  listenerService.submit(new Listener(this,serverSocketChannel,latch,handlerService));
+  try {
+    latch.await();
+  }
+ catch (  InterruptedException ex) {
+    getLogger().log(Level.WARNING,"Interrupted while waiting for starting latch. Stopping...",ex);
+    stop();
+  }
 }
