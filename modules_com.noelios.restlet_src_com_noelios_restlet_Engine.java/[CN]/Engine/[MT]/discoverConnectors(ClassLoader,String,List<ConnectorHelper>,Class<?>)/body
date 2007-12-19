@@ -1,0 +1,34 @@
+{
+  try {
+    for (Enumeration<URL> configUrls=classLoader.getResources(descriptor); configUrls.hasMoreElements(); ) {
+      URL configURL=configUrls.nextElement();
+      BufferedReader reader=null;
+      try {
+        reader=new BufferedReader(new InputStreamReader(configURL.openStream(),"utf-8"));
+        String line=reader.readLine();
+        while (line != null) {
+          String provider=getProviderClassName(line);
+          if ((provider != null) && (!provider.equals(""))) {
+            try {
+              Class<? extends ConnectorHelper> providerClass=(Class<? extends ConnectorHelper>)Class.forName(provider);
+              connectors.add(providerClass.getConstructor(constructorClass).newInstance(constructorClass.cast(null)));
+            }
+ catch (            Exception e) {
+              logger.log(Level.SEVERE,"Unable to register the connector " + provider,e);
+            }
+          }
+          line=reader.readLine();
+        }
+      }
+ catch (      IOException e) {
+        logger.log(Level.SEVERE,"Unable to read the provider descriptor: " + configURL.toString());
+      }
+ finally {
+        if (reader != null)         reader.close();
+      }
+    }
+  }
+ catch (  IOException ioe) {
+    logger.log(Level.SEVERE,"Exception while detecting the client connectors.",ioe);
+  }
+}
