@@ -15,9 +15,8 @@
     getRequestHeadStream().write(' ');
     getRequestHeadStream().write(getVersion().getBytes());
     HttpUtils.writeCRLF(getRequestHeadStream());
-    if (requestShouldBeChunked(request)) {
+    if (shouldRequestBeChunked(request)) {
       getRequestHeaders().set(HttpConstants.HEADER_TRANSFER_ENCODING,"chunked",true);
-      setRequestChunked(true);
     }
     getRequestHeaders().set(HttpConstants.HEADER_CONNECTION,"close",true);
     String host=hostDomain;
