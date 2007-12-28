@@ -1,0 +1,40 @@
+{
+  int ptr=0;
+  int msd=0;
+  int diff=0;
+  char a, b;
+  final int llength=uri0.length();
+  final int rlength=uri1.length();
+  final int min;
+  if (rlength < llength)   min=rlength;
+ else   min=llength;
+  boolean rAtEnd, rHasNoMoreDigits;
+  while (ptr < min) {
+    a=uri0.charAt(ptr);
+    b=uri1.charAt(ptr);
+    diff=a - b;
+    if ((a > '9') || (b > '9') || (a < '0')|| (b < '0')) {
+      if (diff != 0)       return diff;
+      msd=0;
+    }
+ else {
+      if (msd == 0)       msd=diff;
+      rAtEnd=rlength - ptr < 2;
+      if (llength - ptr < 2) {
+        if (rAtEnd)         return msd;
+        return -1;
+      }
+      if (rAtEnd)       return 1;
+      rHasNoMoreDigits=isNotDigit(uri1.charAt(ptr + 1));
+      if (isNotDigit(uri0.charAt(ptr + 1))) {
+        if (rHasNoMoreDigits && msd != 0)         return msd;
+        if (!rHasNoMoreDigits)         return -1;
+      }
+ else {
+        if (rHasNoMoreDigits)         return 1;
+      }
+    }
+    ptr++;
+  }
+  return llength - rlength;
+}
