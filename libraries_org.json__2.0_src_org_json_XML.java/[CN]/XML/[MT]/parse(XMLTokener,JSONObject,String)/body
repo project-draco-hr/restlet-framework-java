@@ -49,8 +49,12 @@
     return false;
   }
  else   if (t == SLASH) {
-    if (name == null || !x.nextToken().equals(name)) {
-      throw x.syntaxError("Mismatched close tag");
+    t=x.nextToken();
+    if (name == null) {
+      throw x.syntaxError("Mismatched close tag" + t);
+    }
+    if (!t.equals(name)) {
+      throw x.syntaxError("Mismatched " + name + " and "+ t);
     }
     if (x.nextToken() != GT) {
       throw x.syntaxError("Misshaped close tag");
@@ -94,8 +98,8 @@
         for (; ; ) {
           t=x.nextContent();
           if (t == null) {
-            if (name != null) {
-              throw x.syntaxError("Unclosed tag " + name);
+            if (n != null) {
+              throw x.syntaxError("Unclosed tag " + n);
             }
             return false;
           }

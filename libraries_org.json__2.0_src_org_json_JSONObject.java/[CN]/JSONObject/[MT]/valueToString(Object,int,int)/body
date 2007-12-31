@@ -24,5 +24,14 @@
   if (value instanceof JSONArray) {
     return ((JSONArray)value).toString(indentFactor,indent);
   }
+  if (value instanceof Map) {
+    return new JSONObject((Map)value).toString(indentFactor,indent);
+  }
+  if (value instanceof Collection) {
+    return new JSONArray((Collection)value).toString(indentFactor,indent);
+  }
+  if (value.getClass().isArray()) {
+    return new JSONArray(value).toString(indentFactor,indent);
+  }
   return quote(value.toString());
 }
