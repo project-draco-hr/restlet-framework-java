@@ -1,3 +1,18 @@
 {
-  return null;
+  final PipedWriter pipedWriter=new PipedWriter();
+  final PipedReader pipedReader=new PipedReader(pipedWriter);
+  Thread writer=new Thread(){
+    public void run(){
+      try {
+        representation.write(pipedWriter);
+      }
+ catch (      IOException ioe) {
+        Logger.getLogger(ByteUtils.class.getCanonicalName()).log(Level.WARNING,"Error while writing to the piped reader.",ioe);
+      }
+    }
+  }
+;
+  writer.setDaemon(false);
+  writer.start();
+  return pipedReader;
 }
