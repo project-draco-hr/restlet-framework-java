@@ -1,0 +1,26 @@
+{
+  List<Collection<MediaType>> givenMediaTypes;
+  if (givenMediaType != null)   givenMediaTypes=Collections.singletonList((Collection<MediaType>)Collections.singletonList(givenMediaType));
+ else   givenMediaTypes=null;
+  Map<ResourceMethod,List<MediaType>> mms=findMethodSupportsMime(resourceMethods,ConsOrProdMime.CONSUME_MIME,givenMediaTypes);
+  if (mms.isEmpty())   return null;
+  if (mms.size() == 1)   return Util.getFirstKey(mms);
+  mms=findMethodSupportsMime(mms.keySet(),ConsOrProdMime.PRODUCE_MIME,accMediaTypess);
+  if (mms.isEmpty())   return null;
+  if (mms.size() == 1)   return Util.getFirstKey(mms);
+  for (  Collection<MediaType> accMediaTypes : accMediaTypess) {
+    for (    MediaType accMediaType : accMediaTypes) {
+      ResourceMethod bestMethod=null;
+      for (      Map.Entry<ResourceMethod,List<MediaType>> mm : mms.entrySet()) {
+        for (        MediaType methodMediaType : mm.getValue()) {
+          if (accMediaType.includes(methodMediaType)) {
+            if (bestMethod != null)             throw new CouldNotFindMethodException(this.errorRestletMultipleResourceMethods);
+            bestMethod=mm.getKey();
+          }
+        }
+      }
+      if (bestMethod != null)       return bestMethod;
+    }
+  }
+  return null;
+}

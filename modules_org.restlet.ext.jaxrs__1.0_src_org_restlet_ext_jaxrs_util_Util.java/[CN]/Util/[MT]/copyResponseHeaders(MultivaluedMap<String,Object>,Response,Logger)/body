@@ -1,0 +1,10 @@
+{
+  Collection<Parameter> headers=new ArrayList<Parameter>();
+  for (  Map.Entry<String,List<Object>> m : jaxRsHeaders.entrySet()) {
+    String headerName=m.getKey();
+    for (    Object headerValue : m.getValue()) {
+      headers.add(new Parameter(headerName,headerValue != null ? headerValue.toString() : null));
+    }
+  }
+  Engine.getInstance().copyResponseHeaders(headers,restletResponse,logger);
+}

@@ -1,0 +1,44 @@
+{
+  ResourceObject resourceObject=resObjAndPath.resourceObject;
+  String remainingPath=resObjAndPath.remainingPath;
+  List<ResourceMethod> resourceMethods=new ArrayList();
+  for (  SubResourceMethod method : resourceObject.getResourceClass().getSubResourceMethods()) {
+    UriTemplateRegExp methodPath=method.getUriTemplateRegExp();
+    if (Util.isEmptyOrSlash(remainingPath)) {
+      if (methodPath.isEmptyOrSlash())       resourceMethods.add(method);
+    }
+ else {
+      if (methodPath.matchesWithEmpty(remainingPath))       resourceMethods.add(method);
+    }
+  }
+  if (resourceMethods.isEmpty())   throw new CouldNotFindMethodException(errorRestletResourceMethodNotFound);
+  Iterator<ResourceMethod> methodIter=resourceMethods.iterator();
+  while (methodIter.hasNext()) {
+    ResourceMethod resourceMethod=methodIter.next();
+    if (!resourceMethod.isHttpMethodSupported(httpMethod))     methodIter.remove();
+  }
+  if (resourceMethods.isEmpty()) {
+    throw new CouldNotFindMethodException(errorRestletMethodNotAllowed);
+  }
+  if (givenMediaType != null) {
+    methodIter=resourceMethods.iterator();
+    while (methodIter.hasNext()) {
+      ResourceMethod resourceMethod=methodIter.next();
+      if (!resourceMethod.isGivenMediaTypeSupported(givenMediaType))       methodIter.remove();
+    }
+    if (resourceMethods.isEmpty())     throw new CouldNotFindMethodException(errorRestletUnsupportedMediaType);
+  }
+  methodIter=resourceMethods.iterator();
+  while (methodIter.hasNext()) {
+    ResourceMethod resourceMethod=methodIter.next();
+    if (!resourceMethod.isAcceptedMediaTypeSupported(accMediaTypes))     methodIter.remove();
+  }
+  if (resourceMethods.isEmpty()) {
+    throw new CouldNotFindMethodException(errorRestletNotAcceptable);
+  }
+  ResourceMethod bestResourceMethod=getBestMethod(resourceMethods,givenMediaType,accMediaTypes);
+  if (bestResourceMethod == null) {
+    throw new RuntimeException();
+  }
+  return new ResObjAndMeth(resourceObject,bestResourceMethod);
+}

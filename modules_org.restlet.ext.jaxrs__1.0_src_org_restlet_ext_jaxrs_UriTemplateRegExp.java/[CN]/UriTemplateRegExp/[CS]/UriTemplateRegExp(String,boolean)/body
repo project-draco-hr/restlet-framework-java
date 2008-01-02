@@ -1,0 +1,17 @@
+{
+  this.pathPattern=pathPattern;
+  this.isEmptyOrSlash=Util.isEmptyOrSlash(pathPattern);
+  StringBuilder patternStb=new StringBuilder(pathPattern);
+  if (!pathPattern.endsWith("/"))   patternStb.append('/');
+  patternStb.append('{');
+  patternStb.append(VARNAME_FUER_REST);
+  patternStb.append('}');
+  this.template=new Template(patternStb.toString(),Template.MODE_EQUALS);
+  if (limitedToOneSegment)   this.template.getDefaultVariable().setType(Variable.TYPE_URI_SEGMENT);
+  Variable restVar=template.getVariables().get(VARNAME_FUER_REST);
+  if (restVar == null) {
+    restVar=new Variable(Variable.TYPE_ALL);
+    template.getVariables().put(VARNAME_FUER_REST,restVar);
+  }
+  restVar.setRequired(false);
+}

@@ -1,0 +1,16 @@
+{
+  Map<String,String> variables=new HashMap();
+  boolean pathSuppl=!givenPath.endsWith("/");
+  if (pathSuppl)   givenPath+='/';
+  boolean matches=template.parse(givenPath,(Map)variables) >= 0;
+  if (!matches)   return null;
+  String finalMatchingGroup=variables.remove(VARNAME_FUER_REST);
+  if (finalMatchingGroup.length() > 0) {
+    if (pathSuppl && finalMatchingGroup.endsWith("/"))     finalMatchingGroup=finalMatchingGroup.substring(0,finalMatchingGroup.length() - 1);
+    if (!finalMatchingGroup.startsWith("/"))     finalMatchingGroup="/" + finalMatchingGroup;
+  }
+  String finalCapturingGroup=variables.get(Util.getLastElement(template.getVariableNames()));
+  if (finalCapturingGroup == null)   finalCapturingGroup="";
+  finalCapturingGroup=finalMatchingGroup;
+  return new MatchingResult(variables,finalMatchingGroup,finalCapturingGroup,variables.size());
+}

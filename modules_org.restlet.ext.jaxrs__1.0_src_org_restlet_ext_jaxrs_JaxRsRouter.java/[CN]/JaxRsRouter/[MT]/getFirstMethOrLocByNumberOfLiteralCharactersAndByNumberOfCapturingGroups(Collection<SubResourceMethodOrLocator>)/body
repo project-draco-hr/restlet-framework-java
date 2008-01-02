@@ -1,0 +1,28 @@
+{
+  if (eWithMethod == null || eWithMethod.isEmpty())   return null;
+  Iterator<SubResourceMethodOrLocator> srmlIter=eWithMethod.iterator();
+  SubResourceMethodOrLocator bestSrml=srmlIter.next();
+  if (eWithMethod.size() == 1)   return bestSrml;
+  int bestSrmlChars=Integer.MIN_VALUE;
+  int bestSrmlNoCaptGroups=Integer.MIN_VALUE;
+  for (  SubResourceMethodOrLocator srml : eWithMethod) {
+    int srmlNoLitChars=srml.getUriTemplateRegExp().getNumberOfLiteralChars();
+    if (srmlNoLitChars > bestSrmlChars) {
+      bestSrml=srml;
+      bestSrmlChars=srmlNoLitChars;
+      continue;
+    }
+    if (srmlNoLitChars == bestSrmlChars) {
+      int srmlNoCaptGroups=srml.getUriTemplateRegExp().getNumberOfCapturingGroups();
+      if (srmlNoCaptGroups > bestSrmlNoCaptGroups) {
+        bestSrml=srml;
+        bestSrmlNoCaptGroups=srmlNoCaptGroups;
+        continue;
+      }
+      if (srmlNoCaptGroups == bestSrmlNoCaptGroups) {
+        throw new CouldNotFindMethodException(this.errorRestletMultipleResourceMethods);
+      }
+    }
+  }
+  return bestSrml;
+}

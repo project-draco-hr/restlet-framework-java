@@ -1,0 +1,11 @@
+{
+  List<MediaType> producedMimes=this.getProducedMimes();
+  Iterator<MediaType> prodMimeIter=producedMimes.iterator();
+  while (prodMimeIter.hasNext()) {
+    MediaType producedMime=prodMimeIter.next();
+    if (producedMime.getSubType().equals("*"))     prodMimeIter.remove();
+  }
+  if (producedMimes.isEmpty())   return MediaType.APPLICATION_OCTET_STREAM;
+  if (producedMimes.size() == 1)   return producedMimes.get(0);
+  return MediaType.APPLICATION_OCTET_STREAM;
+}

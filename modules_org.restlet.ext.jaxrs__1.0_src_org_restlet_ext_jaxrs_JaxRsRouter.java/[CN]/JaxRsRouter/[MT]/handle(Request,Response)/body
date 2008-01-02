@@ -1,0 +1,23 @@
+{
+  super.handle(request,response);
+  ResObjAndMeth resObjAndMeth;
+  try {
+    resObjAndMeth=matchingRequestToResourceMethod(request,response);
+  }
+ catch (  CouldNotFindMethodException e) {
+    e.errorRestlet.handle(request,response);
+    return;
+  }
+catch (  MethodInvokeException e) {
+    return;
+  }
+  ResourceMethod resourceMethod=resObjAndMeth.resourceMethod;
+  ResourceObject resourceObject=resObjAndMeth.resourceObject;
+  MatchingResult matchingResult=resObjAndMeth.matchingResult;
+  try {
+    invokeMethodAndHandleResult(resourceMethod,resourceObject,matchingResult,request,response);
+  }
+ catch (  MethodInvokeException e) {
+    return;
+  }
+}

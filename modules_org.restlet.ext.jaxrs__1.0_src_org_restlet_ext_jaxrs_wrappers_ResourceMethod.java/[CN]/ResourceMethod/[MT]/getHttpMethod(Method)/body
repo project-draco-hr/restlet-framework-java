@@ -1,0 +1,11 @@
+{
+  for (  Annotation annotation : javaMethod.getAnnotations()) {
+    Class annoType=annotation.annotationType();
+    HttpMethod httpMethodAnnot=(HttpMethod)annoType.getAnnotation(HttpMethod.class);
+    if (httpMethodAnnot != null) {
+      String httpMethodName=httpMethodAnnot.value();
+      return org.restlet.data.Method.valueOf(httpMethodName);
+    }
+  }
+  return null;
+}

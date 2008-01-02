@@ -1,0 +1,31 @@
+{
+  if (paramClass.equals(String.class))   return paramValue;
+  try {
+    Constructor constructor=paramClass.getConstructor(String.class);
+    return constructor.newInstance(paramValue);
+  }
+ catch (  Exception e) {
+  }
+  Method valueOf;
+  try {
+    valueOf=paramClass.getMethod("valueOf",String.class);
+  }
+ catch (  SecurityException e) {
+    throw new CanNotIntatiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+  }
+catch (  NoSuchMethodException e) {
+    throw new CanNotIntatiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+  }
+  try {
+    return valueOf.invoke(null,paramValue);
+  }
+ catch (  IllegalArgumentException e) {
+    throw new CanNotIntatiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+  }
+catch (  IllegalAccessException e) {
+    throw new CanNotIntatiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+  }
+catch (  InvocationTargetException e) {
+    throw new CanNotIntatiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+  }
+}

@@ -1,0 +1,28 @@
+{
+  if (rrcs == null || rrcs.isEmpty())   return null;
+  Iterator<RootResourceClass> rrcIter=rrcs.iterator();
+  RootResourceClass bestRrc=rrcIter.next();
+  if (rrcs.size() == 1)   return bestRrc;
+  int bestRrcChars=Integer.MIN_VALUE;
+  int bestRrcNoCaptGroups=Integer.MIN_VALUE;
+  for (  RootResourceClass rrc : rrcs) {
+    int rrcNoLitChars=rrc.getUriTemplateRegExp().getNumberOfLiteralChars();
+    if (rrcNoLitChars > bestRrcChars) {
+      bestRrc=rrc;
+      bestRrcChars=rrcNoLitChars;
+      continue;
+    }
+    if (rrcNoLitChars == bestRrcChars) {
+      int rrcNoCaptGroups=rrc.getUriTemplateRegExp().getNumberOfCapturingGroups();
+      if (rrcNoCaptGroups > bestRrcNoCaptGroups) {
+        bestRrc=rrc;
+        bestRrcNoCaptGroups=rrcNoCaptGroups;
+        continue;
+      }
+      if (rrcNoCaptGroups == bestRrcNoCaptGroups) {
+        throw new CouldNotFindMethodException(this.errorRestletMultipleRootResourceClasses);
+      }
+    }
+  }
+  return bestRrc;
+}

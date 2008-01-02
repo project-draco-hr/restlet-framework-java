@@ -1,0 +1,16 @@
+{
+  String u=uriRemainingPart;
+  Collection<RootResourceClass> eAndCs=new ArrayList<RootResourceClass>();
+  for (  RootResourceClass rootResourceClass : this.rootResourceClasses) {
+    MatchingResult matchingResult=rootResourceClass.getUriTemplateRegExp().match(u);
+    if (matchingResult == null)     continue;
+    if (!Util.isEmptyOrSlash(matchingResult.getFinalMatchingGroup()) && !rootResourceClass.hasSubResourceMethodsOrLocators())     continue;
+ else     eAndCs.add(rootResourceClass);
+  }
+  if (eAndCs.isEmpty())   throw new CouldNotFindMethodException(errorRestletRootResourceNotFound);
+  RootResourceClass tClass=getFirstRrcByNumberOfLiteralCharactersAndByNumberOfCapturingGroups(eAndCs);
+  UriTemplateRegExp rMatch=tClass.getUriTemplateRegExp();
+  MatchingResult matchResult=rMatch.match(u);
+  u=matchResult.getFinalCapturingGroup();
+  return new ResClAndTemplate(u,tClass);
+}

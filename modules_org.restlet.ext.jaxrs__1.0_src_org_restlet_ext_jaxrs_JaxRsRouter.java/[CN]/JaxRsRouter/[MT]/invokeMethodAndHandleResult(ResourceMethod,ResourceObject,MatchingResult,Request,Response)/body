@@ -1,0 +1,29 @@
+{
+  Object result;
+  try {
+    result=resourceMethod.invoke(resourceObject,matchingResult,restletRequest);
+  }
+ catch (  Exception e) {
+    throw handleInvokeException(e,restletResponse,"invokeMethod","Can not invoke the resource method");
+  }
+  if (result == null) {
+    restletResponse.setStatus(Status.SUCCESS_OK);
+    restletResponse.setEntity(null);
+    return;
+  }
+ else {
+    restletResponse.setStatus(Status.SUCCESS_OK);
+    MediaType mediaType=resourceMethod.getProducedMediaType(result);
+    if (result instanceof CharSequence) {
+      Representation restletRepresentation=new StringRepresentation((CharSequence)result);
+      restletRepresentation.setMediaType(mediaType);
+      restletResponse.setEntity(restletRepresentation);
+    }
+ else     if (result instanceof Response) {
+      jaxRsRespToRestletResp((javax.ws.rs.core.Response)result,restletResponse,mediaType);
+    }
+ else {
+      throw new NotYetImplementedException();
+    }
+  }
+}
