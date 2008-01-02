@@ -1,0 +1,18 @@
+{
+  Component comp=new Component();
+  comp.getServers().add(protocol,port);
+  Application application=new Application(comp.getContext()){
+    @Override public Restlet createRoot(){
+      JaxRsRouter router=new JaxRsRouter(getContext());
+      Collection<Class<?>> rrcs=rootResourceClasses;
+      for (      Class cl : rrcs) {
+        router.attach(cl);
+      }
+      return router;
+    }
+  }
+;
+  comp.getDefaultHost().attach(application);
+  comp.start();
+  return comp;
+}

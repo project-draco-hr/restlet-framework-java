@@ -1,0 +1,8 @@
+{
+  if (ONLY_ONE_CAR || ONLY_OFFERS)   return;
+  Response response=accessServer(CarListResource.class,Method.GET,MediaType.TEXT_PLAIN);
+  assertTrue(response.getStatus().isSuccess());
+  Representation representation=response.getEntity();
+  assertEquals(CarListResource.DUMMY_CAR_LIST,representation.getText());
+  assertEqualMediaType(MediaType.TEXT_PLAIN,representation.getMediaType());
+}

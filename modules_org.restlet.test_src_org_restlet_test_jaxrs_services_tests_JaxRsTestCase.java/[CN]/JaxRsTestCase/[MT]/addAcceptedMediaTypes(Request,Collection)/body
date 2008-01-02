@@ -1,0 +1,18 @@
+{
+  if (mediaTypes != null && !mediaTypes.isEmpty()) {
+    Collection<Preference<MediaType>> mediaTypePrefs=new ArrayList(mediaTypes.size());
+    for (    Object mediaType : mediaTypes) {
+      if (mediaType instanceof MediaType) {
+        mediaTypePrefs.add(new Preference<MediaType>((MediaType)mediaType));
+      }
+ else       if (mediaType instanceof Preference) {
+        Preference preference=(Preference)mediaType;
+        if (preference.getMetadata() instanceof MediaType)         mediaTypePrefs.add(preference);
+      }
+ else {
+        throw new IllegalArgumentException("Valid mediaTypes are only Preference<MediaType> or MediaType");
+      }
+    }
+    request.getClientInfo().getAcceptedMediaTypes().addAll(mediaTypePrefs);
+  }
+}

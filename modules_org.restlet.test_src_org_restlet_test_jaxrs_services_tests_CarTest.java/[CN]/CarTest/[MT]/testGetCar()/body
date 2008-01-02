@@ -1,0 +1,10 @@
+{
+  if (ONLY_OFFERS)   return;
+  String carNumber="5";
+  Response response=accessServer(CarListResource.class,carNumber,Method.GET,null);
+  Representation representation=response.getEntity();
+  if (response.getStatus().isError())   System.out.println(representation.getText());
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  assertEquals(CarResource.createTextRepr(carNumber),representation.getText());
+  assertEqualMediaType(MediaType.TEXT_PLAIN,representation.getMediaType());
+}
