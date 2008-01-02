@@ -1,0 +1,26 @@
+{
+  if (parameterAnnotations.length == 0)   return false;
+  for (  Annotation annotation : parameterAnnotations) {
+    Class<? extends Annotation> annotationType=annotation.annotationType();
+    if (annotationType.equals(HeaderParam.class)) {
+      continue;
+    }
+ else     if (annotationType.equals(PathParam.class)) {
+      continue;
+    }
+ else     if (annotationType.equals(HttpContext.class)) {
+      if (parameterType.equals(UriInfo.class))       continue;
+      if (parameterType.equals(Request.class))       continue;
+      if (parameterType.equals(HttpHeaders.class))       continue;
+      throw new IllegalTypeException("The Type of a parameter annotated with @HttpContext must be UriInfo, Request or HttpHeaders.");
+    }
+ else     if (annotationType.equals(MatrixParam.class)) {
+      continue;
+    }
+ else     if (annotationType.equals(QueryParam.class)) {
+      continue;
+    }
+    return false;
+  }
+  return true;
+}
