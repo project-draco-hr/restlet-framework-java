@@ -1,3 +1,39 @@
 {
-  return new Component();
+  Component component=null;
+  String componentClassName=getInitParameter(COMPONENT_KEY,null);
+  if (componentClassName != null) {
+    try {
+      Class<?> targetClass;
+      ClassLoader loader=Thread.currentThread().getContextClassLoader();
+      if (loader != null)       targetClass=Class.forName(componentClassName,false,loader);
+ else       targetClass=Class.forName(componentClassName);
+      component=(Component)targetClass.newInstance();
+    }
+ catch (    ClassNotFoundException e) {
+      log("[Noelios Restlet Engine] - The ServerServlet couldn't find the target class. Please check that your classpath includes " + componentClassName,e);
+    }
+catch (    InstantiationException e) {
+      log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check this class has an empty constructor " + componentClassName,e);
+    }
+catch (    IllegalAccessException e) {
+      log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check that you have to proper access rights to " + componentClassName,e);
+    }
+  }
+  if (component != null) {
+    ComponentContext componentContext=(ComponentContext)component.getContext();
+    String initParam;
+    javax.servlet.ServletConfig servletConfig=getServletConfig();
+    for (Enumeration<String> enum1=servletConfig.getInitParameterNames(); enum1.hasMoreElements(); ) {
+      initParam=(String)enum1.nextElement();
+      componentContext.getParameters().add(initParam,servletConfig.getInitParameter(initParam));
+    }
+    for (Enumeration<String> enum1=getServletContext().getInitParameterNames(); enum1.hasMoreElements(); ) {
+      initParam=(String)enum1.nextElement();
+      componentContext.getParameters().add(initParam,getServletContext().getInitParameter(initParam));
+    }
+  }
+ else {
+    component=new Component();
+  }
+  return component;
 }
