@@ -1,3 +1,15 @@
 {
-  throw new NotYetImplementedException();
+  if (this.templateParametersDecoded == null) {
+    if (this.templateParametersEncoded == null)     return null;
+    MultivaluedMap<String,String> templParamsDec=new MultivaluedMapImpl<String,String>();
+    for (    Map.Entry<String,List<String>> entryEnc : this.templateParametersEncoded.entrySet()) {
+      String keyDec=Reference.decode(entryEnc.getKey());
+      List<String> valuesEnc=entryEnc.getValue();
+      List<String> valuesDec=new ArrayList<String>(valuesEnc.size());
+      for (      String valueEnc : valuesEnc)       valuesDec.add(Reference.decode(valueEnc));
+      templParamsDec.put(keyDec,valuesDec);
+    }
+    this.templateParametersDecoded=templParamsDec;
+  }
+  return this.templateParametersDecoded;
 }

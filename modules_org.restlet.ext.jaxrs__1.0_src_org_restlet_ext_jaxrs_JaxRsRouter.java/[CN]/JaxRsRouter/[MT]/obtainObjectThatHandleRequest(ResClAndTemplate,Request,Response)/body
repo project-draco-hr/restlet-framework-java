@@ -1,35 +1,39 @@
 {
   String u=resClAndTemplate.u;
-  ResourceClass resClass=resClAndTemplate.rrc;
+  RootResourceClass resClass=resClAndTemplate.rrc;
+  MultivaluedMap<String,String> allTemplParamsEnc=resClAndTemplate.allTemplParamsEnc;
   UriTemplateRegExp rMatch=resClass.getUriTemplateRegExp();
   ResourceObject o;
   try {
-    o=resClass.createInstance(null,restletRequest);
+    o=resClass.createInstance(resClAndTemplate.matchingResult,allTemplParamsEnc,restletRequest);
   }
  catch (  Exception e) {
-    throw handleInvokeException(e,restletResponse,"newInstance","Could not create new instance of root resource class");
+    throw handleInvokeException(e,restletResponse,"createInstance","Could not create new instance of root resource class");
   }
   for (; ; ) {
-    if (Util.isEmptyOrSlash(u))     return new ResObjAndPath(o,u,new MatchingResult(Collections.EMPTY_MAP,"","",0));
+    if (Util.isEmptyOrSlash(u)) {
+      @SuppressWarnings("unchecked") Map<String,String> variables=Collections.EMPTY_MAP;
+      return new ResObjAndPath(o,u,new MatchingResult(variables,"","",0),allTemplParamsEnc);
+    }
     Collection<SubResourceMethodOrLocator> eWithMethod=new ArrayList<SubResourceMethodOrLocator>();
     for (    SubResourceMethodOrLocator methodOrLocator : resClass.getSubResourceMethodsAndLocators()) {
-      MatchingResult matchingResult=methodOrLocator.getUriTemplateRegExp().match(u);
-      if (matchingResult == null)       continue;
-      if (!Util.isEmptyOrSlash(matchingResult.getFinalMatchingGroup()))       continue;
+      MatchingResult matchResult=methodOrLocator.getUriTemplateRegExp().match(u);
+      if (matchResult == null)       continue;
+      if (!Util.isEmptyOrSlash(matchResult.getFinalMatchingGroup()))       continue;
       eWithMethod.add(methodOrLocator);
     }
     if (eWithMethod.isEmpty())     throw new CouldNotFindMethodException(errorRestletResourceNotFound);
     SubResourceMethodOrLocator firstMeth=getFirstMethOrLocByNumberOfLiteralCharactersAndByNumberOfCapturingGroups(eWithMethod);
     rMatch=firstMeth.getUriTemplateRegExp();
     MatchingResult matchingResult=rMatch.match(u);
-    if (firstMeth instanceof SubResourceMethod)     return new ResObjAndPath(o,u,matchingResult);
+    if (firstMeth instanceof SubResourceMethod)     return new ResObjAndPath(o,u,matchingResult,allTemplParamsEnc);
     u=matchingResult.getFinalCapturingGroup();
     SubResourceLocator subResourceLocator=(SubResourceLocator)firstMeth;
     try {
-      o=subResourceLocator.createSubResource(o,matchingResult,restletRequest);
+      o=subResourceLocator.createSubResource(o,matchingResult,allTemplParamsEnc,restletRequest);
     }
  catch (    Exception e) {
-      throw handleInvokeException(e,restletResponse,"newInstance","Could not create new instance of root resource class");
+      throw handleInvokeException(e,restletResponse,"createSubResource","Could not create new instance of root resource class");
     }
   }
 }

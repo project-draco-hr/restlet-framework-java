@@ -1,6 +1,7 @@
 {
   ResourceObject resourceObject=resObjAndPath.resourceObject;
   String remainingPath=resObjAndPath.remainingPath;
+  MultivaluedMap<String,String> allTemplParamsEnc=resObjAndPath.allTemplParamsEnc;
   List<ResourceMethod> resourceMethods=new ArrayList<ResourceMethod>();
   for (  SubResourceMethod method : resourceObject.getResourceClass().getSubResourceMethods()) {
     UriTemplateRegExp methodPath=method.getUriTemplateRegExp();
@@ -40,5 +41,5 @@
   if (bestResourceMethod == null) {
     throw new RuntimeException();
   }
-  return new ResObjAndMeth(resourceObject,bestResourceMethod);
+  return new ResObjAndMeth(resourceObject,bestResourceMethod,allTemplParamsEnc);
 }

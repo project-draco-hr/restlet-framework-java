@@ -1,3 +1,9 @@
 {
-  rootResourceClasses.add(new RootResourceClass(jaxRsClass));
+  RootResourceClass newRrc=new RootResourceClass(jaxRsClass);
+  UriTemplateRegExp uriTempl=newRrc.getUriTemplateRegExp();
+  for (  RootResourceClass rootResourceClass : this.rootResourceClasses) {
+    if (rootResourceClass.getJaxRsClass().equals(jaxRsClass))     return;
+    if (rootResourceClass.getUriTemplateRegExp().equals(uriTempl))     throw new IllegalArgumentException("There is already a root resource class with path " + uriTempl.getPathPattern());
+  }
+  rootResourceClasses.add(newRrc);
 }

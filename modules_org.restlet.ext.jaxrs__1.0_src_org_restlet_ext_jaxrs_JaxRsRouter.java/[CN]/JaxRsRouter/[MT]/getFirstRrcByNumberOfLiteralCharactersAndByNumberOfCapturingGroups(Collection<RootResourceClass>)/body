@@ -7,15 +7,17 @@
   int bestRrcNoCaptGroups=Integer.MIN_VALUE;
   for (  RootResourceClass rrc : rrcs) {
     int rrcNoLitChars=rrc.getUriTemplateRegExp().getNumberOfLiteralChars();
+    int rrcNoCaptGroups=rrc.getUriTemplateRegExp().getNumberOfCapturingGroups();
     if (rrcNoLitChars > bestRrcChars) {
       bestRrc=rrc;
       bestRrcChars=rrcNoLitChars;
+      bestRrcNoCaptGroups=rrcNoCaptGroups;
       continue;
     }
     if (rrcNoLitChars == bestRrcChars) {
-      int rrcNoCaptGroups=rrc.getUriTemplateRegExp().getNumberOfCapturingGroups();
       if (rrcNoCaptGroups > bestRrcNoCaptGroups) {
         bestRrc=rrc;
+        bestRrcChars=rrcNoLitChars;
         bestRrcNoCaptGroups=rrcNoCaptGroups;
         continue;
       }

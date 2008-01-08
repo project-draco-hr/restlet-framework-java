@@ -1,3 +1,27 @@
 {
-  throw new NotYetImplementedException("Die Matrix-Auswertung soll sp?ter in die Referenz");
+  if (this.matrixParameters == null) {
+    MultivaluedMap<String,String> matrixParameters=new MultivaluedMapImpl<String,String>();
+    if (matrParamEncoded != null) {
+      String[] paramsEncSpl=matrParamEncoded.split(";");
+      for (int i=0; i < paramsEncSpl.length; i++) {
+        String matrParamEnc=paramsEncSpl[i];
+        int posEquSign=matrParamEnc.indexOf('=');
+        String keyEnc;
+        String valueEnc;
+        if (posEquSign <= 0) {
+          keyEnc=matrParamEnc;
+          valueEnc=null;
+        }
+ else {
+          keyEnc=matrParamEnc.substring(0,posEquSign);
+          valueEnc=matrParamEnc.substring(posEquSign + 1);
+        }
+        String key=decode ? Reference.decode(keyEnc) : keyEnc;
+        String value=decode ? Reference.decode(valueEnc) : valueEnc;
+        matrixParameters.add(key,value);
+      }
+    }
+    this.matrixParameters=matrixParameters;
+  }
+  return matrixParameters;
 }

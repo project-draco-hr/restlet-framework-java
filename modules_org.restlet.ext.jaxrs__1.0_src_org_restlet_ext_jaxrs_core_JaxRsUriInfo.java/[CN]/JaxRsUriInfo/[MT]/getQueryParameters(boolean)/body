@@ -1,3 +1,12 @@
 {
-  throw new NotYetImplementedException();
+  if (decode)   return getQueryParameters();
+  if (queryParametersEncoded == null) {
+    Form queryForm=reference.getQueryAsForm();
+    for (    Parameter param : queryForm) {
+      param.setName(Reference.encode(param.getName()));
+      param.setValue(Reference.encode(param.getValue()));
+    }
+    queryParametersEncoded=new FormMulvaltivaluedMap(queryForm);
+  }
+  return queryParametersEncoded;
 }

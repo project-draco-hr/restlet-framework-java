@@ -7,15 +7,17 @@
   int bestSrmlNoCaptGroups=Integer.MIN_VALUE;
   for (  SubResourceMethodOrLocator srml : eWithMethod) {
     int srmlNoLitChars=srml.getUriTemplateRegExp().getNumberOfLiteralChars();
+    int srmlNoCaptGroups=srml.getUriTemplateRegExp().getNumberOfCapturingGroups();
     if (srmlNoLitChars > bestSrmlChars) {
       bestSrml=srml;
       bestSrmlChars=srmlNoLitChars;
+      bestSrmlNoCaptGroups=srmlNoCaptGroups;
       continue;
     }
     if (srmlNoLitChars == bestSrmlChars) {
-      int srmlNoCaptGroups=srml.getUriTemplateRegExp().getNumberOfCapturingGroups();
       if (srmlNoCaptGroups > bestSrmlNoCaptGroups) {
         bestSrml=srml;
+        bestSrmlChars=srmlNoLitChars;
         bestSrmlNoCaptGroups=srmlNoCaptGroups;
         continue;
       }
