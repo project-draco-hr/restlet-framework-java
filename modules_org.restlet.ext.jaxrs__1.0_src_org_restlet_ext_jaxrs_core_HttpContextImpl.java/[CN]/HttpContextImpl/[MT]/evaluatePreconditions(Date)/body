@@ -1,3 +1,17 @@
 {
-  throw new NotYetImplementedException();
+  Date modSinceCond=this.restletRequest.getConditions().getModifiedSince();
+  if (modSinceCond == null)   return null;
+  if (modSinceCond.after(lastModified)) {
+    Method requestMethod=restletRequest.getMethod();
+    if (requestMethod.equals(Method.GET) || requestMethod.equals(Method.HEAD)) {
+      ResponseBuilder rb=Response.notModified();
+      return rb.build();
+    }
+ else {
+      throw new NotYetImplementedException("Only implemented for GET and HEAD");
+    }
+  }
+ else {
+    return null;
+  }
 }
