@@ -1,7 +1,10 @@
 {
   if (this.cookies == null) {
-    List<Cookie> c=new ArrayList<Cookie>();
-    if (!restletRequest.getCookies().isEmpty())     throw new NotYetImplementedException();
+    Map<String,Cookie> c=new HashMap<String,Cookie>();
+    for (    org.restlet.data.Cookie rc : restletRequest.getCookies()) {
+      Cookie cookie=Util.convertCookie(rc);
+      c.put(cookie.getName(),cookie);
+    }
     this.cookies=c;
   }
   return this.cookies;

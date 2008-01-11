@@ -3,8 +3,9 @@
   String remainingPath=resObjAndPath.remainingPath;
   MultivaluedMap<String,String> allTemplParamsEnc=resObjAndPath.allTemplParamsEnc;
   List<ResourceMethod> resourceMethods=new ArrayList<ResourceMethod>();
-  for (  SubResourceMethod method : resourceObject.getResourceClass().getSubResourceMethods()) {
-    UriTemplateRegExp methodPath=method.getUriTemplateRegExp();
+  Iterable<SubResourceMethod> subResourceMethods=resourceObject.getResourceClass().getSubResourceMethods();
+  for (  SubResourceMethod method : subResourceMethods) {
+    PathRegExp methodPath=method.getPathRegExp();
     if (Util.isEmptyOrSlash(remainingPath)) {
       if (methodPath.isEmptyOrSlash())       resourceMethods.add(method);
     }
@@ -13,23 +14,20 @@
     }
   }
   if (resourceMethods.isEmpty())   throw new CouldNotFindMethodException(errorRestletResourceMethodNotFound);
-  Iterator<ResourceMethod> methodIter=resourceMethods.iterator();
-  while (methodIter.hasNext()) {
-    ResourceMethod resourceMethod=methodIter.next();
-    if (!resourceMethod.isHttpMethodSupported(httpMethod))     methodIter.remove();
-  }
+  boolean alsoGet=httpMethod.equals(Method.HEAD);
+  removeNotSupportedHttpMethod(resourceMethods,httpMethod,alsoGet);
   if (resourceMethods.isEmpty()) {
     throw new CouldNotFindMethodException(errorRestletMethodNotAllowed);
   }
   if (givenMediaType != null) {
-    methodIter=resourceMethods.iterator();
+    Iterator<ResourceMethod> methodIter=resourceMethods.iterator();
     while (methodIter.hasNext()) {
       ResourceMethod resourceMethod=methodIter.next();
       if (!resourceMethod.isGivenMediaTypeSupported(givenMediaType))       methodIter.remove();
     }
     if (resourceMethods.isEmpty())     throw new CouldNotFindMethodException(errorRestletUnsupportedMediaType);
   }
-  methodIter=resourceMethods.iterator();
+  Iterator<ResourceMethod> methodIter=resourceMethods.iterator();
   while (methodIter.hasNext()) {
     ResourceMethod resourceMethod=methodIter.next();
     if (!resourceMethod.isAcceptedMediaTypeSupported(accMediaTypes))     methodIter.remove();
@@ -37,9 +35,9 @@
   if (resourceMethods.isEmpty()) {
     throw new CouldNotFindMethodException(errorRestletNotAcceptable);
   }
-  ResourceMethod bestResourceMethod=getBestMethod(resourceMethods,givenMediaType,accMediaTypes);
+  ResourceMethod bestResourceMethod=getBestMethod(resourceMethods,givenMediaType,accMediaTypes,httpMethod);
   if (bestResourceMethod == null) {
-    throw new RuntimeException();
+    throw new RuntimeException("Found no method, but there must be one.");
   }
   return new ResObjAndMeth(resourceObject,bestResourceMethod,allTemplParamsEnc);
 }

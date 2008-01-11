@@ -14,8 +14,25 @@
       for (      Map.Entry<ResourceMethod,List<MediaType>> mm : mms.entrySet()) {
         for (        MediaType methodMediaType : mm.getValue()) {
           if (accMediaType.includes(methodMediaType)) {
-            if (bestMethod != null)             throw new CouldNotFindMethodException(this.errorRestletMultipleResourceMethods);
-            bestMethod=mm.getKey();
+            ResourceMethod currentMethod=mm.getKey();
+            if (bestMethod == null) {
+              bestMethod=currentMethod;
+            }
+ else {
+              if (httpMethod.equals(Method.HEAD)) {
+                if (bestMethod.getHttpMethod().equals(Method.GET) && currentMethod.getHttpMethod().equals(Method.HEAD)) {
+                }
+ else                 if (bestMethod.getHttpMethod().equals(Method.HEAD) && currentMethod.getHttpMethod().equals(Method.GET)) {
+                  bestMethod=currentMethod;
+                }
+ else {
+                  throwMultipleResourceMethods();
+                }
+              }
+ else {
+                throwMultipleResourceMethods();
+              }
+            }
           }
         }
       }

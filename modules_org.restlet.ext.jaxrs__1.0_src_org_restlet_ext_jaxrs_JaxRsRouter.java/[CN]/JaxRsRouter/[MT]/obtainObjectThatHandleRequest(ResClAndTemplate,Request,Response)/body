@@ -2,7 +2,7 @@
   String u=resClAndTemplate.u;
   RootResourceClass resClass=resClAndTemplate.rrc;
   MultivaluedMap<String,String> allTemplParamsEnc=resClAndTemplate.allTemplParamsEnc;
-  UriTemplateRegExp rMatch=resClass.getUriTemplateRegExp();
+  PathRegExp rMatch=resClass.getPathRegExp();
   ResourceObject o;
   try {
     o=resClass.createInstance(resClAndTemplate.matchingResult,allTemplParamsEnc,restletRequest);
@@ -17,14 +17,14 @@
     }
     Collection<SubResourceMethodOrLocator> eWithMethod=new ArrayList<SubResourceMethodOrLocator>();
     for (    SubResourceMethodOrLocator methodOrLocator : resClass.getSubResourceMethodsAndLocators()) {
-      MatchingResult matchResult=methodOrLocator.getUriTemplateRegExp().match(u);
+      MatchingResult matchResult=methodOrLocator.getPathRegExp().match(u);
       if (matchResult == null)       continue;
       if (!Util.isEmptyOrSlash(matchResult.getFinalMatchingGroup()))       continue;
       eWithMethod.add(methodOrLocator);
     }
     if (eWithMethod.isEmpty())     throw new CouldNotFindMethodException(errorRestletResourceNotFound);
     SubResourceMethodOrLocator firstMeth=getFirstMethOrLocByNumberOfLiteralCharactersAndByNumberOfCapturingGroups(eWithMethod);
-    rMatch=firstMeth.getUriTemplateRegExp();
+    rMatch=firstMeth.getPathRegExp();
     MatchingResult matchingResult=rMatch.match(u);
     if (firstMeth instanceof SubResourceMethod)     return new ResObjAndPath(o,u,matchingResult,allTemplParamsEnc);
     u=matchingResult.getFinalCapturingGroup();

@@ -6,8 +6,8 @@
   int bestSrmlChars=Integer.MIN_VALUE;
   int bestSrmlNoCaptGroups=Integer.MIN_VALUE;
   for (  SubResourceMethodOrLocator srml : eWithMethod) {
-    int srmlNoLitChars=srml.getUriTemplateRegExp().getNumberOfLiteralChars();
-    int srmlNoCaptGroups=srml.getUriTemplateRegExp().getNumberOfCapturingGroups();
+    int srmlNoLitChars=srml.getPathRegExp().getNumberOfLiteralChars();
+    int srmlNoCaptGroups=srml.getPathRegExp().getNumberOfCapturingGroups();
     if (srmlNoLitChars > bestSrmlChars) {
       bestSrml=srml;
       bestSrmlChars=srmlNoLitChars;
@@ -22,7 +22,10 @@
         continue;
       }
       if (srmlNoCaptGroups == bestSrmlNoCaptGroups) {
-        throw new CouldNotFindMethodException(this.errorRestletMultipleResourceMethods);
+        if (srml.getPathRegExp().equals(bestSrml.getPathRegExp())) {
+          continue;
+        }
+        throwMultipleResourceMethods();
       }
     }
   }
