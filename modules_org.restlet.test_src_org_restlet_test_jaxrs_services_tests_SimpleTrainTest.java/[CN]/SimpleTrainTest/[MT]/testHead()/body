@@ -1,0 +1,13 @@
+{
+  if (ONLY_M2 || ONLY_TEXT_ALL)   return;
+  Response responseHead=JaxRsTestCase.accessServer(SimpleTrain.class,Method.HEAD,Util.toList(new Object[]{PREF_TEXTPLAIN_QUAL05,MediaType.TEXT_HTML}));
+  Response responseGett=JaxRsTestCase.accessServer(SimpleTrain.class,Method.GET,Util.toList(new Object[]{PREF_TEXTPLAIN_QUAL05,MediaType.TEXT_HTML}));
+  assertEquals(Status.SUCCESS_OK,responseHead.getStatus());
+  assertEquals(Status.SUCCESS_OK,responseGett.getStatus());
+  Representation representationHead=responseHead.getEntity();
+  Representation representationGett=responseGett.getEntity();
+  assertEqualMediaType(MediaType.TEXT_HTML,representationGett.getMediaType());
+  assertEqualMediaType(MediaType.TEXT_HTML,representationHead.getMediaType());
+  assertEquals(SimpleTrain.RERP_HTML_TEXT,representationGett.getText());
+  assertEquals(0,representationHead.getText().length());
+}

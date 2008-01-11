@@ -1,0 +1,9 @@
+{
+  Date modificationDate=getLastModificationDateFromDatastore();
+  Response resp=request.evaluatePreconditions(modificationDate);
+  if (resp != null)   return resp;
+  ResponseBuilder responseBuilder=Response.status(200);
+  responseBuilder.entity("This is the Entity from " + modificationDate);
+  responseBuilder.lastModified(modificationDate);
+  return responseBuilder.build();
+}
