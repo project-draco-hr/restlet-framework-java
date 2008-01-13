@@ -1,0 +1,13 @@
+{
+  Object result=null;
+  XPath xpath=XPathFactory.newInstance().newXPath();
+  xpath.setNamespaceContext(this);
+  Document xmlDocument=getDocumentBuilder().parse(this.xmlRepresentation.getStream());
+  if (xmlDocument != null) {
+    result=xpath.evaluate(expression,xmlDocument,returnType);
+  }
+ else {
+    throw new Exception("Unable to obtain a DOM document for the XML representation. " + "XPath evaluation cancelled.");
+  }
+  return result;
+}
