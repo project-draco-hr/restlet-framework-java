@@ -4,7 +4,7 @@
     InputStream responseBodyAsStream=getHttpMethod().getResponseBodyAsStream();
     if (responseBodyAsStream != null) {
       result=new FilterInputStream(responseBodyAsStream){
-        public void close() throws IOException {
+        @Override public void close() throws IOException {
           super.close();
           getHttpMethod().releaseConnection();
         }
@@ -13,7 +13,6 @@
     }
   }
  catch (  IOException ioe) {
-    result=null;
   }
   return result;
 }
