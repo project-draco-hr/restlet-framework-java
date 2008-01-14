@@ -1,12 +1,11 @@
 {
   String uriRemainingPart=restletRequest.getResourceRef().getRemainingPart();
-  org.restlet.data.Method requMethod=restletRequest.getMethod();
   ResClAndTemplate rcat=identifyRootResourceClass(uriRemainingPart);
   ResObjAndPath resourceObjectAndPath=obtainObjectThatHandleRequest(rcat,restletRequest,restletResponse);
   MatchingResult matchingResult=resourceObjectAndPath.matchingResult;
   @SuppressWarnings("unchecked") List<Collection<MediaType>> accMediaTypes=(List)Util.sortMetadataList((Collection)restletRequest.getClientInfo().getAcceptedMediaTypes());
   MediaType givenMediaType=restletRequest.getEntity().getMediaType();
-  ResObjAndMeth method=idenifyMethodThatHandleRequest(resourceObjectAndPath,requMethod,givenMediaType,accMediaTypes);
+  ResObjAndMeth method=idenifyMethodThatHandleRequest(resourceObjectAndPath,restletResponse,givenMediaType,accMediaTypes);
   method.matchingResult=matchingResult;
   return method;
 }

@@ -1,22 +1,23 @@
 {
-  ResourceObject resourceObject=resObjAndPath.resourceObject;
+  org.restlet.data.Method httpMethod=restletResp.getRequest().getMethod();
+  ResourceObject resObj=resObjAndPath.resourceObject;
   String remainingPath=resObjAndPath.remainingPath;
   MultivaluedMap<String,String> allTemplParamsEnc=resObjAndPath.allTemplParamsEnc;
-  List<ResourceMethod> resourceMethods=new ArrayList<ResourceMethod>();
-  Iterable<SubResourceMethod> subResourceMethods=resourceObject.getResourceClass().getSubResourceMethods();
-  for (  SubResourceMethod method : subResourceMethods) {
-    PathRegExp methodPath=method.getPathRegExp();
-    if (Util.isEmptyOrSlash(remainingPath)) {
-      if (methodPath.isEmptyOrSlash())       resourceMethods.add(method);
-    }
- else {
-      if (methodPath.matchesWithEmpty(remainingPath))       resourceMethods.add(method);
-    }
-  }
+  List<ResourceMethod> resourceMethods=getResMethodsForPath(resObj,remainingPath);
   if (resourceMethods.isEmpty())   throw new CouldNotFindMethodException(errorRestletResourceMethodNotFound);
   boolean alsoGet=httpMethod.equals(Method.HEAD);
   removeNotSupportedHttpMethod(resourceMethods,httpMethod,alsoGet);
   if (resourceMethods.isEmpty()) {
+    if (httpMethod.equals(Method.OPTIONS)) {
+      resourceMethods=getResMethodsForPath(resObj,remainingPath);
+      Set<Method> allowedMethods=restletResp.getAllowedMethods();
+      for (      ResourceMethod rm : resourceMethods)       allowedMethods.add(rm.getHttpMethod());
+      if (!allowedMethods.isEmpty()) {
+        if (allowedMethods.contains(Method.GET))         allowedMethods.add(Method.HEAD);
+        restletResp.setEntity(new StringRepresentation(""));
+      }
+      throw new RequestHandledException();
+    }
     throw new CouldNotFindMethodException(errorRestletMethodNotAllowed);
   }
   if (givenMediaType != null) {
@@ -39,5 +40,5 @@
   if (bestResourceMethod == null) {
     throw new RuntimeException("Found no method, but there must be one.");
   }
-  return new ResObjAndMeth(resourceObject,bestResourceMethod,allTemplParamsEnc);
+  return new ResObjAndMeth(resObj,bestResourceMethod,allTemplParamsEnc);
 }

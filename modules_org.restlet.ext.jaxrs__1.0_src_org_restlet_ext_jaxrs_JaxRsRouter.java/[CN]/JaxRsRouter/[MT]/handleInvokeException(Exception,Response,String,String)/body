@@ -2,9 +2,9 @@
   if (e.getCause() instanceof WebApplicationException) {
     WebApplicationException webAppExc=(WebApplicationException)e.getCause();
     jaxRsRespToRestletResp(webAppExc.getResponse(),restletResponse,null);
-    throw new MethodInvokeException();
+    throw new RequestHandledException();
   }
   restletResponse.setStatus(Status.SERVER_ERROR_INTERNAL);
   getLogger().logp(Level.WARNING,this.getClass().getName(),methodName,logMessage,e.getCause());
-  throw new MethodInvokeException();
+  throw new RequestHandledException();
 }
