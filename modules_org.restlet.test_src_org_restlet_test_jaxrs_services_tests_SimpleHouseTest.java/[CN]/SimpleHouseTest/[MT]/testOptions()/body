@@ -1,0 +1,10 @@
+{
+  Response response=accessServer(SimpleHouse.class,Method.OPTIONS);
+  assertAllowedMethod(response,Method.GET);
+  response=accessServer(SimpleHouse.class,"headTest1",Method.OPTIONS);
+  assertAllowedMethod(response,Method.GET,Method.HEAD,Method.POST);
+  response=accessServer(SimpleHouse.class,"headTest2",Method.OPTIONS);
+  assertAllowedMethod(response,Method.GET,Method.HEAD);
+  response=accessServer(SimpleHouse.class,"xyz",Method.OPTIONS);
+  assertEquals(Status.CLIENT_ERROR_NOT_FOUND,response.getStatus());
+}

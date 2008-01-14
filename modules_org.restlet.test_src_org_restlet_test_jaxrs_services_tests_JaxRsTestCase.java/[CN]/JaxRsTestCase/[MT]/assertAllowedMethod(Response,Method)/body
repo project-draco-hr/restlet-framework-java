@@ -1,0 +1,10 @@
+{
+  if (optionsResponse.getStatus().isError())   assertEquals(Status.SUCCESS_OK,optionsResponse.getStatus());
+  Set<Method> expectedMethods=new HashSet<Method>(Arrays.asList(methods));
+  if (expectedMethods.contains(Method.GET))   expectedMethods.add(Method.HEAD);
+  List<Method> allowedMethods=new ArrayList<Method>(optionsResponse.getAllowedMethods());
+  for (  Method method : methods) {
+    assertTrue("allowedMethod must contain " + method,allowedMethods.contains(method));
+  }
+  assertEquals("allowedMethods.size invalid",expectedMethods.size(),allowedMethods.size());
+}
