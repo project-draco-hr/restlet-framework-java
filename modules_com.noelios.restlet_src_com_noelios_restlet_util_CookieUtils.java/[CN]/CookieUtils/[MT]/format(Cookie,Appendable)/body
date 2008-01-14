@@ -6,25 +6,21 @@
     throw new IllegalArgumentException("Can't write cookie. Invalid name detected");
   }
  else {
-    try {
-      appendValue(name,0,destination).append('=');
-      if ((value != null) && (value.length() > 0)) {
-        appendValue(value,version,destination);
-      }
-      if (version > 0) {
-        String path=cookie.getPath();
-        if ((path != null) && (path.length() > 0)) {
-          destination.append("; $Path=");
-          HttpUtils.appendQuote(path,destination);
-        }
-        String domain=cookie.getDomain();
-        if ((domain != null) && (domain.length() > 0)) {
-          destination.append("; $Domain=");
-          HttpUtils.appendQuote(domain,destination);
-        }
-      }
+    appendValue(name,0,destination).append('=');
+    if ((value != null) && (value.length() > 0)) {
+      appendValue(value,version,destination);
     }
- catch (    IOException e) {
+    if (version > 0) {
+      String path=cookie.getPath();
+      if ((path != null) && (path.length() > 0)) {
+        destination.append("; $Path=");
+        HttpUtils.appendQuote(path,destination);
+      }
+      String domain=cookie.getDomain();
+      if ((domain != null) && (domain.length() > 0)) {
+        destination.append("; $Domain=");
+        HttpUtils.appendQuote(domain,destination);
+      }
     }
   }
 }
