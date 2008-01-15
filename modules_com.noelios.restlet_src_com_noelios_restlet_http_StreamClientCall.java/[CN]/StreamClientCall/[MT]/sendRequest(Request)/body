@@ -28,7 +28,10 @@
       HttpUtils.writeHeader(header,getRequestHeadStream());
     }
     HttpUtils.writeCRLF(getRequestHeadStream());
-    super.sendRequest(request);
+    result=super.sendRequest(request);
+    if (result.equals(Status.CONNECTOR_ERROR_COMMUNICATION)) {
+      return result;
+    }
     parseResponse();
     result=new Status(getStatusCode(),null,getReasonPhrase(),null);
   }

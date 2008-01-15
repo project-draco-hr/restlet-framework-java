@@ -1,7 +1,7 @@
 {
   Status result=null;
+  Representation entity=request.isEntityAvailable() ? request.getEntity() : null;
   try {
-    Representation entity=request.isEntityAvailable() ? request.getEntity() : null;
     if (entity != null) {
       ConnectorService connectorService=getConnectorService(request);
       if (connectorService != null)       connectorService.beforeSend(entity);
@@ -29,7 +29,6 @@
     result=new Status(Status.CONNECTOR_ERROR_COMMUNICATION,"Unable to complete the HTTP call due to a communication error with the remote server. " + ioe.getMessage());
   }
  finally {
-    Representation entity=request.isEntityAvailable() ? request.getEntity() : null;
     if (entity != null) {
       entity.release();
     }
