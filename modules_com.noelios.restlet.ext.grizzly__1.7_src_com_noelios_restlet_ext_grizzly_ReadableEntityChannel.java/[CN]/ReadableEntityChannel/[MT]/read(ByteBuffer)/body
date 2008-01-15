@@ -1,9 +1,16 @@
 {
   int result=-1;
-  if (this.availableSize > 0) {
-    result=((ReadableByteChannel)getSource()).read(dst);
-    if (result > 0) {
-      this.availableSize=this.availableSize - result;
+  if ((this.remainingBuffer != null) && (this.remainingBuffer.hasRemaining())) {
+    byte[] src=new byte[this.remainingBuffer.remaining()];
+    this.remainingBuffer.get(src);
+    dst.put(src);
+  }
+ else {
+    if (this.availableSize > 0) {
+      result=((ReadableByteChannel)getSource()).read(dst);
+      if (result > 0) {
+        this.availableSize=this.availableSize - result;
+      }
     }
   }
   return result;

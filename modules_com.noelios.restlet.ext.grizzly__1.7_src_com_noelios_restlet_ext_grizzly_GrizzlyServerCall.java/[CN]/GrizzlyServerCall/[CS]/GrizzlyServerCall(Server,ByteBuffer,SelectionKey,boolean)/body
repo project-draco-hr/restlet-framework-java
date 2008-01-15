@@ -2,11 +2,12 @@
   super(server);
   setConfidential(confidential);
   try {
-    this.headStream.setSelectionKey(key);
-    this.headStream.setByteBuffer(byteBuffer);
+    this.byteBuffer=byteBuffer;
+    this.requestStream.setSelectionKey(key);
+    this.requestStream.setByteBuffer(byteBuffer);
     this.socketChannel=(SocketChannel)key.channel();
     this.getRequestHeaders().clear();
-    readRequestHead(headStream);
+    readRequestHead(requestStream);
   }
  catch (  IOException ioe) {
     getLogger().log(Level.WARNING,"Unable to parse the HTTP request",ioe);
