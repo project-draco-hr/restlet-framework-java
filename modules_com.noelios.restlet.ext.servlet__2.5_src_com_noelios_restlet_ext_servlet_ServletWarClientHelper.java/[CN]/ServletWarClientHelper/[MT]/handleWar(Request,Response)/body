@@ -6,13 +6,15 @@
     Representation output=null;
     if (basePath.endsWith("/")) {
       Set<String> entries=getServletContext().getResourcePaths(basePath);
-      ReferenceList rl=new ReferenceList(entries.size());
-      rl.setIdentifier(request.getResourceRef());
-      for (Iterator<String> iter=entries.iterator(); iter.hasNext(); ) {
-        entry=iter.next();
-        rl.add(new Reference(basePath + entry.substring(basePath.length())));
+      if (entries != null) {
+        ReferenceList rl=new ReferenceList(entries.size());
+        rl.setIdentifier(request.getResourceRef());
+        for (Iterator<String> iter=entries.iterator(); iter.hasNext(); ) {
+          entry=iter.next();
+          rl.add(new Reference(basePath + entry.substring(basePath.length())));
+        }
+        output=rl.getTextRepresentation();
       }
-      output=rl.getTextRepresentation();
     }
  else {
       InputStream ris=getServletContext().getResourceAsStream(basePath);
