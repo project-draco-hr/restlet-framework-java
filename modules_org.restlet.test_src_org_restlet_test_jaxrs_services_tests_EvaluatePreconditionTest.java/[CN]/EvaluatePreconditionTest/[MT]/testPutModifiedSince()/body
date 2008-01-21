@@ -1,0 +1,10 @@
+{
+  Conditions conditions=new Conditions();
+  conditions.setModifiedSince(BEFORE);
+  Response response=accessServer(EvaluatePreconditionService.class,"date",Method.PUT,conditions);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  conditions=new Conditions();
+  conditions.setModifiedSince(AFTER);
+  response=accessServer(EvaluatePreconditionService.class,"date",Method.PUT,conditions);
+  assertEquals(Status.CLIENT_ERROR_PRECONDITION_FAILED,response.getStatus());
+}

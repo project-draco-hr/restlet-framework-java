@@ -1,0 +1,30 @@
+{
+  Conditions conditions=new Conditions();
+  conditions.setModifiedSince(BEFORE);
+  conditions.setMatch(Util.createList(getEntityTagFromDatastore()));
+  Response response=accessServer(EvaluatePreconditionService.class,"date",Method.GET,conditions);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  response=accessServer(EvaluatePreconditionService.class,"date",Method.PUT,conditions);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  conditions=new Conditions();
+  conditions.setModifiedSince(AFTER);
+  conditions.setMatch(Util.createList(getEntityTagFromDatastore()));
+  response=accessServer(EvaluatePreconditionService.class,"date",Method.GET,conditions);
+  assertEquals(Status.REDIRECTION_NOT_MODIFIED,response.getStatus());
+  response=accessServer(EvaluatePreconditionService.class,"date",Method.PUT,conditions);
+  assertEquals(Status.CLIENT_ERROR_PRECONDITION_FAILED,response.getStatus());
+  conditions=new Conditions();
+  conditions.setModifiedSince(BEFORE);
+  conditions.setMatch(Util.createList(new Tag("shkhsdk")));
+  response=accessServer(EvaluatePreconditionService.class,"date",Method.GET,conditions);
+  assertEquals(Status.CLIENT_ERROR_PRECONDITION_FAILED,response.getStatus());
+  response=accessServer(EvaluatePreconditionService.class,"date",Method.PUT,conditions);
+  assertEquals(Status.CLIENT_ERROR_PRECONDITION_FAILED,response.getStatus());
+  conditions=new Conditions();
+  conditions.setModifiedSince(AFTER);
+  conditions.setMatch(Util.createList(new Tag("shkhsdk")));
+  response=accessServer(EvaluatePreconditionService.class,"date",Method.GET,conditions);
+  assertEquals(Status.CLIENT_ERROR_PRECONDITION_FAILED,response.getStatus());
+  response=accessServer(EvaluatePreconditionService.class,"date",Method.PUT,conditions);
+  assertEquals(Status.CLIENT_ERROR_PRECONDITION_FAILED,response.getStatus());
+}

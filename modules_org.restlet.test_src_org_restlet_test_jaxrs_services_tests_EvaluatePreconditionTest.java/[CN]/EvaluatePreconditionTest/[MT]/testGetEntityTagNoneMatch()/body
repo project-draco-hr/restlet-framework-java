@@ -1,0 +1,10 @@
+{
+  Conditions conditions=new Conditions();
+  conditions.setNoneMatch(Util.createList(getEntityTagFromDatastore()));
+  Response response=accessServer(EvaluatePreconditionService.class,"date",Method.GET,conditions);
+  assertEquals(Status.CLIENT_ERROR_PRECONDITION_FAILED,response.getStatus());
+  conditions=new Conditions();
+  conditions.setNoneMatch(Util.createList(new Tag("affer")));
+  response=accessServer(EvaluatePreconditionService.class,"date",Method.GET,conditions);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+}
