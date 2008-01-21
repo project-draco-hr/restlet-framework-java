@@ -1,3 +1,56 @@
 {
-  throw new NotYetImplementedException();
+  if (lastModified == null && entityTag == null)   return null;
+  ResponseBuilder rb=null;
+  Method requestMethod=restletRequest.getMethod();
+  Conditions conditions=this.restletRequest.getConditions();
+  if (lastModified != null) {
+    Date modSinceCond=conditions.getModifiedSince();
+    if (modSinceCond != null) {
+      if (modSinceCond.after(lastModified)) {
+        boolean readRequest=requestMethod.equals(Method.GET) || requestMethod.equals(Method.HEAD);
+        if (readRequest) {
+          rb=Response.notModified();
+          rb.lastModified(lastModified);
+          rb.tag(entityTag);
+        }
+ else {
+          return precFailed();
+        }
+      }
+ else {
+      }
+    }
+    Date unmodSinceCond=conditions.getUnmodifiedSince();
+    if (unmodSinceCond != null) {
+      if (unmodSinceCond.after(lastModified)) {
+        return null;
+      }
+ else {
+        return precFailed();
+      }
+    }
+  }
+  if (entityTag != null) {
+    Tag actualEntityTag=Util.convertEntityTag(entityTag);
+    List<Tag> requestMatchETags=conditions.getMatch();
+    if (!requestMatchETags.isEmpty()) {
+      boolean match=checkIfOneMatch(requestMatchETags,actualEntityTag);
+      if (!match) {
+        return precFailed();
+      }
+    }
+ else {
+    }
+    List<Tag> requestNoneMatchETags=conditions.getNoneMatch();
+    if (!requestNoneMatchETags.isEmpty()) {
+      boolean match=checkIfOneMatch(requestNoneMatchETags,actualEntityTag);
+      if (match) {
+        return precFailed();
+      }
+    }
+ else {
+    }
+  }
+  if (rb != null)   return rb.build();
+  return null;
 }
