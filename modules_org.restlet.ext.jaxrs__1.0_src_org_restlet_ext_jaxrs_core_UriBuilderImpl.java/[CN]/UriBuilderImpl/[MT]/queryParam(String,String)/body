@@ -1,3 +1,18 @@
 {
-  throw new NotYetImplementedException();
+  name=encode(name,"query parameter name");
+  value=encode(name,"query parameter value");
+  String oldQuery=reference.getQuery();
+  StringBuilder newQuery;
+  if (oldQuery == null) {
+    newQuery=new StringBuilder();
+  }
+ else {
+    newQuery=new StringBuilder(oldQuery);
+    newQuery.append('&');
+  }
+  newQuery.append(name);
+  newQuery.append('=');
+  newQuery.append(value);
+  reference.setQuery(newQuery.toString());
+  return this;
 }
