@@ -14,7 +14,7 @@
           rb.tag(entityTag);
         }
  else {
-          return precFailed();
+          return precFailed("The entity was not modified since " + Util.formatDate(modSinceCond,false));
         }
       }
  else {
@@ -26,7 +26,7 @@
         return null;
       }
  else {
-        return precFailed();
+        return precFailed("The entity was modified since " + Util.formatDate(unmodSinceCond,false));
       }
     }
   }
@@ -36,7 +36,7 @@
     if (!requestMatchETags.isEmpty()) {
       boolean match=checkIfOneMatch(requestMatchETags,actualEntityTag);
       if (!match) {
-        return precFailed();
+        return precFailed("The entity does not match Entity Tag " + entityTag);
       }
     }
  else {
@@ -45,7 +45,7 @@
     if (!requestNoneMatchETags.isEmpty()) {
       boolean match=checkIfOneMatch(requestNoneMatchETags,actualEntityTag);
       if (match) {
-        return precFailed();
+        return precFailed("The entity matches Entity Tag " + entityTag);
       }
     }
  else {
