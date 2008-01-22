@@ -1,3 +1,7 @@
 {
-  throw new NotYetImplementedException();
+  if (variants == null || variants.isEmpty())   throw new IllegalArgumentException();
+  List<org.restlet.resource.Variant> restletVariants=Util.convertVariants(variants);
+  org.restlet.resource.Variant bestRestlVar=restletRequest.getClientInfo().getPreferredVariant(restletVariants,null);
+  Variant bestVariant=Util.convertVariant(bestRestlVar);
+  return bestVariant;
 }
