@@ -1,11 +1,11 @@
 {
   Conditions conditions=new Conditions();
   conditions.setModifiedSince(BEFORE);
-  Response response=accessServer(EvaluatePreconditionService.class,"date",Method.PUT,conditions);
+  Response response=accessServer(RequestService.class,"date",Method.PUT,conditions);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   conditions=new Conditions();
   conditions.setModifiedSince(AFTER);
-  response=accessServer(EvaluatePreconditionService.class,"date",Method.PUT,conditions);
+  response=accessServer(RequestService.class,"date",Method.PUT,conditions);
   assertEquals(PREC_FAILED,response.getStatus());
   assertTrue("Entity must contain \"was not modified\"",response.getEntity().getText().contains("The entity was not modified since"));
 }

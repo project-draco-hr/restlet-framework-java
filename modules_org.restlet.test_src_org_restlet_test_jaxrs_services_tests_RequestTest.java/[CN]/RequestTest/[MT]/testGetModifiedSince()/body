@@ -1,17 +1,17 @@
 {
   Conditions conditions=new Conditions();
   conditions.setModifiedSince(BEFORE);
-  Response response=accessServer(EvaluatePreconditionService.class,"date",Method.GET,conditions);
+  Response response=accessServer(RequestService.class,"date",Method.GET,conditions);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
-  assertEquals(EvaluatePreconditionService.getLastModificationDateFromDatastore(),response.getEntity().getModificationDate());
+  assertEquals(RequestService.getLastModificationDateFromDatastore(),response.getEntity().getModificationDate());
   assertEquals(getEntityTagFromDatastore(),response.getEntity().getTag());
   assertNotNull(response.getEntity().getText());
   assertTrue(response.getEntity().getSize() > 0);
   conditions=new Conditions();
   conditions.setModifiedSince(AFTER);
-  response=accessServer(EvaluatePreconditionService.class,"date",Method.GET,conditions);
+  response=accessServer(RequestService.class,"date",Method.GET,conditions);
   assertEquals(Status.REDIRECTION_NOT_MODIFIED,response.getStatus());
-  assertEquals(EvaluatePreconditionService.getLastModificationDateFromDatastore(),response.getEntity().getModificationDate());
+  assertEquals(RequestService.getLastModificationDateFromDatastore(),response.getEntity().getModificationDate());
   assertEquals(getEntityTagFromDatastore(),response.getEntity().getTag());
   assertEquals(0,response.getEntity().getSize());
 }

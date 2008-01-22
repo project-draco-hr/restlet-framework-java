@@ -1,11 +1,11 @@
 {
   Conditions conditions=new Conditions();
   conditions.setNoneMatch(Util.createList(getEntityTagFromDatastore()));
-  Response response=accessServer(EvaluatePreconditionService.class,"date",Method.GET,conditions);
+  Response response=accessServer(RequestService.class,"date",Method.GET,conditions);
   assertEquals(PREC_FAILED,response.getStatus());
   assertTrue("Entity must contain \"matches Entity Tag\"",response.getEntity().getText().contains("The entity matches Entity Tag"));
   conditions=new Conditions();
   conditions.setNoneMatch(Util.createList(new Tag("affer")));
-  response=accessServer(EvaluatePreconditionService.class,"date",Method.GET,conditions);
+  response=accessServer(RequestService.class,"date",Method.GET,conditions);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
 }

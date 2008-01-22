@@ -1,15 +1,15 @@
 {
   Conditions conditions=new Conditions();
   conditions.setUnmodifiedSince(AFTER);
-  Response response=accessServer(EvaluatePreconditionService.class,"date",Method.GET,conditions);
+  Response response=accessServer(RequestService.class,"date",Method.GET,conditions);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
-  assertEquals(EvaluatePreconditionService.getLastModificationDateFromDatastore(),response.getEntity().getModificationDate());
+  assertEquals(RequestService.getLastModificationDateFromDatastore(),response.getEntity().getModificationDate());
   assertEquals(getEntityTagFromDatastore(),response.getEntity().getTag());
   assertNotNull(response.getEntity().getText());
   assertTrue(response.getEntity().getSize() > 0);
   conditions=new Conditions();
   conditions.setUnmodifiedSince(BEFORE);
-  response=accessServer(EvaluatePreconditionService.class,"date",Method.GET,conditions);
+  response=accessServer(RequestService.class,"date",Method.GET,conditions);
   assertEquals(PREC_FAILED,response.getStatus());
   assertTrue("Entity must contain \"was modified\"",response.getEntity().getText().contains("The entity was modified since"));
 }
