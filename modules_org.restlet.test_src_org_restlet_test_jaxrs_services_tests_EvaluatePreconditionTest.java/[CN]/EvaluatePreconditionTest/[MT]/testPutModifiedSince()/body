@@ -6,5 +6,6 @@
   conditions=new Conditions();
   conditions.setModifiedSince(AFTER);
   response=accessServer(EvaluatePreconditionService.class,"date",Method.PUT,conditions);
-  assertEquals(Status.CLIENT_ERROR_PRECONDITION_FAILED,response.getStatus());
+  assertEquals(PREC_FAILED,response.getStatus());
+  assertTrue("Entity must contain \"was not modified\"",response.getEntity().getText().contains("The entity was not modified since"));
 }
