@@ -14,7 +14,14 @@
     this.connection.setInstanceFollowRedirects(getHelper().isFollowRedirects());
     this.connection.setUseCaches(getHelper().isUseCaches());
     this.responseHeadersAdded=false;
-    setConfidential(this.connection instanceof HttpsURLConnection);
+    if (this.connection instanceof HttpsURLConnection) {
+      setConfidential(true);
+      HostnameVerifier verifier=helper.getHostnameVerifier();
+      if (verifier != null) {
+        HttpsURLConnection https=(HttpsURLConnection)this.connection;
+        https.setHostnameVerifier(verifier);
+      }
+    }
   }
  else {
     throw new IllegalArgumentException("Only HTTP or HTTPS resource URIs are allowed here");
