@@ -2,7 +2,10 @@
   String oldPart=isRelative() ? getRelativePart() : getSchemeSpecificPart();
   String newPart;
   String newAuthority=(authority == null) ? "" : "//" + authority;
-  if (oldPart.startsWith("//")) {
+  if (oldPart == null) {
+    newPart=newAuthority;
+  }
+ else   if (oldPart.startsWith("//")) {
     int index=oldPart.indexOf('/',2);
     if (index != -1) {
       newPart=newAuthority + oldPart.substring(index);
