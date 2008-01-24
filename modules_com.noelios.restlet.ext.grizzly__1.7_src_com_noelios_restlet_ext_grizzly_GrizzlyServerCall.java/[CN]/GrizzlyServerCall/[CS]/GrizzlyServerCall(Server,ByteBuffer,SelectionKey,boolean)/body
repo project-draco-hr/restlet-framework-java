@@ -1,12 +1,13 @@
 {
   super(server);
   setConfidential(confidential);
+  this.byteBuffer=byteBuffer;
+  this.requestStream=new ByteBufferInputStream();
+  this.requestStream.setSelectionKey(key);
+  this.requestStream.setByteBuffer(byteBuffer);
+  this.socketChannel=(SocketChannel)key.channel();
+  this.getRequestHeaders().clear();
   try {
-    this.byteBuffer=byteBuffer;
-    this.requestStream.setSelectionKey(key);
-    this.requestStream.setByteBuffer(byteBuffer);
-    this.socketChannel=(SocketChannel)key.channel();
-    this.getRequestHeaders().clear();
     readRequestHead(requestStream);
   }
  catch (  IOException ioe) {
