@@ -3,5 +3,10 @@
   List<org.restlet.resource.Variant> restletVariants=Util.convertVariants(variants);
   org.restlet.resource.Variant bestRestlVar=restletRequest.getClientInfo().getPreferredVariant(restletVariants,null);
   Variant bestVariant=Util.convertVariant(bestRestlVar);
+  Set<Dimension> dimensions=restletResponse.getDimensions();
+  if (bestRestlVar.getCharacterSet() != null)   dimensions.add(Dimension.CHARACTER_SET);
+  if (bestRestlVar.getEncodings() != null)   dimensions.add(Dimension.ENCODING);
+  if (bestRestlVar.getLanguages() != null)   dimensions.add(Dimension.LANGUAGE);
+  if (bestRestlVar.getMediaType() != null)   dimensions.add(Dimension.MEDIA_TYPE);
   return bestVariant;
 }
