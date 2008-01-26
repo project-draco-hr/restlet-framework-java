@@ -1,0 +1,37 @@
+{
+  MultivaluedMapImpl<String,String> matrixParameters=new MultivaluedMapImpl<String,String>();
+  if (matrParamString != null) {
+    String[] paramsEncSpl=matrParamString.split(";");
+    for (int i=0; i < paramsEncSpl.length; i++) {
+      String matrParamEnc=paramsEncSpl[i];
+      int posEquSign=matrParamEnc.indexOf('=');
+      String keyEnc;
+      String valueEnc;
+      if (posEquSign <= 0) {
+        keyEnc=matrParamEnc;
+        valueEnc=null;
+      }
+ else {
+        keyEnc=matrParamEnc.substring(0,posEquSign);
+        valueEnc=matrParamEnc.substring(posEquSign + 1);
+      }
+      if (keyEnc.length() == 0 && valueEnc == null)       continue;
+      String key;
+      String value;
+      if (decode) {
+        key=Reference.decode(keyEnc);
+        value=Reference.decode(valueEnc);
+      }
+ else       if (encodeAndCheckWhenNotDecode) {
+        key=Util.encode(keyEnc,i," matrix parameter key",true);
+        value=Util.encode(valueEnc,i," matrix parameter value",true);
+      }
+ else {
+        key=keyEnc;
+        value=valueEnc;
+      }
+      matrixParameters.add(key,value);
+    }
+  }
+  return matrixParameters;
+}

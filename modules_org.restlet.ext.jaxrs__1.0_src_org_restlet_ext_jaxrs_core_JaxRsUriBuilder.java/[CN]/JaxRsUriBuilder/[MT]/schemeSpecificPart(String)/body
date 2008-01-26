@@ -1,0 +1,17 @@
+{
+  if (ssp == null)   throw new IllegalArgumentException("The scheme specific part must not be null");
+  Reference reference=new Reference(ssp,null);
+  this.userInfo=reference.getUserInfo();
+  this.host=reference.getHostDomain();
+  this.port=reference.getHostPort();
+  String path=reference.getPath();
+  if (path == null) {
+    this.pathSegments.clear();
+  }
+ else {
+    this.replacePath(path);
+  }
+  this.query=reference.getQuery();
+  this.fragment=reference.getFragment();
+  return this;
+}

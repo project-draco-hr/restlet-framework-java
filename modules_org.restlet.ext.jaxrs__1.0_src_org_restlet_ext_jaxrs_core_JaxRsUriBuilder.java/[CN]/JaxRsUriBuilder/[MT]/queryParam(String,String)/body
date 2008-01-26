@@ -1,0 +1,21 @@
+{
+  name=encode(name,"query parameter name");
+  value=encode(value,"query parameter value");
+  StringBuilder query;
+  if (this.query == null) {
+    query=new StringBuilder();
+    this.query=query;
+  }
+ else   if (this.query instanceof StringBuilder) {
+    query=(StringBuilder)this.query;
+    query.append('&');
+  }
+ else {
+    query=new StringBuilder(this.query.toString());
+    query.append('&');
+  }
+  query.append(name);
+  query.append('=');
+  query.append(value);
+  return this;
+}

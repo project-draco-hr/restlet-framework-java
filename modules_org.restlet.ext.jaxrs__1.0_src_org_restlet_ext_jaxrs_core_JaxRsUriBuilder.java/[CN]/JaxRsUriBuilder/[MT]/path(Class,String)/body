@@ -1,0 +1,15 @@
+{
+  if (methodName == null)   throw new IllegalArgumentException("The method name must not be null");
+  Method resMethod=null;
+  for (  Method method : resource.getMethods()) {
+    if (!method.getName().equals(methodName))     continue;
+    Path path=method.getAnnotation(Path.class);
+    if (path == null)     continue;
+    if (resMethod != null)     throw new IllegalArgumentException("The class " + resource + " has more than one methods with the name "+ methodName+ " annotated with @Path");
+    resMethod=method;
+  }
+  if (resMethod == null)   throw new IllegalArgumentException("The class " + resource + " has no method with the name "+ methodName+ " annotated with @Path");
+  path(resource);
+  path(resMethod);
+  return this;
+}

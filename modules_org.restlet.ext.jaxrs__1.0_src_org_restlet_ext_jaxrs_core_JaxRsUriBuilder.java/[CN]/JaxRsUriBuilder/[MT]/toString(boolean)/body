@@ -1,0 +1,36 @@
+{
+  try {
+    StringBuilder stb=new StringBuilder();
+    if (scheme != null) {
+      Util.append(stb,scheme,convertBraces);
+      stb.append("://");
+    }
+    if (userInfo != null) {
+      Util.append(stb,userInfo,convertBraces);
+      stb.append('@');
+    }
+    if (host != null)     Util.append(stb,host,convertBraces);
+    if (port > 0) {
+      stb.append(':');
+      stb.append(port);
+    }
+    boolean relativeUri=stb.length() == 0;
+    for (    JaxRsPathSegment pathSegment : pathSegments) {
+      stb.append('/');
+      pathSegment.toStringBuilder(stb,convertBraces);
+    }
+    if (relativeUri)     stb.deleteCharAt(0);
+    if (query != null) {
+      stb.append('?');
+      Util.append(stb,query,convertBraces);
+    }
+    if (fragment != null) {
+      stb.append('#');
+      Util.append(stb,fragment,convertBraces);
+    }
+    return stb.toString();
+  }
+ catch (  IOException e) {
+    throw new RuntimeException("Could not write the UriBuilder to a String; but this Exception could not occur normally",e);
+  }
+}
