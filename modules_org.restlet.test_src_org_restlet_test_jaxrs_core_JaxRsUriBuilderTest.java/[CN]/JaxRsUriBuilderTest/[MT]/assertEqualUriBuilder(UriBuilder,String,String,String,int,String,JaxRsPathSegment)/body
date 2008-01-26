@@ -1,0 +1,31 @@
+{
+  if (actualUriBuilder instanceof JaxRsUriBuilder) {
+    JaxRsUriBuilder jaxRsUriBuilder=(JaxRsUriBuilder)actualUriBuilder;
+    assertEquals(expectedScheme,jaxRsUriBuilder.getScheme());
+    assertEquals(expectedUserInfo,jaxRsUriBuilder.getUserInfo());
+    assertEquals(expectedHost,jaxRsUriBuilder.getHost());
+    assertEquals(expectedPort,jaxRsUriBuilder.getPort());
+    LinkedList<JaxRsPathSegment> actPathSegms=jaxRsUriBuilder.getPathSegments();
+    for (int i=0; i < expectedPathSegments.length; i++) {
+      PathSegment expectedPathSegment=expectedPathSegments[i];
+      JaxRsPathSegment actPathSegm=actPathSegms.get(i);
+      assertEquals(i + ". path segm:",expectedPathSegment,actPathSegm);
+    }
+    assertEquals(expectedPathSegments.length,actPathSegms.size());
+    CharSequence actualQuery=jaxRsUriBuilder.getQuery();
+    if (actualQuery != null)     actualQuery=actualQuery.toString();
+    assertEquals(expectedQuery,actualQuery);
+  }
+  UriBuilder expectedUriBuilder=RuntimeDelegate.getInstance().createUriBuilder();
+  expectedUriBuilder.encode(false);
+  if (expectedScheme != null)   expectedUriBuilder.scheme(expectedScheme);
+  if (expectedUserInfo != null)   expectedUriBuilder.userInfo(expectedUserInfo);
+  if (expectedHost != null)   expectedUriBuilder.host(expectedHost);
+  expectedUriBuilder.port(expectedPort);
+  for (  JaxRsPathSegment pathSegment : expectedPathSegments) {
+    expectedUriBuilder.path(pathSegment.getPath());
+    for (    Map.Entry<String,List<String>> mpEntry : pathSegment.getMatrixParameters().entrySet())     for (    String mpValue : mpEntry.getValue())     expectedUriBuilder.matrixParam(mpEntry.getKey(),mpValue);
+  }
+  if (expectedQuery != null)   expectedUriBuilder.replaceQueryParams(expectedQuery);
+  assertEquals(expectedUriBuilder.build(),actualUriBuilder.build());
+}

@@ -1,0 +1,19 @@
+{
+  uriBuilder1.schemeSpecificPart("//shkf");
+  assertEqualUriBuilder(uriBuilder1,"http",null,"shkf",-1,null);
+  uriBuilder1.schemeSpecificPart("//shkf/akfshdf");
+  assertEqualUriBuilder(uriBuilder1,"http",null,"shkf",-1,null,new JaxRsPathSegment("akfshdf",null));
+  uriBuilder1.schemeSpecificPart("//user@shkf/akfshdf/akjhf");
+  assertEqualUriBuilder(uriBuilder1,"http","user","shkf",-1,null,new JaxRsPathSegment("akfshdf",null),new JaxRsPathSegment("akjhf",null));
+  uriBuilder1.schemeSpecificPart("//shkf:4711/akjhf?a=b");
+  assertEqualUriBuilder(uriBuilder1,"http",null,"shkf",4711,"a=b",new JaxRsPathSegment("akjhf",null));
+  uriBuilder1.schemeSpecificPart("//www.domain.org/akjhf;1=2?a=b");
+  MultivaluedMapImpl<String,String> mp=new MultivaluedMapImpl<String,String>();
+  mp.putSingle("1","2");
+  assertEqualUriBuilder(uriBuilder1,"http",null,"www.domain.org",-1,"a=b",new JaxRsPathSegment("akjhf",mp));
+  uriBuilder1.schemeSpecificPart("//www.domain.org/akjhf;1=2;3=4?a=b");
+  mp=new MultivaluedMapImpl<String,String>();
+  mp.putSingle("1","2");
+  mp.putSingle("3","4");
+  assertEqualUriBuilder(uriBuilder1,"http",null,"www.domain.org",-1,"a=b",new JaxRsPathSegment("akjhf",mp));
+}
