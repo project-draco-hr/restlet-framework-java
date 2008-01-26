@@ -1,5 +1,4 @@
 {
-  Filter lastFilter=null;
   boolean success=checkVirtualHost(getComponent().getDefaultHost());
   if (success) {
     for (    VirtualHost host : getComponent().getHosts()) {
@@ -11,20 +10,11 @@
   }
  else {
     if (getComponent().getLogService().isEnabled()) {
-      lastFilter=createLogFilter(getComponent().getContext(),getComponent().getLogService());
-      setFirst(lastFilter);
+      addFilter(createLogFilter(getComponent().getContext(),getComponent().getLogService()));
     }
     if (getComponent().getStatusService().isEnabled()) {
-      Filter statusFilter=createStatusFilter(getComponent());
-      if (lastFilter != null)       lastFilter.setNext(statusFilter);
-      if (getFirst() == null)       setFirst(statusFilter);
-      lastFilter=statusFilter;
+      addFilter(createStatusFilter(getComponent()));
     }
-    if (getFirst() == null) {
-      setFirst(getServerRouter());
-    }
- else {
-      lastFilter.setNext(getServerRouter());
-    }
+    setNext(getServerRouter());
   }
 }
