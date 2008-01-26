@@ -3,9 +3,8 @@
   reference.setProtocol(PROTOCOL);
   reference.setAuthority("localhost");
   reference.setHostPort(PORT);
-  Path pathAnnotation=jaxRsClass.getAnnotation(Path.class);
-  if (pathAnnotation == null)   throw new RuntimeException("no @Path available on " + jaxRsClass);
-  String path=pathAnnotation.value();
+  String path=ResourceClass.getPathTemplate(jaxRsClass);
+  if (path == null)   throw new RuntimeException("no @Path available on " + jaxRsClass);
   if (!path.startsWith("/"))   path="/" + path;
   if (subPath != null && subPath.length() > 0)   path+="/" + subPath;
   reference.setPath(path);
