@@ -1,5 +1,12 @@
 {
   URI u=new URI("ftp","test.org",null,null,"fragment");
   uriBuilder1.uri(u);
-  assertEqualsURI("ftp://test.org/path1/path2#fragment",uriBuilder1);
+  assertEqualsURI("ftp://test.org#fragment",uriBuilder1);
+  u=new URI("ftp","test.org","/path","qu=ery","fragment");
+  uriBuilder1.uri(u);
+  assertEqualsURI("ftp://test.org/path?qu=ery#fragment",uriBuilder1);
+  String id="4711";
+  URI collectionUri=new URI("http://localhost:8181/SecurityContextTestService");
+  URI location=UriBuilder.fromUri(collectionUri).path("{id}").build(id);
+  assertEqualsURI(collectionUri + "/4711",location);
 }

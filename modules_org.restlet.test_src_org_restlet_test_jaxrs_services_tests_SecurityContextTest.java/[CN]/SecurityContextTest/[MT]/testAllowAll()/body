@@ -1,11 +1,10 @@
 {
-  if (!setAuthroizator(AllowAllAuthenticator.getInstance()))   return;
-  startServer();
+  if (!startServer(AllowAllAuthenticator.getInstance()))   return;
   Response response;
-  response=accessServer(SecurityContextService.class,Method.GET);
+  response=accessServer(SEC_CONT_SERV,Method.GET);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
-  response=accessServer(SecurityContextService.class,Method.POST);
+  response=accessServer(SEC_CONT_SERV,Method.POST);
   assertEquals(Status.SUCCESS_CREATED,response.getStatus());
-  Reference expecretLocation=createReference(SecurityContextService.class,null);
+  Reference expecretLocation=createReference(SEC_CONT_SERV,null);
   assertTrue("The location must start with " + expecretLocation + "; it is "+ response.getLocationRef(),response.getLocationRef().toString().startsWith(expecretLocation.toString()));
 }

@@ -1,4 +1,5 @@
 {
   JaxRsGuard guard=new JaxRsGuard(context,challangeScheme,realmName,authenticator);
-  return getGuarded(context,guard,authenticator);
+  guard.setNext(new JaxRsRouter(context,authenticator));
+  return guard;
 }

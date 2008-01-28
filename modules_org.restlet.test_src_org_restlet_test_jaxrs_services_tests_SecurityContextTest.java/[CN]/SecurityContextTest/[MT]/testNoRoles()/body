@@ -2,6 +2,7 @@
   Authenticator exampleAuthorizator=new Authenticator(){
     /** 
  * @returns true, if the first char of the password is 'a'
+ * @see Authenticator#checkSecret(String,char[])
  */
     public boolean checkSecret(    String identifier,    char[] secret){
       if (secret[0] == 'a')       return true;
@@ -10,22 +11,32 @@
     /** 
  * @return true, if the role name and the username starts with the
  * same char.
+ * @see Authenticator#isUserInRole(String)
  */
     public boolean isUserInRole(    Principal principal,    String role){
+      if (principal == null)       throw new IllegalArgumentException("No principal given");
+      if (role == null)       throw new IllegalArgumentException("No role given");
       if (role.charAt(0) == principal.getName().charAt(0))       return true;
       return false;
     }
   }
 ;
-  if (!setAuthroizator(exampleAuthorizator))   return;
-  startServer();
+  if (!startServer(exampleAuthorizator))   return;
   ChallengeResponse challengeResponse=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"fsdf","xyz");
-  Response response=accessServer(SecurityContextService.class,null,Method.GET,null,challengeResponse);
+  Response response=accessServer(SEC_CONT_SERV,null,Method.GET,null,challengeResponse);
   assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED,response.getStatus());
   challengeResponse=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"fsdf","baj");
-  response=accessServer(SecurityContextService.class,null,Method.GET,null,challengeResponse);
+  response=accessServer(SEC_CONT_SERV,null,Method.GET,null,challengeResponse);
+  assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED,response.getStatus());
+  challengeResponse=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"fsdf","abj");
+  response=accessServer(SEC_CONT_SERV,null,Method.GET,null,challengeResponse);
   assertEquals(Status.CLIENT_ERROR_FORBIDDEN,response.getStatus());
-  challengeResponse=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"fsdf","baj");
-  response=accessServer(SecurityContextService.class,null,Method.GET,null,challengeResponse);
-  assertEquals(Status.CLIENT_ERROR_FORBIDDEN,response.getStatus());
+  challengeResponse=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"bsdf","abaj");
+  response=accessServer(SEC_CONT_SERV,null,Method.GET,null,challengeResponse);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  challengeResponse=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"fsdf","axa2");
+  response=accessServer(SEC_CONT_SERV,null,Method.POST,null,challengeResponse);
+  assertEquals(Status.SUCCESS_CREATED,response.getStatus());
+  response=accessServer(SEC_CONT_SERV,null,Method.PUT,null,challengeResponse);
+  assertEquals(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED,response.getStatus());
 }

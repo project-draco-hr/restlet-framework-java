@@ -1,9 +1,8 @@
 {
-  if (!setAuthroizator(ForbidAllAuthenticator.getInstance()))   return;
-  startServer();
+  if (!startServer(ForbidAllAuthenticator.getInstance()))   return;
   Response response;
-  response=accessServer(SecurityContextService.class,Method.GET);
-  assertEquals(Status.CLIENT_ERROR_FORBIDDEN,response.getStatus());
-  response=accessServer(SecurityContextService.class,Method.POST);
-  assertEquals(Status.CLIENT_ERROR_FORBIDDEN,response.getStatus());
+  response=accessServer(SEC_CONT_SERV,Method.GET);
+  assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED,response.getStatus());
+  response=accessServer(SEC_CONT_SERV,Method.POST);
+  assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED,response.getStatus());
 }

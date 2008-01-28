@@ -1,0 +1,19 @@
+{
+  Component comp=new Component();
+  if (contextParameter != null)   comp.getContext().getParameters().add(contextParameter);
+  comp.getServers().add(protocol,port);
+  Application application=new Application(comp.getContext()){
+    @Override public Restlet createRoot(){
+      JaxRsGuard router=JaxRsRouter.getGuarded(getContext(),challengeScheme,"",authenticator);
+      Collection<Class<?>> rrcs=rootResourceClasses;
+      for (      Class<?> cl : rrcs) {
+        router.attach(cl);
+      }
+      return router;
+    }
+  }
+;
+  comp.getDefaultHost().attach(application);
+  comp.start();
+  this.component=comp;
+}
