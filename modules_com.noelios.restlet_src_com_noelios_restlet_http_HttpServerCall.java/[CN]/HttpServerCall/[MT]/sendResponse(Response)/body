@@ -10,9 +10,11 @@
         if (connectorService != null)         connectorService.afterSend(entity);
       }
  else {
-        if (getResponseEntityStream() != null) {
-          getResponseEntityStream().write(13);
-          getResponseEntityStream().write(10);
+        if (response.getStatus().isRedirection()) {
+          if (getResponseEntityStream() != null) {
+            getResponseEntityStream().write(13);
+            getResponseEntityStream().write(10);
+          }
         }
       }
       if (getResponseEntityStream() != null) {
