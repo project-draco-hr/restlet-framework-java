@@ -5,7 +5,7 @@
   PathRegExp rMatch=resClass.getPathRegExp();
   ResourceObject o;
   try {
-    o=resClass.createInstance(resClAndTemplate.matchingResult,allTemplParamsEnc,restletRequest,restletResponse,authorizator);
+    o=resClass.createInstance(resClAndTemplate.matchingResult,allTemplParamsEnc,restletRequest,restletResponse,authenticator);
   }
  catch (  Exception e) {
     throw handleInvokeException(e,restletResponse,"createInstance","Could not create new instance of root resource class");
@@ -30,7 +30,7 @@
     u=matchingResult.getFinalCapturingGroup();
     SubResourceLocator subResourceLocator=(SubResourceLocator)firstMeth;
     try {
-      o=subResourceLocator.createSubResource(o,matchingResult,allTemplParamsEnc,restletRequest,restletResponse,authorizator);
+      o=subResourceLocator.createSubResource(o,matchingResult,allTemplParamsEnc,restletRequest,restletResponse,authenticator);
     }
  catch (    Exception e) {
       throw handleInvokeException(e,restletResponse,"createSubResource","Could not create new instance of root resource class");
