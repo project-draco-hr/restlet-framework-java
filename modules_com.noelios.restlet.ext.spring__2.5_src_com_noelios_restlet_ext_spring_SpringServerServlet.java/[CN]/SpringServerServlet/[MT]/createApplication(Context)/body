@@ -1,0 +1,15 @@
+{
+  Application application=null;
+  String applicationBeanName=getInitParameter(SpringServerServlet.APPLICATION_KEY,null);
+  if (getWebApplicationContext().containsBean(applicationBeanName)) {
+    application=(Application)getWebApplicationContext().getBean(applicationBeanName);
+  }
+  if (application != null) {
+    ApplicationContext applicationContext=(ApplicationContext)application.getContext();
+    application.setContext(new ApplicationContext(application,new ServletContextAdapter(this,context),applicationContext.getLogger()));
+  }
+ else {
+    application=super.createApplication(context);
+  }
+  return application;
+}
