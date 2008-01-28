@@ -1,3 +1,12 @@
 {
-  throw new NotYetImplementedException("SecurityContext.getAuthenticationScheme()");
+  Principal principal=Util.getPrincipal(request);
+  if (principal == null)   return null;
+  ChallengeResponse challengeResponse=request.getChallengeResponse();
+  if (challengeResponse == null)   return null;
+  ChallengeScheme authScheme=challengeResponse.getScheme();
+  if (authScheme == null)   return null;
+  String authSchemeName=authScheme.getName();
+  if (authSchemeName.equals(ChallengeScheme.HTTP_BASIC))   return SecurityContext.BASIC_AUTH;
+  if (authSchemeName.equals(ChallengeScheme.HTTP_DIGEST))   return SecurityContext.DIGEST_AUTH;
+  return authSchemeName;
 }
