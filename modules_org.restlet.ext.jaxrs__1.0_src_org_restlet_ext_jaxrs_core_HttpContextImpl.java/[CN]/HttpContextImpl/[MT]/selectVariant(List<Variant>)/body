@@ -1,8 +1,8 @@
 {
   if (variants == null || variants.isEmpty())   throw new IllegalArgumentException();
-  List<org.restlet.resource.Variant> restletVariants=Util.convertVariants(variants);
+  List<org.restlet.resource.Variant> restletVariants=Converter.toRestletVariants(variants);
   org.restlet.resource.Variant bestRestlVar=request.getClientInfo().getPreferredVariant(restletVariants,null);
-  Variant bestVariant=Util.convertVariant(bestRestlVar);
+  Variant bestVariant=Converter.toJaxRsVariant(bestRestlVar);
   Set<Dimension> dimensions=response.getDimensions();
   if (bestRestlVar.getCharacterSet() != null)   dimensions.add(Dimension.CHARACTER_SET);
   if (bestRestlVar.getEncodings() != null)   dimensions.add(Dimension.ENCODING);
