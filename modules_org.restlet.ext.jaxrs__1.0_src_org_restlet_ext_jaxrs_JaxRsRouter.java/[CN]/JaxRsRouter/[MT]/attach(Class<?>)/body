@@ -1,9 +1,11 @@
 {
-  RootResourceClass newRrc=new RootResourceClass(jaxRsClass);
-  PathRegExp uriTempl=newRrc.getPathRegExp();
-  for (  RootResourceClass rootResourceClass : this.rootResourceClasses) {
-    if (rootResourceClass.getJaxRsClass().equals(jaxRsClass))     return;
-    if (rootResourceClass.getPathRegExp().equals(uriTempl))     throw new IllegalArgumentException("There is already a root resource class with path " + uriTempl.getPathPattern());
+  try {
+    attach(jaxRsClass,false);
   }
-  rootResourceClasses.add(newRrc);
+ catch (  RuntimeException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    getLogger().log(Level.WARNING,"Could not attach the root resource class",e);
+  }
 }

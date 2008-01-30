@@ -1,0 +1,17 @@
+{
+  InputStream inputStream=url.openStream();
+  BufferedReader reader=new BufferedReader(new InputStreamReader(inputStream));
+  String className;
+  while ((className=reader.readLine()) != null) {
+    className=className.trim();
+    if (className.startsWith("#") || className.startsWith("//"))     continue;
+    try {
+      Class<?> clazz=classLoader.loadClass(className);
+      classColl.add(clazz);
+    }
+ catch (    ClassNotFoundException e) {
+      if (throwOnClassNotFound)       throw e;
+      getLogger().log(Level.WARNING,"Class with name " + className + " not found",e);
+    }
+  }
+}

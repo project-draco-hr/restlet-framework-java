@@ -1,0 +1,39 @@
+{
+  String u=resClAndTemplate.u;
+  RootResourceClass resClass=resClAndTemplate.rrc;
+  MultivaluedMap<String,String> allTemplParamsEnc=resClAndTemplate.allTemplParamsEnc;
+  PathRegExp rMatch=resClass.getPathRegExp();
+  ResourceObject o;
+  try {
+    o=resClass.createInstance(resClAndTemplate.matchingResult,allTemplParamsEnc,restletRequest,restletResponse,authenticator);
+  }
+ catch (  Exception e) {
+    throw handleInvokeException(e,restletResponse,"createInstance","Could not create new instance of root resource class",accMediaTypes);
+  }
+  for (; ; ) {
+    if (Util.isEmptyOrSlash(u)) {
+      @SuppressWarnings("unchecked") Map<String,String> variables=Collections.EMPTY_MAP;
+      return new ResObjAndPath(o,u,new MatchingResult(variables,"","",0),allTemplParamsEnc);
+    }
+    Collection<SubResourceMethodOrLocator> eWithMethod=new ArrayList<SubResourceMethodOrLocator>();
+    for (    SubResourceMethodOrLocator methodOrLocator : resClass.getSubResourceMethodsAndLocators()) {
+      MatchingResult matchResult=methodOrLocator.getPathRegExp().match(u);
+      if (matchResult == null)       continue;
+      if (!Util.isEmptyOrSlash(matchResult.getFinalMatchingGroup()))       continue;
+      eWithMethod.add(methodOrLocator);
+    }
+    if (eWithMethod.isEmpty())     throw new CouldNotFindMethodException(errorRestletResourceNotFound);
+    SubResourceMethodOrLocator firstMeth=getFirstMethOrLocByNumberOfLiteralCharactersAndByNumberOfCapturingGroups(eWithMethod);
+    rMatch=firstMeth.getPathRegExp();
+    MatchingResult matchingResult=rMatch.match(u);
+    if (firstMeth instanceof SubResourceMethod)     return new ResObjAndPath(o,u,matchingResult,allTemplParamsEnc);
+    u=matchingResult.getFinalCapturingGroup();
+    SubResourceLocator subResourceLocator=(SubResourceLocator)firstMeth;
+    try {
+      o=subResourceLocator.createSubResource(o,matchingResult,allTemplParamsEnc,restletRequest,restletResponse,authenticator);
+    }
+ catch (    Exception e) {
+      throw handleInvokeException(e,restletResponse,"createSubResource","Could not create new instance of root resource class",accMediaTypes);
+    }
+  }
+}

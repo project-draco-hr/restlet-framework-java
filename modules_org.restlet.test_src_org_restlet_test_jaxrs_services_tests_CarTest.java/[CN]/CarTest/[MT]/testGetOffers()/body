@@ -2,8 +2,9 @@
   if (ONLY_ONE_CAR)   return;
   Response response=accessServer(CarListResource.class,"offers",Method.GET,(MediaType)null);
   Representation representation=response.getEntity();
-  if (response.getStatus().isError())   System.out.println(representation.getText());
+  if (response.getStatus().isError())   System.out.println(representation != null ? representation.getText() : "[no representation]");
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   assertEquals(CarListResource.OFFERS,representation.getText());
-  assertEqualMediaType(MediaType.APPLICATION_OCTET_STREAM,representation.getMediaType());
+  MediaType actualMediaType=representation.getMediaType();
+  assertEqualMediaType(MediaType.TEXT_PLAIN,actualMediaType);
 }

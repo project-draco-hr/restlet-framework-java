@@ -1,6 +1,5 @@
 {
-  Object[] args;
-  if (constructor.getParameterTypes().length == 0)   args=new Object[0];
- else   args=getParameterValues(constructor.getParameterAnnotations(),constructor.getParameterTypes(),matchingResult,restletRequ,restletResponse,allTemplParamsEnc,authenticator);
-  return new ResourceObject(constructor.newInstance(args),this);
+  Constructor<?> constructor=this.constructor;
+  Object newInstance=createInstance(constructor,matchingResult,allTemplParamsEnc,restletRequ,restletResponse,authenticator);
+  return new ResourceObject(newInstance,this);
 }

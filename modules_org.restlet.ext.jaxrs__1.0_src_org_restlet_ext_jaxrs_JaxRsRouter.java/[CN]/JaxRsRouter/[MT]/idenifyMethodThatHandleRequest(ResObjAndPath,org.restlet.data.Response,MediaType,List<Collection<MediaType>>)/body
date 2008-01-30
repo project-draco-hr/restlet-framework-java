@@ -3,13 +3,13 @@
   ResourceObject resObj=resObjAndPath.resourceObject;
   String remainingPath=resObjAndPath.remainingPath;
   MultivaluedMap<String,String> allTemplParamsEnc=resObjAndPath.allTemplParamsEnc;
-  List<ResourceMethod> resourceMethods=getResMethodsForPath(resObj,remainingPath);
+  Collection<ResourceMethod> resourceMethods=resObj.getMethodsForPath(remainingPath);
   if (resourceMethods.isEmpty())   throw new CouldNotFindMethodException(errorRestletResourceMethodNotFound);
   boolean alsoGet=httpMethod.equals(Method.HEAD);
   removeNotSupportedHttpMethod(resourceMethods,httpMethod,alsoGet);
   if (resourceMethods.isEmpty()) {
     if (httpMethod.equals(Method.OPTIONS)) {
-      resourceMethods=getResMethodsForPath(resObj,remainingPath);
+      resourceMethods=resObj.getMethodsForPath(remainingPath);
       Set<Method> allowedMethods=restletResp.getAllowedMethods();
       for (      ResourceMethod rm : resourceMethods)       allowedMethods.add(rm.getHttpMethod());
       if (!allowedMethods.isEmpty()) {
