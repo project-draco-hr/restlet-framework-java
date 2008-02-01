@@ -2,8 +2,13 @@
   List<S3Bucket> result=new ArrayList<S3Bucket>();
   Response response=authorizedGet(HOST);
   DomRepresentation document=response.getEntityAsDom();
-  for (  Node node : document.getNodes("//Bucket/Name")) {
-    result.add(new S3Bucket(node.getTextContent()));
+  if (response.getStatus().isSuccess()) {
+    for (    Node node : document.getNodes("//Bucket/Name")) {
+      result.add(new S3Bucket(node.getTextContent()));
+    }
+  }
+ else {
+    System.out.println("Unable to access to your S3 buckets : " + response.getStatus());
   }
   return result;
 }
