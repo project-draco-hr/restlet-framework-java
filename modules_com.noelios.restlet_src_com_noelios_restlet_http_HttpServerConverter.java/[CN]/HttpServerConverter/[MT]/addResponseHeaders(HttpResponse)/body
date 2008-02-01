@@ -31,52 +31,6 @@
       response.getHttpCall().setStatusCode(response.getStatus().getCode());
       response.getHttpCall().setReasonPhrase(response.getStatus().getDescription());
     }
-    if (response.getEntity() != null) {
-      Representation entity=response.getEntity();
-      if (entity.getExpirationDate() != null) {
-        responseHeaders.add(HttpConstants.HEADER_EXPIRES,response.getHttpCall().formatDate(entity.getExpirationDate(),false));
-      }
-      if (!entity.getEncodings().isEmpty()) {
-        StringBuilder value=new StringBuilder();
-        for (        Encoding encoding : entity.getEncodings()) {
-          if (!encoding.equals(Encoding.IDENTITY)) {
-            if (value.length() > 0)             value.append(", ");
-            value.append(encoding.getName());
-          }
-          responseHeaders.add(HttpConstants.HEADER_CONTENT_ENCODING,value.toString());
-        }
-      }
-      if (!entity.getLanguages().isEmpty()) {
-        StringBuilder value=new StringBuilder();
-        for (int i=0; i < entity.getLanguages().size(); i++) {
-          if (i > 0)           value.append(", ");
-          value.append(entity.getLanguages().get(i).getName());
-        }
-        responseHeaders.add(HttpConstants.HEADER_CONTENT_LANGUAGE,value.toString());
-      }
-      if (entity.getMediaType() != null) {
-        StringBuilder contentType=new StringBuilder(entity.getMediaType().getName());
-        if (entity.getCharacterSet() != null) {
-          contentType.append("; charset=").append(entity.getCharacterSet().getName());
-        }
-        responseHeaders.add(HttpConstants.HEADER_CONTENT_TYPE,contentType.toString());
-      }
-      if (entity.getModificationDate() != null) {
-        responseHeaders.add(HttpConstants.HEADER_LAST_MODIFIED,response.getHttpCall().formatDate(entity.getModificationDate(),false));
-      }
-      if (entity.getTag() != null) {
-        responseHeaders.add(HttpConstants.HEADER_ETAG,entity.getTag().format());
-      }
-      if (response.getEntity().getSize() != Representation.UNKNOWN_SIZE) {
-        responseHeaders.add(HttpConstants.HEADER_CONTENT_LENGTH,Long.toString(response.getEntity().getSize()));
-      }
-      if (response.getEntity().getIdentifier() != null) {
-        responseHeaders.add(HttpConstants.HEADER_CONTENT_LOCATION,response.getEntity().getIdentifier().toString());
-      }
-      if (response.getEntity().isDownloadable() && response.getEntity().getDownloadName() != null) {
-        responseHeaders.add(HttpConstants.HEADER_CONTENT_DISPOSITION,response.getHttpCall().formatContentDisposition(response.getEntity().getDownloadName()));
-      }
-    }
     if (!(response.getRequest().getClientInfo().getAgent() != null && response.getRequest().getClientInfo().getAgent().contains("MSIE"))) {
       Set<Dimension> dimensions=response.getDimensions();
       if (!dimensions.isEmpty()) {
