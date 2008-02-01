@@ -1,45 +1,38 @@
 {
   Representation result=null;
-  long contentLength=Representation.UNKNOWN_SIZE;
+  long size=Representation.UNKNOWN_SIZE;
   Series<Parameter> responseHeaders=getResponseHeaders();
   for (  Parameter header : responseHeaders) {
     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LENGTH)) {
       try {
-        contentLength=Long.parseLong(header.getValue());
+        size=Long.parseLong(header.getValue());
       }
  catch (      NumberFormatException e) {
-        contentLength=Representation.UNKNOWN_SIZE;
+        getLogger().warning("Unkown value received as content lenght: \"" + header.getValue() + "\".");
+      }
+    }
+ else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_TRANSFER_ENCODING)) {
+      if (!header.getValue().equalsIgnoreCase("identity")) {
+        size=Representation.UNKNOWN_SIZE;
       }
     }
   }
-  InputStream stream=getResponseEntityStream(contentLength);
-  ReadableByteChannel channel=getResponseEntityChannel(contentLength);
-  if (stream != null) {
-    result=new InputRepresentation(stream,null);
+  if (getMethod().equals(Method.HEAD.getName())) {
+    result=new EmptyRepresentation();
   }
- else   if (channel != null) {
-    result=new ReadableRepresentation(channel,null);
-  }
- else   if (getMethod().equals(Method.HEAD.getName())) {
-    result=new Representation(){
-      @Override public ReadableByteChannel getChannel() throws IOException {
-        return null;
-      }
-      @Override public Reader getReader() throws IOException {
-        return null;
-      }
-      @Override public InputStream getStream() throws IOException {
-        return null;
-      }
-      @Override public void write(      OutputStream outputStream) throws IOException {
-      }
-      @Override public void write(      WritableByteChannel writableChannel) throws IOException {
-      }
-      @Override public void write(      Writer writer) throws IOException {
-      }
+ else {
+    InputStream stream=getResponseEntityStream(size);
+    ReadableByteChannel channel=getResponseEntityChannel(size);
+    if (stream != null) {
+      result=new InputRepresentation(stream,null);
     }
-;
+ else     if (channel != null) {
+      result=new ReadableRepresentation(channel,null);
+    }
   }
-  if (result != null)   copyResponseEntityHeaders(responseHeaders,result);
+  if (result != null) {
+    result.setSize(size);
+    copyResponseEntityHeaders(responseHeaders,result);
+  }
   return result;
 }
