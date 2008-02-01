@@ -1,0 +1,11 @@
+{
+  router.postProcessBeanFactory(factory);
+  RouteList actualRoutes=router.getRoutes();
+  assertEquals("Wrong number of routes",2,actualRoutes.size());
+  Set<String> actualUris=new HashSet<String>();
+  for (  Route actualRoute : actualRoutes) {
+    actualUris.add(actualRoute.getTemplate().getPattern());
+  }
+  assertTrue("Missing ore URI: " + actualUris,actualUris.contains(ORE_URI));
+  assertTrue("Missing fish URI: " + actualUris,actualUris.contains(FISH_URI));
+}

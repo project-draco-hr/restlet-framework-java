@@ -1,0 +1,14 @@
+{
+  router.postProcessBeanFactory(factory);
+  RouteList actualRoutes=router.getRoutes();
+  assertEquals("Wrong number of routes",2,actualRoutes.size());
+  Route oreRoute=null, fishRoute=null;
+  for (  Route actualRoute : actualRoutes) {
+    if (actualRoute.getTemplate().getPattern().equals(FISH_URI))     fishRoute=actualRoute;
+    if (actualRoute.getTemplate().getPattern().equals(ORE_URI))     oreRoute=actualRoute;
+  }
+  assertNotNull("ore route not present: " + actualRoutes,oreRoute);
+  assertNotNull("fish route not present: " + actualRoutes,fishRoute);
+  assertFinderForBean("ore",oreRoute.getNext());
+  assertFinderForBean("fish",fishRoute.getNext());
+}
