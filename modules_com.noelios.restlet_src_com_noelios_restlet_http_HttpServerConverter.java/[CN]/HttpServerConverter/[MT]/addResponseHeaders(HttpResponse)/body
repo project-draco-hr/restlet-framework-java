@@ -33,42 +33,8 @@
     }
     if (!(response.getRequest().getClientInfo().getAgent() != null && response.getRequest().getClientInfo().getAgent().contains("MSIE"))) {
       Set<Dimension> dimensions=response.getDimensions();
-      if (!dimensions.isEmpty()) {
-        StringBuilder sb=new StringBuilder();
-        boolean first=true;
-        if (dimensions.contains(Dimension.CLIENT_ADDRESS) || dimensions.contains(Dimension.TIME) || dimensions.contains(Dimension.UNSPECIFIED)) {
-          responseHeaders.add(HttpConstants.HEADER_VARY,"*");
-        }
- else {
-          for (          Dimension dim : response.getDimensions()) {
-            if (first) {
-              first=false;
-            }
- else {
-              sb.append(", ");
-            }
-            if (dim == Dimension.CHARACTER_SET) {
-              sb.append(HttpConstants.HEADER_ACCEPT_CHARSET);
-            }
- else             if (dim == Dimension.CLIENT_AGENT) {
-              sb.append(HttpConstants.HEADER_USER_AGENT);
-            }
- else             if (dim == Dimension.ENCODING) {
-              sb.append(HttpConstants.HEADER_ACCEPT_ENCODING);
-            }
- else             if (dim == Dimension.LANGUAGE) {
-              sb.append(HttpConstants.HEADER_ACCEPT_LANGUAGE);
-            }
- else             if (dim == Dimension.MEDIA_TYPE) {
-              sb.append(HttpConstants.HEADER_ACCEPT);
-            }
- else             if (dim == Dimension.AUTHORIZATION) {
-              sb.append(HttpConstants.HEADER_AUTHORIZATION);
-            }
-          }
-          responseHeaders.add(HttpConstants.HEADER_VARY,sb.toString());
-        }
-      }
+      String vary=createVaryHeader(dimensions);
+      if (vary != null)       responseHeaders.add(HttpConstants.HEADER_VARY,vary);
     }
     Series<Parameter> additionalHeaders=(Series<Parameter>)response.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
     addAdditionalHeaders(responseHeaders,additionalHeaders);
