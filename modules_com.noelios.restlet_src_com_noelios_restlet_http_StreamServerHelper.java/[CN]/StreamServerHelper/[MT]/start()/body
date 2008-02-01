@@ -4,6 +4,7 @@
   handlerService=Executors.newFixedThreadPool(10);
   listenerService=Executors.newSingleThreadExecutor();
   serverSocketChannel=createServerSocket();
+  setEphemeralPort(serverSocketChannel.socket());
   latch=new CountDownLatch(1);
   listenerService.submit(new Listener(this,serverSocketChannel,latch,handlerService));
   try {
