@@ -3,7 +3,10 @@
   try {
     result=resourceMethod.invoke(resourceObject,matchingResult,allTemplParamsEnc,restletRequest,restletResponse,authenticator);
   }
- catch (  Exception e) {
+ catch (  InvocationTargetException ite) {
+    throw handleInvokeException(ite,restletResponse,"invoke","Exception in resource method",accMediaTypes);
+  }
+catch (  Exception e) {
     throw handleInvokeException(e,restletResponse,"invoke","Can not invoke the resource method",accMediaTypes);
   }
   if (result == null) {

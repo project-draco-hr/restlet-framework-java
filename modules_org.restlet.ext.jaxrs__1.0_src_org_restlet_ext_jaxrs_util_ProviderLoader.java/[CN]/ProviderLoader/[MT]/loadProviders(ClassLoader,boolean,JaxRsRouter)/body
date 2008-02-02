@@ -1,0 +1,28 @@
+{
+  boolean result=true;
+  try {
+    Class<?> providerClass=javax.ws.rs.ext.MessageBodyWriter.class;
+    Collection<Class<?>> messageBodyReaderClasses=loadClasses(classLoader,providerClass,throwOnException,jaxRsRouter);
+    for (    Class<?> messageBodyReaderClass : messageBodyReaderClasses) {
+      try {
+        jaxRsRouter.addProvider(messageBodyReaderClass,false,true);
+      }
+ catch (      IllegalArgumentException e) {
+        if (throwOnException)         throw e;
+        jaxRsRouter.getLogger().log(Level.WARNING,"Could not add the MessageBodyReader " + messageBodyReaderClass.getName(),e);
+        result=false;
+      }
+    }
+  }
+ catch (  IOException e) {
+    if (throwOnException)     throw e;
+    jaxRsRouter.getLogger().log(Level.WARNING,"Could not add the MessageBodyReaders",e);
+    result=false;
+  }
+catch (  ClassNotFoundException e) {
+    if (throwOnException)     throw e;
+    jaxRsRouter.getLogger().log(Level.WARNING,"Could not load a MessageBodyReader: " + e.getMessage(),e);
+    result=false;
+  }
+  return result;
+}
