@@ -7,6 +7,7 @@
     List<Variant> variants=getVariants();
     if ((variants == null) || (variants.isEmpty())) {
       getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+      getLogger().warning("A resource should normally have at least one variant added by calling getVariants().add() in the constructor");
     }
  else     if (isNegotiateContent()) {
       Variant preferredVariant=getPreferredVariant();
@@ -42,7 +43,7 @@
             variantRefs.add(variant.getIdentifier());
           }
  else {
-            getLogger().warning("A resource with multiple variants should provide and identifier for each variants when content negotiation is turned off");
+            getLogger().warning("A resource with multiple variants should provide an identifier for each variant when content negotiation is turned off");
           }
         }
         if (variantRefs.size() > 0) {
