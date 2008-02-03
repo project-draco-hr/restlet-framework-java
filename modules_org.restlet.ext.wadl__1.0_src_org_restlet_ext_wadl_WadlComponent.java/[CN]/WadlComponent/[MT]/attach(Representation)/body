@@ -12,16 +12,7 @@
     app.setRoot(root);
     NodeSet resources=dom.getNodes("/application/resources/resource");
     for (    Node resource : resources) {
-      String uriPattern=resource.getAttributes().getNamedItem("path").getNodeValue();
-      Node idNode=resource.getAttributes().getNamedItem("id");
-      if (idNode != null) {
-        String targetClassName=idNode.getNodeValue();
-        Class targetClass=Class.forName(targetClassName);
-        root.attach(uriPattern,targetClass);
-      }
- else {
-        getLogger().warning("Unable to find the 'id' attribute of the resource element with this path attribute \"" + uriPattern + "\"");
-      }
+      attachResourceAndChildren(dom,resource,null,root);
     }
     Node baseNode=dom.getNode("/application/resources/@base");
     Reference baseRef=new Reference(baseNode.getNodeValue());
