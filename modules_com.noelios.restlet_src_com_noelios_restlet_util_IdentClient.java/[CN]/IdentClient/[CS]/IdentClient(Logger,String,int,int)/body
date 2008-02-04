@@ -1,6 +1,7 @@
 {
   Socket socket=null;
   if ((logger != null) && (clientAddress != null) && (clientPort != -1)&& (serverPort != -1)) {
+    BufferedReader in=null;
     try {
       StringBuilder sb=new StringBuilder();
       sb.append(clientPort).append(" , ").append(serverPort).append("\r\n");
@@ -9,7 +10,7 @@
       socket.setSoTimeout(SO_TIMEOUT);
       socket.connect(new InetSocketAddress(clientAddress,113),CONNECT_TIMEOUT);
       socket.getOutputStream().write(request.getBytes());
-      BufferedReader in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+      in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
       String response=in.readLine();
       if (response != null) {
         StringTokenizer st=new StringTokenizer(response,":");
@@ -28,7 +29,7 @@
     }
  finally {
       try {
-        if (socket != null)         socket.close();
+        if (in != null)         in.close();
       }
  catch (      IOException ioe) {
         logger.log(Level.FINE,"Unable to close the socket",ioe);
