@@ -1,15 +1,15 @@
 {
   if (!startServer(AllowAllAuthenticator.getInstance()))   return;
   Response response;
-  response=accessServer(SEC_CONT_SERV,"userPrincipal",Method.GET);
+  response=accessServer(Method.GET,SEC_CONT_SERV,"userPrincipal");
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   String entity=response.getEntity().getText();
   assertEquals("",entity);
-  response=accessServer(SEC_CONT_SERV,"userPrincipal",Method.GET,null,new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"abc","def"));
+  response=accessServer(Method.GET,SEC_CONT_SERV,"userPrincipal",null,new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"abc","def"));
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   entity=response.getEntity().getText();
   assertEquals("abc",entity);
-  response=accessServer(SEC_CONT_SERV,"userPrincipal",Method.GET,null,new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"asdfsdfbc","def"));
+  response=accessServer(Method.GET,SEC_CONT_SERV,"userPrincipal",null,new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"asdfsdfbc","def"));
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   entity=response.getEntity().getText();
   assertEquals("asdfsdfbc",entity);

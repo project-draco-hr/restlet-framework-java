@@ -1,11 +1,11 @@
 {
   if (this.cookies == null) {
-    Map<String,Cookie> c=new HashMap<String,Cookie>();
+    Map<String,Cookie> cookies=new HashMap<String,Cookie>();
     for (    org.restlet.data.Cookie rc : request.getCookies()) {
       Cookie cookie=Converter.toJaxRsCookie(rc);
-      c.put(cookie.getName(),cookie);
+      cookies.put(cookie.getName(),cookie);
     }
-    this.cookies=c;
+    this.cookies=Collections.unmodifiableMap(cookies);
   }
   return this.cookies;
 }

@@ -8,7 +8,7 @@
   Collection<MediaType> mediaTypes=determineMediaType(resourceMethod,mbws,accMediaTypes);
   mbws=mbws.subSet(mediaTypes);
   MessageBodyWriter mbw=mbws.getBest(accMediaTypes);
-  if (mbw == null)   throw handleWebAppExc(new WebApplicationException(406),restletResponse,accMediaTypes);
+  if (mbw == null)   throw handleWebAppExc(new WebApplicationException(406),restletResponse,accMediaTypes,resourceMethod);
   MediaType mediaType=Util.getFirstElement(mediaTypes);
   MultivaluedMap<String,Object> httpResponseHeaders=null;
   return new JaxRsOutputRepresentation(entity,mediaType,mbw,httpResponseHeaders);

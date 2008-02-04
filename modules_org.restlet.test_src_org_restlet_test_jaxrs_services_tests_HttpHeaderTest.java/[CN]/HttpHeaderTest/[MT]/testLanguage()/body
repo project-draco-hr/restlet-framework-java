@@ -1,0 +1,13 @@
+{
+  List<Preference<Language>> acceptedLanguages=new ArrayList<Preference<Language>>();
+  acceptedLanguages.add(new Preference<Language>(Language.ENGLISH));
+  ClientInfo clientInfo=new ClientInfo();
+  clientInfo.setAcceptedLanguages(acceptedLanguages);
+  Request request=new Request(Method.POST,createReference(SERVICE_CLASS,"language"));
+  request.setClientInfo(clientInfo);
+  request.setEntity(new StringRepresentation("entity",Language.ENGLISH));
+  Client client=createClient();
+  Response response=client.handle(request);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  assertEquals("en",response.getEntity().getText());
+}

@@ -1,0 +1,18 @@
+{
+  Request request=new Request(Method.GET,createReference(SERVICE_CLASS,"HeaderParam"));
+  Util.getHttpHeaders(request).add(HttpHeaderTestService.TEST_HEADER_NAME,"abc");
+  Client client=createClient();
+  Response response=client.handle(request);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  assertEquals("abc",response.getEntity().getText());
+  request=new Request(Method.GET,createReference(SERVICE_CLASS,"HeaderParam"));
+  Util.getHttpHeaders(request).add(HttpHeaderTestService.TEST_HEADER_NAME.toLowerCase(),"abc");
+  response=client.handle(request);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  assertEquals("abc",response.getEntity().getText());
+  request=new Request(Method.GET,createReference(SERVICE_CLASS,"HeaderParam"));
+  Util.getHttpHeaders(request).add(HttpHeaderTestService.TEST_HEADER_NAME.toUpperCase(),"abc");
+  response=client.handle(request);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  assertEquals("abc",response.getEntity().getText());
+}

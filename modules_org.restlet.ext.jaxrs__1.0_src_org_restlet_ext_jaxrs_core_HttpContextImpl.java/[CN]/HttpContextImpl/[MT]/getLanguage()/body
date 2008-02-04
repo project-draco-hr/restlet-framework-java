@@ -1,3 +1,10 @@
 {
-  return language;
+  if (this.language == null) {
+    Representation entity=request.getEntity();
+    if (entity == null)     return null;
+    List<Language> languages=entity.getLanguages();
+    if (languages.isEmpty())     return null;
+    this.language=Util.getFirstElement(languages).getName();
+  }
+  return this.language;
 }

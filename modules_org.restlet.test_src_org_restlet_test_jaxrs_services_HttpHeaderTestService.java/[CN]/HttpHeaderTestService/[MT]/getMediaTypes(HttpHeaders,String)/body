@@ -1,0 +1,18 @@
+{
+  Map<String,Cookie> cookies=headers.getCookies();
+  try {
+    cookies.put("notAllowed",new Cookie("notAllowed","value"));
+    throw new WebApplicationException(Response.serverError().entity("could add cookie notAllowed").build());
+  }
+ catch (  UnsupportedOperationException uoe) {
+  }
+  try {
+    cookies.put("xyz",new Cookie("notAllowed","value"));
+    throw new WebApplicationException(Response.serverError().entity("could add xyz").build());
+  }
+ catch (  UnsupportedOperationException uoe) {
+  }
+  Cookie cookie=cookies.get(cookieName);
+  if (cookie == null)   return null;
+  return cookie.toString();
+}
