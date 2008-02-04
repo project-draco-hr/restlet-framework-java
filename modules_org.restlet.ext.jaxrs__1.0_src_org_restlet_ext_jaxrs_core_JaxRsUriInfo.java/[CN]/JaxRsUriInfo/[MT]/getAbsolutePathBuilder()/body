@@ -1,3 +1,11 @@
 {
-  return UriBuilder.fromPath(reference.toString(false,false));
+  UriBuilder b=new JaxRsUriBuilder();
+  b.encode(false);
+  try {
+    b.uri(URI.create(reference.toString(true,false)));
+  }
+ catch (  NullPointerException ex) {
+    throw new IllegalArgumentException(ex.getMessage(),ex);
+  }
+  return b;
 }
