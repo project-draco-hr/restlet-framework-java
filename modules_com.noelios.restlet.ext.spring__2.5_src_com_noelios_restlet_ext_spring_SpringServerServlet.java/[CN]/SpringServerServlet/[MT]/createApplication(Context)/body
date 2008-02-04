@@ -1,12 +1,21 @@
 {
   Application application=null;
-  String applicationBeanName=getInitParameter(SpringServerServlet.APPLICATION_KEY,null);
-  if (getWebApplicationContext().containsBean(applicationBeanName)) {
-    application=(Application)getWebApplicationContext().getBean(applicationBeanName);
-  }
+  String applicationBeanName=getInitParameter(SpringServerServlet.APPLICATION_BEAN_PARAM_NAME,null);
+  application=(Application)getWebApplicationContext().getBean(applicationBeanName);
   if (application != null) {
     ApplicationContext applicationContext=(ApplicationContext)application.getContext();
     application.setContext(new ApplicationContext(application,new ServletContextAdapter(this,context),applicationContext.getLogger()));
+    applicationContext.setWarClient(new ServletWarClient(applicationContext,this.getServletConfig().getServletContext()));
+    String initParam;
+    javax.servlet.ServletConfig servletConfig=getServletConfig();
+    for (Enumeration<String> enum1=servletConfig.getInitParameterNames(); enum1.hasMoreElements(); ) {
+      initParam=enum1.nextElement();
+      applicationContext.getParameters().add(initParam,servletConfig.getInitParameter(initParam));
+    }
+    for (Enumeration<String> enum1=getServletContext().getInitParameterNames(); enum1.hasMoreElements(); ) {
+      initParam=enum1.nextElement();
+      applicationContext.getParameters().add(initParam,getServletContext().getInitParameter(initParam));
+    }
   }
  else {
     application=super.createApplication(context);
