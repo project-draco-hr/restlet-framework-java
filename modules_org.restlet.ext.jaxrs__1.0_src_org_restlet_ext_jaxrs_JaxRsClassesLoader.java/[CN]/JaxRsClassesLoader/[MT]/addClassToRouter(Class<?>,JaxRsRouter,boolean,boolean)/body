@@ -1,0 +1,20 @@
+{
+  boolean result=false;
+  if (asRootResourceClass) {
+    if (clazz.isAnnotationPresent(Path.class)) {
+      jaxRsRouter.attach(clazz);
+      result=true;
+    }
+  }
+  if (asProvider) {
+    if (clazz.isAssignableFrom(MessageBodyReader.class)) {
+      jaxRsRouter.addMessageBodyReader(clazz);
+      result=true;
+    }
+    if (clazz.isAssignableFrom(MessageBodyWriter.class)) {
+      jaxRsRouter.addMessageBodyWriter(clazz);
+      result=true;
+    }
+  }
+  return result;
+}

@@ -1,0 +1,22 @@
+{
+  try {
+    @SuppressWarnings("unchecked") Iterator<Class<MessageBodyWriter<?>>> rIter=new ServiceProviderIterator(MessageBodyWriter.class,throwOnException,classLoader,jaxRsRouter.getLogger(),Level.WARNING);
+    while (rIter.hasNext()) {
+      Class<javax.ws.rs.ext.MessageBodyWriter<?>> clazz=rIter.next();
+      jaxRsRouter.addMessageBodyWriter(clazz);
+    }
+    @SuppressWarnings("unchecked") Iterator<Class<MessageBodyReader<?>>> wIter=new ServiceProviderIterator(MessageBodyReader.class,throwOnException,classLoader,jaxRsRouter.getLogger(),Level.WARNING);
+    while (wIter.hasNext()) {
+      Class<javax.ws.rs.ext.MessageBodyReader<?>> clazz=wIter.next();
+      jaxRsRouter.addMessageBodyReader(clazz);
+    }
+  }
+ catch (  WrappedClassLoadException e) {
+    Throwable cause=e.getCause();
+    if (cause instanceof Error)     throw (Error)cause;
+    if (cause instanceof RuntimeException)     throw (RuntimeException)cause;
+    if (cause instanceof ClassNotFoundException)     throw (ClassNotFoundException)cause;
+    if (cause instanceof IOException)     throw (IOException)cause;
+    throw e;
+  }
+}

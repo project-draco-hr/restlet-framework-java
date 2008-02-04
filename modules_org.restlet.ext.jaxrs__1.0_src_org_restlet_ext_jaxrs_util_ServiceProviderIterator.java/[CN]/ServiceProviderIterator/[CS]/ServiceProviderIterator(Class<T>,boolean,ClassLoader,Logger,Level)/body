@@ -1,0 +1,19 @@
+{
+  super(throwOnExc,logger,logLevel);
+  if (interfacce == null)   throw new IllegalArgumentException("The given interface (or class) must not be null");
+  this.interfacce=interfacce;
+  if (classLoader != null)   this.classLoader=classLoader;
+ else   this.classLoader=ClassLoader.getSystemClassLoader();
+  String rName=META_INF_SERVICES + interfacce.getName();
+  InputStream inputStream=this.classLoader.getResourceAsStream(rName);
+  if (inputStream == null && throwOnExc)   throw new IllegalArgumentException("file " + rName + " not found");
+  BufferedReader reader=new BufferedReader(new InputStreamReader(inputStream));
+  List<String> classNames=new ArrayList<String>();
+  String className;
+  while ((className=reader.readLine()) != null) {
+    className=className.trim();
+    if (className.startsWith("#"))     continue;
+    classNames.add(className);
+  }
+  this.classNameIter=classNames.iterator();
+}

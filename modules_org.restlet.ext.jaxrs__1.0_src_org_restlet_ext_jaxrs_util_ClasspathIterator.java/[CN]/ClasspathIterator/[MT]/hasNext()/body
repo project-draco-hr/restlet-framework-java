@@ -2,7 +2,7 @@
   if (this.next != null) {
     return true;
   }
-  if (currentIter.hasNext()) {
+  if (currentIter != null && currentIter.hasNext()) {
     this.next=currentIter.next();
     return this.hasNext();
   }
@@ -10,13 +10,13 @@
     String cpEntry=this.classPathIter.next();
     File f=new File(cpEntry);
     if (f.isDirectory()) {
-      currentIter=new DirectoryClassIterator(f);
+      currentIter=new DirectoryClassIterator(f,throwOnExc);
       return this.hasNext();
     }
  else {
       try {
         JarFile jarFile=new JarFile(f);
-        currentIter=new JarFileClassIterator(jarFile);
+        currentIter=new JarFileClassIterator(jarFile,throwOnExc);
         return this.hasNext();
       }
  catch (      IOException e) {

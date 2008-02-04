@@ -1,0 +1,11 @@
+{
+  Constructor<?> constructor=RootResourceClass.findJaxRsConstructor(messageBodyReaderClass);
+  Object provider;
+  try {
+    provider=RootResourceClass.createInstance(constructor,null,null,null,null,authenticator);
+  }
+ catch (  Exception e) {
+    throw new IllegalArgumentException("MessageBodyReader could not be instantiated: " + e.getMessage(),e);
+  }
+  this.messageBodyReaders.add(new MessageBodyReader((javax.ws.rs.ext.MessageBodyReader<?>)provider));
+}
