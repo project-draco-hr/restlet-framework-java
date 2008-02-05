@@ -3,6 +3,16 @@
   sb.append(request.getScheme().getTechnicalName());
   if (request.getRealm() != null) {
     sb.append(" realm=\"").append(request.getRealm()).append('"');
+    if (request.getScheme().equals(ChallengeScheme.HTTP_DIGEST)) {
+      Series<Parameter> parameters=request.getParameters();
+      sb.append(", domain=\"").append(parameters.getFirstValue("domain")).append('"');
+      sb.append(", qop=\"auth\"");
+      sb.append(", algorithm=MD5");
+      sb.append(", nonce=\"").append(parameters.getFirstValue("nonce")).append('"');
+      if (parameters.getFirst("stale") != null) {
+        sb.append(", stale=\"TRUE\"");
+      }
+    }
   }
   return sb.toString();
 }

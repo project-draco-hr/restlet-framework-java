@@ -55,6 +55,21 @@
       throw new RuntimeException("Unsupported encoding, unable to encode credentials");
     }
   }
+ else   if (challenge.getScheme().equals(ChallengeScheme.HTTP_DIGEST)) {
+    Series<Parameter> credentials=challenge.getParameters();
+    for (    String name : credentials.getNames()) {
+      sb.append(name).append('=');
+      if (name.equals("qop") || name.equals("algorithm") || name.equals("nc")) {
+        sb.append(credentials.getFirstValue(name)).append(",");
+      }
+ else {
+        sb.append('"').append(credentials.getFirstValue(name)).append('"').append(",");
+      }
+    }
+    if (!credentials.isEmpty()) {
+      sb.deleteCharAt(sb.length() - 1);
+    }
+  }
  else   if (challenge.getScheme().equals(ChallengeScheme.SMTP_PLAIN)) {
     try {
       String credentials="^@" + challenge.getIdentifier() + "^@"+ secret;

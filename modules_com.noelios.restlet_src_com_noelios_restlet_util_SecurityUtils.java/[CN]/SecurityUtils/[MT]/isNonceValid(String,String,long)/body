@@ -1,0 +1,13 @@
+{
+  try {
+    String decodedNonce=new String(Base64.decode(nonce));
+    long nonceTimeMS=Long.parseLong(decodedNonce.substring(0,decodedNonce.indexOf(':')));
+    if (decodedNonce.equals(nonceTimeMS + ":" + md5String(nonceTimeMS + ":" + secretKey))) {
+      return lifespanMS > (System.currentTimeMillis() - nonceTimeMS);
+    }
+  }
+ catch (  Exception e) {
+    throw new CredentialException("Error parsing nonce: " + e);
+  }
+  throw new CredentialException("Nonce does not match secret key!");
+}
