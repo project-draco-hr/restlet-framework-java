@@ -1,7 +1,7 @@
 {
   Conditions conditions=new Conditions();
   conditions.setMatch(Util.createList(getEntityTagFromDatastore()));
-  Response response=accessServer(Method.GET,RequestService.class,"date",conditions,null);
+  Response response=get("date",conditions);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   assertEquals(RequestService.getLastModificationDateFromDatastore(),response.getEntity().getModificationDate());
   assertEquals(getEntityTagFromDatastore(),response.getEntity().getTag());
@@ -9,7 +9,7 @@
   assertTrue(response.getEntity().getSize() > 0);
   conditions=new Conditions();
   conditions.setMatch(Util.createList(new Tag("affer")));
-  response=accessServer(Method.GET,RequestService.class,"date",conditions,null);
+  response=get("date",conditions);
   assertEquals(PREC_FAILED,response.getStatus());
   assertTrue("Entity must contain \"does not match Entity Tag\"",response.getEntity().getText().contains("The entity does not match Entity Tag"));
 }

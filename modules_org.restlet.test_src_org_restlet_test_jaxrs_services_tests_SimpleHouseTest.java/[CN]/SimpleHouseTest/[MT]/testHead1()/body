@@ -1,14 +1,14 @@
 {
-  Response responseGett=accessServer(Method.GET,SimpleHouse.class,"headTest1",MediaType.TEXT_HTML);
-  Response responseHead=accessServer(Method.HEAD,SimpleHouse.class,"headTest1",MediaType.TEXT_HTML);
+  Response responseGett=get("headTest1",MediaType.TEXT_HTML);
+  Response responseHead=head("headTest1",MediaType.TEXT_HTML);
   if (responseGett.getStatus().isError())   System.out.println(responseGett.getEntity().getText());
   assertEquals(Status.SUCCESS_OK,responseGett.getStatus());
   if (responseHead.getStatus().isError())   System.out.println(responseHead.getEntity().getText());
   assertEquals(Status.SUCCESS_OK,responseHead.getStatus());
-  Representation representationGett=responseGett.getEntity();
-  Representation representationHead=responseHead.getEntity();
-  assertEquals("4711",representationGett.getText());
-  assertEquals("",representationHead.getText());
-  assertEqualMediaType(MediaType.TEXT_HTML,representationGett.getMediaType());
-  assertEqualMediaType(MediaType.TEXT_HTML,representationHead.getMediaType());
+  Representation entityGett=responseGett.getEntity();
+  Representation entityHead=responseHead.getEntity();
+  assertEquals("4711",entityGett.getText());
+  assertEquals("",entityHead.getText());
+  assertEqualMediaType(MediaType.TEXT_HTML,entityGett.getMediaType());
+  assertEqualMediaType(MediaType.TEXT_HTML,entityHead.getMediaType());
 }
