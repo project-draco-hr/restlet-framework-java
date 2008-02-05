@@ -1,0 +1,11 @@
+{
+  try {
+    JAXBContext jaxbContext=getJaxbContext(type);
+    Unmarshaller unmarshaller=jaxbContext.createUnmarshaller();
+    return unmarshaller.unmarshal(entityStream);
+  }
+ catch (  JAXBException e) {
+    logger.log(Level.WARNING,"Could not unmarshal to " + type.getName(),e);
+    throw new IOException("Could not marshal to " + type.getName() + ": "+ e.getMessage());
+  }
+}

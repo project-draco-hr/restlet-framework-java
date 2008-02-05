@@ -1,7 +1,9 @@
 {
   boolean result=false;
+  int modifiers=clazz.getModifiers();
+  if (Modifier.isAbstract(modifiers) || Modifier.isInterface(modifiers))   return false;
   if (asProvider) {
-    if (clazz.isAssignableFrom(MessageBodyReader.class)) {
+    if (MessageBodyReader.class.isAssignableFrom(clazz)) {
       if (!clazz.isAnnotationPresent(Provider.class)) {
         String msg="The class " + clazz.getName() + " implements the MessageBodyReader, but is not annotated with @Provider. Will although use it as MessageBodyReader.";
         jaxRsRouter.getLogger().log(Level.INFO,msg);
@@ -9,7 +11,7 @@
       jaxRsRouter.addMessageBodyReader(clazz);
       result=true;
     }
-    if (clazz.isAssignableFrom(MessageBodyWriter.class)) {
+    if (MessageBodyWriter.class.isAssignableFrom(clazz)) {
       if (!clazz.isAnnotationPresent(Provider.class)) {
         String msg="The class " + clazz.getName() + " implements the MessageBodyWriter, but is not annotated with @Provider. Will although use it as MessageBodyWriter.";
         jaxRsRouter.getLogger().log(Level.INFO,msg);

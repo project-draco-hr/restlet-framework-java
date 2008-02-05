@@ -1,0 +1,20 @@
+{
+  if (this.next != null) {
+    return true;
+  }
+  if (currentIter != null && currentIter.hasNext()) {
+    this.next=currentIter.next();
+    return this.hasNext();
+  }
+  while (this.dirEnum.hasMoreElements()) {
+    URL dir=this.dirEnum.nextElement();
+    File f=new File(dir.getPath());
+    if (f.isDirectory()) {
+      String path=f.getPath();
+      File rootDir=new File(path.substring(0,path.length() - packageName.length()));
+      currentIter=new DirectoryClassIterator(f,rootDir,false,throwOnExc,logger,logLevel);
+      return this.hasNext();
+    }
+  }
+  return false;
+}

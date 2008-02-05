@@ -5,7 +5,9 @@
     provider=RootResourceClass.createInstance(constructor,null,null,null,null,authenticator);
   }
  catch (  Exception e) {
-    throw new IllegalArgumentException("MessageBodyReader could not be instantiated: " + e.getMessage(),e);
+    String message="MessageBodyReader could not be instantiated";
+    if (e.getMessage() != null)     message+=": " + e.getMessage();
+    throw new IllegalArgumentException(message,e);
   }
   this.messageBodyReaders.add(new MessageBodyReader((javax.ws.rs.ext.MessageBodyReader<?>)provider));
 }

@@ -1,0 +1,15 @@
+{
+  try {
+    JAXBContext jaxbContext=getJaxbContext(object.getClass());
+    Marshaller marshaller=jaxbContext.createMarshaller();
+    marshaller.marshal(object,entityStream);
+  }
+ catch (  PropertyException e) {
+    logger.log(Level.WARNING,"Could not marshal the " + object.getClass().getName(),e);
+    throw new IOException("Could not marshal the " + object.getClass().getName() + ": "+ e.getMessage());
+  }
+catch (  JAXBException e) {
+    logger.log(Level.WARNING,"Could not marshal the " + object.getClass().getName(),e);
+    throw new IOException("Could not marshal the " + object.getClass().getName() + ": "+ e.getMessage());
+  }
+}
