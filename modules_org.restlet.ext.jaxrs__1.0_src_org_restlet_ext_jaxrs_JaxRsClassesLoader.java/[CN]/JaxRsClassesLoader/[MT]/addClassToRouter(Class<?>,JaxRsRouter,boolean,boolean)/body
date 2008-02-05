@@ -1,18 +1,30 @@
 {
   boolean result=false;
-  if (asRootResourceClass) {
-    if (clazz.isAnnotationPresent(Path.class)) {
-      jaxRsRouter.attach(clazz);
-      result=true;
-    }
-  }
   if (asProvider) {
     if (clazz.isAssignableFrom(MessageBodyReader.class)) {
+      if (!clazz.isAnnotationPresent(Provider.class)) {
+        String msg="The class " + clazz.getName() + " implements the MessageBodyReader, but is not annotated with @Provider. Will although use it as MessageBodyReader.";
+        jaxRsRouter.getLogger().log(Level.INFO,msg);
+      }
       jaxRsRouter.addMessageBodyReader(clazz);
       result=true;
     }
     if (clazz.isAssignableFrom(MessageBodyWriter.class)) {
+      if (!clazz.isAnnotationPresent(Provider.class)) {
+        String msg="The class " + clazz.getName() + " implements the MessageBodyWriter, but is not annotated with @Provider. Will although use it as MessageBodyWriter.";
+        jaxRsRouter.getLogger().log(Level.INFO,msg);
+      }
       jaxRsRouter.addMessageBodyWriter(clazz);
+      result=true;
+    }
+ else     if (!result && clazz.isAnnotationPresent(Provider.class)) {
+      String msg="The class " + clazz.getName() + " is annotated with @Provider, but does nor implement MessageBodyWriter nor MessageBodyReader. Don't know how to use it.";
+      jaxRsRouter.getLogger().log(Level.INFO,msg);
+    }
+  }
+  if (asRootResourceClass) {
+    if (clazz.isAnnotationPresent(Path.class)) {
+      jaxRsRouter.attach(clazz);
       result=true;
     }
   }
