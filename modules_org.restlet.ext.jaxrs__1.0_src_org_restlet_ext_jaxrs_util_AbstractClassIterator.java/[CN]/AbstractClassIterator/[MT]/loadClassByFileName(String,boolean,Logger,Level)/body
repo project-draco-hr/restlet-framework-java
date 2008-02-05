@@ -8,6 +8,7 @@
     return Class.forName(classname);
   }
  catch (  Throwable e) {
+    if (throwOnExc)     throw new WrappedClassLoadException(classname,e);
     if (logger != null) {
       if (logLevel == null)       logLevel=Level.INFO;
       logger.log(logLevel,"Could not load class with name " + classname,e);
