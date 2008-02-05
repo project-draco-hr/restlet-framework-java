@@ -2,8 +2,7 @@
   if (!setAuthroizator(AllowAllAuthenticator.getInstance()))   return;
   startServer(ChallengeScheme.HTTP_DIGEST);
   ChallengeResponse cr=new ChallengeResponse(ChallengeScheme.HTTP_DIGEST,"u","p");
-  Response response;
-  response=get("authenticationScheme",cr);
+  Response response=get("authenticationScheme",cr);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   String entity=response.getEntity().getText();
   assertEquals(SecurityContext.DIGEST_AUTH,entity);

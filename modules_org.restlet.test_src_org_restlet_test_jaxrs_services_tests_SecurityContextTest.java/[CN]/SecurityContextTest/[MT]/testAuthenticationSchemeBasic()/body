@@ -1,8 +1,7 @@
 {
   if (!startServer(AllowAllAuthenticator.getInstance()))   return;
   ChallengeResponse cr=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"u","p");
-  Response response;
-  response=get("authenticationScheme",cr);
+  Response response=get("authenticationScheme",cr);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   String entity=response.getEntity().getText();
   assertEquals(SecurityContext.BASIC_AUTH,entity);
