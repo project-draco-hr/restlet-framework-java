@@ -1,0 +1,10 @@
+{
+  Set<Method> allowedMethods=this.allowedMethods.get(remainingPath);
+  if (allowedMethods != null)   return allowedMethods;
+  allowedMethods=new HashSet<Method>(6);
+  for (  ResourceMethod rm : getMethodsForPath(remainingPath))   allowedMethods.add(rm.getHttpMethod());
+  if (!allowedMethods.isEmpty())   if (allowedMethods.contains(Method.GET))   allowedMethods.add(Method.HEAD);
+  Set<Method> unmodifiable=Collections.unmodifiableSet(allowedMethods);
+  this.allowedMethods.put(remainingPath,unmodifiable);
+  return unmodifiable;
+}

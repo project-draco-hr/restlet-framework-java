@@ -3,18 +3,14 @@
   ResourceObject resObj=resObjAndPath.resourceObject;
   String remainingPath=resObjAndPath.remainingPath;
   MultivaluedMap<String,String> allTemplParamsEnc=resObjAndPath.allTemplParamsEnc;
-  Collection<ResourceMethod> resourceMethods=resObj.getMethodsForPath(remainingPath);
+  Collection<ResourceMethod> resourceMethods=resObj.getResourceClass().getMethodsForPath(remainingPath);
   if (resourceMethods.isEmpty())   throw new CouldNotFindMethodException(errorRestletResourceMethodNotFound);
   boolean alsoGet=httpMethod.equals(Method.HEAD);
   removeNotSupportedHttpMethod(resourceMethods,httpMethod,alsoGet);
   if (resourceMethods.isEmpty()) {
     if (httpMethod.equals(Method.OPTIONS)) {
-      resourceMethods=resObj.getMethodsForPath(remainingPath);
-      Set<Method> allowedMethods=restletResp.getAllowedMethods();
-      for (      ResourceMethod rm : resourceMethods)       allowedMethods.add(rm.getHttpMethod());
-      if (!allowedMethods.isEmpty()) {
-        if (allowedMethods.contains(Method.GET))         allowedMethods.add(Method.HEAD);
-      }
+      Set<Method> allowedMethods=resObj.getResourceClass().getAllowedMethods(remainingPath);
+      restletResp.getAllowedMethods().addAll(allowedMethods);
       throw new RequestHandledException();
     }
     throw new CouldNotFindMethodException(errorRestletMethodNotAllowed);
