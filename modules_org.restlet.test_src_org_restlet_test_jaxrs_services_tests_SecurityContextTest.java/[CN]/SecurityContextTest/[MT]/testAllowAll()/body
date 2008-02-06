@@ -2,7 +2,8 @@
   if (!startServer(AllowAllAuthenticator.getInstance()))   return;
   Response response=get();
   assertEquals(Status.SUCCESS_OK,response.getStatus());
-  response=post();
+  response=post(new Form("abc=def").getWebRepresentation());
+  sysOutEntityIfError(response);
   assertEquals(Status.SUCCESS_CREATED,response.getStatus());
   Reference expecretLocation=createReference(SEC_CONT_SERV,null);
   assertTrue("The location must start with " + expecretLocation + "; it is "+ response.getLocationRef(),response.getLocationRef().toString().startsWith(expecretLocation.toString()));

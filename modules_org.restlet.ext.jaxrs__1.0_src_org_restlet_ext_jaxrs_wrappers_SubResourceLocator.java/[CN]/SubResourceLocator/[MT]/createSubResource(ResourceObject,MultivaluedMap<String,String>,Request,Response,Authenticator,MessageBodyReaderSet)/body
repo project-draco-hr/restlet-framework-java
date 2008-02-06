@@ -1,0 +1,8 @@
+{
+  Object[] args;
+  Class<?>[] parameterTypes=this.javaMethod.getParameterTypes();
+  if (parameterTypes.length == 0)   args=new Object[0];
+ else   args=getParameterValues(javaMethod.getParameterAnnotations(),parameterTypes,restletRequest,restletResponse,allTemplParamsEnc,authenticator,mbrs);
+  Object subResourceObject=javaMethod.invoke(resourceObject.getResourceObject(),args);
+  return new ResourceObject(subResourceObject);
+}

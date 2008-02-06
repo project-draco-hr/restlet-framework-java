@@ -22,21 +22,22 @@
   }
 ;
   if (!startServer(exampleAuthorizator))   return;
-  ChallengeResponse challengeResponse=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"fsdf","xyz");
-  Response response=get(null,challengeResponse);
+  ChallengeResponse cr=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"fsdf","xyz");
+  Response response=get(null,cr);
   assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED,response.getStatus());
-  challengeResponse=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"fsdf","baj");
-  response=get(null,challengeResponse);
+  cr=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"fsdf","baj");
+  response=get(null,cr);
   assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED,response.getStatus());
-  challengeResponse=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"fsdf","abj");
-  response=get(null,challengeResponse);
+  cr=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"fsdf","abj");
+  response=get(null,cr);
   assertEquals(Status.CLIENT_ERROR_FORBIDDEN,response.getStatus());
-  challengeResponse=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"bsdf","abaj");
-  response=get(null,challengeResponse);
+  cr=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"bsdf","abaj");
+  response=get(null,cr);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
-  challengeResponse=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"fsdf","axa2");
-  response=post(null,challengeResponse);
+  cr=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"fsdf","axa2");
+  response=post(null,new Form("abc=def").getWebRepresentation(),cr);
+  sysOutEntityIfError(response);
   assertEquals(Status.SUCCESS_CREATED,response.getStatus());
-  response=accessServer(Method.PUT,SEC_CONT_SERV,null,null,challengeResponse);
+  response=accessServer(Method.PUT,SEC_CONT_SERV,null,null,cr);
   assertEquals(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED,response.getStatus());
 }

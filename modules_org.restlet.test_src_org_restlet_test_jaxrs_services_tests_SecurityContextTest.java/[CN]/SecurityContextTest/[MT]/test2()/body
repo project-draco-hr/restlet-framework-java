@@ -10,6 +10,10 @@
 ))   return;
   Response response=get();
   assertEquals(Status.CLIENT_ERROR_FORBIDDEN,response.getStatus());
-  response=post();
+  response=post(new Form().getWebRepresentation());
+  sysOutEntityIfError(response);
+  assertEquals(Status.CLIENT_ERROR_FORBIDDEN,response.getStatus());
+  response=post(new Form("abc=def").getWebRepresentation());
+  sysOutEntityIfError(response);
   assertEquals(Status.CLIENT_ERROR_FORBIDDEN,response.getStatus());
 }

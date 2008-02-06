@@ -1,11 +1,15 @@
 {
   String deEncoded="encode";
   Response response=get(deEncoded + "/66");
+  sysOutEntityIfError(response);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
-  Representation r=response.getEntity();
-  assertEquals("66",r.getText());
+  assertEquals("66",response.getEntity().getText());
   response=get(deEncoded + "/a+bc");
+  sysOutEntityIfError(response);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
-  r=response.getEntity();
-  assertEquals("a+bc",r.getText());
+  assertEquals("a+bc",response.getEntity().getText());
+  response=get(deEncoded + "/a%20bc");
+  sysOutEntityIfError(response);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  assertEquals("a%20bc",response.getEntity().getText());
 }

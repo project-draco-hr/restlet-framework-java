@@ -5,21 +5,21 @@
       String headerParamValue=Util.getHttpHeaders(restletRequest).getFirstValue(((HeaderParam)annotation).value(),true);
       return getParameterValueFromParam(paramClass,headerParamValue);
     }
- else     if (annotationType.equals(PathParam.class)) {
+    if (annotationType.equals(PathParam.class)) {
       String pathParamValue=allTemplParamsEnc.getFirst(((PathParam)annotation).value());
       return getParameterValueFromParam(paramClass,pathParamValue);
     }
- else     if (annotationType.equals(Context.class)) {
-      if (httpContext == null)       httpContext=new HttpContextImpl(restletRequest,new UnmodifiableMultivaluedMap<String,String>(allTemplParamsEnc,false),restletResponse,authenticator);
-      return httpContext;
+    if (annotationType.equals(Context.class)) {
+      if (context != null)       return context;
+      return new HttpContextImpl(restletRequest,new UnmodifiableMultivaluedMap<String,String>(allTemplParamsEnc,false),restletResponse,authenticator);
     }
- else     if (annotationType.equals(MatrixParam.class)) {
+    if (annotationType.equals(MatrixParam.class)) {
       throw new NotYetImplementedException();
     }
- else     if (annotationType.equals(QueryParam.class)) {
+    if (annotationType.equals(QueryParam.class)) {
       String queryParamValue=restletRequest.getResourceRef().getQueryAsForm().getFirstValue(((QueryParam)annotation).value());
       return getParameterValueFromParam(paramClass,queryParamValue);
     }
   }
-  throw new IllegalAnnotationException("The " + indexForExcMessages + ". parameter requires one of the following annotations: "+ VALID_ANNOTATIONS);
+  throw new IllegalOrNoAnnotationException("The " + indexForExcMessages + ". parameter requires one of the following annotations: "+ VALID_ANNOTATIONS);
 }

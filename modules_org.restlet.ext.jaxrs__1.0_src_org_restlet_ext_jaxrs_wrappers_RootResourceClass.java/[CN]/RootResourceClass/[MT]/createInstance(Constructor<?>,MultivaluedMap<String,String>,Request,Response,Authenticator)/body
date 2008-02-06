@@ -1,6 +1,15 @@
 {
   Object[] args;
-  if (constructor.getParameterTypes().length == 0)   args=new Object[0];
- else   args=getParameterValues(constructor.getParameterAnnotations(),constructor.getParameterTypes(),restletRequ,restletResponse,allTemplParamsEnc,authenticator);
+  if (constructor.getParameterTypes().length == 0) {
+    args=new Object[0];
+  }
+ else {
+    try {
+      args=getParameterValues(constructor.getParameterAnnotations(),constructor.getParameterTypes(),restletRequ,restletResponse,allTemplParamsEnc,authenticator,null);
+    }
+ catch (    NoMessageBodyReadersException e) {
+      throw new IllegalOrNoAnnotationException("the root resource class constructor (" + constructor + ") must have annotations on any parameters. (normally this excpetion could not occur)");
+    }
+  }
   return constructor.newInstance(args);
 }

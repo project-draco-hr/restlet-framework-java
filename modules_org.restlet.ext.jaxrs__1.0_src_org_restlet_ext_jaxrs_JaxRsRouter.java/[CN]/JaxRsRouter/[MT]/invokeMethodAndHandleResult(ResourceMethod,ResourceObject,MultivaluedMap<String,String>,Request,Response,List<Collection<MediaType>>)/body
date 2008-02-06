@@ -1,10 +1,13 @@
 {
   Object result;
   try {
-    result=resourceMethod.invoke(resourceObject,allTemplParamsEnc,restletRequest,restletResponse,authenticator);
+    result=resourceMethod.invoke(resourceObject,allTemplParamsEnc,restletRequest,restletResponse,authenticator,this.messageBodyReaders);
   }
  catch (  InvocationTargetException ite) {
     throw handleInvokeException(ite,accMediaTypes,resourceMethod,restletResponse,"invoke","Exception in resource method");
+  }
+catch (  RequestHandledException e) {
+    throw e;
   }
 catch (  Exception e) {
     throw handleInvokeException(e,accMediaTypes,resourceMethod,restletResponse,"invoke","Can not invoke the resource method");

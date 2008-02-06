@@ -4,10 +4,10 @@
   Response responseGett=JaxRsTestCase.accessServer(Method.GET,SimpleTrain.class,Util.createList(new Object[]{PREF_TEXTPLAIN_QUAL05,MediaType.TEXT_HTML}));
   assertEquals(Status.SUCCESS_OK,responseHead.getStatus());
   assertEquals(Status.SUCCESS_OK,responseGett.getStatus());
-  Representation representationHead=responseHead.getEntity();
-  Representation representationGett=responseGett.getEntity();
-  assertEqualMediaType(MediaType.TEXT_HTML,representationGett.getMediaType());
-  assertEqualMediaType(MediaType.TEXT_HTML,representationHead.getMediaType());
-  assertEquals(SimpleTrain.RERP_HTML_TEXT,representationGett.getText());
-  assertEquals(0,representationHead.getText().length());
+  Representation entityHead=responseHead.getEntity();
+  Representation entityGett=responseGett.getEntity();
+  assertEqualMediaType(MediaType.TEXT_HTML,entityGett.getMediaType());
+  assertEqualMediaType(MediaType.TEXT_HTML,entityHead.getMediaType());
+  assertEquals(SimpleTrain.RERP_HTML_TEXT,entityGett.getText());
+  assertNull("HEAD response: entity must be null",entityHead.getText());
 }
