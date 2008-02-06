@@ -1,0 +1,24 @@
+{
+  try {
+    if (paramClass == Integer.TYPE)     return new Integer(paramValue);
+    if (paramClass == Double.TYPE)     return new Double(paramValue);
+    if (paramClass == Float.TYPE)     return new Float(paramValue);
+    if (paramClass == Byte.TYPE)     return new Byte(paramValue);
+    if (paramClass == Long.TYPE)     return new Long(paramValue);
+    if (paramClass == Short.TYPE)     return new Short(paramValue);
+    if (paramClass == Character.TYPE) {
+      if (paramValue.length() == 1)       return paramValue.charAt(0);
+      throw InstantiateParameterException.primitive(paramClass,paramValue,null);
+    }
+    if (paramClass == Boolean.TYPE) {
+      if (paramValue.equalsIgnoreCase("true"))       return Boolean.TRUE;
+      if (paramValue.equalsIgnoreCase("false"))       return Boolean.FALSE;
+      throw InstantiateParameterException.primitive(paramClass,paramValue,null);
+    }
+  }
+ catch (  IllegalArgumentException e) {
+    throw InstantiateParameterException.primitive(paramClass,paramValue,e);
+  }
+  if (paramClass == Void.TYPE)   throw new WebApplicationException(500);
+  throw new WebApplicationException(500);
+}

@@ -1,0 +1,15 @@
+{
+  Response response=get(subPath);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  DomRepresentation entity=response.getEntityAsDom();
+  Node xml=entity.getDocument().getFirstChild();
+  assertEquals("person",xml.getNodeName());
+  NodeList nodeList=xml.getChildNodes();
+  Node node=nodeList.item(0);
+  assertEquals("firstname",node.getNodeName());
+  assertEquals("Angela",node.getFirstChild().getNodeValue());
+  node=nodeList.item(1);
+  assertEquals("lastname",node.getNodeName());
+  assertEquals("Merkel",node.getFirstChild().getNodeValue());
+  assertEquals(2,nodeList.getLength());
+}

@@ -1,5 +1,6 @@
 {
   if (paramClass.equals(String.class))   return paramValue;
+  if (paramClass.isPrimitive())   return getParamValueForPrimitive(paramClass,paramValue);
   try {
     Constructor<?> constructor=paramClass.getConstructor(String.class);
     return constructor.newInstance(paramValue);
@@ -11,21 +12,21 @@
     valueOf=paramClass.getMethod("valueOf",String.class);
   }
  catch (  SecurityException e) {
-    throw new CanNotIntatiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+    throw new InstantiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
   }
 catch (  NoSuchMethodException e) {
-    throw new CanNotIntatiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+    throw new InstantiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
   }
   try {
     return valueOf.invoke(null,paramValue);
   }
  catch (  IllegalArgumentException e) {
-    throw new CanNotIntatiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+    throw new InstantiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
   }
 catch (  IllegalAccessException e) {
-    throw new CanNotIntatiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+    throw new InstantiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
   }
 catch (  InvocationTargetException e) {
-    throw new CanNotIntatiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+    throw new InstantiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
   }
 }

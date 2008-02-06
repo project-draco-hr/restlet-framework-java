@@ -11,5 +11,16 @@
       throw new IllegalOrNoAnnotationException("the root resource class constructor (" + constructor + ") must have annotations on any parameters. (normally this excpetion could not occur)");
     }
   }
-  return constructor.newInstance(args);
+  try {
+    return constructor.newInstance(args);
+  }
+ catch (  IllegalArgumentException e) {
+    throw new InstantiateRootRessourceException("Could not instantiate " + constructor.getDeclaringClass(),e);
+  }
+catch (  InstantiationException e) {
+    throw new InstantiateRootRessourceException("Could not instantiate " + constructor.getDeclaringClass(),e);
+  }
+catch (  IllegalAccessException e) {
+    throw new InstantiateRootRessourceException("Could not instantiate " + constructor.getDeclaringClass(),e);
+  }
 }

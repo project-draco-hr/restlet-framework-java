@@ -1,19 +1,24 @@
 {
   super.handle(request,response);
+  @SuppressWarnings("unchecked") List<Collection<MediaType>> accMediaTypes=(List)Util.sortMetadataList((Collection)request.getClientInfo().getAcceptedMediaTypes());
   try {
-    @SuppressWarnings("unchecked") List<Collection<MediaType>> accMediaTypes=(List)Util.sortMetadataList((Collection)request.getClientInfo().getAcceptedMediaTypes());
-    ResObjAndMeth resObjAndMeth;
     try {
-      resObjAndMeth=matchingRequestToResourceMethod(request,response,accMediaTypes);
+      ResObjAndMeth resObjAndMeth;
+      try {
+        resObjAndMeth=matchingRequestToResourceMethod(request,response,accMediaTypes);
+      }
+ catch (      CouldNotFindMethodException e) {
+        e.errorRestlet.handle(request,response);
+        return;
+      }
+      ResourceMethod resourceMethod=resObjAndMeth.resourceMethod;
+      ResourceObject resourceObject=resObjAndMeth.resourceObject;
+      MultivaluedMap<String,String> allTemplParamsEnc=resObjAndMeth.allTemplParamsEnc;
+      invokeMethodAndHandleResult(resourceMethod,resourceObject,allTemplParamsEnc,request,response,accMediaTypes);
     }
- catch (    CouldNotFindMethodException e) {
-      e.errorRestlet.handle(request,response);
-      return;
+ catch (    WebApplicationException e) {
+      handleWebAppExc(e,response,accMediaTypes,null);
     }
-    ResourceMethod resourceMethod=resObjAndMeth.resourceMethod;
-    ResourceObject resourceObject=resObjAndMeth.resourceObject;
-    MultivaluedMap<String,String> allTemplParamsEnc=resObjAndMeth.allTemplParamsEnc;
-    invokeMethodAndHandleResult(resourceMethod,resourceObject,allTemplParamsEnc,request,response,accMediaTypes);
   }
  catch (  RequestHandledException e) {
   }

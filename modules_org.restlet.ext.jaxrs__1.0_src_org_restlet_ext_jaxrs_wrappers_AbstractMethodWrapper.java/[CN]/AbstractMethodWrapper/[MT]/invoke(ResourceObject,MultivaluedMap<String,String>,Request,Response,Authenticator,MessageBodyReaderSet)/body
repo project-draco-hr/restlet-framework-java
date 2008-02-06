@@ -2,5 +2,13 @@
   Annotation[][] parameterAnnotationss=javaMethod.getParameterAnnotations();
   Class<?>[] parameterTypes=javaMethod.getParameterTypes();
   Object[] args=getParameterValues(parameterAnnotationss,parameterTypes,restletRequest,restletResponse,allTemplParamsEnc,authenticator,mbrs);
-  return this.javaMethod.invoke(resourceObject.getResourceObject(),args);
+  try {
+    return this.javaMethod.invoke(resourceObject.getResourceObject(),args);
+  }
+ catch (  IllegalArgumentException e) {
+    throw new MethodInvokeException("Could not invoke " + javaMethod,e);
+  }
+catch (  IllegalAccessException e) {
+    throw new MethodInvokeException("Could not invoke " + javaMethod,e);
+  }
 }

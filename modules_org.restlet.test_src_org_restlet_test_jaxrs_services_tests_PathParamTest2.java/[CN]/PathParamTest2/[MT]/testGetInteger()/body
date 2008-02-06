@@ -1,0 +1,11 @@
+{
+  Response response=get("Integer/4423467");
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  assertEquals("4423467",response.getEntity().getText());
+  response=get("Integer/423645365467345743734");
+  assertTrue(response.getStatus().isError());
+  assertEquals(Status.CLIENT_ERROR_NOT_FOUND,response.getStatus());
+  response=get("Integer/abc");
+  assertTrue(response.getStatus().isError());
+  assertEquals(Status.CLIENT_ERROR_NOT_FOUND,response.getStatus());
+}

@@ -7,7 +7,10 @@
   try {
     o=resClass.createInstance(allTemplParamsEnc,restletRequest,restletResponse,authenticator);
   }
- catch (  Exception e) {
+ catch (  InstantiateParameterException e) {
+    throw new WebApplicationException(e,404);
+  }
+catch (  Exception e) {
     throw handleCreateException(e,restletResponse,"createInstance","Could not create new instance of root resource class");
   }
   for (; ; ) {
@@ -32,7 +35,10 @@
     try {
       o=subResourceLocator.createSubResource(o,allTemplParamsEnc,restletRequest,restletResponse,authenticator,this.messageBodyReaders);
     }
- catch (    Exception e) {
+ catch (    InstantiateParameterException e) {
+      throw new WebApplicationException(e,404);
+    }
+catch (    Exception e) {
       throw handleCreateException(e,restletResponse,"createSubResource","Could not create new instance of root resource class");
     }
   }
