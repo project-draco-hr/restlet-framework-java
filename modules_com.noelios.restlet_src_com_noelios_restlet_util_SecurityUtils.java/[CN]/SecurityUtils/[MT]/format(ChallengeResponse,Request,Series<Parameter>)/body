@@ -43,12 +43,12 @@
     String canonicalizedResource=getCanonicalizedResourceName(request.getResourceRef());
     StringBuilder rest=new StringBuilder();
     rest.append(methodName).append('\n').append(contentMd5).append('\n').append(contentType).append('\n').append(date).append('\n').append(canonicalizedAmzHeaders).append(canonicalizedResource);
-    sb.append(challenge.getIdentifier()).append(':').append(Base64.encode(toHMac(rest.toString(),new String(challenge.getSecret())),true));
+    sb.append(challenge.getIdentifier()).append(':').append(Base64.encode(toHMac(rest.toString(),new String(challenge.getSecret())),false));
   }
  else   if (challenge.getScheme().equals(ChallengeScheme.HTTP_BASIC)) {
     try {
       String credentials=challenge.getIdentifier() + ':' + new String(challenge.getSecret());
-      sb.append(Base64.encode(credentials.getBytes("US-ASCII"),true));
+      sb.append(Base64.encode(credentials.getBytes("US-ASCII"),false));
     }
  catch (    UnsupportedEncodingException e) {
       throw new RuntimeException("Unsupported encoding, unable to encode credentials");
@@ -72,7 +72,7 @@
  else   if (challenge.getScheme().equals(ChallengeScheme.SMTP_PLAIN)) {
     try {
       String credentials="^@" + challenge.getIdentifier() + "^@"+ new String(challenge.getSecret());
-      sb.append(Base64.encode(credentials.getBytes("US-ASCII"),true));
+      sb.append(Base64.encode(credentials.getBytes("US-ASCII"),false));
     }
  catch (    UnsupportedEncodingException e) {
       throw new RuntimeException("Unsupported encoding, unable to encode credentials");
