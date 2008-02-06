@@ -1,6 +1,6 @@
 {
 switch (authenticate(request)) {
-case 1:
+case AUTHENTICATION_VALID:
     if (authorize(request)) {
       accept(request,response);
     }
@@ -8,16 +8,19 @@ case 1:
       forbid(response);
     }
   break;
-case 0:
-challenge(response);
+case AUTHENTICATION_MISSING:
+challenge(response,false);
 break;
-case -1:
+case AUTHENTICATION_INVALID:
 if (isRechallengeEnabled()) {
-challenge(response);
+challenge(response,false);
 }
  else {
 forbid(response);
 }
+break;
+case AUTHENTICATION_STALE:
+challenge(response,true);
 break;
 }
 return CONTINUE;
