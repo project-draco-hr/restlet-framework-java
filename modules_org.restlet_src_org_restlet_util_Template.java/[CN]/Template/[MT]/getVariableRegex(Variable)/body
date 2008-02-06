@@ -13,12 +13,13 @@
     final String URI_GEN_DELIMS="\\:\\/\\?\\#\\[\\]\\@";
     final String URI_SUB_DELIMS="\\!\\$\\&\\'\\(\\)\\*\\+\\,\\;\\=";
     final String URI_RESERVED=URI_GEN_DELIMS + URI_SUB_DELIMS;
-    final String URI_ALL=URI_RESERVED + URI_UNRESERVED;
     final String WORD="\\w";
     final String PCT_ENCODED="\\%[" + HEXA + "]["+ HEXA+ "]";
     final String PCHAR="[" + URI_UNRESERVED + URI_SUB_DELIMS+ "\\:\\@]|(?:"+ PCT_ENCODED+ ")";
     final String QUERY=PCHAR + "|\\/|\\?";
     final String FRAGMENT=QUERY;
+    final String URI_PATH=PCHAR + "|\\/";
+    final String URI_ALL="[" + URI_RESERVED + URI_UNRESERVED+ "]|(?:"+ PCT_ENCODED+ ")";
     StringBuilder coreRegex=new StringBuilder();
 switch (variable.getType()) {
 case Variable.TYPE_ALL:
@@ -34,7 +35,7 @@ case Variable.TYPE_ALPHA_DIGIT:
 appendClass(coreRegex,ALPHA_DIGIT,variable.isRequired());
 break;
 case Variable.TYPE_URI_ALL:
-appendClass(coreRegex,URI_ALL,variable.isRequired());
+appendGroup(coreRegex,URI_ALL,variable.isRequired());
 break;
 case Variable.TYPE_URI_UNRESERVED:
 appendClass(coreRegex,URI_UNRESERVED,variable.isRequired());
@@ -44,6 +45,9 @@ appendClass(coreRegex,WORD,variable.isRequired());
 break;
 case Variable.TYPE_URI_FRAGMENT:
 appendGroup(coreRegex,FRAGMENT,variable.isRequired());
+break;
+case Variable.TYPE_URI_PATH:
+appendGroup(coreRegex,URI_PATH,variable.isRequired());
 break;
 case Variable.TYPE_URI_QUERY:
 appendGroup(coreRegex,QUERY,variable.isRequired());
