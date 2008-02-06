@@ -9,11 +9,12 @@
       String realmValue=realm.substring(equals + 2,realm.length() - 1);
       result=new ChallengeRequest(new ChallengeScheme("HTTP_" + scheme,scheme),realmValue);
       if (result.getScheme().equals(ChallengeScheme.HTTP_DIGEST)) {
-        Series<Parameter> parameters=new Form();
-        SecurityUtils.parseDirectives(realm,parameters);
-        result.setRealm(parameters.getFirstValue("realm"));
-        parameters.removeAll("realm");
-        result.setParameters(parameters);
+        Series<Parameter> components=new Form();
+        AuthenticationUtils.parseParameters(realm,components);
+        for (        Parameter param : components) {
+          result.getParameters().add(param.getName(),param.getValue());
+        }
+        result.setRealm(components.getFirstValue("realm"));
       }
     }
   }

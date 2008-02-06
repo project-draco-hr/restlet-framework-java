@@ -1,0 +1,22 @@
+{
+  response.setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
+  response.setChallengeRequest(new ChallengeRequest(guard.getScheme(),guard.getRealm()));
+  if (guard.getScheme().equals(ChallengeScheme.HTTP_DIGEST)) {
+    if (stale) {
+      response.getAttributes().put("stale","true");
+    }
+    Series<Parameter> parameters=response.getChallengeRequest().getParameters();
+    StringBuffer domain=new StringBuffer();
+    for (    String baseUri : guard.getBaseUris()) {
+      domain.append(baseUri).append(' ');
+    }
+    if (domain.length() > 0) {
+      domain.delete(domain.length() - 1,domain.length());
+      parameters.add("domain",domain.toString());
+    }
+    parameters.add("nonce",makeNonce(guard.getServerKey()));
+    if (response.getAttributes().containsKey("stale")) {
+      parameters.add("stale","true");
+    }
+  }
+}

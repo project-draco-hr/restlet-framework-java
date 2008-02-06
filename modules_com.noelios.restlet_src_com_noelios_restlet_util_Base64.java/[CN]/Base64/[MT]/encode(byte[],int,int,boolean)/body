@@ -1,0 +1,22 @@
+{
+  char[] output=new char[(((len + 2) / 3) * 4) + (newlines ? len / 43 : 0)];
+  int pos=0;
+  for (int i=0; i < (len + 2) / 3; ++i) {
+    int pad=0;
+    if (len + 1 < (i + 1) * 3) {
+      pad=2;
+    }
+ else     if (len < (i + 1) * 3) {
+      pad=1;
+    }
+    int x=(byteAt(bytes,i,off) << 16) | (pad > 1 ? 0 : (byteAt(bytes,i,off + 1) << 8)) | (pad > 0 ? 0 : (byteAt(bytes,i,off + 2)));
+    output[pos++]=BASE64_DIGITS[x >> 18];
+    output[pos++]=BASE64_DIGITS[(x >> 12) & 0x3F];
+    output[pos++]=pad > 1 ? '=' : BASE64_DIGITS[(x >> 6) & 0x3F];
+    output[pos++]=pad > 0 ? '=' : BASE64_DIGITS[x & 0x3F];
+    if (newlines && ((i + 1) % 19 == 0)) {
+      output[pos++]='\n';
+    }
+  }
+  return new String(output,0,pos);
+}
