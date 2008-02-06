@@ -11,8 +11,8 @@
       arg=getParameterValue(parameterAnnotationss[i],paramType,restletRequest,restletResponse,httpContext,allTemplParamsEnc,i,authenticator);
       if (httpContext == null && arg instanceof HttpContextImpl)       httpContext=(HttpContextImpl)arg;
     }
- catch (    IllegalOrNoAnnotationException e) {
-      if (annotRequired)       throw e;
+ catch (    IllegalOrNoAnnotationException ionae) {
+      if (annotRequired)       throw ionae;
       annotRequired=true;
       if (mbrs == null) {
         throw new NoMessageBodyReadersException();
@@ -33,8 +33,8 @@
           javax.ws.rs.core.MediaType jaxRsMediaType=Converter.toJaxRsMediaType(mediaType,entity.getCharacterSet());
           arg=mbr.readFrom(paramType,jaxRsMediaType,httpHeaders,entity.getStream());
         }
- catch (        IOException e1) {
-          throw new CanNotIntatiateParameterException("Can not instatiate parameter of type " + paramType.getName());
+ catch (        IOException e) {
+          throw new CanNotIntatiateParameterException("Can not instatiate parameter of type " + paramType.getName(),e);
         }
       }
     }
