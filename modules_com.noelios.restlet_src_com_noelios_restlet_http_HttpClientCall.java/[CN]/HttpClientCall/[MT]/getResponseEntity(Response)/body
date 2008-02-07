@@ -8,7 +8,7 @@
         size=Long.parseLong(header.getValue());
       }
  catch (      NumberFormatException e) {
-        getLogger().warning("Unkown value received as content lenght: \"" + header.getValue() + "\".");
+        getLogger().warning("Unkown value received as content length: \"" + header.getValue() + "\".");
       }
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_TRANSFER_ENCODING)) {
@@ -33,6 +33,9 @@
   if (result != null) {
     result.setSize(size);
     copyResponseEntityHeaders(responseHeaders,result);
+    if (size == Representation.UNKNOWN_SIZE) {
+      getLogger().info("The length of the message body is unknown. The entity must be handled carefully");
+    }
   }
   return result;
 }
