@@ -10,8 +10,13 @@
         if (connectorService != null)         connectorService.afterSend(entity);
       }
       if (getResponseEntityStream() != null) {
-        getResponseEntityStream().flush();
-        getResponseEntityStream().close();
+        try {
+          getResponseEntityStream().flush();
+          getResponseEntityStream().close();
+        }
+ catch (        IOException ioe) {
+          getLogger().log(Level.FINE,"Exception while flushing and closing the entity stream.",ioe);
+        }
       }
     }
   finally {
