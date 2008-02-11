@@ -1,7 +1,7 @@
 {
-  String u=resClAndTemplate.u;
-  RootResourceClass resClass=resClAndTemplate.rrc;
-  MultivaluedMap<String,String> allTemplParamsEnc=resClAndTemplate.allTemplParamsEnc;
+  String u=rrcAndRemPath.u;
+  RootResourceClass resClass=rrcAndRemPath.rrc;
+  MultivaluedMap<String,String> allTemplParamsEnc=rrcAndRemPath.allTemplParamsEnc;
   PathRegExp rMatch=resClass.getPathRegExp();
   ResourceObject o;
   try {
@@ -15,7 +15,7 @@ catch (  Exception e) {
   }
   for (; ; ) {
     if (Util.isEmptyOrSlash(u)) {
-      return new ResObjAndPath(o,u,allTemplParamsEnc);
+      return new ResObjAndRemPath(o,u,allTemplParamsEnc);
     }
     Collection<SubResourceMethodOrLocator> eWithMethod=new ArrayList<SubResourceMethodOrLocator>();
     for (    SubResourceMethodOrLocator methodOrLocator : resClass.getSubResourceMethodsAndLocators()) {
@@ -29,7 +29,7 @@ catch (  Exception e) {
     rMatch=firstMeth.getPathRegExp();
     MatchingResult matchingResult=rMatch.match(u);
     addMrVarsToMap(matchingResult,allTemplParamsEnc);
-    if (firstMeth instanceof SubResourceMethod)     return new ResObjAndPath(o,u,allTemplParamsEnc);
+    if (firstMeth instanceof SubResourceMethod)     return new ResObjAndRemPath(o,u,allTemplParamsEnc);
     u=matchingResult.getFinalCapturingGroup();
     SubResourceLocator subResourceLocator=(SubResourceLocator)firstMeth;
     try {
