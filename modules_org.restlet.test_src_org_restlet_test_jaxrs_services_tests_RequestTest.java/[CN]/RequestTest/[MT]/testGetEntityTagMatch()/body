@@ -1,10 +1,10 @@
 {
   Conditions conditions=new Conditions();
-  conditions.setMatch(Util.createList(getEntityTagFromDatastore()));
+  conditions.setMatch(Util.createList(getDatastoreETag()));
   Response response=get("date",conditions);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   assertEquals(RequestService.getLastModificationDateFromDatastore(),response.getEntity().getModificationDate());
-  assertEquals(getEntityTagFromDatastore(),response.getEntity().getTag());
+  assertEquals(getDatastoreETag(),response.getEntity().getTag());
   assertNotNull(response.getEntity().getText());
   assertTrue(response.getEntity().getSize() > 0);
   conditions=new Conditions();
