@@ -1,0 +1,14 @@
+{
+  SortedMap<Float,Collection<Metadata>> map=new TreeMap<Float,Collection<Metadata>>(Collections.reverseOrder());
+  for (  Preference<? extends Metadata> preference : preferences) {
+    Float quality=preference.getQuality();
+    Collection<Metadata> metadatas=map.get(quality);
+    if (metadatas == null) {
+      metadatas=new ArrayList<Metadata>(2);
+      map.put(quality,metadatas);
+    }
+    metadatas.add(preference.getMetadata());
+  }
+  List arrayList=new ArrayList<Collection<? extends Metadata>>(map.values());
+  return new SortedMetadata<Metadata>(arrayList);
+}

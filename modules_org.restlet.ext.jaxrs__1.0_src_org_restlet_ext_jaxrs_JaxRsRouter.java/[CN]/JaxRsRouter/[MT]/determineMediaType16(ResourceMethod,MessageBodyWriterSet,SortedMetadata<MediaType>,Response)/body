@@ -1,0 +1,13 @@
+{
+  Collection<MediaType> p=resourceMethod.getProducedMimes();
+  if (p.isEmpty()) {
+    p=new ArrayList<MediaType>();
+    for (    MessageBodyWriter messageBodyWriter : mbwsForEntityClass)     p.addAll(messageBodyWriter.getProducedMimes());
+  }
+  if (p.isEmpty())   return Collections.singleton(MediaType.ALL);
+  if (accMediaTypes.isEmpty())   accMediaTypes=SortedMetadata.getMediaTypeAll();
+  Set<MediaType> m=new HashSet<MediaType>();
+  for (  MediaType prod : p)   for (  MediaType acc : accMediaTypes)   if (Util.isCompatible(prod,acc))   m.add(Util.mostSpecific(prod,acc));
+  if (m.isEmpty())   throw throwNotAcceptable(restletResponse);
+  return m;
+}

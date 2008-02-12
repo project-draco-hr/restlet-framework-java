@@ -1,0 +1,18 @@
+{
+  if (mediaTypes == null || mediaTypes.length == 0)   throw new IllegalArgumentException("You must give at least one MediaType");
+  if (mediaTypes.length == 1)   return mediaTypes[0];
+  org.restlet.data.MediaType mostSpecific=mediaTypes[0];
+  for (int i=1; i < mediaTypes.length; i++) {
+    org.restlet.data.MediaType mediaType=mediaTypes[i];
+    if (mediaType.getMainType().equals("*"))     continue;
+    if (mostSpecific.getMainType().equals("*")) {
+      mostSpecific=mediaType;
+      continue;
+    }
+    if (mostSpecific.getSubType().equals("*")) {
+      mostSpecific=mediaType;
+      continue;
+    }
+  }
+  return mostSpecific;
+}
