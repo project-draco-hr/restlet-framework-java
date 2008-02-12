@@ -6,6 +6,9 @@
   }
   if (p.isEmpty())   return Collections.singleton(MediaType.ALL);
   if (accMediaTypes.isEmpty())   accMediaTypes=SortedMetadata.getMediaTypeAll();
+  Comparator<MediaType> comp=Util.MEDIA_TYPE_COMP;
+  p=Util.createTreeSet(p,comp);
+  if (p.size() > 1)   "".toString();
   Set<MediaType> m=new HashSet<MediaType>();
   for (  MediaType prod : p)   for (  MediaType acc : accMediaTypes)   if (Util.isCompatible(prod,acc))   m.add(Util.mostSpecific(prod,acc));
   if (m.isEmpty())   throw throwNotAcceptable(restletResponse);
