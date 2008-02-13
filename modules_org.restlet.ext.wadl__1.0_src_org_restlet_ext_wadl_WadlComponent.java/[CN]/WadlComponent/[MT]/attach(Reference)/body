@@ -1,0 +1,11 @@
+{
+  WadlApplication result=null;
+  if (!getClients().contains(wadlRef.getSchemeProtocol())) {
+    getClients().add(wadlRef.getSchemeProtocol());
+  }
+  Response response=getContext().getClientDispatcher().get(wadlRef);
+  if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
+    result=attach(response.getEntity());
+  }
+  return result;
+}

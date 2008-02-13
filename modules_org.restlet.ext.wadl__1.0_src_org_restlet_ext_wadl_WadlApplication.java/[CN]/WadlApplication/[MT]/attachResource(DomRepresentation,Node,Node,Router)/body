@@ -1,6 +1,6 @@
 {
-  String uriPattern=thisResource.getAttributes().getNamedItem("path").getNodeValue();
-  Node idNode=thisResource.getAttributes().getNamedItem("id");
+  String uriPattern=currentResource.getAttributes().getNamedItem("path").getNodeValue();
+  Node idNode=currentResource.getAttributes().getNamedItem("id");
   if (idNode != null) {
     if (parentResource != null) {
       String parentUriPattern=parentResource.getAttributes().getNamedItem("path").getNodeValue();
@@ -8,14 +8,14 @@
         parentUriPattern+="/";
       }
       uriPattern=parentUriPattern + uriPattern;
-      ((Element)thisResource).setAttribute("path",uriPattern);
+      ((Element)currentResource).setAttribute("path",uriPattern);
     }
     String targetClassName=idNode.getNodeValue();
     Class targetClass=Class.forName(targetClassName);
     router.attach(uriPattern,targetClass);
     NodeSet childResources=wadl.getNodes("//resource[@id='" + targetClassName + "']/resource");
     for (    Node childResource : childResources) {
-      attachResourceAndChildren(wadl,childResource,thisResource,router);
+      attachResource(wadl,childResource,currentResource,router);
     }
   }
  else {

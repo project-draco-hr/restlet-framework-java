@@ -1,0 +1,19 @@
+{
+  String hostDomain=baseRef.getHostDomain();
+  String hostPort=Integer.toString(baseRef.getHostPort());
+  String hostScheme=baseRef.getScheme();
+  VirtualHost host=null;
+  for (  VirtualHost vh : component.getHosts()) {
+    if (vh.getHostDomain().equals(hostDomain) && vh.getHostPort().equals(hostPort) && vh.getHostScheme().equals(hostScheme)) {
+      host=vh;
+    }
+  }
+  if (host == null) {
+    host=new VirtualHost(getContext());
+    host.setHostDomain(hostDomain);
+    host.setHostPort(hostPort);
+    host.setHostScheme(hostScheme);
+    component.getHosts().add(host);
+  }
+  return host;
+}

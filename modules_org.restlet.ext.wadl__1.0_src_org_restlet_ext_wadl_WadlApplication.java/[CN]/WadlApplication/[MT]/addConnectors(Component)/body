@@ -1,0 +1,25 @@
+{
+  Protocol protocol=getBaseRef().getSchemeProtocol();
+  int port=getBaseRef().getHostPort();
+  boolean exists=false;
+  if (port == -1) {
+    for (    Server server : component.getServers()) {
+      if (server.getProtocols().contains(protocol) && (server.getPort() == protocol.getDefaultPort())) {
+        exists=true;
+      }
+    }
+    if (!exists) {
+      component.getServers().add(protocol);
+    }
+  }
+ else {
+    for (    Server server : component.getServers()) {
+      if (server.getProtocols().contains(protocol) && (server.getPort() == port)) {
+        exists=true;
+      }
+    }
+    if (!exists) {
+      component.getServers().add(protocol,port);
+    }
+  }
+}
