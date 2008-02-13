@@ -1,15 +1,21 @@
 {
+  Representation result=(representation == null) ? Representation.createEmpty() : representation;
+  boolean entityHeaderFound=false;
   for (  Parameter header : responseHeaders) {
     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_TYPE)) {
       ContentType contentType=new ContentType(header.getValue());
       result.setMediaType(contentType.getMediaType());
       result.setCharacterSet(contentType.getCharacterSet());
+      entityHeaderFound=true;
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LENGTH)) {
       result.setSize(Long.parseLong(header.getValue()));
+      entityHeaderFound=true;
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_EXPIRES)) {
+      entityHeaderFound=true;
       result.setExpirationDate(parseDate(header.getValue(),false));
+      entityHeaderFound=true;
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_ENCODING)) {
       HeaderReader hr=new HeaderReader(header.getValue());
@@ -21,6 +27,7 @@
         }
         value=hr.readValue();
       }
+      entityHeaderFound=true;
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LANGUAGE)) {
       HeaderReader hr=new HeaderReader(header.getValue());
@@ -29,18 +36,27 @@
         result.getLanguages().add(new Language(value));
         value=hr.readValue();
       }
+      entityHeaderFound=true;
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_LAST_MODIFIED)) {
       result.setModificationDate(parseDate(header.getValue(),false));
+      entityHeaderFound=true;
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_ETAG)) {
       result.setTag(Tag.parse(header.getValue()));
+      entityHeaderFound=true;
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LOCATION)) {
       result.setIdentifier(header.getValue());
+      entityHeaderFound=true;
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_DISPOSITION)) {
       result.setDownloadName(parseContentDisposition(header.getValue()));
+      entityHeaderFound=true;
     }
   }
+  if (!entityHeaderFound) {
+    return null;
+  }
+  return result;
 }
