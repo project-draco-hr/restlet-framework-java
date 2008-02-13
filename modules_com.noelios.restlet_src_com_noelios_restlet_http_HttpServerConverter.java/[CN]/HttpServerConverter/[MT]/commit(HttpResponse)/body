@@ -18,7 +18,8 @@
       response.setEntity(null);
     }
  else     if (response.getStatus().equals(Status.REDIRECTION_NOT_MODIFIED)) {
-      getLogger().warning("Responses with a 304 (Not modified) status can't have an entity. Ignoring the entity");
+      getLogger().warning("Responses with a 304 (Not modified) status can't have an entity. Only adding entity headers.");
+      addEntityHeaders(response);
       response.setEntity(null);
     }
  else     if (response.getStatus().isInformational()) {
@@ -26,11 +27,11 @@
       response.setEntity(null);
     }
  else {
+      addEntityHeaders(response);
       if ((response.getEntity() != null) && !response.getEntity().isAvailable()) {
         getLogger().warning("A response with an unavailable entity was returned. Ignoring the entity");
         response.setEntity(null);
       }
-      addEntityHeaders(response);
     }
     addResponseHeaders(response);
     response.getHttpCall().sendResponse(response);
