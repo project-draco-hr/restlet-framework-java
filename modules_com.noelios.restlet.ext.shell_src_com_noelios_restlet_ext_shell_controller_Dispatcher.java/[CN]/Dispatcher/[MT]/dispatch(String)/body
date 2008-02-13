@@ -1,0 +1,22 @@
+{
+  String[] args=DispatcherHelpers.tokenize(line);
+  Command command=commands.get(args[0]);
+  String[] realArgs;
+  try {
+    realArgs=UsageParserFacade.buildArguments(command.getUsage(),args);
+  }
+ catch (  UsageException e) {
+    view.output("usage: %s: %s",command.getUsage(),e.getMessage());
+    return;
+  }
+  executeCommand(command,realArgs);
+  if (model.getResponse().getStatus().equals(Status.CLIENT_ERROR_UNAUTHORIZED)) {
+    ChallengeRequest challengeRequest=model.getResponse().getChallengeRequest();
+    view.output("%s authentication for realm '%s'",challengeRequest.getScheme().getTechnicalName(),challengeRequest.getRealm());
+    String username=view.input("username: ");
+    String password=view.input("password: ");
+    ChallengeResponse challengeResponse=new ChallengeResponse(challengeRequest.getScheme(),username,password);
+    model.setChallengeResponse(challengeResponse);
+    executeCommand(command,args);
+  }
+}

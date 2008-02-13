@@ -1,0 +1,17 @@
+{
+  final String commandName=args[0];
+  final Commands commands=CommandsSingleton.getInstance();
+  if (commandName.equals("")) {
+    Set<Command> uniqueCommands=new HashSet<Command>(commands.values());
+    for (    Command command : uniqueCommands) {
+      if (command.getHelp() != null) {
+        view.output("%s : %s",command.getUsage(),command.getHelp());
+      }
+    }
+  }
+ else {
+    Command command=commands.get(commandName);
+    view.output("usage : %s",command.getUsage());
+    view.output("help  : %s",command.getHelp());
+  }
+}
