@@ -25,6 +25,10 @@ catch (  Exception e) {
     if (result instanceof javax.ws.rs.core.Response) {
       jaxRsRespToRestletResp((javax.ws.rs.core.Response)result,restletResponse,resourceMethod,accMediaTypes);
     }
+ else     if (result instanceof javax.ws.rs.core.Response.ResponseBuilder) {
+      javax.ws.rs.core.Response response=((javax.ws.rs.core.Response.ResponseBuilder)result).build();
+      jaxRsRespToRestletResp(response,restletResponse,resourceMethod,accMediaTypes);
+    }
  else {
       Representation entity=convertToRepresentation(result,resourceMethod,accMediaTypes,restletResponse,null);
       restletResponse.setEntity(entity);
