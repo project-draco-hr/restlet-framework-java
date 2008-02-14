@@ -3,10 +3,10 @@
   if (givenMediaType != null)   givenMediaTypes=SortedMetadata.singleton(givenMediaType);
  else   givenMediaTypes=null;
   Map<ResourceMethod,List<MediaType>> mms=findMethodSupportsMime(resourceMethods,ConsOrProdMime.CONSUME_MIME,givenMediaTypes);
-  if (mms.isEmpty())   return null;
+  if (mms.isEmpty())   throw new WebApplicationException(500);
   if (mms.size() == 1)   return Util.getFirstKey(mms);
   mms=findMethodSupportsMime(mms.keySet(),ConsOrProdMime.PRODUCE_MIME,accMediaTypes);
-  if (mms.isEmpty())   return null;
+  if (mms.isEmpty())   throw new WebApplicationException(500);
   if (mms.size() == 1)   return Util.getFirstKey(mms);
   for (  MediaType accMediaType : accMediaTypes) {
     ResourceMethod bestMethod=null;
@@ -38,5 +38,5 @@
     }
     if (bestMethod != null)     return bestMethod;
   }
-  return null;
+  throw new WebApplicationException(500);
 }

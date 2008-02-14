@@ -32,9 +32,6 @@
     throw new CouldNotFindMethodException(errorRestletNotAcceptable,"there is no java method on class " + resourceClass.getName() + " supporting the http method "+ httpMethod+ " and remaining path "+ u+ " and the given and accepted media types");
   }
   ResourceMethod bestResourceMethod=getBestMethod(resourceMethods,givenMediaType,accMediaTypes,httpMethod);
-  if (bestResourceMethod == null) {
-    throw new RuntimeException("Found no method, but there must be one.");
-  }
   MatchingResult mr=bestResourceMethod.getPathRegExp().match(u);
   addMrVarsToMap(mr,callContext);
   return new ResObjAndMeth(resObj,bestResourceMethod);
