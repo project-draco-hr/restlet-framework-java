@@ -1,10 +1,11 @@
 {
+  this();
   DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
   dbf.setNamespaceAware(false);
   dbf.setValidating(false);
   try {
     DocumentBuilder db=dbf.newDocumentBuilder();
-    Document document=db.parse(new FileInputStream(new File(xmlConfigPath)));
+    Document document=db.parse(new FileInputStream(new LocalReference(xmlConfigReference).getFile()));
     NodeList clientNodes=document.getElementsByTagName("client");
     for (int i=0; i < clientNodes.getLength(); i++) {
       Node clientNode=clientNodes.item(i);
