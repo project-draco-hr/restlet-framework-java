@@ -5,39 +5,38 @@
   Map<ResourceMethod,List<MediaType>> mms=findMethodSupportsMime(resourceMethods,ConsOrProdMime.CONSUME_MIME,givenMediaTypes);
   if (mms.isEmpty())   return null;
   if (mms.size() == 1)   return Util.getFirstKey(mms);
-  mms=findMethodSupportsMime(mms.keySet(),ConsOrProdMime.PRODUCE_MIME,accMediaTypess);
+  mms=findMethodSupportsMime(mms.keySet(),ConsOrProdMime.PRODUCE_MIME,accMediaTypes);
   if (mms.isEmpty())   return null;
   if (mms.size() == 1)   return Util.getFirstKey(mms);
-{
-    for (    MediaType accMediaType : accMediaTypess) {
-      ResourceMethod bestMethod=null;
-      for (      Map.Entry<ResourceMethod,List<MediaType>> mm : mms.entrySet()) {
-        for (        MediaType methodMediaType : mm.getValue()) {
-          if (accMediaType.includes(methodMediaType)) {
-            ResourceMethod currentMethod=mm.getKey();
-            if (bestMethod == null) {
-              bestMethod=currentMethod;
+  for (  MediaType accMediaType : accMediaTypes) {
+    ResourceMethod bestMethod=null;
+    for (    Map.Entry<ResourceMethod,List<MediaType>> mm : mms.entrySet()) {
+      for (      MediaType methodMediaType : mm.getValue()) {
+        if (accMediaType.includes(methodMediaType)) {
+          ResourceMethod currentMethod=mm.getKey();
+          if (bestMethod == null) {
+            bestMethod=currentMethod;
+          }
+ else {
+            if (httpMethod.equals(Method.HEAD)) {
+              Method bestMethodHttp=bestMethod.getHttpMethod();
+              if (bestMethodHttp.equals(Method.GET) && currentMethod.getHttpMethod().equals(Method.HEAD)) {
+              }
+ else               if (bestMethod.getHttpMethod().equals(Method.HEAD) && currentMethod.getHttpMethod().equals(Method.GET)) {
+                bestMethod=currentMethod;
+              }
+ else {
+                throwMultipleResourceMethods("Multiple java methods found on " + currentMethod.getResourceClass().getName() + ": "+ bestMethod.getName()+ " and "+ currentMethod.getName());
+              }
             }
  else {
-              if (httpMethod.equals(Method.HEAD)) {
-                if (bestMethod.getHttpMethod().equals(Method.GET) && currentMethod.getHttpMethod().equals(Method.HEAD)) {
-                }
- else                 if (bestMethod.getHttpMethod().equals(Method.HEAD) && currentMethod.getHttpMethod().equals(Method.GET)) {
-                  bestMethod=currentMethod;
-                }
- else {
-                  throwMultipleResourceMethods();
-                }
-              }
- else {
-                throwMultipleResourceMethods();
-              }
+              throwMultipleResourceMethods("Multiple java methods found for this request: " + bestMethod.getName() + " and "+ currentMethod.getName());
             }
           }
         }
       }
-      if (bestMethod != null)       return bestMethod;
     }
+    if (bestMethod != null)     return bestMethod;
   }
   return null;
 }

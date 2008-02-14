@@ -11,4 +11,7 @@
   conditions.setModifiedSince(AFTER);
   response=get("date",conditions);
   assertEquals(Status.REDIRECTION_NOT_MODIFIED,response.getStatus());
+  assertEquals(RequestService.getLastModificationDateFromDatastore(),response.getEntity().getModificationDate());
+  assertEquals(getDatastoreETag(),response.getEntity().getTag());
+  assertEquals(0,response.getEntity().getSize());
 }
