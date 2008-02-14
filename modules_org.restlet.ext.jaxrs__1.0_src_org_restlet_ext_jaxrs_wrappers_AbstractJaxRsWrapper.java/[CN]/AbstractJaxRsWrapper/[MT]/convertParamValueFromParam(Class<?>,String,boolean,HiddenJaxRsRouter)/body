@@ -1,0 +1,33 @@
+{
+  if (!leaveEncoded && paramValue != null)   paramValue=Reference.decode(paramValue);
+  if (paramClass.equals(String.class))   return paramValue;
+  if (paramClass.isPrimitive())   return getParamValueForPrimitive(paramClass,paramValue,jaxRsRouter);
+  try {
+    Constructor<?> constr=paramClass.getConstructor(String.class);
+    return constr.newInstance(paramValue);
+  }
+ catch (  Exception e) {
+  }
+  Method valueOf;
+  try {
+    valueOf=paramClass.getMethod("valueOf",String.class);
+  }
+ catch (  SecurityException e) {
+    throw new InstantiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+  }
+catch (  NoSuchMethodException e) {
+    throw new InstantiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+  }
+  try {
+    return valueOf.invoke(null,paramValue);
+  }
+ catch (  IllegalArgumentException e) {
+    throw new InstantiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+  }
+catch (  IllegalAccessException e) {
+    throw new InstantiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+  }
+catch (  InvocationTargetException e) {
+    throw new InstantiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+  }
+}

@@ -1,0 +1,26 @@
+{
+  for (  Annotation annotation : paramAnnotations) {
+    Class<? extends Annotation> annotationType=annotation.annotationType();
+    if (annotationType.equals(HeaderParam.class)) {
+      String headerParamValue=Util.getHttpHeaders(callContext.getRequest()).getFirstValue(((HeaderParam)annotation).value(),true);
+      return convertParamValueFromParam(paramClass,headerParamValue,false,jaxRsRouter);
+    }
+    if (annotationType.equals(PathParam.class)) {
+      String pathParamValue=callContext.getLastTemplParamEnc((PathParam)annotation);
+      return convertParamValueFromParam(paramClass,pathParamValue,leaveEncoded,jaxRsRouter);
+    }
+    if (annotationType.equals(Context.class)) {
+      return callContext;
+    }
+    if (annotationType.equals(MatrixParam.class)) {
+      String pathParamValue=callContext.getLastMatrixParamEnc((MatrixParam)annotation);
+      return convertParamValueFromParam(paramClass,pathParamValue,leaveEncoded,jaxRsRouter);
+    }
+    if (annotationType.equals(QueryParam.class)) {
+      Form form=Converter.toFormEncoded(callContext.getRequest().getResourceRef().getQuery(),jaxRsRouter.getLogger());
+      String queryParamValue=form.getFirstValue(((QueryParam)annotation).value());
+      return convertParamValueFromParam(paramClass,queryParamValue,true,jaxRsRouter);
+    }
+  }
+  throw new IllegalOrNoAnnotationException("The " + indexForExcMessages + ". parameter requires one of the following annotations: "+ VALID_ANNOTATIONS);
+}
