@@ -3,8 +3,8 @@
   if (entity == null)   return null;
   Class<? extends Object> entityClass=entity.getClass();
   MessageBodyWriterSet mbws=this.messageBodyWriters.subSet(entityClass);
-  Set<MediaType> possMediaTypes;
-  if (responseMediaType != null)   possMediaTypes=Collections.singleton(responseMediaType);
+  List<MediaType> possMediaTypes;
+  if (responseMediaType != null)   possMediaTypes=Collections.singletonList(responseMediaType);
  else   possMediaTypes=determineMediaType16(resourceMethod,mbws,accMediaTypes,restletResponse);
   mbws=mbws.subSet(possMediaTypes);
   MessageBodyWriter mbw=mbws.getBest(accMediaTypes);
