@@ -2,5 +2,8 @@
   if (this == anotherObject)   return true;
   if (!(anotherObject instanceof UriInfo))   return false;
   UriInfo other=(UriInfo)anotherObject;
-  return this.getBaseUri().equals(other.getBaseUri()) && this.getPathSegments().equals(other.getPathSegments()) && Util.equals(this.getTemplateParameters(),other.getTemplateParameters());
+  if (!this.getBaseUri().equals(other.getBaseUri()))   return false;
+  if (!this.getPathSegments().equals(other.getPathSegments()))   return false;
+  if (!Util.equals(this.getTemplateParameters(),other.getTemplateParameters()))   return false;
+  return true;
 }

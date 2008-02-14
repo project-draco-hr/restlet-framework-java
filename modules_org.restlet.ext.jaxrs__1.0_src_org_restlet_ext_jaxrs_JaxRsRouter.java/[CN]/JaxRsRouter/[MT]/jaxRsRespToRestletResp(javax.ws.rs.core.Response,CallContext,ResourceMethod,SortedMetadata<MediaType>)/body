@@ -1,0 +1,9 @@
+{
+  Response restletResponse=callContext.getResponse();
+  restletResponse.setStatus(Status.valueOf(jaxRsResponse.getStatus()));
+  Object mediaTypeStr=jaxRsResponse.getMetadata().getFirst(HttpHeaders.CONTENT_TYPE);
+  MediaType respMediaType=null;
+  if (mediaTypeStr != null)   respMediaType=MediaType.valueOf(mediaTypeStr.toString());
+  restletResponse.setEntity(convertToRepresentation(jaxRsResponse.getEntity(),resourceMethod,accMediaTypes,callContext,respMediaType));
+  Util.copyResponseHeaders(jaxRsResponse.getMetadata(),restletResponse,getLogger());
+}

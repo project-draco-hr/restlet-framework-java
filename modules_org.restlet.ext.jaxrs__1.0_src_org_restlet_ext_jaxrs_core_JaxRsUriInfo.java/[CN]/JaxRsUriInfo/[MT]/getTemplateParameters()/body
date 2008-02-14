@@ -1,7 +1,8 @@
 {
+  checkReadable();
   if (this.templateParametersDecoded == null) {
     if (this.templateParametersEncoded == null)     return null;
-    MultivaluedMap<String,String> templParamsDec=new MultivaluedMapImpl<String,String>();
+    MultivaluedMapImpl<String,String> templParamsDec=new MultivaluedMapImpl<String,String>();
     for (    Map.Entry<String,List<String>> entryEnc : this.templateParametersEncoded.entrySet()) {
       String keyDec=Reference.decode(entryEnc.getKey());
       List<String> valuesEnc=entryEnc.getValue();
@@ -9,7 +10,7 @@
       for (      String valueEnc : valuesEnc)       valuesDec.add(Reference.decode(valueEnc));
       templParamsDec.put(keyDec,valuesDec);
     }
-    this.templateParametersDecoded=new UnmodifiableMultivaluedMap<String,String>(templParamsDec,false);
+    this.templateParametersDecoded=UnmodifiableMultivaluedMap.get(templParamsDec,false);
   }
   return this.templateParametersDecoded;
 }

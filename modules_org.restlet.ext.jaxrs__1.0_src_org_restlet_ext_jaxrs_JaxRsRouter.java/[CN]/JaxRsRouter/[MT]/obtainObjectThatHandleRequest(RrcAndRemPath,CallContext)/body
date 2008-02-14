@@ -1,0 +1,44 @@
+{
+  String u=rrcAndRemPath.u;
+  RootResourceClass resClass=rrcAndRemPath.rrc;
+  PathRegExp rMatch=resClass.getPathRegExp();
+  ResourceObject o;
+  try {
+    o=resClass.createInstance(callContext,this);
+  }
+ catch (  InstantiateParameterException e) {
+    throw new WebApplicationException(e,404);
+  }
+catch (  Exception e) {
+    throw handleCreateException(e,callContext,"createInstance","Could not create new instance of root resource class");
+  }
+  for (; ; ) {
+    if (Util.isEmptyOrSlash(u)) {
+      return new ResObjAndRemPath(o,u);
+    }
+    Collection<SubResourceMethodOrLocator> eWithMethod=new ArrayList<SubResourceMethodOrLocator>();
+    for (    SubResourceMethodOrLocator methodOrLocator : resClass.getSubResourceMethodsAndLocators()) {
+      MatchingResult matchResult=methodOrLocator.getPathRegExp().match(u);
+      if (matchResult == null)       continue;
+      if (!Util.isEmptyOrSlash(matchResult.getFinalMatchingGroup()))       continue;
+      eWithMethod.add(methodOrLocator);
+    }
+    if (eWithMethod.isEmpty())     throw new CouldNotFindMethodException(errorRestletResourceNotFound);
+    SubResourceMethodOrLocator firstMeth=getFirstMethOrLocByNumberOfLiteralCharactersAndByNumberOfCapturingGroups(eWithMethod);
+    rMatch=firstMeth.getPathRegExp();
+    MatchingResult matchingResult=rMatch.match(u);
+    addMrVarsToMap(matchingResult,callContext);
+    if (firstMeth instanceof SubResourceMethod)     return new ResObjAndRemPath(o,u);
+    u=matchingResult.getFinalCapturingGroup();
+    SubResourceLocator subResourceLocator=(SubResourceLocator)firstMeth;
+    try {
+      o=subResourceLocator.createSubResource(o,callContext,this);
+    }
+ catch (    InstantiateParameterException e) {
+      throw new WebApplicationException(e,404);
+    }
+catch (    Exception e) {
+      throw handleCreateException(e,callContext,"createSubResource","Could not create new instance of root resource class");
+    }
+  }
+}

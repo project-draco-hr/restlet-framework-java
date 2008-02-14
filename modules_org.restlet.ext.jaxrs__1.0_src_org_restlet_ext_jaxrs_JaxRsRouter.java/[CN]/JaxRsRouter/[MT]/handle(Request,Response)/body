@@ -3,22 +3,23 @@
   List<Preference<MediaType>> acceptedMediaTypes=request.getClientInfo().getAcceptedMediaTypes();
   SortedMetadata<MediaType> accMediaTypes=new SortedMetadata<MediaType>(acceptedMediaTypes);
   try {
+    CallContext callContext=new CallContext(request,response,this.authenticator);
     try {
       ResObjAndMeth resObjAndMeth;
       try {
-        resObjAndMeth=matchingRequestToResourceMethod(request,response,accMediaTypes);
+        resObjAndMeth=matchingRequestToResourceMethod(callContext,accMediaTypes);
       }
  catch (      CouldNotFindMethodException e) {
         e.errorRestlet.handle(request,response);
         return;
       }
+      callContext.setReadOnly();
       ResourceMethod resourceMethod=resObjAndMeth.resourceMethod;
       ResourceObject resourceObject=resObjAndMeth.resourceObject;
-      MultivaluedMap<String,String> allTemplParamsEnc=resObjAndMeth.allTemplParamsEnc;
-      invokeMethodAndHandleResult(resourceMethod,resourceObject,allTemplParamsEnc,request,response,accMediaTypes);
+      invokeMethodAndHandleResult(resourceMethod,resourceObject,callContext,accMediaTypes);
     }
  catch (    WebApplicationException e) {
-      handleWebAppExc(e,response,accMediaTypes,null);
+      handleWebAppExc(e,callContext,accMediaTypes,null);
     }
   }
  catch (  RequestHandledException e) {

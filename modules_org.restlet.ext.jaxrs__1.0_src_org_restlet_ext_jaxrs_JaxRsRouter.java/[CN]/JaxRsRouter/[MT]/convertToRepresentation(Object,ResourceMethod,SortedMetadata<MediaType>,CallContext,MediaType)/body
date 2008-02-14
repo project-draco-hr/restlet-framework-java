@@ -1,0 +1,17 @@
+{
+  if (entity instanceof Representation)   return (Representation)entity;
+  if (entity == null)   return null;
+  Class<? extends Object> entityClass=entity.getClass();
+  MessageBodyWriterSet mbws=this.messageBodyWriters.subSet(entityClass);
+  List<MediaType> possMediaTypes;
+  if (responseMediaType != null)   possMediaTypes=Collections.singletonList(responseMediaType);
+ else   possMediaTypes=determineMediaType16(resourceMethod,mbws,accMediaTypes,callContext.getResponse());
+  mbws=mbws.subSet(possMediaTypes);
+  MessageBodyWriter mbw=mbws.getBest(accMediaTypes);
+  if (mbw == null)   throw handleWebAppExc(new WebApplicationException(406),callContext,accMediaTypes,resourceMethod);
+  MediaType mediaType;
+  if (responseMediaType != null)   mediaType=responseMediaType;
+ else   mediaType=determineMediaType79(possMediaTypes,callContext.getResponse());
+  MultivaluedMap<String,Object> httpResponseHeaders=null;
+  return new JaxRsOutputRepresentation(entity,mediaType,mbw,httpResponseHeaders);
+}
