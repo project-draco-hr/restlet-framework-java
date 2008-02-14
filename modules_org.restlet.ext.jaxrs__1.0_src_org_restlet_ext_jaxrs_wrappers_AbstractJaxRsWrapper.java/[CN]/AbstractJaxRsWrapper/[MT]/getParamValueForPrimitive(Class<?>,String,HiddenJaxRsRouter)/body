@@ -19,6 +19,10 @@
  catch (  IllegalArgumentException e) {
     throw InstantiateParameterException.primitive(paramClass,paramValue,e);
   }
-  if (paramClass == Void.TYPE)   throw new WebApplicationException(500);
+  if (paramClass == Void.TYPE) {
+    String message="a method return parameter type was void, but this could not be here";
+    jaxRsRouter.getLogger().warning(message);
+    throw new WebApplicationException(500);
+  }
   throw new WebApplicationException(500);
 }

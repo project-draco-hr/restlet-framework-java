@@ -5,7 +5,7 @@
   PathRegExp rMatch=resClass.getPathRegExp();
   ResourceObject o;
   try {
-    o=resClass.createInstance(allTemplParamsEnc,restletRequest,restletResponse,authenticator);
+    o=resClass.createInstance(allTemplParamsEnc,restletRequest,restletResponse,this);
   }
  catch (  InstantiateParameterException e) {
     throw new WebApplicationException(e,404);
@@ -33,7 +33,7 @@ catch (  Exception e) {
     u=matchingResult.getFinalCapturingGroup();
     SubResourceLocator subResourceLocator=(SubResourceLocator)firstMeth;
     try {
-      o=subResourceLocator.createSubResource(o,allTemplParamsEnc,restletRequest,restletResponse,authenticator,this.messageBodyReaders);
+      o=subResourceLocator.createSubResource(o,allTemplParamsEnc,restletRequest,restletResponse,this);
     }
  catch (    InstantiateParameterException e) {
       throw new WebApplicationException(e,404);

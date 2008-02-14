@@ -8,12 +8,13 @@
     Class<?> paramType=parameterTypes[i];
     Object arg;
     try {
-      arg=getParameterValue(parameterAnnotationss[i],paramType,restletRequest,restletResponse,httpContext,allTemplParamsEnc,i,authenticator);
+      arg=getParameterValue(parameterAnnotationss[i],paramType,restletRequest,restletResponse,httpContext,allTemplParamsEnc,i,jaxRsRouter);
       if (httpContext == null && arg instanceof HttpContextImpl)       httpContext=(HttpContextImpl)arg;
     }
  catch (    IllegalOrNoAnnotationException ionae) {
       if (annotRequired)       throw ionae;
       annotRequired=true;
+      MessageBodyReaderSet mbrs=jaxRsRouter.getMessageBodyReaders();
       if (mbrs == null) {
         throw new NoMessageBodyReadersException();
       }
