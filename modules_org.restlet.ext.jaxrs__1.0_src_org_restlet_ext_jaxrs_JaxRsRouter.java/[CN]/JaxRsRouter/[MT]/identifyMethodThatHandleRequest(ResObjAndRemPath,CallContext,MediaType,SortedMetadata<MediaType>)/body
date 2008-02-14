@@ -1,14 +1,14 @@
 {
   org.restlet.data.Method httpMethod=callContext.getRequest().getMethod();
   ResourceObject resObj=resObjAndRemPath.resourceObject;
-  String remainingPath=resObjAndRemPath.remainingPath;
-  Collection<ResourceMethod> resourceMethods=resObj.getResourceClass().getMethodsForPath(remainingPath);
+  RemainingPath u=resObjAndRemPath.u;
+  Collection<ResourceMethod> resourceMethods=resObj.getResourceClass().getMethodsForPath(u);
   if (resourceMethods.isEmpty())   throw new CouldNotFindMethodException(errorRestletResourceMethodNotFound);
   boolean alsoGet=httpMethod.equals(Method.HEAD);
   removeNotSupportedHttpMethod(resourceMethods,httpMethod,alsoGet);
   if (resourceMethods.isEmpty()) {
     if (httpMethod.equals(Method.OPTIONS)) {
-      Set<Method> allowedMethods=resObj.getResourceClass().getAllowedMethods(remainingPath);
+      Set<Method> allowedMethods=resObj.getResourceClass().getAllowedMethods(u);
       callContext.getResponse().getAllowedMethods().addAll(allowedMethods);
       throw new RequestHandledException();
     }
@@ -34,7 +34,7 @@
   if (bestResourceMethod == null) {
     throw new RuntimeException("Found no method, but there must be one.");
   }
-  MatchingResult mr=bestResourceMethod.getPathRegExp().match(remainingPath);
+  MatchingResult mr=bestResourceMethod.getPathRegExp().match(u);
   addMrVarsToMap(mr,callContext);
   return new ResObjAndMeth(resObj,bestResourceMethod);
 }

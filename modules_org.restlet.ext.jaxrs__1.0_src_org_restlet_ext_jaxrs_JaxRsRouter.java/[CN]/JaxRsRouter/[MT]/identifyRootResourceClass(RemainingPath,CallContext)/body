@@ -1,0 +1,16 @@
+{
+  Collection<RootResourceClass> eAndCs=new ArrayList<RootResourceClass>();
+  for (  RootResourceClass rootResourceClass : this.rootResourceClasses) {
+    MatchingResult matchingResult=rootResourceClass.getPathRegExp().match(u);
+    if (matchingResult == null)     continue;
+    if (!Util.isEmptyOrSlash(matchingResult.getFinalMatchingGroup()) && !rootResourceClass.hasSubResourceMethodsOrLocators())     continue;
+ else     eAndCs.add(rootResourceClass);
+  }
+  if (eAndCs.isEmpty())   throw new CouldNotFindMethodException(errorRestletRootResourceNotFound);
+  RootResourceClass tClass=getFirstRrcByNumberOfLiteralCharactersAndByNumberOfCapturingGroups(eAndCs);
+  PathRegExp rMatch=tClass.getPathRegExp();
+  MatchingResult matchResult=rMatch.match(u);
+  u=matchResult.getFinalCapturingGroup();
+  addMrVarsToMap(matchResult,callContext);
+  return new RrcAndRemPath(tClass,u);
+}

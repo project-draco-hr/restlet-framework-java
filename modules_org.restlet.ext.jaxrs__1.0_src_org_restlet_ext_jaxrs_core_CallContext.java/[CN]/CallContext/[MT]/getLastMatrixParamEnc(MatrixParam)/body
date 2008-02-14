@@ -1,9 +1,10 @@
 {
   String mpName=matrixParamAnnot.value();
-  for (int i=pathSegmentsEncoded.size() - 1; i >= 0; i--) {
-    PathSegment pathSegment=pathSegmentsEncoded.get(i);
+  List<PathSegment> pathSegments=getPathSegments(false);
+  for (int i=pathSegments.size() - 1; i >= 0; i--) {
+    PathSegment pathSegment=pathSegments.get(i);
     List<String> mpValues=pathSegment.getMatrixParameters().get(mpName);
-    if (!mpValues.isEmpty())     return Util.getLastElement(mpValues);
+    if (mpValues != null && !mpValues.isEmpty())     return Util.getLastElement(mpValues);
   }
   return null;
 }
