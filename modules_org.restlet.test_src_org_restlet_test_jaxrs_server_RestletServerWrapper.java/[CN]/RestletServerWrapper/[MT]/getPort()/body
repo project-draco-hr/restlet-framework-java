@@ -1,0 +1,17 @@
+{
+  Server server=Util.getOnlyElement(this.component.getServers());
+  int port=server.getPort();
+  if (port > 0)   return port;
+  port=server.getEphemeralPort();
+  if (port > 0)   return port;
+  for (int i=0; i < 100; i++) {
+    try {
+      Thread.sleep(20);
+    }
+ catch (    InterruptedException e) {
+    }
+    port=server.getEphemeralPort();
+    if (port > 0)     return port;
+  }
+  throw new IllegalStateException("Sorry, the port is not available");
+}

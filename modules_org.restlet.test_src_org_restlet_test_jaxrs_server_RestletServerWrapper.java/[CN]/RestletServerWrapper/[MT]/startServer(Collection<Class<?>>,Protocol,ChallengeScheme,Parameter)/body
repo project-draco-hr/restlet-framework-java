@@ -1,7 +1,7 @@
 {
   Component comp=new Component();
   if (contextParameter != null)   comp.getContext().getParameters().add(contextParameter);
-  comp.getServers().add(protocol,port);
+  comp.getServers().add(protocol,0);
   Application application=new Application(comp.getContext()){
     @Override public Restlet createRoot(){
       JaxRsGuard router=JaxRsRouter.getGuarded(getContext(),authenticator,false,false,challengeScheme,"");
@@ -16,4 +16,5 @@
   comp.getDefaultHost().attach(application);
   comp.start();
   this.component=comp;
+  System.out.println("listening on port " + getPort());
 }
