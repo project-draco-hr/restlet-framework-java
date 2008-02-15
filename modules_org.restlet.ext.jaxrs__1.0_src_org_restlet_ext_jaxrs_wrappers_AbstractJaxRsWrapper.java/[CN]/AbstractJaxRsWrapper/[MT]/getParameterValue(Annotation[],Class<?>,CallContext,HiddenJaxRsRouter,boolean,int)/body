@@ -1,4 +1,11 @@
 {
+  String defaultValue=null;
+  for (  Annotation annotation : paramAnnotations) {
+    if (annotation.annotationType().equals(DefaultValue.class)) {
+      defaultValue=((DefaultValue)annotation).value();
+      break;
+    }
+  }
   for (  Annotation annotation : paramAnnotations) {
     Class<? extends Annotation> annotationType=annotation.annotationType();
     if (annotationType.equals(Context.class)) {
@@ -6,20 +13,26 @@
     }
     if (annotationType.equals(HeaderParam.class)) {
       String headerParamValue=Util.getHttpHeaders(callContext.getRequest()).getFirstValue(((HeaderParam)annotation).value(),true);
-      return convertParamValueFromParam(paramClass,headerParamValue,false,jaxRsRouter);
+      return convertParamValueFromParam(paramClass,headerParamValue,defaultValue,false,jaxRsRouter);
     }
     if (annotationType.equals(PathParam.class)) {
       String pathParamValue=callContext.getLastTemplParamEnc((PathParam)annotation);
-      return convertParamValueFromParam(paramClass,pathParamValue,leaveEncoded,jaxRsRouter);
+      return convertParamValueFromParam(paramClass,pathParamValue,defaultValue,leaveEncoded,jaxRsRouter);
     }
     if (annotationType.equals(MatrixParam.class)) {
-      String pathParamValue=callContext.getLastMatrixParamEnc((MatrixParam)annotation);
-      return convertParamValueFromParam(paramClass,pathParamValue,leaveEncoded,jaxRsRouter);
+      String matrixParamValue=callContext.getLastMatrixParamEnc((MatrixParam)annotation);
+      return convertParamValueFromParam(paramClass,matrixParamValue,defaultValue,leaveEncoded,jaxRsRouter);
     }
     if (annotationType.equals(QueryParam.class)) {
       Form form=Converter.toFormEncoded(callContext.getRequest().getResourceRef().getQuery(),jaxRsRouter.getLogger());
       String queryParamValue=form.getFirstValue(((QueryParam)annotation).value());
-      return convertParamValueFromParam(paramClass,queryParamValue,true,jaxRsRouter);
+      return convertParamValueFromParam(paramClass,queryParamValue,defaultValue,true,jaxRsRouter);
+    }
+    if (annotationType.equals(CookieParam.class)) {
+      Series<Cookie> cookies=callContext.getRequest().getCookies();
+      String cookieName=((CookieParam)annotation).value();
+      String cookieValue=cookies.getFirstValue(cookieName);
+      return convertParamValueFromParam(paramClass,cookieValue,defaultValue,leaveEncoded,jaxRsRouter);
     }
   }
   throw new IllegalOrNoAnnotationException("The " + indexForExcMessages + ". parameter requires one of the following annotations: "+ VALID_ANNOTATIONS);
