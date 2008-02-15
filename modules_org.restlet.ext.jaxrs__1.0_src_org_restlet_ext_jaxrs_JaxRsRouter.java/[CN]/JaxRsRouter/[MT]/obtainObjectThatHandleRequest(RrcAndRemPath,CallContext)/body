@@ -9,8 +9,11 @@
  catch (  InstantiateParameterException e) {
     throw new WebApplicationException(e,404);
   }
+catch (  WebApplicationException e) {
+    throw e;
+  }
 catch (  Exception e) {
-    throw handleCreateException(e,callContext,"createInstance","Could not create new instance of root resource class");
+    throw handleCreateException(e,callContext,"createInstance",null,"Could not create new instance of root resource class");
   }
   for (; ; ) {
     if (u.isEmptyOrSlash()) {
@@ -34,11 +37,14 @@ catch (  Exception e) {
     try {
       o=subResourceLocator.createSubResource(o,callContext,this);
     }
- catch (    InstantiateParameterException e) {
+ catch (    WebApplicationException e) {
+      throw e;
+    }
+catch (    InstantiateParameterException e) {
       throw new WebApplicationException(e,404);
     }
 catch (    Exception e) {
-      throw handleCreateException(e,callContext,"createSubResource","Could not create new instance of root resource class");
+      throw handleCreateException(e,callContext,"createSubResource",subResourceLocator,"Could not create new instance of root resource class");
     }
   }
 }

@@ -1,0 +1,9 @@
+{
+  Request restletRequest=callContext.getRequest();
+  RemainingPath u=new RemainingPath(restletRequest.getResourceRef().getRemainingPart());
+  RrcAndRemPath rcat=identifyRootResourceClass(u,callContext);
+  ResObjAndRemPath resourceObjectAndPath=obtainObjectThatHandleRequest(rcat,callContext);
+  MediaType givenMediaType=restletRequest.getEntity().getMediaType();
+  ResObjAndMeth method=identifyMethodThatHandleRequest(resourceObjectAndPath,callContext,givenMediaType);
+  return method;
+}

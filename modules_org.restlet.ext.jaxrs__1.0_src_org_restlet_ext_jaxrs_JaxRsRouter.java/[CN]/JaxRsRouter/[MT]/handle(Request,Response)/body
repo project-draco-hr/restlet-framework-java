@@ -1,13 +1,11 @@
 {
   super.handle(request,response);
-  List<Preference<MediaType>> acceptedMediaTypes=request.getClientInfo().getAcceptedMediaTypes();
-  SortedMetadata<MediaType> accMediaTypes=new SortedMetadata<MediaType>(acceptedMediaTypes);
   try {
     CallContext callContext=new CallContext(request,response,this.authenticator);
     try {
       ResObjAndMeth resObjAndMeth;
       try {
-        resObjAndMeth=matchingRequestToResourceMethod(callContext,accMediaTypes);
+        resObjAndMeth=matchingRequestToResourceMethod(callContext);
       }
  catch (      CouldNotFindMethodException e) {
         e.errorRestlet.handle(request,response);
@@ -17,10 +15,10 @@
       callContext.setReadOnly();
       ResourceMethod resourceMethod=resObjAndMeth.resourceMethod;
       ResourceObject resourceObject=resObjAndMeth.resourceObject;
-      invokeMethodAndHandleResult(resourceMethod,resourceObject,callContext,accMediaTypes);
+      invokeMethodAndHandleResult(resourceMethod,resourceObject,callContext);
     }
  catch (    WebApplicationException e) {
-      handleWebAppExc(e,callContext,accMediaTypes,null);
+      handleWebAppExc(e,callContext,null);
     }
   }
  catch (  RequestHandledException e) {

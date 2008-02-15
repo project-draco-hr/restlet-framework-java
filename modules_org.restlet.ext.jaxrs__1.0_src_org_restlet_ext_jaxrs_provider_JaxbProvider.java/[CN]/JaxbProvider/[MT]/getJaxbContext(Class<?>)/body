@@ -1,3 +1,8 @@
 {
-  return JAXBContext.newInstance(clazz);
+  try {
+    return JAXBContext.newInstance(clazz);
+  }
+ catch (  NoClassDefFoundError e) {
+    throw new WebApplicationException(Response.serverError().entity(e.getMessage()).build());
+  }
 }
