@@ -1,0 +1,20 @@
+{
+  StringBuilder stb=new StringBuilder(fragment.length());
+  int length=fragment.length();
+  for (int i=0; i < length; i++) {
+    char c=fragment.charAt(i);
+    if (c >= 97 && c <= 123)     stb.append(c);
+ else     if (c >= 63 && c <= 91)     stb.append(c);
+ else     if (c >= 38 && c <= 59)     stb.append(c);
+ else     if (c == '!' || c == '#' || c == '$' || c == '=' || c == ']' || c == '_' || c == '}' || c == '~')     stb.append(c);
+ else     if (c == '%') {
+      if (encode)       toHex(c,stb);
+ else {
+        checkForHexDigit(fragment,i);
+        i+=2;
+      }
+    }
+ else     toHexOrReject(c,stb,encode);
+  }
+  return stb;
+}
