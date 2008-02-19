@@ -11,14 +11,22 @@
  else {
         uriPattern="";
       }
-      String targetClass=null;
-      item=childNode.getAttributes().getNamedItem("targetClass");
-      if (item != null) {
-        targetClass=item.getNodeValue();
-      }
       item=childNode.getAttributes().getNamedItem("default");
       boolean bDefault=getBoolean(item,false);
-      Route route=attach(router,targetClass,uriPattern,bDefault);
+      Route route=null;
+      item=childNode.getAttributes().getNamedItem("targetClass");
+      if (item != null) {
+        route=attach(router,item.getNodeValue(),uriPattern,bDefault);
+      }
+ else {
+        item=childNode.getAttributes().getNamedItem("targetDescriptor");
+        if (item != null) {
+          route=attachWithDescriptor(router,item.getNodeValue(),uriPattern,bDefault);
+        }
+ else {
+          getLogger().log(Level.WARNING,"Both targetClass name and targetDescriptor are missing. Couldn't attach a new route.");
+        }
+      }
       if (route != null) {
         Template template=route.getTemplate();
         item=childNode.getAttributes().getNamedItem("matchingMode");
@@ -26,7 +34,6 @@
         item=childNode.getAttributes().getNamedItem("defaultVariableType");
         template.getDefaultVariable().setType(getInt(item,Variable.TYPE_URI_SEGMENT));
       }
-      item=childNode.getAttributes().getNamedItem("targetDescriptor");
     }
   }
 }
