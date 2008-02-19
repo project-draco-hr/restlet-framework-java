@@ -1,14 +1,15 @@
 {
+  Route route=null;
   if (targetClassName != null) {
     try {
       Class<?> targetClass=Engine.classForName(targetClassName);
       if (Resource.class.isAssignableFrom(targetClass)) {
         Class<? extends Resource> resourceClass=(Class<? extends Resource>)targetClass;
-        if (uriPattern != null) {
-          router.attach(uriPattern,resourceClass);
+        if (uriPattern != null && !defaultRoute) {
+          route=router.attach(uriPattern,resourceClass);
         }
  else {
-          router.attachDefault(resourceClass);
+          route=router.attachDefault(resourceClass);
         }
       }
  else {
@@ -22,11 +23,11 @@
           target.setContext(getContext());
         }
         if (target != null) {
-          if (uriPattern != null) {
-            router.attach(uriPattern,target);
+          if (uriPattern != null && !defaultRoute) {
+            route=router.attach(uriPattern,target);
           }
  else {
-            router.attachDefault(target);
+            route=router.attachDefault(target);
           }
         }
       }
@@ -47,4 +48,5 @@ catch (    InvocationTargetException e) {
       getLogger().log(Level.WARNING,"Couldn't instantiate the target class. An exception was thrown while creating " + targetClassName,e);
     }
   }
+  return route;
 }

@@ -45,7 +45,7 @@
           }
           int port=getInt(portNode,Protocol.UNKNOWN_PORT);
           if (port == Protocol.UNKNOWN_PORT) {
-            getLogger().warning("Please specify a host when defining a list of protocols.");
+            getLogger().warning("Please specify a port when defining a list of protocols.");
           }
  else {
             server=new Server(getContext(),protocolsList,getInt(portNode,Protocol.UNKNOWN_PORT),this.getServers().getTarget());
@@ -67,6 +67,7 @@
       for (int j=0; j < hostNodes.getLength(); j++) {
         VirtualHost host=new VirtualHost();
         parseHost(host,hostNodes.item(j));
+        this.getHosts().add(host);
       }
     }
     NodeList internalRouterNodes=document.getElementsByTagName("internalRouter");
@@ -92,6 +93,7 @@
       if (item != null) {
         this.getInternalRouter().setRetryDelay(getLong(item,this.getInternalRouter().getRetryDelay()));
       }
+      setAttach(getInternalRouter(),node);
     }
     NodeList logServiceNodes=document.getElementsByTagName("logService");
     if (logServiceNodes.getLength() > 0) {
