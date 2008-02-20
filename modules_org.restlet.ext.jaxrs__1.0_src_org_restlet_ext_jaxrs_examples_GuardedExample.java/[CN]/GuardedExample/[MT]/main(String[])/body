@@ -4,8 +4,7 @@
   Application application=new Application(comp.getContext()){
     @Override public Restlet createRoot(){
       Authenticator authenticator=new ExampleAuthenticator();
-      JaxRsGuard jaxRsRestlet=JaxRsRouter.getGuarded(getContext(),authenticator,false,false,ChallengeScheme.HTTP_BASIC,"persons");
-      jaxRsRestlet.attach(PersonsRootResource.class);
+      JaxRsGuard jaxRsRestlet=JaxRsRouter.getGuarded(getContext(),new ExampleAppConfig(),authenticator,ChallengeScheme.HTTP_BASIC,"persons");
       return jaxRsRestlet;
     }
   }
