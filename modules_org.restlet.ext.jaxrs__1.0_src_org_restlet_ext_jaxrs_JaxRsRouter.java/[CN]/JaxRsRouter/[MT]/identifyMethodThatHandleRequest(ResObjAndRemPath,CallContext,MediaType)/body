@@ -4,7 +4,7 @@
   RemainingPath u=resObjAndRemPath.u;
   ResourceClass resourceClass=resObj.getResourceClass();
   Collection<ResourceMethod> resourceMethods=resourceClass.getMethodsForPath(u);
-  if (resourceMethods.isEmpty())   throw new CouldNotFindMethodException(errorRestletResourceMethodNotFound,"there is no method on class " + resourceClass.getName() + " for remaining path "+ u);
+  if (resourceMethods.isEmpty())   throwResourceMethodNotFound(resourceClass,u);
   boolean alsoGet=httpMethod.equals(Method.HEAD);
   removeNotSupportedHttpMethod(resourceMethods,httpMethod,alsoGet);
   if (resourceMethods.isEmpty()) {
@@ -13,7 +13,7 @@
       callContext.getResponse().getAllowedMethods().addAll(allowedMethods);
       throw new RequestHandledException();
     }
-    throw new CouldNotFindMethodException(errorRestletMethodNotAllowed,"there is no method supporting the http method " + httpMethod + " on class "+ resourceClass.getName()+ " and remaining path "+ u);
+    throwMethodNotAllowed(httpMethod,resourceClass,u);
   }
   if (givenMediaType != null) {
     Iterator<ResourceMethod> methodIter=resourceMethods.iterator();
@@ -21,7 +21,7 @@
       ResourceMethod resourceMethod=methodIter.next();
       if (!resourceMethod.isGivenMediaTypeSupported(givenMediaType))       methodIter.remove();
     }
-    if (resourceMethods.isEmpty())     throw new CouldNotFindMethodException(errorRestletUnsupportedMediaType,"there is no java method on class " + resourceClass.getName() + " supporting the http method "+ httpMethod+ " and remaining path "+ u+ " and the given media types");
+    if (resourceMethods.isEmpty())     throwUnsupportedMediaType(httpMethod,resourceClass,u);
   }
   SortedMetadata<MediaType> accMediaTypes=callContext.getAccMediaTypes();
   Iterator<ResourceMethod> methodIter=resourceMethods.iterator();
@@ -30,7 +30,7 @@
     if (!resourceMethod.isAcceptedMediaTypeSupported(accMediaTypes))     methodIter.remove();
   }
   if (resourceMethods.isEmpty()) {
-    throw new CouldNotFindMethodException(errorRestletNotAcceptable,"there is no java method on class " + resourceClass.getName() + " supporting the http method "+ httpMethod+ " and remaining path "+ u+ " and the given and accepted media types");
+    throwNoResourceMethodForAccMediaTypes(httpMethod,resourceClass,u);
   }
   ResourceMethod bestResourceMethod=getBestMethod(resourceMethods,givenMediaType,accMediaTypes,httpMethod);
   MatchingResult mr=bestResourceMethod.getPathRegExp().match(u);

@@ -1,0 +1,33 @@
+{
+  if (eWithMethod == null || eWithMethod.isEmpty())   return null;
+  Iterator<ResourceMethodOrLocator> srmlIter=eWithMethod.iterator();
+  ResourceMethodOrLocator bestSrml=srmlIter.next();
+  if (eWithMethod.size() == 1)   return bestSrml;
+  int bestSrmlChars=Integer.MIN_VALUE;
+  int bestSrmlNoCaptGroups=Integer.MIN_VALUE;
+  for (  ResourceMethodOrLocator srml : eWithMethod) {
+    int srmlNoLitChars=srml.getPathRegExp().getNumberOfLiteralChars();
+    int srmlNoCaptGroups=srml.getPathRegExp().getNumberOfCapturingGroups();
+    if (srmlNoLitChars > bestSrmlChars) {
+      bestSrml=srml;
+      bestSrmlChars=srmlNoLitChars;
+      bestSrmlNoCaptGroups=srmlNoCaptGroups;
+      continue;
+    }
+    if (srmlNoLitChars == bestSrmlChars) {
+      if (srmlNoCaptGroups > bestSrmlNoCaptGroups) {
+        bestSrml=srml;
+        bestSrmlChars=srmlNoLitChars;
+        bestSrmlNoCaptGroups=srmlNoCaptGroups;
+        continue;
+      }
+      if (srmlNoCaptGroups == bestSrmlNoCaptGroups) {
+        if (srml.getPathRegExp().equals(bestSrml.getPathRegExp())) {
+          continue;
+        }
+        throwMultipleResourceMethods(bestSrml,srml);
+      }
+    }
+  }
+  return bestSrml;
+}
