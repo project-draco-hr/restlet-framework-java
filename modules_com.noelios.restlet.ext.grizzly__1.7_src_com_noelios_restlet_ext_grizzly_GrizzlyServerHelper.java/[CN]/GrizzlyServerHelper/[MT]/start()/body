@@ -10,15 +10,16 @@
   new Thread(){
     @Override public void run(){
       try {
-        latch.countDown();
         controller.addStateListener(new ControllerStateListener(){
           public void onException(          Throwable arg0){
+            latch.countDown();
           }
           public void onReady(){
             if (getServer().getPort() == 0) {
               TCPSelectorHandler tsh=(TCPSelectorHandler)controller.getSelectorHandler(Controller.Protocol.TCP);
               setEphemeralPort(tsh.getPortLowLevel());
             }
+            latch.countDown();
           }
           public void onStarted(){
           }

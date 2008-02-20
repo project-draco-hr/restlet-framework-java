@@ -1,8 +1,8 @@
 {
   component=new Component();
-  component.getServers().add(Protocol.HTTP,port);
-  uri="http://localhost:" + (incPorts ? port++ : port) + "/test";
+  Server server=component.getServers().add(Protocol.HTTP,0);
   Application application=createApplication(component);
   component.getDefaultHost().attach(application);
   component.start();
+  return "http://localhost:" + server.getEphemeralPort() + "/test";
 }
