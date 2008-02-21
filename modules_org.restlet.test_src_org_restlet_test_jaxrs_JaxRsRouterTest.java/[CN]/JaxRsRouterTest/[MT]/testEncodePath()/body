@@ -1,6 +1,11 @@
 {
-  JaxRsRouter router=new JaxRsRouter(null,AllowAllAuthenticator.getInstance(),false,false);
-  router.attach(SimpleTrain.class);
+  ApplicationConfig appConfig=new ApplicationConfig(){
+    @Override public Set<Class<?>> getResourceClasses(){
+      return (Set)Util.createSet(SimpleTrain.class);
+    }
+  }
+;
+  JaxRsRouter router=new JaxRsRouter(null,appConfig,AllowAllAuthenticator.getInstance());
   try {
     router.attach(IllegalPathService1.class);
     fail("must not pass");

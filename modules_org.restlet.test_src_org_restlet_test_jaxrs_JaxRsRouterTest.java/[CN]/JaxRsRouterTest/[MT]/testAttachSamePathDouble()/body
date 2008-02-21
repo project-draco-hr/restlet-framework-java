@@ -1,6 +1,11 @@
 {
-  JaxRsRouter router=new JaxRsRouter(null,AllowAllAuthenticator.getInstance(),false,false);
-  router.attach(DoublePath1.class);
+  ApplicationConfig appConfig=new ApplicationConfig(){
+    @Override public Set<Class<?>> getResourceClasses(){
+      return (Set)Util.createSet(DoublePath1.class);
+    }
+  }
+;
+  JaxRsRouter router=new JaxRsRouter(null,appConfig,AllowAllAuthenticator.getInstance());
   try {
     router.attach(DoublePath2.class);
     fail("Attach two root resource classes with the same @Path must raise an Excption");

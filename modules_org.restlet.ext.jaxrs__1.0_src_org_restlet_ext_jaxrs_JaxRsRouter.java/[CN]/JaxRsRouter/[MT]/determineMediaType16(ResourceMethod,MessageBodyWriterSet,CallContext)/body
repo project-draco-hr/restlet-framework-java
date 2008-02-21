@@ -9,7 +9,7 @@
   if (accMediaTypes.isEmpty())   accMediaTypes=SortedMetadata.getMediaTypeAll();
   p=Util.sortByConcreteness(p);
   List<MediaType> m=new ArrayList<MediaType>();
-  if (true)   throw new NotYetImplementedException("sorry I've check in to early");
+  for (  MediaType prod : p)   for (  MediaType acc : accMediaTypes)   if (prod.isCompatible(acc))   m.add(MediaType.getMostSpecific(prod,acc));
   if (m.isEmpty())   throwNotAcceptableWhileDetermineMediaType(callContext.getRequest(),callContext.getResponse());
   return m;
 }

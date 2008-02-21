@@ -1,5 +1,9 @@
 {
-  JaxRsRouter router=new JaxRsRouter(null,AllowAllAuthenticator.getInstance(),false,false);
-  router.attach(DoublePath1.class);
-  router.attach(DoublePath1.class);
+  ApplicationConfig appConfig=new ApplicationConfig(){
+    @Override public Set<Class<?>> getResourceClasses(){
+      return (Set)Util.createSet(DoublePath1.class,DoublePath1.class);
+    }
+  }
+;
+  new JaxRsRouter(null,appConfig,AllowAllAuthenticator.getInstance());
 }

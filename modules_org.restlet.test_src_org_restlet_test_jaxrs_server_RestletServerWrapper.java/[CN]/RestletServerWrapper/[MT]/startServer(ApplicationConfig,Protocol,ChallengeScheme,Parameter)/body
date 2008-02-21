@@ -4,12 +4,7 @@
   comp.getServers().add(protocol,0);
   Application application=new Application(comp.getContext()){
     @Override public Restlet createRoot(){
-      JaxRsGuard guard=JaxRsRouter.getGuarded(getContext(),authenticator,false,false,challengeScheme,"");
-      jaxRsRouter=guard.getNext();
-      Collection<Class<?>> rrcs=rootResourceClasses;
-      for (      Class<?> cl : rrcs) {
-        jaxRsRouter.attach(cl);
-      }
+      JaxRsGuard guard=JaxRsRouter.getGuarded(getContext(),appConfig,authenticator,challengeScheme,"");
       return guard;
     }
   }
