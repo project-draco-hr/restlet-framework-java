@@ -24,15 +24,18 @@
       return convertParamValueFromParam(paramClass,matrixParamValue,defaultValue,leaveEncoded,jaxRsRouter);
     }
     if (annotationType.equals(QueryParam.class)) {
-      Form form=Converter.toFormEncoded(callContext.getRequest().getResourceRef().getQuery(),jaxRsRouter.getLogger());
-      String queryParamValue=form.getFirstValue(((QueryParam)annotation).value());
+      Logger logger=jaxRsRouter.getLogger();
+      String queryString=callContext.getRequest().getResourceRef().getQuery();
+      Form form=Converter.toFormEncoded(queryString,logger);
+      String paramName=((QueryParam)annotation).value();
+      String queryParamValue=form.getFirstValue(paramName);
       return convertParamValueFromParam(paramClass,queryParamValue,defaultValue,true,jaxRsRouter);
     }
     if (annotationType.equals(CookieParam.class)) {
       Series<Cookie> cookies=callContext.getRequest().getCookies();
       String cookieName=((CookieParam)annotation).value();
       String cookieValue=cookies.getFirstValue(cookieName);
-      return convertParamValueFromParam(paramClass,cookieValue,defaultValue,leaveEncoded,jaxRsRouter);
+      return convertParamValueFromParam(paramClass,cookieValue,defaultValue,true,jaxRsRouter);
     }
   }
   throw new IllegalOrNoAnnotationException("The " + indexForExcMessages + ". parameter requires one of the following annotations: "+ VALID_ANNOTATIONS);

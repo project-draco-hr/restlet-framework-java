@@ -12,28 +12,7 @@
  catch (    IllegalOrNoAnnotationException ionae) {
       if (annotRequired)       throw ionae;
       annotRequired=true;
-      Representation entity=callContext.getRequest().getEntity();
-      if (entity == null) {
-        arg=null;
-      }
- else {
-        MediaType mediaType=entity.getMediaType();
-        MessageBodyReaderSet mbrs=jaxRsRouter.getMessageBodyReaders();
-        if (mbrs == null)         throw new NoMessageBodyReadersException();
-        MessageBodyReader mbr=mbrs.getBest(mediaType,paramType);
-        if (mbr == null) {
-          callContext.getResponse().setStatus(Status.CLIENT_ERROR_NOT_ACCEPTABLE);
-          throw new RequestHandledException();
-        }
-        MultivaluedMap<String,String> httpHeaders=Util.getJaxRsHttpHeaders(callContext.getRequest());
-        try {
-          javax.ws.rs.core.MediaType jaxRsMediaType=Converter.toJaxRsMediaType(mediaType,entity.getCharacterSet());
-          arg=mbr.readFrom(paramType,jaxRsMediaType,httpHeaders,entity.getStream());
-        }
- catch (        IOException e) {
-          throw new InstantiateParameterException("Can not instatiate parameter of type " + paramType.getName(),e);
-        }
-      }
+      arg=convertRepresentation(callContext,paramType,jaxRsRouter);
     }
     args[i]=arg;
   }
