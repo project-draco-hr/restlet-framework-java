@@ -1,0 +1,35 @@
+{
+  File testDir=new File(System.getProperty("java.io.tmpdir"),this.getClass().getName());
+  deleteDir(testDir);
+  testDir.mkdir();
+  File file=new File(testDir,"component.xml");
+  BufferedWriter writer=new BufferedWriter(new FileWriter(file));
+  writer.append("<?xml version=\"1.0\"?>");
+  writer.append("<component>");
+  writer.append("<server protocol=\"HTTP\" port=\"" + port + "\" />");
+  writer.append("<server protocol=\"HTTP\" port=\"" + port2 + "\" />");
+  writer.append("<defaultHost hostPort=\"" + port2 + "\">");
+  writer.append("<attach uriPattern=\"/abcd\" targetClass=\"org.restlet.test.HelloWorldApplication\" /> ");
+  writer.append("</defaultHost>");
+  writer.append("<host hostPort=\"" + port + "\">");
+  writer.append("<attach uriPattern=\"/efgh\" targetClass=\"org.restlet.test.HelloWorldApplication\" /> ");
+  writer.append("</host>");
+  writer.append("</component>");
+  writer.flush();
+  writer.close();
+  Component component=new Component(LocalReference.createFileReference(file.getCanonicalPath()));
+  component.start();
+  Client client=new Client(Protocol.HTTP);
+  Response response=client.get("http://localhost:" + port + "/efgh");
+  assertTrue(response.getStatus().isSuccess());
+  assertTrue(response.isEntityAvailable());
+  response=client.get("http://localhost:" + port + "/abcd");
+  assertTrue(response.getStatus().isClientError());
+  response=client.get("http://localhost:" + port2 + "/abcd");
+  assertTrue(response.getStatus().isSuccess());
+  assertTrue(response.isEntityAvailable());
+  response=client.get("http://localhost:" + port2 + "/efgh");
+  assertTrue(response.getStatus().isClientError());
+  component.stop();
+  deleteDir(testDir);
+}
