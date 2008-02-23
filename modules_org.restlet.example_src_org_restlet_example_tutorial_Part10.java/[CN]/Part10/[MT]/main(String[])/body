@@ -1,14 +1,7 @@
 {
   Component component=new Component();
   component.getServers().add(Protocol.HTTP,8182);
-  Application application=new Application(component.getContext()){
-    @Override public Restlet createRoot(){
-      String target="http://www.google.com/search?q=site:mysite.org+{keywords}";
-      return new Redirector(getContext(),target,Redirector.MODE_CLIENT_TEMPORARY);
-    }
-  }
-;
-  Route route=component.getDefaultHost().attach("/search",application);
-  route.extractQuery("keywords","kwd",true);
+  Application application=new Part10(component.getContext());
+  component.getDefaultHost().attachDefault(application);
   component.start();
 }
