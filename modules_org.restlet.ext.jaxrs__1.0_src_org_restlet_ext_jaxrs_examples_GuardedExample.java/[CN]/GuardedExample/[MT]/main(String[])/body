@@ -1,6 +1,6 @@
 {
   Component comp=new Component();
-  comp.getServers().add(Protocol.HTTP,8182);
+  Server server=comp.getServers().add(Protocol.HTTP,8182);
   Application application=new Application(comp.getContext()){
     @Override public Restlet createRoot(){
       AccessControl accessControl=new ExampleAccessControl();
@@ -16,7 +16,6 @@
 ;
   comp.getDefaultHost().attach(application);
   comp.start();
-  Server server=comp.getServers().get(0);
   System.out.println("Server stated on port " + server.getPort());
   System.out.println("Press key to stop server");
   System.in.read();
