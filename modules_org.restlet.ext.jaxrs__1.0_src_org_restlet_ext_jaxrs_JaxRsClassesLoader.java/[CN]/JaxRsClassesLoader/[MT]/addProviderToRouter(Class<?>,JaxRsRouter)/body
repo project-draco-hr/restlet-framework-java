@@ -3,26 +3,25 @@
   if (Modifier.isAbstract(modifiers) || Modifier.isInterface(modifiers)) {
     return;
   }
-  boolean added=false;
-  if (MessageBodyReader.class.isAssignableFrom(clazz)) {
-    if (!clazz.isAnnotationPresent(Provider.class)) {
-      String msg="The class " + clazz.getName() + " implements the MessageBodyReader, but is not annotated with @Provider. Will although use it as MessageBodyReader.";
-      jaxRsRouter.getLogger().log(Level.INFO,msg);
-    }
-    jaxRsRouter.addMessageBodyReader(clazz);
-    added=true;
+  Constructor<?> constructor=RootResourceClass.findJaxRsConstructor(clazz);
+  Object provider;
+  try {
+    provider=RootResourceClass.createInstance(constructor,false,null,jaxRsRouter);
   }
-  if (MessageBodyWriter.class.isAssignableFrom(clazz)) {
-    if (!clazz.isAnnotationPresent(Provider.class)) {
-      String msg="The class " + clazz.getName() + " implements the MessageBodyWriter, but is not annotated with @Provider. Will although use it as MessageBodyWriter.";
-      jaxRsRouter.getLogger().log(Level.INFO,msg);
-    }
-    jaxRsRouter.addMessageBodyWriter(clazz);
-    added=true;
+ catch (  InstantiateParameterException e) {
+    throw new IllegalArgumentException("Could not instantiate the MessageBodyWriter, class " + clazz.getName(),e);
   }
-  if (ContextResolver.class.isAssignableFrom(clazz)) {
-    throw new NotYetImplementedException("ContextResolver are not supported yet");
+catch (  MissingAnnotationException e) {
+    throw new IllegalArgumentException("Could not instantiate the MessageBodyWriter, class " + clazz.getName(),e);
   }
-  if (!added) {
+catch (  InstantiateRootRessourceException e) {
+    throw new IllegalArgumentException("Could not instantiate the MessageBodyWriter, class " + clazz.getName(),e);
   }
+catch (  RequestHandledException e) {
+    throw new IllegalArgumentException("Could not instantiate the MessageBodyWriter, class " + clazz.getName(),e);
+  }
+catch (  InvocationTargetException e) {
+    throw new IllegalArgumentException("Could not instantiate the MessageBodyWriter, class " + clazz.getName(),e.getCause());
+  }
+  jaxRsRouter.addProvider(provider);
 }
