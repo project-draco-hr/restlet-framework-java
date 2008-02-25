@@ -1,14 +1,6 @@
 {
   Authenticator exampleAuthorizator=new Authenticator(){
     /** 
- * @returns true, if the first char of the password is 'a'
- * @see Authenticator#checkSecret(String,char[])
- */
-    public boolean checkSecret(    String identifier,    char[] secret){
-      if (secret[0] == 'a')       return true;
-      return false;
-    }
-    /** 
  * @return true, if the role name and the username starts with the
  * same char.
  * @see Authenticator#isUserInRole(String)
@@ -22,19 +14,16 @@
   }
 ;
   if (!startServer(exampleAuthorizator))   return;
-  ChallengeResponse cr=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"fsdf","xyz");
-  Response response=get(null,cr);
+  Response response=getAuth(null,"fsdf","xyz");
   assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED,response.getStatus());
-  cr=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"fsdf","baj");
-  response=get(null,cr);
+  response=getAuth(null,"fsdf","baj");
   assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED,response.getStatus());
-  cr=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"fsdf","abj");
-  response=get(null,cr);
+  response=getAuth(null,"alice","alicesSecret");
   assertEquals(Status.CLIENT_ERROR_FORBIDDEN,response.getStatus());
-  cr=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"bsdf","abaj");
-  response=get(null,cr);
+  response=getAuth(null,"bob","bobsSecret");
   assertEquals(Status.SUCCESS_OK,response.getStatus());
-  cr=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"fsdf","axa2");
+  ChallengeResponse cr;
+  cr=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"bob","bobsSecret");
   response=post(null,new Form("abc=def").getWebRepresentation(),cr);
   sysOutEntityIfError(response);
   assertEquals(Status.SUCCESS_CREATED,response.getStatus());

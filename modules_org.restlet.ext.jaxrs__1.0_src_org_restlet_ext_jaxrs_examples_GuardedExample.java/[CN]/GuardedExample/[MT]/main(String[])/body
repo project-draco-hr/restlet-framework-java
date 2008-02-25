@@ -4,8 +4,13 @@
   Application application=new Application(comp.getContext()){
     @Override public Restlet createRoot(){
       Authenticator authenticator=new ExampleAuthenticator();
-      JaxRsGuard jaxRsRestlet=JaxRsRouter.getGuarded(getContext(),new ExampleAppConfig(),authenticator,ChallengeScheme.HTTP_BASIC,"persons");
-      return jaxRsRestlet;
+      Guard guard=new Guard(getContext(),ChallengeScheme.HTTP_BASIC,"persons");
+      guard.getSecrets().put("admin","adminPW".toCharArray());
+      guard.getSecrets().put("alice","alicesSecret".toCharArray());
+      guard.getSecrets().put("bob","bobsSecret".toCharArray());
+      JaxRsRouter router=new JaxRsRouter(getContext(),new ExampleAppConfig(),authenticator);
+      guard.setNext(router);
+      return guard;
     }
   }
 ;

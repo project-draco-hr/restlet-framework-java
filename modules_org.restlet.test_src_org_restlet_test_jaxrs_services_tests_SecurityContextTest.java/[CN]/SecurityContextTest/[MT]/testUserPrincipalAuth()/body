@@ -1,0 +1,11 @@
+{
+  if (!startServer(AllowAllAuthenticator.getInstance()))   return;
+  Response response=getAuth("userPrincipal","alice","alicesSecret");
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  String entity=response.getEntity().getText();
+  assertEquals("alice",entity);
+  response=getAuth("userPrincipal","bob","bobsSecret");
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  entity=response.getEntity().getText();
+  assertEquals("bob",entity);
+}

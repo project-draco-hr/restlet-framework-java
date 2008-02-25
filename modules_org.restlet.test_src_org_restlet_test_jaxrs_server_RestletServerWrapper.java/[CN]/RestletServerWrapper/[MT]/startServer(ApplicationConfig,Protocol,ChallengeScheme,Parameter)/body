@@ -4,7 +4,15 @@
   comp.getServers().add(protocol,0);
   Application application=new Application(comp.getContext()){
     @Override public Restlet createRoot(){
-      JaxRsGuard guard=JaxRsRouter.getGuarded(getContext(),appConfig,authenticator,challengeScheme,"");
+      if (authenticator == null) {
+        return new JaxRsRouter(getContext(),appConfig,AllowAllAuthenticator.getInstance());
+      }
+      Guard guard=new Guard(getContext(),challengeScheme,"");
+      guard.getSecrets().put("admin","adminPW".toCharArray());
+      guard.getSecrets().put("alice","alicesSecret".toCharArray());
+      guard.getSecrets().put("bob","bobsSecret".toCharArray());
+      JaxRsRouter router=new JaxRsRouter(getContext(),appConfig,authenticator);
+      guard.setNext(router);
       return guard;
     }
   }

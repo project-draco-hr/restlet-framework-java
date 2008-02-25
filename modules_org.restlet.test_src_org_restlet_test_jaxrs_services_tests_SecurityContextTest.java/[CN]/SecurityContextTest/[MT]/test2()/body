@@ -1,19 +1,20 @@
 {
   if (!startServer(new Authenticator(){
-    public boolean checkSecret(    String identifier,    char[] secret){
-      return true;
-    }
     public boolean isUserInRole(    Principal principal,    String role){
       return false;
     }
   }
 ))   return;
   Response response=get();
+  assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED,response.getStatus());
+  response=getAuth(null,"ydfsdf","ydf");
+  assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED,response.getStatus());
+  response=getAuth(null,"admin","adminPW");
   assertEquals(Status.CLIENT_ERROR_FORBIDDEN,response.getStatus());
-  response=post(new Form().getWebRepresentation());
+  response=post(null,new Form().getWebRepresentation(),new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"alice","alicesSecret"));
   sysOutEntityIfError(response);
   assertEquals(Status.CLIENT_ERROR_FORBIDDEN,response.getStatus());
-  response=post(new Form("abc=def").getWebRepresentation());
+  response=post(null,new Form("abc=def").getWebRepresentation(),new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"bob","bobsSecret"));
   sysOutEntityIfError(response);
   assertEquals(Status.CLIENT_ERROR_FORBIDDEN,response.getStatus());
 }
