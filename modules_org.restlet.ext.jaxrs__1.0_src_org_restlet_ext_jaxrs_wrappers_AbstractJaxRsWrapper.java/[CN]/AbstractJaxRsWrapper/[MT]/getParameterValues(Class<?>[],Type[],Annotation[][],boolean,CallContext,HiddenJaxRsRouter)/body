@@ -1,0 +1,21 @@
+{
+  int paramNo=paramTypes.length;
+  if (paramNo == 0)   return new Object[0];
+  Object[] args=new Object[paramNo];
+  boolean annotRequired=false;
+  for (int i=0; i < args.length; i++) {
+    Class<?> paramType=paramTypes[i];
+    Object arg;
+    Annotation[] paramAnnotations=paramAnnotationss[i];
+    try {
+      arg=getParameterValue(paramAnnotations,paramType,callContext,jaxRsRouter,leaveEncoded,i);
+    }
+ catch (    IllegalOrNoAnnotationException ionae) {
+      if (annotRequired)       throw ionae;
+      annotRequired=true;
+      arg=convertRepresentation(callContext,paramType,paramGenericTypes[i],paramAnnotations,jaxRsRouter);
+    }
+    args[i]=arg;
+  }
+  return args;
+}

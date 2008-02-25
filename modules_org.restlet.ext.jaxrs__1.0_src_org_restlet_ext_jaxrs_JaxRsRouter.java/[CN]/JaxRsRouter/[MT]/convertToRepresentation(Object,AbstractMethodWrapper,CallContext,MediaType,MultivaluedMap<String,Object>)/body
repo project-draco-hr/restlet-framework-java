@@ -2,8 +2,10 @@
   if (entity instanceof Representation)   return (Representation)entity;
   if (entity == null)   return null;
   Class<? extends Object> entityClass=entity.getClass();
+  Type genericReturnType=resourceMethod.getGenericReturnType();
+  Annotation[] methodAnnotations=resourceMethod.getAnnotations();
+  MessageBodyWriterSet mbws=this.messageBodyWriters.subSet(entityClass,genericReturnType,methodAnnotations);
   SortedMetadata<MediaType> accMediaTypes=callContext.getAccMediaTypes();
-  MessageBodyWriterSet mbws=this.messageBodyWriters.subSet(entityClass);
   List<MediaType> possMediaTypes;
   if (responseMediaType != null)   possMediaTypes=Collections.singletonList(responseMediaType);
  else   if (resourceMethod instanceof ResourceMethod)   possMediaTypes=determineMediaType16((ResourceMethod)resourceMethod,mbws,callContext);
@@ -15,5 +17,5 @@
   if (responseMediaType != null)   mediaType=responseMediaType;
  else   mediaType=determineMediaType79(possMediaTypes,callContext);
   MultivaluedMap<String,Object> httpResponseHeaders=new WrappedRequestForHttpHeaders(callContext.getResponse(),jaxRsRespHeaders,getLogger());
-  return new JaxRsOutputRepresentation(entity,mediaType,mbw,httpResponseHeaders);
+  return new JaxRsOutputRepresentation(entity,genericReturnType,mediaType,methodAnnotations,mbw,httpResponseHeaders);
 }
