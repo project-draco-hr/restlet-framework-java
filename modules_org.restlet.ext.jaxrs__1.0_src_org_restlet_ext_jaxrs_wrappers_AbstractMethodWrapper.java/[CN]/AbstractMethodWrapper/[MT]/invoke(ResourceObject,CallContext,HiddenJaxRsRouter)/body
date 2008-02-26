@@ -4,7 +4,8 @@
   Type[] paramGenericTypes=javaMethod.getGenericParameterTypes();
   Object[] args=getParameterValues(paramTypes,paramGenericTypes,parameterAnnotationss,leaveEncoded,callContext,jaxRsRouter);
   try {
-    return this.javaMethod.invoke(resourceObject.getResourceObject(),args);
+    Object jaxRsResourceObj=resourceObject.getJaxRsResourceObject();
+    return this.javaMethod.invoke(jaxRsResourceObj,args);
   }
  catch (  IllegalArgumentException e) {
     throw new MethodInvokeException("Could not invoke " + javaMethod,e);

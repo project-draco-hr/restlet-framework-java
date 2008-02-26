@@ -1,17 +1,6 @@
 {
-  boolean added=false;
-  if (provider instanceof javax.ws.rs.ext.MessageBodyWriter) {
-    this.messageBodyWriters.add(new MessageBodyWriter((javax.ws.rs.ext.MessageBodyWriter<?>)provider));
-    added=true;
-  }
-  if (provider instanceof javax.ws.rs.ext.MessageBodyReader) {
-    this.messageBodyReaders.add(new MessageBodyReader((javax.ws.rs.ext.MessageBodyReader<?>)provider));
-    added=true;
-  }
-  if (provider instanceof javax.ws.rs.ext.ContextResolver) {
-    this.contextResolvers.add(new ContextResolver((javax.ws.rs.ext.ContextResolver<?>)provider));
-    added=true;
-  }
-  if (!added) {
-  }
+  Provider<?> provider=new Provider<Object>(jaxRsProvider);
+  if (provider.isWriter())   this.messageBodyWriters.add(provider);
+  if (provider.isReader())   this.messageBodyReaders.add(provider);
+  if (provider.isContextResolver())   this.contextResolvers.add(provider);
 }

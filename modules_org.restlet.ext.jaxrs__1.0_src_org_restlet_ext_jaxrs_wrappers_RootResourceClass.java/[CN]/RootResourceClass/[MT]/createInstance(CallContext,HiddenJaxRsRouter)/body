@@ -2,6 +2,11 @@
   Constructor<?> constructor=this.constructor;
   Object instance=createInstance(constructor,leaveEncoded,callContext,jaxRsRouter);
   ResourceObject rootResourceObject=new ResourceObject(instance,this);
-  rootResourceObject.injectDependencies(callContext);
+  try {
+    rootResourceObject.injectDependencies(callContext);
+  }
+ catch (  InjectException e) {
+    throw new InstantiateRootRessourceException(e);
+  }
   return rootResourceObject;
 }

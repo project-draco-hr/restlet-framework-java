@@ -5,17 +5,17 @@
  else   args=getParameterValues(parameterTypes,javaMethod.getGenericParameterTypes(),javaMethod.getParameterAnnotations(),leaveEncoded,callContext,jaxRsRouter);
   Object subResObj;
   try {
-    subResObj=javaMethod.invoke(resourceObject.getResourceObject(),args);
+    subResObj=javaMethod.invoke(resourceObject.getJaxRsResourceObject(),args);
   }
  catch (  IllegalArgumentException e) {
-    throw new InstantiateRessourceException(javaMethod.getReturnType(),e);
+    Class<?> returnType=javaMethod.getReturnType();
+    throw new InstantiateRessourceException(returnType,e);
   }
 catch (  IllegalAccessException e) {
-    throw new InstantiateRessourceException(javaMethod.getReturnType(),e);
+    Class<?> returnType=javaMethod.getReturnType();
+    throw new InstantiateRessourceException(returnType,e);
   }
   if (subResObj == null) {
   }
-  ResourceObject subResourceObject=new ResourceObject(subResObj);
-  subResourceObject.injectDependencies(callContext);
-  return subResourceObject;
+  return new ResourceObject(subResObj);
 }
