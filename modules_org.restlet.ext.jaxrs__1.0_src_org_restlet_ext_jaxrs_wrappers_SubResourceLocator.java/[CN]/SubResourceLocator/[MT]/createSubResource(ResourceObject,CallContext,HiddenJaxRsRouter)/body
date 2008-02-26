@@ -3,9 +3,9 @@
   Class<?>[] parameterTypes=this.javaMethod.getParameterTypes();
   if (parameterTypes.length == 0)   args=new Object[0];
  else   args=getParameterValues(parameterTypes,javaMethod.getGenericParameterTypes(),javaMethod.getParameterAnnotations(),leaveEncoded,callContext,jaxRsRouter);
-  Object subResourceObject;
+  Object subResObj;
   try {
-    subResourceObject=javaMethod.invoke(resourceObject.getResourceObject(),args);
+    subResObj=javaMethod.invoke(resourceObject.getResourceObject(),args);
   }
  catch (  IllegalArgumentException e) {
     throw new InstantiateRessourceException(javaMethod.getReturnType(),e);
@@ -13,7 +13,9 @@
 catch (  IllegalAccessException e) {
     throw new InstantiateRessourceException(javaMethod.getReturnType(),e);
   }
-  if (subResourceObject == null) {
+  if (subResObj == null) {
   }
-  return new ResourceObject(subResourceObject);
+  ResourceObject subResourceObject=new ResourceObject(subResObj);
+  subResourceObject.injectDependencies(callContext);
+  return subResourceObject;
 }

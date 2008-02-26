@@ -1,5 +1,7 @@
 {
   Constructor<?> constructor=this.constructor;
-  Object newInstance=createInstance(constructor,leaveEncoded,callContext,jaxRsRouter);
-  return new ResourceObject(newInstance,this);
+  Object instance=createInstance(constructor,leaveEncoded,callContext,jaxRsRouter);
+  ResourceObject rootResourceObject=new ResourceObject(instance,this);
+  rootResourceObject.injectDependencies(callContext);
+  return rootResourceObject;
 }
