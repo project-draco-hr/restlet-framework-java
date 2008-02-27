@@ -1,8 +1,8 @@
 {
   if (!leaveEncoded && paramValue != null)   paramValue=Reference.decode(paramValue);
- else   if (paramValue == null)   paramValue=defaultValue;
+ else   if (paramValue == null && defaultValue != null)   paramValue=defaultValue.value();
   if (paramClass.equals(String.class))   return paramValue;
-  if (paramClass.isPrimitive())   return getParamValueForPrimitive(paramClass,paramValue,jaxRsRouter);
+  if (paramClass.isPrimitive())   return getParamValueForPrimitive(paramClass,paramValue);
   try {
     Constructor<?> constr=paramClass.getConstructor(String.class);
     return constr.newInstance(paramValue);

@@ -1,6 +1,41 @@
 {
-  for (  Field contextField : getInjectContextFields()) {
-    Object jaxRsResObj=resourceObject.getJaxRsResourceObject();
+  Object jaxRsResObj=resourceObject.getJaxRsResourceObject();
+  for (  Field contextField : this.injectFieldsContext) {
     Util.inject(jaxRsResObj,contextField,callContext);
+  }
+  for (  Field cpf : this.injectFieldsCookieParam) {
+    CookieParam headerParam=cpf.getAnnotation(CookieParam.class);
+    DefaultValue defaultValue=cpf.getAnnotation(DefaultValue.class);
+    Class<?> convTo=cpf.getDeclaringClass();
+    Object value=getCookieParamValue(convTo,headerParam,defaultValue,callContext);
+    Util.inject(jaxRsResObj,cpf,value);
+  }
+  for (  Field hpf : this.injectFieldsHeaderParam) {
+    HeaderParam headerParam=hpf.getAnnotation(HeaderParam.class);
+    DefaultValue defaultValue=hpf.getAnnotation(DefaultValue.class);
+    Class<?> convTo=hpf.getDeclaringClass();
+    Object value=getHeaderParamValue(convTo,headerParam,defaultValue,callContext);
+    Util.inject(jaxRsResObj,hpf,value);
+  }
+  for (  Field hpf : this.injectFieldsMatrixParam) {
+    MatrixParam headerParam=hpf.getAnnotation(MatrixParam.class);
+    DefaultValue defaultValue=hpf.getAnnotation(DefaultValue.class);
+    Class<?> convTo=hpf.getDeclaringClass();
+    Object value=getMatrixParamValue(convTo,headerParam,leaveEncoded,defaultValue,callContext);
+    Util.inject(jaxRsResObj,hpf,value);
+  }
+  for (  Field hpf : this.injectFieldsPathParam) {
+    PathParam headerParam=hpf.getAnnotation(PathParam.class);
+    DefaultValue defaultValue=hpf.getAnnotation(DefaultValue.class);
+    Class<?> convTo=hpf.getDeclaringClass();
+    Object value=getPathParamValue(convTo,headerParam,leaveEncoded,defaultValue,callContext);
+    Util.inject(jaxRsResObj,hpf,value);
+  }
+  for (  Field hpf : this.injectFieldsQueryParam) {
+    QueryParam headerParam=hpf.getAnnotation(QueryParam.class);
+    DefaultValue defaultValue=hpf.getAnnotation(DefaultValue.class);
+    Class<?> convTo=hpf.getDeclaringClass();
+    Object value=getQueryParamValue(convTo,headerParam,defaultValue,callContext,Logger.getAnonymousLogger());
+    Util.inject(jaxRsResObj,hpf,value);
   }
 }
