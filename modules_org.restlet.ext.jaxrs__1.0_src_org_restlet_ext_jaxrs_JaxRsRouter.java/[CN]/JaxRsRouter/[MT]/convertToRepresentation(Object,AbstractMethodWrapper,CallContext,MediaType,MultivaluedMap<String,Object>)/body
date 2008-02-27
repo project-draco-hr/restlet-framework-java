@@ -2,8 +2,12 @@
   if (entity instanceof Representation)   return (Representation)entity;
   if (entity == null)   return null;
   Class<? extends Object> entityClass=entity.getClass();
-  Type genericReturnType=resourceMethod.getGenericReturnType();
-  Annotation[] methodAnnotations=resourceMethod.getAnnotations();
+  Type genericReturnType=null;
+  Annotation[] methodAnnotations=null;
+  if (resourceMethod != null) {
+    genericReturnType=resourceMethod.getGenericReturnType();
+    methodAnnotations=resourceMethod.getAnnotations();
+  }
   MessageBodyWriterSet mbws=this.messageBodyWriters.subSet(entityClass,genericReturnType,methodAnnotations);
   SortedMetadata<MediaType> accMediaTypes=callContext.getAccMediaTypes();
   List<MediaType> possMediaTypes;

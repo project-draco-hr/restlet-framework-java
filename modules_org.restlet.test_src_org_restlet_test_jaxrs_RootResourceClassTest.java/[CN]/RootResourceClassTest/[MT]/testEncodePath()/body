@@ -1,10 +1,11 @@
 {
+  WrapperFactory wrapperFactory=new WrapperFactory(Logger.getAnonymousLogger());
   try {
-    new RootResourceClass(IllegalPathService1.class);
+    wrapperFactory.getRootResourceClass(IllegalPathService1.class);
     fail("must not pass");
   }
  catch (  AssertionFailedError e) {
   }
-  RootResourceClass rrc=new RootResourceClass(IllegalPathService2.class);
+  RootResourceClass rrc=wrapperFactory.getRootResourceClass(IllegalPathService2.class);
   assertEquals("/afsdf%3Ause",rrc.getPathRegExp().getPathPattern());
 }

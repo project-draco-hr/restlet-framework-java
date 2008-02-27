@@ -1,0 +1,27 @@
+{
+  Collection<ResourceMethodOrLocator> srmls=new ArrayList<ResourceMethodOrLocator>();
+  Collection<ResourceMethod> subRsesMeths=new ArrayList<ResourceMethod>();
+  Collection<SubResourceLocator> subResLocs=new ArrayList<SubResourceLocator>();
+  java.lang.reflect.Method[] classMethods=jaxRsClass.getDeclaredMethods();
+  for (  java.lang.reflect.Method javaMethod : classMethods) {
+    Path path=javaMethod.getAnnotation(Path.class);
+    org.restlet.data.Method httpMethod=ResourceMethod.getHttpMethod(javaMethod);
+    if (httpMethod != null) {
+      if (checkResMethodNotPublic(javaMethod,logger))       continue;
+      ResourceMethod subResMeth=new ResourceMethod(javaMethod,path,this,httpMethod);
+      subRsesMeths.add(subResMeth);
+      srmls.add(subResMeth);
+    }
+ else {
+      if (path != null) {
+        if (checkResMethodNotPublic(javaMethod,logger))         continue;
+        SubResourceLocator subResLoc=new SubResourceLocator(javaMethod,path,this);
+        subResLocs.add(subResLoc);
+        srmls.add(subResLoc);
+      }
+    }
+  }
+  this.subResourceLocators=subResLocs;
+  this.subResourceMethods=subRsesMeths;
+  this.subResourceMethodsAndLocators=srmls;
+}
