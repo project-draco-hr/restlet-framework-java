@@ -1,0 +1,41 @@
+{
+  String methodName=request.getMethod().getName();
+  String date="";
+  if (httpHeaders.getFirstValue("X-Amz-Date",true) == null) {
+    date=httpHeaders.getFirstValue(HttpConstants.HEADER_DATE,true);
+    if (date == null) {
+      date=DateUtils.format(new Date(),DateUtils.FORMAT_RFC_1123.get(0));
+      httpHeaders.add(HttpConstants.HEADER_DATE,date);
+    }
+  }
+  String contentMd5=httpHeaders.getFirstValue(HttpConstants.HEADER_CONTENT_MD5,true);
+  if (contentMd5 == null)   contentMd5="";
+  String contentType=httpHeaders.getFirstValue(HttpConstants.HEADER_CONTENT_TYPE,true);
+  if (contentType == null) {
+    boolean applyPatch=false;
+    String jvmVendor=System.getProperty("java.vm.vendor");
+    if (jvmVendor != null && (jvmVendor.toLowerCase()).startsWith("sun")) {
+      int majorVersionNumber=Engine.getJavaMajorVersion();
+      int minorVersionNumber=Engine.getJavaMinorVersion();
+      if (majorVersionNumber == 1) {
+        if (minorVersionNumber < 5) {
+          applyPatch=true;
+        }
+ else         if (minorVersionNumber == 5) {
+          applyPatch=(Engine.getJavaUpdateVersion() < 10);
+        }
+      }
+    }
+    if (applyPatch && !request.getMethod().equals(Method.PUT)) {
+      contentType="application/x-www-form-urlencoded";
+    }
+ else {
+      contentType="";
+    }
+  }
+  String canonicalizedAmzHeaders=getCanonicalizedAmzHeaders(httpHeaders);
+  String canonicalizedResource=getCanonicalizedResourceName(request.getResourceRef());
+  StringBuilder rest=new StringBuilder();
+  rest.append(methodName).append('\n').append(contentMd5).append('\n').append(contentType).append('\n').append(date).append('\n').append(canonicalizedAmzHeaders).append(canonicalizedResource);
+  sb.append(challenge.getIdentifier()).append(':').append(Base64.encode(SecurityUtils.toHMac(rest.toString(),new String(challenge.getSecret())),false));
+}

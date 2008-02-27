@@ -1,0 +1,21 @@
+{
+  ChallengeRequest result=null;
+  if (header != null) {
+    int space=header.indexOf(' ');
+    if (space != -1) {
+      String scheme=header.substring(0,space);
+      result=new ChallengeRequest(new ChallengeScheme("HTTP_" + scheme,scheme),null);
+      String rest=header.substring(space + 1);
+      parseParameters(rest,result.getParameters());
+      result.setRealm(result.getParameters().getFirstValue("realm"));
+    }
+  }
+  AuthenticationHelper helper=Engine.getInstance().findHelper(result.getScheme(),false,true);
+  if (helper != null) {
+    helper.parseRequest(result,header);
+  }
+ else {
+    throw new IllegalArgumentException("Challenge scheme " + result.getScheme() + " not supported by the Restlet engine.");
+  }
+  return result;
+}

@@ -1,0 +1,19 @@
+{
+  super.challenge(response,stale,guard);
+  if (stale) {
+    response.getAttributes().put("stale","true");
+  }
+  Series<Parameter> parameters=response.getChallengeRequest().getParameters();
+  StringBuffer domain=new StringBuffer();
+  for (  String baseUri : guard.getDomainUris()) {
+    domain.append(baseUri).append(' ');
+  }
+  if (domain.length() > 0) {
+    domain.delete(domain.length() - 1,domain.length());
+    parameters.add("domain",domain.toString());
+  }
+  parameters.add("nonce",SecurityUtils.makeNonce(guard.getServerKey()));
+  if (response.getAttributes().containsKey("stale")) {
+    parameters.add("stale","true");
+  }
+}

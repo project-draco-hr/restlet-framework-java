@@ -1,0 +1,23 @@
+{
+  try {
+    byte[] credentialsEncoded=Base64.decode(cr.getCredentials());
+    if (credentialsEncoded == null) {
+      logger.warning("Cannot decode credentials: " + cr.getCredentials());
+    }
+    String credentials=new String(credentialsEncoded,"US-ASCII");
+    int separator=credentials.indexOf(':');
+    if (separator == -1) {
+      logger.warning("Invalid credentials given by client with IP: " + ((request != null) ? request.getClientInfo().getAddress() : "?"));
+    }
+ else {
+      cr.setIdentifier(credentials.substring(0,separator));
+      cr.setSecret(credentials.substring(separator + 1));
+      if (logger != null) {
+        logger.info("Basic HTTP authentication succeeded: identifier=" + cr.getIdentifier() + ".");
+      }
+    }
+  }
+ catch (  UnsupportedEncodingException e) {
+    logger.log(Level.WARNING,"Unsupported encoding error",e);
+  }
+}
