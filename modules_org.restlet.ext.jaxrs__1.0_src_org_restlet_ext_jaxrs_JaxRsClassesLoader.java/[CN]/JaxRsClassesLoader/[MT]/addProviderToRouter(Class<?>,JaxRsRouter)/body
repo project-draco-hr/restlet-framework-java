@@ -1,6 +1,7 @@
 {
   int modifiers=clazz.getModifiers();
   if (Modifier.isAbstract(modifiers) || Modifier.isInterface(modifiers)) {
+    jaxRsRouter.getLogger().warning("The provider " + clazz.getName() + " is not concrete");
     return;
   }
   Constructor<?> providerConstructor=RootResourceClass.findJaxRsConstructor(clazz);
@@ -9,19 +10,19 @@
     provider=RootResourceClass.createInstance(providerConstructor,false,null,jaxRsRouter);
   }
  catch (  InstantiateParameterException e) {
-    throw new IllegalArgumentException("Could not instantiate the MessageBodyWriter, class " + clazz.getName(),e);
+    throw new IllegalArgumentException("Could not instantiate the Provider, class " + clazz.getName(),e);
   }
 catch (  MissingAnnotationException e) {
-    throw new IllegalArgumentException("Could not instantiate the MessageBodyWriter, class " + clazz.getName(),e);
+    throw new IllegalArgumentException("Could not instantiate the Provider, class " + clazz.getName(),e);
   }
 catch (  InstantiateRootRessourceException e) {
-    throw new IllegalArgumentException("Could not instantiate the MessageBodyWriter, class " + clazz.getName(),e);
+    throw new IllegalArgumentException("Could not instantiate the Provider, class " + clazz.getName(),e);
   }
 catch (  RequestHandledException e) {
-    throw new IllegalArgumentException("Could not instantiate the MessageBodyWriter, class " + clazz.getName(),e);
+    throw new IllegalArgumentException("Could not instantiate the Provider, class " + clazz.getName(),e);
   }
 catch (  InvocationTargetException e) {
-    throw new IllegalArgumentException("Could not instantiate the MessageBodyWriter, class " + clazz.getName(),e.getCause());
+    throw new IllegalArgumentException("Could not instantiate the Provider, class " + clazz.getName(),e.getCause());
   }
   jaxRsRouter.addProvider(provider);
 }

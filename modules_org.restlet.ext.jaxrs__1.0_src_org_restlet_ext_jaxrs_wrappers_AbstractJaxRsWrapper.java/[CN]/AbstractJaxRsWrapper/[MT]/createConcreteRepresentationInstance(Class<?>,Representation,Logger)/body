@@ -1,0 +1,20 @@
+{
+  if (paramType.equals(Representation.class))   return entity;
+  Constructor<?> constr;
+  try {
+    constr=paramType.getConstructor(Representation.class);
+  }
+ catch (  SecurityException e) {
+    logger.warning("The constructor " + paramType + "(Representation) is not accessable.");
+    return null;
+  }
+catch (  NoSuchMethodException e) {
+    return null;
+  }
+  try {
+    return constr.newInstance(entity);
+  }
+ catch (  Exception e) {
+    throw InstantiateParameterException.object(paramType,"the message body",e);
+  }
+}

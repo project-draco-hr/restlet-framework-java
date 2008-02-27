@@ -14,21 +14,21 @@
     valueOf=paramClass.getMethod("valueOf",String.class);
   }
  catch (  SecurityException e) {
-    throw new InstantiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+    throw InstantiateParameterException.object(paramClass,paramValue,e);
   }
 catch (  NoSuchMethodException e) {
-    throw new InstantiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+    throw InstantiateParameterException.object(paramClass,paramValue,e);
   }
   try {
     return valueOf.invoke(null,paramValue);
   }
  catch (  IllegalArgumentException e) {
-    throw new InstantiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+    throw InstantiateParameterException.object(paramClass,paramValue,e);
   }
 catch (  IllegalAccessException e) {
-    throw new InstantiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+    throw InstantiateParameterException.object(paramClass,paramValue,e);
   }
 catch (  InvocationTargetException e) {
-    throw new InstantiateParameterException("Could not convert " + paramValue + " to a "+ paramClass.getName(),e);
+    throw InstantiateParameterException.object(paramClass,paramValue,e);
   }
 }

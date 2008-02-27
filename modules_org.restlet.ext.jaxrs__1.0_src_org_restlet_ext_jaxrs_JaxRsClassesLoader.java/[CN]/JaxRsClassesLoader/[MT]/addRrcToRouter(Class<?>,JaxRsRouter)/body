@@ -1,11 +1,15 @@
 {
   int modifiers=clazz.getModifiers();
   if (Modifier.isAbstract(modifiers) || Modifier.isInterface(modifiers)) {
+    String msg="The root resource class " + clazz.getName() + " is not concrete";
+    jaxRsRouter.getLogger().warning(msg);
     return;
   }
   if (clazz.isAnnotationPresent(Path.class)) {
     jaxRsRouter.attach(clazz);
   }
  else {
+    String msg="The root resource class " + clazz.getName() + " is not annotated with @Path. The class will be ignored.";
+    jaxRsRouter.getLogger().warning(msg);
   }
 }
