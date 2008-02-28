@@ -6,7 +6,7 @@
     if (bb.hasRemaining()) {
       result=bb.get();
     }
- else {
+ else     if (!endReached) {
       int bytesRead=readChannel();
       if (bytesRead == 0) {
         selector=SelectorFactory.getSelector();
@@ -16,12 +16,18 @@
         }
         bytesRead=readChannel();
       }
-      if (bytesRead <= 0) {
+ else       if (bytesRead == -1) {
+        endReached=true;
+      }
+      if (bb.remaining() == 0) {
         result=-1;
       }
  else {
         result=bb.get();
       }
+    }
+ else {
+      result=-1;
     }
   }
   finally {
