@@ -1,5 +1,14 @@
 {
-  RootResourceClass newRrc=wrapperFactory.getRootResourceClass(rootResourceClass);
+  RootResourceClass newRrc;
+  try {
+    newRrc=wrapperFactory.getRootResourceClass(rootResourceClass);
+  }
+ catch (  IllegalPathOnClassException e) {
+    throw new IllegalArgumentException(e);
+  }
+catch (  IllegalPathOnMethodException e) {
+    throw new IllegalArgumentException(e);
+  }
   PathRegExp uriTempl=newRrc.getPathRegExp();
   for (  RootResourceClass rrc : this.rootResourceClasses) {
     if (rrc.getJaxRsClass().equals(rootResourceClass))     return;

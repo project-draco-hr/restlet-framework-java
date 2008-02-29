@@ -3,7 +3,16 @@
   String resMethodPath=null;
   for (  Method method : resource.getMethods()) {
     if (!method.getName().equals(methodName))     continue;
-    String path=AbstractMethodWrapper.getPathTemplate(method);
+    String path;
+    try {
+      path=AbstractMethodWrapper.getPathTemplate(method);
+    }
+ catch (    IllegalPathOnMethodException e) {
+      throw e.getCause();
+    }
+catch (    MissingAnnotationException e) {
+      throw new IllegalArgumentException(e);
+    }
     if (path == null)     continue;
     if (resMethodPath != null && !resMethodPath.equals(path))     throw new IllegalArgumentException("The class " + resource + " has more than one methods with the name "+ methodName+ " annotated with @Path");
     resMethodPath=path;

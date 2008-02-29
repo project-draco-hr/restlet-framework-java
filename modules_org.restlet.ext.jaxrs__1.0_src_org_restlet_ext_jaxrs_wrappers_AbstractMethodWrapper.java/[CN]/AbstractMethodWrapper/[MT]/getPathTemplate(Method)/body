@@ -1,5 +1,9 @@
 {
-  Path path=javaMethod.getAnnotation(Path.class);
-  if (path == null)   return null;
-  return AbstractJaxRsWrapper.getPathTemplate(path);
+  Path path=getPathAnnotation(method);
+  try {
+    return AbstractJaxRsWrapper.getPathTemplate(path);
+  }
+ catch (  IllegalPathException e) {
+    throw new IllegalPathOnMethodException(e);
+  }
 }

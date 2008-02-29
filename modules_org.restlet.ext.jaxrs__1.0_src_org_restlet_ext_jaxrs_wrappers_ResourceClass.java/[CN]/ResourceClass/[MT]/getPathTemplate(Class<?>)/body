@@ -1,5 +1,8 @@
 {
-  Path path=rootResourceClass.getAnnotation(Path.class);
-  if (path == null)   throw new IllegalArgumentException("The class " + rootResourceClass.getName() + " is not a root resource class, because it is not annotated with @Path");
-  return AbstractJaxRsWrapper.getPathTemplate(path);
+  try {
+    return getPathTemplate(getPathAnnotation(resource));
+  }
+ catch (  IllegalPathException e) {
+    throw new IllegalPathOnClassException(e);
+  }
 }

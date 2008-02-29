@@ -3,8 +3,16 @@
   reference.setProtocol(Protocol.HTTP);
   reference.setAuthority("localhost");
   reference.setHostPort(serverWrapper.getPort());
-  String path=ResourceClass.getPathTemplate(jaxRsClass);
-  if (path == null)   throw new RuntimeException("no @Path available on " + jaxRsClass);
+  String path;
+  try {
+    path=ResourceClass.getPathTemplate(jaxRsClass);
+  }
+ catch (  IllegalPathOnClassException e) {
+    throw new JaxRsRuntimeException(e);
+  }
+catch (  MissingAnnotationException e) {
+    throw new JaxRsRuntimeException(e);
+  }
   if (!path.startsWith("/"))   path="/" + path;
   if (subPath != null) {
     if (subPath.startsWith(";"))     path+=subPath;

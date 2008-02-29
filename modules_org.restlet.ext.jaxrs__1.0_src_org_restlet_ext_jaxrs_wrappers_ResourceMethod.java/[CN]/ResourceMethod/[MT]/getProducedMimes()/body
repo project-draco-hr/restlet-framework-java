@@ -1,7 +1,8 @@
 {
   if (producedMimes == null) {
-    ProduceMime produceMime=this.javaMethod.getAnnotation(ProduceMime.class);
-    if (produceMime == null)     produceMime=this.javaMethod.getAnnotation(ProduceMime.class);
+    ProduceMime produceMime;
+    produceMime=this.javaMethod.getAnnotation(ProduceMime.class);
+    if (produceMime == null)     produceMime=this.javaMethod.getClass().getAnnotation(ProduceMime.class);
     if (produceMime != null)     this.producedMimes=convertToMediaTypes(produceMime.value());
  else     this.producedMimes=Collections.emptyList();
   }

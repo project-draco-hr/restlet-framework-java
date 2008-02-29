@@ -1,10 +1,16 @@
 {
   String pathTemplate=path.value();
   if (path.encode()) {
-    return EncodeOrCheck.encodeNotBraces(pathTemplate,false).toString();
+    pathTemplate=EncodeOrCheck.encodeNotBraces(pathTemplate,false).toString();
   }
  else {
-    EncodeOrCheck.checkForInvalidUriChars(pathTemplate,-1,"path template");
-    return pathTemplate;
+    try {
+      EncodeOrCheck.checkForInvalidUriChars(pathTemplate,-1,"path template");
+    }
+ catch (    IllegalArgumentException iae) {
+      throw new IllegalPathException(path,iae);
+    }
   }
+  if (pathTemplate.contains(";"))   throw new IllegalPathException(path,"A path must not contain a semicolon");
+  return pathTemplate;
 }
