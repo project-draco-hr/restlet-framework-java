@@ -2,6 +2,7 @@
   super(context);
   this.wrapperFactory=new WrapperFactory(getContext().getLogger());
   this.loadDefaultProviders();
-  this.attach(appConfig);
-  this.setAccessControl(accessControl);
+  if (appConfig != null)   this.attach(appConfig);
+  if (accessControl != null)   this.setAccessControl(accessControl);
+ else   this.setAccessControl(ThrowExcAccessControl.getInstance());
 }

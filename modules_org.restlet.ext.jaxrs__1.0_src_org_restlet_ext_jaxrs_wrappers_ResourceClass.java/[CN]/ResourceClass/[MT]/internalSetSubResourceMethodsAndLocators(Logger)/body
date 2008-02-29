@@ -4,8 +4,9 @@
   Collection<SubResourceLocator> subResLocs=new ArrayList<SubResourceLocator>();
   java.lang.reflect.Method[] classMethods=jaxRsClass.getDeclaredMethods();
   for (  java.lang.reflect.Method javaMethod : classMethods) {
-    Path path=javaMethod.getAnnotation(Path.class);
-    org.restlet.data.Method httpMethod=ResourceMethod.getHttpMethod(javaMethod);
+    java.lang.reflect.Method annJavaMethod=getAnnotatedJavaMethod(javaMethod);
+    Path path=annJavaMethod.getAnnotation(Path.class);
+    org.restlet.data.Method httpMethod=ResourceMethod.getHttpMethod(annJavaMethod);
     if (httpMethod != null) {
       if (checkResMethodNotPublic(javaMethod,logger))       continue;
       ResourceMethod subResMeth=new ResourceMethod(javaMethod,path,this,httpMethod);

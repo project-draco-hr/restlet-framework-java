@@ -3,7 +3,10 @@
   Server server=comp.getServers().add(Protocol.HTTP,8182);
   Application application=new Application(comp.getContext()){
     @Override public Restlet createRoot(){
-      return new JaxRsRouter(getContext(),new ExampleAppConfig());
+      ExampleAppConfig appConfig=new ExampleAppConfig();
+      JaxRsRouter router=new JaxRsRouter(getContext(),appConfig);
+      HtmlPreferer filter=new HtmlPreferer(getContext(),router);
+      return filter;
     }
   }
 ;

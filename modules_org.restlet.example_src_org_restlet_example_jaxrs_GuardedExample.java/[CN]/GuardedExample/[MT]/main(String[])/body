@@ -4,13 +4,14 @@
   Application application=new Application(comp.getContext()){
     @Override public Restlet createRoot(){
       AccessControl accessControl=new ExampleAccessControl();
+      JaxRsRouter router=new JaxRsRouter(getContext(),new ExampleAppConfig(),accessControl);
       Guard guard=new Guard(getContext(),ChallengeScheme.HTTP_BASIC,"persons");
       guard.getSecrets().put("admin","adminPW".toCharArray());
       guard.getSecrets().put("alice","alicesSecret".toCharArray());
       guard.getSecrets().put("bob","bobsSecret".toCharArray());
-      JaxRsRouter router=new JaxRsRouter(getContext(),new ExampleAppConfig(),accessControl);
       guard.setNext(router);
-      return guard;
+      HtmlPreferer filter=new HtmlPreferer(getContext(),guard);
+      return filter;
     }
   }
 ;

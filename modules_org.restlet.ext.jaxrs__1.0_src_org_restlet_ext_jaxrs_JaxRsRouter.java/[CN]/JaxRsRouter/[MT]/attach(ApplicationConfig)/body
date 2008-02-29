@@ -1,7 +1,25 @@
 {
   Collection<Class<?>> rrcs=appConfig.getResourceClasses();
   Collection<Class<?>> providerClasses=appConfig.getProviderClasses();
-  JaxRsClassesLoader.addRrcsToRouter(rrcs,this);
-  JaxRsClassesLoader.addProvidersToRouter(providerClasses,this);
+  if (rrcs == null || rrcs.isEmpty())   throw new IllegalArgumentException("The ApplicationConfig must return root resource classes");
+  for (  Class<?> rrc : rrcs) {
+    try {
+      this.addRootResourceClass(rrc);
+    }
+ catch (    MissingAnnotationException e) {
+      getLogger().warning(e.getMessage());
+    }
+  }
+  if (providerClasses != null) {
+    for (    Class<?> providerClass : providerClasses) {
+      try {
+        this.addProvider(providerClass);
+      }
+ catch (      InvocationTargetException ite) {
+        String msg="The constructor of provider " + providerClass.getName() + " has thrown an exception";
+        throw new IllegalArgumentException(msg,ite.getCause());
+      }
+    }
+  }
   this.addExtensionMappings(appConfig.getExtensionMappings());
 }

@@ -1,0 +1,10 @@
+{
+  float htmlQuality=Float.MAX_VALUE;
+  float xmlQuality=Float.MIN_VALUE;
+  for (  Preference<MediaType> acc : request.getClientInfo().getAcceptedMediaTypes()) {
+    MediaType accMediaType=acc.getMetadata();
+    if (accMediaType.equals(MediaType.APPLICATION_XHTML_XML,true) || accMediaType.equals(MediaType.TEXT_HTML,true))     htmlQuality=acc.getQuality();
+    if (accMediaType.equals(MediaType.APPLICATION_XML,true) || accMediaType.equals(MediaType.TEXT_XML,true))     xmlQuality=acc.getQuality();
+  }
+  return htmlQuality <= xmlQuality;
+}

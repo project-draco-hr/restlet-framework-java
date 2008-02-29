@@ -1,3 +1,12 @@
 {
-  throw new NotYetImplementedException();
+  ParameterizedType pt=(ParameterizedType)genericType;
+  Type atp=pt.getActualTypeArguments()[0];
+  Class<?> clazz;
+  if (atp instanceof Class)   clazz=(Class<?>)atp;
+ else   if (atp instanceof ParameterizedType)   clazz=(Class<?>)((ParameterizedType)atp).getRawType();
+ else   throw new ImplementationException("The JaxbElement provider has gotten a type it could not unmarshal. Perhaps it is not consistent to itself.");
+  QName qName=null;
+  Class<?> declaredType=clazz;
+  Object value=unmarshal(clazz,entityStream);
+  return new JAXBElement(qName,declaredType,value);
 }

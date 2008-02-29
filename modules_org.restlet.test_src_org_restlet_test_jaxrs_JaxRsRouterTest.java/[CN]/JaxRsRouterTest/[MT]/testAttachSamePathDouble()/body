@@ -1,13 +1,12 @@
 {
   ApplicationConfig appConfig=new ApplicationConfig(){
     @Override public Set<Class<?>> getResourceClasses(){
-      return (Set)Util.createSet(DoublePath1.class);
+      return (Set)Util.createSet(DoublePath1.class,DoublePath2.class);
     }
   }
 ;
-  JaxRsRouter router=new JaxRsRouter(null,appConfig,AllowAllAccess.getInstance());
   try {
-    router.attach(DoublePath2.class);
+    JaxRsRouter router=new JaxRsRouter(null,appConfig);
     fail("Attach two root resource classes with the same @Path must raise an Excption");
   }
  catch (  IllegalArgumentException e) {

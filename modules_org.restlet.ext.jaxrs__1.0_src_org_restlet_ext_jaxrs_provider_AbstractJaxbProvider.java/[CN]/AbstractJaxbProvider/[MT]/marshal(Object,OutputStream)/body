@@ -1,0 +1,11 @@
+{
+  Class<? extends Object> type=object.getClass();
+  try {
+    JAXBContext jaxbContext=getJaxbContext(object.getClass());
+    Marshaller marshaller=jaxbContext.createMarshaller();
+    marshaller.marshal(object,entityStream);
+  }
+ catch (  JAXBException e) {
+    throw logAndIOExc(getLogger(),"Could not marshal the " + type.getName(),e);
+  }
+}

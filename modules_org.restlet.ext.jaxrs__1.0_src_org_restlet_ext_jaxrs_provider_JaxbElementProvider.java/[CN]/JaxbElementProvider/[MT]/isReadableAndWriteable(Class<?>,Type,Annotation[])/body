@@ -1,3 +1,9 @@
 {
-  return JAXBElement.class.isAssignableFrom(type);
+  if (!JAXBElement.class.isAssignableFrom(type))   return false;
+  if (!(genericType instanceof ParameterizedType))   return false;
+  ParameterizedType pt=(ParameterizedType)genericType;
+  Type atp=pt.getActualTypeArguments()[0];
+  if (atp instanceof Class)   return true;
+  if (atp instanceof ParameterizedType)   return (((ParameterizedType)atp).getRawType() instanceof Class);
+  return false;
 }
