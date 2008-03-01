@@ -1,0 +1,16 @@
+{
+  final Application application=new Application(context){
+    @Override public Restlet createRoot(){
+      final Context context=getContext();
+      if (accessControl == null) {
+        return new JaxRsRouter(context,appConfig,AllowAllAccess.getInstance());
+      }
+      Guard guard=createGuard(context,challengeScheme);
+      JaxRsRouter router=new JaxRsRouter(context,appConfig,accessControl);
+      guard.setNext(router);
+      return guard;
+    }
+  }
+;
+  return application;
+}

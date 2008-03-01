@@ -2,5 +2,9 @@
   Response response=get();
   sysOutEntityIfError(response);
   assertEquals(Status.SUCCESS_NO_CONTENT,response.getStatus());
-  assertEquals(null,response.getEntity().getText());
+  Representation entity=response.getEntity();
+  String text;
+  if (entity != null)   text=entity.getText();
+ else   text=null;
+  assertEquals(null,text);
 }
