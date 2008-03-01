@@ -1,6 +1,12 @@
 {
   super(context);
   this.rechallengeEnabled=true;
+  this.secretResolver=new Resolver<char[]>(){
+    public char[] resolve(    String identifier){
+      return getSecrets().get(identifier);
+    }
+  }
+;
   this.secrets=new ConcurrentHashMap<String,char[]>();
   if ((scheme == null)) {
     throw new IllegalArgumentException("Please specify an authentication scheme. Use the 'None' challenge if no authentication is required.");
