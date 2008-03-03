@@ -1,6 +1,4 @@
 {
-  Reference reference=createBaseRef();
-  reference.setBaseRef(createBaseRef());
   String path;
   try {
     path=ResourceClass.getPathTemplate(jaxRsClass);
@@ -11,11 +9,5 @@
 catch (  MissingAnnotationException e) {
     throw new JaxRsRuntimeException(e);
   }
-  if (!path.startsWith("/"))   path="/" + path;
-  if (subPath != null) {
-    if (subPath.startsWith(";"))     path+=subPath;
- else     if (subPath.length() > 0)     path+="/" + subPath;
-  }
-  reference.setPath(path);
-  return reference;
+  return createReference(path,subPath);
 }
