@@ -1,7 +1,8 @@
 {
   if (this.consumedMimes == null) {
-    ConsumeMime consumeMime=this.javaMethod.getAnnotation(ConsumeMime.class);
-    if (consumeMime == null)     consumeMime=this.javaMethod.getAnnotation(ConsumeMime.class);
+    ConsumeMime consumeMime;
+    consumeMime=this.annotatedMethod.getAnnotation(ConsumeMime.class);
+    if (consumeMime == null)     consumeMime=this.executeMethod.getClass().getAnnotation(ConsumeMime.class);
     if (consumeMime == null)     this.consumedMimes=Collections.singletonList(MediaType.ALL);
  else     this.consumedMimes=convertToMediaTypes(consumeMime.value());
   }

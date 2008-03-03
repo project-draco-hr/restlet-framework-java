@@ -1,16 +1,16 @@
 {
-  Annotation[][] parameterAnnotationss=javaMethod.getParameterAnnotations();
-  Class<?>[] paramTypes=javaMethod.getParameterTypes();
-  Type[] paramGenericTypes=javaMethod.getGenericParameterTypes();
+  Annotation[][] parameterAnnotationss=annotatedMethod.getParameterAnnotations();
+  Class<?>[] paramTypes=executeMethod.getParameterTypes();
+  Type[] paramGenericTypes=executeMethod.getGenericParameterTypes();
   Object[] args=getParameterValues(paramTypes,paramGenericTypes,parameterAnnotationss,leaveEncoded,callContext,jaxRsRouter);
   try {
     Object jaxRsResourceObj=resourceObject.getJaxRsResourceObject();
-    return this.javaMethod.invoke(jaxRsResourceObj,args);
+    return executeMethod.invoke(jaxRsResourceObj,args);
   }
  catch (  IllegalArgumentException e) {
-    throw new MethodInvokeException("Could not invoke " + javaMethod,e);
+    throw new MethodInvokeException("Could not invoke " + executeMethod,e);
   }
 catch (  IllegalAccessException e) {
-    throw new MethodInvokeException("Could not invoke " + javaMethod,e);
+    throw new MethodInvokeException("Could not invoke " + executeMethod,e);
   }
 }

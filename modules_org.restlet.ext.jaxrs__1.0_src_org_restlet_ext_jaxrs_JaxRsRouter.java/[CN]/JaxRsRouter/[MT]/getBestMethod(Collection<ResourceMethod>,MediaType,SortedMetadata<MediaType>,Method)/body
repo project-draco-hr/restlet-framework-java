@@ -2,15 +2,17 @@
   SortedMetadata<MediaType> givenMediaTypes;
   if (givenMediaType != null)   givenMediaTypes=SortedMetadata.singleton(givenMediaType);
  else   givenMediaTypes=null;
-  Map<ResourceMethod,List<MediaType>> mms=findMethodSupportsMime(resourceMethods,ConsOrProdMime.CONSUME_MIME,givenMediaTypes);
-  if (mms.isEmpty())   throw new WebApplicationException(500);
-  if (mms.size() == 1)   return Util.getFirstKey(mms);
-  mms=findMethodSupportsMime(mms.keySet(),ConsOrProdMime.PRODUCE_MIME,accMediaTypes);
-  if (mms.isEmpty())   throw new WebApplicationException(500);
-  if (mms.size() == 1)   return Util.getFirstKey(mms);
+  Map<ResourceMethod,List<MediaType>> mms1;
+  mms1=findMethodSupportsMime(resourceMethods,ConsOrProdMime.CONSUME_MIME,givenMediaTypes);
+  if (mms1.isEmpty())   return Util.getFirstElement(resourceMethods);
+  if (mms1.size() == 1)   return Util.getFirstKey(mms1);
+  Map<ResourceMethod,List<MediaType>> mms2;
+  mms2=findMethodSupportsMime(mms1.keySet(),ConsOrProdMime.PRODUCE_MIME,accMediaTypes);
+  if (mms2.isEmpty())   return Util.getFirstKey(mms1);
+  if (mms2.size() == 1)   return Util.getFirstKey(mms2);
   for (  MediaType accMediaType : accMediaTypes) {
     ResourceMethod bestMethod=null;
-    for (    Map.Entry<ResourceMethod,List<MediaType>> mm : mms.entrySet()) {
+    for (    Map.Entry<ResourceMethod,List<MediaType>> mm : mms2.entrySet()) {
       for (      MediaType methodMediaType : mm.getValue()) {
         if (accMediaType.includes(methodMediaType)) {
           ResourceMethod currentMethod=mm.getKey();
@@ -36,5 +38,5 @@
     }
     if (bestMethod != null)     return bestMethod;
   }
-  throw new WebApplicationException(500);
+  return Util.getFirstKey(mms2);
 }
