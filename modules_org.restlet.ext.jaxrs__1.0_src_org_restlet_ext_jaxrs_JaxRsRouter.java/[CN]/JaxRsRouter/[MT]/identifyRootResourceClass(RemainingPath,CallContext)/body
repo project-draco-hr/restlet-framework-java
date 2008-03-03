@@ -1,10 +1,11 @@
 {
   Collection<RootResourceClass> eAndCs=new ArrayList<RootResourceClass>();
   for (  RootResourceClass rootResourceClass : this.rootResourceClasses) {
-    MatchingResult matchingResult=rootResourceClass.getPathRegExp().match(u);
+    PathRegExp rrcPathRegExp=rootResourceClass.getPathRegExp();
+    MatchingResult matchingResult=rrcPathRegExp.match(u);
     if (matchingResult == null)     continue;
-    if (!Util.isEmptyOrSlash(matchingResult.getFinalMatchingGroup()) && !rootResourceClass.hasSubResourceMethodsOrLocators())     continue;
- else     eAndCs.add(rootResourceClass);
+    if (Util.isEmptyOrSlash(matchingResult.getFinalMatchingGroup()))     eAndCs.add(rootResourceClass);
+ else     if (rootResourceClass.hasSubResourceMethodsOrLocators())     eAndCs.add(rootResourceClass);
   }
   if (eAndCs.isEmpty())   throwRootResourceNotFound(u);
   RootResourceClass tClass=getFirstRrcByNumberOfLiteralCharactersAndByNumberOfCapturingGroups(eAndCs);

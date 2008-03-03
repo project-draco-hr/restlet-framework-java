@@ -21,10 +21,10 @@ catch (  Exception e) {
     }
     Collection<ResourceMethodOrLocator> eWithMethod=new ArrayList<ResourceMethodOrLocator>();
     for (    ResourceMethodOrLocator methodOrLocator : resClass.getSubResourceMethodsAndLocators()) {
-      MatchingResult matchResult=methodOrLocator.getPathRegExp().match(u);
+      PathRegExp pathRegExp=methodOrLocator.getPathRegExp();
+      MatchingResult matchResult=pathRegExp.match(u);
       if (matchResult == null)       continue;
-      if (!Util.isEmptyOrSlash(matchResult.getFinalMatchingGroup()))       continue;
-      eWithMethod.add(methodOrLocator);
+      if (Util.isEmptyOrSlash(matchResult.getFinalMatchingGroup()))       eWithMethod.add(methodOrLocator);
     }
     if (eWithMethod.isEmpty())     throwResourceNotFound(o,u);
     ResourceMethodOrLocator firstMeth=getFirstMethOrLocByNumberOfLiteralCharactersAndByNumberOfCapturingGroups(eWithMethod);
