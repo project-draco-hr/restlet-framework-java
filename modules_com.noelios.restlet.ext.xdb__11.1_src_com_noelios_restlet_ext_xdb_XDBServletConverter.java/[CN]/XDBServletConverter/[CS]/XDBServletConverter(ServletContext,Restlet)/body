@@ -1,0 +1,26 @@
+{
+  super(new Context(new ServletLogger(context)));
+  this.target=target;
+  CallableStatement preparedstatement=null;
+  try {
+    conn=XDBServerServlet.getConnection();
+    int endPoint=1;
+    preparedstatement=conn.prepareCall("{ call dbms_xdb.getListenerEndPoint(1,?,?,?) }");
+    preparedstatement.registerOutParameter(1,Types.VARCHAR);
+    preparedstatement.registerOutParameter(2,Types.INTEGER);
+    preparedstatement.registerOutParameter(3,Types.INTEGER);
+    preparedstatement.execute();
+    localAddr=preparedstatement.getString(1);
+    localPort=preparedstatement.getInt(2);
+    endPoint=preparedstatement.getInt(3);
+  }
+ catch (  ServletException e) {
+    context.log("Failed to get SQL Connection",e);
+  }
+catch (  SQLException s) {
+    context.log("Failed to get Listener Endpoint",s);
+  }
+ finally {
+    XDBServerServlet.closeDBResources(preparedstatement,null);
+  }
+}

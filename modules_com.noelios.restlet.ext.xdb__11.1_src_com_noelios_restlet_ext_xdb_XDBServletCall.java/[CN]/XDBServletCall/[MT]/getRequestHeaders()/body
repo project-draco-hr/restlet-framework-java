@@ -1,0 +1,15 @@
+{
+  if (this.requestHeaders == null) {
+    this.requestHeaders=new Form();
+    String headerName;
+    String headerValue;
+    for (Enumeration<String> names=getRequest().getHeaderNames(); names.hasMoreElements(); ) {
+      headerName=names.nextElement();
+      for (Enumeration<String> values=getRequest().getHeaders(headerName); values.hasMoreElements(); ) {
+        headerValue=values.nextElement();
+        this.requestHeaders.add(new Parameter(headerName,headerValue));
+      }
+    }
+  }
+  return this.requestHeaders;
+}

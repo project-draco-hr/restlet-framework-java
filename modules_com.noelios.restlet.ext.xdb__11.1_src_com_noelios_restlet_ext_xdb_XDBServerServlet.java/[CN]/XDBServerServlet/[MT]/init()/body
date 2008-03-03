@@ -1,0 +1,46 @@
+{
+  CallableStatement preparedstatement=null;
+  if (this.conn == null)   this.conn=getConnection();
+  try {
+    int endPoint=1;
+    preparedstatement=conn.prepareCall("{ call dbms_xdb.getListenerEndPoint(1,?,?,?) }");
+    preparedstatement.registerOutParameter(1,Types.VARCHAR);
+    preparedstatement.registerOutParameter(2,Types.INTEGER);
+    preparedstatement.registerOutParameter(3,Types.INTEGER);
+    preparedstatement.execute();
+    localAddr=preparedstatement.getString(1);
+    localPort=preparedstatement.getInt(2);
+    endPoint=preparedstatement.getInt(3);
+    log("[Noelios Restlet Engine] - The ServerServlet address = " + localAddr);
+    log("[Noelios Restlet Engine] - The ServerServlet port = " + localPort);
+    log("[Noelios Restlet Engine] - The ServerServlet endpoint = " + endPoint);
+  }
+ catch (  SQLException e) {
+    log(e.getLocalizedMessage(),e);
+  }
+ finally {
+    closeDBResources(preparedstatement,null);
+  }
+  try {
+    if (remoteDebugging) {
+      preparedstatement=conn.prepareCall("{ call dbms_debug_jdwp.connect_tcp(?,?) }");
+      preparedstatement.setString(1,"localhost");
+      preparedstatement.setInt(2,4000);
+      preparedstatement.execute();
+    }
+  }
+ catch (  SQLException e) {
+    log(e.getLocalizedMessage(),e);
+  }
+ finally {
+    closeDBResources(preparedstatement,null);
+  }
+  if ((getApplication() != null) && (getApplication().isStopped())) {
+    try {
+      getApplication().start();
+    }
+ catch (    Exception e) {
+      log("Error during the starting of the Restlet Application",e);
+    }
+  }
+}

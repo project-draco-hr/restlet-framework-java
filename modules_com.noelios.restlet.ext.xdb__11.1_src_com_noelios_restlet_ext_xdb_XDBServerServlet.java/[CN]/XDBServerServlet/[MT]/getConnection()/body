@@ -1,0 +1,16 @@
+{
+  Connection conn=null;
+  try {
+    if (System.getProperty("java.vm.name").equals("JServer VM")) {
+      conn=DriverManager.getConnection("jdbc:oracle:kprb:","default","default");
+    }
+ else {
+      throw new ServletException("Class designed to be used at Server side: jdbc:oracle:thin:@");
+    }
+  }
+ catch (  SQLException s) {
+    System.err.println("Exception getting SQL Connection: " + s.getLocalizedMessage());
+    throw new ServletException("Unable to connect using: jdbc:oracle:kprb:",s);
+  }
+  return conn;
+}

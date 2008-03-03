@@ -1,0 +1,16 @@
+{
+  CallableStatement preparedstatement=null;
+  try {
+    if (remoteDebugging) {
+      preparedstatement=conn.prepareCall("{ call dbms_debug_jdwp.disconnect }");
+      preparedstatement.execute();
+    }
+  }
+ catch (  SQLException e) {
+    log(e.getLocalizedMessage(),e);
+  }
+ finally {
+    closeDBResources(preparedstatement,null);
+  }
+  super.destroy();
+}
