@@ -1,0 +1,18 @@
+{
+  Float[] htmlXmlQualities;
+  Map<String,Object> attributes=request.getAttributes();
+  htmlXmlQualities=(Float[])attributes.get(MT_QUALITY_ARRAY);
+  if (htmlXmlQualities == null) {
+    htmlXmlQualities=new Float[4];
+    List<Preference<MediaType>> acceptedMediaTypes=request.getClientInfo().getAcceptedMediaTypes();
+    for (    Preference<MediaType> accPref : acceptedMediaTypes) {
+      MediaType accMediaType=accPref.getMetadata();
+      if (accMediaType.equals(MediaType.TEXT_HTML,true))       htmlXmlQualities[MT_PREF_TEXT_HTML]=accPref.getQuality();
+      if (accMediaType.equals(MediaType.TEXT_XML,true))       htmlXmlQualities[MT_PREF_TEXT_XML]=accPref.getQuality();
+      if (accMediaType.equals(MediaType.APPLICATION_XHTML_XML,true))       htmlXmlQualities[MT_PREF_APP_XHTML]=accPref.getQuality();
+      if (accMediaType.equals(MediaType.APPLICATION_XML,true))       htmlXmlQualities[MT_PREF_APP_XML]=accPref.getQuality();
+    }
+    attributes.put(MT_QUALITY_ARRAY,htmlXmlQualities);
+  }
+  return htmlXmlQualities;
+}

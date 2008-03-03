@@ -1,18 +1,14 @@
 {
-  float xmlQuality=Float.MIN_VALUE;
-  for (  Preference<MediaType> acc : request.getClientInfo().getAcceptedMediaTypes()) {
-    MediaType accMediaType=acc.getMetadata();
-    if (accMediaType.equals(MediaType.APPLICATION_XML,true) || accMediaType.equals(MediaType.TEXT_XML,true)) {
-      xmlQuality=acc.getQuality();
-      if (xmlQuality >= 1f) {
-        xmlQuality=0.999f;
-        acc.setQuality(xmlQuality);
-      }
-    }
+  Float xmlQualityO=getXmlMaxQuality(request);
+  if (xmlQualityO == null)   return;
+  float xmlQuality=xmlQualityO;
+  float htmlMinQuality;
+  if (xmlQuality < 1) {
+    htmlMinQuality=xmlQuality + 0.001f;
   }
-  float htmlQuality=xmlQuality + 0.001f;
-  for (  Preference<MediaType> acc : request.getClientInfo().getAcceptedMediaTypes()) {
-    MediaType accMediaType=acc.getMetadata();
-    if (accMediaType.equals(MediaType.APPLICATION_XHTML_XML,true) || accMediaType.equals(MediaType.TEXT_HTML,true))     acc.setQuality(htmlQuality);
+ else {
+    lowerWithQuality(request,xmlQuality);
+    htmlMinQuality=1;
   }
+  htmlPrefsMin(request,htmlMinQuality);
 }
