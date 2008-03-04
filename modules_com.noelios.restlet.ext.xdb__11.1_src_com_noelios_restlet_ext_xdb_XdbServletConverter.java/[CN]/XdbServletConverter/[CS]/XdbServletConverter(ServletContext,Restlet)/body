@@ -3,7 +3,7 @@
   this.target=target;
   CallableStatement preparedstatement=null;
   try {
-    conn=XdbbServerServlet.getConnection();
+    conn=XdbServerServlet.getConnection();
     @SuppressWarnings("unused") int endPoint=1;
     preparedstatement=conn.prepareCall("{ call dbms_xdb.getListenerEndPoint(1,?,?,?) }");
     preparedstatement.registerOutParameter(1,Types.VARCHAR);
@@ -21,6 +21,6 @@ catch (  SQLException s) {
     context.log("Failed to get Listener Endpoint",s);
   }
  finally {
-    XdbbServerServlet.closeDBResources(preparedstatement,null);
+    XdbServerServlet.closeDBResources(preparedstatement,null);
   }
 }
