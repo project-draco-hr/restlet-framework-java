@@ -5,13 +5,10 @@
   if (pathSuppl)   givenPath+='/';
   boolean matches=template.parse(givenPath,(Map)templateVars) >= 0;
   if (!matches)   return null;
-  String finalMatchingGroup=templateVars.remove(VARNAME_FUER_REST);
-  if (finalMatchingGroup.length() > 0) {
-    if (pathSuppl && finalMatchingGroup.endsWith("/"))     finalMatchingGroup=finalMatchingGroup.substring(0,finalMatchingGroup.length() - 1);
-    if (!finalMatchingGroup.startsWith("/"))     finalMatchingGroup="/" + finalMatchingGroup;
+  String finalCapturingGroup=templateVars.remove(VARNAME_FUER_REST);
+  if (finalCapturingGroup.length() > 0) {
+    if (pathSuppl && finalCapturingGroup.endsWith("/"))     finalCapturingGroup=finalCapturingGroup.substring(0,finalCapturingGroup.length() - 1);
+    if (!finalCapturingGroup.startsWith("/"))     finalCapturingGroup="/" + finalCapturingGroup;
   }
-  String finalCapturingGroup=templateVars.get(Util.getLastElement(template.getVariableNames()));
-  if (finalCapturingGroup == null)   finalCapturingGroup="";
-  finalCapturingGroup=finalMatchingGroup;
-  return new MatchingResult(templateVars,finalMatchingGroup,finalCapturingGroup,templateVars.size());
+  return new MatchingResult(templateVars,finalCapturingGroup,templateVars.size());
 }
