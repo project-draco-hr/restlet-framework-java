@@ -3,7 +3,17 @@
   String applicationClassName=getInitParameter(Application.KEY,null);
   if (applicationClassName != null) {
     try {
-      Class<?> targetClass=Engine.classForName(applicationClassName);
+      int doubleDotPos=applicationClassName.indexOf(':');
+      Class targetClass;
+      if (doubleDotPos > 0) {
+        Class loaderClass=Engine.classForName("oracle.aurora.rdbms.DbmsJava");
+        Method meth=loaderClass.getMethod("classForNameAndSchema",new Class[]{String.class,String.class});
+        String sch=applicationClassName.substring(0,doubleDotPos);
+        String className=applicationClassName.substring(doubleDotPos + 1);
+        log("[Noelios Restlet Engine] - Schema: " + sch + " class: "+ className+ " loader: "+ loaderClass);
+        targetClass=(Class)meth.invoke(null,new Object[]{className,sch});
+      }
+ else       targetClass=Engine.classForName(applicationClassName);
       try {
         application=(Application)targetClass.getConstructor(Context.class).newInstance(new ServletContextAdapter(this,context));
       }
