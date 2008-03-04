@@ -3,14 +3,14 @@
   Component component=getComponent();
   Application application=getApplication();
   if ((component != null) && (application != null)) {
-    Server server=new Server(component.getContext(),new ArrayList<Protocol>(),localAddr,localPort,component);
+    Server server=new Server(component.getContext(),new ArrayList<Protocol>(),localAddress,localPort,component);
     server.getProtocols().add(Protocol.HTTP);
     result=new HttpServerHelper(server);
     String uriPattern=request.getServletPath();
-    log(".createServer: attaching application: " + application + " uri: "+ uriPattern);
+    log("[Noelios Restlet Engine] - Attaching application: " + application + " uri: "+ uriPattern);
     Route route=component.getDefaultHost().attach(uriPattern,application);
     String extractQueries=getInitParameter(EXTRACT_QUERY_ATTRIBUTE,EXTRACT_QUERY_ATTRIBUTE_DEFAULT);
-    log(".createServer: parsing query attributes: " + extractQueries);
+    log("[Noelios Restlet Engine] - Parsing query attributes: " + extractQueries);
     if (extractQueries != null && extractQueries.length() > 0) {
       String extractQuery[]=extractQueries.split(";");
       for (int i=0; i < extractQuery.length; i++) {
