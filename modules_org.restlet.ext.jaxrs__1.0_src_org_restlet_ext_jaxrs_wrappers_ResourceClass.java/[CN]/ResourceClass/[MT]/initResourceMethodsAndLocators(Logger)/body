@@ -4,18 +4,19 @@
   Collection<SubResourceLocator> subResLocs=new ArrayList<SubResourceLocator>();
   Method[] classMethods=jaxRsClass.getDeclaredMethods();
   for (  Method javaMethod : classMethods) {
-    if (!checkResMethodVolatileOrNotPublic(javaMethod,logger))     continue;
     Method annotatedMethod=getAnnotatedJavaMethod(javaMethod);
     if (annotatedMethod == null)     continue;
     Path path=annotatedMethod.getAnnotation(Path.class);
     org.restlet.data.Method httpMethod=ResourceMethod.getHttpMethod(annotatedMethod);
     if (httpMethod != null) {
+      if (!checkResMethodVolatileOrNotPublic(javaMethod,logger))       continue;
       ResourceMethod subResMeth=new ResourceMethod(javaMethod,annotatedMethod,this,httpMethod);
       subRsesMeths.add(subResMeth);
       srmls.add(subResMeth);
     }
  else {
       if (path != null) {
+        if (!checkResMethodVolatileOrNotPublic(javaMethod,logger))         continue;
         SubResourceLocator subResLoc=new SubResourceLocator(javaMethod,annotatedMethod,this);
         subResLocs.add(subResLoc);
         srmls.add(subResLoc);

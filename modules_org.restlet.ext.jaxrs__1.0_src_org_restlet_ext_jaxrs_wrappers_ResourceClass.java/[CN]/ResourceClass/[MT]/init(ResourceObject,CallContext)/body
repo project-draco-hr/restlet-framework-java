@@ -3,7 +3,6 @@
   for (  Field contextField : this.injectFieldsContext) {
     Util.inject(jaxRsResObj,contextField,callContext);
   }
-  if (true)   return;
   for (  Field cpf : this.injectFieldsCookieParam) {
     CookieParam headerParam=cpf.getAnnotation(CookieParam.class);
     DefaultValue defaultValue=cpf.getAnnotation(DefaultValue.class);
@@ -38,5 +37,14 @@
     Class<?> convTo=hpf.getDeclaringClass();
     Object value=getQueryParamValue(convTo,headerParam,defaultValue,callContext,Logger.getAnonymousLogger());
     Util.inject(jaxRsResObj,hpf,value);
+  }
+  try {
+    Util.invokeNoneArgMethod(jaxRsResObj,this.postConstructMethod);
+  }
+ catch (  InvocationTargetException e) {
+    String message=e.getMessage();
+    MethodInvokeException mie=new MethodInvokeException(message);
+    mie.initCause(e.getCause());
+    throw mie;
   }
 }

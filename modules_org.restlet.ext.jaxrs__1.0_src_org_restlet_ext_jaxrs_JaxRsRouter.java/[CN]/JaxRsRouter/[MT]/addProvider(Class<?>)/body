@@ -1,5 +1,14 @@
 {
-  Provider<?> provider=new Provider<Object>(jaxRsProviderClass);
+  Provider<?> provider;
+  try {
+    provider=new Provider<Object>(jaxRsProviderClass);
+  }
+ catch (  InvocationTargetException e) {
+    InstantiateProviderException ipe=new InstantiateProviderException(e.getMessage());
+    ipe.initCause(e.getCause());
+    throw ipe;
+  }
+  provider.init();
   if (provider.isWriter())   this.messageBodyWriters.add(provider);
   if (provider.isReader())   this.messageBodyReaders.add(provider);
   if (provider.isContextResolver())   this.contextResolvers.add(provider);

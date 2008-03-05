@@ -1,0 +1,16 @@
+{
+  JaxRsRouter jaxRsRouter=new JaxRsRouter(null,getAppConfig());
+  jaxRsRouter.start();
+  assertTrue(Jsr250TestProvider.initiated);
+  Reference ref=new Reference(new Reference("http://localhost"),"http://localhost/jsr250test");
+  Request request=new Request(Method.GET,ref);
+  Response response=jaxRsRouter.handle(request);
+  JaxRsTestCase.sysOutEntityIfError(response);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  Representation entity=response.getEntity();
+  String expected="value: true\nMessageBodyWriter initiaied: true";
+  assertEquals(expected,entity.getText());
+  assertNotNull(Jsr250TestService.LastDestroyed);
+  jaxRsRouter.stop();
+  assertTrue(Jsr250TestProvider.destroyed);
+}

@@ -1,0 +1,22 @@
+{
+  try {
+    Set<Provider<?>> allProviders=new HashSet<Provider<?>>(64);
+    allProviders.addAll((Collection)this.messageBodyReaders);
+    allProviders.addAll((Collection)this.messageBodyWriters);
+    allProviders.addAll((Collection)this.contextResolvers);
+    for (    Provider<?> p : allProviders) {
+      try {
+        p.preDestroy();
+      }
+ catch (      MethodInvokeException e) {
+        getLogger().log(Level.INFO,PRE_CONSTR_EXC_MESSAGE,e);
+      }
+catch (      InvocationTargetException e) {
+        getLogger().log(Level.INFO,PRE_CONSTR_EXC_MESSAGE,e);
+      }
+    }
+  }
+  finally {
+    super.stop();
+  }
+}

@@ -1,5 +1,6 @@
 {
   super.handle(request,response);
+  ResourceObject resourceObject=null;
   try {
     CallContext callContext=new CallContext(request,response,this.accessControl);
     try {
@@ -14,7 +15,7 @@
       }
       callContext.setReadOnly();
       ResourceMethod resourceMethod=resObjAndMeth.resourceMethod;
-      ResourceObject resourceObject=resObjAndMeth.resourceObject;
+      resourceObject=resObjAndMeth.resourceObject;
       invokeMethodAndHandleResult(resourceMethod,resourceObject,callContext);
     }
  catch (    WebApplicationException e) {
@@ -22,5 +23,18 @@
     }
   }
  catch (  RequestHandledException e) {
+  }
+ finally {
+    if (resourceObject != null) {
+      try {
+        resourceObject.preDestroy();
+      }
+ catch (      MethodInvokeException e) {
+        getLogger().log(Level.INFO,PRE_CONSTR_EXC_MESSAGE,e);
+      }
+catch (      InvocationTargetException e) {
+        getLogger().log(Level.INFO,PRE_CONSTR_EXC_MESSAGE,e);
+      }
+    }
   }
 }
