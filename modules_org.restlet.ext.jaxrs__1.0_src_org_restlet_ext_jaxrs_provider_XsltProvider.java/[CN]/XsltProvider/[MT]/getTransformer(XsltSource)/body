@@ -1,0 +1,16 @@
+{
+  Transformer transformer=transformerCache.get(xsltSource);
+  if (transformer == null) {
+    try {
+      Source source=loadSource(xsltSource);
+      transformer=transformerFactory.newTransformer(source);
+      transformerCache.put(xsltSource,transformer);
+    }
+ catch (    TransformerConfigurationException e) {
+      String message="Could not create transformer for " + xsltSource;
+      logger.log(Level.WARNING,message,e);
+      return null;
+    }
+  }
+  return transformer;
+}
