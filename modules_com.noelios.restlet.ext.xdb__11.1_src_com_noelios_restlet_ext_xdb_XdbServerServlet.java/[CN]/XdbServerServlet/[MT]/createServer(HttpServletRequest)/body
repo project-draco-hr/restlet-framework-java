@@ -8,16 +8,7 @@
     result=new HttpServerHelper(server);
     String uriPattern=request.getServletPath();
     log("[Noelios Restlet Engine] - Attaching application: " + application + " uri: "+ uriPattern);
-    Route route=component.getDefaultHost().attach(uriPattern,application);
-    String extractQueries=getInitParameter(EXTRACT_QUERY_ATTRIBUTE,EXTRACT_QUERY_ATTRIBUTE_DEFAULT);
-    log("[Noelios Restlet Engine] - Parsing query attributes: " + extractQueries);
-    if (extractQueries != null && extractQueries.length() > 0) {
-      String extractQuery[]=extractQueries.split(";");
-      for (int i=0; i < extractQuery.length; i++) {
-        String args[]=extractQuery[i].split(",");
-        route.extractQuery(args[0],args[1],"true".equalsIgnoreCase(args[2]));
-      }
-    }
+    component.getDefaultHost().attach(uriPattern,application);
   }
   return result;
 }
