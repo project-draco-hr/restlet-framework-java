@@ -5,7 +5,8 @@
   List<Field> ifmp=new ArrayList<Field>();
   List<Field> ifpp=new ArrayList<Field>();
   List<Field> ifqp=new ArrayList<Field>();
-  for (  Field field : this.jaxRsClass.getFields()) {
+  for (  Field field : this.jaxRsClass.getDeclaredFields()) {
+    field.setAccessible(true);
     if (field.isAnnotationPresent(Context.class))     ifcx.add(field);
     if (field.isAnnotationPresent(CookieParam.class))     ifcp.add(field);
     if (field.isAnnotationPresent(HeaderParam.class))     ifhp.add(field);

@@ -1,0 +1,10 @@
+{
+  Response response=get();
+  sysOutEntityIfError(response);
+  JaxbRepresentation<PersonList> personListRepr=new JaxbRepresentation<PersonList>(response.getEntity(),PersonList.class);
+  List<Person> persons=personListRepr.getObject().getPersons();
+  assertEquals(3,persons.size());
+  assertEquals("Angela",persons.get(0).getFirstname());
+  assertEquals("Olmert",persons.get(1).getLastname());
+  assertEquals("George U.",persons.get(2).getFirstname());
+}

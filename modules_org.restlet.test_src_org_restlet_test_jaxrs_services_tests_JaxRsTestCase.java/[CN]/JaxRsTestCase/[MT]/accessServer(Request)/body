@@ -1,5 +1,8 @@
 {
   Restlet connector=getConnector();
-  if (shouldAccessWithoutTcp())   Util.getHttpHeaders(request).add("host","localhost");
+  if (shouldAccessWithoutTcp()) {
+    String hostDomain=request.getResourceRef().getHostDomain();
+    Util.getHttpHeaders(request).add("host",hostDomain);
+  }
   return connector.handle(request);
 }
