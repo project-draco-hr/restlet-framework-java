@@ -7,20 +7,26 @@
     Method annotatedMethod=getAnnotatedJavaMethod(javaMethod);
     if (annotatedMethod == null)     continue;
     Path path=annotatedMethod.getAnnotation(Path.class);
-    org.restlet.data.Method httpMethod=ResourceMethod.getHttpMethod(annotatedMethod);
-    if (httpMethod != null) {
-      if (!checkResMethodVolatileOrNotPublic(javaMethod,logger))       continue;
-      ResourceMethod subResMeth=new ResourceMethod(javaMethod,annotatedMethod,this,httpMethod);
-      subRsesMeths.add(subResMeth);
-      srmls.add(subResMeth);
-    }
- else {
-      if (path != null) {
+    org.restlet.data.Method httpMethod;
+    httpMethod=ResourceMethod.getHttpMethod(annotatedMethod);
+    try {
+      if (httpMethod != null) {
         if (!checkResMethodVolatileOrNotPublic(javaMethod,logger))         continue;
-        SubResourceLocator subResLoc=new SubResourceLocator(javaMethod,annotatedMethod,this);
-        subResLocs.add(subResLoc);
-        srmls.add(subResLoc);
+        ResourceMethod subResMeth=new ResourceMethod(javaMethod,annotatedMethod,this,httpMethod);
+        subRsesMeths.add(subResMeth);
+        srmls.add(subResMeth);
       }
+ else {
+        if (path != null) {
+          if (!checkResMethodVolatileOrNotPublic(javaMethod,logger))           continue;
+          SubResourceLocator subResLoc=new SubResourceLocator(javaMethod,annotatedMethod,this);
+          subResLocs.add(subResLoc);
+          srmls.add(subResLoc);
+        }
+      }
+    }
+ catch (    IllegalPathOnMethodException e) {
+      logger.warning("The method " + annotatedMethod + " is annotated with an illegal path: "+ e.getPath()+ ". Ignoring this method. ("+ e.getMessage()+ ")");
     }
   }
   this.subResourceLocators=subResLocs;

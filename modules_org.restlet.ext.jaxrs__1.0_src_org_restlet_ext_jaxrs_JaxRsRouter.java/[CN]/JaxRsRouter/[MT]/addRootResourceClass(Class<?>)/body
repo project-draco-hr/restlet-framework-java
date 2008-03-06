@@ -4,10 +4,7 @@
     newRrc=wrapperFactory.getRootResourceClass(rootResourceClass);
   }
  catch (  IllegalPathOnClassException e) {
-    throw new IllegalArgumentException(e);
-  }
-catch (  IllegalPathOnMethodException e) {
-    throw new IllegalArgumentException(e);
+    throw new IllegalArgumentException("The root resource class " + rootResourceClass.getName() + " is annotated with an illegal path: "+ e.getPath()+ ". ("+ e.getMessage()+ ")",e);
   }
   PathRegExp uriTempl=newRrc.getPathRegExp();
   for (  RootResourceClass rrc : this.rootResourceClasses) {
