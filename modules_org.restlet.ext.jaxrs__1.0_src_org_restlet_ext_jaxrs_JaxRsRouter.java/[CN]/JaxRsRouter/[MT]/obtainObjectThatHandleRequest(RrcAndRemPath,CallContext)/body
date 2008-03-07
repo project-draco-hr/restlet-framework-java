@@ -1,10 +1,10 @@
 {
   RemainingPath u=rrcAndRemPath.u;
-  RootResourceClass resClass=rrcAndRemPath.rrc;
-  PathRegExp rMatch=resClass.getPathRegExp();
+  RootResourceClass rrc=rrcAndRemPath.rrc;
+  PathRegExp rMatch=rrc.getPathRegExp();
   ResourceObject o;
   try {
-    o=resClass.createInstance(callContext,this);
+    o=rrc.createInstance(callContext,this);
   }
  catch (  InstantiateParameterException e) {
     throw new WebApplicationException(e,404);
@@ -15,6 +15,7 @@ catch (  WebApplicationException e) {
 catch (  Exception e) {
     throw handleExecption(e,null,callContext,"Could not create new instance of root resource class");
   }
+  ResourceClass resClass=rrc;
   for (; ; ) {
     if (u.isEmptyOrSlash()) {
       return new ResObjAndRemPath(o,u);
@@ -25,6 +26,7 @@ catch (  Exception e) {
       MatchingResult matchingResult=pathRegExp.match(u);
       if (matchingResult == null)       continue;
       if (matchingResult.getFinalCapturingGroup().isEmptyOrSlash())       eWithMethod.add(methodOrLocator);
+ else       if (methodOrLocator instanceof SubResourceLocator)       eWithMethod.add(methodOrLocator);
     }
     if (eWithMethod.isEmpty())     throwResourceNotFound(o,u);
     ResourceMethodOrLocator firstMeth=getFirstMethOrLocByNumberOfLiteralCharactersAndByNumberOfCapturingGroups(eWithMethod);
@@ -41,10 +43,15 @@ catch (  Exception e) {
       throw e;
     }
 catch (    InstantiateParameterException e) {
-      throw new WebApplicationException(e,404);
+      ResponseBuilder rb=javax.ws.rs.core.Response.status(404);
+      StringWriter stw=new StringWriter();
+      e.printStackTrace(new PrintWriter(stw));
+      rb.entity(stw.toString());
+      throw new WebApplicationException(e,rb.build());
     }
 catch (    Exception e) {
       throw handleExecption(e,subResourceLocator,callContext,"Could not create new instance of root resource class");
     }
+    resClass=o.getResourceClass();
   }
 }
