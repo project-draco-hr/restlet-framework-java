@@ -8,12 +8,10 @@
     subResObj=executeMethod.invoke(resourceObject.getJaxRsResourceObject(),args);
   }
  catch (  IllegalArgumentException e) {
-    Class<?> returnType=executeMethod.getReturnType();
-    throw new InstantiateRessourceException(returnType,e);
+    throw new InstantiateRessourceException(executeMethod,e);
   }
 catch (  IllegalAccessException e) {
-    Class<?> returnType=executeMethod.getReturnType();
-    throw new InstantiateRessourceException(returnType,e);
+    throw new InstantiateRessourceException(executeMethod,e);
   }
   if (subResObj == null) {
     jaxRsRouter.getLogger().warning("The sub resource object is null. That is not allowed");
@@ -23,5 +21,12 @@ catch (  IllegalAccessException e) {
   }
   WrapperFactory wrapperFactory=jaxRsRouter.getWrapperFactory();
   ResourceClass resourceClass=wrapperFactory.getResourceClass(subResObj.getClass());
-  return new ResourceObject(subResObj,resourceClass);
+  ResourceObject subResourceObject=new ResourceObject(subResObj,resourceClass);
+  try {
+    subResourceObject.init(callContext);
+  }
+ catch (  InjectException e) {
+    throw new InstantiateRessourceException(executeMethod,e);
+  }
+  return subResourceObject;
 }

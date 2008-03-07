@@ -8,21 +8,22 @@
     if (paramClass == Short.TYPE)     return new Short(paramValue);
     if (paramClass == Character.TYPE) {
       if (paramValue.length() == 1)       return paramValue.charAt(0);
-      throw InstantiateParameterException.primitive(paramClass,paramValue,null);
+      throw ConvertParameterException.primitive(paramClass,paramValue,null);
     }
     if (paramClass == Boolean.TYPE) {
       if (paramValue.equalsIgnoreCase("true"))       return Boolean.TRUE;
       if (paramValue.equalsIgnoreCase("false"))       return Boolean.FALSE;
-      throw InstantiateParameterException.primitive(paramClass,paramValue,null);
+      throw ConvertParameterException.primitive(paramClass,paramValue,null);
     }
   }
  catch (  IllegalArgumentException e) {
-    throw InstantiateParameterException.primitive(paramClass,paramValue,e);
+    throw ConvertParameterException.primitive(paramClass,paramValue,e);
   }
-  if (paramClass == Void.TYPE) {
-    String message="a method return parameter type was void, but this could not be here";
-    Logger.getAnonymousLogger().warning(message);
-    throw new WebApplicationException(500);
-  }
-  throw new WebApplicationException(500);
+  String warning;
+  if (paramClass == Void.TYPE)   warning="an object should be converted to a void; but this could not be here";
+ else   warning="an object should be converted to a " + paramClass + ", but here are only primitives allowed.";
+  Logger.getAnonymousLogger().warning(warning);
+  ResponseBuilder rb=javax.ws.rs.core.Response.serverError();
+  rb.entity(warning);
+  throw new WebApplicationException(rb.build());
 }

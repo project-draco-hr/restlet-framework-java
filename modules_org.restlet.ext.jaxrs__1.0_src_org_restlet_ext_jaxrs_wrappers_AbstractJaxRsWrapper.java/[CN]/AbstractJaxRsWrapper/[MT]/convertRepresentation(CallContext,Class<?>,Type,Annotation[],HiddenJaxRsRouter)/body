@@ -7,15 +7,14 @@
   }
   MediaType mediaType=entity.getMediaType();
   MessageBodyReaderSet mbrs=jaxRsRouter.getMessageBodyReaders();
-  if (mbrs == null)   throw new NoMessageBodyReadersException();
   MessageBodyReader<?> mbr=mbrs.getBest(mediaType,paramType,genericType,annotations);
-  if (mbr == null)   throw jaxRsRouter.throwNoMessageBodyReader(callContext.getResponse(),mediaType,paramType);
+  if (mbr == null)   throw new NoMessageBodyReaderException(mediaType,paramType);
   MultivaluedMap<String,String> httpHeaders=Util.getJaxRsHttpHeaders(callContext.getRequest());
   try {
     javax.ws.rs.core.MediaType jaxRsMediaType=Converter.toJaxRsMediaType(mediaType,entity.getCharacterSet());
     return mbr.readFrom((Class)paramType,genericType,jaxRsMediaType,annotations,httpHeaders,entity.getStream());
   }
  catch (  IOException e) {
-    throw InstantiateParameterException.object(paramType,"the message body",e);
+    throw ConvertParameterException.object(paramType,"the message body",e);
   }
 }

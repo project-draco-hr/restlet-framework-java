@@ -4,7 +4,7 @@
   RemainingPath u=resObjAndRemPath.u;
   ResourceClass resourceClass=resObj.getResourceClass();
   Collection<ResourceMethod> resourceMethods=resourceClass.getMethodsForPath(u);
-  if (resourceMethods.isEmpty())   throwResourceMethodNotFound(resourceClass,u);
+  if (resourceMethods.isEmpty())   handleResourceMethodNotFound(resourceClass,u);
   boolean alsoGet=httpMethod.equals(Method.HEAD);
   removeNotSupportedHttpMethod(resourceMethods,httpMethod,alsoGet);
   if (resourceMethods.isEmpty()) {
@@ -13,7 +13,7 @@
       callContext.getResponse().getAllowedMethods().addAll(allowedMethods);
       throw new RequestHandledException();
     }
-    throwMethodNotAllowed(httpMethod,resourceClass,u);
+    handleMethodNotAllowed(httpMethod,resourceClass,u);
   }
   if (givenMediaType != null) {
     Iterator<ResourceMethod> methodIter=resourceMethods.iterator();
@@ -21,7 +21,7 @@
       ResourceMethod resourceMethod=methodIter.next();
       if (!resourceMethod.isGivenMediaTypeSupported(givenMediaType))       methodIter.remove();
     }
-    if (resourceMethods.isEmpty())     throwUnsupportedMediaType(httpMethod,resourceClass,u,givenMediaType);
+    if (resourceMethods.isEmpty())     handleUnsupportedMediaType(httpMethod,resourceClass,u,givenMediaType);
   }
   SortedMetadata<MediaType> accMediaTypes=callContext.getAccMediaTypes();
   Iterator<ResourceMethod> methodIter=resourceMethods.iterator();
@@ -30,7 +30,7 @@
     if (!resourceMethod.isAcceptedMediaTypeSupported(accMediaTypes))     methodIter.remove();
   }
   if (resourceMethods.isEmpty()) {
-    throwNoResourceMethodForAccMediaTypes(httpMethod,resourceClass,u);
+    handleNoResourceMethodForAccMediaTypes(httpMethod,resourceClass,u);
   }
   ResourceMethod bestResourceMethod=getBestMethod(resourceMethods,givenMediaType,accMediaTypes,httpMethod);
   MatchingResult mr=bestResourceMethod.getPathRegExp().match(u);
