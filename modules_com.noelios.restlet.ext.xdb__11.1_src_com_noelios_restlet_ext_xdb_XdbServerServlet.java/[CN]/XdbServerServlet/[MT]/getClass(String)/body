@@ -5,7 +5,7 @@
     String sch=className.substring(0,doubleDotPos);
     String cName=className.substring(doubleDotPos + 1);
     try {
-      Class loaderClass=Engine.classForName("oracle.aurora.rdbms.DbmsJava");
+      Class<?> loaderClass=Engine.classForName("oracle.aurora.rdbms.DbmsJava");
       Method meth=loaderClass.getMethod("classForNameAndSchema",new Class[]{String.class,String.class});
       log("[Noelios Restlet Engine] - Schema: " + sch + " class: "+ className+ " loader: "+ loaderClass);
       targetClass=(Class<?>)meth.invoke(null,new Object[]{cName,sch});
