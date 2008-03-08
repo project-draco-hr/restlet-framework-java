@@ -1,5 +1,5 @@
 {
-  Collection<Person> persons=dbGetAllPersons();
+  Collection<Person> persons=getDataStore().getAllPersons();
   StringBuilder html=new StringBuilder();
   html.append("<html><head></head><body>\n");
   html.append("<h1>Persons</h1>\n");
@@ -18,9 +18,16 @@
   html.append("</ul>\n");
   URI resourceUri=uriInfo.getAbsolutePath();
   html.append("<form action=\"" + resourceUri + "\" method=\"POST\">");
-  html.append("<input type=\"text\" name=\"firstname\" /><br>");
-  html.append("<input type=\"text\" name=\"lastname\"  /><br>");
-  html.append("<input type=\"submit\" /><br>");
+  html.append("<table border=0><tr>");
+  html.append("<td>first name:</td>");
+  html.append("<td><input type=\"text\" name=\"firstname\" /></td>");
+  html.append("</tr><tr>");
+  html.append("<td>last name:</td>");
+  html.append("<td><input type=\"text\" name=\"lastname\"  /></td>");
+  html.append("</tr><tr>");
+  html.append("<td></td>");
+  html.append("<td><input type=\"submit\" value=\"create person\"></td>");
+  html.append("</tr></table>");
   html.append("</form>");
   html.append("</body></html>");
   return html.toString();

@@ -1,11 +1,16 @@
 {
-  Person person=dbLoadPerson();
+  Person person=getDataStore().loadPerson(personId);
+  URI parentLoc=uriInfo.getBaseUriBuilder().path("persons").build();
   StringBuilder html=new StringBuilder();
   html.append("<html><head>\n</head><body>\n");
   html.append("<h1>Person</h1>");
+  html.append("<p>");
   html.append("firstname: " + person.getFirstname() + "<br>\n");
   html.append("lastname:  " + person.getLastname() + " <br>\n");
   html.append("(ID: " + person.getId() + ")\n");
+  html.append("</p><p>");
+  html.append("<a href=\"" + parentLoc + "\">person list</a>");
+  html.append("</p>");
   html.append("</body></html>");
   return html.toString();
 }
