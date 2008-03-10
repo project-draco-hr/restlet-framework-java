@@ -4,9 +4,11 @@
     String path=request.getResourceRef().getPath();
     if ((path != null) && path.startsWith("/"))     path=path.substring(1);
     URL url=classLoader.getResource(Reference.decode(path));
+    Date modificationDate=null;
     if (url != null) {
       if (url.getProtocol().equals("file")) {
         File file=new File(url.getFile());
+        modificationDate=new Date(file.lastModified());
         if (file.isDirectory()) {
           url=null;
         }
@@ -16,6 +18,7 @@
       try {
         Representation output=new InputRepresentation(url.openStream(),metadataService.getDefaultMediaType());
         output.setIdentifier(request.getResourceRef());
+        output.setModificationDate(modificationDate);
         String name=path.substring(path.lastIndexOf('/') + 1);
         updateMetadata(metadataService,name,output);
         response.setEntity(output);
