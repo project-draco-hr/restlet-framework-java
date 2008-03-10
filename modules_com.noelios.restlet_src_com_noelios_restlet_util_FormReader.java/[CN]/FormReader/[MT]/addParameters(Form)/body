@@ -1,8 +1,8 @@
 {
   boolean readNext=true;
   Parameter param=null;
-  while (readNext) {
-    try {
+  try {
+    while (readNext) {
       param=readNextParameter();
       if (param != null) {
         form.add(param);
@@ -11,9 +11,9 @@
         readNext=false;
       }
     }
- catch (    IOException ioe) {
-      getLogger().log(Level.WARNING,"Unable to parse a form parameter. Skipping it.",ioe);
-    }
+  }
+ catch (  IOException ioe) {
+    getLogger().log(Level.WARNING,"Unable to parse a form parameter. Skipping the remaining parameters.",ioe);
   }
   try {
     this.stream.close();
