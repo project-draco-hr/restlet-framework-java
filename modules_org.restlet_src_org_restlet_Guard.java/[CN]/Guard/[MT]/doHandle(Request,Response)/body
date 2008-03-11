@@ -1,17 +1,33 @@
 {
+  boolean loggable=getLogger().isLoggable(Level.FINE);
 switch (authenticate(request)) {
 case AUTHENTICATION_VALID:
-    if (authorize(request)) {
-      accept(request,response);
+    if (loggable) {
+      getLogger().fine("Authentication suceeded. Valid credentials provided for identifier: " + request.getChallengeResponse().getIdentifier() + ".");
     }
+  if (authorize(request)) {
+    if (loggable) {
+      getLogger().fine("Request authorized for identifier: " + request.getChallengeResponse().getIdentifier() + ".");
+    }
+    accept(request,response);
+  }
  else {
-      forbid(response);
+    if (loggable) {
+      getLogger().fine("Request not authorized for identifier: " + request.getChallengeResponse().getIdentifier() + ".");
     }
-  break;
+    forbid(response);
+  }
+break;
 case AUTHENTICATION_MISSING:
+if (loggable) {
+getLogger().fine("Authentication failed. No credentials provided.");
+}
 challenge(response,false);
 break;
 case AUTHENTICATION_INVALID:
+if (loggable) {
+getLogger().fine("Authentication failed. Invalid credentials provided.");
+}
 if (isRechallengeEnabled()) {
 challenge(response,false);
 }
@@ -20,6 +36,9 @@ forbid(response);
 }
 break;
 case AUTHENTICATION_STALE:
+if (loggable) {
+getLogger().fine("Authentication failed. Stale credentials provided.");
+}
 challenge(response,true);
 break;
 }
