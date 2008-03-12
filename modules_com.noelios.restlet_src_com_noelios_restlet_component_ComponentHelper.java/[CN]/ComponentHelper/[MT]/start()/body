@@ -1,19 +1,19 @@
 {
-  boolean success=checkVirtualHost(getComponent().getDefaultHost());
+  boolean success=checkVirtualHost(getHelped().getDefaultHost());
   if (success) {
-    for (    VirtualHost host : getComponent().getHosts()) {
+    for (    VirtualHost host : getHelped().getHosts()) {
       success=success && checkVirtualHost(host);
     }
   }
   if (!success) {
-    getComponent().stop();
+    getHelped().stop();
   }
  else {
-    if (getComponent().getLogService().isEnabled()) {
-      addFilter(createLogFilter(getComponent().getContext(),getComponent().getLogService()));
+    if (getHelped().getLogService().isEnabled()) {
+      addFilter(createLogFilter(getHelped().getContext(),getHelped().getLogService()));
     }
-    if (getComponent().getStatusService().isEnabled()) {
-      addFilter(createStatusFilter(getComponent()));
+    if (getHelped().getStatusService().isEnabled()) {
+      addFilter(createStatusFilter(getHelped()));
     }
     setNext(getServerRouter());
   }

@@ -1,11 +1,5 @@
 {
-  request.getAttributes().put(Application.KEY,this.application);
-  response.getAttributes().put(Application.KEY,this.application);
-  if (getFirst() != null) {
-    getFirst().handle(request,response);
-  }
- else {
-    response.setStatus(Status.SERVER_ERROR_INTERNAL);
-    getApplication().getLogger().log(Level.SEVERE,"The application wasn't properly started, it can't handle calls.");
-  }
+  request.getAttributes().put(Application.KEY,getHelped());
+  response.getAttributes().put(Application.KEY,getHelped());
+  super.handle(request,response);
 }
