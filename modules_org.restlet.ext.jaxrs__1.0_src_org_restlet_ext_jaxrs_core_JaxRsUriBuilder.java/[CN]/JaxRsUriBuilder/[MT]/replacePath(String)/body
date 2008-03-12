@@ -1,5 +1,15 @@
 {
   this.pathSegments.clear();
-  if (path != null && path.length != 0)   for (  String segment : path)   addPathSegments(segment);
+  if (path == null || path.length == 0)   return this;
+  if (path.length == 1 && (path[0] == null || path[0].length() == 0))   return this;
+  List<JaxRsPathSegment> newPathSegments=new ArrayList<JaxRsPathSegment>();
+  for (  String segment : path) {
+    if (segment.startsWith("/"))     segment=segment.substring(1);
+    if (segment.length() > 0) {
+      String[] segments=segment.split("/");
+      addToJaxRsPathSegments(segments,newPathSegments);
+    }
+  }
+  this.pathSegments.addAll(newPathSegments);
   return this;
 }

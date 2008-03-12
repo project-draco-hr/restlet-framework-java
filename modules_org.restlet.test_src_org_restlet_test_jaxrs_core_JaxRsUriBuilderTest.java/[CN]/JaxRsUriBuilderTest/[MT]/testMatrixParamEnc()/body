@@ -1,0 +1,20 @@
+{
+  uriBuilder1Enc.matrixParam("mp1","mv1");
+  assertEqualsURI(URI_1 + ";mp1=mv1",uriBuilder1Enc);
+  uriBuilder1Enc.matrixParam("mp1","mv2");
+  assertEqualsURI(URI_1 + ";mp1=mv1;mp1=mv2",uriBuilder1Enc);
+  uriBuilder1Enc.matrixParam("mp3","mv3");
+  try {
+    assertEqualsURI(URI_1 + ";mp1=mv1;mp1=mv2;mp3=mv3",uriBuilder1Enc);
+  }
+ catch (  AssertionFailedError afe) {
+    assertEqualsURI(URI_1 + ";mp3=mv3;mp1=mv1;mp1=mv2",uriBuilder1Enc);
+  }
+  uriBuilder1Enc.replaceMatrixParams("mp4=mv4");
+  assertEqualsURI(URI_1 + ";mp4=mv4",uriBuilder1Enc);
+  uriBuilder1Enc.replaceMatrixParams("");
+  assertEquals(URI_1,uriBuilder1Enc.build());
+  uriBuilder1Enc.replaceMatrixParams(null);
+  uriBuilder1Enc.matrixParam("jkj$sdf","ij a%20");
+  assertEqualsURI(URI_1 + ";jkj%24sdf=ij%20a%2520",uriBuilder1Enc);
+}

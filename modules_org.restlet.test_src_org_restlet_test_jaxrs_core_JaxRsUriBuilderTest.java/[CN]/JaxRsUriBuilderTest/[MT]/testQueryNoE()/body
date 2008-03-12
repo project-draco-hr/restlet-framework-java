@@ -1,0 +1,18 @@
+{
+  uriBuilder1NoE.queryParam("qn","qv");
+  assertEqualsURI(URI_1 + "?qn=qv",uriBuilder1NoE);
+  uriBuilder1NoE.queryParam("qn","qv2");
+  assertEqualsURI(URI_1 + "?qn=qv&qn=qv2",uriBuilder1NoE);
+  uriBuilder1NoE.queryParam("qn3","qv3");
+  assertEqualsURI(URI_1 + "?qn=qv&qn=qv2&qn3=qv3",uriBuilder1NoE);
+  uriBuilder1NoE.replaceQueryParams("qnNew=qvNew");
+  assertEqualsURI(URI_1 + "?qnNew=qvNew",uriBuilder1NoE);
+  uriBuilder1NoE.replaceQueryParams(null);
+  try {
+    uriBuilder1NoE.queryParam("na$me","George U.");
+    fail();
+  }
+ catch (  IllegalArgumentException iae) {
+  }
+  assertEquals(URI_1,uriBuilder1NoE.build());
+}

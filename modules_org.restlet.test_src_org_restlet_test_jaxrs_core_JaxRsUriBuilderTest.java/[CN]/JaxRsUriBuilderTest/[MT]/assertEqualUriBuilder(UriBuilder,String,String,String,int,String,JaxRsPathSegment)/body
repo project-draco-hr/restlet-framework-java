@@ -1,18 +1,18 @@
 {
   if (actualUriBuilder instanceof JaxRsUriBuilder) {
     JaxRsUriBuilder jaxRsUriBuilder=(JaxRsUriBuilder)actualUriBuilder;
-    assertEquals(expectedScheme,jaxRsUriBuilder.getScheme());
-    assertEquals(expectedUserInfo,jaxRsUriBuilder.getUserInfo());
-    assertEquals(expectedHost,jaxRsUriBuilder.getHost());
-    assertEquals(expectedPort,jaxRsUriBuilder.getPort());
-    LinkedList<JaxRsPathSegment> actPathSegms=jaxRsUriBuilder.getPathSegments();
+    assertEquals(expectedScheme,getScheme(jaxRsUriBuilder));
+    assertEquals(expectedUserInfo,getUserInfo(jaxRsUriBuilder));
+    assertEquals(expectedHost,getHost(jaxRsUriBuilder));
+    assertEquals(expectedPort,getPort(jaxRsUriBuilder));
+    List<PathSegment> actPathSegms=getPathSegments(jaxRsUriBuilder);
     for (int i=0; i < expectedPathSegments.length; i++) {
       PathSegment expectedPathSegment=expectedPathSegments[i];
-      JaxRsPathSegment actPathSegm=actPathSegms.get(i);
+      PathSegment actPathSegm=actPathSegms.get(i);
       assertEquals(i + ". path segm:",expectedPathSegment,actPathSegm);
     }
     assertEquals(expectedPathSegments.length,actPathSegms.size());
-    CharSequence actualQuery=jaxRsUriBuilder.getQuery();
+    CharSequence actualQuery=getQuery(jaxRsUriBuilder);
     if (actualQuery != null)     actualQuery=actualQuery.toString();
     assertEquals(expectedQuery,actualQuery);
   }

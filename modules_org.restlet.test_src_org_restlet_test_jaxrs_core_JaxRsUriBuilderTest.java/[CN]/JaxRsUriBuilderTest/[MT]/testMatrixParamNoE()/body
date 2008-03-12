@@ -1,0 +1,25 @@
+{
+  uriBuilder1NoE.matrixParam("mp1","mv1");
+  assertEqualsURI(URI_1 + ";mp1=mv1",uriBuilder1NoE);
+  uriBuilder1NoE.matrixParam("mp1","mv2");
+  assertEqualsURI(URI_1 + ";mp1=mv1;mp1=mv2",uriBuilder1NoE);
+  uriBuilder1NoE.matrixParam("mp3","mv3");
+  try {
+    assertEqualsURI(URI_1 + ";mp1=mv1;mp1=mv2;mp3=mv3",uriBuilder1NoE);
+  }
+ catch (  AssertionFailedError afe) {
+    assertEqualsURI(URI_1 + ";mp3=mv3;mp1=mv1;mp1=mv2",uriBuilder1NoE);
+  }
+  uriBuilder1NoE.replaceMatrixParams("mp4=mv4");
+  assertEqualsURI(URI_1 + ";mp4=mv4",uriBuilder1NoE);
+  uriBuilder1NoE.replaceMatrixParams("");
+  assertEquals(URI_1,uriBuilder1NoE.build());
+  uriBuilder1NoE.replaceMatrixParams(null);
+  try {
+    uriBuilder1NoE.matrixParam("jkj$sdf","ij a%20");
+    fail();
+  }
+ catch (  IllegalArgumentException iae) {
+  }
+  assertEquals(URI_1,uriBuilder1NoE.build());
+}

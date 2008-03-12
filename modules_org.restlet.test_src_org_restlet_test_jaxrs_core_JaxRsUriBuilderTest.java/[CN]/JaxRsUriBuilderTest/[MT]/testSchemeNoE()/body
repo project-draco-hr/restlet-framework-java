@@ -1,0 +1,20 @@
+{
+  uriBuilder1NoE.scheme("ftp");
+  assertEqualsURI("ftp://localhost/path1/path2",uriBuilder1NoE);
+  uriBuilder1NoE.scheme("f4.-+tp");
+  assertEqualsURI("f4.-+tp://localhost/path1/path2",uriBuilder1NoE);
+  try {
+    uriBuilder1NoE.scheme("44");
+    fail();
+  }
+ catch (  IllegalArgumentException iae) {
+  }
+  assertEqualsURI("f4.-+tp://localhost/path1/path2",uriBuilder1NoE);
+  try {
+    uriBuilder1NoE.scheme("f\0");
+    fail();
+  }
+ catch (  IllegalArgumentException iae) {
+  }
+  assertEqualsURI("f4.-+tp://localhost/path1/path2",uriBuilder1NoE);
+}

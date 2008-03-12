@@ -1,0 +1,12 @@
+{
+  uriBuilder1Enc.userInfo("username");
+  assertEqualsURI("http://username@localhost/path1/path2",uriBuilder1Enc);
+  uriBuilder1Enc.replacePath((String)null);
+  uriBuilder1Enc.host("abc");
+  uriBuilder1Enc.userInfo("username:pw");
+  assertEqualsUriSlashAllowed("http://username:pw@abc",uriBuilder1Enc);
+  uriBuilder1Enc.userInfo("rkj;s78:&=+$,");
+  assertEqualsUriSlashAllowed("http://rkj;s78:&=+$,@abc",uriBuilder1Enc);
+  uriBuilder1Enc.userInfo(" ");
+  assertEqualsUriSlashAllowed("http://%20@abc",uriBuilder1Enc);
+}
