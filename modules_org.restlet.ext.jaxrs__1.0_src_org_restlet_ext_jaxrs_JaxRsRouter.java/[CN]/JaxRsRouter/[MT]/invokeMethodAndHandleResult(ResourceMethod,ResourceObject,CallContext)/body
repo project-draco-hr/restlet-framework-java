@@ -27,6 +27,8 @@ catch (  Exception e) {
       jaxRsRespToRestletResp((javax.ws.rs.core.Response)result,callContext,resourceMethod);
     }
  else     if (result instanceof javax.ws.rs.core.Response.ResponseBuilder) {
+      String warning="the method " + resourceMethod + " returnef a ResponseBuilder. This is not allowed by default. Call responseBuilder.build() in the resource method";
+      getLogger().warning(warning);
       javax.ws.rs.core.Response jaxRsResponse=((javax.ws.rs.core.Response.ResponseBuilder)result).build();
       jaxRsRespToRestletResp(jaxRsResponse,callContext,resourceMethod);
     }
