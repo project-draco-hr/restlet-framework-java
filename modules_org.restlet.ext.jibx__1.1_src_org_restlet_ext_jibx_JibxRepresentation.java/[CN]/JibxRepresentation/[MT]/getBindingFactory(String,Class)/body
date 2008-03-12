@@ -1,7 +1,12 @@
 {
   IBindingFactory jibxBFact=bindingFactories.get(bindingName + bindingClass.toString());
   if (jibxBFact == null) {
-    jibxBFact=BindingDirectory.getFactory(bindingName,bindingClass);
+    if (bindingName == null) {
+      jibxBFact=BindingDirectory.getFactory(bindingClass);
+    }
+ else {
+      jibxBFact=BindingDirectory.getFactory(bindingName,bindingClass);
+    }
     bindingFactories.put(bindingName + bindingClass.toString(),jibxBFact);
   }
   return jibxBFact;
