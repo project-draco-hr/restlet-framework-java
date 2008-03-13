@@ -1,0 +1,31 @@
+{
+  OAuthMessage requestMessage=OAuthHelper.getMessage(getRequest());
+  OAuthConsumer consumer=provider.getConsumer(requestMessage);
+  ChallengeRequest challengeRequest=new ChallengeRequest(OAuthGuard.SCHEME,realm);
+  if (consumer == null) {
+    getResponse().setChallengeRequest(challengeRequest);
+    getResponse().setStatus(Status.CLIENT_ERROR_UNAUTHORIZED,"Invalid Consumer Key");
+    challengeRequest.getParameters().add("oauth_problem","consumer_key_unknown");
+    return;
+  }
+  OAuthAccessor accessor=new OAuthAccessor(consumer);
+  try {
+    requestMessage.validateSignature(accessor);
+  }
+ catch (  OAuthProblemException e) {
+    getResponse().setChallengeRequest(challengeRequest);
+    getResponse().setStatus(Status.CLIENT_ERROR_UNAUTHORIZED,"Invalid signature");
+    challengeRequest.getParameters().add("oauth_problem","signature_invalid");
+    return;
+  }
+catch (  Exception e) {
+    throw new RuntimeException(e);
+  }
+  provider.generateRequestToken(accessor);
+  try {
+    getResponse().setEntity(new StringRepresentation(OAuth.formEncode(OAuth.newList("oauth_token",accessor.requestToken,"oauth_token_secret",accessor.tokenSecret))));
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
+  }
+}

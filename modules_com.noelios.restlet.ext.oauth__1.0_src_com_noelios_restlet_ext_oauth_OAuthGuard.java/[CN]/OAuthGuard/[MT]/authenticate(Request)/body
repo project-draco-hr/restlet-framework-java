@@ -1,0 +1,14 @@
+{
+  OAuthMessage requestMessage=OAuthHelper.getMessage(request);
+  OAuthAccessor accessor=provider.getAccessor(requestMessage);
+  if (accessor == null) {
+    return Guard.AUTHENTICATION_MISSING;
+  }
+  try {
+    requestMessage.validateSignature(accessor);
+  }
+ catch (  Exception e1) {
+    return Guard.AUTHENTICATION_INVALID;
+  }
+  return Boolean.TRUE.equals(accessor.getProperty("authorized")) ? Guard.AUTHENTICATION_VALID : Guard.AUTHENTICATION_INVALID;
+}

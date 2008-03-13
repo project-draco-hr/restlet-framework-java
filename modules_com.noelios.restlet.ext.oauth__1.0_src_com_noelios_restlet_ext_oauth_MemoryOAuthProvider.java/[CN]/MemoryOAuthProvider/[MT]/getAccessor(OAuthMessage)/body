@@ -1,0 +1,28 @@
+{
+  String consumer_token=null;
+  try {
+    consumer_token=requestMessage.getToken();
+  }
+ catch (  IOException e) {
+    return null;
+  }
+  if (consumer_token == null) {
+    return null;
+  }
+  OAuthAccessor accessor=null;
+  for (  OAuthAccessor a : tokens) {
+    if (a.requestToken != null) {
+      if (a.requestToken.equals(consumer_token)) {
+        accessor=a;
+        break;
+      }
+    }
+ else     if (a.accessToken != null) {
+      if (a.accessToken.equals(consumer_token)) {
+        accessor=a;
+        break;
+      }
+    }
+  }
+  return accessor;
+}

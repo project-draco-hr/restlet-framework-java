@@ -1,0 +1,25 @@
+{
+  OAuthMessage requestMessage=OAuthHelper.getMessage(getRequest());
+  OAuthAccessor accessor=provider.getAccessor(requestMessage);
+  if (accessor == null) {
+    ChallengeRequest challengeRequest=new ChallengeRequest(OAuthGuard.SCHEME,realm);
+    getResponse().setChallengeRequest(challengeRequest);
+    getResponse().setStatus(Status.CLIENT_ERROR_UNAUTHORIZED,"Invalid / expired Token");
+    challengeRequest.getParameters().add("oauth_problem","token_rejected");
+    return;
+  }
+  if (!isAuthorized()) {
+    handleFailedAuthorization();
+    return;
+  }
+  String userId="user";
+  provider.markAsAuthorized(accessor,userId);
+  String callback=getRequest().getResourceRef().getQueryAsForm().getFirstValue("oauth_callback");
+  if (callback != null) {
+    getResponse().setLocationRef(callback);
+    getResponse().setStatus(Status.REDIRECTION_FOUND);
+  }
+ else {
+    getResponse().setEntity("You have allowed authorization. Please close this browser window and click continue" + " in the client.",MediaType.TEXT_PLAIN);
+  }
+}
