@@ -1,0 +1,23 @@
+{
+  if (actualUriBuilder instanceof JaxRsUriBuilder) {
+    JaxRsUriBuilder jaxRsUriBuilder=(JaxRsUriBuilder)actualUriBuilder;
+    assertEquals(expectedScheme,getScheme(jaxRsUriBuilder));
+    assertEquals(expectedUserInfo,getUserInfo(jaxRsUriBuilder));
+    assertEquals(expectedHost,getHost(jaxRsUriBuilder));
+    assertEquals(expectedPort,getPort(jaxRsUriBuilder));
+    String actPath=getPath(jaxRsUriBuilder);
+    assertEquals(expectedPath,actPath);
+    CharSequence actualQuery=getQuery(jaxRsUriBuilder);
+    if (actualQuery != null)     actualQuery=actualQuery.toString();
+    assertEquals(expectedQuery,actualQuery);
+  }
+  JaxRsUriBuilder expectedUriBuilder=(JaxRsUriBuilder)RuntimeDelegate.getInstance().createUriBuilder();
+  expectedUriBuilder.encode(false);
+  if (expectedScheme != null)   expectedUriBuilder.scheme(expectedScheme);
+  if (expectedUserInfo != null)   expectedUriBuilder.userInfo(expectedUserInfo);
+  if (expectedHost != null)   expectedUriBuilder.host(expectedHost);
+  expectedUriBuilder.port(expectedPort);
+  expectedUriBuilder.path(expectedPath);
+  if (expectedQuery != null)   expectedUriBuilder.replaceQueryParams(expectedQuery);
+  assertEquals(expectedUriBuilder.build(),actualUriBuilder.build());
+}

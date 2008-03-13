@@ -1,0 +1,22 @@
+{
+  uriBuilder1NoE.replacePath("newPath");
+  assertEqualsURI("http://localhost/newPath",uriBuilder1NoE);
+  uriBuilder1NoE.replacePath((String[])null);
+  assertEqualUriBuilder("http",null,"localhost",null,"",null,uriBuilder1NoE);
+  assertEqualsUriSlashAllowed("http://localhost",uriBuilder1NoE);
+  try {
+    uriBuilder1NoE.replacePath("gh","r t");
+    fail();
+  }
+ catch (  IllegalArgumentException iae) {
+  }
+  assertEqualsUriSlashAllowed("http://localhost",uriBuilder1NoE);
+  uriBuilder1Enc.replacePath("gh","r;t");
+  assertEqualsURI("http://localhost/gh/r;t",uriBuilder1Enc);
+  uriBuilder1Enc.replacePath("gh","r;t=");
+  assertEqualsURI("http://localhost/gh/r;t=",uriBuilder1Enc);
+  uriBuilder1Enc.replacePath("gh","r;t=6");
+  assertEqualsURI("http://localhost/gh/r;t=6",uriBuilder1Enc);
+  uriBuilder1Enc.replacePath("gh","r;t=6;g");
+  assertEqualsURI("http://localhost/gh/r;t=6;g",uriBuilder1Enc);
+}

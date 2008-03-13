@@ -1,5 +1,7 @@
 {
-  CharSequence encoded=encode(string,encode,true,indexForErrMessage,nameForMessage);
-  if (encoded == null)   return null;
-  return encoded.toString();
+  if (string == null)   throw throwIllegalArgExc(indexForErrMessage,nameForMessage,string," must not be null");
+  if (encode)   return encodeNotBraces(string,true);
+ else   EncodeOrCheck.checkForInvalidUriChars(string,indexForErrMessage,nameForMessage);
+  if (string == null)   return null;
+  return string.toString();
 }

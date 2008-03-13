@@ -1,6 +1,14 @@
 {
-  JaxRsPathSegment lastPathSegment=this.pathSegments.getLast();
-  if (matrixParams == null || matrixParams.length() == 0)   lastPathSegment.getMatrixParameters().clear();
- else   lastPathSegment.setMatrixParameters(JaxRsPathSegment.parseMatrixParams(matrixParams,false,true));
+  CharSequence mpcs=null;
+  if (matrixParams != null)   mpcs=EncodeOrCheck.fullMatrix(matrixParams,encode);
+  StringBuilder path=getPath();
+  int beginLastPs=path.lastIndexOf("/");
+  if (beginLastPs >= 0) {
+    int beginMp=path.indexOf(";",beginLastPs);
+    if (beginMp >= 0)     path.delete(beginMp,path.length());
+  }
+  if (mpcs == null)   return this;
+  if (mpcs.length() == 0 || mpcs.charAt(0) != ';')   path.append(";");
+  path.append(mpcs);
   return this;
 }

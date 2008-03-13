@@ -1,7 +1,8 @@
 {
   if (resource == null)   throw new IllegalArgumentException("The root resource class must not be null");
+  String newPathSegment;
   try {
-    addUnencodedPathSegments(ResourceClass.getPathTemplate(resource));
+    newPathSegment=ResourceClass.getPathTemplate(resource);
   }
  catch (  IllegalPathOnClassException e) {
     throw e.getCause();
@@ -9,5 +10,8 @@
 catch (  MissingAnnotationException e) {
     throw new IllegalArgumentException("The resource class " + resource.getName() + " requires an annotation @Path");
   }
+  StringBuilder path=getPath();
+  if (newPathSegment.charAt(0) != '/')   path.append('/');
+  path.append(newPathSegment);
   return this;
 }

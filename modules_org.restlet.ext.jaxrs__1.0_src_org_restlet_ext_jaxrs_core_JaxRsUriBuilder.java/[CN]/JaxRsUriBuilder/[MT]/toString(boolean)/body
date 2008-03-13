@@ -10,16 +10,14 @@
       stb.append('@');
     }
     if (host != null)     Util.append(stb,host,convertBraces);
-    if (port > 0) {
+    if (port != null) {
       stb.append(':');
       stb.append(port);
     }
-    boolean relativeUri=stb.length() == 0;
-    for (    JaxRsPathSegment pathSegment : pathSegments) {
-      stb.append('/');
-      pathSegment.toStringBuilder(stb,convertBraces);
+    if (path != null) {
+      if (stb.length() > 0 && path.length() > 0 && path.charAt(0) != '/')       stb.append('/');
+      Util.append(stb,path,convertBraces);
     }
-    if (relativeUri)     stb.deleteCharAt(0);
     if (query != null) {
       stb.append('?');
       Util.append(stb,query,convertBraces);

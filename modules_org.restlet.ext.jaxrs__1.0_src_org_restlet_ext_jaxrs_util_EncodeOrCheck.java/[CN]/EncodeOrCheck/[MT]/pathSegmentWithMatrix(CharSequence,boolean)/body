@@ -1,0 +1,18 @@
+{
+  int l=path.length();
+  StringBuilder stb=new StringBuilder(l + 6);
+  for (int i=0; i < l; i++) {
+    char c=path.charAt(i);
+    if (Reference.isUnreserved(c) || Reference.isReserved(c))     stb.append(c);
+ else     if (c == '{' || c == '}')     stb.append(c);
+ else     if (c == '%') {
+      if (encode)       toHex(c,stb);
+ else {
+        checkForHexDigitAndAppend(path,i,stb);
+        i+=2;
+      }
+    }
+ else     toHexOrReject(c,stb,encode);
+  }
+  return stb;
+}

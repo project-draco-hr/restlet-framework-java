@@ -1,0 +1,17 @@
+{
+  uriBuilder1Enc.replacePath("newPath");
+  assertEqualsURI("http://localhost/newPath",uriBuilder1Enc);
+  uriBuilder1Enc.replacePath((String[])null);
+  assertEqualUriBuilder("http",null,"localhost",null,"",null,uriBuilder1Enc);
+  assertEqualsUriSlashAllowed("http://localhost",uriBuilder1Enc);
+  uriBuilder1Enc.replacePath("gh","r t");
+  assertEqualsURI("http://localhost/gh/r%20t",uriBuilder1Enc);
+  uriBuilder1Enc.replacePath("gh","r;t");
+  assertEqualsURI("http://localhost/gh/r;t",uriBuilder1Enc);
+  uriBuilder1Enc.replacePath("gh","r;t=6");
+  assertEqualsURI("http://localhost/gh/r;t=6",uriBuilder1Enc);
+  uriBuilder1Enc.replacePath("gh","r;t=");
+  assertEqualsURI("http://localhost/gh/r;t=",uriBuilder1Enc);
+  uriBuilder1Enc.replacePath("gh","r;t=6;g");
+  assertEqualsURI("http://localhost/gh/r;t=6;g",uriBuilder1Enc);
+}

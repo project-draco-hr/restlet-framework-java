@@ -1,13 +1,21 @@
 {
   JaxRsUriBuilder uriBuilder=new JaxRsUriBuilder();
   uriBuilder.encode=this.encode;
-  uriBuilder.fragment=this.fragment;
+  if (this.fragment != null) {
+    uriBuilder.fragment=this.fragment;
+    this.fragment=this.fragment.toString();
+  }
   uriBuilder.host=this.host;
   uriBuilder.port=this.port;
   uriBuilder.scheme=this.scheme;
-  uriBuilder.userInfo=this.userInfo;
-  uriBuilder.pathSegments=new LinkedList<JaxRsPathSegment>();
-  for (  JaxRsPathSegment pathSegment : pathSegments)   uriBuilder.pathSegments.add(pathSegment.clone());
+  if (this.userInfo != null) {
+    uriBuilder.userInfo=this.userInfo;
+    this.userInfo=this.userInfo.toString();
+  }
+  if (this.path != null) {
+    uriBuilder.path=this.path;
+    this.path=this.path.toString();
+  }
   if (this.query != null) {
     uriBuilder.query=this.query;
     this.query=this.query.toString();

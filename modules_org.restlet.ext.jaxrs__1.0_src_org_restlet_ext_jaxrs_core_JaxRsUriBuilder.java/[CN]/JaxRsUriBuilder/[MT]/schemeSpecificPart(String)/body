@@ -1,13 +1,70 @@
 {
   if (ssp == null)   throw new IllegalArgumentException("The scheme specific part must not be null");
-  Reference reference=new Reference(ssp,null);
-  this.userInfo=reference.getUserInfo();
-  this.host=reference.getHostDomain();
-  this.port=reference.getHostPort();
-  String path=reference.getPath();
-  this.pathSegments.clear();
-  if (path != null)   this.addUnencodedPathSegments(path);
-  this.query=reference.getQuery();
-  this.fragment=reference.getFragment();
+  if (ssp.startsWith("//"))   ssp=ssp.substring(2);
+  int firstSlashPos=ssp.indexOf('/');
+  String authority;
+  CharSequence path;
+  CharSequence query;
+  CharSequence fragment;
+  if (firstSlashPos >= 0) {
+    authority=ssp.substring(0,firstSlashPos);
+    String pathQueryFragment=ssp.substring(firstSlashPos);
+    String pathQuery;
+    int firstCrosshatchPos=pathQueryFragment.indexOf('#');
+    if (firstCrosshatchPos >= 0) {
+      pathQuery=pathQueryFragment.substring(0,firstCrosshatchPos);
+      fragment=pathQueryFragment.substring(firstCrosshatchPos + 1);
+    }
+ else {
+      pathQuery=pathQueryFragment;
+      fragment=null;
+    }
+    int firstQmPos=pathQuery.indexOf('?');
+    if (firstQmPos >= 0) {
+      path=pathQuery.substring(0,firstQmPos);
+      query=pathQuery.substring(firstQmPos + 1);
+    }
+ else {
+      path=pathQuery;
+      query=null;
+    }
+  }
+ else {
+    authority=ssp;
+    path=null;
+    query=null;
+    fragment=null;
+  }
+  CharSequence userInfo;
+  String host;
+  String port;
+  int atSignPos=authority.lastIndexOf('@');
+  if (atSignPos >= 0) {
+    userInfo=authority.substring(0,atSignPos);
+    authority=authority.substring(atSignPos + 1);
+  }
+ else {
+    userInfo=null;
+  }
+  int colonPos=authority.lastIndexOf(':');
+  if (colonPos >= 0) {
+    host=authority.substring(0,colonPos);
+    port=authority.substring(colonPos + 1);
+  }
+ else {
+    host=authority;
+    port=null;
+  }
+  if (userInfo != null)   userInfo=EncodeOrCheck.userInfo(userInfo,encode);
+  if (host != null)   host=EncodeOrCheck.host(host);
+  if (path != null)   path=EncodeOrCheck.pathSegmentWithMatrix(path,encode);
+  if (query != null)   query=EncodeOrCheck.fullQuery(query,encode);
+  if (fragment != null)   fragment=EncodeOrCheck.fragment(fragment,encode);
+  port(port);
+  this.userInfo=userInfo;
+  this.host=host;
+  this.path=path;
+  this.query=query;
+  this.fragment=fragment;
   return this;
 }

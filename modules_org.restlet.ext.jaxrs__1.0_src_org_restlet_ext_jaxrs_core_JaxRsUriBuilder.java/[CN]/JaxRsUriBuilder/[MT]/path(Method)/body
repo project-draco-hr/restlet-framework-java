@@ -1,10 +1,10 @@
 {
   if (methods == null || methods.length == 0)   return this;
-  List<JaxRsPathSegment> newPathSegments=new ArrayList<JaxRsPathSegment>();
+  List<CharSequence> newPathSegments=new ArrayList<CharSequence>();
   for (  Method method : methods) {
-    String segment;
+    String validSegment;
     try {
-      segment=AbstractMethodWrapper.getPathTemplate(method);
+      validSegment=AbstractMethodWrapper.getPathTemplate(method);
     }
  catch (    MissingAnnotationException e) {
       throw new IllegalArgumentException(e);
@@ -12,12 +12,8 @@
 catch (    IllegalPathException e) {
       throw e.getCause();
     }
-    if (segment.startsWith("/"))     segment=segment.substring(1);
-    if (segment.length() > 0) {
-      String[] segments=segment.split("/");
-      addToJaxRsPathSegments(segments,newPathSegments);
-    }
+    newPathSegments.add(validSegment);
   }
-  this.pathSegments.addAll(newPathSegments);
+  addValidPathSegments(newPathSegments);
   return this;
 }

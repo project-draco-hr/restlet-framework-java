@@ -1,19 +1,21 @@
 {
   uriBuilder1NoE.schemeSpecificPart("//shkf");
-  assertEqualUriBuilder(uriBuilder1NoE,"http",null,"shkf",-1,null);
+  assertEqualUriBuilder("http",null,"shkf",null,null,null,uriBuilder1NoE);
   uriBuilder1NoE.schemeSpecificPart("//shkf/akfshdf");
-  assertEqualUriBuilder(uriBuilder1NoE,"http",null,"shkf",-1,null,new JaxRsPathSegment("akfshdf",false,null));
+  assertEqualUriBuilder("http",null,"shkf",null,"/akfshdf",null,uriBuilder1NoE);
   uriBuilder1NoE.schemeSpecificPart("//user@shkf/akfshdf/akjhf");
-  assertEqualUriBuilder(uriBuilder1NoE,"http","user","shkf",-1,null,new JaxRsPathSegment("akfshdf",false,null),new JaxRsPathSegment("akjhf",false,null));
+  assertEqualUriBuilder("http","user","shkf",null,"/akfshdf/akjhf",null,uriBuilder1NoE);
   uriBuilder1NoE.schemeSpecificPart("//shkf:4711/akjhf?a=b");
-  assertEqualUriBuilder(uriBuilder1NoE,"http",null,"shkf",4711,"a=b",new JaxRsPathSegment("akjhf",false,null));
+  assertEqualUriBuilder("http",null,"shkf","4711","/akjhf","a=b",uriBuilder1NoE);
   uriBuilder1NoE.schemeSpecificPart("//www.domain.org/akjhf;1=2?a=b");
-  MultivaluedMapImpl<String,String> mp=new MultivaluedMapImpl<String,String>();
-  mp.putSingle("1","2");
-  assertEqualUriBuilder(uriBuilder1NoE,"http",null,"www.domain.org",-1,"a=b",new JaxRsPathSegment("akjhf",false,mp));
+  assertEqualUriBuilder("http",null,"www.domain.org",null,"/akjhf;1=2","a=b",uriBuilder1NoE);
   uriBuilder1NoE.schemeSpecificPart("//www.domain.org/akjhf;1=2;3=4?a=b");
-  mp=new MultivaluedMapImpl<String,String>();
-  mp.putSingle("1","2");
-  mp.putSingle("3","4");
-  assertEqualUriBuilder(uriBuilder1NoE,"http",null,"www.domain.org",-1,"a=b",new JaxRsPathSegment("akjhf",false,mp));
+  assertEqualUriBuilder("http",null,"www.domain.org",null,"/akjhf;1=2;3=4","a=b",uriBuilder1NoE);
+  try {
+    uriBuilder1NoE.schemeSpecificPart("//www.domain.org/ ");
+    fail();
+  }
+ catch (  IllegalArgumentException iae) {
+  }
+  assertEqualUriBuilder("http",null,"www.domain.org",null,"/akjhf;1=2;3=4","a=b",uriBuilder1NoE);
 }
