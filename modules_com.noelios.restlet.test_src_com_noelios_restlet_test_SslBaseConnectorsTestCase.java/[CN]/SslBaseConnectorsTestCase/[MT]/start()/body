@@ -1,0 +1,11 @@
+{
+  component=new Component();
+  component.getContext().getParameters().add("keyPassword",System.getProperty("javax.net.ssl.keyStorePassword"));
+  component.getContext().getParameters().add("keystorePassword",System.getProperty("javax.net.ssl.keyStorePassword"));
+  component.getContext().getParameters().add("keystorePath",System.getProperty("javax.net.ssl.keyStore"));
+  Server server=component.getServers().add(Protocol.HTTPS,0);
+  Application application=createApplication(component);
+  component.getDefaultHost().attach(application);
+  component.start();
+  return "https://localhost:" + server.getEphemeralPort() + "/test";
+}
