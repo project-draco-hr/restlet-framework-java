@@ -1,8 +1,12 @@
 {
   String varValue=retrievedValues.get(variableName);
   if (varValue == null) {
-    if (i >= values.length)     throw new IllegalArgumentException("The value given array contains not enough elements");
-    varValue=values[i];
+    if (i >= values.length) {
+      throw new IllegalArgumentException("The value given array contains not enough elements (contains " + values.length + ", but need at least "+ (i + 1)+ ")");
+    }
+    Object value=values[i];
+    if (value == null)     throw new IllegalArgumentException("The given array contains null value at position (" + i + ")");
+    varValue=value.toString();
     i++;
     retrievedValues.put(variableName,varValue);
   }

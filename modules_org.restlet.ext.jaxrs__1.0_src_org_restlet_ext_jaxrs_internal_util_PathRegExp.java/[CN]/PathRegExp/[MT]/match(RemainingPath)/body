@@ -10,5 +10,9 @@
     if (pathSuppl && finalCapturingGroup.endsWith("/"))     finalCapturingGroup=finalCapturingGroup.substring(0,finalCapturingGroup.length() - 1);
     if (!finalCapturingGroup.startsWith("/"))     finalCapturingGroup="/" + finalCapturingGroup;
   }
-  return new MatchingResult(templateVars,finalCapturingGroup,templateVars.size());
+  String matched;
+  int matchedChars=givenPath.length() - finalCapturingGroup.length();
+  if (matchedChars > 0 && givenPath.charAt(matchedChars - 1) == '/')   matchedChars--;
+  matched=givenPath.substring(0,matchedChars);
+  return new MatchingResult(matched,templateVars,finalCapturingGroup,templateVars.size());
 }

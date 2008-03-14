@@ -1,7 +1,8 @@
 {
-  List<URI> parentURIs=uriInfo.getAncestorResourceURIs();
-  uriInfo.getAncestorResources();
-  URI segments=parentURIs.get(parentURIs.size() - 1);
-  URI parentUri=uriInfo.getBaseUriBuilder().uri(segments).build();
-  return parentUri.toString();
+  List<String> parentURIs=uriInfo.getAncestorResourceURIs();
+  String segment=parentURIs.get(parentURIs.size() - 1);
+  URI parentUri=uriInfo.getBaseUriBuilder().path(segment).build();
+  StringBuilder html=new StringBuilder();
+  appendCreateForm(html,parentUri);
+  return html.toString();
 }

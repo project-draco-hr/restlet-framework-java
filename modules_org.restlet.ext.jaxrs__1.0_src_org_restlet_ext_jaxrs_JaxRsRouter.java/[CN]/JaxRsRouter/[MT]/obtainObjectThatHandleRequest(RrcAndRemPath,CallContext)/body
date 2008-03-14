@@ -18,6 +18,8 @@ catch (  NoMessageBodyReaderException e) {
 catch (  Exception e) {
     throw handleExecption(e,null,callContext,"Could not create new instance of root resource class");
   }
+  Object jaxRsResObj1=o.getJaxRsResourceObject();
+  callContext.addForAncestor(jaxRsResObj1,rrcAndRemPath.matchedUriPath);
   ResourceClass resClass=rrc;
   for (; ; ) {
     if (u.isEmptyOrSlash()) {
@@ -37,6 +39,9 @@ catch (  Exception e) {
     MatchingResult matchingResult=rMatch.match(u);
     addMrVarsToMap(matchingResult,callContext);
     if (firstMeth instanceof ResourceMethod)     return new ResObjAndRemPath(o,u);
+    String matchedUriPart=matchingResult.getMatched();
+    Object jaxRsResObj2=o.getJaxRsResourceObject();
+    callContext.addForAncestor(jaxRsResObj2,matchedUriPart);
     u=matchingResult.getFinalCapturingGroup();
     SubResourceLocator subResourceLocator=(SubResourceLocator)firstMeth;
     try {

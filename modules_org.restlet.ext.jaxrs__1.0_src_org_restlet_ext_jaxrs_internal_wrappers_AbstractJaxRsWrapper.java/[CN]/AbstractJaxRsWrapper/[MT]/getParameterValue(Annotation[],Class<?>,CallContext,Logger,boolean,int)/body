@@ -8,7 +8,9 @@
   for (  Annotation annotation : paramAnnotations) {
     Class<? extends Annotation> annoType=annotation.annotationType();
     if (annoType.equals(Context.class)) {
-      return callContext;
+      if (paramClass.equals(ClientInfo.class))       return callContext.getRequest().getClientInfo();
+ else       if (paramClass.equals(Conditions.class))       return callContext.getRequest().getConditions();
+ else       return callContext;
     }
     if (annoType.equals(HeaderParam.class)) {
       return getHeaderParamValue(paramClass,(HeaderParam)annotation,defaultValue,callContext);
