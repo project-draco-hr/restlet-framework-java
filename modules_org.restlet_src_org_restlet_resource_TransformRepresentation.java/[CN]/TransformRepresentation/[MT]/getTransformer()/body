@@ -1,15 +1,11 @@
 {
-  if (this.transformer == null) {
+  Transformer result=this.transformer;
+  if (result == null) {
+    Templates templates=getTemplates();
     try {
-      StreamSource transformSource=new StreamSource(getTransformSheet().getStream());
-      if (getTransformSheet().getIdentifier() != null) {
-        transformSource.setSystemId(getTransformSheet().getIdentifier().getTargetRef().toString());
+      if (templates != null) {
+        result=templates.newTransformer();
       }
-      TransformerFactory transformerFactory=TransformerFactory.newInstance();
-      if (getUriResolver() != null) {
-        transformerFactory.setURIResolver(getUriResolver());
-      }
-      this.transformer=transformerFactory.newTransformer(transformSource);
     }
  catch (    TransformerConfigurationException tce) {
       throw new IOException("Transformer configuration exception. " + tce.getMessage());
@@ -18,5 +14,5 @@ catch (    TransformerFactoryConfigurationError tfce) {
       throw new IOException("Transformer factory configuration exception. " + tfce.getMessage());
     }
   }
-  return this.transformer;
+  return result;
 }
