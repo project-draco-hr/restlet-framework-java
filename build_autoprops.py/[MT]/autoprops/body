@@ -1,0 +1,10 @@
+def autoprops():
+    cfg = ConfigParser.ConfigParser()
+    from os.path import expanduser, expandvars
+    cfg.read([expandvars(expanduser(path)) for path in CFG])
+
+    def props(cfg, pattern):
+        for p in cfg.get('auto-props', pattern).split(';'):
+            yield (p.split('=', 1) + ['*'])[:2]
+    for pattern in cfg.options('auto-props'):
+        yield (pattern, props(cfg, pattern))
