@@ -1,11 +1,4 @@
 {
-  boolean result=false;
-  for (  Parameter header : getResponseHeaders()) {
-    if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_TRANSFER_ENCODING)) {
-      if (header.getValue().equalsIgnoreCase("chunked")) {
-        result=true;
-      }
-    }
-  }
-  return result;
+  String header=getResponseHeaders().getFirstValue(HttpConstants.HEADER_TRANSFER_ENCODING,true);
+  return (header != null) && header.equalsIgnoreCase("chunked");
 }
