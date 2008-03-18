@@ -1,18 +1,25 @@
 {
-  Transformer result=this.transformer;
-  if (result == null) {
+  Transformer result=null;
+  try {
     Templates templates=getTemplates();
-    try {
-      if (templates != null) {
-        result=templates.newTransformer();
+    if (templates != null) {
+      result=templates.newTransformer();
+      if (this.uriResolver != null) {
+        result.setURIResolver(getUriResolver());
+      }
+      for (      String name : getParameters().keySet()) {
+        result.setParameter(name,getParameters().get(name));
+      }
+      for (      String name : getOutputProperties().keySet()) {
+        result.setOutputProperty(name,getOutputProperties().get(name));
       }
     }
- catch (    TransformerConfigurationException tce) {
-      throw new IOException("Transformer configuration exception. " + tce.getMessage());
-    }
-catch (    TransformerFactoryConfigurationError tfce) {
-      throw new IOException("Transformer factory configuration exception. " + tfce.getMessage());
-    }
+  }
+ catch (  TransformerConfigurationException tce) {
+    throw new IOException("Transformer configuration exception. " + tce.getMessage());
+  }
+catch (  TransformerFactoryConfigurationError tfce) {
+    throw new IOException("Transformer factory configuration exception. " + tfce.getMessage());
   }
   return result;
 }
