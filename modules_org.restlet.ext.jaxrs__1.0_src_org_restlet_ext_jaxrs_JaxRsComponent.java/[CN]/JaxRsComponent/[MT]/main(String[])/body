@@ -1,0 +1,41 @@
+{
+  if (args.length == 0) {
+    System.out.println("Run some ApplicationConfigs by give the class names (including package name)\nas command line arguments.");
+    System.out.println("You can also give a port or an AccessControl.");
+    return;
+  }
+  JaxRsComponent component=new JaxRsComponent();
+  List<String> arguments=new ArrayList<String>(Arrays.asList(args));
+  int port=getPort(arguments);
+  Server server=component.getServers().add(Protocol.HTTP,port);
+  int numberAttached=0;
+  for (  String arg : arguments) {
+    try {
+      component.attach(arg);
+      System.out.println("Attached class " + arg);
+      numberAttached++;
+    }
+ catch (    IllegalArgumentException e) {
+      System.out.println(e.getMessage());
+      System.out.println("ignore " + arg);
+    }
+catch (    ClassNotFoundException e) {
+      System.out.println("Class " + e.getMessage() + " does not exist");
+      System.out.println("ignore " + arg);
+    }
+  }
+  if (numberAttached == 0) {
+    System.out.println("No class attached. Will finish");
+    return;
+  }
+  for (  String rootUris : component.jaxRsApplication.getRootUris()) {
+    System.out.println("http://localhost:" + server.getPort() + rootUris);
+  }
+  component.getDefaultHost().attach(component.jaxRsApplication);
+  component.start();
+  System.out.println("Press key to stop server");
+  System.in.read();
+  System.out.println("Stopping server");
+  component.stop();
+  System.out.println("Server stopped");
+}

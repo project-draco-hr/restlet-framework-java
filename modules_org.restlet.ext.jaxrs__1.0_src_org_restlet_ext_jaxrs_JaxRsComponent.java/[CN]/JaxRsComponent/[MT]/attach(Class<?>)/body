@@ -1,0 +1,15 @@
+{
+  Object instance;
+  try {
+    instance=clazz.newInstance();
+  }
+ catch (  InstantiationException e) {
+    throw new IllegalArgumentException("Could not instantiate class " + clazz.getClass().getName(),e);
+  }
+catch (  IllegalAccessException e) {
+    throw new IllegalArgumentException("Could not instantiate class " + clazz.getClass().getName(),e);
+  }
+  if (instance instanceof ApplicationConfig)   this.attach((ApplicationConfig)instance);
+ else   if (instance instanceof AccessControl)   this.setAccessControl((AccessControl)instance);
+ else   throw new IllegalArgumentException("The class " + clazz.getName() + " is not valid for a JaxRsComponent");
+}

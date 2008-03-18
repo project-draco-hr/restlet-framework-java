@@ -1,0 +1,20 @@
+{
+  Integer port=null;
+  Iterator<String> argIter=arguments.iterator();
+  while (argIter.hasNext()) {
+    String arg=argIter.next();
+    try {
+      port=new Integer(arg);
+      argIter.remove();
+      break;
+    }
+ catch (    NumberFormatException e) {
+    }
+  }
+  if (port == null) {
+    port=DEFAULT_PORT;
+    String noPortGivenMessage="No port given. Use port " + port + ". You can give a port by set it as command line argument.";
+    System.out.println(noPortGivenMessage);
+  }
+  return port;
+}
