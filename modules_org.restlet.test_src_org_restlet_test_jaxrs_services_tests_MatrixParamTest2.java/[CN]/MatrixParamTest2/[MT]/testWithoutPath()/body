@@ -1,0 +1,15 @@
+{
+  if (jaxRxImplementorCheck(20,3))   return;
+  Response response=get(";firstname=Angela;lastname=Merkel");
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  assertEquals("Angela Merkel",response.getEntity().getText());
+  response=get(";lastname=Merkel;firstname=Angela");
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  assertEquals("Angela Merkel",response.getEntity().getText());
+  response=get(";firstname=Goofy");
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  assertEquals("Goofy null",response.getEntity().getText());
+  response=get(";lastname=Goofy");
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  assertEquals("null Goofy",response.getEntity().getText());
+}

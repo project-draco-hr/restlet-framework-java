@@ -1,0 +1,28 @@
+{
+  boolean toArray=false;
+  Collection<Object> coll=null;
+  if (paramGenericType instanceof GenericArrayType) {
+    GenericArrayType genericArrayType=(GenericArrayType)paramGenericType;
+    paramClass=(Class<?>)genericArrayType.getGenericComponentType();
+    coll=new ArrayList<Object>(1);
+  }
+ else   if (paramGenericType instanceof ParameterizedType) {
+    ParameterizedType parameterizedType=(ParameterizedType)paramGenericType;
+    Type rawType=parameterizedType.getRawType();
+    if (rawType.equals(Collection.class) || rawType.equals(List.class))     coll=new ArrayList<Object>(1);
+ else     if (rawType.equals(Set.class))     coll=new HashSet<Object>(2);
+ else     if (rawType.equals(SortedSet.class))     coll=new TreeSet<Object>();
+    paramClass=(Class<?>)parameterizedType.getActualTypeArguments()[0];
+  }
+  if (coll != null) {
+    while (paramValues.hasNext()) {
+      String queryParamValue=paramValues.next();
+      Object paramValue_=convertParamValueFromParam(paramClass,queryParamValue,defaultValue,leaveEncoded);
+      if (paramValue_ != null)       coll.add(paramValue_);
+      defaultValue=null;
+    }
+    if (toArray)     return coll.toArray();
+    return coll;
+  }
+  return convertParamValueFromParam(paramClass,paramValue,defaultValue,leaveEncoded);
+}
