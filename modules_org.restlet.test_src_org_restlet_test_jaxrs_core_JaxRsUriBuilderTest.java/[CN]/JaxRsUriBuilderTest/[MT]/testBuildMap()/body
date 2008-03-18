@@ -1,5 +1,4 @@
 {
-  assertEqualsURI("http://localhost/abc/%7Bvar1%7D/def/%7Bvar2%7D",uriBuilderWithVarsEnc);
   Map<String,Object> vars=new HashMap<String,Object>();
   try {
     uriBuilderWithVarsEnc.build(vars);
@@ -18,4 +17,11 @@
   assertEqualsURI("http://localhost/abc/123/def/456",uriBuilderWithVarsEnc.build(vars));
   vars.put("var3","789");
   assertEqualsURI("http://localhost/abc/123/def/456",uriBuilderWithVarsEnc.build(vars));
+  vars.put("var2"," ");
+  assertEqualsURI("http://localhost/abc/123/def/%20",uriBuilderWithVarsEnc.build(vars));
+  try {
+    uriBuilderWithVarsNoE.build(vars);
+  }
+ catch (  IllegalArgumentException iae) {
+  }
 }
