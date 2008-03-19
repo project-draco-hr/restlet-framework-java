@@ -1,8 +1,17 @@
 {
-  if (isRequestChunked()) {
-    return new ChunkedOutputStream(getRequestHeadStream());
-  }
+  if (requestEntityStream == null) {
+    if (isRequestChunked() && isKeepAlive()) {
+      requestEntityStream=new ChunkedOutputStream(new KeepAliveOutputStream(getRequestHeadStream()));
+    }
+ else     if (isRequestChunked()) {
+      requestEntityStream=new ChunkedOutputStream(getRequestHeadStream());
+    }
+ else     if (isKeepAlive()) {
+      requestEntityStream=new KeepAliveOutputStream(getRequestHeadStream());
+    }
  else {
-    return new KeepAliveOutputStream(getRequestHeadStream());
+      requestEntityStream=new KeepAliveOutputStream(getRequestHeadStream());
+    }
   }
+  return requestEntityStream;
 }
