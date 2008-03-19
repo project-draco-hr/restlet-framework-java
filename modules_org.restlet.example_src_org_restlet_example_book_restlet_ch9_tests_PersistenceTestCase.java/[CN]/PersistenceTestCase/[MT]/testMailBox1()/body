@@ -1,0 +1,16 @@
+{
+  MailBox mailBox=mailRoot.getMailBoxes().get(0);
+  assertEquals(mailBox.getContacts().size(),2);
+  assertEquals(mailBox.getContacts().get(1).getName(),"contact-2");
+  assertEquals(mailBox.getMails().size(),2);
+  assertEquals(mailBox.getMails().get(0).getSender(),mailRoot.getUsers().get(0));
+  assertEquals(mailBox.getMails().get(1).getSender(),mailRoot.getUsers().get(0));
+  assertEquals(mailBox.getMails().get(0).getTags().get(0),"tag1");
+  assertEquals(mailBox.getMails().get(1).getTags().size(),2);
+  assertEquals(mailBox.getFeeds().get(0).getTags().get(0),"tag2");
+  assertEquals(mailBox.getMails().get(1).getTags().get(1),"tag2");
+  assertFalse(mailBox.getFeeds().get(0).getMails().contains(mailBox.getMails().get(0)));
+  assertTrue(mailBox.getFeeds().get(0).getMails().contains(mailBox.getMails().get(1)));
+  assertEquals(mailBox.getMails().get(0).getPrimaryRecipients().get(0),mailBox.getContacts().get(0));
+  assertEquals(mailBox.getMails().get(0).getPrimaryRecipients().get(1),mailBox.getContacts().get(1));
+}
