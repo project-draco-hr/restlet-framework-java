@@ -17,13 +17,15 @@
       }
     }
   }
-  InputStream stream=getUnClosedResponseEntityStream(getResponseEntityStream(size));
-  ReadableByteChannel channel=getResponseEntityChannel(size);
-  if (stream != null) {
-    result=new InputRepresentation(stream,null);
-  }
- else   if (channel != null) {
-    result=new ReadableRepresentation(channel,null);
+  if (!getMethod().equals(Method.HEAD.getName()) && !response.getStatus().isInformational() && !response.getStatus().equals(Status.REDIRECTION_NOT_MODIFIED)&& !response.getStatus().equals(Status.SUCCESS_NO_CONTENT)&& !response.getStatus().equals(Status.SUCCESS_RESET_CONTENT)&& !response.getStatus().equals(Status.SUCCESS_PARTIAL_CONTENT)) {
+    InputStream stream=getUnClosedResponseEntityStream(getResponseEntityStream(size));
+    ReadableByteChannel channel=getResponseEntityChannel(size);
+    if (stream != null) {
+      result=new InputRepresentation(stream,null);
+    }
+ else     if (channel != null) {
+      result=new ReadableRepresentation(channel,null);
+    }
   }
   result=copyResponseEntityHeaders(responseHeaders,result);
   if (result != null) {
