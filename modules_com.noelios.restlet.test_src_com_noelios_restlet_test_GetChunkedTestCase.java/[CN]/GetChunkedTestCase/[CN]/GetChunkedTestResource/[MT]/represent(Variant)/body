@@ -1,0 +1,14 @@
+{
+  Representation source=new StringRepresentation("<?xml version='1.0'?><mail>Hello world</mail>",MediaType.APPLICATION_XML);
+  StringBuilder builder=new StringBuilder();
+  builder.append("<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\">");
+  builder.append("<xsl:output method=\"text\"/>");
+  builder.append("<xsl:template match=\"/\">");
+  builder.append("<xsl:apply-templates />");
+  builder.append("</xsl:template>");
+  builder.append("</xsl:stylesheet>");
+  Representation transformSheet=new StringRepresentation(builder.toString(),MediaType.TEXT_XML);
+  Representation representation=new TransformRepresentation(getContext(),source,transformSheet);
+  representation.setMediaType(variant.getMediaType());
+  return representation;
+}
