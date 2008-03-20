@@ -1,8 +1,9 @@
 {
   super.start();
   getLogger().info("Starting the internal HTTP server");
-  handlerService=Executors.newFixedThreadPool(10);
-  listenerService=Executors.newSingleThreadExecutor();
+  ThreadFactory factory=new LoggingThreadFactory(getLogger());
+  handlerService=Executors.newFixedThreadPool(10,factory);
+  listenerService=Executors.newSingleThreadExecutor(factory);
   serverSocketChannel=createServerSocket();
   setEphemeralPort(serverSocketChannel.socket());
   latch=new CountDownLatch(1);
