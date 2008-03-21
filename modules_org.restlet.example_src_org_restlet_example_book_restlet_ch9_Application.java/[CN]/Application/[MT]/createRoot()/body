@@ -1,7 +1,21 @@
 {
   Router router=new Router(getContext());
+  RmepGuard guard=new RmepGuard(getContext(),ChallengeScheme.HTTP_BASIC,"rmep",daoFactory);
   router.attachDefault(MailRootResource.class);
-  router.attach("/mailboxes",MailBoxesResource.class);
-  router.attach("/mailboxes/{mailboxId}",MailBoxResource.class);
-  return router;
+  Directory directory=new Directory(getContext(),LocalReference.createFileReference("D:\\alaska\\forge\\build\\swc\\restlet\\trunk\\modules\\org.restlet.example\\src\\org\\restlet\\example\\book\\restlet\\ch9\\web\\images"));
+  directory.setIndexName(null);
+  directory.setListingAllowed(true);
+  router.attach("/images",directory);
+  router.attach("/mailboxes",MailboxesResource.class);
+  router.attach("/mailboxes/{mailboxId}",MailboxResource.class);
+  router.attach("/mailboxes/{mailboxId}/contacts",ContactsResource.class);
+  router.attach("/mailboxes/{mailboxId}/contacts/{contactId}",ContactResource.class);
+  router.attach("/mailboxes/{mailboxId}/mails",MailsResource.class);
+  router.attach("/mailboxes/{mailboxId}/mails/{mailId}",MailResource.class);
+  router.attach("/mailboxes/{mailboxId}/feeds",FeedsResource.class);
+  router.attach("/mailboxes/{mailboxId}/feeds/{feedId}",FeedResource.class);
+  router.attach("/users",UsersResource.class);
+  router.attach("/users/{userId}",UserResource.class);
+  guard.setNext(router);
+  return guard;
 }

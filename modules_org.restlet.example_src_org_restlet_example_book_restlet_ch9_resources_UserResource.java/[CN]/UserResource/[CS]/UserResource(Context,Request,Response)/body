@@ -1,4 +1,9 @@
 {
   super(context,request,response);
-  getVariants().add(new Variant(MediaType.TEXT_HTML));
+  String userId=(String)request.getAttributes().get("userId");
+  user=getDAOFactory().getUserDAO().getUserById(userId);
+  if (user != null) {
+    getVariants().add(new Variant(MediaType.TEXT_HTML));
+    mailboxes=getDAOFactory().getUserDAO().getMailboxes(user);
+  }
 }

@@ -3,7 +3,7 @@
   Predicate<Mail> mailByContactNamePredicate=new Predicate<Mail>(){
     @Override public boolean match(    Mail mail){
       boolean found=false;
-      for (      Contact contact : mail.getPrimaryRecipients()) {
+      for (      Contact contact : mail.getRecipients()) {
         if ("contact-5".equals(contact.getName())) {
           found=true;
           break;
@@ -13,10 +13,10 @@
     }
   }
 ;
-  Predicate<MailBox> mailboxByContactNamePredicate=new Predicate<MailBox>(){
-    @Override public boolean match(    MailBox mailBox){
+  Predicate<Mailbox> mailboxByContactNamePredicate=new Predicate<Mailbox>(){
+    @Override public boolean match(    Mailbox mailbox){
       boolean found=false;
-      for (      Contact contact : mailBox.getContacts()) {
+      for (      Contact contact : mailbox.getContacts()) {
         if ("contact-5".equals(contact.getName())) {
           found=true;
           break;
@@ -28,7 +28,7 @@
 ;
   ObjectSet<Contact> contactList;
   ObjectSet<Mail> mailList;
-  ObjectSet<MailBox> mailBoxList;
+  ObjectSet<Mailbox> mailboxList;
   contactProto.setName("contact-4");
   contactList=objectContainer.queryByExample(contactProto);
   assertEquals(contactList.size(),1);
@@ -40,31 +40,31 @@
   objectContainer.commit();
   mailList=objectContainer.query(mailByContactNamePredicate);
   assertEquals(mailList.size(),2);
-  mailBoxList=objectContainer.query(mailboxByContactNamePredicate);
-  assertEquals(mailBoxList.size(),1);
+  mailboxList=objectContainer.query(mailboxByContactNamePredicate);
+  assertEquals(mailboxList.size(),1);
   contactProto.setName("contact-5");
   contactList=objectContainer.queryByExample(contactProto);
   for (  Contact contact2 : contactList) {
-    for (    MailBox mailBox : mailBoxList) {
+    for (    Mailbox mailbox : mailboxList) {
       boolean found=false;
-      for (int i=0; i < mailBox.getContacts().size() && !found; i++) {
-        Contact contact3=mailBox.getContacts().get(i);
+      for (int i=0; i < mailbox.getContacts().size() && !found; i++) {
+        Contact contact3=mailbox.getContacts().get(i);
         if (contact2.getId().equals(contact3.getId())) {
-          mailBox.getContacts().remove(i);
+          mailbox.getContacts().remove(i);
           found=true;
         }
       }
-      objectContainer.store(mailBox);
+      objectContainer.store(mailbox);
     }
     for (    Mail mail : mailList) {
       List<Contact> list=new ArrayList<Contact>();
-      for (int i=0; i < mail.getPrimaryRecipients().size(); i++) {
-        Contact contact3=mail.getPrimaryRecipients().get(i);
+      for (int i=0; i < mail.getRecipients().size(); i++) {
+        Contact contact3=mail.getRecipients().get(i);
         if (!contact2.getId().equals(contact3.getId())) {
           list.add(contact3);
         }
       }
-      mail.setPrimaryRecipients(list);
+      mail.setRecipients(list);
       objectContainer.store(mail);
     }
     objectContainer.delete(contact2);
@@ -72,8 +72,8 @@
   objectContainer.commit();
   contactList=objectContainer.queryByExample(contactProto);
   assertTrue(contactList.isEmpty());
-  mailBoxList=objectContainer.query(mailboxByContactNamePredicate);
-  assertTrue(mailBoxList.isEmpty());
+  mailboxList=objectContainer.query(mailboxByContactNamePredicate);
+  assertTrue(mailboxList.isEmpty());
   mailList=objectContainer.query(mailByContactNamePredicate);
   assertTrue(mailList.isEmpty());
 }

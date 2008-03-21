@@ -1,4 +1,9 @@
 {
   super(context,request,response);
-  getVariants().add(new Variant(MediaType.TEXT_HTML));
+  String mailboxId=(String)request.getAttributes().get("mailboxId");
+  mailbox=getDAOFactory().getMailboxDAO().getMailboxById(mailboxId);
+  if (mailbox != null) {
+    getVariants().add(new Variant(MediaType.TEXT_HTML));
+    feeds=mailbox.getFeeds();
+  }
 }

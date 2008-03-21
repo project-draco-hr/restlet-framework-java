@@ -1,3 +1,8 @@
 {
-  super.storeRepresentation(entity);
+  Form form=new Form(entity);
+  mail.setMessage(form.getFirstValue("message"));
+  mail.setStatus(form.getFirstValue("status"));
+  mail.setSubject(form.getFirstValue("subject"));
+  getDAOFactory().getMailDAO().updateMail(mail);
+  getResponse().redirectSeeOther(getRequest().getResourceRef());
 }

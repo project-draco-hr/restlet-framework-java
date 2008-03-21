@@ -1,3 +1,15 @@
 {
-  return super.represent(variant);
+  Map<String,Object> dataModel=new TreeMap<String,Object>();
+  dataModel.put("currentUser",getCurrentUser());
+  dataModel.put("mailbox",mailbox);
+  dataModel.put("feed",feed);
+  dataModel.put("resourceRef",getRequest().getResourceRef());
+  Representation representation=null;
+  MediaType mediaType=variant.getMediaType();
+  if (MediaType.TEXT_HTML.equals(mediaType)) {
+    representation=new TemplateRepresentation("feed.html",getFmcConfiguration(),dataModel,variant.getMediaType());
+  }
+ else   if (MediaType.APPLICATION_ATOM_XML.equals(mediaType)) {
+  }
+  return representation;
 }

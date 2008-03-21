@@ -1,4 +1,11 @@
 {
   super(context,request,response);
   getVariants().add(new Variant(MediaType.TEXT_HTML));
+  if (getCurrentUser().isAdministrator()) {
+    users=getDAOFactory().getUserDAO().getUsers();
+  }
+ else {
+    users=new ArrayList<User>();
+    users.add(getCurrentUser());
+  }
 }
