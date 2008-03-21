@@ -1,8 +1,18 @@
 {
   Form form=new Form(entity);
+  mail.setSubject(form.getFirstValue("subject"));
   mail.setMessage(form.getFirstValue("message"));
   mail.setStatus(form.getFirstValue("status"));
-  mail.setSubject(form.getFirstValue("subject"));
+  String[] recipientsArray=form.getFirstValue("recipients").split(", ");
+  List<Contact> recipients=new ArrayList<Contact>();
+  for (int i=0; i < recipientsArray.length; i++) {
+    String string=recipientsArray[i];
+    Contact contact=new Contact();
+    contact.setName(string);
+    recipients.add(contact);
+  }
+  mail.setRecipients(recipients);
+  mail.setTags(Arrays.asList(form.getFirstValue("tags").split(" ")));
   getDAOFactory().getMailboxDAO().updateMail(mailbox,mail);
   getResponse().redirectSeeOther(getRequest().getResourceRef());
 }
