@@ -1,9 +1,9 @@
 {
-  Form form=new Form();
+  Form form=new Form(entity);
   Contact contact=new Contact();
   contact.setMailAddress(form.getFirstValue("mailAddress"));
   contact.setName(form.getFirstValue("name"));
-  contact=getDAOFactory().getContactDAO().createContact(contact);
+  contact=getDAOFactory().getMailboxDAO().createContact(mailbox,contact);
   Reference contactRef=new Reference(getRequest().getResourceRef(),contact.getId());
   getResponse().redirectSeeOther(contactRef);
 }
