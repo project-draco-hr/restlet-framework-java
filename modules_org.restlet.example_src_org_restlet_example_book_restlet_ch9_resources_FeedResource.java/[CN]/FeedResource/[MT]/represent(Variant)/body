@@ -3,6 +3,7 @@
   dataModel.put("currentUser",getCurrentUser());
   dataModel.put("mailbox",mailbox);
   dataModel.put("feed",feed);
+  dataModel.put("mails",mails);
   dataModel.put("resourceRef",getRequest().getResourceRef());
   dataModel.put("rootRef",getRequest().getRootRef());
   if (feed.getTags() != null) {
@@ -11,7 +12,7 @@
       String tag=iterator.next();
       builder.append(tag);
       if (iterator.hasNext()) {
-        builder.append(", ");
+        builder.append(" ");
       }
     }
     dataModel.put("tags",builder.toString());
@@ -19,6 +20,16 @@
   Representation representation=null;
   MediaType mediaType=variant.getMediaType();
   if (MediaType.TEXT_HTML.equals(mediaType)) {
+    StringBuilder builder=new StringBuilder();
+    builder.append("<link ");
+    builder.append("rel=\"alternate\" ");
+    builder.append("type=\"application/rss+xml\" ");
+    builder.append("href=\"");
+    builder.append(getRequest().getResourceRef());
+    builder.append("\" ");
+    builder.append("title=\"Test feed\"");
+    builder.append("/>");
+    dataModel.put("feedHeader",builder.toString());
     representation=new TemplateRepresentation("feed.html",getFmcConfiguration(),dataModel,variant.getMediaType());
   }
  else   if (MediaType.APPLICATION_ATOM_XML.equals(mediaType)) {

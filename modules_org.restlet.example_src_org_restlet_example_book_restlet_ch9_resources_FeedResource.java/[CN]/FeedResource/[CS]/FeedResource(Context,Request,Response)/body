@@ -6,6 +6,14 @@
     String feedId=(String)request.getAttributes().get("feedId");
     feed=getDAOFactory().getFeedDAO().getFeedById(feedId);
     if (feed != null) {
+      mails=new ArrayList<Mail>();
+      if (feed.getTags() != null) {
+        for (        Mail mail : mailbox.getMails()) {
+          if (mail.getTags() != null && mail.getTags().containsAll(feed.getTags())) {
+            mails.add(mail);
+          }
+        }
+      }
       getVariants().add(new Variant(MediaType.TEXT_HTML));
       getVariants().add(new Variant(MediaType.APPLICATION_ATOM_XML));
     }
