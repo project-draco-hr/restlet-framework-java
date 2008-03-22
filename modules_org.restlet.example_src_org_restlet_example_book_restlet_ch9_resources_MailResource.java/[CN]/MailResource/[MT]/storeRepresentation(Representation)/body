@@ -24,5 +24,63 @@
     mail.setTags(null);
   }
   getDAOFactory().getMailboxDAO().updateMail(mailbox,mail);
-  getResponse().redirectSeeOther(getRequest().getResourceRef());
+  if (Mail.STATUS_SENDING.equalsIgnoreCase(mail.getStatus())) {
+    mail.setSendingDate(new Date());
+    boolean success=true;
+    if (mail.getRecipients() != null) {
+      Client client=new Client(Protocol.HTTP);
+      Form form2=new Form();
+      form2.add("status",Mail.STATUS_RECEIVING);
+      form2.add("senderAddress",getRequest().getRootRef() + "/mailboxes/" + mailbox.getId());
+      form2.add("senderName",getCurrentUser().getFirstName() + " " + getCurrentUser().getLastName());
+      form2.add("subject",mail.getSubject());
+      form2.add("message",mail.getMessage());
+      form2.add("sendingDate",mail.getSendingDate().toString());
+      for (      Contact recipient : mail.getRecipients()) {
+        form2.add("recipient",recipient.getMailAddress());
+      }
+      StringBuilder builder=new StringBuilder();
+      Response response;
+      Request request=new Request();
+      request.setMethod(Method.POST);
+      request.setEntity(form2.getWebRepresentation());
+      ChallengeScheme scheme=ChallengeScheme.HTTP_BASIC;
+      ChallengeResponse authentication=new ChallengeResponse(scheme,getCurrentUser().getLogin(),getCurrentUser().getPassword());
+      request.setChallengeResponse(authentication);
+      for (      Contact contact : mail.getRecipients()) {
+        request.setResourceRef(contact.getMailAddress());
+        response=client.handle(request);
+        if (!response.getStatus().isSuccess()) {
+          success=false;
+          builder.append(contact.getName());
+          builder.append("\t");
+          builder.append(response.getStatus());
+        }
+      }
+      if (success) {
+        mail.setStatus(Mail.STATUS_SENT);
+        getDAOFactory().getMailboxDAO().updateMail(mailbox,mail);
+        getResponse().redirectSeeOther(getRequest().getResourceRef());
+      }
+ else {
+        Map<String,Object> dataModel=new TreeMap<String,Object>();
+        dataModel.put("currentUser",getCurrentUser());
+        dataModel.put("mailbox",mailbox);
+        dataModel.put("mail",mail);
+        dataModel.put("resourceRef",getRequest().getResourceRef());
+        dataModel.put("rootRef",getRequest().getRootRef());
+        dataModel.put("message",builder.toString());
+        TemplateRepresentation representation=new TemplateRepresentation("mailSendingError.html",getFmcConfiguration(),dataModel,MediaType.TEXT_HTML);
+        getResponse().setEntity(representation);
+      }
+    }
+ else {
+      mail.setStatus(Mail.STATUS_DRAFT);
+      getDAOFactory().getMailboxDAO().updateMail(mailbox,mail);
+      getResponse().redirectSeeOther(getRequest().getResourceRef());
+    }
+  }
+ else {
+    getResponse().redirectSeeOther(getRequest().getResourceRef());
+  }
 }
