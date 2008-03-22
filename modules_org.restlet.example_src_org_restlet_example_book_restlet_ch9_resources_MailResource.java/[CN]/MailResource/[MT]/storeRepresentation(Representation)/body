@@ -3,16 +3,26 @@
   mail.setSubject(form.getFirstValue("subject"));
   mail.setMessage(form.getFirstValue("message"));
   mail.setStatus(form.getFirstValue("status"));
-  String[] recipientsArray=form.getFirstValue("recipients").split(", ");
-  List<Contact> recipients=new ArrayList<Contact>();
-  for (int i=0; i < recipientsArray.length; i++) {
-    String string=recipientsArray[i];
-    Contact contact=new Contact();
-    contact.setName(string);
-    recipients.add(contact);
+  if (form.getFirstValue("recipients") != null) {
+    List<Contact> recipients=new ArrayList<Contact>();
+    for (    Parameter parameter : form.subList("recipients")) {
+      for (      Contact contact : mailbox.getContacts()) {
+        if (contact.getId().equals(parameter.getValue())) {
+          recipients.add(contact);
+        }
+      }
+    }
+    mail.setRecipients(recipients);
   }
-  mail.setRecipients(recipients);
-  mail.setTags(Arrays.asList(form.getFirstValue("tags").split(" ")));
+ else {
+    mail.setRecipients(null);
+  }
+  if (form.getFirstValue("tags") != null) {
+    mail.setTags(new ArrayList<String>(Arrays.asList(form.getFirstValue("tags").split(" "))));
+  }
+ else {
+    mail.setTags(null);
+  }
   getDAOFactory().getMailboxDAO().updateMail(mailbox,mail);
   getResponse().redirectSeeOther(getRequest().getResourceRef());
 }

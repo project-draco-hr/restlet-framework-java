@@ -1,7 +1,12 @@
 {
   Form form=new Form(entity);
   feed.setNickname(form.getFirstValue("nickname"));
-  feed.setTags(Arrays.asList(form.getFirstValue("tags").split(" ")));
+  if (form.getFirstValue("tags") != null) {
+    feed.setTags(new ArrayList<String>(Arrays.asList(form.getFirstValue("tags").split(" "))));
+  }
+ else {
+    feed.setTags(null);
+  }
   getDAOFactory().getMailboxDAO().updateFeed(mailbox,feed);
   getResponse().redirectSeeOther(getRequest().getResourceRef());
 }
