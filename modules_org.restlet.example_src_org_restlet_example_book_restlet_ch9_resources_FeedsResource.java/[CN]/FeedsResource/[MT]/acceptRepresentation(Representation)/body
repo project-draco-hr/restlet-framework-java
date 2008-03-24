@@ -4,6 +4,5 @@
   feed.setNickname(form.getFirstValue("nickname"));
   feed.setTags(Arrays.asList(form.getFirstValue("tags").split(" ")));
   feed=getDAOFactory().getMailboxDAO().createFeed(mailbox,feed);
-  Reference feedRef=new Reference(getRequest().getResourceRef(),feed.getId());
-  getResponse().redirectSeeOther(feedRef);
+  getResponse().redirectSeeOther(getChildReference(getRequest().getResourceRef(),feed.getId()));
 }

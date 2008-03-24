@@ -7,6 +7,5 @@
   user.setPassword(form.getFirstValue("password"));
   user.setAdministrator((form.getFirstValue("administrator") == null ? false : true));
   user=getDAOFactory().getUserDAO().createUser(user);
-  Reference userRef=new Reference(getRequest().getResourceRef(),user.getId());
-  getResponse().redirectSeeOther(userRef);
+  getResponse().redirectSeeOther(getChildReference(getRequest().getResourceRef(),user.getId()));
 }

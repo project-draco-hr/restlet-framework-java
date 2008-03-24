@@ -4,6 +4,5 @@
   contact.setMailAddress(form.getFirstValue("mailAddress"));
   contact.setName(form.getFirstValue("name"));
   contact=getDAOFactory().getMailboxDAO().createContact(mailbox,contact);
-  Reference contactRef=new Reference(getRequest().getResourceRef(),contact.getId());
-  getResponse().redirectSeeOther(contactRef);
+  getResponse().redirectSeeOther(getChildReference(getRequest().getResourceRef(),contact.getId()));
 }

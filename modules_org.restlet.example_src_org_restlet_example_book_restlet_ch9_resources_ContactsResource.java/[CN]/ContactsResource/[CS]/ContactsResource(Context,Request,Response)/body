@@ -2,9 +2,9 @@
   super(context,request,response);
   String mailboxId=(String)request.getAttributes().get("mailboxId");
   mailbox=getDAOFactory().getMailboxDAO().getMailboxById(mailboxId);
-  hostedMailboxes=getDAOFactory().getMailboxDAO().getMailboxes();
   if (mailbox != null) {
-    getVariants().add(new Variant(MediaType.TEXT_HTML));
     contacts=mailbox.getContacts();
+    hostedMailboxes=getDAOFactory().getMailboxDAO().getMailboxes();
+    getVariants().add(new Variant(MediaType.TEXT_HTML));
   }
 }

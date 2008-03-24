@@ -5,6 +5,9 @@
   User owner=getDAOFactory().getUserDAO().getUserById(form.getFirstValue("ownerId"));
   mailbox.setOwner(owner);
   mailbox=getDAOFactory().getMailboxDAO().createMailbox(mailbox);
-  Reference mailboxRef=new Reference(getRequest().getResourceRef(),mailbox.getId());
-  getResponse().redirectSeeOther(mailboxRef);
+  Contact contact=new Contact();
+  contact.setMailAddress(getRequest().getRootRef().getIdentifier() + "/mailboxes/" + mailbox.getId());
+  contact.setName(owner.getFirstName() + " " + owner.getLastName());
+  getDAOFactory().getMailboxDAO().createContact(mailbox,contact);
+  getResponse().redirectSeeOther(getChildReference(getRequest().getResourceRef(),mailbox.getId()));
 }
