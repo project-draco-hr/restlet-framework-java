@@ -1,6 +1,6 @@
 {
   Router router=new Router(getContext());
-  RmepGuard guard=new RmepGuard(getContext(),ChallengeScheme.HTTP_BASIC,"rmep",daoFactory);
+  RmepGuard guard=new RmepGuard(getContext(),ChallengeScheme.HTTP_BASIC,"rmep",dataFacade);
   router.attachDefault(MailRootResource.class);
   Directory imgDirectory=new Directory(getContext(),LocalReference.createFileReference("D:\\alaska\\forge\\build\\swc\\restlet\\trunk\\modules\\org.restlet.example\\src\\org\\restlet\\example\\book\\restlet\\ch9\\web\\images"));
   router.attach("/images",imgDirectory);
@@ -9,7 +9,7 @@
   router.attach("/users",UsersResource.class);
   router.attach("/users/{userId}",UserResource.class);
   router.attach("/mailboxes",MailboxesResource.class);
-  RmepMailboxGuard mailboxGuard=new RmepMailboxGuard(getContext(),ChallengeScheme.HTTP_BASIC,"rmep",daoFactory);
+  RmepMailboxGuard mailboxGuard=new RmepMailboxGuard(getContext(),ChallengeScheme.HTTP_BASIC,"rmep",dataFacade);
   router.attach("/mailboxes/{mailboxId}",mailboxGuard);
   Router mailboxRouter=new Router(getContext());
   mailboxRouter.attachDefault(MailboxResource.class);

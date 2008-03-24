@@ -1,29 +1,14 @@
 {
   Form form=new Form(entity);
-  mail.setSubject(form.getFirstValue("subject"));
-  mail.setMessage(form.getFirstValue("message"));
-  mail.setStatus(form.getFirstValue("status"));
-  if (form.getFirstValue("recipients") != null) {
-    List<Contact> recipients=new ArrayList<Contact>();
-    for (    Parameter parameter : form.subList("recipients")) {
-      for (      Contact contact : mailbox.getContacts()) {
-        if (contact.getId().equals(parameter.getValue())) {
-          recipients.add(contact);
-        }
-      }
-    }
-    mail.setRecipients(recipients);
+  List<String> mailAddresses=new ArrayList<String>();
+  for (  Parameter parameter : form.subList("recipients")) {
+    mailAddresses.add(parameter.getValue());
   }
- else {
-    mail.setRecipients(null);
-  }
+  List<String> tags=null;
   if (form.getFirstValue("tags") != null) {
-    mail.setTags(new ArrayList<String>(Arrays.asList(form.getFirstValue("tags").split(" "))));
+    tags=new ArrayList<String>(Arrays.asList(form.getFirstValue("tags").split(" ")));
   }
- else {
-    mail.setTags(null);
-  }
-  getDAOFactory().getMailboxDAO().updateMail(mailbox,mail);
+  getDataFacade().updateMail(mailbox,mail,form.getFirstValue("status"),form.getFirstValue("subject"),form.getFirstValue("message"),mailAddresses,tags);
   if (Mail.STATUS_SENDING.equalsIgnoreCase(mail.getStatus())) {
     mail.setSendingDate(new Date());
     boolean success=true;
@@ -32,12 +17,12 @@
       Form form2=new Form();
       form2.add("status",Mail.STATUS_RECEIVING);
       form2.add("senderAddress",getRequest().getRootRef() + "/mailboxes/" + mailbox.getId());
-      form2.add("senderName",getCurrentUser().getFirstName() + " " + getCurrentUser().getLastName());
+      form2.add("senderName",mailbox.getSenderName());
       form2.add("subject",mail.getSubject());
       form2.add("message",mail.getMessage());
       form2.add("sendingDate",mail.getSendingDate().toString());
       for (      Contact recipient : mail.getRecipients()) {
-        form2.add("recipient",recipient.getMailAddress());
+        form2.add("recipient",recipient.getMailAddress() + "$" + recipient.getName());
       }
       StringBuilder builder=new StringBuilder();
       Response response;
@@ -59,7 +44,7 @@
       }
       if (success) {
         mail.setStatus(Mail.STATUS_SENT);
-        getDAOFactory().getMailboxDAO().updateMail(mailbox,mail);
+        getDataFacade().updateMail(mailbox,mail);
         getResponse().redirectSeeOther(getRequest().getResourceRef());
       }
  else {
@@ -76,7 +61,7 @@
     }
  else {
       mail.setStatus(Mail.STATUS_DRAFT);
-      getDAOFactory().getMailboxDAO().updateMail(mailbox,mail);
+      getDataFacade().updateMail(mailbox,mail);
       getResponse().redirectSeeOther(getRequest().getResourceRef());
     }
   }

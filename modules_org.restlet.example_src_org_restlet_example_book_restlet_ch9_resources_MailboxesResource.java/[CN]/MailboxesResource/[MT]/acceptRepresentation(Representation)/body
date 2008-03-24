@@ -2,12 +2,9 @@
   Form form=new Form(entity);
   Mailbox mailbox=new Mailbox();
   mailbox.setNickname(form.getFirstValue("nickname"));
-  User owner=getDAOFactory().getUserDAO().getUserById(form.getFirstValue("ownerId"));
+  User owner=getDataFacade().getUserById(form.getFirstValue("ownerId"));
   mailbox.setOwner(owner);
-  mailbox=getDAOFactory().getMailboxDAO().createMailbox(mailbox);
-  Contact contact=new Contact();
-  contact.setMailAddress(getRequest().getRootRef().getIdentifier() + "/mailboxes/" + mailbox.getId());
-  contact.setName(owner.getFirstName() + " " + owner.getLastName());
-  getDAOFactory().getMailboxDAO().createContact(mailbox,contact);
-  getResponse().redirectSeeOther(getChildReference(getRequest().getResourceRef(),mailbox.getId()));
+  mailbox.setSenderName(owner.getFirstName() + " " + owner.getLastName());
+  mailbox=getDataFacade().createMailbox(mailbox);
+  getResponse().redirectSeeOther(getRequest().getResourceRef());
 }
