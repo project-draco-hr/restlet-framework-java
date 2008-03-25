@@ -7,15 +7,14 @@
       found=true;
     }
   }
-  T contactDAO=dataFacade.getContactDAO();
   for (  Contact contact : mail.getRecipients()) {
     if (contact.getId() == null) {
-      contactDAO.deleteContact(contact);
+      dataFacade.deleteContact(contact);
     }
   }
   if (mail.getSender().getId() == null) {
-    contactDAO.deleteContact(mail.getSender());
+    dataFacade.deleteContact(mail.getSender());
   }
-  dataFacade.getMailDAO().deleteMail(mail);
-  dataFacade.getMailboxDAO().updateMailbox(mailbox);
+  dataFacade.deleteMail(mail);
+  dataFacade.updateMailbox(mailbox);
 }

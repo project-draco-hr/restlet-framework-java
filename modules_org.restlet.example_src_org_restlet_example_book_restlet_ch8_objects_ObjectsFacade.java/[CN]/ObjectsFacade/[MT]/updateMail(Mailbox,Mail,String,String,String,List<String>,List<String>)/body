@@ -5,11 +5,10 @@
   if (Mail.STATUS_DRAFT.equalsIgnoreCase(mail.getStatus())) {
     List<Contact> mailRecipients=new ArrayList<Contact>();
     if (mailAddresses != null) {
-      T contactDAO=dataFacade.getContactDAO();
       if (mail.getRecipients() != null) {
         for (        Contact recipient : mail.getRecipients()) {
           if (!mailAddresses.contains(recipient.getMailAddress())) {
-            contactDAO.deleteContact(recipient);
+            dataFacade.deleteContact(recipient);
           }
         }
       }
@@ -30,10 +29,9 @@
       mail.setRecipients(mailRecipients);
     }
  else {
-      T contactDAO=dataFacade.getContactDAO();
       if (mail.getRecipients() != null) {
         for (        Contact recipient : mail.getRecipients()) {
-          contactDAO.deleteContact(recipient);
+          dataFacade.deleteContact(recipient);
         }
       }
       mail.setRecipients(null);

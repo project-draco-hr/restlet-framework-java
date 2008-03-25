@@ -2,13 +2,10 @@
   super(context);
   this.getConnectorService().getClientProtocols().add(Protocol.FILE);
   this.getConnectorService().getClientProtocols().add(Protocol.HTTP);
-  Configuration config=Db4o.configure();
-  config.updateDepth(2);
-  config.activationDepth(10);
-  dataFacade=new ObjectsFacade(new Db4oFacade(Db4o.openFile(System.getProperty("user.home") + File.separator + "rmep.dbo")));
+  dataFacade=new ObjectsFacade(new Db4oFacade(System.getProperty("user.home") + File.separator + "rmep.dbo"));
   this.dataFacade.initAdmin();
   try {
-    File templateDir=new File("D:\\alaska\\forge\\build\\swc\\restlet\\trunk\\modules\\org.restlet.example\\src\\org\\restlet\\example\\book\\restlet\\ch9\\web\\tmpl");
+    File templateDir=new File("D:\\alaska\\forge\\build\\swc\\restlet\\trunk\\modules\\org.restlet.example\\src\\org\\restlet\\example\\book\\restlet\\ch8\\web\\tmpl");
     fmc=new freemarker.template.Configuration();
     fmc.setDirectoryForTemplateLoading(templateDir);
   }
