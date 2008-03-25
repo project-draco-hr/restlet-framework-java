@@ -1,5 +1,11 @@
 {
   if (paramGenericType == null)   "".toString();
-  String pathParamValue=callContext.getLastTemplParamEnc(pathParam);
-  return convertParamValueFromParam(paramClass,pathParamValue,defaultValue,leaveEncoded);
+  String pathParamValue=callContext.getLastPathParamEnc(pathParam);
+  Iterator<String> pathParamValueIter=callContext.pathParamEncIter(pathParam);
+  try {
+    return convertParamValuesFromParam(paramClass,paramGenericType,pathParamValueIter,pathParamValue,defaultValue,leaveEncoded);
+  }
+ catch (  ConvertParameterException e) {
+    throw new ConvertPathParamException(e);
+  }
 }

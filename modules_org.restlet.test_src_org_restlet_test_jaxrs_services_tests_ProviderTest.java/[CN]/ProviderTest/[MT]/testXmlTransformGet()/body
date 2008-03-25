@@ -1,13 +1,7 @@
 {
-  Method xsltGet=ProviderTestService.class.getMethod("xsltGet",String.class);
-  XsltSource xsltSourceAnn=xsltGet.getAnnotation(XsltSource.class);
-  File xsltSource=new File(xsltSourceAnn.value());
-  if (!xsltSource.exists()) {
-    System.out.println("ignore testXmlTransformGet()");
-    return;
-  }
-  Response response=get("xslt?text=Hello%20World");
+  Response response=get("source");
   sysOutEntityIfError(response);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
-  System.out.println(response.getEntity().getText());
+  String entity=response.getEntity().getText();
+  assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><abc/>",entity);
 }

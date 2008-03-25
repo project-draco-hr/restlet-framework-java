@@ -1,0 +1,20 @@
+{
+  Collection<javax.ws.rs.core.Cookie> cookies=null;
+  boolean toArray=false;
+  if (paramGenericType instanceof GenericArrayType) {
+    cookies=new ArrayList<javax.ws.rs.core.Cookie>(1);
+    toArray=true;
+  }
+ else   if (paramGenericType instanceof ParameterizedType) {
+    cookies=createColl((ParameterizedType)paramGenericType);
+  }
+  for (  Cookie rc : callContext.getRequest().getCookies()) {
+    if (!rc.getName().equals(cookieName))     continue;
+    javax.ws.rs.core.Cookie cookie=Converter.toJaxRsCookie(rc);
+    if (cookies == null)     return cookie;
+    cookies.add(cookie);
+  }
+  if (cookies == null)   return null;
+  if (toArray)   return cookies.toArray();
+  return cookies;
+}

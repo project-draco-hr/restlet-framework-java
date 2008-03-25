@@ -1,0 +1,11 @@
+{
+  List<PathSegment> pathSegents=uriInfo.getPathSegments();
+  PathSegment lastPathSegm=pathSegents.get(0);
+  MultivaluedMap<String,String> mp=lastPathSegm.getMatrixParameters();
+  if (mp.isEmpty()) {
+    ResponseBuilder rb=Response.status(Status.NOT_FOUND);
+    rb.entity("matrix parameters are empty");
+    throw new WebApplicationException(rb.build());
+  }
+  return firstname + " " + lastname;
+}

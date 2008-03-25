@@ -1,5 +1,10 @@
 {
   String matrixParamValue=callContext.getLastMatrixParamEnc(matrixParam);
   Iterator<String> matrixParamValues=callContext.matrixParamEncIter(matrixParam);
-  return convertParamValuesFromParam(paramClass,paramGenericType,matrixParamValues,matrixParamValue,defaultValue,leaveEncoded);
+  try {
+    return convertParamValuesFromParam(paramClass,paramGenericType,matrixParamValues,matrixParamValue,defaultValue,leaveEncoded);
+  }
+ catch (  ConvertParameterException e) {
+    throw new ConvertMatrixParamException(e);
+  }
 }

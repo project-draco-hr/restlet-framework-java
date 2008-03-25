@@ -5,24 +5,22 @@
     GenericArrayType genericArrayType=(GenericArrayType)paramGenericType;
     paramClass=(Class<?>)genericArrayType.getGenericComponentType();
     coll=new ArrayList<Object>(1);
+    toArray=true;
   }
  else   if (paramGenericType instanceof ParameterizedType) {
     ParameterizedType parameterizedType=(ParameterizedType)paramGenericType;
-    Type rawType=parameterizedType.getRawType();
-    if (rawType.equals(Collection.class) || rawType.equals(List.class))     coll=new ArrayList<Object>(1);
- else     if (rawType.equals(Set.class))     coll=new HashSet<Object>(2);
- else     if (rawType.equals(SortedSet.class))     coll=new TreeSet<Object>();
+    coll=createColl(parameterizedType);
     paramClass=(Class<?>)parameterizedType.getActualTypeArguments()[0];
   }
-  if (coll != null) {
-    while (paramValues.hasNext()) {
-      String queryParamValue=paramValues.next();
-      Object paramValue_=convertParamValueFromParam(paramClass,queryParamValue,defaultValue,leaveEncoded);
-      if (paramValue_ != null)       coll.add(paramValue_);
-      defaultValue=null;
-    }
-    if (toArray)     return coll.toArray();
-    return coll;
+  if (coll == null) {
+    return convertParamValueFromParam(paramClass,paramValue,defaultValue,leaveEncoded);
   }
-  return convertParamValueFromParam(paramClass,paramValue,defaultValue,leaveEncoded);
+  while (paramValueIter.hasNext()) {
+    String queryParamValue=paramValueIter.next();
+    Object convertedValue=convertParamValueFromParam(paramClass,queryParamValue,defaultValue,leaveEncoded);
+    if (convertedValue != null)     coll.add(convertedValue);
+    defaultValue=null;
+  }
+  if (toArray)   return coll.toArray();
+  return coll;
 }

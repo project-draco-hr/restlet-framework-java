@@ -1,0 +1,15 @@
+{
+  Reference resourceRef=callContext.getRequest().getResourceRef();
+  String queryString=resourceRef.getQuery();
+  Form form=Converter.toFormEncoded(queryString,logger);
+  String paramName=queryParam.value();
+  List<Parameter> parameters=form.subList(paramName);
+  try {
+    String queryParamValue=getValue(form.getFirst(paramName));
+    ParamValueIter queryParamValueIter=new ParamValueIter(parameters);
+    return convertParamValuesFromParam(paramClass,paramGenericType,queryParamValueIter,queryParamValue,defaultValue,leaveEncoded);
+  }
+ catch (  ConvertParameterException e) {
+    throw new ConvertQueryParamException(e);
+  }
+}

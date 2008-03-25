@@ -1,19 +1,43 @@
 {
   Object result;
   try {
-    result=resourceMethod.invoke(resourceObject,callContext,this);
+    result=resourceMethod.invoke(resourceObject,callContext,this.messageBodyReaders,getLogger());
   }
  catch (  WebApplicationException e) {
     throw e;
   }
-catch (  ConvertParameterException e) {
-    throw handleConvertParameterExc(e);
-  }
 catch (  InvocationTargetException ite) {
     throw handleExecption(ite,resourceMethod,callContext,"Exception in resource method");
   }
-catch (  Exception e) {
+catch (  RuntimeException e) {
     throw handleExecption(e,resourceMethod,callContext,"Can not invoke the resource method");
+  }
+catch (  MethodInvokeException e) {
+    throw handleExecption(e,resourceMethod,callContext,"Can not invoke the resource method");
+  }
+catch (  MissingAnnotationException e) {
+    throw handleExecption(e,resourceMethod,callContext,"Can not invoke the resource method");
+  }
+catch (  NoMessageBodyReaderException nmbre) {
+    throw handleNoMessageBodyReader(callContext,nmbre);
+  }
+catch (  ConvertRepresentationException e) {
+    throw handleConvertRepresentationExc(e);
+  }
+catch (  ConvertHeaderParamException e) {
+    throw handleConvertHeaderParamExc(e);
+  }
+catch (  ConvertPathParamException e) {
+    throw handleConvertPathParamExc(e);
+  }
+catch (  ConvertMatrixParamException e) {
+    throw handleConvertMatrixParamExc(e);
+  }
+catch (  ConvertQueryParamException e) {
+    throw handleConvertQueryParamExc(e);
+  }
+catch (  ConvertCookieParamException e) {
+    throw handleConvertCookieParamExc(e);
   }
   Response restletResponse=callContext.getResponse();
   if (result == null) {

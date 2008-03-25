@@ -1,5 +1,11 @@
 {
   Series<Cookie> cookies=callContext.getRequest().getCookies();
   String cookieName=cookieParam.value();
-  return convertParamValuesFromParam(paramClass,paramGenericType,new ParamValueIter((Series)cookies.subList(cookieName)),getValue(cookies.getFirst(cookieName)),defaultValue,true);
+  if (paramClass.equals(javax.ws.rs.core.Cookie.class))   getCookies(cookieName,paramGenericType,callContext);
+  try {
+    return convertParamValuesFromParam(paramClass,paramGenericType,new ParamValueIter((Series)cookies.subList(cookieName)),getValue(cookies.getFirst(cookieName)),defaultValue,true);
+  }
+ catch (  ConvertParameterException e) {
+    throw new ConvertCookieParamException(e);
+  }
 }

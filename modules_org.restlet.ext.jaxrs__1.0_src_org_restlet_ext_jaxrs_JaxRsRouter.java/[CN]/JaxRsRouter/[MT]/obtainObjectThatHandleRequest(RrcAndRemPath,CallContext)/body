@@ -4,19 +4,46 @@
   PathRegExp rMatch=rrc.getPathRegExp();
   ResourceObject o;
   try {
-    o=rrc.createInstance(callContext,this);
+    o=rrc.createInstance(callContext,this.messageBodyReaders,getLogger());
   }
- catch (  ConvertParameterException e) {
-    throw handleConvertParameterExc(e);
-  }
-catch (  WebApplicationException e) {
+ catch (  WebApplicationException e) {
     throw e;
   }
 catch (  NoMessageBodyReaderException e) {
     throw handleNoMessageBodyReader(callContext,e);
   }
-catch (  Exception e) {
+catch (  RuntimeException e) {
     throw handleExecption(e,null,callContext,"Could not create new instance of root resource class");
+  }
+catch (  MissingAnnotationException e) {
+    throw handleExecption(e,null,callContext,"Could not create new instance of root resource class");
+  }
+catch (  InstantiateRootRessourceException e) {
+    throw handleExecption(e,null,callContext,"Could not create new instance of root resource class");
+  }
+catch (  MethodInvokeException e) {
+    throw handleExecption(e,null,callContext,"Could not create new instance of root resource class");
+  }
+catch (  InvocationTargetException e) {
+    throw handleExecption(e,null,callContext,"Could not create new instance of root resource class");
+  }
+catch (  ConvertRepresentationException e) {
+    throw handleConvertRepresentationExc(e);
+  }
+catch (  ConvertHeaderParamException e) {
+    throw handleConvertHeaderParamExc(e);
+  }
+catch (  ConvertPathParamException e) {
+    throw handleConvertPathParamExc(e);
+  }
+catch (  ConvertMatrixParamException e) {
+    throw handleConvertMatrixParamExc(e);
+  }
+catch (  ConvertQueryParamException e) {
+    throw handleConvertQueryParamExc(e);
+  }
+catch (  ConvertCookieParamException e) {
+    throw handleConvertCookieParamExc(e);
   }
   Object jaxRsResObj1=o.getJaxRsResourceObject();
   callContext.addForAncestor(jaxRsResObj1,rrcAndRemPath.matchedUriPath);
@@ -45,16 +72,46 @@ catch (  Exception e) {
     u=matchingResult.getFinalCapturingGroup();
     SubResourceLocator subResourceLocator=(SubResourceLocator)firstMeth;
     try {
-      o=subResourceLocator.createSubResource(o,callContext,this);
+      o=subResourceLocator.createSubResource(o,callContext,this.messageBodyReaders,wrapperFactory,getLogger());
     }
  catch (    WebApplicationException e) {
       throw e;
     }
-catch (    ConvertParameterException cpe) {
-      throw handleConvertParameterExc(cpe);
-    }
-catch (    Exception e) {
+catch (    RuntimeException e) {
       throw handleExecption(e,subResourceLocator,callContext,"Could not create new instance of root resource class");
+    }
+catch (    MissingAnnotationException e) {
+      throw handleExecption(e,subResourceLocator,callContext,"Could not create new instance of root resource class");
+    }
+catch (    InstantiateRessourceException e) {
+      throw handleExecption(e,subResourceLocator,callContext,"Could not create new instance of root resource class");
+    }
+catch (    MethodInvokeException e) {
+      throw handleExecption(e,subResourceLocator,callContext,"Could not create new instance of root resource class");
+    }
+catch (    InvocationTargetException e) {
+      throw handleExecption(e,subResourceLocator,callContext,"Could not create new instance of root resource class");
+    }
+catch (    NoMessageBodyReaderException nmbre) {
+      throw handleNoMessageBodyReader(callContext,nmbre);
+    }
+catch (    ConvertRepresentationException e) {
+      throw handleConvertRepresentationExc(e);
+    }
+catch (    ConvertHeaderParamException e) {
+      throw handleConvertHeaderParamExc(e);
+    }
+catch (    ConvertPathParamException e) {
+      throw handleConvertPathParamExc(e);
+    }
+catch (    ConvertMatrixParamException e) {
+      throw handleConvertMatrixParamExc(e);
+    }
+catch (    ConvertQueryParamException e) {
+      throw handleConvertQueryParamExc(e);
+    }
+catch (    ConvertCookieParamException e) {
+      throw handleConvertCookieParamExc(e);
     }
     resClass=o.getResourceClass();
   }
