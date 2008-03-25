@@ -1,0 +1,13 @@
+{
+  super(context,request,response);
+  String mailboxId=(String)request.getAttributes().get("mailboxId");
+  mailbox=getDataFacade().getMailboxById(mailboxId);
+  if (mailbox != null) {
+    String contactId=(String)request.getAttributes().get("contactId");
+    contact=getDataFacade().getContactById(contactId);
+    if (contact != null) {
+      hostedMailboxes=getDataFacade().getMailboxes();
+      getVariants().add(new Variant(MediaType.TEXT_HTML));
+    }
+  }
+}

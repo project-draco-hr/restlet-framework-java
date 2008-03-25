@@ -1,0 +1,25 @@
+{
+  Router router=new Router(getContext());
+  RmepGuard guard=new RmepGuard(getContext(),ChallengeScheme.HTTP_BASIC,"rmep",dataFacade);
+  router.attachDefault(MailRootResource.class);
+  Directory imgDirectory=new Directory(getContext(),LocalReference.createFileReference("D:\\alaska\\forge\\build\\swc\\restlet\\trunk\\modules\\org.restlet.example\\src\\org\\restlet\\example\\book\\restlet\\ch9\\web\\images"));
+  router.attach("/images",imgDirectory);
+  Directory cssDirectory=new Directory(getContext(),LocalReference.createFileReference("D:\\alaska\\forge\\build\\swc\\restlet\\trunk\\modules\\org.restlet.example\\src\\org\\restlet\\example\\book\\restlet\\ch9\\web\\stylesheets"));
+  router.attach("/stylesheets",cssDirectory);
+  router.attach("/users",UsersResource.class);
+  router.attach("/users/{userId}",UserResource.class);
+  router.attach("/mailboxes",MailboxesResource.class);
+  RmepMailboxGuard mailboxGuard=new RmepMailboxGuard(getContext(),ChallengeScheme.HTTP_BASIC,"rmep",dataFacade);
+  router.attach("/mailboxes/{mailboxId}",mailboxGuard);
+  Router mailboxRouter=new Router(getContext());
+  mailboxRouter.attachDefault(MailboxResource.class);
+  mailboxRouter.attach("/contacts",ContactsResource.class);
+  mailboxRouter.attach("/contacts/{contactId}",ContactResource.class);
+  mailboxRouter.attach("/mails",MailsResource.class);
+  mailboxRouter.attach("/mails/{mailId}",MailResource.class);
+  mailboxRouter.attach("/feeds",FeedsResource.class);
+  mailboxRouter.attach("/feeds/{feedId}",FeedResource.class);
+  mailboxGuard.setNext(mailboxRouter);
+  guard.setNext(router);
+  return guard;
+}

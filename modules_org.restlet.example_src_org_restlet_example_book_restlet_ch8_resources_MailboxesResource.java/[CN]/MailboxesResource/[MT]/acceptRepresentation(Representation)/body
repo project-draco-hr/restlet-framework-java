@@ -1,0 +1,10 @@
+{
+  Form form=new Form(entity);
+  Mailbox mailbox=new Mailbox();
+  mailbox.setNickname(form.getFirstValue("nickname"));
+  User owner=getDataFacade().getUserById(form.getFirstValue("ownerId"));
+  mailbox.setOwner(owner);
+  mailbox.setSenderName(owner.getFirstName() + " " + owner.getLastName());
+  mailbox=getDataFacade().createMailbox(mailbox);
+  getResponse().redirectSeeOther(getRequest().getResourceRef());
+}

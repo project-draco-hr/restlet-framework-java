@@ -1,0 +1,14 @@
+{
+  Mailbox mailbox=new Mailbox();
+  mailbox.setId(Integer.toString(mailboxSequence++));
+  mailbox.setOwner(owner);
+  int index=Integer.parseInt(mailbox.getId()) % (mailTags.size());
+  mailbox.getFeeds().add(createFeed(Arrays.asList(mailTags.get(index))));
+  for (int i=0; i < mailboxSequence; i++) {
+    mailbox.getContacts().add(createContact());
+  }
+  for (int i=0; i < mailboxSequence; i++) {
+    mailbox.getMails().add(createMail(owner,mailbox.getContacts(),mailbox.getFeeds()));
+  }
+  return mailbox;
+}

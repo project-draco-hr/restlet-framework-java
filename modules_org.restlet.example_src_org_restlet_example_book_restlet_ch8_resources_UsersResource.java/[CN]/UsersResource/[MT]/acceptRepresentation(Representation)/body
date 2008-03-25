@@ -1,0 +1,11 @@
+{
+  Form form=new Form(entity);
+  User user=new User();
+  user.setFirstName(form.getFirstValue("firstName"));
+  user.setLastName(form.getFirstValue("lastName"));
+  user.setLogin(form.getFirstValue("login"));
+  user.setPassword(form.getFirstValue("password"));
+  user.setAdministrator((form.getFirstValue("administrator") == null ? false : true));
+  user=getDataFacade().createUser(user);
+  getResponse().redirectSeeOther(getChildReference(getRequest().getResourceRef(),user.getId()));
+}
