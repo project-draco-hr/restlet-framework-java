@@ -7,24 +7,16 @@
     size=Representation.UNKNOWN_SIZE;
   }
  else {
-    String contentLength=responseHeaders.getFirstValue(HttpConstants.HEADER_CONTENT_LENGTH,true);
-    if (contentLength != null) {
-      try {
-        size=Long.parseLong(contentLength);
-      }
- catch (      NumberFormatException e) {
-        getLogger().warning("Unkown value received as content length: \"" + contentLength + "\".");
-      }
-    }
+    size=getContentLength();
   }
   if (!getMethod().equals(Method.HEAD.getName()) && !response.getStatus().isInformational() && !response.getStatus().equals(Status.REDIRECTION_NOT_MODIFIED)&& !response.getStatus().equals(Status.SUCCESS_NO_CONTENT)&& !response.getStatus().equals(Status.SUCCESS_RESET_CONTENT)&& !response.getStatus().equals(Status.SUCCESS_PARTIAL_CONTENT)) {
     InputStream stream=getUnClosedResponseEntityStream(getResponseEntityStream(size));
     ReadableByteChannel channel=getResponseEntityChannel(size);
     if (stream != null) {
-      result=new InputRepresentation(stream,null);
+      result=getRepresentation(stream);
     }
  else     if (channel != null) {
-      result=new ReadableRepresentation(channel,null);
+      result=getRepresentation(channel);
     }
   }
   result=copyResponseEntityHeaders(responseHeaders,result);

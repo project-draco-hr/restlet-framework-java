@@ -1,16 +1,6 @@
 {
   Representation result=null;
-  long contentLength=Representation.UNKNOWN_SIZE;
-  for (  Parameter header : getRequestHeaders()) {
-    if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LENGTH)) {
-      try {
-        contentLength=Long.parseLong(header.getValue());
-      }
- catch (      NumberFormatException e) {
-        contentLength=Representation.UNKNOWN_SIZE;
-      }
-    }
-  }
+  long contentLength=getContentLength();
   InputStream requestStream=getRequestEntityStream(contentLength);
   ReadableByteChannel requestChannel=getRequestEntityChannel(contentLength);
   if (requestStream != null) {

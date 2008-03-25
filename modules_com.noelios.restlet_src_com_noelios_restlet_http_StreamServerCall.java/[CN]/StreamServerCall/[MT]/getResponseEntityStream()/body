@@ -1,16 +1,10 @@
 {
   if (responseEntityStream == null) {
-    if (isResponseChunked() && isKeepAlive()) {
-      responseEntityStream=new ChunkedOutputStream(new KeepAliveOutputStream(getResponseStream()));
-    }
- else     if (isResponseChunked()) {
+    if (isResponseChunked()) {
       responseEntityStream=new ChunkedOutputStream(getResponseStream());
     }
- else     if (isKeepAlive()) {
-      responseEntityStream=new KeepAliveOutputStream(getResponseStream());
-    }
  else {
-      responseEntityStream=getResponseStream();
+      responseEntityStream=new KeepAliveOutputStream(getResponseStream());
     }
   }
   return responseEntityStream;

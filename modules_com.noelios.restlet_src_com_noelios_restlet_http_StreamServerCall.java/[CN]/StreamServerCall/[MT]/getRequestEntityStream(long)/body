@@ -1,8 +1,11 @@
 {
-  if (isRequestChunked()) {
-    return new ChunkedInputStream(getRequestStream());
-  }
+  if (requestEntityStream == null) {
+    if (isRequestChunked()) {
+      requestEntityStream=new ChunkedInputStream(getRequestStream());
+    }
  else {
-    return new InputEntityStream(getRequestStream(),size);
+      requestEntityStream=new InputEntityStream(getRequestStream(),size);
+    }
   }
+  return requestEntityStream;
 }
