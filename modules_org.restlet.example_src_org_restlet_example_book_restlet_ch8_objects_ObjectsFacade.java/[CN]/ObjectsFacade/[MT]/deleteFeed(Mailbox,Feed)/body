@@ -1,0 +1,12 @@
+{
+  boolean found=false;
+  for (int i=0; i < mailbox.getFeeds().size() && !found; i++) {
+    Feed feed2=mailbox.getFeeds().get(i);
+    if (feed2.getId().equals(feed.getId())) {
+      mailbox.getFeeds().remove(i);
+      found=true;
+    }
+  }
+  dataFacade.getFeedDAO().deleteFeed(feed);
+  dataFacade.getMailboxDAO().updateMailbox(mailbox);
+}

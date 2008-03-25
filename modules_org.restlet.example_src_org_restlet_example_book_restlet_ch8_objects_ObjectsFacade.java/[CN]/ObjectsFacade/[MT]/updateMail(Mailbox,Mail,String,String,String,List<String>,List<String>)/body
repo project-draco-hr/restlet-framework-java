@@ -1,0 +1,45 @@
+{
+  mail.setSubject(subject);
+  mail.setMessage(message);
+  mail.setTags(tags);
+  if (Mail.STATUS_DRAFT.equalsIgnoreCase(mail.getStatus())) {
+    List<Contact> mailRecipients=new ArrayList<Contact>();
+    if (mailAddresses != null) {
+      T contactDAO=dataFacade.getContactDAO();
+      if (mail.getRecipients() != null) {
+        for (        Contact recipient : mail.getRecipients()) {
+          if (!mailAddresses.contains(recipient.getMailAddress())) {
+            contactDAO.deleteContact(recipient);
+          }
+        }
+      }
+      for (      String mailAddress : mailAddresses) {
+        Contact contact=lookForContact(mailAddress,mailbox);
+        if (contact != null) {
+          mailRecipients.add(contact);
+        }
+ else {
+          for (          Contact recipient : mail.getRecipients()) {
+            if (recipient.getMailAddress().equals(mailAddress)) {
+              mailRecipients.add(recipient);
+              break;
+            }
+          }
+        }
+      }
+      mail.setRecipients(mailRecipients);
+    }
+ else {
+      T contactDAO=dataFacade.getContactDAO();
+      if (mail.getRecipients() != null) {
+        for (        Contact recipient : mail.getRecipients()) {
+          contactDAO.deleteContact(recipient);
+        }
+      }
+      mail.setRecipients(null);
+    }
+  }
+  mail.setStatus(status);
+  updateMail(mailbox,mail);
+  return mail;
+}
