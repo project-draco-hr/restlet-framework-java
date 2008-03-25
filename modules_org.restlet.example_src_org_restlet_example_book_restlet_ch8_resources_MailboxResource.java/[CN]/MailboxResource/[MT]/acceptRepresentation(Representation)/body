@@ -4,7 +4,7 @@
   mail.setStatus(Mail.STATUS_RECEIVED);
   String senderAddress=form.getFirstValue("senderAddress");
   String senderName=form.getFirstValue("senderName");
-  Contact contact=getDataFacade().lookForContact(senderAddress,mailbox);
+  Contact contact=getObjectsFacade().lookForContact(senderAddress,mailbox);
   if (contact == null) {
     contact=new Contact();
     contact.setMailAddress(senderAddress);
@@ -15,14 +15,14 @@
   mail.setSubject(form.getFirstValue("subject"));
   Series<Parameter> recipients=form.subList("recipient");
   for (  Parameter recipient : recipients) {
-    contact=getDataFacade().lookForContact(recipient.getValue(),mailbox);
+    contact=getObjectsFacade().lookForContact(recipient.getValue(),mailbox);
     if (contact == null) {
       contact=new Contact();
-      String[] recipientValues=((String)recipient.getValue()).split("\\$");
+      String[] recipientValues=recipient.getValue().split("\\$");
       contact.setMailAddress(recipientValues[0]);
       contact.setName(recipientValues[1]);
     }
     mail.getRecipients().add(contact);
   }
-  getDataFacade().createMail(mailbox,mail);
+  getObjectsFacade().createMail(mailbox,mail);
 }

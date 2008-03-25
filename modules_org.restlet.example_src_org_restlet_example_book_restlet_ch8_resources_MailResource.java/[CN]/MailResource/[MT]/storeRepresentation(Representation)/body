@@ -8,7 +8,7 @@
   if (form.getFirstValue("tags") != null) {
     tags=new ArrayList<String>(Arrays.asList(form.getFirstValue("tags").split(" ")));
   }
-  getDataFacade().updateMail(mailbox,mail,form.getFirstValue("status"),form.getFirstValue("subject"),form.getFirstValue("message"),mailAddresses,tags);
+  getObjectsFacade().updateMail(mailbox,mail,form.getFirstValue("status"),form.getFirstValue("subject"),form.getFirstValue("message"),mailAddresses,tags);
   if (Mail.STATUS_SENDING.equalsIgnoreCase(mail.getStatus())) {
     mail.setSendingDate(new Date());
     boolean success=true;
@@ -44,7 +44,7 @@
       }
       if (success) {
         mail.setStatus(Mail.STATUS_SENT);
-        getDataFacade().updateMail(mailbox,mail);
+        getObjectsFacade().updateMail(mailbox,mail);
         getResponse().redirectSeeOther(getRequest().getResourceRef());
       }
  else {
@@ -61,7 +61,7 @@
     }
  else {
       mail.setStatus(Mail.STATUS_DRAFT);
-      getDataFacade().updateMail(mailbox,mail);
+      getObjectsFacade().updateMail(mailbox,mail);
       getResponse().redirectSeeOther(getRequest().getResourceRef());
     }
   }
