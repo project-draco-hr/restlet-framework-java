@@ -1,8 +1,9 @@
 {
   checkValidity(query);
+  boolean emptyQueryString=(query == null || query.length() <= 0);
   if (queryIndex != -1) {
     if (fragmentIndex != -1) {
-      if (query != null) {
+      if (!emptyQueryString) {
         this.internalRef=this.internalRef.substring(0,queryIndex + 1) + query + this.internalRef.substring(fragmentIndex);
       }
  else {
@@ -10,7 +11,7 @@
       }
     }
  else {
-      if (query != null) {
+      if (!emptyQueryString) {
         this.internalRef=this.internalRef.substring(0,queryIndex + 1) + query;
       }
  else {
@@ -20,14 +21,14 @@
   }
  else {
     if (fragmentIndex != -1) {
-      if (query != null) {
+      if (!emptyQueryString) {
         this.internalRef=this.internalRef.substring(0,fragmentIndex) + '?' + query+ this.internalRef.substring(fragmentIndex);
       }
  else {
       }
     }
  else {
-      if (query != null) {
+      if (!emptyQueryString) {
         if (this.internalRef != null) {
           this.internalRef=this.internalRef + '?' + query;
         }
