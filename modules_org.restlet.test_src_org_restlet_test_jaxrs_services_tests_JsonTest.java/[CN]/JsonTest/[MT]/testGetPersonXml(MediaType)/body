@@ -1,0 +1,9 @@
+{
+  Response response=get("person?firstname=Angela&lastname=Merkel",xmlMediaType);
+  sysOutEntityIfError(response);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  JaxbRepresentation<Person> jaxbReprs=new JaxbRepresentation<Person>(response.getEntity(),Person.class);
+  Person person=jaxbReprs.getObject();
+  assertEquals("Angela",person.getFirstname());
+  assertEquals("Merkel",person.getLastname());
+}

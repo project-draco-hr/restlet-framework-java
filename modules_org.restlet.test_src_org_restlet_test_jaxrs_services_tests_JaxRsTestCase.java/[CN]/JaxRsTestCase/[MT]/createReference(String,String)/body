@@ -3,8 +3,13 @@
   reference.setBaseRef(createBaseRef());
   if (!path.startsWith("/"))   path="/" + path;
   if (subPath != null) {
-    if (subPath.startsWith(";"))     path+=subPath;
- else     if (subPath.length() > 0)     path+="/" + subPath;
+    if (subPath.startsWith(";")) {
+      path+=subPath;
+    }
+ else     if (subPath.length() > 0) {
+      if (path.endsWith("/") || subPath.startsWith("/"))       path+=subPath;
+ else       path+="/" + subPath;
+    }
   }
   reference.setPath(path);
   return reference;

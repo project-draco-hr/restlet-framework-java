@@ -1,11 +1,10 @@
 {
   boolean toArray=false;
   Collection<Object> coll=null;
-  if (paramGenericType instanceof GenericArrayType) {
-    GenericArrayType genericArrayType=(GenericArrayType)paramGenericType;
-    paramClass=(Class<?>)genericArrayType.getGenericComponentType();
+  if (paramClass.isArray()) {
     coll=new ArrayList<Object>(1);
     toArray=true;
+    paramClass=paramClass.getComponentType();
   }
  else   if (paramGenericType instanceof ParameterizedType) {
     ParameterizedType parameterizedType=(ParameterizedType)paramGenericType;
@@ -21,6 +20,7 @@
     if (convertedValue != null)     coll.add(convertedValue);
     defaultValue=null;
   }
-  if (toArray)   return coll.toArray();
+  if (coll.isEmpty())   coll.add(convertParamValueFromParam(paramClass,paramValue,defaultValue,leaveEncoded));
+  if (toArray)   return Util.toArray(coll,paramClass);
   return coll;
 }

@@ -1,0 +1,23 @@
+{
+  final String jsonString;
+  jsonString=Util.copyToStringBuilder(entityStream).toString();
+  try {
+    if (JSONObject.class.isAssignableFrom(type))     return new JSONObject(jsonString);
+    if (JSONArray.class.isAssignableFrom(type))     return new JSONArray(jsonString);
+  }
+ catch (  JSONException e) {
+    IOException ioe=new IOException(e.getMessage());
+    ioe.initCause(e);
+    throw ioe;
+  }
+  if (JSONString.class.isAssignableFrom(type))   return new JSONString(){
+    public String toJSONString(){
+      return jsonString;
+    }
+    @Override public String toString(){
+      return jsonString;
+    }
+  }
+;
+  throw new IllegalArgumentException("the given type " + type + " is not supported");
+}

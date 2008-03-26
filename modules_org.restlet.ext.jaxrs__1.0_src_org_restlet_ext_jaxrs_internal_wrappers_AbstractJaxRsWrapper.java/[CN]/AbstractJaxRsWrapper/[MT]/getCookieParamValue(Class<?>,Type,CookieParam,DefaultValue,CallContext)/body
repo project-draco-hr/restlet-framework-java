@@ -1,7 +1,44 @@
 {
-  Series<Cookie> cookies=callContext.getRequest().getCookies();
   String cookieName=cookieParam.value();
-  if (paramClass.equals(javax.ws.rs.core.Cookie.class))   getCookies(cookieName,paramGenericType,callContext);
+  Collection<Cookie> coll=null;
+  boolean isCookie=false;
+  boolean toArray=false;
+  if (paramClass.equals(Cookie.class)) {
+    isCookie=true;
+  }
+ else   if (paramClass.isArray()) {
+    Class<?> paramClass2=paramClass.getComponentType();
+    if (paramClass2.equals(Cookie.class)) {
+      coll=new ArrayList<Cookie>();
+      toArray=true;
+      isCookie=true;
+    }
+  }
+ else   if (paramGenericType instanceof ParameterizedType) {
+    ParameterizedType parametrizedType=(ParameterizedType)paramGenericType;
+    Type[] argTypes=parametrizedType.getActualTypeArguments();
+    if (argTypes.length == 1 && argTypes[0].equals(Cookie.class)) {
+      coll=createColl(parametrizedType);
+      if (coll != null)       isCookie=true;
+    }
+  }
+  Series<org.restlet.data.Cookie> cookies;
+  cookies=callContext.getRequest().getCookies();
+  if (isCookie) {
+    for (    org.restlet.data.Cookie rc : cookies) {
+      if (!rc.getName().equals(cookieName))       continue;
+      Cookie cookie=Converter.toJaxRsCookie(rc);
+      if (coll == null)       return cookie;
+      coll.add(cookie);
+    }
+    if (coll == null)     return null;
+    if (coll.isEmpty()) {
+      String value=defaultValue.value();
+      coll.add(new Cookie(cookieName,value));
+    }
+    if (toArray)     return Util.toArray(coll,Cookie.class);
+    return coll;
+  }
   try {
     return convertParamValuesFromParam(paramClass,paramGenericType,new ParamValueIter((Series)cookies.subList(cookieName)),getValue(cookies.getFirst(cookieName)),defaultValue,true);
   }

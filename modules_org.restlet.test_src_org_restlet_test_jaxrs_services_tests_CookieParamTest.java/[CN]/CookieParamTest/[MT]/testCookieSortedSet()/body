@@ -1,0 +1,11 @@
+{
+  Request request=createGetRequest("SortedSet");
+  request.getCookies().add(new Cookie("c","c1"));
+  request.getCookies().add(new Cookie("c","c2"));
+  request.getCookies().add(new Cookie("d","c3"));
+  Response response=accessServer(request);
+  sysOutEntityIfError(response);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  String entity=response.getEntity().getText();
+  assertEquals("c1, c2",entity.substring(1,entity.length() - 1));
+}
