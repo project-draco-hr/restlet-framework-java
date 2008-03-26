@@ -1,3 +1,8 @@
 {
-  return dataFacade.createMailbox(mailbox);
+  mailbox.setId(mailbox.getNickname());
+  if (dataFacade.getMailboxById(mailbox.getId()) != null) {
+    throw new ObjectsException("An other mailbox has the same name.");
+  }
+  dataFacade.createMailbox(mailbox);
+  return mailbox;
 }

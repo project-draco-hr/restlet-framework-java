@@ -1,9 +1,15 @@
 {
   super(context,request,response);
-  String userId=(String)request.getAttributes().get("userId");
-  user=getObjectsFacade().getUserById(userId);
-  if (user != null) {
-    mailboxes=getObjectsFacade().getMailboxes(user);
-    getVariants().add(new Variant(MediaType.TEXT_HTML));
+  if (getCurrentUser() != null) {
+    setModifiable(true);
+    String userId=(String)request.getAttributes().get("userId");
+    user=getObjectsFacade().getUserById(userId);
+    if (user != null) {
+      mailboxes=getObjectsFacade().getMailboxes(user);
+      getVariants().add(new Variant(MediaType.TEXT_HTML));
+    }
+  }
+ else {
+    setModifiable(false);
   }
 }

@@ -1,11 +1,17 @@
 {
   super(context,request,response);
-  if (getCurrentUser().isAdministrator()) {
-    users=getObjectsFacade().getUsers();
+  if (getCurrentUser() != null) {
+    if (getCurrentUser().isAdministrator()) {
+      setModifiable(true);
+      users=getObjectsFacade().getUsers();
+    }
+ else {
+      users=new ArrayList<User>();
+      users.add(getCurrentUser());
+    }
   }
  else {
-    users=new ArrayList<User>();
-    users.add(getCurrentUser());
+    setModifiable(false);
   }
   getVariants().add(new Variant(MediaType.TEXT_HTML));
 }

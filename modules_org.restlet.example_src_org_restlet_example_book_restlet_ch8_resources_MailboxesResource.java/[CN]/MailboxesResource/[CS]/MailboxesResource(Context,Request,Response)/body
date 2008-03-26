@@ -1,11 +1,14 @@
 {
   super(context,request,response);
-  if (getCurrentUser().isAdministrator()) {
-    mailboxes=getObjectsFacade().getMailboxes();
-    users=getObjectsFacade().getUsers();
-  }
+  if (getCurrentUser() != null) {
+    if (getCurrentUser().isAdministrator()) {
+      setModifiable(true);
+      mailboxes=getObjectsFacade().getMailboxes();
+      users=getObjectsFacade().getUsers();
+    }
  else {
-    mailboxes=getObjectsFacade().getMailboxes(getCurrentUser());
+      mailboxes=getObjectsFacade().getMailboxes(getCurrentUser());
+    }
   }
   getVariants().add(new Variant(MediaType.TEXT_HTML));
 }

@@ -29,9 +29,6 @@
       Request request=new Request();
       request.setMethod(Method.POST);
       request.setEntity(form2.getWebRepresentation());
-      ChallengeScheme scheme=ChallengeScheme.HTTP_BASIC;
-      ChallengeResponse authentication=new ChallengeResponse(scheme,getCurrentUser().getLogin(),getCurrentUser().getPassword());
-      request.setChallengeResponse(authentication);
       for (      Contact contact : mail.getRecipients()) {
         request.setResourceRef(contact.getMailAddress());
         response=client.handle(request);

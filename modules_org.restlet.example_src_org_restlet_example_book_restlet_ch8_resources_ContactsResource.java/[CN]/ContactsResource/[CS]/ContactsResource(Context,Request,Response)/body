@@ -1,10 +1,16 @@
 {
   super(context,request,response);
-  String mailboxId=(String)request.getAttributes().get("mailboxId");
-  mailbox=getObjectsFacade().getMailboxById(mailboxId);
-  if (mailbox != null) {
-    contacts=mailbox.getContacts();
-    hostedMailboxes=getObjectsFacade().getMailboxes();
-    getVariants().add(new Variant(MediaType.TEXT_HTML));
+  if (getCurrentUser() != null) {
+    setModifiable(true);
+    String mailboxId=(String)request.getAttributes().get("mailboxId");
+    mailbox=getObjectsFacade().getMailboxById(mailboxId);
+    if (mailbox != null) {
+      contacts=mailbox.getContacts();
+      hostedMailboxes=getObjectsFacade().getMailboxes();
+      getVariants().add(new Variant(MediaType.TEXT_HTML));
+    }
+  }
+ else {
+    setModifiable(false);
   }
 }

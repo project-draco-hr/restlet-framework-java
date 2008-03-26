@@ -1,3 +1,11 @@
 {
-  return (User)getRequest().getAttributes().get(RmepGuard.CURRENT_USER);
+  if (currentUser == null) {
+    currentUser=(User)getRequest().getAttributes().get(RmepGuard.CURRENT_USER);
+    if (currentUser == null) {
+      if (getRequest().getChallengeResponse() != null) {
+        currentUser=getObjectsFacade().getUserByLoginPwd(getRequest().getChallengeResponse().getIdentifier(),getRequest().getChallengeResponse().getSecret());
+      }
+    }
+  }
+  return currentUser;
 }
