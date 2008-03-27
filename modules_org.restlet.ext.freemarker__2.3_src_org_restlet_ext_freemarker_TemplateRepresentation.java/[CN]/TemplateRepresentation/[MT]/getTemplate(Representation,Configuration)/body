@@ -1,8 +1,14 @@
 {
   try {
-    return new Template("template",templateRepresentation.getReader(),config);
+    if (templateRepresentation.getCharacterSet() != null) {
+      return new Template("template",templateRepresentation.getReader(),config,templateRepresentation.getCharacterSet().getName());
+    }
+ else {
+      return new Template("template",templateRepresentation.getReader(),config,CharacterSet.UTF_8.getName());
+    }
   }
  catch (  IOException e) {
+    logger.warning("Unable to get the template from the representation " + templateRepresentation.getIdentifier() + ". Error message: "+ e.getMessage());
     return null;
   }
 }
