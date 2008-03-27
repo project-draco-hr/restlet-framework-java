@@ -2,9 +2,17 @@
   MetadataService metadataService=getMetadataService(request);
   if (request.getMethod().equals(Method.GET) || request.getMethod().equals(Method.HEAD)) {
     String path=request.getResourceRef().getPath();
-    if ((path != null) && path.startsWith("/"))     path=path.substring(1);
-    URL url=classLoader.getResource(Reference.decode(path));
+    URL url=null;
     Date modificationDate=null;
+    if ((path != null) && path.startsWith("/")) {
+      path=path.substring(1);
+    }
+    if (classLoader != null) {
+      url=classLoader.getResource(Reference.decode(path));
+    }
+ else {
+      getLogger().warning("Unable to get the resource. The selected classloader is null.");
+    }
     if (url != null) {
       if (url.getProtocol().equals("file")) {
         File file=new File(url.getFile());
