@@ -1,0 +1,70 @@
+{
+  Object jaxRsResObj=resourceObject.getJaxRsResourceObject();
+  for (  Field contextField : this.injectFieldsCallContext) {
+    Util.inject(jaxRsResObj,contextField,callContext);
+  }
+  for (  Field crf : this.injectFieldsContextResolvers) {
+    Util.inject(jaxRsResObj,crf,internalResolvers);
+  }
+  for (  Field mbwField : this.injectFieldsMbWorkers) {
+    Object messageBodyWorkers=null;
+    Util.inject(jaxRsResObj,mbwField,messageBodyWorkers);
+  }
+  for (  Field clientInfoField : this.injectFieldsClientInfo) {
+    ClientInfo clientInfo=callContext.getRequest().getClientInfo();
+    Util.inject(jaxRsResObj,clientInfoField,clientInfo);
+  }
+  for (  Field conditionsField : this.injectFieldsConditions) {
+    Conditions conditions=callContext.getRequest().getConditions();
+    Util.inject(jaxRsResObj,conditionsField,conditions);
+  }
+  for (  Field cpf : this.injectFieldsCookieParam) {
+    CookieParam headerParam=cpf.getAnnotation(CookieParam.class);
+    DefaultValue defaultValue=cpf.getAnnotation(DefaultValue.class);
+    Class<?> convTo=cpf.getType();
+    Type paramGenericType=cpf.getGenericType();
+    Object value=getCookieParamValue(convTo,paramGenericType,headerParam,defaultValue,callContext);
+    Util.inject(jaxRsResObj,cpf,value);
+  }
+  for (  Field hpf : this.injectFieldsHeaderParam) {
+    HeaderParam headerParam=hpf.getAnnotation(HeaderParam.class);
+    DefaultValue defaultValue=hpf.getAnnotation(DefaultValue.class);
+    Class<?> convTo=hpf.getType();
+    Type paramGenericType=hpf.getGenericType();
+    Object value=getHeaderParamValue(convTo,paramGenericType,headerParam,defaultValue,callContext);
+    Util.inject(jaxRsResObj,hpf,value);
+  }
+  for (  Field mpf : this.injectFieldsMatrixParam) {
+    MatrixParam headerParam=mpf.getAnnotation(MatrixParam.class);
+    DefaultValue defaultValue=mpf.getAnnotation(DefaultValue.class);
+    Class<?> convTo=mpf.getType();
+    Type paramGenericType=mpf.getGenericType();
+    Object value=getMatrixParamValue(convTo,paramGenericType,headerParam,leaveEncoded,defaultValue,callContext);
+    Util.inject(jaxRsResObj,mpf,value);
+  }
+  for (  Field ppf : this.injectFieldsPathParam) {
+    PathParam headerParam=ppf.getAnnotation(PathParam.class);
+    DefaultValue defaultValue=ppf.getAnnotation(DefaultValue.class);
+    Class<?> convTo=ppf.getType();
+    Type paramGenericType=ppf.getGenericType();
+    Object value=getPathParamValue(convTo,paramGenericType,headerParam,leaveEncoded,defaultValue,callContext);
+    Util.inject(jaxRsResObj,ppf,value);
+  }
+  for (  Field cpf : this.injectFieldsQueryParam) {
+    QueryParam headerParam=cpf.getAnnotation(QueryParam.class);
+    DefaultValue defaultValue=cpf.getAnnotation(DefaultValue.class);
+    Class<?> convTo=cpf.getType();
+    Type paramGenericType=cpf.getGenericType();
+    Object value=getQueryParamValue(convTo,paramGenericType,headerParam,leaveEncoded,defaultValue,callContext,Logger.getAnonymousLogger());
+    Util.inject(jaxRsResObj,cpf,value);
+  }
+  try {
+    Util.invokeNoneArgMethod(jaxRsResObj,this.postConstructMethod);
+  }
+ catch (  InvocationTargetException e) {
+    String message=e.getMessage();
+    MethodInvokeException mie=new MethodInvokeException(message);
+    mie.setStackTrace(e.getCause().getStackTrace());
+    throw mie;
+  }
+}

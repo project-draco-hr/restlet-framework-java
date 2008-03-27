@@ -1,0 +1,31 @@
+{
+  Object[] args;
+  Class<?>[] parameterTypes=this.executeMethod.getParameterTypes();
+  if (parameterTypes.length == 0)   args=new Object[0];
+ else   args=getParameterValues(parameterTypes,executeMethod.getGenericParameterTypes(),annotatedMethod.getParameterAnnotations(),leaveEncoded,callContext,mbrs,logger);
+  Object subResObj;
+  try {
+    subResObj=executeMethod.invoke(resourceObject.getJaxRsResourceObject(),args);
+  }
+ catch (  IllegalArgumentException e) {
+    throw new InstantiateRessourceException(executeMethod,e);
+  }
+catch (  IllegalAccessException e) {
+    throw new InstantiateRessourceException(executeMethod,e);
+  }
+  if (subResObj == null) {
+    logger.warning("The sub resource object is null. That is not allowed");
+    ResponseBuilder rb=javax.ws.rs.core.Response.serverError();
+    rb.entity("The sub resource object is null. That is not allowed");
+    throw new WebApplicationException(rb.build());
+  }
+  ResourceClass resourceClass=wrapperFactory.getResourceClass(subResObj.getClass());
+  ResourceObject subResourceObject=new ResourceObject(subResObj,resourceClass);
+  try {
+    subResourceObject.init(callContext,contextResolvers);
+  }
+ catch (  InjectException e) {
+    throw new InstantiateRessourceException(executeMethod,e);
+  }
+  return subResourceObject;
+}
