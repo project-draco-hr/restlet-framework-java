@@ -2,7 +2,6 @@
   super(context,request,response);
   if (getCurrentUser() != null) {
     if (getCurrentUser().isAdministrator()) {
-      setModifiable(true);
       mailboxes=getObjectsFacade().getMailboxes();
       users=getObjectsFacade().getUsers();
     }
@@ -10,5 +9,6 @@
       mailboxes=getObjectsFacade().getMailboxes(getCurrentUser());
     }
   }
+  setModifiable(true);
   getVariants().add(new Variant(MediaType.TEXT_HTML));
 }
