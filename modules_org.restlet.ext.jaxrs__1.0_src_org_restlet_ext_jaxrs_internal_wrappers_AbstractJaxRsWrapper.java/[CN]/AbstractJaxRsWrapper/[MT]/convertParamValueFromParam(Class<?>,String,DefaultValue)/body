@@ -1,0 +1,37 @@
+{
+  try {
+    Constructor<?> constr=paramClass.getConstructor(String.class);
+    return constr.newInstance(paramValue);
+  }
+ catch (  Exception e) {
+  }
+  Method valueOf;
+  try {
+    valueOf=paramClass.getMethod("valueOf",String.class);
+  }
+ catch (  SecurityException e) {
+    throw ConvertParameterException.object(paramClass,paramValue,e);
+  }
+catch (  NoSuchMethodException e) {
+    throw ConvertParameterException.object(paramClass,paramValue,e);
+  }
+  try {
+    return valueOf.invoke(null,paramValue);
+  }
+ catch (  IllegalArgumentException e) {
+    throw ConvertParameterException.object(paramClass,paramValue,e);
+  }
+catch (  IllegalAccessException e) {
+    throw ConvertParameterException.object(paramClass,paramValue,e);
+  }
+catch (  InvocationTargetException e) {
+    if ((paramValue == null || paramValue.length() <= 0) && (e.getCause() instanceof IllegalArgumentException)) {
+      if (defaultValue == null)       return null;
+ else {
+        String dfv=defaultValue.value();
+        return convertParamValueFromParam(paramClass,dfv,null);
+      }
+    }
+    throw ConvertParameterException.object(paramClass,paramValue,e);
+  }
+}

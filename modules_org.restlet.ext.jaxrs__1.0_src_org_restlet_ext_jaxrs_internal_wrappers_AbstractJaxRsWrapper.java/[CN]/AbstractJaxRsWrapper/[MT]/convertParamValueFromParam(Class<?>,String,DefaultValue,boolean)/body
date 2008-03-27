@@ -2,33 +2,9 @@
   if (!leaveEncoded && paramValue != null)   paramValue=Reference.decode(paramValue);
  else   if (paramValue == null && defaultValue != null)   paramValue=defaultValue.value();
   if (paramClass.equals(String.class))   return paramValue;
-  if (paramClass.isPrimitive())   return getParamValueForPrimitive(paramClass,paramValue);
-  try {
-    Constructor<?> constr=paramClass.getConstructor(String.class);
-    return constr.newInstance(paramValue);
+  if (paramClass.isPrimitive()) {
+    if (paramValue != null && paramValue.length() <= 0)     paramValue=defaultValue.value();
+    return getParamValueForPrimitive(paramClass,paramValue);
   }
- catch (  Exception e) {
-  }
-  Method valueOf;
-  try {
-    valueOf=paramClass.getMethod("valueOf",String.class);
-  }
- catch (  SecurityException e) {
-    throw ConvertParameterException.object(paramClass,paramValue,e);
-  }
-catch (  NoSuchMethodException e) {
-    throw ConvertParameterException.object(paramClass,paramValue,e);
-  }
-  try {
-    return valueOf.invoke(null,paramValue);
-  }
- catch (  IllegalArgumentException e) {
-    throw ConvertParameterException.object(paramClass,paramValue,e);
-  }
-catch (  IllegalAccessException e) {
-    throw ConvertParameterException.object(paramClass,paramValue,e);
-  }
-catch (  InvocationTargetException e) {
-    throw ConvertParameterException.object(paramClass,paramValue,e);
-  }
+  return convertParamValueFromParam(paramClass,paramValue,defaultValue);
 }

@@ -1,0 +1,24 @@
+{
+  Response response1=get("int?n1=1&n2=2&n3=3");
+  sysOutEntityIfError(response1);
+  assertEquals(Status.SUCCESS_OK,response1.getStatus());
+  assertEquals("1 2 3",response1.getEntity().getText());
+  Response response2=get("int?n1=1&n2=2");
+  sysOutEntityIfError(response2);
+  assertEquals(Status.SUCCESS_OK,response2.getStatus());
+  assertEquals("1 2 99",response2.getEntity().getText());
+  Response response5=get("int?n2=2&n3=3");
+  sysOutEntityIfError(response5);
+  assertEquals(Status.SUCCESS_OK,response5.getStatus());
+  assertEquals("0 2 3",response5.getEntity().getText());
+  Response response4=get("int?n1=1&n2=2&n3=");
+  sysOutEntityIfError(response4);
+  assertEquals(Status.SUCCESS_OK,response4.getStatus());
+  assertEquals("1 2 99",response4.getEntity().getText());
+  Response response6=get("int?n1=1&n3=3");
+  assertEquals(Status.CLIENT_ERROR_BAD_REQUEST,response6.getStatus());
+  Response response3=get("int?n1=1&n2=2&n3");
+  sysOutEntityIfError(response3);
+  assertEquals(Status.SUCCESS_OK,response3.getStatus());
+  assertEquals("1 2 99",response3.getEntity().getText());
+}

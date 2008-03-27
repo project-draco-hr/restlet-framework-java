@@ -1,16 +1,36 @@
 {
   try {
-    if (paramClass == Integer.TYPE)     return new Integer(paramValue);
-    if (paramClass == Double.TYPE)     return new Double(paramValue);
-    if (paramClass == Float.TYPE)     return new Float(paramValue);
-    if (paramClass == Byte.TYPE)     return new Byte(paramValue);
-    if (paramClass == Long.TYPE)     return new Long(paramValue);
-    if (paramClass == Short.TYPE)     return new Short(paramValue);
+    if (paramClass == Integer.TYPE) {
+      if ((paramValue == null || paramValue.length() <= 0))       return DEFAULT_INT;
+      return new Integer(paramValue);
+    }
+    if (paramClass == Double.TYPE) {
+      if ((paramValue == null || paramValue.length() <= 0))       return DEFAULT_DOUBLE;
+      return new Double(paramValue);
+    }
+    if (paramClass == Float.TYPE) {
+      if ((paramValue == null || paramValue.length() <= 0))       return DEFAULT_FLOAT;
+      return new Float(paramValue);
+    }
+    if (paramClass == Byte.TYPE) {
+      if ((paramValue == null || paramValue.length() <= 0))       return DEFAULT_BYTE;
+      return new Byte(paramValue);
+    }
+    if (paramClass == Long.TYPE) {
+      if ((paramValue == null || paramValue.length() <= 0))       return DEFAULT_LONG;
+      return new Long(paramValue);
+    }
+    if (paramClass == Short.TYPE) {
+      if ((paramValue == null || paramValue.length() <= 0))       return DEFAULT_SHORT;
+      return new Short(paramValue);
+    }
     if (paramClass == Character.TYPE) {
+      if ((paramValue == null || paramValue.length() <= 0))       return DEFAULT_CHAR;
       if (paramValue.length() == 1)       return paramValue.charAt(0);
       throw ConvertParameterException.primitive(paramClass,paramValue,null);
     }
     if (paramClass == Boolean.TYPE) {
+      if ((paramValue == null || paramValue.length() <= 0))       return DEFAULT_BOOLEAN;
       if (paramValue.equalsIgnoreCase("true"))       return Boolean.TRUE;
       if (paramValue.equalsIgnoreCase("false"))       return Boolean.FALSE;
       throw ConvertParameterException.primitive(paramClass,paramValue,null);
