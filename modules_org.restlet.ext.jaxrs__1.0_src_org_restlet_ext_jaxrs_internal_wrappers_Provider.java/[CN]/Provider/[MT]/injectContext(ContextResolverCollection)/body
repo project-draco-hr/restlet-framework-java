@@ -1,16 +1,16 @@
 {
-  Class<? extends Object> providerClass=jaxRsProvider.getClass();
+  Class<? extends Object> providerClass=this.jaxRsProvider.getClass();
   for (  Field field : providerClass.getDeclaredFields()) {
     if (!field.isAnnotationPresent(Context.class))     continue;
     Class<?> fieldType=field.getType();
     if (fieldType.equals(ContextResolver.class)) {
       field.setAccessible(true);
-      Util.inject(jaxRsProvider,field,internalResolvers);
+      Util.inject(this.jaxRsProvider,field,internalResolvers);
     }
  else     if (fieldType.equals(MessageBodyWorkers.class)) {
       field.setAccessible(true);
       Object toInject=null;
-      Util.inject(jaxRsProvider,field,toInject);
+      Util.inject(this.jaxRsProvider,field,toInject);
     }
   }
 }

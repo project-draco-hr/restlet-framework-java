@@ -1,18 +1,3 @@
 {
-  Object jaxRsProvider=this.getJaxRsProvider();
-  injectContext(jaxRsProvider,internalResolvers);
-  Class<? extends Object> providerClass=jaxRsProvider.getClass();
-  Method postConstructMethod=Util.findPostConstructMethod(providerClass);
-  try {
-    Util.invokeNoneArgMethod(jaxRsProvider,postConstructMethod);
-  }
- catch (  MethodInvokeException e) {
-    InstantiateProviderException ipe=new InstantiateProviderException(e.getMessage());
-    ipe.setStackTrace(e.getStackTrace());
-    throw ipe;
-  }
-catch (  InvocationTargetException e) {
-    String message="Exception while calling " + postConstructMethod;
-    throw new InstantiateProviderException(message,e);
-  }
+  injectContext(internalResolvers);
 }
