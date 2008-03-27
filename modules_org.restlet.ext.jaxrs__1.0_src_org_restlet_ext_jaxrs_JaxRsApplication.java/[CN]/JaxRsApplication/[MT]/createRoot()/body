@@ -1,4 +1,9 @@
 {
-  HtmlPreferer filter=new HtmlPreferer(getContext(),jaxRsRouter);
-  return filter;
+  Restlet restlet=jaxRsRouter;
+  if (this.guard != null) {
+    this.guard.setNext(restlet);
+    restlet=this.guard;
+  }
+  restlet=new HtmlPreferer(getContext(),restlet);
+  return restlet;
 }

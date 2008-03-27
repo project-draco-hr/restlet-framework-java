@@ -1,6 +1,7 @@
 {
-  startServer();
+  if (!startServer(AllowAllAccess.getInstance()))   return;
   Response response=get();
+  sysOutEntityIfError(response);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   response=post(new Form("abc=def").getWebRepresentation());
   sysOutEntityIfError(response);
