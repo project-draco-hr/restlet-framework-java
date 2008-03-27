@@ -3,25 +3,27 @@
   Collection<ResourceMethod> subRsesMeths=new ArrayList<ResourceMethod>();
   Collection<SubResourceLocator> subResLocs=new ArrayList<SubResourceLocator>();
   Method[] classMethods=jaxRsClass.getDeclaredMethods();
-  for (  Method javaMethod : classMethods) {
-    Method annotatedMethod=getAnnotatedJavaMethod(javaMethod);
+  for (  Method execMethod : classMethods) {
+    Method annotatedMethod=getAnnotatedJavaMethod(execMethod);
     if (annotatedMethod == null)     continue;
     Path path=annotatedMethod.getAnnotation(Path.class);
     org.restlet.data.Method httpMethod;
     httpMethod=ResourceMethod.getHttpMethod(annotatedMethod);
     try {
       if (httpMethod != null) {
-        if (!checkResMethodVolatileOrNotPublic(javaMethod,logger))         continue;
-        ResourceMethod subResMeth=new ResourceMethod(javaMethod,annotatedMethod,this,httpMethod);
+        if (!checkResMethodVolatileOrNotPublic(execMethod,logger))         continue;
+        ResourceMethod subResMeth=new ResourceMethod(execMethod,annotatedMethod,this,httpMethod);
         subRsesMeths.add(subResMeth);
         srmls.add(subResMeth);
+        checkForPrimitiveParameters(execMethod,logger);
       }
  else {
         if (path != null) {
-          if (!checkResMethodVolatileOrNotPublic(javaMethod,logger))           continue;
-          SubResourceLocator subResLoc=new SubResourceLocator(javaMethod,annotatedMethod,this);
+          if (!checkResMethodVolatileOrNotPublic(execMethod,logger))           continue;
+          SubResourceLocator subResLoc=new SubResourceLocator(execMethod,annotatedMethod,this);
           subResLocs.add(subResLoc);
           srmls.add(subResLoc);
+          checkForPrimitiveParameters(execMethod,logger);
         }
       }
     }

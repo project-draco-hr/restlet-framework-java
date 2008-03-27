@@ -1,9 +1,10 @@
 {
   if (!startServer(AllowAllAccess.getInstance()))   return;
-  Response response=get();
+  ChallengeResponse cr=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"bob","bobsSecret");
+  Response response=get(null,cr);
   sysOutEntityIfError(response);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
-  response=post(new Form("abc=def").getWebRepresentation());
+  response=post(null,new Form("abc=def").getWebRepresentation(),cr);
   sysOutEntityIfError(response);
   assertEquals(Status.SUCCESS_CREATED,response.getStatus());
   Reference expecretLocation=createReference(SEC_CONT_SERV,null);
