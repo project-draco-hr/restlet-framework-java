@@ -1,0 +1,23 @@
+{
+  Class<? extends Object> providerClass=this.jaxRsProvider.getClass();
+  do {
+    for (    Field field : providerClass.getDeclaredFields()) {
+      if (!field.isAnnotationPresent(Context.class))       continue;
+      Class<?> fieldType=field.getType();
+      if (fieldType.equals(ContextResolver.class)) {
+        field.setAccessible(true);
+        ContextResolver<?> injectCR;
+        jaxRsProvider.toString();
+        injectCR=WrapperUtil.getContextResolver(field,allResolvers);
+        Util.inject(this.jaxRsProvider,field,injectCR);
+      }
+ else       if (fieldType.equals(MessageBodyWorkers.class)) {
+        field.setAccessible(true);
+        Object toInject=null;
+        Util.inject(this.jaxRsProvider,field,toInject);
+      }
+    }
+    providerClass=providerClass.getSuperclass();
+  }
+ while (providerClass != null);
+}

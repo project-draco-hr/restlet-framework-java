@@ -1,6 +1,8 @@
 {
+  JAXBContext jaxbContext=contextResolver.getContext(type);
+  if (jaxbContext != null)   return jaxbContext;
   try {
-    return JAXBContext.newInstance(clazz);
+    return JAXBContext.newInstance(type);
   }
  catch (  NoClassDefFoundError e) {
     throw new WebApplicationException(Response.serverError().entity(e.getMessage()).build());

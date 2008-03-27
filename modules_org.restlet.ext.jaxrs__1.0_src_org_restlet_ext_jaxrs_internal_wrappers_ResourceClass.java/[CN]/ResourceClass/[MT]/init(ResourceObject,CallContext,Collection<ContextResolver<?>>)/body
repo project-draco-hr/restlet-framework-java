@@ -3,8 +3,10 @@
   for (  Field contextField : this.injectFieldsCallContext) {
     Util.inject(jaxRsResObj,contextField,callContext);
   }
-  for (  Field crf : this.injectFieldsContextResolvers) {
-    Util.inject(jaxRsResObj,crf,internalResolvers);
+  for (  Field field : this.injectFieldsContextResolvers) {
+    ContextResolver<?> contextResolver;
+    contextResolver=getContextResolver(field,allResolvers);
+    Util.inject(jaxRsResObj,field,contextResolver);
   }
   for (  Field mbwField : this.injectFieldsMbWorkers) {
     Object messageBodyWorkers=null;
