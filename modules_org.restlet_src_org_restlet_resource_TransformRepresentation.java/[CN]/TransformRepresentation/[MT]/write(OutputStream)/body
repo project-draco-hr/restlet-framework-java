@@ -1,11 +1,6 @@
 {
   try {
-    StreamSource sourceDocument=new StreamSource(getSourceRepresentation().getStream());
-    if (getSourceRepresentation().getIdentifier() != null) {
-      sourceDocument.setSystemId(getSourceRepresentation().getIdentifier().getTargetRef().toString());
-    }
-    StreamResult resultDocument=new StreamResult(outputStream);
-    getTransformer().transform(sourceDocument,resultDocument);
+    getTransformer().transform(getSaxSource(),new StreamResult(outputStream));
   }
  catch (  TransformerException te) {
     throw new IOException("Transformer exception. " + te.getMessage());

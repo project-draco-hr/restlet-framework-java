@@ -1,18 +1,8 @@
 {
   if (contentHandler != null) {
     try {
-      Source source=null;
-      if (this.xmlDocument != null) {
-        source=new DOMSource(xmlDocument);
-      }
- else {
-        source=new StreamSource(xmlRepresentation.getStream());
-      }
-      if (xmlRepresentation.getIdentifier() != null) {
-        source.setSystemId(xmlRepresentation.getIdentifier().getTargetRef().toString());
-      }
       Result result=new SAXResult(contentHandler);
-      TransformerFactory.newInstance().newTransformer().transform(source,result);
+      TransformerFactory.newInstance().newTransformer().transform(this.source,result);
     }
  catch (    TransformerConfigurationException tce) {
       throw new IOException("Couldn't parse the source representation: " + tce.getMessage());
