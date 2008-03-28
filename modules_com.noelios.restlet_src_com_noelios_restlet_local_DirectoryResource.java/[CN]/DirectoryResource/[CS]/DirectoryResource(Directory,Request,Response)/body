@@ -2,6 +2,9 @@
   super(directory.getContext(),request,response);
   this.directory=directory;
   this.relativePart=request.getResourceRef().getRemainingPart();
+  if (getApplication() != null && getApplication().getTunnelService().isExtensionTunnel()) {
+    this.relativePart+=request.getAttributes().get(TunnelService.REF_EXTENSIONS_KEY);
+  }
   setModifiable(getDirectory().isModifiable());
   if (this.relativePart.startsWith("/")) {
     this.relativePart=this.relativePart.substring(1);
