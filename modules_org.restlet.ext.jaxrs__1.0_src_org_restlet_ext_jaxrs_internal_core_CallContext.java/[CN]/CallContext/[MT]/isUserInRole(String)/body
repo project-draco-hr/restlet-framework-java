@@ -1,5 +1,5 @@
 {
-  Principal principal=Guard.getPrincipal(request);
+  Principal principal=(request.getChallengeResponse() == null) ? null : request.getChallengeResponse().getPrincipal();
   if (this.accessControl == null)   this.accessControl=ThrowExcAccessControl.getInstance();
   return accessControl.isUserInRole(principal,role);
 }

@@ -1,8 +1,7 @@
 {
-  Principal principal=Guard.getPrincipal(request);
-  if (principal == null)   return null;
   ChallengeResponse challengeResponse=request.getChallengeResponse();
   if (challengeResponse == null)   return null;
+  if (!challengeResponse.isAuthenticated())   return null;
   ChallengeScheme authScheme=challengeResponse.getScheme();
   if (authScheme == null)   return null;
   if (authScheme.equals(ChallengeScheme.HTTP_BASIC))   return SecurityContext.BASIC_AUTH;
