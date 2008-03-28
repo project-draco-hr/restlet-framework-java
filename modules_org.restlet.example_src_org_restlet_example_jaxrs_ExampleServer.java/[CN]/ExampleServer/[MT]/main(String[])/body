@@ -1,15 +1,9 @@
 {
   Component comp=new Component();
   Server server=comp.getServers().add(Protocol.HTTP,8182);
-  Application application=new Application(comp.getContext()){
-    @Override public Restlet createRoot(){
-      ExampleAppConfig appConfig=new ExampleAppConfig();
-      JaxRsRouter router=new JaxRsRouter(getContext(),appConfig);
-      HtmlPreferer filter=new HtmlPreferer(getContext(),router);
-      return filter;
-    }
-  }
-;
+  JaxRsApplication application=new JaxRsApplication(comp.getContext());
+  application.attach(new ExampleAppConfig());
+  application.setPreferHtml(true);
   comp.getDefaultHost().attach(application);
   comp.start();
   System.out.println("Server started on port " + server.getPort());

@@ -1,20 +1,15 @@
 {
   Component comp=new Component();
   Server server=comp.getServers().add(Protocol.HTTP,8182);
-  Application application=new Application(comp.getContext()){
-    @Override public Restlet createRoot(){
-      AccessControl accessControl=new ExampleAccessControl();
-      JaxRsRouter router=new JaxRsRouter(getContext(),new ExampleAppConfig(),accessControl);
-      Guard guard=new Guard(getContext(),ChallengeScheme.HTTP_BASIC,"persons");
-      guard.getSecrets().put("admin","adminPW".toCharArray());
-      guard.getSecrets().put("alice","alicesSecret".toCharArray());
-      guard.getSecrets().put("bob","bobsSecret".toCharArray());
-      guard.setNext(router);
-      HtmlPreferer filter=new HtmlPreferer(getContext(),guard);
-      return filter;
-    }
-  }
-;
+  JaxRsApplication application=new JaxRsApplication(comp.getContext());
+  Guard guard=new Guard(application.getContext(),ChallengeScheme.HTTP_BASIC,"JAX-RS example");
+  guard.getSecrets().put("admin","adminPW".toCharArray());
+  guard.getSecrets().put("alice","alicesSecret".toCharArray());
+  guard.getSecrets().put("bob","bobsSecret".toCharArray());
+  ExampleAccessControl accessControl=new ExampleAccessControl();
+  application.setAuthentication(guard,accessControl);
+  application.attach(new ExampleAppConfig());
+  application.setPreferHtml(true);
   comp.getDefaultHost().attach(application);
   comp.start();
   System.out.println("Server started on port " + server.getPort());
