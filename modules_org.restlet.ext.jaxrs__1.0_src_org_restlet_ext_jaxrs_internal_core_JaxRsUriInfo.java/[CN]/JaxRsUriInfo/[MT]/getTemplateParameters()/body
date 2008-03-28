@@ -1,17 +1,3 @@
 {
-  if (this.templateParametersDecoded == null) {
-    MultivaluedMapImpl<String,String> templParamsDec=new MultivaluedMapImpl<String,String>();
-    for (    Map.Entry<String,List<String>> entryEnc : this.interalGetPathParamsEncoded().entrySet()) {
-      String keyDec=Reference.decode(entryEnc.getKey());
-      List<String> valuesEnc=entryEnc.getValue();
-      List<String> valuesDec=new ArrayList<String>(valuesEnc.size());
-      for (      String valueEnc : valuesEnc)       valuesDec.add(Reference.decode(valueEnc));
-      templParamsDec.put(keyDec,valuesDec);
-    }
-    UnmodifiableMultivaluedMap<String,String> tpd;
-    tpd=UnmodifiableMultivaluedMap.get(templParamsDec,false);
-    if (isChangeable())     return tpd;
-    this.templateParametersDecoded=tpd;
-  }
-  return this.templateParametersDecoded;
+  return getPathParameters();
 }
