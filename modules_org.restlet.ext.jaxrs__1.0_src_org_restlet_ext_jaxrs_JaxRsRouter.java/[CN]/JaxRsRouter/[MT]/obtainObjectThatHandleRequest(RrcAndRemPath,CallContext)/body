@@ -18,7 +18,7 @@ catch (  RuntimeException e) {
 catch (  MissingAnnotationException e) {
     throw handleExecption(e,null,callContext,"Could not create new instance of root resource class");
   }
-catch (  InstantiateRootRessourceException e) {
+catch (  InstantiateException e) {
     throw handleExecption(e,null,callContext,"Could not create new instance of root resource class");
   }
 catch (  InvocationTargetException e) {
@@ -58,10 +58,10 @@ catch (  ConvertCookieParamException e) {
  else       if (methodOrLocator instanceof SubResourceLocator)       eWithMethod.add(methodOrLocator);
     }
     if (eWithMethod.isEmpty())     handleResourceNotFound(o,u);
-    ResourceMethodOrLocator firstMeth=getFirstMethOrLocByNumberOfLiteralCharactersAndByNumberOfCapturingGroups(eWithMethod);
+    ResourceMethodOrLocator firstMeth=AlgorithmUtil.getFirstMethOrLocByNumberOfLiteralCharactersAndByNumberOfCapturingGroups(eWithMethod);
     rMatch=firstMeth.getPathRegExp();
     MatchingResult matchingResult=rMatch.match(u);
-    addPathVarsToMap(matchingResult,callContext);
+    AlgorithmUtil.addPathVarsToMap(matchingResult,callContext);
     if (firstMeth instanceof ResourceMethod)     return new ResObjAndRemPath(o,u);
     String matchedUriPart=matchingResult.getMatched();
     Object jaxRsResObj2=o.getJaxRsResourceObject();
@@ -75,16 +75,16 @@ catch (  ConvertCookieParamException e) {
       throw e;
     }
 catch (    RuntimeException e) {
-      throw handleExecption(e,subResourceLocator,callContext,"Could not create new instance of root resource class");
+      throw handleExecption(e,subResourceLocator,callContext,"Could not create new instance of resource class");
     }
 catch (    MissingAnnotationException e) {
-      throw handleExecption(e,subResourceLocator,callContext,"Could not create new instance of root resource class");
+      throw handleExecption(e,subResourceLocator,callContext,"Could not create new instance of resource class");
     }
-catch (    InstantiateRessourceException e) {
-      throw handleExecption(e,subResourceLocator,callContext,"Could not create new instance of root resource class");
+catch (    InstantiateException e) {
+      throw handleExecption(e,subResourceLocator,callContext,"Could not create new instance of resource class");
     }
 catch (    InvocationTargetException e) {
-      throw handleExecption(e,subResourceLocator,callContext,"Could not create new instance of root resource class");
+      throw handleExecption(e,subResourceLocator,callContext,"Could not create new instance of resource class");
     }
 catch (    NoMessageBodyReaderException nmbre) {
       throw handleNoMessageBodyReader(callContext,nmbre);

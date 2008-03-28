@@ -9,9 +9,7 @@
     provider=new Provider<Object>(jaxRsProviderClass);
   }
  catch (  InvocationTargetException e) {
-    InstantiateProviderException ipe=new InstantiateProviderException(e.getMessage());
-    ipe.setStackTrace(e.getCause().getStackTrace());
-    throw ipe;
+    throw new InstantiateException("Exception while creating constructor",e);
   }
   if (provider.isWriter())   this.messageBodyWriters.add(provider);
   if (provider.isReader())   this.messageBodyReaders.add(provider);

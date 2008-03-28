@@ -6,7 +6,7 @@
   Collection<ResourceMethod> resourceMethods=resourceClass.getMethodsForPath(u);
   if (resourceMethods.isEmpty())   handleResourceMethodNotFound(resourceClass,u);
   boolean alsoGet=httpMethod.equals(Method.HEAD);
-  removeNotSupportedHttpMethod(resourceMethods,httpMethod,alsoGet);
+  AlgorithmUtil.removeNotSupportedHttpMethod(resourceMethods,httpMethod,alsoGet);
   if (resourceMethods.isEmpty()) {
     if (httpMethod.equals(Method.OPTIONS)) {
       Set<Method> allowedMethods=resourceClass.getAllowedMethods(u);
@@ -32,9 +32,9 @@
   if (resourceMethods.isEmpty()) {
     handleNoResourceMethodForAccMediaTypes(httpMethod,resourceClass,u);
   }
-  ResourceMethod bestResourceMethod=getBestMethod(resourceMethods,givenMediaType,accMediaTypes,httpMethod);
+  ResourceMethod bestResourceMethod=AlgorithmUtil.getBestMethod(resourceMethods,givenMediaType,accMediaTypes,httpMethod);
   MatchingResult mr=bestResourceMethod.getPathRegExp().match(u);
-  addPathVarsToMap(mr,callContext);
+  AlgorithmUtil.addPathVarsToMap(mr,callContext);
   String matchedUriPart=mr.getMatched();
   if (matchedUriPart.length() > 0) {
     Object jaxRsResObj=resObj.getJaxRsResourceObject();
