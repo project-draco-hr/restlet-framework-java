@@ -7,6 +7,9 @@
   headStream.write(13);
   headStream.write(10);
   getResponseHeaders().set(HttpConstants.HEADER_CONNECTION,"close",isServerKeepAlive());
+  if (shouldResponseBeChunked(response)) {
+    getResponseHeaders().add(HttpConstants.HEADER_TRANSFER_ENCODING,"chunked");
+  }
   for (  Parameter header : getResponseHeaders()) {
     HttpUtils.writeHeader(header,headStream);
   }
