@@ -1,0 +1,14 @@
+{
+  Representation representation=null;
+  try {
+    DynamicApplication application=(DynamicApplication)getApplication();
+    Map<String,Object> map=new TreeMap<String,Object>();
+    map.put("items",items);
+    representation=new TemplateRepresentation("items.ftl",application.getFmc(),map,MediaType.TEXT_PLAIN);
+  }
+ catch (  Exception e) {
+    System.out.println(e.getMessage());
+    getResponse().setStatus(new Status(Status.SERVER_ERROR_INTERNAL,e));
+  }
+  return representation;
+}

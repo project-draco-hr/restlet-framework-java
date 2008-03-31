@@ -1,0 +1,54 @@
+{
+  Component component=new Component();
+  component.getServers().add(Protocol.HTTP,8182);
+  component.getClients().add(Protocol.FILE);
+  component.getDefaultHost().attach("/directoryApplication",new DirectoryApplication(component.getContext()));
+  component.getDefaultHost().attach("/dynamicApplication",new DynamicApplication(component.getContext()));
+  component.getDefaultHost().attach("/xmlApplication",new XmlApplication(component.getContext()));
+  component.getDefaultHost().attach("/cookiesRestlet",new CookiesRestlet());
+  component.getDefaultHost().attach("/tunnelApplication",new TunnelApplication(component.getContext()));
+  component.getDefaultHost().attach("/nonStandardMethodsApplication",new NonStandardMethodsApplication(component.getContext()));
+  component.start();
+  Client client=new Client(Protocol.HTTP);
+  Response response=client.get("http://localhost:8182/xmlApplication/xml/mail.xml");
+  if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
+    DomRepresentation domRep=response.getEntityAsDom();
+    NodeSet nodes=domRep.getNodes("/mail/recipients/to/text()");
+    for (    Node node : nodes) {
+      System.out.println(node.getNodeValue());
+    }
+    response=client.get("http://localhost:8182/xmlApplication/xml/mail.xsd");
+    if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
+      domRep.validate(response.getEntity());
+    }
+  }
+  response=client.get("http://localhost:8182/xmlApplication/xml/mail.xml");
+  if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
+    SaxRepresentation saxRep=response.getEntityAsSax();
+    ContentHandler contentHandler=new DefaultHandler(){
+      @Override public void startElement(      String uri,      String localName,      String name,      Attributes attributes) throws SAXException {
+        System.out.println("processing element : " + name);
+      }
+    }
+;
+    saxRep.parse(contentHandler);
+  }
+  response=client.get("http://localhost:8182/cookiesRestlet");
+  for (  CookieSetting cookieSetting : response.getCookieSettings()) {
+    System.out.print("[");
+    System.out.print(cookieSetting.getName());
+    System.out.print("/");
+    System.out.print(cookieSetting.getValue());
+    System.out.print("]");
+  }
+  Request request=new Request(Method.GET,"http://localhost:8182/cookiesRestlet");
+  request.getCookies().addAll(response.getCookieSettings());
+  request.getCookies().add(new Cookie("test","value"));
+  response=client.handle(request);
+  response.getEntity().write(System.out);
+  request=new Request(new Method("TEST"),"http://localhost:8182/nonStandardMethodsApplication");
+  request.setEntity(new StringRepresentation("Test non standard method."));
+  response=client.handle(request);
+  System.out.println(response.getStatus());
+  response.getEntity().write(System.out);
+}

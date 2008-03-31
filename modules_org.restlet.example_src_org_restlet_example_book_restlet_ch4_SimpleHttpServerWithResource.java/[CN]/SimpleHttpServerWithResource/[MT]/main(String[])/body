@@ -1,0 +1,24 @@
+{
+  Application application=new Application(){
+    @Override public synchronized Restlet createRoot(){
+      Router router=new Router(getContext());
+      Restlet restlet=new Restlet(){
+        @Override public void handle(        Request request,        Response response){
+          response.setEntity("hello, world",MediaType.TEXT_PLAIN);
+        }
+      }
+;
+      return router;
+    }
+  }
+;
+  Component component=new Component();
+  component.getServers().add(Protocol.HTTP);
+  component.getDefaultHost().attach(application);
+  try {
+    component.start();
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+}

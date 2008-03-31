@@ -1,0 +1,15 @@
+{
+  Component component=new Component();
+  component.getServers().add(Protocol.HTTP,8182);
+  component.getClients().add(Protocol.FILE);
+  component.getDefaultHost().attach("/dynamicApplication",new DynamicApplication(component.getContext()));
+  component.start();
+  Client client=new Client(Protocol.HTTP);
+  Request request=new Request(Method.GET,"http://localhost:8182/dynamicApplication/transformer");
+  request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.TEXT_HTML));
+  Response response=client.handle(request);
+  if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
+    response.getEntity().write(System.out);
+  }
+  component.stop();
+}

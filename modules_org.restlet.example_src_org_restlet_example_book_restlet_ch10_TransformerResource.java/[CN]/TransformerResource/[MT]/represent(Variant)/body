@@ -1,0 +1,14 @@
+{
+  File dir=new File("D:\\alaska\\forge\\build\\swc\\nre\\trunk\\books\\apress\\manuscript\\sample");
+  Representation source=new FileRepresentation(new File(dir,"mail.xml"),MediaType.APPLICATION_XML);
+  Representation transformSheet=null;
+  if (MediaType.TEXT_HTML.equals(variant.getMediaType())) {
+    transformSheet=new FileRepresentation(new File(dir,"mail_html.xsl"),MediaType.TEXT_XML);
+  }
+ else {
+    transformSheet=new FileRepresentation(new File(dir,"mail_text.xsl"),MediaType.TEXT_XML);
+  }
+  Representation representation=new TransformRepresentation(getContext(),source,transformSheet);
+  representation.setMediaType(variant.getMediaType());
+  return representation;
+}

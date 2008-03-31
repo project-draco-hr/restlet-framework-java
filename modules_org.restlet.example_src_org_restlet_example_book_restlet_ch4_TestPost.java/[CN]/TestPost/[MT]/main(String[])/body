@@ -1,0 +1,17 @@
+{
+  Restlet restlet=new Restlet(){
+    public void handle(    Request request,    Response response){
+      System.out.println(request.getMethod());
+      System.out.println(request.isEntityAvailable());
+      System.out.println(request.getEntity().getMediaType());
+    }
+  }
+;
+  Server httpServer=new Server(Protocol.HTTP,8080,restlet);
+  httpServer.start();
+  Client client=new Client(Protocol.HTTP);
+  Request request=new Request(Method.POST,"http://localhost:8080");
+  request.setEntity(new StringRepresentation("lkkjlljllkj",MediaType.APPLICATION_FLASH));
+  Response response=client.handle(request);
+  httpServer.stop();
+}

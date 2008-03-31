@@ -1,0 +1,27 @@
+{
+  Restlet restlet=new Restlet(){
+    @Override public void handle(    Request request,    Response response){
+      Client client=new Client(Protocol.FILE);
+      Response resp=client.get(LocalReference.createFileReference("d:\\temp\\doc.txt"));
+      System.out.println(resp.getStatus());
+      try {
+        resp.getEntity().write(System.out);
+      }
+ catch (      IOException e) {
+        e.printStackTrace();
+      }
+      response.setEntity("hello, world",MediaType.TEXT_PLAIN);
+    }
+  }
+;
+  Component component=new Component();
+  component.getServers().add(Protocol.FILE);
+  component.getServers().add(Protocol.HTTP);
+  component.getDefaultHost().attach("helloWorld",restlet);
+  try {
+    component.start();
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+}
