@@ -27,10 +27,9 @@
   }
   for (  Field ppf : this.injectFieldsPathParam) {
     PathParam headerParam=ppf.getAnnotation(PathParam.class);
-    DefaultValue defaultValue=ppf.getAnnotation(DefaultValue.class);
     Class<?> convTo=ppf.getType();
     Type paramGenericType=ppf.getGenericType();
-    Object value=WrapperUtil.getPathParamValue(convTo,paramGenericType,headerParam,leaveEncoded,defaultValue,callContext);
+    Object value=WrapperUtil.getPathParamValue(convTo,paramGenericType,headerParam,leaveEncoded,callContext);
     Util.inject(jaxRsResObj,ppf,value);
   }
   for (  Field cpf : this.injectFieldsQueryParam) {
