@@ -1,8 +1,7 @@
 {
   Set<Provider<?>> providers=new HashSet<Provider<?>>();
-  providers.addAll((Collection)this.messageBodyReaders);
-  providers.addAll((Collection)this.messageBodyWriters);
+  this.entityProviders.addAllTo(providers);
   providers.addAll((Collection)this.contextResolvers);
-  for (  Provider<?> provider : providers)   provider.init(this.contextResolvers);
+  for (  Provider<?> provider : providers)   provider.init(this.contextResolvers,this.entityProviders);
   super.start();
 }

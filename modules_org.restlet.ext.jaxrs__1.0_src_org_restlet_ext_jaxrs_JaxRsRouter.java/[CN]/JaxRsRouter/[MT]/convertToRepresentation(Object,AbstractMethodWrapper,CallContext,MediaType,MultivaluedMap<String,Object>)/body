@@ -8,18 +8,17 @@
     genericReturnType=resourceMethod.getGenericReturnType();
     methodAnnotations=resourceMethod.getAnnotations();
   }
-  MessageBodyWriterSet mbws=this.messageBodyWriters.subSet(entityClass,genericReturnType,methodAnnotations);
+  MessageBodyWriterSubSet mbws=entityProviders.writerSubSet(entityClass,genericReturnType,methodAnnotations);
   SortedMetadata<MediaType> accMediaTypes=callContext.getAccMediaTypes();
-  List<MediaType> possMediaTypes;
-  if (responseMediaType != null)   possMediaTypes=Collections.singletonList(responseMediaType);
- else   if (resourceMethod instanceof ResourceMethod)   possMediaTypes=determineMediaType16((ResourceMethod)resourceMethod,mbws,callContext);
- else   possMediaTypes=Collections.singletonList(MediaType.TEXT_PLAIN);
-  mbws=mbws.subSet(possMediaTypes);
-  MessageBodyWriter<?> mbw=mbws.getBest(accMediaTypes);
+  List<MediaType> respMediaTypes;
+  if (responseMediaType != null)   respMediaTypes=Collections.singletonList(responseMediaType);
+ else   if (resourceMethod instanceof ResourceMethod)   respMediaTypes=determineMediaType16((ResourceMethod)resourceMethod,mbws,callContext);
+ else   respMediaTypes=Collections.singletonList(MediaType.TEXT_PLAIN);
+  MessageBodyWriter<?> mbw=mbws.getBestWriter(respMediaTypes,accMediaTypes);
   if (mbw == null)   handleNoMessageBodyWriter(callContext.getResponse(),accMediaTypes,entityClass);
   MediaType mediaType;
   if (responseMediaType != null)   mediaType=responseMediaType;
- else   mediaType=determineMediaType79(possMediaTypes,callContext);
+ else   mediaType=determineMediaType79(respMediaTypes,callContext);
   MultivaluedMap<String,Object> httpResponseHeaders=new WrappedRequestForHttpHeaders(callContext.getResponse(),jaxRsRespHeaders,getLogger());
   return new JaxRsOutputRepresentation(entity,genericReturnType,mediaType,methodAnnotations,mbw,httpResponseHeaders);
 }

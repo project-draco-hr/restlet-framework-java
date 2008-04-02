@@ -1,0 +1,12 @@
+{
+  Constructor<?> constructor=this.constructor;
+  Object instance=WrapperUtil.createInstance(constructor,constructorLeaveEncoded,callContext,entityProviders,logger);
+  ResourceObject rootResourceObject=new ResourceObject(instance,this);
+  try {
+    this.injectHelper.inject(rootResourceObject,callContext,allResolvers,entityProviders);
+  }
+ catch (  InjectException e) {
+    throw new InstantiateException(e);
+  }
+  return rootResourceObject;
+}

@@ -1,0 +1,24 @@
+{
+  List<Field> ifCookieParam=new ArrayList<Field>(1);
+  List<Field> ifHeaderParam=new ArrayList<Field>(1);
+  List<Field> ifMatrixParam=new ArrayList<Field>(1);
+  List<Field> ifPathParam=new ArrayList<Field>(1);
+  List<Field> ifQueryParam=new ArrayList<Field>(1);
+  do {
+    for (    Field field : jaxRsClass.getDeclaredFields()) {
+      field.setAccessible(true);
+      if (field.isAnnotationPresent(PathParam.class))       ifPathParam.add(field);
+ else       if (field.isAnnotationPresent(CookieParam.class))       ifCookieParam.add(field);
+ else       if (field.isAnnotationPresent(HeaderParam.class))       ifHeaderParam.add(field);
+ else       if (field.isAnnotationPresent(MatrixParam.class))       ifMatrixParam.add(field);
+ else       if (field.isAnnotationPresent(QueryParam.class))       ifQueryParam.add(field);
+    }
+    jaxRsClass=jaxRsClass.getSuperclass();
+  }
+ while (jaxRsClass != null);
+  this.injectFieldsCookieParam=ifCookieParam.toArray(EMPTY_FIELD_ARRAY);
+  this.injectFieldsHeaderParam=ifHeaderParam.toArray(EMPTY_FIELD_ARRAY);
+  this.injectFieldsMatrixParam=ifMatrixParam.toArray(EMPTY_FIELD_ARRAY);
+  this.injectFieldsPathParam=ifPathParam.toArray(EMPTY_FIELD_ARRAY);
+  this.injectFieldsQueryParam=ifQueryParam.toArray(EMPTY_FIELD_ARRAY);
+}
