@@ -1,6 +1,14 @@
 {
-  callContext.getResponse().setStatus(Status.SERVER_ERROR_INTERNAL);
-  logger.log(Level.WARNING,logMessage,exception.getCause());
-  exception.printStackTrace();
+  Throwable cause=exception.getCause();
+  if (cause instanceof WebApplicationException) {
+    javax.ws.rs.core.Response jaxRsResp;
+    jaxRsResp=((WebApplicationException)cause).getResponse();
+    jaxRsRouter.jaxRsRespToRestletResp(jaxRsResp,callContext,null);
+  }
+ else {
+    callContext.getResponse().setStatus(Status.SERVER_ERROR_INTERNAL);
+    logger.log(Level.WARNING,logMessage,cause);
+    exception.printStackTrace();
+  }
   throw new RequestHandledException();
 }

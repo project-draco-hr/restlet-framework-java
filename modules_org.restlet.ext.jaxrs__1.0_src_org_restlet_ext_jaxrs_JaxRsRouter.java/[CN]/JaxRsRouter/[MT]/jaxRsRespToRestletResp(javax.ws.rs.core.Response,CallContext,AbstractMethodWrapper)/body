@@ -4,6 +4,8 @@
   Object mediaTypeStr=jaxRsResponse.getMetadata().getFirst(HttpHeaders.CONTENT_TYPE);
   MediaType respMediaType=null;
   if (mediaTypeStr != null)   respMediaType=MediaType.valueOf(mediaTypeStr.toString());
-  restletResponse.setEntity(convertToRepresentation(jaxRsResponse.getEntity(),resourceMethod,callContext,respMediaType,jaxRsResponse.getMetadata()));
+  Object jaxRsEntity=jaxRsResponse.getEntity();
+  Representation repr=convertToRepresentation(jaxRsEntity,jaxRsMethod,callContext,respMediaType,jaxRsResponse.getMetadata());
+  restletResponse.setEntity(repr);
   Util.copyResponseHeaders(jaxRsResponse.getMetadata(),restletResponse,getLogger());
 }
