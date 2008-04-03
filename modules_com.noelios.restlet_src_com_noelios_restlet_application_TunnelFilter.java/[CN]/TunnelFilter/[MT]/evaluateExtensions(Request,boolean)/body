@@ -9,9 +9,18 @@
   float encodingQuality=1;
   StringBuilder cutExts=new StringBuilder();
   int lpsStart=path.lastIndexOf('/') + 1;
-  String[] lpss=path.substring(lpsStart).split("\\.");
-  List<String> lps=new ArrayList<String>(Arrays.asList(lpss));
-  Iterator<String> lpsIter=lps.iterator();
+  String lps=path.substring(lpsStart);
+  String matrixParams="";
+  if (matrixParamsEnabled) {
+    int lpsEnd=lps.indexOf(';');
+    if (lpsEnd >= 0) {
+      matrixParams=lps.substring(lpsEnd);
+      lps=lps.substring(0,lpsEnd);
+    }
+  }
+  String[] lpssa=lps.split("\\.");
+  List<String> lpss=new ArrayList<String>(Arrays.asList(lpssa));
+  Iterator<String> lpsIter=lpss.iterator();
   if (lpsIter.hasNext()) {
     lpsIter.next();
     ClientInfo clientInfo=request.getClientInfo();
@@ -50,7 +59,7 @@
   }
   StringBuilder newPath=new StringBuilder();
   newPath.append(path,0,lpsStart);
-  lpsIter=lps.iterator();
+  lpsIter=lpss.iterator();
   if (lpsIter.hasNext()) {
     String pathPart=lpsIter.next();
     newPath.append(pathPart);
@@ -60,6 +69,7 @@
       newPath.append(ext);
     }
   }
+  newPath.append(matrixParams);
   resourceRef.setPath(newPath.toString());
   String cutExtsStr=null;
   if (cutExts.length() > 1)   cutExtsStr=cutExts.substring(1);
