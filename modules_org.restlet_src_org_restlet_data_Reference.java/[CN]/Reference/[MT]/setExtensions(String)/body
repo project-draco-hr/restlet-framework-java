@@ -1,0 +1,34 @@
+{
+  String lastSegment=getLastSegment();
+  if (lastSegment != null) {
+    int extensionIndex=lastSegment.indexOf('.');
+    int matrixIndex=lastSegment.indexOf(';');
+    StringBuilder sb=new StringBuilder();
+    if (extensionIndex != -1) {
+      sb.append(lastSegment.substring(0,extensionIndex));
+      if ((extensions != null) && (extensions.length() > 0)) {
+        sb.append('.').append(extensions);
+      }
+      if (matrixIndex != -1) {
+        sb.append(lastSegment.substring(matrixIndex));
+      }
+    }
+ else {
+      if ((extensions != null) && (extensions.length() > 0)) {
+        if (matrixIndex != -1) {
+          sb.append(lastSegment.substring(0,matrixIndex)).append('.').append(extensions).append(lastSegment.substring(matrixIndex));
+        }
+ else {
+          sb.append(lastSegment).append('.').append(extensions);
+        }
+      }
+ else {
+        sb.append(lastSegment);
+      }
+    }
+    setLastSegment(sb.toString());
+  }
+ else {
+    setLastSegment('.' + extensions);
+  }
+}

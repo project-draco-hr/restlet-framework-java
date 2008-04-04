@@ -1,0 +1,52 @@
+{
+  TunnelService tunnelService=getTunnelService();
+  boolean queryModified=false;
+  Reference resourceRef=request.getResourceRef();
+  if (resourceRef.hasQuery()) {
+    Form query=resourceRef.getQueryAsForm(null);
+    Method method=request.getMethod();
+    if (tunnelService.isMethodTunnel() && method.equals(Method.POST)) {
+      String methodName=query.getFirstValue(tunnelService.getMethodParameter());
+      if (methodName != null) {
+        request.setMethod(Method.valueOf(methodName));
+        query.removeFirst(tunnelService.getMethodParameter());
+        queryModified=true;
+      }
+    }
+    if (tunnelService.isPreferencesTunnel()) {
+      String charSetParameter=tunnelService.getCharacterSetParameter();
+      String encodingParameter=tunnelService.getEncodingParameter();
+      String languageParameter=tunnelService.getLanguageParameter();
+      String mediaTypeParameter=tunnelService.getMediaTypeParameter();
+      String acceptedCharSet=query.getFirstValue(charSetParameter);
+      String acceptedEncoding=query.getFirstValue(encodingParameter);
+      String acceptedLanguage=query.getFirstValue(languageParameter);
+      String acceptedMediaType=query.getFirstValue(mediaTypeParameter);
+      ClientInfo clientInfo=request.getClientInfo();
+      Metadata metadata=getMetadata(acceptedCharSet);
+      if (metadata instanceof CharacterSet) {
+        updateMetadata(clientInfo,metadata);
+        query.removeFirst(charSetParameter);
+      }
+      metadata=getMetadata(acceptedEncoding);
+      if (metadata instanceof Encoding) {
+        updateMetadata(clientInfo,metadata);
+        query.removeFirst(encodingParameter);
+      }
+      metadata=getMetadata(acceptedLanguage);
+      if (metadata instanceof Language) {
+        updateMetadata(clientInfo,metadata);
+        query.removeFirst(languageParameter);
+      }
+      metadata=getMetadata(acceptedMediaType);
+      if (metadata instanceof MediaType) {
+        updateMetadata(clientInfo,metadata);
+        query.removeFirst(mediaTypeParameter);
+      }
+    }
+    if (queryModified) {
+      request.getResourceRef().setQuery(query.getQueryString(null));
+    }
+  }
+  return queryModified;
+}

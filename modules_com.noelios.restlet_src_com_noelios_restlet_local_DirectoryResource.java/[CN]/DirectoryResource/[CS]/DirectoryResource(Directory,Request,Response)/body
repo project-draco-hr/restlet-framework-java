@@ -2,10 +2,11 @@
   super(directory.getContext(),request,response);
   this.directory=directory;
   this.relativePart=request.getResourceRef().getRemainingPart();
-  if (getApplication() != null && getApplication().getTunnelService().isExtensionTunnel()) {
-    String string=(String)request.getAttributes().get(TunnelService.REF_EXTENSIONS_KEY);
-    if (string != null && string.length() > 0) {
-      this.relativePart+="." + string;
+  if (getApplication() != null && getApplication().getTunnelService().isExtensionsTunnel()) {
+    Reference originalRef=(Reference)request.getAttributes().get(TunnelService.ATTRIBUTE_ORIGINAL_REF);
+    if (originalRef != null) {
+      originalRef.setBaseRef(request.getResourceRef().getBaseRef());
+      this.relativePart=originalRef.getRemainingPart();
     }
   }
   setModifiable(getDirectory().isModifiable());

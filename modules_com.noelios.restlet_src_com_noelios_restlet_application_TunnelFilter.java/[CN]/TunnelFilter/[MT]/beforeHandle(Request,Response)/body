@@ -1,24 +1,15 @@
 {
-  Form query=request.getResourceRef().getQueryAsForm(null);
+  Reference originalRef=new Reference(request.getResourceRef().toString());
   boolean queryModified=false;
-  TunnelService tunnelService=getApplication().getTunnelService();
-  Method method=request.getMethod();
-  if (tunnelService.isMethodTunnel() && method.equals(Method.POST)) {
-    String methodName=query.getFirstValue(tunnelService.getMethodParameter());
-    if (methodName != null) {
-      request.setMethod(Method.valueOf(methodName));
-      query.removeFirst(tunnelService.getMethodParameter());
-      queryModified=true;
-    }
+  boolean extensionsModified=false;
+  if (getTunnelService().isQueryTunnel()) {
+    queryModified=processQuery(request);
   }
-  if (tunnelService.isPreferencesTunnel()) {
-    queryModified=evaluateQueryParameters(request,query,tunnelService);
+  if (getTunnelService().isExtensionsTunnel()) {
+    extensionsModified=processExtensions(request);
   }
-  if (tunnelService.isExtensionTunnel()) {
-    evaluateExtensions(request);
-  }
-  if (queryModified) {
-    request.getResourceRef().setQuery(query.getQueryString(null));
+  if (queryModified || extensionsModified) {
+    request.getAttributes().put(TunnelService.ATTRIBUTE_ORIGINAL_REF,originalRef);
   }
   return CONTINUE;
 }

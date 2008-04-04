@@ -1,7 +1,9 @@
 {
-  assertEquals(expectedCut,request.getResourceRef().toString());
+  Reference resourceRef=request.getResourceRef();
+  assertEquals(expectedCut,resourceRef.toString());
   Map<String,Object> attributes=request.getAttributes();
-  assertEquals(this.lastCreatedReference,attributes.get(REF_ORIGINAL_KEY));
-  assertEquals(expectedCut,attributes.get(REF_CUT_KEY));
-  assertEquals(expectedExtensions,attributes.get(REF_EXTENSIONS_KEY));
+  Reference originalRef=(Reference)attributes.get(ATTRIBUTE_ORIGINAL_REF);
+  assertTrue((originalRef == null) || originalRef.equals(new Reference(this.lastCreatedReference)));
+  assertEquals(expectedCut,resourceRef.toString());
+  assertEquals(expectedExtensions,resourceRef.getExtensions());
 }
