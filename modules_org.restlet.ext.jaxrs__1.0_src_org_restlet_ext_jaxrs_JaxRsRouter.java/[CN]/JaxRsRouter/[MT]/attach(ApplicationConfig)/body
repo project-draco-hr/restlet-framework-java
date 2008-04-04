@@ -2,23 +2,13 @@
   Collection<Class<?>> rrcs=appConfig.getResourceClasses();
   Collection<Class<?>> providerClasses=appConfig.getProviderClasses();
   if (rrcs == null || rrcs.isEmpty())   throw new IllegalArgumentException("The ApplicationConfig must return root resource classes");
+  boolean everythingFine=true;
   for (  Class<?> rrc : rrcs) {
-    try {
-      this.addRootResourceClass(rrc);
-    }
- catch (    MissingAnnotationException e) {
-      getLogger().warning(e.getMessage());
-    }
+    everythingFine&=this.addRootResourceClass(rrc);
   }
   if (providerClasses != null) {
     for (    Class<?> providerClass : providerClasses) {
-      try {
-        this.addProvider(providerClass,false);
-      }
- catch (      InstantiateException ipe) {
-        String msg="The provider " + providerClass.getName() + " could not be instantiated";
-        throw new IllegalArgumentException(msg,ipe);
-      }
+      everythingFine&=this.addProvider(providerClass,false);
     }
   }
 }

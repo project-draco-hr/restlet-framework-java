@@ -8,9 +8,22 @@
   try {
     provider=new Provider<Object>(jaxRsProviderClass);
   }
- catch (  InvocationTargetException e) {
-    throw new InstantiateException("Exception while creating constructor",e);
+ catch (  InvocationTargetException ite) {
+    String msg="ignore provider " + jaxRsProviderClass.getName() + ", because an exception occured while instantiating";
+    getLogger().log(Level.WARNING,msg,ite);
+    return false;
+  }
+catch (  IllegalArgumentException iae) {
+    String msg="ignore provider " + jaxRsProviderClass.getName() + ", because it could not be instantiated";
+    getLogger().log(Level.WARNING,msg,iae);
+    return false;
+  }
+catch (  MissingConstructorException mce) {
+    String msg="ignore provider " + jaxRsProviderClass.getName() + ", because no valid constructor was found";
+    getLogger().warning(msg);
+    return false;
   }
   this.entityProviders.add(provider,defaultProvider);
   if (provider.isContextResolver())   this.contextResolvers.add(provider);
+  return true;
 }
