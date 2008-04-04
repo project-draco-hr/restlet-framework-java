@@ -1,9 +1,13 @@
 {
+  WebApplicationException constructorWae=null;
   try {
     Constructor<?> constr=paramClass.getConstructor(String.class);
     return constr.newInstance(paramValue);
   }
- catch (  Exception e) {
+ catch (  WebApplicationException wae) {
+    constructorWae=wae;
+  }
+catch (  Exception e) {
   }
   Method valueOf;
   try {
@@ -19,19 +23,24 @@ catch (  NoSuchMethodException e) {
     return valueOf.invoke(null,paramValue);
   }
  catch (  IllegalArgumentException e) {
+    if (constructorWae != null)     throw constructorWae;
     throw ConvertParameterException.object(paramClass,paramValue,e);
   }
 catch (  IllegalAccessException e) {
+    if (constructorWae != null)     throw constructorWae;
     throw ConvertParameterException.object(paramClass,paramValue,e);
   }
-catch (  InvocationTargetException e) {
-    if ((paramValue == null || paramValue.length() <= 0) && (e.getCause() instanceof IllegalArgumentException)) {
+catch (  InvocationTargetException ite) {
+    if (constructorWae != null)     throw constructorWae;
+    Throwable cause=ite.getCause();
+    if (cause instanceof WebApplicationException)     throw (WebApplicationException)cause;
+    if ((paramValue == null || paramValue.length() <= 0) && (ite.getCause() instanceof IllegalArgumentException)) {
       if (defaultValue == null)       return null;
  else {
         String dfv=defaultValue.value();
         return convertParamValueFromParam(paramClass,dfv,null);
       }
     }
-    throw ConvertParameterException.object(paramClass,paramValue,e);
+    throw ConvertParameterException.object(paramClass,paramValue,ite);
   }
 }

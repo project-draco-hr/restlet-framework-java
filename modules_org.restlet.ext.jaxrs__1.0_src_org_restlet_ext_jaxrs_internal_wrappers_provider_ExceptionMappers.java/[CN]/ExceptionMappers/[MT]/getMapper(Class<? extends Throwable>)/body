@@ -1,0 +1,9 @@
+{
+  if (causeClass == null)   return SERVER_ERROR_EXC_MAPPER;
+  ExceptionMapper<Throwable> mapper=(ExceptionMapper)this.excMappers.get(causeClass);
+  if (mapper == null) {
+    Class superclass=causeClass.getSuperclass();
+    mapper=getMapper(superclass);
+  }
+  return mapper;
+}

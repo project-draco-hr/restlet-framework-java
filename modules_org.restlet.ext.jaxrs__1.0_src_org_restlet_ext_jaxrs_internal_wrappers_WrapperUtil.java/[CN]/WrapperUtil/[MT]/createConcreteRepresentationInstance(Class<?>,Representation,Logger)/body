@@ -14,7 +14,13 @@ catch (  NoSuchMethodException e) {
   try {
     return constr.newInstance(entity);
   }
- catch (  Exception e) {
+ catch (  IllegalArgumentException e) {
+    throw ConvertRepresentationException.object(representationType,"the message body",e);
+  }
+catch (  InstantiationException e) {
+    throw ConvertRepresentationException.object(representationType,"the message body",e);
+  }
+catch (  IllegalAccessException e) {
     throw ConvertRepresentationException.object(representationType,"the message body",e);
   }
 }

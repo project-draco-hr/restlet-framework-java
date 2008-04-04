@@ -13,7 +13,10 @@
     javax.ws.rs.core.MediaType jaxRsMediaType=Converter.toJaxRsMediaType(mediaType,entity.getCharacterSet());
     return mbr.readFrom((Class)paramType,genericType,jaxRsMediaType,annotations,httpHeaders,entity.getStream());
   }
- catch (  IOException e) {
+ catch (  WebApplicationException wae) {
+    throw wae;
+  }
+catch (  IOException e) {
     throw ConvertRepresentationException.object(paramType,"the message body",e);
   }
  finally {

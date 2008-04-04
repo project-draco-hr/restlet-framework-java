@@ -1,0 +1,22 @@
+{
+  Throwable cause=ite.getCause();
+  ExceptionMapper<Throwable> mapper=getMapper(cause.getClass());
+  if (mapper == null) {
+    String entity="No ExceptionMapper was found, but must be found";
+    return Response.serverError().entity(entity).build();
+  }
+  Response response;
+  try {
+    response=mapper.toResponse(cause);
+  }
+ catch (  RuntimeException e) {
+    String message="The ExceptionMapper throws an Exception";
+    logger.log(Level.WARNING,message,e);
+    return Response.serverError().entity(message).build();
+  }
+  if (response == null) {
+    String entity="The ExceptionMapper returned null";
+    return Response.serverError().entity(entity).build();
+  }
+  return response;
+}
