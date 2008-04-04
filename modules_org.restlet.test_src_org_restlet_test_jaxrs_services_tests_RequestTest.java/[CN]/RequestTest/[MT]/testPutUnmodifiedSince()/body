@@ -1,11 +1,11 @@
 {
   Conditions conditions=new Conditions();
   conditions.setUnmodifiedSince(AFTER);
-  Response response=put("date",conditions);
+  Response response=put("date",null,conditions);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   conditions=new Conditions();
   conditions.setUnmodifiedSince(BEFORE);
-  response=put("date",conditions);
+  response=put("date",null,conditions);
   assertEquals(PREC_FAILED,response.getStatus());
   String respEntity=response.getEntity().getText();
   assertTrue("Entity must contain \"was not modified\"",respEntity.contains("The entity was modified since"));

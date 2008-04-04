@@ -8,18 +8,28 @@
   try {
     provider=new Provider<Object>(jaxRsProviderClass);
   }
- catch (  InvocationTargetException ite) {
-    String msg="ignore provider " + jaxRsProviderClass.getName() + ", because an exception occured while instantiating";
+ catch (  InstantiateException e) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + "Could not instantiate the Provider, class "+ jaxRsProviderClass.getName();
+    getLogger().log(Level.WARNING,msg,e);
+    return false;
+  }
+catch (  IllegalAnnotationException e) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + "Could not instantiate the Provider, class "+ jaxRsProviderClass.getName()+ ", because "+ e.getMessage();
+    getLogger().log(Level.WARNING,msg);
+    return false;
+  }
+catch (  InvocationTargetException ite) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + ", because an exception occured while instantiating";
     getLogger().log(Level.WARNING,msg,ite);
     return false;
   }
 catch (  IllegalArgumentException iae) {
-    String msg="ignore provider " + jaxRsProviderClass.getName() + ", because it could not be instantiated";
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + ", because it could not be instantiated";
     getLogger().log(Level.WARNING,msg,iae);
     return false;
   }
 catch (  MissingConstructorException mce) {
-    String msg="ignore provider " + jaxRsProviderClass.getName() + ", because no valid constructor was found";
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + ", because no valid constructor was found";
     getLogger().warning(msg);
     return false;
   }

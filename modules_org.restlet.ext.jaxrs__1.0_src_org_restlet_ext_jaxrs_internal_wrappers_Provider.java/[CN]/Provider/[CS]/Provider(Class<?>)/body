@@ -2,27 +2,7 @@
   if (jaxRsProviderClass == null)   throw new IllegalArgumentException("The JAX-RS provider class must not be null");
   Util.checkClassConcrete(jaxRsProviderClass,"provider");
   Constructor<?> providerConstructor=WrapperUtil.findJaxRsConstructor(jaxRsProviderClass,"provider");
-  try {
-    this.jaxRsProvider=createInstance(providerConstructor,jaxRsProviderClass);
-  }
- catch (  ConvertRepresentationException e) {
-    throw new IllegalArgumentException("Could not instantiate the Provider, class " + jaxRsProviderClass.getName(),e);
-  }
-catch (  ConvertHeaderParamException e) {
-    throw new IllegalArgumentException("Could not instantiate the Provider, class " + jaxRsProviderClass.getName(),e);
-  }
-catch (  ConvertPathParamException e) {
-    throw new IllegalArgumentException("Could not instantiate the Provider, class " + jaxRsProviderClass.getName(),e);
-  }
-catch (  ConvertMatrixParamException e) {
-    throw new IllegalArgumentException("Could not instantiate the Provider, class " + jaxRsProviderClass.getName(),e);
-  }
-catch (  ConvertQueryParamException e) {
-    throw new IllegalArgumentException("Could not instantiate the Provider, class " + jaxRsProviderClass.getName(),e);
-  }
-catch (  ConvertCookieParamException e) {
-    throw new IllegalArgumentException("Could not instantiate the Provider, class " + jaxRsProviderClass.getName(),e);
-  }
+  this.jaxRsProvider=createInstance(providerConstructor,jaxRsProviderClass);
   boolean isProvider=false;
   if (jaxRsProvider instanceof javax.ws.rs.ext.MessageBodyWriter) {
     this.writer=(javax.ws.rs.ext.MessageBodyWriter<T>)jaxRsProvider;
