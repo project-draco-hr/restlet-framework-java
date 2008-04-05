@@ -1,8 +1,10 @@
 {
   final Pipe pipe=Pipe.open();
+  final Context context=Context.getCurrent();
   Thread writer=new Thread(){
     @Override public void run(){
       try {
+        Context.setCurrent(context);
         WritableByteChannel wbc=pipe.sink();
         representation.write(wbc);
         wbc.close();

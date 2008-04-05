@@ -1,9 +1,11 @@
 {
   final PipedWriter pipedWriter=new PipedWriter();
   final PipedReader pipedReader=new PipedReader(pipedWriter);
+  final Context context=Context.getCurrent();
   Thread writer=new Thread(){
     @Override public void run(){
       try {
+        Context.setCurrent(context);
         representation.write(pipedWriter);
       }
  catch (      IOException ioe) {
