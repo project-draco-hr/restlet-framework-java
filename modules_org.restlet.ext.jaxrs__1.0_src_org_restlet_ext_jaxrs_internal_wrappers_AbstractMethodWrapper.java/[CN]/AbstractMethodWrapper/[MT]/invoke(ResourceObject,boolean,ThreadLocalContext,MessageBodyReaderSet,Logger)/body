@@ -1,0 +1,19 @@
+{
+  Object[] args;
+  Class<?>[] parameterTypes=this.executeMethod.getParameterTypes();
+  if (parameterTypes.length == 0) {
+    args=new Object[0];
+  }
+ else {
+    Type[] genParamTypes=executeMethod.getGenericParameterTypes();
+    Annotation[][] paramAnnos=annotatedMethod.getParameterAnnotations();
+    try {
+      args=WrapperUtil.getParameterValues(parameterTypes,genParamTypes,paramAnnos,allowEntity,false,leaveEncoded,tlContext,mbrs,logger);
+    }
+ catch (    IllegalAnnotationException e) {
+      throw new ImplementationException(e);
+    }
+  }
+  Object jaxRsResourceObj=resourceObject.getJaxRsResourceObject();
+  return executeMethod.invoke(jaxRsResourceObj,args);
+}

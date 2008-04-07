@@ -1,0 +1,18 @@
+{
+  Constructor<?> constructor=this.constructor;
+  Object instance;
+  try {
+    instance=WrapperUtil.createInstance(constructor,false,constructorLeaveEncoded,tlContext,entityProviders,logger);
+  }
+ catch (  IllegalAnnotationException iae) {
+    throw new InstantiateException(iae);
+  }
+  ResourceObject rootResourceObject=new ResourceObject(instance,this);
+  try {
+    this.injectHelper.inject(rootResourceObject,tlContext,allResolvers,entityProviders);
+  }
+ catch (  InjectException e) {
+    throw new InstantiateException(e);
+  }
+  return rootResourceObject;
+}

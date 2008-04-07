@@ -1,0 +1,65 @@
+{
+  CallContext callContext=tlContext.get();
+  Object result;
+  try {
+    result=resourceMethod.invoke(resourceObject,tlContext,this.entityProviders,getLogger());
+  }
+ catch (  WebApplicationException e) {
+    throw e;
+  }
+catch (  InvocationTargetException ite) {
+    throw invocationTargetExecption(ite,resourceMethod);
+  }
+catch (  RuntimeException e) {
+    throw excHandler.runtimeExecption(e,resourceMethod,callContext,"Can not invoke the resource method");
+  }
+catch (  MethodInvokeException e) {
+    throw excHandler.methodInvokeException(e,callContext,"Can not invoke the resource method");
+  }
+catch (  MissingAnnotationException e) {
+    throw excHandler.missingAnnotation(e,callContext,"Can not invoke the " + resourceMethod);
+  }
+catch (  NoMessageBodyReaderException nmbre) {
+    throw excHandler.noMessageBodyReader(callContext,nmbre);
+  }
+catch (  ConvertRepresentationException e) {
+    throw excHandler.convertRepresentationExc(e);
+  }
+catch (  ConvertHeaderParamException e) {
+    throw excHandler.convertHeaderParamExc(e);
+  }
+catch (  ConvertPathParamException e) {
+    throw excHandler.convertPathParamExc(e);
+  }
+catch (  ConvertMatrixParamException e) {
+    throw excHandler.convertMatrixParamExc(e);
+  }
+catch (  ConvertQueryParamException e) {
+    throw excHandler.convertQueryParamExc(e);
+  }
+catch (  ConvertCookieParamException e) {
+    throw excHandler.convertCookieParamExc(e);
+  }
+  Response restletResponse=callContext.getResponse();
+  if (result == null) {
+    restletResponse.setStatus(Status.SUCCESS_NO_CONTENT);
+    restletResponse.setEntity(null);
+    return;
+  }
+ else {
+    restletResponse.setStatus(Status.SUCCESS_OK);
+    if (result instanceof javax.ws.rs.core.Response) {
+      jaxRsRespToRestletResp((javax.ws.rs.core.Response)result,resourceMethod);
+    }
+ else     if (result instanceof javax.ws.rs.core.Response.ResponseBuilder) {
+      String warning="the method " + resourceMethod + " returnef a ResponseBuilder. This is not allowed by default. Call responseBuilder.build() in the resource method";
+      getLogger().warning(warning);
+      javax.ws.rs.core.Response jaxRsResponse=((javax.ws.rs.core.Response.ResponseBuilder)result).build();
+      jaxRsRespToRestletResp(jaxRsResponse,resourceMethod);
+    }
+ else {
+      Representation entity=convertToRepresentation(result,resourceMethod,null,null);
+      restletResponse.setEntity(entity);
+    }
+  }
+}

@@ -2,11 +2,13 @@
   super.handle(request,response);
   ResourceObject resourceObject=null;
   try {
-    CallContext callContext=new CallContext(request,response,this.roleChecker);
+    CallContext callContext;
+    callContext=new CallContext(request,response,this.roleChecker);
+    tlContext.set(callContext);
     try {
       ResObjAndMeth resObjAndMeth;
       try {
-        resObjAndMeth=matchingRequestToResourceMethod(callContext);
+        resObjAndMeth=matchingRequestToResourceMethod();
       }
  catch (      CouldNotFindMethodException e) {
         e.errorRestlet.handle(request,response);
@@ -16,10 +18,10 @@
       callContext.setReadOnly();
       ResourceMethod resourceMethod=resObjAndMeth.resourceMethod;
       resourceObject=resObjAndMeth.resourceObject;
-      invokeMethodAndHandleResult(resourceMethod,resourceObject,callContext);
+      invokeMethodAndHandleResult(resourceMethod,resourceObject);
     }
  catch (    WebApplicationException e) {
-      jaxRsRespToRestletResp(e.getResponse(),callContext,null);
+      jaxRsRespToRestletResp(e.getResponse(),null);
       throw new RequestHandledException();
     }
   }

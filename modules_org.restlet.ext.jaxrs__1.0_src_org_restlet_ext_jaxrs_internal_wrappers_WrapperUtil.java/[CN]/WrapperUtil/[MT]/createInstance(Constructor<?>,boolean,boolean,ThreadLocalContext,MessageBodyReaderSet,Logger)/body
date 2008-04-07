@@ -1,0 +1,21 @@
+{
+  Object[] args;
+  if (constructor.getParameterTypes().length == 0) {
+    args=new Object[0];
+  }
+ else {
+    args=getParameterValues(constructor.getParameterTypes(),constructor.getGenericParameterTypes(),constructor.getParameterAnnotations(),false,onlyContextAnnot,leaveEncoded,tlContext,mbrs,logger);
+  }
+  try {
+    return constructor.newInstance(args);
+  }
+ catch (  IllegalArgumentException e) {
+    throw new InstantiateException("Could not instantiate " + constructor.getDeclaringClass(),e);
+  }
+catch (  InstantiationException e) {
+    throw new InstantiateException("Could not instantiate " + constructor.getDeclaringClass(),e);
+  }
+catch (  IllegalAccessException e) {
+    throw new InstantiateException("Could not instantiate " + constructor.getDeclaringClass(),e);
+  }
+}

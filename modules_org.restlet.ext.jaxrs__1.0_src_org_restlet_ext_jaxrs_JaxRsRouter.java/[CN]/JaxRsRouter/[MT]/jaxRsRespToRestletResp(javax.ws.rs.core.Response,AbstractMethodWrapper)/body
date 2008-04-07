@@ -1,0 +1,11 @@
+{
+  Response restletResponse=tlContext.get().getResponse();
+  restletResponse.setStatus(Status.valueOf(jaxRsResponse.getStatus()));
+  Object mediaTypeStr=jaxRsResponse.getMetadata().getFirst(HttpHeaders.CONTENT_TYPE);
+  MediaType respMediaType=null;
+  if (mediaTypeStr != null)   respMediaType=MediaType.valueOf(mediaTypeStr.toString());
+  Object jaxRsEntity=jaxRsResponse.getEntity();
+  Representation repr=convertToRepresentation(jaxRsEntity,jaxRsMethod,respMediaType,jaxRsResponse.getMetadata());
+  restletResponse.setEntity(repr);
+  Util.copyResponseHeaders(jaxRsResponse.getMetadata(),restletResponse,getLogger());
+}

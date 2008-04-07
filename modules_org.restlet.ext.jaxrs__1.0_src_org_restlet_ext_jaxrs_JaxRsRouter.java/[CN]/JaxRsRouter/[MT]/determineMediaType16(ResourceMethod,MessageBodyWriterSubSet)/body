@@ -1,0 +1,15 @@
+{
+  CallContext callContext=tlContext.get();
+  SortedMetadata<MediaType> accMediaTypes=callContext.getAccMediaTypes();
+  Collection<MediaType> p=resourceMethod.getProducedMimes();
+  if (p.isEmpty()) {
+    p=mbwsForEntityClass.getAllProducibleMediaTypes();
+    if (p.isEmpty())     return Collections.singletonList(MediaType.ALL);
+  }
+  if (accMediaTypes.isEmpty())   accMediaTypes=SortedMetadata.getMediaTypeAll();
+  List<MediaType> pSorted=Util.sortByConcreteness(p);
+  List<MediaType> m=new ArrayList<MediaType>();
+  for (  MediaType prod : pSorted)   for (  MediaType acc : accMediaTypes)   if (prod.isCompatible(acc))   m.add(MediaType.getMostSpecific(prod,acc));
+  if (m.isEmpty())   excHandler.notAcceptableWhileDetermineMediaType(callContext.getRequest(),callContext.getResponse());
+  return m;
+}

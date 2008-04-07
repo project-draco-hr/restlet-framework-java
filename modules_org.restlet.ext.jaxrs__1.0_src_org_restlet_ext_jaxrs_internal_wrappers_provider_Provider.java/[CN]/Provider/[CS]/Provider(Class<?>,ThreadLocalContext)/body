@@ -1,0 +1,26 @@
+{
+  if (jaxRsProviderClass == null)   throw new IllegalArgumentException("The JAX-RS provider class must not be null");
+  Util.checkClassConcrete(jaxRsProviderClass,"provider");
+  Constructor<?> providerConstructor=WrapperUtil.findJaxRsConstructor(jaxRsProviderClass,"provider");
+  this.jaxRsProvider=createInstance(providerConstructor,jaxRsProviderClass,tlContext);
+  boolean isProvider=false;
+  if (jaxRsProvider instanceof javax.ws.rs.ext.MessageBodyWriter) {
+    this.writer=(javax.ws.rs.ext.MessageBodyWriter<T>)jaxRsProvider;
+    isProvider=true;
+  }
+  if (jaxRsProvider instanceof javax.ws.rs.ext.MessageBodyReader) {
+    this.reader=(javax.ws.rs.ext.MessageBodyReader<T>)jaxRsProvider;
+    isProvider=true;
+  }
+  if (jaxRsProvider instanceof javax.ws.rs.ext.ExceptionMapper) {
+    this.excMapper=(javax.ws.rs.ext.ExceptionMapper<T>)jaxRsProvider;
+    isProvider=true;
+  }
+  if (jaxRsProvider instanceof javax.ws.rs.ext.ContextResolver) {
+    this.contextResolver=(javax.ws.rs.ext.ContextResolver<T>)jaxRsProvider;
+    isProvider=true;
+  }
+  if (!isProvider) {
+    throw new IllegalArgumentException("The given JAX-RS Provider is neither a MessageBodyWriter nor a MessageBodyReader nor a ContextResolver");
+  }
+}

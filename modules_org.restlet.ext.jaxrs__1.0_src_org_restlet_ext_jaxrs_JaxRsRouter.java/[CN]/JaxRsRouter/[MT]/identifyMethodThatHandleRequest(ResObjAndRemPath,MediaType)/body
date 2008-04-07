@@ -1,0 +1,45 @@
+{
+  CallContext callContext=tlContext.get();
+  org.restlet.data.Method httpMethod=callContext.getRequest().getMethod();
+  ResourceObject resObj=resObjAndRemPath.resourceObject;
+  RemainingPath u=resObjAndRemPath.u;
+  ResourceClass resourceClass=resObj.getResourceClass();
+  Collection<ResourceMethod> resourceMethods=resourceClass.getMethodsForPath(u);
+  if (resourceMethods.isEmpty())   excHandler.resourceMethodNotFound(resourceClass,u);
+  boolean alsoGet=httpMethod.equals(Method.HEAD);
+  AlgorithmUtil.removeNotSupportedHttpMethod(resourceMethods,httpMethod,alsoGet);
+  if (resourceMethods.isEmpty()) {
+    if (httpMethod.equals(Method.OPTIONS)) {
+      Set<Method> allowedMethods=resourceClass.getAllowedMethods(u);
+      callContext.getResponse().getAllowedMethods().addAll(allowedMethods);
+      throw new RequestHandledException();
+    }
+    excHandler.methodNotAllowed(httpMethod,resourceClass,u);
+  }
+  if (givenMediaType != null) {
+    Iterator<ResourceMethod> methodIter=resourceMethods.iterator();
+    while (methodIter.hasNext()) {
+      ResourceMethod resourceMethod=methodIter.next();
+      if (!resourceMethod.isGivenMediaTypeSupported(givenMediaType))       methodIter.remove();
+    }
+    if (resourceMethods.isEmpty())     excHandler.unsupportedMediaType(httpMethod,resourceClass,u,givenMediaType);
+  }
+  SortedMetadata<MediaType> accMediaTypes=callContext.getAccMediaTypes();
+  Iterator<ResourceMethod> methodIter=resourceMethods.iterator();
+  while (methodIter.hasNext()) {
+    ResourceMethod resourceMethod=methodIter.next();
+    if (!resourceMethod.isAcceptedMediaTypeSupported(accMediaTypes))     methodIter.remove();
+  }
+  if (resourceMethods.isEmpty()) {
+    excHandler.noResourceMethodForAccMediaTypes(httpMethod,resourceClass,u);
+  }
+  ResourceMethod bestResourceMethod=AlgorithmUtil.getBestMethod(resourceMethods,givenMediaType,accMediaTypes,httpMethod);
+  MatchingResult mr=bestResourceMethod.getPathRegExp().match(u);
+  AlgorithmUtil.addPathVarsToMap(mr,callContext);
+  String matchedUriPart=mr.getMatched();
+  if (matchedUriPart.length() > 0) {
+    Object jaxRsResObj=resObj.getJaxRsResourceObject();
+    callContext.addForAncestor(jaxRsResObj,matchedUriPart);
+  }
+  return new ResObjAndMeth(resObj,bestResourceMethod);
+}
