@@ -2,15 +2,7 @@
   Integer keySize=null;
   String sslCipherSuite=getSslCipherSuite();
   if (sslCipherSuite != null) {
-    StringTokenizer st=new StringTokenizer(sslCipherSuite,"_");
-    while (st.hasMoreTokens()) {
-      try {
-        keySize=Integer.valueOf(st.nextToken());
-        break;
-      }
- catch (      NumberFormatException e) {
-      }
-    }
+    keySize=extractKeySize(sslCipherSuite);
   }
   return keySize;
 }
