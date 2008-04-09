@@ -1,7 +1,8 @@
 {
   TunnelService tunnelService=getTunnelService();
   boolean extensionsModified=false;
-  if (tunnelService.isPreferencesTunnel()) {
+  Method method=request.getMethod();
+  if (tunnelService.isPreferencesTunnel() && method.equals(Method.GET)) {
     Reference resourceRef=request.getResourceRef();
     if (resourceRef.hasExtensions()) {
       ClientInfo clientInfo=request.getClientInfo();
