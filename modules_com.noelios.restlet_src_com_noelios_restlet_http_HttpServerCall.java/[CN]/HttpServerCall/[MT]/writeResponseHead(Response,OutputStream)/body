@@ -3,7 +3,12 @@
   headStream.write(' ');
   headStream.write(Integer.toString(getStatusCode()).getBytes());
   headStream.write(' ');
-  headStream.write(getReasonPhrase().getBytes());
+  if (getReasonPhrase() != null) {
+    headStream.write(getReasonPhrase().getBytes());
+  }
+ else {
+    headStream.write(("Status " + getStatusCode()).getBytes());
+  }
   headStream.write(13);
   headStream.write(10);
   getResponseHeaders().set(HttpConstants.HEADER_CONNECTION,"close",isServerKeepAlive());
