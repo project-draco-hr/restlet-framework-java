@@ -1,0 +1,39 @@
+{
+  NodeList childNodes=node.getChildNodes();
+  for (int i=0; i < childNodes.getLength(); i++) {
+    Node childNode=childNodes.item(i);
+    if ("attach".equals(childNode.getNodeName())) {
+      String uriPattern=null;
+      Node item=childNode.getAttributes().getNamedItem("uriPattern");
+      if (item != null) {
+        uriPattern=item.getNodeValue();
+      }
+ else {
+        uriPattern="";
+      }
+      item=childNode.getAttributes().getNamedItem("default");
+      boolean bDefault=getBoolean(item,false);
+      Route route=null;
+      item=childNode.getAttributes().getNamedItem("targetClass");
+      if (item != null) {
+        route=attach(router,item.getNodeValue(),uriPattern,bDefault);
+      }
+ else {
+        item=childNode.getAttributes().getNamedItem("targetDescriptor");
+        if (item != null) {
+          route=attachWithDescriptor(router,item.getNodeValue(),uriPattern,bDefault);
+        }
+ else {
+          getLogger().log(Level.WARNING,"Both targetClass name and targetDescriptor are missing. Couldn't attach a new route.");
+        }
+      }
+      if (route != null) {
+        Template template=route.getTemplate();
+        item=childNode.getAttributes().getNamedItem("matchingMode");
+        template.setMatchingMode(getInt(item,Template.MODE_STARTS_WITH));
+        item=childNode.getAttributes().getNamedItem("defaultVariableType");
+        template.getDefaultVariable().setType(getInt(item,Variable.TYPE_URI_SEGMENT));
+      }
+    }
+  }
+}

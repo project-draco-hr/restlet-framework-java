@@ -1,0 +1,32 @@
+{
+  String authority=getAuthority();
+  if (authority == null) {
+    setAuthority(domain);
+  }
+ else {
+    if (domain == null) {
+      domain="";
+    }
+ else {
+      domain=domain.toLowerCase();
+    }
+    int index1=authority.indexOf('@');
+    int index2=authority.indexOf(':');
+    if (index1 != -1) {
+      if (index2 != -1) {
+        setAuthority(authority.substring(0,index1 + 1) + domain + authority.substring(index2));
+      }
+ else {
+        setAuthority(authority.substring(0,index1 + 1) + domain);
+      }
+    }
+ else {
+      if (index2 != -1) {
+        setAuthority(domain + authority.substring(index2));
+      }
+ else {
+        setAuthority(domain);
+      }
+    }
+  }
+}

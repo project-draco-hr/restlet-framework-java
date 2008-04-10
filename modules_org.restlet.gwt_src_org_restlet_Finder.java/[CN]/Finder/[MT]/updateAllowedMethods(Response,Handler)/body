@@ -1,0 +1,11 @@
+{
+  Set<Method> allowedMethods=response.getAllowedMethods();
+  for (  java.lang.reflect.Method classMethod : target.getClass().getMethods()) {
+    if (classMethod.getName().startsWith("allow") && (classMethod.getParameterTypes().length == 0)) {
+      if ((Boolean)invoke(target,classMethod)) {
+        Method allowedMethod=Method.valueOf(classMethod.getName().substring(5));
+        allowedMethods.add(allowedMethod);
+      }
+    }
+  }
+}

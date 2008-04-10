@@ -1,0 +1,41 @@
+{
+  int result=0;
+  Selector selector=null;
+  SelectionKey selectionKey=null;
+  try {
+    if (bb.hasRemaining()) {
+      result=bb.get();
+    }
+ else     if (!endReached) {
+      int bytesRead=readChannel();
+      if (bytesRead == 0) {
+        selector=SelectorFactory.getSelector();
+        if (selector != null) {
+          selectionKey=selectableChannel.register(selector,SelectionKey.OP_READ);
+          selector.select(10000);
+        }
+        bytesRead=readChannel();
+      }
+ else       if (bytesRead == -1) {
+        endReached=true;
+      }
+      if (bb.remaining() == 0) {
+        result=-1;
+      }
+ else {
+        result=bb.get();
+      }
+    }
+ else {
+      result=-1;
+    }
+  }
+  finally {
+    if (selectionKey != null) {
+      selectionKey.cancel();
+      selector.selectNow();
+      SelectorFactory.returnSelector(selector);
+    }
+  }
+  return result;
+}

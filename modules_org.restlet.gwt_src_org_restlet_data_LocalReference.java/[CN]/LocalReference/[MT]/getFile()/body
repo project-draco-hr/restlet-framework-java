@@ -1,0 +1,14 @@
+{
+  File result=null;
+  if (getSchemeProtocol().equals(Protocol.FILE)) {
+    String hostName=getAuthority();
+    if ((hostName == null) || hostName.equals("") || hostName.equalsIgnoreCase("localhost")) {
+      String filePath=Reference.decode(getPath());
+      result=new File(filePath);
+    }
+ else {
+      throw new RuntimeException("Can't resolve files on remote host machines");
+    }
+  }
+  return result;
+}

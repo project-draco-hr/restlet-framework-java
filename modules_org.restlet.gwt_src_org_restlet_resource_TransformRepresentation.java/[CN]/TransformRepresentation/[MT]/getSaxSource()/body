@@ -1,0 +1,34 @@
+{
+  SAXSource source=null;
+  if (getSourceRepresentation() instanceof XmlRepresentation) {
+    source=((XmlRepresentation)getSourceRepresentation()).getSaxSource();
+  }
+ else   if (getSourceRepresentation() instanceof TransformRepresentation) {
+    TransformRepresentation lastTR=(TransformRepresentation)getSourceRepresentation();
+    TransformRepresentation rootTR=lastTR;
+    XMLFilter lastFilter=lastTR.getXmlFilter();
+    XMLFilter rootFilter=lastFilter;
+    XMLFilter currFilter=null;
+    while (rootTR.getSourceRepresentation() instanceof TransformRepresentation) {
+      rootTR=(TransformRepresentation)rootTR.getSourceRepresentation();
+      currFilter=rootTR.getXmlFilter();
+      rootFilter.setParent(currFilter);
+      rootFilter=currFilter;
+    }
+    InputSource rootSource=null;
+    if (rootTR.getSourceRepresentation() instanceof XmlRepresentation) {
+      rootSource=((XmlRepresentation)rootTR.getSourceRepresentation()).getSaxSource().getInputSource();
+    }
+ else {
+      rootSource=new InputSource(rootTR.getSourceRepresentation().getStream());
+    }
+    source=new SAXSource(lastFilter,rootSource);
+  }
+ else {
+    source=new SAXSource(new InputSource(getSourceRepresentation().getStream()));
+  }
+  if (getSourceRepresentation().getIdentifier() != null) {
+    source.setSystemId(getSourceRepresentation().getIdentifier().getTargetRef().toString());
+  }
+  return source;
+}

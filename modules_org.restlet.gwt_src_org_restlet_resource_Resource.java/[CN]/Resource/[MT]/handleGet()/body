@@ -1,0 +1,75 @@
+{
+  if (!isAvailable()) {
+    getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+  }
+ else {
+    Representation selectedRepresentation=null;
+    List<Variant> variants=getVariants();
+    if ((variants == null) || (variants.isEmpty())) {
+      getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+      getLogger().warning("A resource should normally have at least one variant added by calling getVariants().add() in the constructor. Check your resource \"" + getRequest().getResourceRef() + "\".");
+    }
+ else     if (isNegotiateContent()) {
+      Variant preferredVariant=getPreferredVariant();
+      if (preferredVariant == null) {
+        getResponse().setStatus(Status.CLIENT_ERROR_NOT_ACCEPTABLE);
+        ReferenceList refs=new ReferenceList(variants.size());
+        for (        Variant variant : variants) {
+          if (variant.getIdentifier() != null) {
+            refs.add(variant.getIdentifier());
+          }
+        }
+        getResponse().setEntity(refs.getTextRepresentation());
+      }
+ else {
+        getResponse().getDimensions().clear();
+        getResponse().getDimensions().add(Dimension.CHARACTER_SET);
+        getResponse().getDimensions().add(Dimension.ENCODING);
+        getResponse().getDimensions().add(Dimension.LANGUAGE);
+        getResponse().getDimensions().add(Dimension.MEDIA_TYPE);
+        getResponse().setEntity(getRepresentation(preferredVariant));
+      }
+      selectedRepresentation=getResponse().getEntity();
+    }
+ else {
+      if (variants.size() == 1) {
+        getResponse().setEntity(getRepresentation(variants.get(0)));
+        selectedRepresentation=getResponse().getEntity();
+      }
+ else {
+        ReferenceList variantRefs=new ReferenceList();
+        for (        Variant variant : variants) {
+          if (variant.getIdentifier() != null) {
+            variantRefs.add(variant.getIdentifier());
+          }
+ else {
+            getLogger().warning("A resource with multiple variants should provide an identifier for each variant when content negotiation is turned off");
+          }
+        }
+        if (variantRefs.size() > 0) {
+          getResponse().setStatus(Status.REDIRECTION_MULTIPLE_CHOICES);
+          getResponse().setEntity(variantRefs.getTextRepresentation());
+        }
+ else {
+          getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+        }
+      }
+    }
+    if (selectedRepresentation == null) {
+      if ((getResponse().getStatus() == null) || getResponse().getStatus().isSuccess()) {
+        getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+      }
+ else {
+      }
+    }
+ else {
+      if (getRequest().getConditions().hasSome()) {
+        Status status=getRequest().getConditions().getStatus(getRequest().getMethod(),selectedRepresentation);
+        if (status != null) {
+          getResponse().setStatus(status);
+          getResponse().setEntity(null);
+        }
+      }
+    }
+  }
+}

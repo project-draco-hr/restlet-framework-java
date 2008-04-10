@@ -1,0 +1,20 @@
+{
+  if (isDataFormat()) {
+    state=SEEN_ELEMENT;
+    if (depth > 0) {
+      characters(false,"\n");
+    }
+    doIndent();
+  }
+  nsSupport.pushContext();
+  write('<');
+  writeName(uri,localName,qName,true);
+  writeAttributes(atts);
+  if (elementLevel == 1) {
+    forceNSDecls();
+  }
+  writeNSDecls();
+  write("/>");
+  super.startElement(uri,localName,qName,atts);
+  super.endElement(uri,localName,qName);
+}
