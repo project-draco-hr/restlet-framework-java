@@ -2,13 +2,13 @@
   CallContext callContext=tlContext.get();
   Object result;
   try {
-    result=resourceMethod.invoke(resourceObject,tlContext,this.entityProviders,getLogger());
+    result=resourceMethod.invoke(resourceObject,tlContext,this.entityProviders,allResolvers,getLogger());
   }
  catch (  WebApplicationException e) {
     throw e;
   }
 catch (  InvocationTargetException ite) {
-    throw invocationTargetExecption(ite,resourceMethod);
+    throw handleInvocationTargetExc(ite);
   }
 catch (  RuntimeException e) {
     throw excHandler.runtimeExecption(e,resourceMethod,callContext,"Can not invoke the resource method");
@@ -58,8 +58,8 @@ catch (  ConvertCookieParamException e) {
       jaxRsRespToRestletResp(jaxRsResponse,resourceMethod);
     }
  else {
-      Representation entity=convertToRepresentation(result,resourceMethod,null,null);
-      restletResponse.setEntity(entity);
+      SortedMetadata<MediaType> accMediaTypes=tlContext.get().getAccMediaTypes();
+      restletResponse.setEntity(convertToRepresentation(result,resourceMethod,null,null,accMediaTypes));
     }
   }
 }

@@ -1,4 +1,13 @@
 {
   String entity="Could not convert:\n" + exception.getClass().getName() + ": "+ exception.getMessage();
-  return Response.status(STATUS).entity(entity).build();
+  ResponseBuilder rb=Response.status(STATUS);
+  List<MediaType> accMediaTypes=httpHeaders.getAcceptableMediaTypes();
+  if (accMediaTypes.contains(MediaType.TEXT_HTML_TYPE)) {
+    rb.type(MediaType.TEXT_HTML_TYPE);
+    entity="<html><head><title>invalid argument</title></head>" + "<boy><h1>Sorry</h1><p>" + entity + "</p></body></html>";
+  }
+ else {
+    rb.type(MediaType.TEXT_PLAIN_TYPE);
+  }
+  return rb.entity(entity).build();
 }

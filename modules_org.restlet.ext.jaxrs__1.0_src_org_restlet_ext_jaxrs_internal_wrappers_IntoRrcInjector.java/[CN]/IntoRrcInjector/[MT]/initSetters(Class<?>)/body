@@ -1,0 +1,23 @@
+{
+  List<Method> cookieParmSetters=new ArrayList<Method>(1);
+  List<Method> headerParmSetters=new ArrayList<Method>(1);
+  List<Method> matrixParmSetters=new ArrayList<Method>(1);
+  List<Method> pathParamSetters=new ArrayList<Method>(1);
+  List<Method> queryParamSetters=new ArrayList<Method>(1);
+  do {
+    for (    Method method : jaxRsClass.getDeclaredMethods()) {
+      if (isBeanSetter(method,PathParam.class))       pathParamSetters.add(method);
+ else       if (isBeanSetter(method,CookieParam.class))       cookieParmSetters.add(method);
+ else       if (isBeanSetter(method,HeaderParam.class))       headerParmSetters.add(method);
+ else       if (isBeanSetter(method,MatrixParam.class))       matrixParmSetters.add(method);
+ else       if (isBeanSetter(method,QueryParam.class))       queryParamSetters.add(method);
+    }
+    jaxRsClass=jaxRsClass.getSuperclass();
+  }
+ while (jaxRsClass != null);
+  this.cookieParamSetters=cookieParmSetters.toArray(EMPTY_METHOD_ARRAY);
+  this.headerParamSetters=headerParmSetters.toArray(EMPTY_METHOD_ARRAY);
+  this.matrixParamSetters=matrixParmSetters.toArray(EMPTY_METHOD_ARRAY);
+  this.pathParamSetters=pathParamSetters.toArray(EMPTY_METHOD_ARRAY);
+  this.queryParamSetters=queryParamSetters.toArray(EMPTY_METHOD_ARRAY);
+}

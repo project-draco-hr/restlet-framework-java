@@ -1,0 +1,37 @@
+{
+  DefaultValue defaultValue=null;
+  for (  Annotation annot : paramAnnotations) {
+    Class<? extends Annotation> annotationType=annot.annotationType();
+    if (annotationType.equals(DefaultValue.class))     defaultValue=(DefaultValue)annot;
+ else     if (!leaveEncoded && annotationType.equals(Encoded.class))     leaveEncoded=true;
+  }
+  for (  Annotation annotation : paramAnnotations) {
+    Class<? extends Annotation> annoType=annotation.annotationType();
+    if (annoType.equals(Context.class)) {
+      if (paramClass.equals(MessageBodyWorkers.class))       return mbWorkers;
+      if (paramClass.equals(ContextResolver.class))       return getContextResolver(paramGenericType,allResolvers);
+      return tlContext;
+    }
+    if (annoType.equals(HeaderParam.class)) {
+      if (onlyContextAnnot)       throw new IllegalAnnotationException(annotation);
+      return getHeaderParamValue(paramClass,paramGenericType,(HeaderParam)annotation,defaultValue,tlContext.get());
+    }
+    if (annoType.equals(PathParam.class)) {
+      if (onlyContextAnnot)       throw new IllegalAnnotationException(annotation);
+      return getPathParamValue(paramClass,paramGenericType,(PathParam)annotation,leaveEncoded,defaultValue,tlContext.get());
+    }
+    if (annoType.equals(MatrixParam.class)) {
+      if (onlyContextAnnot)       throw new IllegalAnnotationException(annotation);
+      return getMatrixParamValue(paramClass,paramGenericType,(MatrixParam)annotation,leaveEncoded,defaultValue,tlContext.get());
+    }
+    if (annoType.equals(QueryParam.class)) {
+      if (onlyContextAnnot)       throw new IllegalAnnotationException(annotation);
+      return getQueryParamValue(paramClass,paramGenericType,(QueryParam)annotation,leaveEncoded,defaultValue,tlContext.get(),logger);
+    }
+    if (annoType.equals(CookieParam.class)) {
+      if (onlyContextAnnot)       throw new IllegalAnnotationException(annotation);
+      return getCookieParamValue(paramClass,paramGenericType,(CookieParam)annotation,defaultValue,tlContext.get());
+    }
+  }
+  throw new MissingAnnotationException("The " + indexForExcMessages + ". parameter requires one of the following annotations: "+ VALID_ANNOTATIONS);
+}

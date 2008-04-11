@@ -1,0 +1,22 @@
+{
+  sysout("start accMediaType=" + getAccMediaType());
+  boolean counterAtStart;
+synchronized (counterSync) {
+    counterAtStart=marker;
+    marker=!marker;
+  }
+  do {
+    TestUtils.sleep();
+  }
+ while (counterAtStart == marker);
+  MediaType accMediaType=getAccMediaType();
+  sysout("middle accMediaType=" + accMediaType);
+synchronized (counterSync) {
+    marker=!marker;
+  }
+  ResponseBuilder rb=Response.serverError();
+  rb.type(accMediaType);
+  rb.entity("Database access error");
+  sysout("end accMediaType=" + accMediaType);
+  return rb.build();
+}

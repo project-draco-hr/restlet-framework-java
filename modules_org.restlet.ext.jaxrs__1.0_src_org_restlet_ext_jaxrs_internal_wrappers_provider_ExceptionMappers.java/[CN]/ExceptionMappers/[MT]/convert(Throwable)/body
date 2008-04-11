@@ -1,0 +1,22 @@
+{
+  ExceptionMapper<Throwable> mapper=getMapper(cause.getClass());
+  if (mapper == null) {
+    String entity="No ExceptionMapper was found, but must be found";
+    return Response.serverError().entity(entity).type(MediaType.TEXT_PLAIN_TYPE).build();
+  }
+  Response response;
+  try {
+    response=mapper.toResponse(cause);
+  }
+ catch (  RuntimeException e) {
+    String message="The ExceptionMapper throws an Exception";
+    localLogger.log(Level.WARNING,message,e);
+    return Response.serverError().entity(message).build();
+  }
+  if (response == null) {
+    String message="The ExceptionMapper returned null";
+    localLogger.log(Level.WARNING,message);
+    return Response.serverError().entity(message).build();
+  }
+  return response;
+}

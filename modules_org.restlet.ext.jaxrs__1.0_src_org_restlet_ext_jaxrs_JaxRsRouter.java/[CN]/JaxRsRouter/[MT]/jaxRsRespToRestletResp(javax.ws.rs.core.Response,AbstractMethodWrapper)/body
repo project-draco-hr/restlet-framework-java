@@ -5,7 +5,9 @@
   MediaType respMediaType=null;
   if (mediaTypeStr != null)   respMediaType=MediaType.valueOf(mediaTypeStr.toString());
   Object jaxRsEntity=jaxRsResponse.getEntity();
-  Representation repr=convertToRepresentation(jaxRsEntity,jaxRsMethod,respMediaType,jaxRsResponse.getMetadata());
-  restletResponse.setEntity(repr);
+  SortedMetadata<MediaType> accMediaType;
+  if (respMediaType != null)   accMediaType=SortedMetadata.get(respMediaType);
+ else   accMediaType=tlContext.get().getAccMediaTypes();
+  restletResponse.setEntity(convertToRepresentation(jaxRsEntity,jaxRsMethod,respMediaType,jaxRsResponse.getMetadata(),accMediaType));
   Util.copyResponseHeaders(jaxRsResponse.getMetadata(),restletResponse,getLogger());
 }

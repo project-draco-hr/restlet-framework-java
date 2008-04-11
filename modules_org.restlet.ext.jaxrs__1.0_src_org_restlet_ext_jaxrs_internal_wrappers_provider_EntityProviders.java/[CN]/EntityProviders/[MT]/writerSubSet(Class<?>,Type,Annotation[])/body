@@ -1,15 +1,7 @@
 {
   List<MessageBodyWriter<?>> mbws=new ArrayList<MessageBodyWriter<?>>();
   for (  MessageBodyWriter mbw : this.messageBodyWriters) {
-    try {
-      if (mbw.isWriteable(entityClass,genericType,annotations))       mbws.add(mbw);
-    }
- catch (    NullPointerException e) {
-      if (genericType != null && annotations != null)       throw e;
-    }
-catch (    IllegalArgumentException e) {
-      if (genericType != null && annotations != null)       throw e;
-    }
+    if (isWriteable(mbw,entityClass,genericType,annotations))     mbws.add(mbw);
   }
   return new MessageBodyWriterSubSet(mbws);
 }

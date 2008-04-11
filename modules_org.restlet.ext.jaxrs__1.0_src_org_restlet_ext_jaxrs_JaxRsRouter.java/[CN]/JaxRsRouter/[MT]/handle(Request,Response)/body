@@ -10,8 +10,8 @@
       try {
         resObjAndMeth=matchingRequestToResourceMethod();
       }
- catch (      CouldNotFindMethodException e) {
-        e.errorRestlet.handle(request,response);
+ catch (      CouldNotFindResMethodException e) {
+        e.getErrorRestlet().handle(request,response);
         response.setEntity(new StringRepresentation(e.getMessage(),MediaType.TEXT_PLAIN,Language.ENGLISH));
         return;
       }
@@ -22,7 +22,7 @@
     }
  catch (    WebApplicationException e) {
       jaxRsRespToRestletResp(e.getResponse(),null);
-      throw new RequestHandledException();
+      return;
     }
   }
  catch (  RequestHandledException e) {

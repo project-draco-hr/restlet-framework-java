@@ -2,7 +2,7 @@
   Collection<MediaType> restletMediaTypes=Collections.singleton(Converter.toRestletMediaType(mediaType));
   List<MessageBodyWriter> mbws=(List)this.messageBodyWriters;
   for (  MessageBodyWriter<T> mbw : mbws) {
-    if (mbw.supportAtLeastOne(restletMediaTypes))     if (mbw.isWriteable(type,genericType,annotations))     return mbw.getJaxRsWriter();
+    if (mbw.supportAtLeastOne(restletMediaTypes))     if (isWriteable(mbw,type,genericType,annotations))     return mbw.getJaxRsWriter();
   }
   return null;
 }

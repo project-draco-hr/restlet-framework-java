@@ -5,7 +5,7 @@
   ResourceObject o;
   CallContext callContext=tlContext.get();
   try {
-    o=rrc.createInstance(tlContext,contextResolvers,this.entityProviders,getLogger());
+    o=rrc.createInstance(tlContext,entityProviders,allResolvers,getLogger());
   }
  catch (  WebApplicationException e) {
     throw e;
@@ -23,7 +23,7 @@ catch (  InstantiateException e) {
     throw excHandler.instantiateExecption(e,callContext,"Could not create new instance of root resource class");
   }
 catch (  InvocationTargetException e) {
-    throw invocationTargetExecption(e,null);
+    throw handleInvocationTargetExc(e);
   }
 catch (  ConvertRepresentationException e) {
     throw excHandler.convertRepresentationExc(e);
@@ -59,10 +59,10 @@ catch (  ConvertCookieParamException e) {
  else       if (methodOrLocator instanceof SubResourceLocator)       eWithMethod.add(methodOrLocator);
     }
     if (eWithMethod.isEmpty())     excHandler.resourceNotFound(o,u);
-    ResourceMethodOrLocator firstMeth=AlgorithmUtil.getFirstMethOrLocByNumberOfLiteralCharactersAndByNumberOfCapturingGroups(eWithMethod);
+    ResourceMethodOrLocator firstMeth=getFirstMethOrLocByNumberOfLiteralCharactersAndByNumberOfCapturingGroups(eWithMethod);
     rMatch=firstMeth.getPathRegExp();
     MatchingResult matchingResult=rMatch.match(u);
-    AlgorithmUtil.addPathVarsToMap(matchingResult,callContext);
+    addPathVarsToMap(matchingResult,callContext);
     if (firstMeth instanceof ResourceMethod)     return new ResObjAndRemPath(o,u);
     String matchedUriPart=matchingResult.getMatched();
     Object jaxRsResObj2=o.getJaxRsResourceObject();
@@ -70,7 +70,7 @@ catch (  ConvertCookieParamException e) {
     u=matchingResult.getFinalCapturingGroup();
     SubResourceLocator subResourceLocator=(SubResourceLocator)firstMeth;
     try {
-      o=subResourceLocator.createSubResource(o,tlContext,this.entityProviders,wrapperFactory,getLogger());
+      o=subResourceLocator.createSubResource(o,tlContext,this.entityProviders,wrapperFactory,allResolvers,getLogger());
     }
  catch (    WebApplicationException e) {
       throw e;
@@ -85,7 +85,7 @@ catch (    InstantiateException e) {
       throw excHandler.instantiateExecption(e,callContext,"Could not create new instance of resource class");
     }
 catch (    InvocationTargetException e) {
-      throw invocationTargetExecption(e,subResourceLocator);
+      throw handleInvocationTargetExc(e);
     }
 catch (    NoMessageBodyReaderException nmbre) {
       throw excHandler.noMessageBodyReader(callContext,nmbre);

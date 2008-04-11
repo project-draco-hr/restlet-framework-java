@@ -1,0 +1,24 @@
+{
+  if (entity instanceof Representation)   return (Representation)entity;
+  if (entity == null)   return null;
+  Class<? extends Object> entityClass=entity.getClass();
+  Type genericReturnType=null;
+  Annotation[] methodAnnotations=null;
+  if (resourceMethod != null) {
+    genericReturnType=resourceMethod.getGenericReturnType();
+    methodAnnotations=resourceMethod.getAnnotations();
+  }
+  MessageBodyWriterSubSet mbws=entityProviders.writerSubSet(entityClass,genericReturnType,methodAnnotations);
+  List<MediaType> respMediaTypes;
+  if (responseMediaType != null)   respMediaTypes=Collections.singletonList(responseMediaType);
+ else   if (resourceMethod instanceof ResourceMethod)   respMediaTypes=determineMediaType16((ResourceMethod)resourceMethod,mbws);
+ else   respMediaTypes=Collections.singletonList(MediaType.TEXT_PLAIN);
+  MessageBodyWriter<?> mbw=mbws.getBestWriter(respMediaTypes,accMediaTypes);
+  Response response=tlContext.get().getResponse();
+  if (mbw == null)   excHandler.noMessageBodyWriter(response,accMediaTypes,entityClass);
+  MediaType mediaType;
+  if (responseMediaType != null)   mediaType=responseMediaType;
+ else   mediaType=determineMediaType79(respMediaTypes);
+  MultivaluedMap<String,Object> httpResponseHeaders=new WrappedRequestForHttpHeaders(response,jaxRsRespHeaders,getLogger());
+  return new JaxRsOutputRepresentation(entity,genericReturnType,mediaType,methodAnnotations,mbw,httpResponseHeaders);
+}

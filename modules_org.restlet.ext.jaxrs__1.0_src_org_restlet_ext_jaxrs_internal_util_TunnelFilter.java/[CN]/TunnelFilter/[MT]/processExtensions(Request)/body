@@ -1,0 +1,55 @@
+{
+  TunnelService tunnelService=getTunnelService();
+  boolean extensionsModified=false;
+  if (tunnelService.isPreferencesTunnel()) {
+    Reference resourceRef=request.getResourceRef();
+    if (resourceRef.hasExtensions()) {
+      StringBuilder cutExts=new StringBuilder();
+      ClientInfo clientInfo=request.getClientInfo();
+      boolean encodingFound=false;
+      boolean characterSetFound=false;
+      boolean mediaTypeFound=false;
+      boolean languageFound=false;
+      String[] extensions=resourceRef.getExtensionsAsArray();
+      StringBuilder sb=new StringBuilder();
+      boolean extensionAdded=false;
+      Metadata metadata=null;
+      for (int i=extensions.length - 1; i >= 0; i--) {
+        metadata=getMetadata(extensions[i]);
+        if (!characterSetFound && (metadata instanceof CharacterSet)) {
+          updateMetadata(clientInfo,metadata);
+          characterSetFound=true;
+          cutExts.append('.').append(extensions[i]);
+        }
+ else         if (!encodingFound && (metadata instanceof Encoding)) {
+          updateMetadata(clientInfo,metadata);
+          encodingFound=true;
+          cutExts.append('.').append(extensions[i]);
+        }
+ else         if (!languageFound && (metadata instanceof Language)) {
+          updateMetadata(clientInfo,metadata);
+          languageFound=true;
+          cutExts.append('.').append(extensions[i]);
+        }
+ else         if (!mediaTypeFound && (metadata instanceof MediaType)) {
+          updateMetadata(clientInfo,metadata);
+          mediaTypeFound=true;
+          cutExts.append('.').append(extensions[i]);
+        }
+ else {
+          if (extensionAdded) {
+            sb.insert(0,'.');
+          }
+          sb.insert(0,extensions[i]);
+          extensionAdded=true;
+        }
+      }
+      if (characterSetFound || encodingFound || languageFound|| mediaTypeFound) {
+        resourceRef.setExtensions(sb.toString());
+        extensionsModified=true;
+        request.getAttributes().put(ATTRIBUTE_CUT_EXTENSIONS,cutExts.toString());
+      }
+    }
+  }
+  return extensionsModified;
+}
