@@ -1,0 +1,20 @@
+{
+  GWT.log("Restlet module loaded.",null);
+  final Button button=new Button("Restlet, Fetch!");
+  final Label label=new Label();
+  button.addClickListener(new ClickListener(){
+    public void onClick(    Widget sender){
+      Client client=new Client(Protocol.HTTP);
+      Response response=client.get("/demo/hello.txt");
+      try {
+        label.setText(response.getEntity().getText());
+      }
+ catch (      IOException ioException) {
+        GWT.log("Restlet I/O failed",ioException);
+      }
+    }
+  }
+);
+  RootPanel.get("slot1").add(button);
+  RootPanel.get("slot2").add(label);
+}
