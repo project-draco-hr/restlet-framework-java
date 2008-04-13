@@ -1,6 +1,11 @@
 {
-  if (directoryRedirection) {
-    getResponse().redirectPermanent(getRequest().getResourceRef().getIdentifier() + "/");
+  if (directoryRedirection && !targetIndex) {
+    if (originalRef != null) {
+      getResponse().redirectPermanent(originalRef.getIdentifier() + "/");
+    }
+ else {
+      getResponse().redirectPermanent(getRequest().getResourceRef().getIdentifier() + "/");
+    }
   }
  else {
     super.handleGet();

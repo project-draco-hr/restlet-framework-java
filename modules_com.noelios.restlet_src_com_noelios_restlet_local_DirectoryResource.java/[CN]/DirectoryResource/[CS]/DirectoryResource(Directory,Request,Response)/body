@@ -2,14 +2,14 @@
   super(directory.getContext(),request,response);
   this.directory=directory;
   this.relativePart=request.getResourceRef().getRemainingPart();
+  setModifiable(this.directory.isModifiable());
   if (getApplication() != null && getApplication().getTunnelService().isExtensionsTunnel()) {
-    Reference originalRef=(Reference)request.getAttributes().get(TunnelService.ATTRIBUTE_ORIGINAL_REF);
+    originalRef=(Reference)request.getAttributes().get(TunnelService.ATTRIBUTE_ORIGINAL_REF);
     if (originalRef != null) {
       originalRef.setBaseRef(request.getResourceRef().getBaseRef());
       this.relativePart=originalRef.getRemainingPart();
     }
   }
-  setModifiable(getDirectory().isModifiable());
   if (this.relativePart.startsWith("/")) {
     this.relativePart=this.relativePart.substring(1);
   }
@@ -78,6 +78,13 @@
           this.targetIndex=true;
         }
       }
+    }
+  }
+  if (!targetDirectory && !targetFile && originalRef != null) {
+    this.relativePart=request.getResourceRef().getRemainingPart();
+    this.targetUri=new Reference(directory.getRootRef().toString() + this.relativePart).normalize().toString(false,false);
+    if (!this.targetUri.startsWith(directory.getRootRef().toString())) {
+      this.targetUri=directory.getRootRef().toString();
     }
   }
   if (!this.targetDirectory) {

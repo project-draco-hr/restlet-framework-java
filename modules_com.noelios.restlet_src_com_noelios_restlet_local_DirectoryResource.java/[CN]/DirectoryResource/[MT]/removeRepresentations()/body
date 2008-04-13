@@ -1,6 +1,11 @@
 {
   if (directoryRedirection && !targetIndex) {
-    getResponse().redirectSeeOther(getRequest().getResourceRef().getIdentifier() + "/");
+    if (originalRef != null) {
+      getResponse().redirectSeeOther(originalRef.getIdentifier() + "/");
+    }
+ else {
+      getResponse().redirectSeeOther(getRequest().getResourceRef().getIdentifier() + "/");
+    }
   }
  else {
     Request contextRequest=new Request(Method.DELETE,this.targetUri);
