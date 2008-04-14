@@ -2,20 +2,19 @@
   if (isConfidential()) {
     return new WritableByteChannel(){
       public void close() throws IOException {
-        getSocketChannel().close();
       }
       public boolean isOpen(){
         return getSocketChannel().isOpen();
       }
       public int write(      ByteBuffer src) throws IOException {
         int nWrite=src.limit();
-        SSLOutputWriter.flushChannel(socketChannel,src);
+        SSLOutputWriter.flushChannel(getSocketChannel(),src);
         return nWrite;
       }
     }
 ;
   }
  else {
-    return this.socketChannel;
+    return getSocketChannel();
   }
 }

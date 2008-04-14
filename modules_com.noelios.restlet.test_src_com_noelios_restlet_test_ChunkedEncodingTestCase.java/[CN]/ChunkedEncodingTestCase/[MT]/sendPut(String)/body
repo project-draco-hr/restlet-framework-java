@@ -1,9 +1,14 @@
 {
   Request request=new Request(Method.PUT,uri,createTestXml());
   Response r=new Client(Protocol.HTTP).handle(request);
-  if (checkedForChunkedResponse) {
-    checkForChunkedHeader(r);
+  try {
+    if (checkedForChunkedResponse) {
+      checkForChunkedHeader(r);
+    }
+    assertEquals(r.getStatus().getDescription(),Status.SUCCESS_OK,r.getStatus());
+    assertXML(r.getEntityAsDom());
   }
-  assertEquals(r.getStatus().getDescription(),Status.SUCCESS_OK,r.getStatus());
-  assertXML(r.getEntityAsDom());
+  finally {
+    r.release();
+  }
 }

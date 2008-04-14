@@ -1,6 +1,11 @@
 {
   Request request=new Request(Method.GET,uri);
   Response r=new Client(Protocol.HTTP).handle(request);
-  assertEquals(r.getStatus().getDescription(),Status.SUCCESS_OK,r.getStatus());
-  assertXML(r.getEntityAsDom());
+  try {
+    assertEquals(r.getStatus().getDescription(),Status.SUCCESS_OK,r.getStatus());
+    assertXML(r.getEntityAsDom());
+  }
+  finally {
+    r.release();
+  }
 }
