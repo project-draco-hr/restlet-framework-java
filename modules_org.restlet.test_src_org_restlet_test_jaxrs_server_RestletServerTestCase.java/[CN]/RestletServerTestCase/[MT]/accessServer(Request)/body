@@ -4,7 +4,7 @@
   Restlet connector=getClientConnector();
   if (shouldAccessWithoutTcp()) {
     String hostDomain=request.getResourceRef().getHostDomain();
-    Util.getHttpHeaders(request).add("host",hostDomain);
+    getHttpHeaders(request).add("host",hostDomain);
   }
   Response response=connector.handle(request);
   if (!useTcp && request.getMethod().equals(Method.HEAD)) {
@@ -18,17 +18,17 @@
       @Override public InputStream getStream() throws IOException {
         return new ByteArrayInputStream(new byte[0]);
       }
+      @Override public String getText(){
+        return null;
+      }
+      @Override public boolean isAvailable(){
+        return false;
+      }
       @Override public void write(      OutputStream outputStream) throws IOException {
       }
       @Override public void write(      WritableByteChannel writableChannel) throws IOException {
       }
       @Override public void write(      Writer writer) throws IOException {
-      }
-      @Override public boolean isAvailable(){
-        return false;
-      }
-      @Override public String getText(){
-        return null;
       }
     }
 );
