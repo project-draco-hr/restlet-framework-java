@@ -1,0 +1,53 @@
+{
+  writer.startElement(namespace,"feed");
+  if (getAuthors() != null) {
+    for (    Person person : getAuthors()) {
+      person.writeElement(writer,"author",namespace);
+    }
+  }
+  if (getCategories() != null) {
+    for (    Category category : getCategories()) {
+      category.writeElement(writer,namespace);
+    }
+  }
+  if (getContributors() != null) {
+    for (    Person person : getContributors()) {
+      person.writeElement(writer,"contributor",namespace);
+    }
+  }
+  if (getEntries() != null) {
+    for (    Entry entry : getEntries()) {
+      entry.writeElement(writer,namespace);
+    }
+  }
+  if (getGenerator() != null) {
+    getGenerator().writeElement(writer,namespace);
+  }
+  if (getIcon() != null) {
+    writer.dataElement(namespace,"icon",getIcon().toString());
+  }
+  if (getId() != null) {
+    writer.dataElement(namespace,"id",null,new AttributesImpl(),getId());
+  }
+  if (getLinks() != null) {
+    for (    Link link : getLinks()) {
+      link.writeElement(writer,namespace);
+    }
+  }
+  if (getLogo() != null && getLogo().toString() != null) {
+    writer.dataElement(namespace,"logo",getLogo().toString());
+  }
+  if (getRights() != null) {
+    getRights().writeElement(writer,namespace,"rights");
+  }
+  if (getSubtitle() != null) {
+    getSubtitle().writeElement(writer,namespace,"subtitle");
+  }
+  if (getTitle() != null) {
+    getTitle().writeElement(writer,namespace,"title");
+  }
+  if (getUpdated() != null) {
+    Text.writeElement(writer,getUpdated(),namespace,"updated");
+  }
+  writer.endElement(namespace,"feed");
+}

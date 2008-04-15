@@ -3,8 +3,11 @@
     writer.setDataFormat(true);
     writer.setIndentStep(3);
     writer.startDocument();
-    writer.startElement(NAMESPACE,"service");
-    writer.endElement(NAMESPACE,"service");
+    writer.startElement(APP_NAMESPACE,"service");
+    for (    Workspace workspace : getWorkspaces()) {
+      workspace.writeElement(writer,APP_NAMESPACE);
+    }
+    writer.endElement(APP_NAMESPACE,"service");
     writer.endDocument();
   }
  catch (  SAXException se) {
