@@ -1,7 +1,8 @@
 {
   super(context,request,response);
-  String mailboxId=Reference.decode((String)request.getAttributes().get("mailboxId"));
+  String mailboxId=Reference.decode((String)request.getAttributes().get("mailboxId"),CharacterSet.ISO_8859_1);
   mailbox=getObjectsFacade().getMailboxById(mailboxId);
+  System.out.println(Reference.encode(mailboxId));
   if (mailbox != null) {
     getVariants().add(new Variant(MediaType.TEXT_HTML));
   }
