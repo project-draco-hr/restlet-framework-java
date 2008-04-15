@@ -7,14 +7,7 @@
     tlContext.set(callContext);
     try {
       ResObjAndMeth resObjAndMeth;
-      try {
-        resObjAndMeth=matchingRequestToResourceMethod();
-      }
- catch (      CouldNotFindResMethodException e) {
-        e.getErrorRestlet().handle(request,response);
-        response.setEntity(new StringRepresentation(e.getMessage(),MediaType.TEXT_PLAIN,Language.ENGLISH));
-        return;
-      }
+      resObjAndMeth=matchingRequestToResourceMethod();
       callContext.setReadOnly();
       ResourceMethod resourceMethod=resObjAndMeth.resourceMethod;
       resourceObject=resObjAndMeth.resourceObject;

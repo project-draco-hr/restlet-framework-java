@@ -4,7 +4,6 @@
   if (tunnelService.isPreferencesTunnel()) {
     Reference resourceRef=request.getResourceRef();
     if (resourceRef.hasExtensions()) {
-      StringBuilder cutExts=new StringBuilder();
       ClientInfo clientInfo=request.getClientInfo();
       boolean encodingFound=false;
       boolean characterSetFound=false;
@@ -19,22 +18,18 @@
         if (!characterSetFound && (metadata instanceof CharacterSet)) {
           updateMetadata(clientInfo,metadata);
           characterSetFound=true;
-          cutExts.append('.').append(extensions[i]);
         }
  else         if (!encodingFound && (metadata instanceof Encoding)) {
           updateMetadata(clientInfo,metadata);
           encodingFound=true;
-          cutExts.append('.').append(extensions[i]);
         }
  else         if (!languageFound && (metadata instanceof Language)) {
           updateMetadata(clientInfo,metadata);
           languageFound=true;
-          cutExts.append('.').append(extensions[i]);
         }
  else         if (!mediaTypeFound && (metadata instanceof MediaType)) {
           updateMetadata(clientInfo,metadata);
           mediaTypeFound=true;
-          cutExts.append('.').append(extensions[i]);
         }
  else {
           if (extensionAdded) {
@@ -47,7 +42,6 @@
       if (characterSetFound || encodingFound || languageFound|| mediaTypeFound) {
         resourceRef.setExtensions(sb.toString());
         extensionsModified=true;
-        request.getAttributes().put(ATTRIBUTE_CUT_EXTENSIONS,cutExts.toString());
       }
     }
   }
