@@ -1,0 +1,22 @@
+{
+  AttributesImpl attributes=new AttributesImpl();
+  if (getHref() != null && getHref().toString() != null) {
+    attributes.addAttribute("","href",null,"atomURI",getHref().toString());
+  }
+  writer.startElement(APP_NAMESPACE,"collection",null,attributes);
+  if (getTitle() != null) {
+    writer.dataElement(ATOM_NAMESPACE,"title",getTitle());
+  }
+  if (getMemberType() != null) {
+    getMemberType().writeElement(writer,APP_NAMESPACE);
+  }
+  try {
+    if (getFeed() != null) {
+      getFeed().writeElement(writer);
+    }
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+  writer.endElement(APP_NAMESPACE,"collection");
+}

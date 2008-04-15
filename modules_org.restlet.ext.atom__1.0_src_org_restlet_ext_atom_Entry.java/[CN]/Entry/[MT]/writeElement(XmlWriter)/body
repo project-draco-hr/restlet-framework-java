@@ -1,0 +1,48 @@
+{
+  writer.startElement(ATOM_NAMESPACE,"entry");
+  if (getAuthors() != null) {
+    for (    Person person : getAuthors()) {
+      person.writeElement(writer,"author");
+    }
+  }
+  if (getCategories() != null) {
+    for (    Category category : getCategories()) {
+      category.writeElement(writer);
+    }
+  }
+  if (getContent() != null) {
+    getContent().writeElement(writer);
+  }
+  if (getContributors() != null) {
+    for (    Person person : getContributors()) {
+      person.writeElement(writer,"contributor");
+    }
+  }
+  if (getId() != null) {
+    writer.dataElement(ATOM_NAMESPACE,"id",getId());
+  }
+  if (getLinks() != null) {
+    for (    Link link : getLinks()) {
+      link.writeElement(writer);
+    }
+  }
+  if (getPublished() != null) {
+    Text.writeElement(writer,getPublished(),ATOM_NAMESPACE,"published");
+  }
+  if (getRights() != null) {
+    getRights().writeElement(writer,"rights");
+  }
+  if (getSource() != null) {
+    getSource().writeElement(writer);
+  }
+  if (getSummary() != null) {
+    writer.dataElement(ATOM_NAMESPACE,"summary",getSummary());
+  }
+  if (getTitle() != null) {
+    getTitle().writeElement(writer,"title");
+  }
+  if (getUpdated() != null) {
+    Text.writeElement(writer,getUpdated(),ATOM_NAMESPACE,"updated");
+  }
+  writer.endElement(ATOM_NAMESPACE,"entry");
+}

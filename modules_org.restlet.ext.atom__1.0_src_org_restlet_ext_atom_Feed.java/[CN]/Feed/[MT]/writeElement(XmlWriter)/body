@@ -1,0 +1,53 @@
+{
+  writer.startElement(ATOM_NAMESPACE,"feed");
+  if (getAuthors() != null) {
+    for (    Person person : getAuthors()) {
+      person.writeElement(writer,"author");
+    }
+  }
+  if (getCategories() != null) {
+    for (    Category category : getCategories()) {
+      category.writeElement(writer);
+    }
+  }
+  if (getContributors() != null) {
+    for (    Person person : getContributors()) {
+      person.writeElement(writer,"contributor");
+    }
+  }
+  if (getEntries() != null) {
+    for (    Entry entry : getEntries()) {
+      entry.writeElement(writer);
+    }
+  }
+  if (getGenerator() != null) {
+    getGenerator().writeElement(writer);
+  }
+  if (getIcon() != null) {
+    writer.dataElement(ATOM_NAMESPACE,"icon",getIcon().toString());
+  }
+  if (getId() != null) {
+    writer.dataElement(ATOM_NAMESPACE,"id",null,new AttributesImpl(),getId());
+  }
+  if (getLinks() != null) {
+    for (    Link link : getLinks()) {
+      link.writeElement(writer);
+    }
+  }
+  if (getLogo() != null && getLogo().toString() != null) {
+    writer.dataElement(ATOM_NAMESPACE,"logo",getLogo().toString());
+  }
+  if (getRights() != null) {
+    getRights().writeElement(writer,"rights");
+  }
+  if (getSubtitle() != null) {
+    getSubtitle().writeElement(writer,"subtitle");
+  }
+  if (getTitle() != null) {
+    getTitle().writeElement(writer,"title");
+  }
+  if (getUpdated() != null) {
+    Text.writeElement(writer,getUpdated(),ATOM_NAMESPACE,"updated");
+  }
+  writer.endElement(ATOM_NAMESPACE,"feed");
+}

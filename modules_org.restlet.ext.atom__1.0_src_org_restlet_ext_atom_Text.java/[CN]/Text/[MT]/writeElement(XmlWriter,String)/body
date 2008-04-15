@@ -1,0 +1,22 @@
+{
+  AttributesImpl attributes=new AttributesImpl();
+  String type=null;
+  if (getType() != null && getType().getSubType() != null) {
+    if (getType().getSubType().contains("xhtml")) {
+      type="xhtml";
+    }
+ else     if (getType().getSubType().contains("html")) {
+      type="html";
+    }
+  }
+  if (type == null) {
+    type="text";
+  }
+  attributes.addAttribute("","type",null,"text",type);
+  if (getContent() != null) {
+    writer.dataElement(ATOM_NAMESPACE,localName,null,attributes,getContent());
+  }
+ else {
+    writer.emptyElement(ATOM_NAMESPACE,localName,null,attributes);
+  }
+}
