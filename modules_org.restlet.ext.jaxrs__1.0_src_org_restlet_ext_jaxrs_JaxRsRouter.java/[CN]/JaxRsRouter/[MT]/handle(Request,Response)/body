@@ -7,11 +7,12 @@
     tlContext.set(callContext);
     try {
       ResObjAndMeth resObjAndMeth;
-      resObjAndMeth=matchingRequestToResourceMethod();
+      resObjAndMeth=requestMatching();
       callContext.setReadOnly();
       ResourceMethod resourceMethod=resObjAndMeth.resourceMethod;
       resourceObject=resObjAndMeth.resourceObject;
-      invokeMethodAndHandleResult(resourceMethod,resourceObject);
+      Object result=invokeMethod(resourceMethod,resourceObject);
+      handleResult(result,resourceMethod);
     }
  catch (    WebApplicationException e) {
       jaxRsRespToRestletResp(e.getResponse(),null);

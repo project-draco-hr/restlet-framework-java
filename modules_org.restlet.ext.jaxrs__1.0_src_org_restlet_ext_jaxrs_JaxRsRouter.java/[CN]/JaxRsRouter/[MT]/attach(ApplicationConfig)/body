@@ -1,14 +1,20 @@
 {
   Collection<Class<?>> rrcs=appConfig.getResourceClasses();
   Collection<Class<?>> providerClasses=appConfig.getProviderClasses();
-  if (rrcs == null || rrcs.isEmpty())   throw new IllegalArgumentException("The ApplicationConfig must return root resource classes");
   boolean everythingFine=true;
-  for (  Class<?> rrc : rrcs) {
-    everythingFine&=this.addRootResourceClass(rrc);
+  if (rrcs == null || rrcs.isEmpty()) {
+    getLogger().warning("The ApplicationConfig " + appConfig.getClass().getName() + " contains no root resource classes.");
+    everythingFine=false;
+  }
+ else {
+    for (    Class<?> rrc : rrcs) {
+      everythingFine&=this.addRootResourceClass(rrc);
+    }
   }
   if (providerClasses != null) {
     for (    Class<?> providerClass : providerClasses) {
       everythingFine&=this.addProvider(providerClass,false);
     }
   }
+  return everythingFine;
 }
