@@ -9,13 +9,20 @@
       boolean characterSetFound=false;
       boolean mediaTypeFound=false;
       boolean languageFound=false;
-      String[] extensions=resourceRef.getExtensionsAsArray();
-      StringBuilder sb=new StringBuilder();
-      boolean extensionAdded=false;
-      Metadata metadata=null;
-      for (int i=extensions.length - 1; i >= 0; i--) {
-        metadata=getMetadata(extensions[i]);
-        if (!characterSetFound && (metadata instanceof CharacterSet)) {
+      String extensions=resourceRef.getExtensions();
+      for (; ; ) {
+        int lastIndexOfPoint=extensions.lastIndexOf('.');
+        String extension=extensions.substring(lastIndexOfPoint + 1);
+        Metadata metadata=getMetadata(extension);
+        if (!mediaTypeFound && (metadata instanceof MediaType)) {
+          updateMetadata(clientInfo,metadata);
+          mediaTypeFound=true;
+        }
+ else         if (!languageFound && (metadata instanceof Language)) {
+          updateMetadata(clientInfo,metadata);
+          languageFound=true;
+        }
+ else         if (!characterSetFound && (metadata instanceof CharacterSet)) {
           updateMetadata(clientInfo,metadata);
           characterSetFound=true;
         }
@@ -23,24 +30,19 @@
           updateMetadata(clientInfo,metadata);
           encodingFound=true;
         }
- else         if (!languageFound && (metadata instanceof Language)) {
-          updateMetadata(clientInfo,metadata);
-          languageFound=true;
+ else {
+          break;
         }
- else         if (!mediaTypeFound && (metadata instanceof MediaType)) {
-          updateMetadata(clientInfo,metadata);
-          mediaTypeFound=true;
+        if (lastIndexOfPoint > 0) {
+          extensions=extensions.substring(0,lastIndexOfPoint);
         }
  else {
-          if (extensionAdded) {
-            sb.insert(0,'.');
-          }
-          sb.insert(0,extensions[i]);
-          extensionAdded=true;
+          extensions="";
+          break;
         }
       }
-      if (characterSetFound || encodingFound || languageFound|| mediaTypeFound) {
-        resourceRef.setExtensions(sb.toString());
+      if (mediaTypeFound || languageFound || encodingFound|| characterSetFound) {
+        resourceRef.setExtensions(extensions);
         extensionsModified=true;
       }
     }
