@@ -6,7 +6,7 @@
   }
   Provider<?> provider;
   try {
-    provider=new Provider<Object>(jaxRsProviderClass,tlContext,this.entityProviders,allResolvers);
+    provider=new Provider<Object>(jaxRsProviderClass,tlContext,this.entityProviders,contextResolvers);
   }
  catch (  InstantiateException e) {
     String msg="Ignore provider " + jaxRsProviderClass.getName() + "Could not instantiate the Provider, class "+ jaxRsProviderClass.getName();
@@ -34,7 +34,7 @@ catch (  MissingConstructorException mce) {
     return false;
   }
   this.entityProviders.add(provider,defaultProvider);
-  if (provider.isContextResolver())   this.allResolvers.add(provider.getContextResolver());
+  if (provider.isContextResolver())   this.contextResolvers.add(provider.getContextResolver());
   if (provider.isExceptionMapper())   this.excMappers.add(provider);
   this.allProviders.add(provider);
   return true;
