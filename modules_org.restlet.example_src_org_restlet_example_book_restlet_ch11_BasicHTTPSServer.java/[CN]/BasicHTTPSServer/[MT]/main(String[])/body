@@ -5,10 +5,13 @@
     }
   }
 ;
+  File keystoreFile=new File("d:\\temp\\certificats","myKeystore");
   Component component=new Component();
-  component.getServers().add(Protocol.FILE);
-  component.getServers().add(Protocol.HTTP);
+  component.getServers().add(Protocol.HTTPS,8182);
   component.getDefaultHost().attach("/helloWorld",restlet);
+  component.getContext().getParameters().add("keystorePath",keystoreFile.toURI().toASCIIString());
+  component.getContext().getParameters().add("keystorePassword","storepass");
+  component.getContext().getParameters().add("keyPassword","keypass");
   try {
     component.start();
   }
