@@ -1,51 +1,10 @@
 {
-  RemainingPath u=rrcAndRemPath.u;
-  RootResourceClass rrc=rrcAndRemPath.rrc;
-  PathRegExp rMatch=rrc.getPathRegExp();
-  ResourceObject o;
-  CallContext callContext=tlContext.get();
-  try {
-    o=rrc.createInstance(tlContext,entityProviders,allResolvers,getLogger());
-  }
- catch (  WebApplicationException e) {
-    throw e;
-  }
-catch (  NoMessageBodyReaderException e) {
-    throw excHandler.noMessageBodyReader();
-  }
-catch (  RuntimeException e) {
-    throw excHandler.runtimeExecption(e,null,callContext,"Could not create new instance of root resource class");
-  }
-catch (  MissingAnnotationException e) {
-    throw excHandler.missingAnnotation(e,callContext,"Could not create new instance of " + rrc);
-  }
-catch (  InstantiateException e) {
-    throw excHandler.instantiateExecption(e,callContext,"Could not create new instance of root resource class");
-  }
-catch (  InvocationTargetException e) {
-    throw handleInvocationTargetExc(e);
-  }
-catch (  ConvertRepresentationException e) {
-    throw excHandler.convertRepresentationExc(e);
-  }
-catch (  ConvertHeaderParamException e) {
-    throw excHandler.convertHeaderParamExc(e);
-  }
-catch (  ConvertPathParamException e) {
-    throw excHandler.convertPathParamExc(e);
-  }
-catch (  ConvertMatrixParamException e) {
-    throw excHandler.convertMatrixParamExc(e);
-  }
-catch (  ConvertQueryParamException e) {
-    throw excHandler.convertQueryParamExc(e);
-  }
-catch (  ConvertCookieParamException e) {
-    throw excHandler.convertCookieParamExc(e);
-  }
+  ResourceObject o=rroRemPathAndMatchedPath.rootResObj;
+  RemainingPath u=rroRemPathAndMatchedPath.u;
+  ResourceClass resClass=o.getResourceClass();
   Object jaxRsResObj1=o.getJaxRsResourceObject();
-  callContext.addForAncestor(jaxRsResObj1,rrcAndRemPath.matchedUriPath);
-  ResourceClass resClass=rrc;
+  CallContext callContext=tlContext.get();
+  callContext.addForAncestor(jaxRsResObj1,rroRemPathAndMatchedPath.matchedUriPath);
   for (; ; ) {
     if (u.isEmptyOrSlash()) {
       return new ResObjAndRemPath(o,u);
@@ -60,7 +19,7 @@ catch (  ConvertCookieParamException e) {
     }
     if (eWithMethod.isEmpty())     excHandler.resourceNotFound();
     ResourceMethodOrLocator firstMeth=getFirstMethOrLocByNumberOfLiteralCharactersAndByNumberOfCapturingGroups(eWithMethod);
-    rMatch=firstMeth.getPathRegExp();
+    PathRegExp rMatch=firstMeth.getPathRegExp();
     MatchingResult matchingResult=rMatch.match(u);
     addPathVarsToMap(matchingResult,callContext);
     if (firstMeth instanceof ResourceMethod)     return new ResObjAndRemPath(o,u);
