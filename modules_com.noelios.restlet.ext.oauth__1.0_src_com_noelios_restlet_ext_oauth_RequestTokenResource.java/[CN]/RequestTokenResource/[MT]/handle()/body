@@ -12,9 +12,9 @@
   try {
     requestMessage.validateSignature(accessor);
   }
- catch (  OAuthProblemException e) {
+ catch (  OAuthProblemException oape) {
     getResponse().setChallengeRequest(challengeRequest);
-    getResponse().setStatus(Status.CLIENT_ERROR_UNAUTHORIZED,"Invalid signature");
+    getResponse().setStatus(Status.CLIENT_ERROR_UNAUTHORIZED,oape);
     challengeRequest.getParameters().add("oauth_problem","signature_invalid");
     return;
   }
