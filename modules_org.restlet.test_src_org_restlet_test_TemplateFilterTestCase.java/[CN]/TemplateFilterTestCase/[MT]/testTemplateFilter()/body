@@ -1,0 +1,36 @@
+{
+  try {
+    testDir=new File(System.getProperty("java.io.tmpdir"),"TemplateFilterTestCase");
+    deleteDir(testDir);
+    testDir.mkdir();
+    File testFileFm1=new File(testDir,"testFm1.txt.fmt");
+    FileWriter fw=new FileWriter(testFileFm1);
+    fw.write("Value=${value}");
+    fw.close();
+    File testFileFm2=new File(testDir,"testFm2.txt");
+    fw=new FileWriter(testFileFm2);
+    fw.write("Value=${value}");
+    fw.close();
+    Component component=new Component();
+    component.getServers().add(Protocol.HTTP,8182);
+    component.getClients().add(Protocol.FILE);
+    MyApplication application=new MyApplication(component.getContext(),testDir);
+    component.getDefaultHost().attachDefault(application);
+    component.start();
+    application.getTunnelService().setExtensionsTunnel(true);
+    Client client=new Client(Protocol.HTTP);
+    Response response=client.get("http://localhost:8182/" + testFileFm1.getName());
+    if (response.isEntityAvailable()) {
+      assertEquals(response.getEntity().getText(),"Value=myValue");
+    }
+    response=client.get("http://localhost:8182/" + testFileFm2.getName());
+    assertTrue(response.getStatus().isSuccess());
+    if (response.isEntityAvailable()) {
+      assertEquals(response.getEntity().getText(),"Value=${value}");
+    }
+    component.stop();
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+}
