@@ -1,16 +1,14 @@
 {
   Writer tmplWriter=null;
   try {
-    getEngine().init();
     VelocityContext context=new VelocityContext(getDataModel());
-    Template template=engine.getTemplate(templateName);
     if (getCharacterSet() != null) {
       tmplWriter=new BufferedWriter(new OutputStreamWriter(outputStream,getCharacterSet().getName()));
     }
  else {
-      tmplWriter=new BufferedWriter(new OutputStreamWriter(outputStream,template.getEncoding()));
+      tmplWriter=new BufferedWriter(new OutputStreamWriter(outputStream,getTemplate().getEncoding()));
     }
-    template.merge(context,tmplWriter);
+    getTemplate().merge(context,tmplWriter);
     tmplWriter.flush();
   }
  catch (  Exception e) {

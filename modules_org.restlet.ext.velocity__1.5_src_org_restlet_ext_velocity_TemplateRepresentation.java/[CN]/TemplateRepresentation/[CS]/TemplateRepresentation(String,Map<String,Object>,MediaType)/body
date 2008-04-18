@@ -1,6 +1,12 @@
 {
   super(mediaType);
-  this.engine=new VelocityEngine();
-  this.dataModel=dataModel;
-  this.templateName=templateName;
+  try {
+    this.dataModel=dataModel;
+    this.engine=new VelocityEngine();
+    getEngine().init();
+    this.template=getEngine().getTemplate(templateName);
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
 }

@@ -1,0 +1,19 @@
+{
+  InputStream result=null;
+  try {
+    Representation resultRepresentation=getStore().get(name);
+    if (resultRepresentation == null) {
+      resultRepresentation=this.defaultRepresentation;
+      if (resultRepresentation == null) {
+        throw new ResourceNotFoundException("Could not locate resource '" + name + "'");
+      }
+    }
+ else {
+      result=resultRepresentation.getStream();
+    }
+  }
+ catch (  IOException ioe) {
+    throw new ResourceNotFoundException(ioe);
+  }
+  return result;
+}
