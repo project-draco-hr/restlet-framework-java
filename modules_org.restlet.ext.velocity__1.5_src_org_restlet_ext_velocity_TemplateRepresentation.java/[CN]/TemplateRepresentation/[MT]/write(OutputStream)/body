@@ -6,12 +6,22 @@
       tmplWriter=new BufferedWriter(new OutputStreamWriter(outputStream,getCharacterSet().getName()));
     }
  else {
-      tmplWriter=new BufferedWriter(new OutputStreamWriter(outputStream,getTemplate().getEncoding()));
+      if (getTemplate().getEncoding() == null) {
+        tmplWriter=new BufferedWriter(new OutputStreamWriter(outputStream));
+      }
+ else {
+        tmplWriter=new BufferedWriter(new OutputStreamWriter(outputStream,getTemplate().getEncoding()));
+      }
     }
     getTemplate().merge(context,tmplWriter);
     tmplWriter.flush();
   }
  catch (  Exception e) {
+    Context context=Context.getCurrent();
+    if (context != null) {
+      context.getLogger().log(Level.WARNING,"Unable to process the template",e);
+    }
+    e.printStackTrace();
     throw new IOException("Template processing error. " + e.getMessage());
   }
 }

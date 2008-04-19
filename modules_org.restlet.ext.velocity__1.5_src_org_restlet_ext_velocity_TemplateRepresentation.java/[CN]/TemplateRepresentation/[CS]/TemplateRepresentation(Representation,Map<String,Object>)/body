@@ -1,10 +1,11 @@
 {
-  super(mediaType);
+  super(templateRepresentation.getMediaType());
   this.dataModel=dataModel;
   this.engine=null;
   this.template=new Template();
-  this.template.setEncoding(templateRepresentation.getEncodings().get(0).getName());
+  this.template.setEncoding((templateRepresentation.getCharacterSet() == null) ? null : templateRepresentation.getCharacterSet().getName());
   this.template.setLastModified(templateRepresentation.getModificationDate().getTime());
   this.template.setName("org.restlet.resource.representation");
   this.template.setResourceLoader(new RepresentationResourceLoader(templateRepresentation));
+  this.templateName=null;
 }

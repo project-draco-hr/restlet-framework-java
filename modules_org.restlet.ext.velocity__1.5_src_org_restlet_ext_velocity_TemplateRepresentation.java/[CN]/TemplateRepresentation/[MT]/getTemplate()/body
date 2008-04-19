@@ -1,3 +1,17 @@
 {
+  if (this.template == null) {
+    if (this.templateName != null) {
+      try {
+        getEngine().init();
+        this.template=getEngine().getTemplate(templateName);
+      }
+ catch (      Exception e) {
+        Context context=Context.getCurrent();
+        if (context != null) {
+          context.getLogger().log(Level.WARNING,"Unable to get template",e);
+        }
+      }
+    }
+  }
   return this.template;
 }
