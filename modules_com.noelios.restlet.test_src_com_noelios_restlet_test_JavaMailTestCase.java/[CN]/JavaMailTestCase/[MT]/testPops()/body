@@ -1,8 +1,16 @@
 {
   Client client=new Client(Protocol.POPS);
-  client.getContext().getParameters().add("debug","true");
-  Request request=new Request(Method.GET,"pops://pop.gmail.com");
-  request.setChallengeResponse(new ChallengeResponse(ChallengeScheme.POP_BASIC,GMAIL_LOGIN,GMAIL_PASSWORD));
+  String baseUri="pops://alaska.noelios.com";
+  Request request=new Request(Method.GET,baseUri);
+  request.setChallengeResponse(new ChallengeResponse(ChallengeScheme.POP_BASIC,NOELIOS_LOGIN,NOELIOS_PASSWORD));
   Response response=client.handle(request);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
+  response.getEntity().write(System.out);
+  System.out.println();
+  DomRepresentation dom=response.getEntityAsDom();
+  for (  Node node : dom.getNodes("/emails/email")) {
+    NamedNodeMap attrs=node.getAttributes();
+    String href=attrs.getNamedItem("href").getNodeValue();
+    printMail(client,baseUri,href);
+  }
 }
