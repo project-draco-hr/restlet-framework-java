@@ -30,28 +30,29 @@
   }
   String text=root.getElementsByTagName("body").item(0).getTextContent();
   boolean authenticate=((getLogin(request) != null) && (getPassword(request) != null));
+  String transport=null;
+  if (Protocol.SMTP.equals(request.getProtocol())) {
+    transport="smtp";
+  }
+ else   if (Protocol.SMTPS.equals(request.getProtocol())) {
+    transport="smtps";
+  }
   Properties props=System.getProperties();
-  props.put("mail.smtp.host",smtpHost);
-  props.put("mail.smtp.port",Integer.toString(smtpPort));
-  props.put("mail.smtp.auth",Boolean.toString(authenticate).toLowerCase());
-  props.put("mail.smtp.starttls.enable",Boolean.toString(isStartTls()));
+  props.put("mail." + transport + ".host",smtpHost);
+  props.put("mail." + transport + ".port",Integer.toString(smtpPort));
+  props.put("mail." + transport + ".auth",Boolean.toString(authenticate).toLowerCase());
+  props.put("mail." + transport + ".starttls.enable",Boolean.toString(isStartTls()));
   Session session=Session.getDefaultInstance(props);
   session.setDebug(isDebug());
-  Transport transport=null;
-  if (request.getProtocol().equals(Protocol.SMTP)) {
-    transport=session.getTransport("smtp");
-  }
- else   if (request.getProtocol().equals(Protocol.SMTPS)) {
-    transport=session.getTransport("smtps");
-  }
-  if (transport != null) {
+  Transport tr=session.getTransport(transport);
+  if (tr != null) {
     if (authenticate) {
-      transport.connect(smtpHost,getLogin(request),getPassword(request));
+      tr.connect(smtpHost,getLogin(request),getPassword(request));
     }
  else {
-      transport.connect();
+      tr.connect();
     }
-    if (transport.isConnected()) {
+    if (tr.isConnected()) {
       getLogger().info("JavaMail client connection successfully established. Attempting to send the message");
       Message msg=new MimeMessage(session);
       msg.setFrom(new InternetAddress(from));
@@ -68,8 +69,8 @@
       msg.setText(text);
       msg.setSentDate(new Date());
       msg.saveChanges();
-      transport.sendMessage(msg,msg.getAllRecipients());
-      transport.close();
+      tr.sendMessage(msg,msg.getAllRecipients());
+      tr.close();
       getLogger().info("JavaMail client successfully sent the message.");
     }
   }

@@ -9,19 +9,19 @@
     }
   }
  catch (  IOException e) {
-    e.printStackTrace();
     getLogger().log(Level.WARNING,"JavaMail client error",e);
+    response.setStatus(Status.CONNECTOR_ERROR_INTERNAL,e);
   }
 catch (  NoSuchProviderException e) {
-    e.printStackTrace();
     getLogger().log(Level.WARNING,"JavaMail client error",e);
+    response.setStatus(Status.SERVER_ERROR_INTERNAL,e);
   }
 catch (  AddressException e) {
-    e.printStackTrace();
     getLogger().log(Level.WARNING,"JavaMail client error",e);
+    response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,e);
   }
 catch (  MessagingException e) {
-    e.printStackTrace();
     getLogger().log(Level.WARNING,"JavaMail client error",e);
+    response.setStatus(Status.SERVER_ERROR_INTERNAL,e);
   }
 }

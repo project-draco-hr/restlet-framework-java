@@ -1,0 +1,8 @@
+{
+  Client client=new Client(Protocol.POP);
+  client.getContext().getParameters().add("debug","true");
+  Request request=new Request(Method.GET,"pop://pop.mail.yahoo.fr");
+  request.setChallengeResponse(new ChallengeResponse(ChallengeScheme.POP_BASIC,YAHOO_ID,YAHOO_PASSWORD));
+  Response response=client.handle(request);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+}
