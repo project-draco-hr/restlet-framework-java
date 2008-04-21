@@ -1,0 +1,76 @@
+{
+  String smtpHost=request.getResourceRef().getHostDomain();
+  int smtpPort=request.getResourceRef().getHostPort();
+  if (smtpPort == -1) {
+    smtpPort=request.getProtocol().getDefaultPort();
+  }
+  if ((smtpHost == null) || (smtpHost.equals(""))) {
+    throw new IllegalArgumentException("Invalid SMTP host specified");
+  }
+  DocumentBuilder docBuilder=DocumentBuilderFactory.newInstance().newDocumentBuilder();
+  Document email=docBuilder.parse(request.getEntity().getStream());
+  Element root=(Element)email.getElementsByTagName("email").item(0);
+  Element header=(Element)root.getElementsByTagName("head").item(0);
+  String subject=header.getElementsByTagName("subject").item(0).getTextContent();
+  String from=header.getElementsByTagName("from").item(0).getTextContent();
+  NodeList toList=header.getElementsByTagName("to");
+  String[] to=new String[toList.getLength()];
+  for (int i=0; i < toList.getLength(); i++) {
+    to[i]=toList.item(i).getTextContent();
+  }
+  NodeList ccList=header.getElementsByTagName("cc");
+  String[] cc=new String[ccList.getLength()];
+  for (int i=0; i < ccList.getLength(); i++) {
+    cc[i]=ccList.item(i).getTextContent();
+  }
+  NodeList bccList=header.getElementsByTagName("bcc");
+  String[] bcc=new String[bccList.getLength()];
+  for (int i=0; i < bccList.getLength(); i++) {
+    bcc[i]=bccList.item(i).getTextContent();
+  }
+  String text=root.getElementsByTagName("body").item(0).getTextContent();
+  boolean authenticate=((getLogin(request) != null) && (getPassword(request) != null));
+  Properties props=System.getProperties();
+  props.put("mail.smtp.host",smtpHost);
+  props.put("mail.smtp.port",Integer.toString(smtpPort));
+  props.put("mail.smtp.auth",Boolean.toString(authenticate).toLowerCase());
+  props.put("mail.smtp.starttls.enable",Boolean.toString(isStartTls()));
+  Session session=Session.getDefaultInstance(props);
+  session.setDebug(isDebug());
+  Transport transport=null;
+  if (request.getProtocol().equals(Protocol.SMTP)) {
+    transport=session.getTransport("smtp");
+  }
+ else   if (request.getProtocol().equals(Protocol.SMTPS)) {
+    transport=session.getTransport("smtps");
+  }
+  if (transport != null) {
+    if (authenticate) {
+      transport.connect(smtpHost,getLogin(request),getPassword(request));
+    }
+ else {
+      transport.connect();
+    }
+    if (transport.isConnected()) {
+      getLogger().info("JavaMail client connection successfully established. Attempting to send the message");
+      Message msg=new MimeMessage(session);
+      msg.setFrom(new InternetAddress(from));
+      for (      String element : to) {
+        msg.addRecipient(Message.RecipientType.TO,new InternetAddress(element));
+      }
+      for (      String element : cc) {
+        msg.addRecipient(Message.RecipientType.CC,new InternetAddress(element));
+      }
+      for (      String element : bcc) {
+        msg.addRecipient(Message.RecipientType.BCC,new InternetAddress(element));
+      }
+      msg.setSubject(subject);
+      msg.setText(text);
+      msg.setSentDate(new Date());
+      msg.saveChanges();
+      transport.sendMessage(msg,msg.getAllRecipients());
+      transport.close();
+      getLogger().info("JavaMail client successfully sent the message.");
+    }
+  }
+}

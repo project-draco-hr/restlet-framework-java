@@ -3,14 +3,41 @@
   if (protocol.equals(Protocol.RIAP)) {
     request.setConfidential(true);
     LocalReference cr=new LocalReference(request.getResourceRef());
-    if (cr.getRiapAuthorityType() == LocalReference.RIAP_COMPONENT) {
-      request.getResourceRef().setBaseRef(request.getResourceRef().getHostIdentifier());
-      if (getComponentContext() != null) {
-        getComponentContext().getComponentHelper().getHelped().getInternalRouter().handle(request,response);
+    Component component=getComponent();
+    if (component != null) {
+      if (cr.getRiapAuthorityType() == LocalReference.RIAP_COMPONENT) {
+        request.getResourceRef().setBaseRef(request.getResourceRef().getHostIdentifier());
+        component.getInternalRouter().handle(request,response);
+      }
+ else       if (cr.getRiapAuthorityType() == LocalReference.RIAP_HOST) {
+        VirtualHost host=null;
+        VirtualHost currentHost=null;
+        Integer hostHashCode=(Integer)request.getAttributes().get("org.restlet.virtualHost.hashCode");
+        for (Iterator<VirtualHost> hostIter=getComponent().getHosts().iterator(); (host == null) && hostIter.hasNext(); ) {
+          currentHost=hostIter.next();
+          if (currentHost.hashCode() == hostHashCode) {
+            host=currentHost;
+          }
+        }
+        if ((host == null) && (component.getDefaultHost() != null)) {
+          if (component.getDefaultHost().hashCode() == hostHashCode) {
+            host=component.getDefaultHost();
+          }
+        }
+        if (host != null) {
+          request.getResourceRef().setBaseRef(request.getResourceRef().getHostIdentifier());
+          host.handle(request,response);
+        }
+ else {
+          getLogger().warning("No virtual host is available to route the RIAP Host request.");
+        }
+      }
+ else {
+        getLogger().warning("Unknown RIAP authority. Only \"component\" is supported.");
       }
     }
  else {
-      getLogger().warning("Unknown RIAP authority. Only \"component\" is supported.");
+      getLogger().warning("No compoent is available to route the RIAP request.");
     }
   }
  else {
