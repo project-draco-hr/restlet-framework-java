@@ -7,8 +7,8 @@
   if ((smtpHost == null) || (smtpHost.equals(""))) {
     throw new IllegalArgumentException("Invalid SMTP host specified");
   }
-  DocumentBuilder docBuilder=DocumentBuilderFactory.newInstance().newDocumentBuilder();
-  Document email=docBuilder.parse(request.getEntity().getStream());
+  DomRepresentation dom=new DomRepresentation(request.getEntity());
+  Document email=dom.getDocument();
   Element root=(Element)email.getElementsByTagName("email").item(0);
   Element header=(Element)root.getElementsByTagName("head").item(0);
   String subject=header.getElementsByTagName("subject").item(0).getTextContent();
