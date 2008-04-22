@@ -12,28 +12,6 @@
     if ((smtpHost == null) || (smtpHost.equals(""))) {
       throw new IllegalArgumentException("Invalid SMTP host specified");
     }
-    DomRepresentation dom=new DomRepresentation(request.getEntity());
-    Document email=dom.getDocument();
-    Element root=(Element)email.getElementsByTagName("email").item(0);
-    Element header=(Element)root.getElementsByTagName("head").item(0);
-    String subject=header.getElementsByTagName("subject").item(0).getTextContent();
-    String from=header.getElementsByTagName("from").item(0).getTextContent();
-    NodeList toList=header.getElementsByTagName("to");
-    String[] to=new String[toList.getLength()];
-    for (int i=0; i < toList.getLength(); i++) {
-      to[i]=toList.item(i).getTextContent();
-    }
-    NodeList ccList=header.getElementsByTagName("cc");
-    String[] cc=new String[ccList.getLength()];
-    for (int i=0; i < ccList.getLength(); i++) {
-      cc[i]=ccList.item(i).getTextContent();
-    }
-    NodeList bccList=header.getElementsByTagName("bcc");
-    String[] bcc=new String[bccList.getLength()];
-    for (int i=0; i < bccList.getLength(); i++) {
-      bcc[i]=bccList.item(i).getTextContent();
-    }
-    String text=root.getElementsByTagName("body").item(0).getTextContent();
     boolean authenticate=((getLogin(request) != null) && (getPassword(request) != null));
     String transport=null;
     if (Protocol.SMTP.equals(request.getProtocol())) {
@@ -59,21 +37,7 @@
       }
       if (tr.isConnected()) {
         getLogger().info("JavaMail client connection successfully established. Attempting to send the message");
-        Message msg=new MimeMessage(session);
-        msg.setFrom(new InternetAddress(from));
-        for (        String element : to) {
-          msg.addRecipient(Message.RecipientType.TO,new InternetAddress(element));
-        }
-        for (        String element : cc) {
-          msg.addRecipient(Message.RecipientType.CC,new InternetAddress(element));
-        }
-        for (        String element : bcc) {
-          msg.addRecipient(Message.RecipientType.BCC,new InternetAddress(element));
-        }
-        msg.setSubject(subject);
-        msg.setText(text);
-        msg.setSentDate(new Date());
-        msg.saveChanges();
+        Message msg=createMessage(request.getEntity(),session);
         tr.sendMessage(msg,msg.getAllRecipients());
         tr.close();
         getLogger().info("JavaMail client successfully sent the message.");
