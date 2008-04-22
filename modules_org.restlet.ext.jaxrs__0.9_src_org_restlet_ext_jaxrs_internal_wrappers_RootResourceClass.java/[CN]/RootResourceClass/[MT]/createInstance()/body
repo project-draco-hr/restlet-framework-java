@@ -1,0 +1,18 @@
+{
+  Constructor<?> constructor=this.constructor;
+  Object instance;
+  try {
+    instance=WrapperUtil.createInstance(constructor,constructorParameters.get());
+  }
+ catch (  ConvertRepresentationException e) {
+    throw new ImplementationException("Must not be possible",e);
+  }
+  ResourceObject rootResourceObject=new ResourceObject(instance,this);
+  try {
+    this.injectHelper.injectInto(instance);
+  }
+ catch (  InjectException e) {
+    throw new InstantiateException(e);
+  }
+  return rootResourceObject;
+}

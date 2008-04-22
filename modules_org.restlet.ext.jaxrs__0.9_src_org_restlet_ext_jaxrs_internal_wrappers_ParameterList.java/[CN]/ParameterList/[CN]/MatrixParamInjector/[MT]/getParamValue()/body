@@ -1,0 +1,11 @@
+{
+  CallContext callContext=tlContext.get();
+  String matrixParamValue=callContext.getLastMatrixParamEnc(matrixParam);
+  Iterator<String> matrixParamValues=callContext.matrixParamEncIter(matrixParam);
+  try {
+    return WrapperUtil.convertParamValuesFromParam(convToCl,convToGen,matrixParamValues,matrixParamValue,defaultValue,leaveEncoded);
+  }
+ catch (  ConvertParameterException e) {
+    throw new ConvertMatrixParamException(e);
+  }
+}

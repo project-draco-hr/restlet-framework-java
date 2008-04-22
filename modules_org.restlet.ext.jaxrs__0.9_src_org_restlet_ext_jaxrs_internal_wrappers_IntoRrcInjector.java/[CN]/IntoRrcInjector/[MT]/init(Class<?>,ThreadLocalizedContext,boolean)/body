@@ -1,0 +1,21 @@
+{
+  do {
+    for (    Field field : jaxRsClass.getDeclaredFields()) {
+      field.setAccessible(true);
+      if (field.isAnnotationPresent(PathParam.class))       add(new PathParamInjector(field,tlContext,leaveEncoded));
+ else       if (field.isAnnotationPresent(CookieParam.class))       add(new CookieParamInjector(field,tlContext));
+ else       if (field.isAnnotationPresent(HeaderParam.class))       add(new HeaderParamInjector(field,tlContext));
+ else       if (field.isAnnotationPresent(MatrixParam.class))       add(new MatrixParamInjector(field,tlContext,leaveEncoded));
+ else       if (field.isAnnotationPresent(QueryParam.class))       add(new QueryParamInjector(field,tlContext,leaveEncoded));
+    }
+    for (    Method method : jaxRsClass.getDeclaredMethods()) {
+      if (isBeanSetter(method,PathParam.class))       add(new PathParamInjector(method,tlContext,leaveEncoded));
+ else       if (isBeanSetter(method,CookieParam.class))       add(new CookieParamInjector(method,tlContext));
+ else       if (isBeanSetter(method,HeaderParam.class))       add(new HeaderParamInjector(method,tlContext));
+ else       if (isBeanSetter(method,MatrixParam.class))       add(new MatrixParamInjector(method,tlContext,leaveEncoded));
+ else       if (isBeanSetter(method,QueryParam.class))       add(new QueryParamInjector(method,tlContext,leaveEncoded));
+    }
+    jaxRsClass=jaxRsClass.getSuperclass();
+  }
+ while (jaxRsClass != null);
+}

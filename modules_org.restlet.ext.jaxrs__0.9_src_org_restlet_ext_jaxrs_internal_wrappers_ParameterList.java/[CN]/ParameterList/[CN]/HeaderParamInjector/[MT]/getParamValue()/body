@@ -1,0 +1,10 @@
+{
+  Form httpHeaders=Util.getHttpHeaders(tlContext.get().getRequest());
+  String headerName=headerParam.value();
+  try {
+    return WrapperUtil.convertParamValuesFromParam(convToCl,convToGen,new ParamValueIter(httpHeaders.subList(headerName,true)),WrapperUtil.getValue(httpHeaders.getFirst(headerName,true)),defaultValue,true);
+  }
+ catch (  ConvertParameterException e) {
+    throw new ConvertHeaderParamException(e);
+  }
+}

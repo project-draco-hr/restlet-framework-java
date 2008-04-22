@@ -1,0 +1,25 @@
+{
+  do {
+    for (    Field field : jaxRsClass.getDeclaredFields()) {
+      field.setAccessible(true);
+      if (field.isAnnotationPresent(Context.class)) {
+        InjectionAim aim=new FieldWrapper(field);
+        Class<?> declaringClass=field.getType();
+        Type genericType=field.getGenericType();
+        EverSameInjector injector=getInjector(tlContext,mbWorkers,allResolvers,aim,declaringClass,genericType);
+        injEverSameAims.add(injector);
+      }
+    }
+    for (    Method method : jaxRsClass.getDeclaredMethods()) {
+      if (isBeanSetter(method,Context.class)) {
+        BeanSetter aim=new BeanSetter(method);
+        Class<?> paramClass=method.getParameterTypes()[0];
+        Type genericType=method.getGenericParameterTypes()[0];
+        EverSameInjector injector=getInjector(tlContext,mbWorkers,allResolvers,aim,paramClass,genericType);
+        injEverSameAims.add(injector);
+      }
+    }
+    jaxRsClass=jaxRsClass.getSuperclass();
+  }
+ while (jaxRsClass != null);
+}

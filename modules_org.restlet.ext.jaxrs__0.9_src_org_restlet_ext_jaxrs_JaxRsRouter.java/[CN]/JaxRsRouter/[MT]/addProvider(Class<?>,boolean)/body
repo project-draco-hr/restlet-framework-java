@@ -6,14 +6,14 @@
   }
   Provider<?> provider;
   try {
-    provider=new Provider<Object>(jaxRsProviderClass,tlContext,this.entityProviders,contextResolvers);
+    provider=new Provider<Object>(jaxRsProviderClass,tlContext,this.entityProviders,contextResolvers,getLogger());
   }
  catch (  InstantiateException e) {
     String msg="Ignore provider " + jaxRsProviderClass.getName() + "Could not instantiate the Provider, class "+ jaxRsProviderClass.getName();
     getLogger().log(Level.WARNING,msg,e);
     return false;
   }
-catch (  IllegalAnnotationException e) {
+catch (  MissingAnnotationException e) {
     String msg="Ignore provider " + jaxRsProviderClass.getName() + "Could not instantiate the Provider, class "+ jaxRsProviderClass.getName()+ ", because "+ e.getMessage();
     getLogger().log(Level.WARNING,msg);
     return false;
