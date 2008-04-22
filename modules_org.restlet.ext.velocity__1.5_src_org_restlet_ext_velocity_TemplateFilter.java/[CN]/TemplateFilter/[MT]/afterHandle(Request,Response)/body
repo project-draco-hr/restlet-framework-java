@@ -1,0 +1,16 @@
+{
+  if (response.isEntityAvailable() && response.getEntity().getEncodings().contains(Encoding.VELOCITY)) {
+    try {
+      response.setEntity(new TemplateRepresentation(response.getEntity(),new ResolverMap(Resolver.createResolver(request,response))));
+    }
+ catch (    ResourceNotFoundException e) {
+      e.printStackTrace();
+    }
+catch (    ParseErrorException e) {
+      e.printStackTrace();
+    }
+catch (    IOException e) {
+      e.printStackTrace();
+    }
+  }
+}
