@@ -1,0 +1,12 @@
+{
+  super(templateRepresentation.getMediaType());
+  this.engine=null;
+  this.template=new Template();
+  this.template.setEncoding((templateRepresentation.getCharacterSet() == null) ? Charset.defaultCharset().name() : templateRepresentation.getCharacterSet().getName());
+  this.template.setLastModified(templateRepresentation.getModificationDate().getTime());
+  this.template.setName("org.restlet.resource.representation");
+  this.template.setRuntimeServices(RuntimeSingleton.getRuntimeServices());
+  this.template.setResourceLoader(new RepresentationResourceLoader(templateRepresentation));
+  this.template.process();
+  this.templateName=null;
+}

@@ -1,16 +1,18 @@
 {
   if (response.isEntityAvailable() && response.getEntity().getEncodings().contains(Encoding.VELOCITY)) {
     try {
-      response.setEntity(new TemplateRepresentation(response.getEntity(),new ResolverMap(Resolver.createResolver(request,response))));
+      TemplateRepresentation representation=new TemplateRepresentation(response.getEntity());
+      representation.setDataModel(request,response);
+      response.setEntity(representation);
     }
  catch (    ResourceNotFoundException e) {
-      e.printStackTrace();
+      response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,e);
     }
 catch (    ParseErrorException e) {
-      e.printStackTrace();
+      response.setStatus(Status.SERVER_ERROR_INTERNAL,e);
     }
 catch (    IOException e) {
-      e.printStackTrace();
+      response.setStatus(Status.SERVER_ERROR_INTERNAL,e);
     }
   }
 }
