@@ -1,14 +1,11 @@
 {
-  Client client=new Client(Protocol.HTTPS);
-  Request request=new Request(Method.GET,"https://localhost:8182/helloWorld");
+  Representation mail=new StringRepresentation(MAIL,MediaType.TEXT_XML);
+  Request request=new Request(new Method("POST"),"smtp://smtp.mail.yahoo.com",mail);
+  ChallengeResponse challengeResponse=new ChallengeResponse(ChallengeScheme.SMTP_PLAIN,"restlet.testfr","saya08");
+  request.setChallengeResponse(challengeResponse);
+  File keystoreFile=new File("d:\\temp\\certificats","myClientKeystore");
+  System.setProperty("javax.net.ssl.trustStore",keystoreFile.getAbsolutePath());
+  Client client=new Client(Protocol.SMTP);
   Response response=client.handle(request);
   System.out.println(response.getStatus());
-  if (response.isEntityAvailable()) {
-    try {
-      response.getEntity().write(System.out);
-    }
- catch (    IOException e) {
-      e.printStackTrace();
-    }
-  }
 }
