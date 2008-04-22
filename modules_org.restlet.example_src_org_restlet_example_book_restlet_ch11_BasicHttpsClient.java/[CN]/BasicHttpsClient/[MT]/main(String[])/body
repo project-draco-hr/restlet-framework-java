@@ -1,6 +1,8 @@
 {
   Client client=new Client(Protocol.HTTPS);
   Request request=new Request(Method.GET,"https://localhost:8182/helloWorld");
+  File keystoreFile=new File("d:\\temp\\certificats","myClientKeystore");
+  System.setProperty("javax.net.ssl.trustStore",keystoreFile.getAbsolutePath());
   Response response=client.handle(request);
   System.out.println(response.getStatus());
   if (response.isEntityAvailable()) {
