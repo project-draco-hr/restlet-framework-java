@@ -1,5 +1,7 @@
 {
   if (response.isEntityAvailable() && response.getEntity().getEncodings().contains(Encoding.FREEMARKER)) {
-    response.setEntity(new TemplateRepresentation(response.getEntity(),configuration,new ResolverHashModel(Resolver.createResolver(request,response)),response.getEntity().getMediaType()));
+    TemplateRepresentation representation=new TemplateRepresentation(response.getEntity(),configuration,response.getEntity().getMediaType());
+    representation.setDataModel(request,response);
+    response.setEntity(representation);
   }
 }
