@@ -1,7 +1,6 @@
 {
   Writer tmplWriter=null;
   try {
-    VelocityContext context=new VelocityContext(getDataModel());
     if (getCharacterSet() != null) {
       tmplWriter=new BufferedWriter(new OutputStreamWriter(outputStream,getCharacterSet().getName()));
     }
@@ -13,7 +12,7 @@
         tmplWriter=new BufferedWriter(new OutputStreamWriter(outputStream,getTemplate().getEncoding()));
       }
     }
-    getTemplate().merge(context,tmplWriter);
+    getTemplate().merge(getContext(),tmplWriter);
     tmplWriter.flush();
   }
  catch (  Exception e) {
