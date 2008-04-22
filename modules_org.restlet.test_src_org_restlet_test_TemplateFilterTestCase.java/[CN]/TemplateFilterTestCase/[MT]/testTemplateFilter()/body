@@ -5,11 +5,11 @@
     testDir.mkdir();
     File testFileFm1=new File(testDir,"testFm1.txt.fmt");
     FileWriter fw=new FileWriter(testFileFm1);
-    fw.write("Value=${value}");
+    fw.write("Method=${m}/Path=${ra}");
     fw.close();
     File testFileFm2=new File(testDir,"testFm2.txt");
     fw=new FileWriter(testFileFm2);
-    fw.write("Value=${value}");
+    fw.write("Method=${m}/Path=${ra}");
     fw.close();
     Component component=new Component();
     component.getServers().add(Protocol.HTTP,8182);
@@ -21,12 +21,12 @@
     Client client=new Client(Protocol.HTTP);
     Response response=client.get("http://localhost:8182/" + testFileFm1.getName());
     if (response.isEntityAvailable()) {
-      assertEquals(response.getEntity().getText(),"Value=myValue");
+      assertEquals(response.getEntity().getText(),"Method=GET/Path=localhost:8182");
     }
     response=client.get("http://localhost:8182/" + testFileFm2.getName());
     assertTrue(response.getStatus().isSuccess());
     if (response.isEntityAvailable()) {
-      assertEquals(response.getEntity().getText(),"Value=${value}");
+      assertEquals(response.getEntity().getText(),"Method=${m}/Path=${ra}");
     }
     component.stop();
   }
