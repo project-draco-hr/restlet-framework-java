@@ -1,8 +1,11 @@
 {
   if (jaxRsProviderClass == null)   throw new IllegalArgumentException("The JAX-RS provider class must not be null");
   Util.checkClassConcrete(jaxRsProviderClass,"provider");
-  Constructor<?> providerConstructor=WrapperUtil.findJaxRsConstructor(jaxRsProviderClass,"provider");
-  this.jaxRsProvider=createInstance(providerConstructor,jaxRsProviderClass,tlContext,mbWorkers,allResolvers,logger);
+  if (objectFactory != null)   this.jaxRsProvider=objectFactory.getInstance(jaxRsProviderClass);
+  if (this.jaxRsProvider == null) {
+    Constructor<?> providerConstructor=WrapperUtil.findJaxRsConstructor(jaxRsProviderClass,"provider");
+    this.jaxRsProvider=createInstance(providerConstructor,jaxRsProviderClass,tlContext,mbWorkers,allResolvers,logger);
+  }
   boolean isProvider=false;
   if (jaxRsProvider instanceof javax.ws.rs.ext.MessageBodyWriter) {
     this.writer=(javax.ws.rs.ext.MessageBodyWriter<T>)jaxRsProvider;
