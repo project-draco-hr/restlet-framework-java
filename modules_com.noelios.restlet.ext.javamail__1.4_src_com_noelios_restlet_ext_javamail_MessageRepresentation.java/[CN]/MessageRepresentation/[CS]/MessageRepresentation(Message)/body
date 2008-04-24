@@ -52,14 +52,45 @@
     sent.setTextContent(DateUtils.format(message.getSentDate(),DateUtils.FORMAT_RFC_1123.get(0)));
     head.appendChild(sent);
   }
-  if (message.getContentType() != null) {
-    MediaType contentType=MediaType.valueOf(message.getContentType());
-    if (MediaType.TEXT_PLAIN.equals(contentType)) {
-      Representation content=new InputRepresentation(message.getInputStream(),contentType);
-      Element body=dom.createElement("body");
-      email.appendChild(head);
-      CDATASection bodyContent=dom.createCDATASection(content.getText());
-      body.appendChild(bodyContent);
+  email.appendChild(head);
+  Representation content=null;
+  if (message.getContent() instanceof Multipart) {
+    Multipart multipart=(Multipart)message.getContent();
+    for (int i=0, n=multipart.getCount(); i < n; i++) {
+      Part part=multipart.getBodyPart(i);
+      String disposition=part.getDisposition();
+      if (disposition != null) {
+        if (disposition.equals(Part.ATTACHMENT) || disposition.equals(Part.INLINE)) {
+        }
+      }
+ else {
+        MimeBodyPart mimeBodyPart=(MimeBodyPart)part;
+        String[] tab=mimeBodyPart.getContentType().split(";");
+        String mediaType=tab[0];
+        MediaType contentType=MediaType.valueOf(mediaType);
+        if (MediaType.TEXT_PLAIN.equals(contentType,true)) {
+          content=new InputRepresentation(mimeBodyPart.getInputStream(),MediaType.TEXT_PLAIN);
+          break;
+        }
+ else {
+        }
+      }
     }
+  }
+ else {
+    if (message.getContentType() != null) {
+      String[] tab=message.getContentType().split(";");
+      String mediaType=tab[0];
+      MediaType contentType=MediaType.valueOf(mediaType);
+      if (MediaType.TEXT_PLAIN.equals(contentType,true)) {
+        content=new InputRepresentation(message.getInputStream(),MediaType.TEXT_PLAIN);
+      }
+    }
+  }
+  if (content != null) {
+    Element body=dom.createElement("body");
+    CDATASection bodyContent=dom.createCDATASection(content.getText());
+    body.appendChild(bodyContent);
+    email.appendChild(body);
   }
 }

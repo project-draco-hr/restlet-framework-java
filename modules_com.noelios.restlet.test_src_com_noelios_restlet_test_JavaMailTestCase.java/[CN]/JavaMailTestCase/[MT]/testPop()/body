@@ -1,8 +1,26 @@
 {
   Client client=new Client(Protocol.POP);
   client.getContext().getParameters().add("debug",DEBUG);
-  Request request=new Request(Method.GET,"pop://pop.mail.yahoo.fr");
-  request.setChallengeResponse(new ChallengeResponse(ChallengeScheme.POP_BASIC,YAHOO_ID,YAHOO_PASSWORD));
+  Request request=new Request(Method.GET,YAHOO_POP);
+  ChallengeResponse challengeResponse=new ChallengeResponse(ChallengeScheme.POP_BASIC,YAHOO_ID,YAHOO_PASSWORD);
+  request.setChallengeResponse(challengeResponse);
   Response response=client.handle(request);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
+  testSmtp();
+  if (response.isEntityAvailable()) {
+    DomRepresentation representation=response.getEntityAsDom();
+    NodeList nodes=representation.getNodes("/emails/email");
+    if (nodes.getLength() > 0) {
+      Node node=representation.getNode("/emails/email[1]/@href");
+      String mailUrl=YAHOO_POP + node.getNodeValue();
+      request=new Request(Method.GET,mailUrl);
+      request.setChallengeResponse(challengeResponse);
+      response=client.handle(request);
+      assertEquals(Status.SUCCESS_OK,response.getStatus());
+      request=new Request(Method.DELETE,mailUrl);
+      request.setChallengeResponse(challengeResponse);
+      response=client.handle(request);
+      assertEquals(Status.SUCCESS_OK,response.getStatus());
+    }
+  }
 }
