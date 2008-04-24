@@ -65,10 +65,8 @@
       }
  else {
         MimeBodyPart mimeBodyPart=(MimeBodyPart)part;
-        String[] tab=mimeBodyPart.getContentType().split(";");
-        String mediaType=tab[0];
-        MediaType contentType=MediaType.valueOf(mediaType);
-        if (MediaType.TEXT_PLAIN.equals(contentType,true)) {
+        ContentType contentType=new ContentType(mimeBodyPart.getContentType());
+        if (MediaType.TEXT_PLAIN.equals(contentType.getMediaType(),true)) {
           content=new InputRepresentation(mimeBodyPart.getInputStream(),MediaType.TEXT_PLAIN);
           break;
         }
@@ -79,10 +77,8 @@
   }
  else {
     if (message.getContentType() != null) {
-      String[] tab=message.getContentType().split(";");
-      String mediaType=tab[0];
-      MediaType contentType=MediaType.valueOf(mediaType);
-      if (MediaType.TEXT_PLAIN.equals(contentType,true)) {
+      ContentType contentType=new ContentType(message.getContentType());
+      if (MediaType.TEXT_PLAIN.equals(contentType.getMediaType(),true)) {
         content=new InputRepresentation(message.getInputStream(),MediaType.TEXT_PLAIN);
       }
     }
