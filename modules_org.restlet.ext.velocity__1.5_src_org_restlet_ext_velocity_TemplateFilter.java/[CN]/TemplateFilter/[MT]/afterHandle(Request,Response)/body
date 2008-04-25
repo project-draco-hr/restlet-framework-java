@@ -2,7 +2,17 @@
   if (response.isEntityAvailable() && response.getEntity().getEncodings().contains(Encoding.VELOCITY)) {
     try {
       TemplateRepresentation representation=new TemplateRepresentation(response.getEntity(),response.getEntity().getMediaType());
-      representation.setDataModel(request,response);
+      if (this.mapDataModel == null && this.resolverDataModel == null) {
+        representation.setDataModel(request,response);
+      }
+ else {
+        if (this.mapDataModel == null) {
+          representation.setDataModel(resolverDataModel);
+        }
+ else {
+          representation.setDataModel(mapDataModel);
+        }
+      }
       response.setEntity(representation);
     }
  catch (    ResourceNotFoundException e) {
