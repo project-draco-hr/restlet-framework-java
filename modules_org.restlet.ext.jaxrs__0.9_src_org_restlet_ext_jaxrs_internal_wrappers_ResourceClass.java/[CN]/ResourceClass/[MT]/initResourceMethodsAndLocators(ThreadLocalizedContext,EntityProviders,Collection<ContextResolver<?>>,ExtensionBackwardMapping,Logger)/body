@@ -1,0 +1,37 @@
+{
+  Collection<ResourceMethodOrLocator> srmls=new ArrayList<ResourceMethodOrLocator>();
+  Collection<ResourceMethod> subRsesMeths=new ArrayList<ResourceMethod>();
+  Collection<SubResourceLocator> subResLocs=new ArrayList<SubResourceLocator>();
+  Method[] classMethods=jaxRsClass.getDeclaredMethods();
+  for (  Method execMethod : classMethods) {
+    Method annotatedMethod=getAnnotatedJavaMethod(execMethod);
+    if (annotatedMethod == null)     continue;
+    Path path=annotatedMethod.getAnnotation(Path.class);
+    org.restlet.data.Method httpMethod;
+    httpMethod=WrapperUtil.getHttpMethod(annotatedMethod);
+    try {
+      if (httpMethod != null) {
+        if (!checkResMethodVolatileOrNotPublic(execMethod,logger))         continue;
+        ResourceMethod subResMeth=new ResourceMethod(execMethod,annotatedMethod,this,httpMethod,tlContext,entityProviders,allCtxResolvers,extensionBackwardMapping,logger);
+        subRsesMeths.add(subResMeth);
+        srmls.add(subResMeth);
+        checkForPrimitiveParameters(execMethod,logger);
+      }
+ else {
+        if (path != null) {
+          if (!checkResMethodVolatileOrNotPublic(execMethod,logger))           continue;
+          SubResourceLocator subResLoc=new SubResourceLocator(execMethod,annotatedMethod,this,tlContext,entityProviders,allCtxResolvers,extensionBackwardMapping,logger);
+          subResLocs.add(subResLoc);
+          srmls.add(subResLoc);
+          checkForPrimitiveParameters(execMethod,logger);
+        }
+      }
+    }
+ catch (    IllegalPathOnMethodException e) {
+      logger.warning("The method " + annotatedMethod + " is annotated with an illegal path: "+ e.getPath()+ ". Ignoring this method. ("+ e.getMessage()+ ")");
+    }
+  }
+  this.subResourceLocators=subResLocs;
+  this.subResourceMethods=subRsesMeths;
+  this.subResourceMethodsAndLocators=srmls;
+}

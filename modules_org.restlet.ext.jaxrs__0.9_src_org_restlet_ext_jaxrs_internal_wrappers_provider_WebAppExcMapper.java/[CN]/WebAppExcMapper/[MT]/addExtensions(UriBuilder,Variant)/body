@@ -1,0 +1,21 @@
+{
+  String mediaTypeExt=null;
+  String languageExt=null;
+  String encodingExt=null;
+  if (variant.getMediaType() != null) {
+    mediaTypeExt=extBackwMapping.getByMediaType(variant.getMediaType());
+    if (mediaTypeExt == null)     return false;
+  }
+  if (variant.getLanguage() != null) {
+    languageExt=extBackwMapping.getByLanguage(variant.getLanguage());
+    if (languageExt == null)     languageExt=variant.getLanguage();
+  }
+  if (variant.getEncoding() != null) {
+    encodingExt=extBackwMapping.getByEncoding(variant.getEncoding());
+    if (encodingExt == null)     encodingExt=variant.getEncoding();
+  }
+  if (languageExt != null)   uriBuilder.extension(languageExt);
+  if (mediaTypeExt != null)   uriBuilder.extension(mediaTypeExt);
+  if (encodingExt != null)   uriBuilder.extension(encodingExt);
+  return true;
+}

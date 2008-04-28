@@ -1,5 +1,12 @@
 {
-  CharSequence e=EncodeOrCheck.pathSegmentWithMatrix(extension,encode);
-  addValidPathSegment(e);
+  StringBuilder path=getPath();
+  if (extension == null) {
+    throw new NotYetImplementedException("unset of an extension is not yet implemented");
+  }
+ else {
+    CharSequence e=EncodeOrCheck.pathSegmentWithMatrix(extension,encode);
+    if (e.charAt(0) != '.')     path.append('.');
+    path.append(e);
+  }
   return this;
 }

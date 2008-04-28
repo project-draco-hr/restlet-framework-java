@@ -2,9 +2,8 @@
   ResourceObject o=rroRemPathAndMatchedPath.rootResObj;
   RemainingPath u=rroRemPathAndMatchedPath.u;
   ResourceClass resClass=o.getResourceClass();
-  Object jaxRsResObj1=o.getJaxRsResourceObject();
   CallContext callContext=tlContext.get();
-  callContext.addForAncestor(jaxRsResObj1,rroRemPathAndMatchedPath.matchedUriPath);
+  callContext.addForAncestor(o.getJaxRsResourceObject(),rroRemPathAndMatchedPath.matchedUriPath);
   for (; ; ) {
     if (u.isEmptyOrSlash()) {
       return new ResObjAndRemPath(o,u);
@@ -24,8 +23,8 @@
     addPathVarsToMap(matchingResult,callContext);
     if (firstMeth instanceof ResourceMethod)     return new ResObjAndRemPath(o,u);
     String matchedUriPart=matchingResult.getMatched();
-    Object jaxRsResObj2=o.getJaxRsResourceObject();
-    callContext.addForAncestor(jaxRsResObj2,matchedUriPart);
+    Object jaxRsResObj=o.getJaxRsResourceObject();
+    callContext.addForAncestor(jaxRsResObj,matchedUriPart);
     u=matchingResult.getFinalCapturingGroup();
     SubResourceLocator subResourceLocator=(SubResourceLocator)firstMeth;
     try {

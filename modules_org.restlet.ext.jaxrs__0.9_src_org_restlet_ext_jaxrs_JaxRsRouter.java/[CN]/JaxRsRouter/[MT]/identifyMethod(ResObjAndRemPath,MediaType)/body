@@ -17,21 +17,21 @@
     excHandler.methodNotAllowed(allowedMethods);
   }
   if (givenMediaType != null) {
-    Iterator<ResourceMethod> methodIter=resourceMethods.iterator();
-    while (methodIter.hasNext()) {
-      ResourceMethod resourceMethod=methodIter.next();
-      if (!resourceMethod.isGivenMediaTypeSupported(givenMediaType))       methodIter.remove();
+    Collection<ResourceMethod> supporting=resourceMethods;
+    resourceMethods=new ArrayList<ResourceMethod>();
+    for (    ResourceMethod resourceMethod : supporting) {
+      if (resourceMethod.isGivenMediaTypeSupported(givenMediaType))       resourceMethods.add(resourceMethod);
     }
-    if (resourceMethods.isEmpty())     excHandler.unsupportedMediaType();
+    if (resourceMethods.isEmpty())     excHandler.unsupportedMediaType(supporting);
   }
   SortedMetadata<MediaType> accMediaTypes=callContext.getAccMediaTypes();
-  Iterator<ResourceMethod> methodIter=resourceMethods.iterator();
-  while (methodIter.hasNext()) {
-    ResourceMethod resourceMethod=methodIter.next();
-    if (!resourceMethod.isAcceptedMediaTypeSupported(accMediaTypes))     methodIter.remove();
+  Collection<ResourceMethod> supporting=resourceMethods;
+  resourceMethods=new ArrayList<ResourceMethod>();
+  for (  ResourceMethod resourceMethod : supporting) {
+    if (resourceMethod.isAcceptedMediaTypeSupported(accMediaTypes))     resourceMethods.add(resourceMethod);
   }
   if (resourceMethods.isEmpty()) {
-    excHandler.noResourceMethodForAccMediaTypes();
+    excHandler.noResourceMethodForAccMediaTypes(supporting);
   }
   ResourceMethod bestResourceMethod=getBestMethod(resourceMethods,givenMediaType,accMediaTypes,httpMethod);
   MatchingResult mr=bestResourceMethod.getPathRegExp().match(u);

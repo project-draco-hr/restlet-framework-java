@@ -1,0 +1,8 @@
+{
+  Response response=wae.getResponse();
+  if (response == null)   return null;
+  if (response.getEntity() != null)   return response;
+  if (response.getStatus() == NOT_ACCEPTABLE.getStatusCode())   return requestOtherVariants(getSupportedVariants(wae),response);
+  if (response.getStatus() == UNSUPPORTED_MEDIA_TYPE.getStatusCode())   return giveOtherVariant(getAcceptedVariants(wae),response);
+  return response;
+}
