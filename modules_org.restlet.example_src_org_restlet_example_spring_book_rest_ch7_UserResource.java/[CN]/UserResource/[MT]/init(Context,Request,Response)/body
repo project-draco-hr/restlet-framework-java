@@ -1,0 +1,12 @@
+{
+  super.init(context,request,response);
+  this.userName=(String)getRequest().getAttributes().get("username");
+  ChallengeResponse cr=getRequest().getChallengeResponse();
+  this.login=(cr != null) ? cr.getIdentifier() : null;
+  this.password=(cr != null) ? new String(cr.getSecret()) : null;
+  this.user=findUser();
+  if (user != null) {
+    getVariants().add(new Variant(MediaType.TEXT_PLAIN));
+  }
+  setModifiable(true);
+}
