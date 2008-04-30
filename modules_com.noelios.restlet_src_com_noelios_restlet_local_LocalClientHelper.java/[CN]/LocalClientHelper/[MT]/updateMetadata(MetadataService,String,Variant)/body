@@ -26,10 +26,16 @@
       }
     }
     if (variant.getLanguages().isEmpty()) {
-      variant.getLanguages().add(metadataService.getDefaultLanguage());
+      Language defaultLanguage=metadataService.getDefaultLanguage();
+      if ((defaultLanguage != null) && !defaultLanguage.equals(Language.ALL)) {
+        variant.getLanguages().add(defaultLanguage);
+      }
     }
     if (variant.getMediaType() == null) {
-      variant.setMediaType(metadataService.getDefaultMediaType());
+      MediaType defaultMediaType=metadataService.getDefaultMediaType();
+      if ((defaultMediaType != null) && !defaultMediaType.equals(MediaType.ALL)) {
+        variant.setMediaType(defaultMediaType);
+      }
     }
   }
 }
