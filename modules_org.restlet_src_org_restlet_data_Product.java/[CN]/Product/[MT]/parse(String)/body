@@ -1,0 +1,37 @@
+{
+  Product result=null;
+  String token=null;
+  String version=null;
+  String comment=null;
+  char[] tab=product.trim().toCharArray();
+  StringBuilder builder=new StringBuilder();
+  int index=0;
+  for (index=0; index < tab.length; index++) {
+    char c=tab[index];
+    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ') {
+      builder.append(c);
+    }
+ else {
+      break;
+    }
+  }
+  token=builder.toString().trim();
+  if (index < tab.length && tab[index] == '/') {
+    index++;
+    int spaceIndex=product.indexOf(" ",index);
+    if (spaceIndex > -1) {
+      version=product.substring(index,spaceIndex);
+      comment=product.substring(spaceIndex + 1);
+    }
+ else {
+      version=product.substring(index);
+    }
+  }
+ else {
+    if (index < tab.length) {
+      comment=product.substring(index);
+    }
+  }
+  result=new Product(token,version,comment);
+  return result;
+}
