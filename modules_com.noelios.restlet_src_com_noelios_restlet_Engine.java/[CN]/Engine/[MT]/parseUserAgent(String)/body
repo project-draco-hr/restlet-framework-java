@@ -24,12 +24,10 @@
           if (c == '/') {
             insideVersion=true;
             versionBuilder=new StringBuilder();
-            version=null;
           }
  else           if (c == '(') {
             insideComment=true;
             commentBuilder=new StringBuilder();
-            comment=null;
           }
         }
       }
@@ -47,7 +45,6 @@
           if (c == '(') {
             insideComment=true;
             commentBuilder=new StringBuilder();
-            comment=null;
           }
  else {
             if (insideComment) {
@@ -55,21 +52,18 @@
                 insideComment=false;
                 comment=commentBuilder.toString();
                 result.add(new Product(token,version,comment));
-                comment=null;
                 insideToken=true;
                 tokenBuilder=new StringBuilder();
-                token=null;
               }
  else {
                 commentBuilder.append(c);
               }
             }
  else {
-              result.add(new Product(token,version,comment));
+              result.add(new Product(token,version,null));
               insideToken=true;
               tokenBuilder=new StringBuilder();
               tokenBuilder.append(c);
-              token=null;
             }
           }
         }
