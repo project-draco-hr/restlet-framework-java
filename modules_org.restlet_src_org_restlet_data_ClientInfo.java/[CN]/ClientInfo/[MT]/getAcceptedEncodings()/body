@@ -1,4 +1,10 @@
 {
-  if (this.acceptedEncodings == null)   this.acceptedEncodings=new ArrayList<Preference<Encoding>>();
-  return this.acceptedEncodings;
+  List<Preference<Encoding>> a=this.acceptedEncodings;
+  if (a == null) {
+synchronized (this) {
+      a=this.acceptedEncodings;
+      if (a == null)       this.acceptedEncodings=a=new ArrayList<Preference<Encoding>>();
+    }
+  }
+  return a;
 }

@@ -1,4 +1,10 @@
 {
-  if (this.serverInfo == null)   this.serverInfo=new ServerInfo();
-  return this.serverInfo;
+  ServerInfo s=this.serverInfo;
+  if (s == null) {
+synchronized (this) {
+      s=this.serverInfo;
+      if (s == null)       this.serverInfo=s=new ServerInfo();
+    }
+  }
+  return s;
 }

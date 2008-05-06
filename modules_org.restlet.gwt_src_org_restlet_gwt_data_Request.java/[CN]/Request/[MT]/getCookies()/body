@@ -1,4 +1,10 @@
 {
-  if (this.cookies == null)   this.cookies=new CookieSeries();
-  return this.cookies;
+  Series<Cookie> c=this.cookies;
+  if (c == null) {
+synchronized (this) {
+      c=this.cookies;
+      if (c == null)       this.cookies=c=new CookieSeries();
+    }
+  }
+  return c;
 }

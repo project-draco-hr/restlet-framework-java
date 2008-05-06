@@ -1,4 +1,10 @@
 {
-  if (this.acceptedMediaTypes == null)   this.acceptedMediaTypes=new ArrayList<Preference<MediaType>>();
-  return this.acceptedMediaTypes;
+  List<Preference<MediaType>> a=this.acceptedMediaTypes;
+  if (a == null) {
+synchronized (this) {
+      a=this.acceptedMediaTypes;
+      if (a == null)       this.acceptedMediaTypes=a=new ArrayList<Preference<MediaType>>();
+    }
+  }
+  return a;
 }

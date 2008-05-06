@@ -1,4 +1,10 @@
 {
-  if (this.xmlConfigRefs == null)   this.xmlConfigRefs=new ArrayList<String>();
-  return this.xmlConfigRefs;
+  List<String> x=this.xmlConfigRefs;
+  if (x == null) {
+synchronized (this) {
+      x=this.xmlConfigRefs;
+      if (x == null)       this.xmlConfigRefs=x=new ArrayList<String>();
+    }
+  }
+  return x;
 }

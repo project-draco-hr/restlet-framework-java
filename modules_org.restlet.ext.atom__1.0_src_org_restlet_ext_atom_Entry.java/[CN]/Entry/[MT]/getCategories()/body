@@ -1,4 +1,10 @@
 {
-  if (this.categories == null)   this.categories=new ArrayList<Category>();
-  return this.categories;
+  List<Category> c=this.categories;
+  if (c == null) {
+synchronized (this) {
+      c=this.categories;
+      if (c == null)       this.categories=c=new ArrayList<Category>();
+    }
+  }
+  return c;
 }

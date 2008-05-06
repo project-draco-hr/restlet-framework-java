@@ -1,4 +1,10 @@
 {
-  if (this.entries == null)   this.entries=new ArrayList<Entry>();
-  return this.entries;
+  List<Entry> e=this.entries;
+  if (e == null) {
+synchronized (this) {
+      e=this.entries;
+      if (e == null)       this.entries=e=new ArrayList<Entry>();
+    }
+  }
+  return e;
 }

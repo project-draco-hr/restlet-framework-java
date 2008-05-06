@@ -1,4 +1,10 @@
 {
-  if (this.acceptedCharacterSets == null)   this.acceptedCharacterSets=new ArrayList<Preference<CharacterSet>>();
-  return this.acceptedCharacterSets;
+  List<Preference<CharacterSet>> a=this.acceptedCharacterSets;
+  if (a == null) {
+synchronized (this) {
+      a=this.acceptedCharacterSets;
+      if (a == null)       this.acceptedCharacterSets=a=new ArrayList<Preference<CharacterSet>>();
+    }
+  }
+  return a;
 }

@@ -1,4 +1,10 @@
 {
-  if (this.variants == null)   this.variants=new ArrayList<Variant>();
-  return this.variants;
+  List<Variant> v=this.variants;
+  if (v == null) {
+synchronized (this) {
+      v=this.variants;
+      if (v == null)       this.variants=v=new ArrayList<Variant>();
+    }
+  }
+  return v;
 }

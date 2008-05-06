@@ -1,4 +1,10 @@
 {
-  if (this.contributors == null)   this.contributors=new ArrayList<Person>();
-  return this.contributors;
+  List<Person> c=this.contributors;
+  if (c == null) {
+synchronized (this) {
+      c=this.contributors;
+      if (c == null)       this.contributors=c=new ArrayList<Person>();
+    }
+  }
+  return c;
 }

@@ -1,4 +1,10 @@
 {
-  if (this.conditions == null)   this.conditions=new Conditions();
-  return this.conditions;
+  Conditions c=this.conditions;
+  if (c == null) {
+synchronized (this) {
+      c=this.conditions;
+      if (c == null)       this.conditions=c=new Conditions();
+    }
+  }
+  return c;
 }

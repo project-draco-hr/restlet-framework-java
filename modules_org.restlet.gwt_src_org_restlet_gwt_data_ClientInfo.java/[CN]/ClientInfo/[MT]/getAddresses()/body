@@ -1,4 +1,10 @@
 {
-  if (this.addresses == null)   this.addresses=new ArrayList<String>();
-  return this.addresses;
+  List<String> a=this.addresses;
+  if (a == null) {
+synchronized (this) {
+      a=this.addresses;
+      if (a == null)       this.addresses=a=new ArrayList<String>();
+    }
+  }
+  return a;
 }

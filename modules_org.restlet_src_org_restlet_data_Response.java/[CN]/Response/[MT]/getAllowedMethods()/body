@@ -1,4 +1,10 @@
 {
-  if (this.allowedMethods == null)   this.allowedMethods=new HashSet<Method>();
-  return this.allowedMethods;
+  Set<Method> a=this.allowedMethods;
+  if (a == null) {
+synchronized (this) {
+      a=this.allowedMethods;
+      if (a == null)       this.allowedMethods=a=new HashSet<Method>();
+    }
+  }
+  return a;
 }

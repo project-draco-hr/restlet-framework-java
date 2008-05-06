@@ -1,4 +1,10 @@
 {
-  if (this.authors == null)   this.authors=new ArrayList<Person>();
-  return this.authors;
+  List<Person> a=this.authors;
+  if (a == null) {
+synchronized (this) {
+      a=this.authors;
+      if (a == null)       this.authors=a=new ArrayList<Person>();
+    }
+  }
+  return a;
 }

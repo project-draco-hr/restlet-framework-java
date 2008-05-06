@@ -1,4 +1,10 @@
 {
-  if (this.propertyConfigRefs == null)   this.propertyConfigRefs=new ArrayList<String>();
-  return this.propertyConfigRefs;
+  List<String> p=this.propertyConfigRefs;
+  if (p == null) {
+synchronized (this) {
+      p=this.propertyConfigRefs;
+      if (p == null)       this.propertyConfigRefs=p=new ArrayList<String>();
+    }
+  }
+  return p;
 }
