@@ -1,4 +1,5 @@
 {
+  Map<String,Object> result=new HashMap<String,Object>();
   if (this.agentMainProduct == null) {
     URL userAgentPropertiesUrl=Engine.getClassLoader().getResource("agent.properties");
     if (userAgentPropertiesUrl != null) {
@@ -9,6 +10,8 @@
         Variable agentName=new Variable(Variable.TYPE_TOKEN);
         Variable agentVersion=new Variable(Variable.TYPE_TOKEN);
         Variable agentComment=new Variable(Variable.TYPE_COMMENT);
+        Variable agentCommentAttribute=new Variable(Variable.TYPE_COMMENT_ATTRIBUTE);
+        Variable facultativeData=new Variable(Variable.TYPE_ALL,null,false,false);
         String line=reader.readLine();
         for (; line != null; line=reader.readLine()) {
           if (line.trim().length() > 0 && !line.trim().startsWith("#")) {
@@ -16,18 +19,19 @@
             template.getVariables().put("agentName",agentName);
             template.getVariables().put("agentVersion",agentVersion);
             template.getVariables().put("agentComment",agentComment);
-            Map<String,Object> map=new HashMap<String,Object>();
-            if (template.parse(getAgent(),map) > -1) {
-              this.agentMainProduct=new Product((String)map.get("agentName"),(String)map.get("agentVersion"),(String)map.get("agentComment"));
+            template.getVariables().put("agentOs",agentCommentAttribute);
+            template.getVariables().put("commentAttribute",agentCommentAttribute);
+            template.getVariables().put("facultativeData",facultativeData);
+            if (template.parse(getAgent(),result) > -1) {
               break;
             }
           }
         }
       }
  catch (      IOException e) {
-        return this.agentMainProduct;
+        return result;
       }
     }
   }
-  return this.agentMainProduct;
+  return result;
 }

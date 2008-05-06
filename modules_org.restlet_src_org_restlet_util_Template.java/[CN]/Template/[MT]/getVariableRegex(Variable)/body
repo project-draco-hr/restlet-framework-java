@@ -20,6 +20,7 @@
     final String SEPARATOR="\\(\\)\\<\\>\\@\\,\\;\\:\\[\\]\"\\/\\\\?\\=\\{\\}\\ \\t";
     final String TOKEN="[^" + SEPARATOR + "]";
     final String COMMENT="[^" + CTL + "]"+ "[^\\(\\)]"+ LWS;
+    final String COMMENT_ATTRIBUTE="[^\\;\\(\\)]";
     final String PCT_ENCODED="\\%[" + HEXA + "]["+ HEXA+ "]";
     final String PCHAR="[" + URI_UNRESERVED + URI_SUB_DELIMS+ "\\:\\@]|(?:"+ PCT_ENCODED+ ")";
     final String QUERY=PCHAR + "|\\/|\\?";
@@ -66,6 +67,9 @@ appendClass(coreRegex,TOKEN,variable.isRequired());
 break;
 case Variable.TYPE_COMMENT:
 appendClass(coreRegex,COMMENT,variable.isRequired());
+break;
+case Variable.TYPE_COMMENT_ATTRIBUTE:
+appendClass(coreRegex,COMMENT_ATTRIBUTE,variable.isRequired());
 break;
 }
 result=coreRegex.toString();
