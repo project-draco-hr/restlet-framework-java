@@ -1,12 +1,9 @@
 {
   final Pipe pipe=Pipe.open();
   final Context context=Context.getCurrent();
-  final Response response=Response.getCurrent();
-  Thread writer=new Thread(){
-    @Override public void run(){
+  Thread writer=context.getThread(new Runnable(){
+    public void run(){
       try {
-        Context.setCurrent(context);
-        Response.setCurrent(response);
         WritableByteChannel wbc=pipe.sink();
         representation.write(wbc);
         wbc.close();
@@ -16,7 +13,7 @@
       }
     }
   }
-;
+);
   writer.setDaemon(false);
   writer.start();
   return pipe.source();

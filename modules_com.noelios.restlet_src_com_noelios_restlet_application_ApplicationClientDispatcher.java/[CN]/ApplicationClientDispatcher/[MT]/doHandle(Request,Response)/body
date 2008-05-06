@@ -1,11 +1,6 @@
 {
-  request.getAttributes().put(Application.KEY,getApplicationContext().getApplication());
-  response.getAttributes().put(Application.KEY,getApplicationContext().getApplication());
   Protocol protocol=request.getProtocol();
-  if (protocol.equals(Protocol.WAR)) {
-    getApplicationContext().getWarClient().handle(request,response);
-  }
- else   if (protocol.equals(Protocol.RIAP)) {
+  if (protocol.equals(Protocol.RIAP)) {
     request.setConfidential(true);
     LocalReference cr=new LocalReference(request.getResourceRef());
     if (cr.getRiapAuthorityType() == LocalReference.RIAP_APPLICATION) {
