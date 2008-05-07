@@ -1,6 +1,6 @@
 {
-  Map<String,Object> result=new HashMap<String,Object>();
-  if (this.agentMainProduct == null) {
+  if (this.agentAttributes == null) {
+    agentAttributes=new HashMap<String,Object>();
     URL userAgentPropertiesUrl=Engine.getClassLoader().getResource("agent.properties");
     if (userAgentPropertiesUrl != null) {
       BufferedReader reader;
@@ -22,16 +22,17 @@
             template.getVariables().put("agentOs",agentCommentAttribute);
             template.getVariables().put("commentAttribute",agentCommentAttribute);
             template.getVariables().put("facultativeData",facultativeData);
-            if (template.parse(getAgent(),result) > -1) {
+            if (template.parse(getAgent(),agentAttributes) > -1) {
               break;
             }
           }
         }
+        reader.close();
       }
  catch (      IOException e) {
-        return result;
+        return agentAttributes;
       }
     }
   }
-  return result;
+  return agentAttributes;
 }

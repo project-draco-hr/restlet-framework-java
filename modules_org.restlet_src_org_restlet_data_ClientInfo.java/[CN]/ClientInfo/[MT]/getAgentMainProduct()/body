@@ -1,32 +1,7 @@
 {
   if (this.agentMainProduct == null) {
-    URL userAgentPropertiesUrl=Engine.getClassLoader().getResource("agent.properties");
-    if (userAgentPropertiesUrl != null) {
-      BufferedReader reader;
-      try {
-        reader=new BufferedReader(new InputStreamReader(userAgentPropertiesUrl.openStream(),CharacterSet.UTF_8.getName()));
-        Template template=null;
-        Variable agentName=new Variable(Variable.TYPE_TOKEN);
-        Variable agentVersion=new Variable(Variable.TYPE_TOKEN);
-        Variable agentComment=new Variable(Variable.TYPE_COMMENT);
-        String line=reader.readLine();
-        for (; line != null; line=reader.readLine()) {
-          if (line.trim().length() > 0 && !line.trim().startsWith("#")) {
-            template=new Template(line,Template.MODE_EQUALS);
-            template.getVariables().put("agentName",agentName);
-            template.getVariables().put("agentVersion",agentVersion);
-            template.getVariables().put("agentComment",agentComment);
-            Map<String,Object> map=new HashMap<String,Object>();
-            if (template.parse(getAgent(),map) > -1) {
-              this.agentMainProduct=new Product((String)map.get("agentName"),(String)map.get("agentVersion"),(String)map.get("agentComment"));
-              break;
-            }
-          }
-        }
-      }
- catch (      IOException e) {
-        return this.agentMainProduct;
-      }
+    if (getAgentAttributes() != null) {
+      this.agentMainProduct=new Product((String)getAgentAttributes().get("agentName"),(String)getAgentAttributes().get("agentVersion"),(String)getAgentAttributes().get("agentComment"));
     }
   }
   return this.agentMainProduct;
