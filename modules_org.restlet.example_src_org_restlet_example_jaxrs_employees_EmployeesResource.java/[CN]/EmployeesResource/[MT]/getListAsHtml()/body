@@ -1,0 +1,45 @@
+{
+  final EmployeeList employees=getEmployees();
+  return new StreamingOutput(){
+    public void write(    OutputStream output) throws IOException {
+      PrintStream ps=new PrintStream(output);
+      ps.println("<html><head>");
+      ps.println("<title>Employees</title>");
+      ps.println("</head></body>");
+      ps.println("<h2>Employees</h2>");
+      ps.println("<ul>");
+      for (      SmallEmployee employee : employees) {
+        ps.print("<li><a href=\"");
+        ps.print(employee.getDetails());
+        ps.print("\">");
+        ps.print(employee.getFirstname());
+        ps.print(" ");
+        ps.print(employee.getLastname());
+        ps.print("</a></li>");
+      }
+      ps.println("</ul>");
+      ps.print("<form action=\"");
+      ps.print(uriInfo.getAbsolutePath());
+      ps.println("\" method=\"POST\">");
+      ps.println("<table><tr>");
+      ps.println("<td>firstname:</td>");
+      ps.println("<td><input type=\"text\" name=\"firstname\" /></td>");
+      ps.println("</tr><tr>");
+      ps.println("<td>lastname:</td>");
+      ps.println("<td><input type=\"text\" name=\"lastname\" /></td>");
+      ps.println("</tr><tr>");
+      ps.println("<td>sex:</td>");
+      ps.println("<td><input type=\"text\" name=\"sex\" /></td>");
+      ps.println("</tr><tr>");
+      ps.println("<td>department:</td>");
+      ps.println("<td><input type=\"text\" name=\"department\" /></td>");
+      ps.println("</tr><tr>");
+      ps.println("<td></td>");
+      ps.println("<td><input type=\"submit\" value=\"create employee\" /></td>");
+      ps.println("</tr></table>");
+      ps.println("</form>");
+      ps.println("</body></html>");
+    }
+  }
+;
+}

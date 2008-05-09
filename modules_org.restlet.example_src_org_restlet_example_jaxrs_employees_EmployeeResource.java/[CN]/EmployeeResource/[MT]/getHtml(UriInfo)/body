@@ -1,0 +1,50 @@
+{
+  final Employee employee=get(uriInfo);
+  final URI employeesUri=createEmployeesUri(uriInfo);
+  return new StreamingOutput(){
+    public void write(    OutputStream output) throws IOException {
+      PrintStream ps=new PrintStream(output);
+      ps.println("<html><head>");
+      ps.println("<title>Employee</title>");
+      ps.println("</head></body>");
+      ps.println("<h2>Employee</h2>");
+      ps.println("<table><tr>");
+      ps.println("<td>staff no.</td>");
+      ps.println("<td>");
+      ps.println(employee.getStaffNo());
+      ps.println("</td>");
+      ps.println("</tr><tr>");
+      ps.println("<td>firstname:</td>");
+      ps.println("<td>");
+      ps.println(employee.getFirstname());
+      ps.println("</td>");
+      ps.println("</tr><tr>");
+      ps.println("<td>lastname:</td>");
+      ps.println("<td>");
+      ps.println(employee.getLastname());
+      ps.println("</td>");
+      ps.println("</tr><tr>");
+      ps.println("<td>sex:</td>");
+      ps.println("<td>");
+      ps.println(employee.getSex());
+      ps.println("</td>");
+      ps.println("</tr><tr>");
+      ps.println("<td>department:</td>");
+      ps.println("<td>");
+      ps.println(employee.getDepartment());
+      ps.println("</td>");
+      ps.println("</tr></table>");
+      ps.println("<hr>");
+      ps.print("<form action=\"");
+      ps.print(uriInfo.getAbsolutePath());
+      ps.println("?method=DELETE\" method=\"POST\">");
+      ps.println("<input type=\"submit\" value=\"Delete employee\" />");
+      ps.println("</form>");
+      ps.print("<hr><a href=\"");
+      ps.print(employeesUri);
+      ps.print("\">all employees</a>");
+      ps.println("</body></html>");
+    }
+  }
+;
+}
