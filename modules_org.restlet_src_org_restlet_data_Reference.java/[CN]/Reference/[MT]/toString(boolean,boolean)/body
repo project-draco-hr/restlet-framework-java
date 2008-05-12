@@ -3,41 +3,25 @@
     if (fragment) {
       return this.internalRef;
     }
- else {
+    if (hasFragment()) {
+      return this.internalRef.substring(0,fragmentIndex);
+    }
+    return this.internalRef;
+  }
+  if (fragment) {
+    if (hasQuery()) {
       if (hasFragment()) {
-        return this.internalRef.substring(0,fragmentIndex);
+        return this.internalRef.substring(0,queryIndex) + "#" + getFragment();
       }
- else {
-        return this.internalRef;
-      }
+      return this.internalRef.substring(0,queryIndex);
     }
+    return this.internalRef;
   }
- else {
-    if (fragment) {
-      if (hasQuery()) {
-        if (hasFragment()) {
-          return this.internalRef.substring(0,queryIndex) + "#" + getFragment();
-        }
- else {
-          return this.internalRef.substring(0,queryIndex);
-        }
-      }
- else {
-        return this.internalRef;
-      }
-    }
- else {
-      if (hasQuery()) {
-        return this.internalRef.substring(0,queryIndex);
-      }
- else {
-        if (hasFragment()) {
-          return this.internalRef.substring(0,fragmentIndex);
-        }
- else {
-          return this.internalRef;
-        }
-      }
-    }
+  if (hasQuery()) {
+    return this.internalRef.substring(0,queryIndex);
   }
+  if (hasFragment()) {
+    return this.internalRef.substring(0,fragmentIndex);
+  }
+  return this.internalRef;
 }

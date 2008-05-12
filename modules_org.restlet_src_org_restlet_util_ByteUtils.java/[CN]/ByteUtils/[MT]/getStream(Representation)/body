@@ -1,26 +1,24 @@
 {
-  if (representation != null) {
-    final PipeStream pipe=new PipeStream();
-    final Context context=Context.getCurrent();
-    Thread writer=context.getThread(new Runnable(){
-      public void run(){
-        try {
-          OutputStream os=pipe.getOutputStream();
-          representation.write(os);
-          os.write(-1);
-          os.close();
-        }
- catch (        IOException ioe) {
-          Logger.getLogger(ByteUtils.class.getCanonicalName()).log(Level.FINE,"Error while writing to the piped input stream.",ioe);
-        }
-      }
-    }
-);
-    writer.setDaemon(false);
-    writer.start();
-    return pipe.getInputStream();
-  }
- else {
+  if (representation == null) {
     return null;
   }
+  final PipeStream pipe=new PipeStream();
+  final Context context=Context.getCurrent();
+  Thread writer=context.getThread(new Runnable(){
+    public void run(){
+      try {
+        OutputStream os=pipe.getOutputStream();
+        representation.write(os);
+        os.write(-1);
+        os.close();
+      }
+ catch (      IOException ioe) {
+        Logger.getLogger(ByteUtils.class.getCanonicalName()).log(Level.FINE,"Error while writing to the piped input stream.",ioe);
+      }
+    }
+  }
+);
+  writer.setDaemon(false);
+  writer.start();
+  return pipe.getInputStream();
 }

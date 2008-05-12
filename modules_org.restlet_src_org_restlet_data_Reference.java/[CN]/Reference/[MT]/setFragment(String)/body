@@ -3,26 +3,24 @@
   if ((fragment != null) && (fragment.indexOf('#') != -1)) {
     throw new IllegalArgumentException("Illegal '#' character detected in parameter");
   }
+  if (hasFragment()) {
+    if (fragment != null) {
+      this.internalRef=this.internalRef.substring(0,fragmentIndex + 1) + fragment;
+    }
  else {
-    if (hasFragment()) {
-      if (fragment != null) {
-        this.internalRef=this.internalRef.substring(0,fragmentIndex + 1) + fragment;
+      this.internalRef=this.internalRef.substring(0,fragmentIndex);
+    }
+  }
+ else {
+    if (fragment != null) {
+      if (this.internalRef != null) {
+        this.internalRef=this.internalRef + '#' + fragment;
       }
  else {
-        this.internalRef=this.internalRef.substring(0,fragmentIndex);
+        this.internalRef='#' + fragment;
       }
     }
  else {
-      if (fragment != null) {
-        if (this.internalRef != null) {
-          this.internalRef=this.internalRef + '#' + fragment;
-        }
- else {
-          this.internalRef='#' + fragment;
-        }
-      }
- else {
-      }
     }
   }
   updateIndexes();
