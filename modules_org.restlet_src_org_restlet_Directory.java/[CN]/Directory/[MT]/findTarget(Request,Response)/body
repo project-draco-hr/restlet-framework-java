@@ -1,6 +1,8 @@
 {
   try {
-    return Engine.getInstance().createDirectoryResource(this,request,response);
+    Resource resource=Engine.getInstance().createDirectoryResource(this,request,response);
+    resource.setNegotiateContent(isNegotiateContent());
+    return resource;
   }
  catch (  IOException ioe) {
     getLogger().log(Level.WARNING,"Unable to find the directory's resource",ioe);
