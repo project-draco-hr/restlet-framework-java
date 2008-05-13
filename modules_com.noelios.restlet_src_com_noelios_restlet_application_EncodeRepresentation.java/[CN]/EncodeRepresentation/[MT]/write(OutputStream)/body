@@ -8,7 +8,14 @@
       encoderOutputStream=new DeflaterOutputStream(outputStream);
     }
  else     if (this.encoding.equals(Encoding.ZIP)) {
-      encoderOutputStream=new ZipOutputStream(outputStream);
+      ZipOutputStream stream=new ZipOutputStream(outputStream);
+      if (getWrappedRepresentation().getDownloadName() != null) {
+        stream.putNextEntry(new ZipEntry(getWrappedRepresentation().getDownloadName()));
+      }
+ else {
+        stream.putNextEntry(new ZipEntry("entry"));
+      }
+      encoderOutputStream=stream;
     }
  else     if (this.encoding.equals(Encoding.IDENTITY)) {
     }
