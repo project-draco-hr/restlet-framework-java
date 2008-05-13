@@ -3,6 +3,7 @@
   this.directory=directory;
   this.relativePart=request.getResourceRef().getRemainingPart();
   setModifiable(this.directory.isModifiable());
+  setNegotiateContent(this.directory.isNegotiateContent());
   if (getApplication() != null && getApplication().getTunnelService().isExtensionsTunnel()) {
     originalRef=(Reference)request.getAttributes().get(TunnelService.ATTRIBUTE_ORIGINAL_REF);
     if (originalRef != null) {
@@ -80,7 +81,7 @@
       }
     }
   }
-  if (!targetDirectory && !targetFile && originalRef != null) {
+  if (isNegotiateContent() && !targetDirectory && !targetFile&& originalRef != null) {
     this.relativePart=request.getResourceRef().getRemainingPart();
     this.targetUri=new Reference(directory.getRootRef().toString() + this.relativePart).normalize().toString(false,false);
     if (!this.targetUri.startsWith(directory.getRootRef().toString())) {

@@ -46,6 +46,27 @@
           updateMetadata(metadataService,file.getName(),output);
         }
       }
+ else {
+        String baseName=getBaseName(file,metadataService);
+        Set<String> extensions=getExtensions(file,metadataService);
+        File[] files=file.getParentFile().listFiles();
+        File uniqueVariant=null;
+        if (files != null) {
+          for (          File entry : files) {
+            if (entry.getName().startsWith(baseName)) {
+              Set<String> entryExtensions=getExtensions(entry,metadataService);
+              if (entryExtensions.containsAll(extensions) && extensions.containsAll(entryExtensions)) {
+                uniqueVariant=entry;
+                break;
+              }
+            }
+          }
+        }
+        if (uniqueVariant != null) {
+          output=new FileRepresentation(uniqueVariant,metadataService.getDefaultMediaType(),getTimeToLive());
+          updateMetadata(metadataService,file.getName(),output);
+        }
+      }
     }
     if (output == null) {
       response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
