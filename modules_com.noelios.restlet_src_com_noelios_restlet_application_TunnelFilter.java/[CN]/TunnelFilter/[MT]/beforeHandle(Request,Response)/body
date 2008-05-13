@@ -2,14 +2,14 @@
   Reference originalRef=new Reference(request.getResourceRef().toString());
   boolean queryModified=false;
   boolean extensionsModified=false;
-  if (getTunnelService().isQueryTunnel()) {
-    queryModified=processQuery(request);
+  if (getTunnelService().isUserAgentTunnel()) {
+    processUserAgent(request);
   }
   if (getTunnelService().isExtensionsTunnel()) {
     extensionsModified=processExtensions(request);
   }
-  if (getTunnelService().isUserAgentTunnel()) {
-    processUserAgent(request);
+  if (getTunnelService().isQueryTunnel()) {
+    queryModified=processQuery(request);
   }
   if (queryModified || extensionsModified) {
     request.getAttributes().put(TunnelService.ATTRIBUTE_ORIGINAL_REF,originalRef);
