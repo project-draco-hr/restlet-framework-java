@@ -1,6 +1,6 @@
 {
   this.paramCount=parameterTypes.length;
-  this.parameters=new ParameterList.InjectObjectGetter[paramCount];
+  this.parameters=new InjectObjectGetter[paramCount];
   boolean entityAlreadyRequired=false;
   for (int i=0; i < paramCount; i++) {
     Class<?> parameterType=parameterTypes[i];
@@ -14,14 +14,14 @@
     if (paramsAllowed) {
       DefaultValue defValue;
       defValue=getAnnos(paramAnnos,DefaultValue.class);
-      if (!leaveEncoded)       leaveEncoded=ParameterList.getLeaveEncoded(paramAnnos);
+      if (!leaveEncoded)       leaveEncoded=getLeaveEncoded(paramAnnos);
       CookieParam cookieParam=getAnnos(paramAnnos,CookieParam.class);
       HeaderParam headerParam=getAnnos(paramAnnos,HeaderParam.class);
       MatrixParam matrixParam=getAnnos(paramAnnos,MatrixParam.class);
       PathParam pathParam=getAnnos(paramAnnos,PathParam.class);
       QueryParam queryParam=getAnnos(paramAnnos,QueryParam.class);
       if (pathParam != null) {
-        parameters[i]=new ParameterList.PathParamInjector(pathParam,defValue,parameterType,genParamType,tlContext,leaveEncoded);
+        parameters[i]=new PathParamInjector(pathParam,defValue,parameterType,genParamType,tlContext,leaveEncoded);
         continue;
       }
       if (cookieParam != null) {
@@ -29,15 +29,15 @@
         continue;
       }
       if (headerParam != null) {
-        parameters[i]=new ParameterList.HeaderParamInjector(headerParam,defValue,parameterType,genParamType,tlContext);
+        parameters[i]=new HeaderParamInjector(headerParam,defValue,parameterType,genParamType,tlContext);
         continue;
       }
       if (matrixParam != null) {
-        parameters[i]=new ParameterList.MatrixParamInjector(matrixParam,defValue,parameterType,genParamType,tlContext,leaveEncoded);
+        parameters[i]=new MatrixParamInjector(matrixParam,defValue,parameterType,genParamType,tlContext,leaveEncoded);
         continue;
       }
       if (queryParam != null) {
-        parameters[i]=new ParameterList.QueryParamInjector(queryParam,defValue,parameterType,genParamType,tlContext,leaveEncoded);
+        parameters[i]=new QueryParamInjector(queryParam,defValue,parameterType,genParamType,tlContext,leaveEncoded);
         continue;
       }
     }

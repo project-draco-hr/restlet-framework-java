@@ -1,13 +1,13 @@
 {
   StringBuilder path=getPath();
-  if (extension == null) {
-    int lastSegmSt=path.lastIndexOf(".");
-    if (lastSegmSt > 0)     path.delete(lastSegmSt,Integer.MAX_VALUE);
-  }
- else {
-    CharSequence e=EncodeOrCheck.pathSegmentWithMatrix(extension,encode);
-    if (e.charAt(0) != '.')     path.append('.');
-    path.append(e);
+  int lastPathSt=path.lastIndexOf("/");
+  int lastSegmSt=path.indexOf(".",lastPathSt);
+  if (lastSegmSt > 0)   path.delete(lastSegmSt,Integer.MAX_VALUE);
+  if (extension != null) {
+    CharSequence ext;
+    ext=EncodeOrCheck.pathSegmentWithMatrix(extension,encode);
+    if (ext.length() == 0 || ext.charAt(0) != '.')     path.append('.');
+    path.append(ext);
   }
   return this;
 }
