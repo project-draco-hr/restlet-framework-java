@@ -1,6 +1,5 @@
 {
-  int ch;
-  while ((ch=reader.read()) >= 0) {
-    entityStream.write((byte)ch);
-  }
+  CharacterSet charSet=Util.getCharacterSet(httpHeaders);
+  if (charSet == null)   charSet=CharacterSet.UTF_8;
+  Util.copyStream(ByteUtils.getStream(reader,charSet),entityStream);
 }

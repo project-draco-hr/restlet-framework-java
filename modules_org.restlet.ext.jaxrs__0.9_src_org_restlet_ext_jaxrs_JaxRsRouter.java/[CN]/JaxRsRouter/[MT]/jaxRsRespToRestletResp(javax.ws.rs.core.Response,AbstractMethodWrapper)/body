@@ -1,13 +1,12 @@
 {
   Response restletResponse=tlContext.get().getResponse();
   restletResponse.setStatus(Status.valueOf(jaxRsResponse.getStatus()));
-  Object mediaTypeStr=jaxRsResponse.getMetadata().getFirst(HttpHeaders.CONTENT_TYPE);
-  MediaType respMediaType=null;
-  if (mediaTypeStr != null)   respMediaType=MediaType.valueOf(mediaTypeStr.toString());
+  MultivaluedMap<String,Object> httpHeaders=jaxRsResponse.getMetadata();
+  MediaType respMediaType=Util.getMediaType(httpHeaders);
   Object jaxRsEntity=jaxRsResponse.getEntity();
   SortedMetadata<MediaType> accMediaType;
   if (respMediaType != null)   accMediaType=SortedMetadata.get(respMediaType);
  else   accMediaType=tlContext.get().getAccMediaTypes();
-  restletResponse.setEntity(convertToRepresentation(jaxRsEntity,jaxRsMethod,respMediaType,jaxRsResponse.getMetadata(),accMediaType));
-  Util.copyResponseHeaders(jaxRsResponse.getMetadata(),restletResponse,getLogger());
+  restletResponse.setEntity(convertToRepresentation(jaxRsEntity,jaxRsMethod,respMediaType,httpHeaders,accMediaType));
+  Util.copyResponseHeaders(httpHeaders,restletResponse,getLogger());
 }
