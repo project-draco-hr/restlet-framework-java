@@ -3,6 +3,8 @@
   if (agentAttributes != null) {
     URL userAgentPropertiesUrl=Engine.getClassLoader().getResource("org/restlet/service/accept.properties");
     if (userAgentPropertiesUrl != null) {
+      Form headers=(Form)request.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
+      String acceptOld=headers.getFirstValue(HttpConstants.HEADER_ACCEPT);
       BufferedReader reader;
       try {
         reader=new BufferedReader(new InputStreamReader(userAgentPropertiesUrl.openStream(),CharacterSet.UTF_8.getName()));
@@ -14,7 +16,7 @@
             if (keyValue.length == 2) {
               String key=keyValue[0].trim();
               String value=keyValue[1].trim();
-              if ("accept".equalsIgnoreCase(key)) {
+              if ("acceptNew".equalsIgnoreCase(key)) {
                 if (processAcceptHeader) {
                   ClientInfo clientInfo=new ClientInfo();
                   PreferenceUtils.parseMediaTypes(value,clientInfo);
@@ -25,8 +27,13 @@
               }
  else {
                 if (processAcceptHeader) {
-                  String attribute=agentAttributes.get(key);
-                  processAcceptHeader=attribute != null && attribute.equalsIgnoreCase(value);
+                  if ("acceptOld".equalsIgnoreCase(key) && !(value == null || value.length() == 0)) {
+                    processAcceptHeader=value.equalsIgnoreCase(acceptOld);
+                  }
+ else {
+                    String attribute=agentAttributes.get(key);
+                    processAcceptHeader=attribute != null && attribute.equalsIgnoreCase(value);
+                  }
                 }
               }
             }
