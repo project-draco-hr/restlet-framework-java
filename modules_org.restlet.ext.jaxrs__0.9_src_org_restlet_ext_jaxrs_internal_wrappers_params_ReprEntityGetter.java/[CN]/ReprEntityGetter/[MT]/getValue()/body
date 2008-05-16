@@ -1,0 +1,16 @@
+{
+  try {
+    Representation entity=Request.getCurrent().getEntity();
+    if (entity == null)     return null;
+    return createInstance(entity);
+  }
+ catch (  IllegalArgumentException e) {
+    throw ConvertRepresentationException.object(getReprClass(),"the message body",e);
+  }
+catch (  InstantiationException e) {
+    throw ConvertRepresentationException.object(getReprClass(),"the message body",e);
+  }
+catch (  IllegalAccessException e) {
+    throw ConvertRepresentationException.object(getReprClass(),"the message body",e);
+  }
+}

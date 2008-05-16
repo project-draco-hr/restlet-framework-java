@@ -1,6 +1,10 @@
 {
-  if (entity instanceof Representation)   return (Representation)entity;
   if (entity == null)   return null;
+  if (entity instanceof Representation) {
+    Representation repr=(Representation)entity;
+    repr.setCharacterSet(getSupportedCharSet(repr.getCharacterSet()));
+    return repr;
+  }
   Class<? extends Object> entityClass=entity.getClass();
   Type genericReturnType=null;
   Annotation[] methodAnnotations=null;
@@ -20,5 +24,7 @@
   if (responseMediaType != null)   mediaType=responseMediaType;
  else   mediaType=determineMediaType79(respMediaTypes);
   MultivaluedMap<String,Object> httpResponseHeaders=new WrappedRequestForHttpHeaders(response,jaxRsRespHeaders,getLogger());
-  return new JaxRsOutputRepresentation(entity,genericReturnType,mediaType,methodAnnotations,mbw,httpResponseHeaders);
+  Representation repr=new JaxRsOutputRepresentation(entity,genericReturnType,mediaType,methodAnnotations,mbw,httpResponseHeaders);
+  repr.setCharacterSet(getSupportedCharSet(httpResponseHeaders));
+  return repr;
 }

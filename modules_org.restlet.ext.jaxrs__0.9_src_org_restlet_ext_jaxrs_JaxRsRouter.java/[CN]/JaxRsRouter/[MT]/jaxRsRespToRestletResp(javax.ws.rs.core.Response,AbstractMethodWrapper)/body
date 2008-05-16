@@ -2,11 +2,11 @@
   Response restletResponse=tlContext.get().getResponse();
   restletResponse.setStatus(Status.valueOf(jaxRsResponse.getStatus()));
   MultivaluedMap<String,Object> httpHeaders=jaxRsResponse.getMetadata();
-  MediaType respMediaType=Util.getMediaType(httpHeaders);
+  MediaType respMediaType=getMediaType(httpHeaders);
   Object jaxRsEntity=jaxRsResponse.getEntity();
   SortedMetadata<MediaType> accMediaType;
   if (respMediaType != null)   accMediaType=SortedMetadata.get(respMediaType);
  else   accMediaType=tlContext.get().getAccMediaTypes();
   restletResponse.setEntity(convertToRepresentation(jaxRsEntity,jaxRsMethod,respMediaType,httpHeaders,accMediaType));
-  Util.copyResponseHeaders(httpHeaders,restletResponse,getLogger());
+  copyResponseHeaders(httpHeaders,restletResponse,getLogger());
 }

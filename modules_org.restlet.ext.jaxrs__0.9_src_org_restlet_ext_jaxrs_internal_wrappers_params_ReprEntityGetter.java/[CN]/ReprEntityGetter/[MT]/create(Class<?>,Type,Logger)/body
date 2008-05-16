@@ -1,0 +1,36 @@
+{
+  if (representationType.equals(Representation.class))   return new DirectReprEntityGetter();
+  try {
+    return new ReprOnlyEntityGetter(representationType.getConstructor(Representation.class));
+  }
+ catch (  SecurityException e) {
+    logger.warning("The constructor " + representationType + "(Representation) is not accessable.");
+  }
+catch (  NoSuchMethodException e) {
+  }
+  if (!(convToGen instanceof ParameterizedType))   return null;
+  ParameterizedType pType=(ParameterizedType)convToGen;
+  Type[] typeArgs=pType.getActualTypeArguments();
+  if (typeArgs.length != 1)   return null;
+  Type typeArg=typeArgs[0];
+  if (!(typeArg instanceof Class))   return null;
+  Class<?> genClass=(Class<?>)typeArg;
+  try {
+    return new ReprClassEntityGetter(representationType.getConstructor(Representation.class,Class.class),genClass);
+  }
+ catch (  SecurityException e) {
+    logger.warning("The constructor " + representationType + "(Representation) is not accessable.");
+  }
+catch (  NoSuchMethodException e) {
+  }
+  try {
+    return new ClassReprEntityGetter(genClass,representationType.getConstructor(Class.class,Representation.class));
+  }
+ catch (  SecurityException e) {
+    logger.warning("The constructor " + representationType + "(Representation) is not accessable.");
+    return null;
+  }
+catch (  NoSuchMethodException e) {
+    return null;
+  }
+}
