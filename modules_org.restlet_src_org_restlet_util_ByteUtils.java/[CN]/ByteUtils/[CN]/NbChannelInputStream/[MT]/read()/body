@@ -33,8 +33,10 @@
   finally {
     if (selectionKey != null) {
       selectionKey.cancel();
-      selector.selectNow();
-      SelectorFactory.returnSelector(selector);
+      if (selector != null) {
+        selector.selectNow();
+        SelectorFactory.returnSelector(selector);
+      }
     }
   }
   return result;
