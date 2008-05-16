@@ -5,14 +5,14 @@
     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_TYPE)) {
       ContentType contentType=new ContentType(header.getValue());
       result.setMediaType(contentType.getMediaType());
-      result.setCharacterSet(contentType.getCharacterSet());
+      CharacterSet characterSet=contentType.getCharacterSet();
+      if (characterSet != null)       result.setCharacterSet(characterSet);
       entityHeaderFound=true;
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LENGTH)) {
       entityHeaderFound=true;
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_EXPIRES)) {
-      entityHeaderFound=true;
       result.setExpirationDate(parseDate(header.getValue(),false));
       entityHeaderFound=true;
     }
