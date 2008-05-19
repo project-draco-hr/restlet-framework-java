@@ -1,3 +1,4 @@
 {
-  return (request.getChallengeResponse() == null) ? null : request.getChallengeResponse().getPrincipal();
+  if (request.getChallengeResponse() != null)   return request.getChallengeResponse().getPrincipal();
+  return SecurityUtil.getSslClientCertPrincipal(request);
 }

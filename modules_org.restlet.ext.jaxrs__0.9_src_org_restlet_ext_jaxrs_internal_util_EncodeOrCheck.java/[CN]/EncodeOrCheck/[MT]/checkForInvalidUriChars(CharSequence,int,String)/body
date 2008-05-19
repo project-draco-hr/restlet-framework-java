@@ -1,8 +1,16 @@
 {
   int l=uriPart.length();
+  boolean inVar=false;
   for (int i=0; i < l; i++) {
     char c=uriPart.charAt(i);
+    if (inVar) {
+      if (c == '}')       inVar=false;
+      continue;
+    }
 switch (c) {
+case '{':
+      inVar=true;
+    continue;
 case ':':
 case '/':
 case '?':
@@ -21,8 +29,8 @@ case '+':
 case ',':
 case ';':
 case '=':
-      throw throwIllegalArgExc(indexForErrMessage,errMessName,uriPart," contains at least one reservec character: " + c + ". They must be encoded.");
-  }
-  if (c == ' ' || c < 32 || c >= 127)   throw throwIllegalArgExc(indexForErrMessage,errMessName,uriPart," contains at least one illegal character: " + c + ". They must be encoded.");
+  throw throwIllegalArgExc(indexForErrMessage,errMessName,uriPart," contains at least one reservec character: " + c + ". They must be encoded.");
+}
+if (c == ' ' || c < 32 || c >= 127) throw throwIllegalArgExc(indexForErrMessage,errMessName,uriPart," contains at least one illegal character: " + c + ". They must be encoded.");
 }
 }
