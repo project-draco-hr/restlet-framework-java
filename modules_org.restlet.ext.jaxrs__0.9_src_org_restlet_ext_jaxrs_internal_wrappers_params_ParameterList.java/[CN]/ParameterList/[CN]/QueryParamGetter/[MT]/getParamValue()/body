@@ -1,0 +1,20 @@
+{
+  Reference resourceRef=tlContext.get().getRequest().getResourceRef();
+  String queryString=resourceRef.getQuery();
+  Form form=Converter.toFormEncoded(queryString,localLogger);
+  String paramName=queryParam.value();
+  List<Parameter> parameters=form.subList(paramName);
+  try {
+    if (this.collType == null) {
+      Parameter firstQueryParam=form.getFirst(paramName);
+      String queryParamValue=WrapperUtil.getValue(firstQueryParam);
+      return convertParamValue(queryParamValue);
+    }
+    ParamValueIter queryParamValueIter;
+    queryParamValueIter=new ParamValueIter(parameters);
+    return convertParamValues(queryParamValueIter);
+  }
+ catch (  ConvertParameterException e) {
+    throw new ConvertQueryParamException(e);
+  }
+}

@@ -1,0 +1,17 @@
+{
+  CallContext callContext=tlContext.get();
+  if (this.convertTo.equals(PathSegment.class)) {
+    throw new NotYetImplementedException("Sorry, @PathParam(..) PathSegment is not yet supported. You may use the non default @Context PathSegment to return the last of the available path segments (decoded), or UriInfo.getPathSegments(boolean)");
+  }
+  try {
+    if (this.collType == null) {
+      String pathParamValue=callContext.getLastPathParamEnc(pathParam);
+      return convertParamValue(pathParamValue);
+    }
+    Iterator<String> ppvIter=callContext.pathParamEncIter(pathParam);
+    return convertParamValues(ppvIter);
+  }
+ catch (  ConvertParameterException e) {
+    throw new ConvertPathParamException(e);
+  }
+}

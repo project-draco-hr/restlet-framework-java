@@ -1,0 +1,22 @@
+{
+  this.tlContext=tlContext;
+  this.defaultValue=defaultValue;
+  if (convToCl.isArray()) {
+    this.convertTo=convToCl.getComponentType();
+    this.collType=(Class)ArrayList.class;
+    this.isArray=true;
+  }
+ else   if (convToGen instanceof ParameterizedType) {
+    ParameterizedType parametrizedType=(ParameterizedType)convToGen;
+    Type[] argTypes=parametrizedType.getActualTypeArguments();
+    if (argTypes[0] instanceof Class)     this.convertTo=(Class<?>)argTypes[0];
+ else     throw new NotYetImplementedException("Sorry, only Class is supported, but is " + argTypes[0]);
+    this.collType=collType(parametrizedType);
+    this.isArray=false;
+  }
+ else {
+    this.convertTo=convToCl;
+    this.collType=null;
+    this.isArray=false;
+  }
+}

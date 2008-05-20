@@ -1,43 +1,42 @@
 {
   this.paramCount=parameterTypes.length;
-  this.parameters=new InjectObjectGetter[paramCount];
+  this.parameters=new ParamGetter[paramCount];
   boolean entityAlreadyRequired=false;
   for (int i=0; i < paramCount; i++) {
     Class<?> parameterType=parameterTypes[i];
     Type genParamType=genParamTypes[i];
     Annotation[] paramAnnos=paramAnnoss[i];
-    Context conntextAnno=getAnnos(paramAnnos,Context.class);
+    Context conntextAnno=getAnno(paramAnnos,Context.class);
     if (conntextAnno != null) {
       parameters[i]=new ContextHolder(ContextInjector.getInjectObject(parameterType,genParamType,tlContext,entityProviders,allCtxResolvers,extensionBackwardMapping));
       continue;
     }
     if (paramsAllowed) {
-      DefaultValue defValue;
-      defValue=getAnnos(paramAnnos,DefaultValue.class);
-      if (!leaveEncoded)       leaveEncoded=getLeaveEncoded(paramAnnos);
-      CookieParam cookieParam=getAnnos(paramAnnos,CookieParam.class);
-      HeaderParam headerParam=getAnnos(paramAnnos,HeaderParam.class);
-      MatrixParam matrixParam=getAnnos(paramAnnos,MatrixParam.class);
-      PathParam pathParam=getAnnos(paramAnnos,PathParam.class);
-      QueryParam queryParam=getAnnos(paramAnnos,QueryParam.class);
+      boolean leaveThisEncoded=getLeaveEncoded(paramAnnos);
+      DefaultValue defValue=getAnno(paramAnnos,DefaultValue.class);
+      CookieParam cookieParam=getAnno(paramAnnos,CookieParam.class);
+      HeaderParam headerParam=getAnno(paramAnnos,HeaderParam.class);
+      MatrixParam matrixParam=getAnno(paramAnnos,MatrixParam.class);
+      PathParam pathParam=getAnno(paramAnnos,PathParam.class);
+      QueryParam queryParam=getAnno(paramAnnos,QueryParam.class);
       if (pathParam != null) {
-        parameters[i]=new PathParamInjector(pathParam,defValue,parameterType,genParamType,tlContext,leaveEncoded);
+        parameters[i]=new PathParamGetter(pathParam,defValue,parameterType,genParamType,tlContext,!leaveAllEncoded && !leaveThisEncoded);
         continue;
       }
       if (cookieParam != null) {
-        parameters[i]=new CookieParamInjector(cookieParam,defValue,parameterType,genParamType,tlContext,getLeaveEncoded(paramAnnos));
+        parameters[i]=new CookieParamGetter(cookieParam,defValue,parameterType,genParamType,tlContext,leaveThisEncoded);
         continue;
       }
       if (headerParam != null) {
-        parameters[i]=new HeaderParamInjector(headerParam,defValue,parameterType,genParamType,tlContext,getLeaveEncoded(paramAnnos));
+        parameters[i]=new HeaderParamGetter(headerParam,defValue,parameterType,genParamType,tlContext,leaveThisEncoded);
         continue;
       }
       if (matrixParam != null) {
-        parameters[i]=new MatrixParamInjector(matrixParam,defValue,parameterType,genParamType,tlContext,leaveEncoded);
+        parameters[i]=new MatrixParamGetter(matrixParam,defValue,parameterType,genParamType,tlContext,!leaveAllEncoded && !leaveThisEncoded);
         continue;
       }
       if (queryParam != null) {
-        parameters[i]=new QueryParamInjector(queryParam,defValue,parameterType,genParamType,tlContext,leaveEncoded);
+        parameters[i]=new QueryParamGetter(queryParam,defValue,parameterType,genParamType,tlContext,!leaveAllEncoded && !leaveThisEncoded);
         continue;
       }
     }

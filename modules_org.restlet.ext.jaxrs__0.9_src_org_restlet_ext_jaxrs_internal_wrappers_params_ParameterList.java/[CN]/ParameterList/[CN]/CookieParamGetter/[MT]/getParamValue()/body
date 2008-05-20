@@ -1,0 +1,31 @@
+{
+  String cookieName=cookieParam.value();
+  Series<org.restlet.data.Cookie> cookies;
+  cookies=tlContext.get().getRequest().getCookies();
+  if (convertTo.equals(Cookie.class)) {
+    Collection<Cookie> coll=createColl();
+    for (    org.restlet.data.Cookie rc : cookies) {
+      if (!rc.getName().equals(cookieName))       continue;
+      Cookie cookie=Converter.toJaxRsCookie(rc);
+      if (coll == null)       return cookie;
+      coll.add(cookie);
+    }
+    if (coll == null)     return null;
+    if (coll.isEmpty()) {
+      String value=defaultValue.value();
+      coll.add(new Cookie(cookieName,value));
+    }
+    if (isArray)     return Util.toArray(coll,Cookie.class);
+    return coll;
+  }
+  try {
+    if (this.collType == null) {
+      String firstCookieValue=WrapperUtil.getValue(cookies.getFirst(cookieName));
+      return convertParamValue(firstCookieValue);
+    }
+    return convertParamValues(new ParamValueIter((Series)cookies.subList(cookieName)));
+  }
+ catch (  ConvertParameterException e) {
+    throw new ConvertCookieParamException(e);
+  }
+}

@@ -1,0 +1,14 @@
+{
+  CallContext callContext=tlContext.get();
+  try {
+    if (this.collType == null) {
+      String matrixParamValue=callContext.getLastMatrixParamEnc(matrixParam);
+      return convertParamValue(matrixParamValue);
+    }
+    Iterator<String> matrixParamValues=callContext.matrixParamEncIter(matrixParam);
+    return convertParamValues(matrixParamValues);
+  }
+ catch (  ConvertParameterException e) {
+    throw new ConvertMatrixParamException(e);
+  }
+}

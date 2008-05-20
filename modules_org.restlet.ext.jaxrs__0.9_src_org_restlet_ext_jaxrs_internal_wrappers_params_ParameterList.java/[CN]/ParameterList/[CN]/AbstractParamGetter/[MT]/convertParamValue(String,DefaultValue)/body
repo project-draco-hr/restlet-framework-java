@@ -1,0 +1,10 @@
+{
+  if (encode() && paramValue != null)   paramValue=Reference.decode(paramValue);
+ else   if (paramValue == null && defaultValue != null)   paramValue=defaultValue.value();
+  if (convertTo.equals(String.class))   return paramValue;
+  if (convertTo.isPrimitive()) {
+    if (paramValue != null && paramValue.length() <= 0)     paramValue=defaultValue.value();
+    return getParamValueForPrimitive(paramValue);
+  }
+  return convertParamValueInner(paramValue,defaultValue);
+}

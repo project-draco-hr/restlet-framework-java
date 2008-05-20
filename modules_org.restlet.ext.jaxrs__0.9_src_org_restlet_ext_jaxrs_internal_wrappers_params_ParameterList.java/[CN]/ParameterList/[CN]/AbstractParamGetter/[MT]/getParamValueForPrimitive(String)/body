@@ -1,0 +1,49 @@
+{
+  try {
+    if (this.convertTo == Integer.TYPE) {
+      if ((paramValue == null || paramValue.length() <= 0))       return DEFAULT_INT;
+      return new Integer(paramValue);
+    }
+    if (this.convertTo == Double.TYPE) {
+      if ((paramValue == null || paramValue.length() <= 0))       return DEFAULT_DOUBLE;
+      return new Double(paramValue);
+    }
+    if (this.convertTo == Float.TYPE) {
+      if ((paramValue == null || paramValue.length() <= 0))       return DEFAULT_FLOAT;
+      return new Float(paramValue);
+    }
+    if (this.convertTo == Byte.TYPE) {
+      if ((paramValue == null || paramValue.length() <= 0))       return DEFAULT_BYTE;
+      return new Byte(paramValue);
+    }
+    if (this.convertTo == Long.TYPE) {
+      if ((paramValue == null || paramValue.length() <= 0))       return DEFAULT_LONG;
+      return new Long(paramValue);
+    }
+    if (this.convertTo == Short.TYPE) {
+      if ((paramValue == null || paramValue.length() <= 0))       return DEFAULT_SHORT;
+      return new Short(paramValue);
+    }
+    if (this.convertTo == Character.TYPE) {
+      if ((paramValue == null || paramValue.length() <= 0))       return DEFAULT_CHAR;
+      if (paramValue.length() == 1)       return paramValue.charAt(0);
+      throw ConvertParameterException.primitive(this.convertTo,paramValue,null);
+    }
+    if (this.convertTo == Boolean.TYPE) {
+      if ((paramValue == null || paramValue.length() <= 0))       return DEFAULT_BOOLEAN;
+      if (paramValue.equalsIgnoreCase("true"))       return Boolean.TRUE;
+      if (paramValue.equalsIgnoreCase("false"))       return Boolean.FALSE;
+      throw ConvertParameterException.primitive(this.convertTo,paramValue,null);
+    }
+  }
+ catch (  IllegalArgumentException e) {
+    throw ConvertParameterException.primitive(this.convertTo,paramValue,e);
+  }
+  String warning;
+  if (this.convertTo == Void.TYPE)   warning="an object should be converted to a void; but this could not be here";
+ else   warning="an object should be converted to a " + this.convertTo + ", but here are only primitives allowed.";
+  Logger.getAnonymousLogger().warning(warning);
+  ResponseBuilder rb=javax.ws.rs.core.Response.serverError();
+  rb.entity(warning);
+  throw new WebApplicationException(rb.build());
+}
