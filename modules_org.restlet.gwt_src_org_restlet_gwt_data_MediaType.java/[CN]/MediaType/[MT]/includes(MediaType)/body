@@ -1,7 +1,17 @@
 {
   boolean result=equals(ALL) || included == null || equals(included);
   if (!result) {
-    result=getMainType().equals(included.getMainType()) && (getSubType().equals(included.getSubType()) || getSubType().equals("*"));
+    if (this.getMainType().equals(included.getMainType())) {
+      if (this.getSubType().equals(included.getSubType())) {
+        result=true;
+      }
+ else       if (this.getSubType().equals("*")) {
+        result=true;
+      }
+ else       if (this.getSubType().startsWith("*+") && included.getSubType().endsWith(this.getSubType().substring(1))) {
+        result=true;
+      }
+    }
   }
   return result;
 }

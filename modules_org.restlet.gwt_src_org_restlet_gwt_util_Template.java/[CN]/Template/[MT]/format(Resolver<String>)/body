@@ -16,7 +16,17 @@
         }
  else {
           String varName=varBuffer.toString();
-          result.append(resolver.resolve(varName));
+          String varValue=resolver.resolve(varName);
+          if (varValue == null) {
+            Variable var=getVariables().get(varName);
+            if (var == null) {
+              var=getDefaultVariable();
+            }
+            if (var != null) {
+              varValue=var.getDefaultValue();
+            }
+          }
+          result.append(varValue);
           varBuffer=new StringBuilder();
         }
         inVariable=false;

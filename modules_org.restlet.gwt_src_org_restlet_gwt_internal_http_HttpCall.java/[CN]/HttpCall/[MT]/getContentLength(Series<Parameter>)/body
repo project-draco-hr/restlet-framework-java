@@ -1,0 +1,14 @@
+{
+  long contentLength=Representation.UNKNOWN_SIZE;
+  for (  Parameter header : headers) {
+    if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LENGTH)) {
+      try {
+        contentLength=Long.parseLong(header.getValue());
+      }
+ catch (      NumberFormatException e) {
+        contentLength=Representation.UNKNOWN_SIZE;
+      }
+    }
+  }
+  return contentLength;
+}

@@ -1,0 +1,18 @@
+{
+  if (acceptLanguageHeader != null) {
+    try {
+      PreferenceReader pr=new PreferenceReader(PreferenceReader.TYPE_LANGUAGE,acceptLanguageHeader);
+      Preference currentPref=pr.readPreference();
+      while (currentPref != null) {
+        preference.getAcceptedLanguages().add(currentPref);
+        currentPref=pr.readPreference();
+      }
+    }
+ catch (    Exception ioe) {
+      throw new IllegalArgumentException("An exception occurred during language preferences parsing. Header: " + acceptLanguageHeader + ". Ignoring header.");
+    }
+  }
+ else {
+    preference.getAcceptedLanguages().add(new Preference(Language.ALL));
+  }
+}

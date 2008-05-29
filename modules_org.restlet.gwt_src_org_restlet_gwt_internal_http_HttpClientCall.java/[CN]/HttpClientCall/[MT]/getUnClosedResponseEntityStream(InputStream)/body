@@ -1,0 +1,22 @@
+{
+  InputStream result=null;
+  if (inputStream != null) {
+    try {
+      if (inputStream.available() > 0) {
+        result=inputStream;
+      }
+ else {
+        PushbackInputStream is=new PushbackInputStream(inputStream);
+        int i=is.read();
+        if (i >= 0) {
+          is.unread(i);
+          result=is;
+        }
+      }
+    }
+ catch (    IOException ioe) {
+      getLogger().log(Level.FINER,"End of response entity stream.",ioe);
+    }
+  }
+  return result;
+}
