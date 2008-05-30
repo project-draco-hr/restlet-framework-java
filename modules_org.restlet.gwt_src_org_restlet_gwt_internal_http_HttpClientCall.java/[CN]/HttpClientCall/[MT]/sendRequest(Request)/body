@@ -3,29 +3,11 @@
   Representation entity=request.isEntityAvailable() ? request.getEntity() : null;
   try {
     if (entity != null) {
-      ConnectorService connectorService=getConnectorService(request);
-      if (connectorService != null)       connectorService.beforeSend(entity);
-      OutputStream rs=getRequestEntityStream();
-      WritableByteChannel wbc=getRequestEntityChannel();
-      if (wbc != null) {
-        entity.write(wbc);
-      }
- else       if (rs != null) {
-        entity.write(rs);
-        rs.flush();
-      }
-      if (connectorService != null)       connectorService.afterSend(entity);
-      if (rs != null) {
-        rs.close();
-      }
- else       if (wbc != null) {
-        wbc.close();
-      }
+      String text=getRequestEntityString();
     }
     result=new Status(getStatusCode(),null,getReasonPhrase(),null);
   }
- catch (  IOException ioe) {
-    getHelper().getLogger().log(Level.WARNING,"An error occured during the communication with the remote HTTP server.",ioe);
+ catch (  Exception ioe) {
     result=new Status(Status.CONNECTOR_ERROR_COMMUNICATION,ioe);
   }
  finally {

@@ -10,20 +10,14 @@
     size=getContentLength();
   }
   if (!getMethod().equals(Method.HEAD.getName()) && !response.getStatus().isInformational() && !response.getStatus().equals(Status.REDIRECTION_NOT_MODIFIED)&& !response.getStatus().equals(Status.SUCCESS_NO_CONTENT)&& !response.getStatus().equals(Status.SUCCESS_RESET_CONTENT)&& !response.getStatus().equals(Status.SUCCESS_PARTIAL_CONTENT)) {
-    InputStream stream=getUnClosedResponseEntityStream(getResponseEntityStream(size));
-    ReadableByteChannel channel=getResponseEntityChannel(size);
-    if (stream != null) {
-      result=getRepresentation(stream);
-    }
- else     if (channel != null) {
-      result=getRepresentation(channel);
-    }
+    String text=getResponseEntityString(size);
+    result=getRepresentation(text);
   }
   result=copyResponseEntityHeaders(responseHeaders,result);
   if (result != null) {
     result.setSize(size);
     if (size == Representation.UNKNOWN_SIZE) {
-      getLogger().info("The length of the message body is unknown. The entity must be handled carefully and consumed entirely in order to surely release the connection.");
+      System.err.println("The length of the message body is unknown. The entity must be handled carefully and consumed entirely in order to surely release the connection.");
     }
   }
   return result;

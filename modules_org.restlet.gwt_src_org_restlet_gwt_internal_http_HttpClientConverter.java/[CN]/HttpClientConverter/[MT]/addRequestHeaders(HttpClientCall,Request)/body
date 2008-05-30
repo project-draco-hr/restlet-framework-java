@@ -53,8 +53,8 @@
       try {
         requestHeaders.add(HttpConstants.HEADER_ACCEPT,PreferenceUtils.format(client.getAcceptedMediaTypes()));
       }
- catch (      IOException ioe) {
-        getLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
+ catch (      Exception ioe) {
+        System.err.println("Unable to format the HTTP Accept header");
       }
     }
  else {
@@ -64,24 +64,24 @@
       try {
         requestHeaders.add(HttpConstants.HEADER_ACCEPT_CHARSET,PreferenceUtils.format(client.getAcceptedCharacterSets()));
       }
- catch (      IOException ioe) {
-        getLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
+ catch (      Exception ioe) {
+        System.err.println("Unable to format the HTTP Accept header");
       }
     }
     if (client.getAcceptedEncodings().size() > 0) {
       try {
         requestHeaders.add(HttpConstants.HEADER_ACCEPT_ENCODING,PreferenceUtils.format(client.getAcceptedEncodings()));
       }
- catch (      IOException ioe) {
-        getLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
+ catch (      Exception ioe) {
+        System.err.println("Unable to format the HTTP Accept header");
       }
     }
     if (client.getAcceptedLanguages().size() > 0) {
       try {
         requestHeaders.add(HttpConstants.HEADER_ACCEPT_LANGUAGE,PreferenceUtils.format(client.getAcceptedLanguages()));
       }
- catch (      IOException ioe) {
-        getLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
+ catch (      Exception ioe) {
+        System.err.println("Unable to format the HTTP Accept header");
       }
     }
     if (request.getEntity() != null) {
@@ -114,9 +114,5 @@
     }
     Series<Parameter> additionalHeaders=(Series<Parameter>)request.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
     addAdditionalHeaders(requestHeaders,additionalHeaders);
-    ChallengeResponse challengeResponse=request.getChallengeResponse();
-    if (challengeResponse != null) {
-      requestHeaders.add(HttpConstants.HEADER_AUTHORIZATION,AuthenticationUtils.format(challengeResponse,request,requestHeaders));
-    }
   }
 }
