@@ -1,0 +1,13 @@
+{
+  super(helper,method,requestUri);
+  if (requestUri.startsWith("http")) {
+    this.requestBuilder=new RequestBuilder(method,requestUri){
+    }
+;
+    this.requestBuilder.setTimeoutMillis(getHelper().getTimeout());
+    this.responseHeadersAdded=false;
+  }
+ else {
+    throw new IllegalArgumentException("Only HTTP or HTTPS resource URIs are allowed here");
+  }
+}

@@ -1,0 +1,11 @@
+{
+  Representation entity=request.isEntityAvailable() ? request.getEntity() : null;
+  if (entity != null) {
+    getRequestBuilder().setRequestData(entity.getText());
+  }
+  for (  Parameter header : getRequestHeaders()) {
+    getRequestBuilder().setHeader(header.getName(),getRequestHeaders().getValues(header.getName()));
+  }
+  getRequestBuilder().setCallback(this);
+  getRequestBuilder().send();
+}
