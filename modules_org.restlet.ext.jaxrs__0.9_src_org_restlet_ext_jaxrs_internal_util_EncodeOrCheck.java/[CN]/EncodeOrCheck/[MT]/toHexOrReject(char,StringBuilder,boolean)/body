@@ -1,7 +1,10 @@
 {
-  if (encode)   toHex(c,stb);
+  if (encode) {
+    stb.append('%');
+    stb.append(HEX_DIGITS[(c >> 4) & 0xF]);
+    stb.append(HEX_DIGITS[c & 0xF]);
+  }
  else {
-    String message="The character " + c + " is not valid";
-    throw new IllegalArgumentException(message);
+    throw new IllegalArgumentException(("The character " + c + " is not valid"));
   }
 }

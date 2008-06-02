@@ -1,0 +1,13 @@
+{
+  String contentType="multipart/form-data";
+  DataSource ds=new ByteArrayDataSource(entityStream,contentType);
+  try {
+    return new MimeMultipart(ds);
+  }
+ catch (  MessagingException e) {
+    if (e.getCause() instanceof IOException)     throw (IOException)e.getCause();
+    IOException ioExc=new IOException("Could not deserialize the data to a Multipart");
+    ioExc.initCause(e);
+    throw ioExc;
+  }
+}

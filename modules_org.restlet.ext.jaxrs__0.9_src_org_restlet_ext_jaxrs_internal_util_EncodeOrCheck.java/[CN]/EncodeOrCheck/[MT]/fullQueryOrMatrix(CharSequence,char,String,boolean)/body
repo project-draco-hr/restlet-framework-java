@@ -1,0 +1,20 @@
+{
+  int l=string.length();
+  StringBuilder stb=new StringBuilder(l + 6);
+  for (int i=0; i < l; i++) {
+    char c=string.charAt(i);
+    if (c == '{')     i=processTemplVarname(string,i,stb);
+ else     if (c == delimiter || c == '=')     stb.append(c);
+ else     if (c == ' ') {
+      if (encode)       stb.append(spaceReplace);
+ else       throw new IllegalArgumentException("A space is not allowed. Switch encode to on to auto encode it.");
+    }
+ else     if (Reference.isUnreserved(c))     stb.append(c);
+ else     if (c == '}')     throw new IllegalArgumentException("'}' is only allowed as " + "end of a variable name in \"" + string + "\"");
+ else     if (c == '%') {
+      i=processPercent(i,encode,string,stb);
+    }
+ else     toHexOrReject(c,stb,encode);
+  }
+  return stb;
+}

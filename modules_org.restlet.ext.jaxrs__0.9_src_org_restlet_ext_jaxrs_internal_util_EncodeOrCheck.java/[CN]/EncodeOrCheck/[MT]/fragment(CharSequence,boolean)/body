@@ -3,16 +3,14 @@
   int length=fragment.length();
   for (int i=0; i < length; i++) {
     char c=fragment.charAt(i);
-    if (c >= 97 && c <= 123)     stb.append(c);
+    if (c == '{')     i=processTemplVarname(fragment,i,stb);
+ else     if (c >= 97 && c <= 122)     stb.append(c);
  else     if (c >= 63 && c <= 91)     stb.append(c);
  else     if (c >= 38 && c <= 59)     stb.append(c);
- else     if (c == '!' || c == '#' || c == '$' || c == '=' || c == ']' || c == '_' || c == '}' || c == '~')     stb.append(c);
+ else     if (c == '!' || c == '#' || c == '$' || c == '=' || c == ']' || c == '_' || c == '~')     stb.append(c);
+ else     if (c == '}')     throw new IllegalArgumentException("'}' is only allowed as end of an template variable name");
  else     if (c == '%') {
-      if (encode)       toHex(c,stb);
- else {
-        checkForHexDigitAndAppend(fragment,i,stb);
-        i+=2;
-      }
+      i=processPercent(i,encode,fragment,stb);
     }
  else     toHexOrReject(c,stb,encode);
   }

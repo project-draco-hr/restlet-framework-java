@@ -1,20 +1,18 @@
 {
-  boolean encode=!leaveEncoded;
   do {
     for (    Field field : jaxRsClass.getDeclaredFields()) {
-      field.setAccessible(true);
-      if (field.isAnnotationPresent(PathParam.class))       add(field,newPathParamGetter(field,tlContext,encode));
- else       if (field.isAnnotationPresent(CookieParam.class))       add(field,newCookieParamGetter(field,tlContext,leaveEncoded));
- else       if (field.isAnnotationPresent(HeaderParam.class))       add(field,newHeaderParamGetter(field,tlContext,leaveEncoded));
- else       if (field.isAnnotationPresent(MatrixParam.class))       add(field,newMatrixParamGetter(field,tlContext,encode));
- else       if (field.isAnnotationPresent(QueryParam.class))       add(field,newQueryParamGetter(field,tlContext,encode));
+      if (field.isAnnotationPresent(PathParam.class))       add(field,newPathParamGetter(field,tlContext,lcEnc));
+ else       if (field.isAnnotationPresent(CookieParam.class))       add(field,newCookieParamGetter(field,tlContext,lcEnc));
+ else       if (field.isAnnotationPresent(HeaderParam.class))       add(field,newHeaderParamGetter(field,tlContext,lcEnc));
+ else       if (field.isAnnotationPresent(MatrixParam.class))       add(field,newMatrixParamGetter(field,tlContext,lcEnc));
+ else       if (field.isAnnotationPresent(QueryParam.class))       add(field,newQueryParamGetter(field,tlContext,lcEnc));
     }
     for (    Method method : jaxRsClass.getDeclaredMethods()) {
-      if (isBeanSetter(method,PathParam.class))       add(method,newPathParamGetter(method,tlContext,encode));
- else       if (isBeanSetter(method,CookieParam.class))       add(method,newCookieParamGetter(method,tlContext,leaveEncoded));
- else       if (isBeanSetter(method,HeaderParam.class))       add(method,newHeaderParamGetter(method,tlContext,leaveEncoded));
- else       if (isBeanSetter(method,MatrixParam.class))       add(method,newMatrixParamGetter(method,tlContext,encode));
- else       if (isBeanSetter(method,QueryParam.class))       add(method,newQueryParamGetter(method,tlContext,encode));
+      if (isBeanSetter(method,PathParam.class))       add(method,newPathParamGetter(method,tlContext,lcEnc));
+ else       if (isBeanSetter(method,CookieParam.class))       add(method,newCookieParamGetter(method,tlContext,lcEnc));
+ else       if (isBeanSetter(method,HeaderParam.class))       add(method,newHeaderParamGetter(method,tlContext,lcEnc));
+ else       if (isBeanSetter(method,MatrixParam.class))       add(method,newMatrixParamGetter(method,tlContext,lcEnc));
+ else       if (isBeanSetter(method,QueryParam.class))       add(method,newQueryParamGetter(method,tlContext,lcEnc));
     }
     jaxRsClass=jaxRsClass.getSuperclass();
   }

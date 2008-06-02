@@ -20,7 +20,7 @@
       PathParam pathParam=getAnno(paramAnnos,PathParam.class);
       QueryParam queryParam=getAnno(paramAnnos,QueryParam.class);
       if (pathParam != null) {
-        parameters[i]=new PathParamGetter(pathParam,defValue,parameterType,genParamType,tlContext,!leaveAllEncoded && !leaveThisEncoded);
+        parameters[i]=new PathParamGetter(pathParam,defValue,parameterType,genParamType,tlContext,leaveAllEncoded || leaveThisEncoded);
         continue;
       }
  else       if (cookieParam != null) {
@@ -32,11 +32,11 @@
         continue;
       }
  else       if (matrixParam != null) {
-        parameters[i]=new MatrixParamGetter(matrixParam,defValue,parameterType,genParamType,tlContext,!leaveAllEncoded && !leaveThisEncoded);
+        parameters[i]=new MatrixParamGetter(matrixParam,defValue,parameterType,genParamType,tlContext,leaveAllEncoded || leaveThisEncoded);
         continue;
       }
  else       if (queryParam != null) {
-        parameters[i]=new QueryParamGetter(queryParam,defValue,parameterType,genParamType,tlContext,!leaveAllEncoded && !leaveThisEncoded);
+        parameters[i]=new QueryParamGetter(queryParam,defValue,parameterType,genParamType,tlContext,leaveAllEncoded || leaveThisEncoded);
         continue;
       }
     }

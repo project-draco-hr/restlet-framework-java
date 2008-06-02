@@ -1,0 +1,14 @@
+{
+  int l=uriPart.length();
+  if (stb != null)   stb.append('{');
+  for (int i=braceIndex + 1; i < l; i++) {
+    char c=uriPart.charAt(i);
+    if (c == '{')     throw new IllegalArgumentException("A variable must not " + "contain an extra '{' in \"" + uriPart + "\"");
+    if (stb != null)     stb.append(c);
+    if (c == '}') {
+      if (i == braceIndex + 1)       throw new IllegalArgumentException("The template variable name '{}' is not allowed in " + "\"" + uriPart + "\"");
+      return i;
+    }
+  }
+  throw new IllegalArgumentException("No '}' found after '{' " + "at position " + braceIndex + " of \""+ uriPart+ "\"");
+}

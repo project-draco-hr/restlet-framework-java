@@ -1,3 +1,9 @@
 {
-  return new Client(Protocol.HTTP);
+  return new Client(Protocol.HTTP){
+    @Override public void handle(    Request request,    Response response){
+      request.setOriginalRef(request.getResourceRef());
+      super.handle(request,response);
+    }
+  }
+;
 }
