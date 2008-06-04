@@ -3,7 +3,14 @@
   if (stale) {
     response.getAttributes().put("stale","true");
   }
-  Series<Parameter> parameters=response.getChallengeRequest().getParameters();
+  ChallengeRequest mainChallengeRequest=null;
+  for (  ChallengeRequest challengeRequest : response.getChallengeRequests()) {
+    if (challengeRequest.getScheme().equals(guard.getScheme())) {
+      mainChallengeRequest=challengeRequest;
+      break;
+    }
+  }
+  Series<Parameter> parameters=mainChallengeRequest.getParameters();
   StringBuffer domain=new StringBuffer();
   for (  String baseUri : guard.getDomainUris()) {
     domain.append(baseUri).append(' ');

@@ -21,8 +21,10 @@
   if (response.getLocationRef() != null) {
     responseHeaders.add(HttpConstants.HEADER_LOCATION,response.getLocationRef().toString());
   }
-  if (response.getChallengeRequest() != null) {
-    responseHeaders.add(HttpConstants.HEADER_WWW_AUTHENTICATE,AuthenticationUtils.format(response.getChallengeRequest()));
+  if (response.getChallengeRequests() != null) {
+    for (    ChallengeRequest challengeRequest : response.getChallengeRequests()) {
+      responseHeaders.add(HttpConstants.HEADER_WWW_AUTHENTICATE,AuthenticationUtils.format(challengeRequest));
+    }
   }
   if (!(response.getRequest().getClientInfo().getAgent() != null && response.getRequest().getClientInfo().getAgent().contains("MSIE"))) {
     Set<Dimension> dimensions=response.getDimensions();
