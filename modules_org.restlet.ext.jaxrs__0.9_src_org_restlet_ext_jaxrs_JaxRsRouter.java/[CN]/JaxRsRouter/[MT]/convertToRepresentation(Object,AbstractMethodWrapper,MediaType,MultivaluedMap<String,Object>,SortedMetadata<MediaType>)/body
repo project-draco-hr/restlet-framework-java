@@ -12,6 +12,9 @@
     genericReturnType=resourceMethod.getGenericReturnType();
     methodAnnotations=resourceMethod.getAnnotations();
   }
+  if (genericReturnType instanceof Class && ((Class)genericReturnType).isAssignableFrom(javax.ws.rs.core.Response.class)) {
+    genericReturnType=entityClass;
+  }
   MessageBodyWriterSubSet mbws=entityProviders.writerSubSet(entityClass,genericReturnType,methodAnnotations);
   List<MediaType> respMediaTypes;
   if (responseMediaType != null)   respMediaTypes=Collections.singletonList(responseMediaType);

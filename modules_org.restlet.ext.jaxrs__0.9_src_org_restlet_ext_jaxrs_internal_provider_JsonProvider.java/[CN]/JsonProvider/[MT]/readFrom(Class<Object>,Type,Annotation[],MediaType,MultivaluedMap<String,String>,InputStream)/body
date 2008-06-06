@@ -10,14 +10,16 @@
     ioe.initCause(e);
     throw ioe;
   }
-  if (JSONString.class.isAssignableFrom(type))   return new JSONString(){
-    public String toJSONString(){
-      return jsonString;
+  if (JSONString.class.isAssignableFrom(type)) {
+    return new JSONString(){
+      public String toJSONString(){
+        return jsonString;
+      }
+      @Override public String toString(){
+        return jsonString;
+      }
     }
-    @Override public String toString(){
-      return jsonString;
-    }
-  }
 ;
+  }
   throw new IllegalArgumentException("the given type " + type + " is not supported");
 }
