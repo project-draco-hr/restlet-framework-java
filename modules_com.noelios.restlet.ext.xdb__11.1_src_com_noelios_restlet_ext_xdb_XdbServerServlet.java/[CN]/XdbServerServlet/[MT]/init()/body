@@ -35,12 +35,18 @@
  finally {
     closeDbResources(preparedstatement,null);
   }
-  if ((getApplication() != null) && (getApplication().isStopped())) {
-    try {
-      getApplication().start();
+  try {
+    if ((getApplication() != null) && (getApplication().isStopped())) {
+      try {
+        getApplication().start();
+      }
+ catch (      Exception e) {
+        log("Error during the starting of the Restlet Application",e);
+      }
     }
- catch (    Exception e) {
-      log("Error during the starting of the Restlet Application",e);
-    }
+  }
+ catch (  AccessControlException ace) {
+    log("Error loading Restlet Application",ace);
+    throw new ServletException("Error loading Restlet application",ace);
   }
 }
