@@ -27,27 +27,7 @@
     callContext.addForAncestor(jaxRsResObj,matchedUriPart);
     u=matchingResult.getFinalCapturingGroup();
     SubResourceLocator subResourceLocator=(SubResourceLocator)firstMeth;
-    try {
-      o=subResourceLocator.createSubResource(o,wrapperFactory,getLogger());
-    }
- catch (    WebApplicationException e) {
-      throw e;
-    }
-catch (    RuntimeException e) {
-      throw excHandler.runtimeExecption(e,subResourceLocator,callContext,"Could not create new instance of resource class");
-    }
-catch (    MissingAnnotationException e) {
-      throw excHandler.missingAnnotation(e,callContext,"Could not create new instance of resource class");
-    }
-catch (    InstantiateException e) {
-      throw excHandler.instantiateExecption(e,callContext,"Could not create new instance of resource class");
-    }
-catch (    InvocationTargetException e) {
-      throw handleInvocationTargetExc(e);
-    }
-catch (    ConvertRepresentationException e) {
-      throw excHandler.convertRepresentationExc(e);
-    }
+    o=createSubResource(o,subResourceLocator,callContext);
     resClass=o.getResourceClass();
   }
 }
