@@ -17,8 +17,8 @@
  else {
           String varName=varBuffer.toString();
           String varValue=resolver.resolve(varName);
+          Variable var=getVariables().get(varName);
           if (varValue == null) {
-            Variable var=getVariables().get(varName);
             if (var == null) {
               var=getDefaultVariable();
             }
@@ -26,7 +26,17 @@
               varValue=var.getDefaultValue();
             }
           }
-          result.append(varValue);
+          if (encodeVariables) {
+            result.append(Variable.encode(var,varValue));
+          }
+ else {
+            if (var != null && var.isEncodedOnFormat()) {
+              result.append(Reference.encode(varValue));
+            }
+ else {
+              result.append(varValue);
+            }
+          }
           varBuffer=new StringBuilder();
         }
         inVariable=false;

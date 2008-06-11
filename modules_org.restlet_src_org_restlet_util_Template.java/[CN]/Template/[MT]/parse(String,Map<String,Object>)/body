@@ -10,7 +10,13 @@
       for (int i=0; i < getRegexVariables().size(); i++) {
         attributeName=getRegexVariables().get(i);
         attributeValue=matcher.group(i + 1);
-        variables.put(attributeName,attributeValue);
+        Variable var=getVariables().get(attributeName);
+        if (var != null && var.isDecodedOnParse()) {
+          variables.put(attributeName,Reference.decode(attributeValue));
+        }
+ else {
+          variables.put(attributeName,attributeValue);
+        }
       }
     }
   }
