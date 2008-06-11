@@ -1,14 +1,13 @@
 {
-  Method[] classMethods=jaxRsClass.getDeclaredMethods();
-  for (  Method execMethod : classMethods) {
+  for (  Method execMethod : jaxRsClass.getMethods()) {
     Method annotatedMethod=getAnnotatedJavaMethod(execMethod);
     if (annotatedMethod == null)     continue;
     Path path=annotatedMethod.getAnnotation(Path.class);
     org.restlet.data.Method httpMethod;
-    httpMethod=WrapperUtil.getHttpMethod(annotatedMethod);
+    httpMethod=getHttpMethod(annotatedMethod);
     try {
       if (httpMethod != null) {
-        if (!checkResMethodVolatileOrNotPublic(execMethod,logger))         continue;
+        if (isVolatile(execMethod))         continue;
         ResourceMethod subResMeth=new ResourceMethod(execMethod,annotatedMethod,this,httpMethod,tlContext,entityProviders,allCtxResolvers,extensionBackwardMapping,logger);
         this.resourceMethods.add(subResMeth);
         this.resourceMethodsAndLocators.add(subResMeth);
@@ -16,7 +15,7 @@
       }
  else {
         if (path != null) {
-          if (!checkResMethodVolatileOrNotPublic(execMethod,logger))           continue;
+          if (isVolatile(execMethod))           continue;
           SubResourceLocator subResLoc=new SubResourceLocator(execMethod,annotatedMethod,this,tlContext,entityProviders,allCtxResolvers,extensionBackwardMapping,logger);
           this.subResourceLocators.add(subResLoc);
           this.resourceMethodsAndLocators.add(subResLoc);
