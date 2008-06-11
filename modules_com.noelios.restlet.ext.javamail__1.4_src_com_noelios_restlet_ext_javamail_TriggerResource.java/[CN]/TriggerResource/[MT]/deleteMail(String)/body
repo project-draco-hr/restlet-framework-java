@@ -1,0 +1,16 @@
+{
+  Reference mailRef=getMailRef(mailIdentifier);
+  if (mailRef.isRelative()) {
+    mailRef.setBaseRef(getMailboxUri());
+    mailRef=mailRef.getTargetRef();
+  }
+  Request request=new Request(Method.DELETE,mailRef);
+  if (getMailboxChallengeScheme() != null) {
+    ChallengeResponse challengeResponse=new ChallengeResponse(getMailboxChallengeScheme(),getMailboxLogin(),getMailboxPassword());
+    request.setChallengeResponse(challengeResponse);
+  }
+  Response response=getContext().getClientDispatcher().handle(request);
+  if (response.getStatus().isError()) {
+    throw new ResourceException(Status.SERVER_ERROR_INTERNAL,"Unable to delete the mail from the mailbox");
+  }
+}

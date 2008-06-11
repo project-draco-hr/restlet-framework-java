@@ -1,0 +1,22 @@
+{
+  List<String> mailIdentifiers=getMailIdentifiers();
+  List<String> mailsSuccessful=new ArrayList<String>();
+  Map<String,String> mailsUnsuccessful=new HashMap<String,String>();
+  Representation mail;
+  for (  String mailIdentifier : mailIdentifiers) {
+    try {
+      mail=getMail(mailIdentifier);
+      if (mail != null) {
+        resolver=getResolver(mailIdentifier,mail);
+        callTarget(resolver);
+        deleteMail(mailIdentifier);
+        mailsSuccessful.add(mailIdentifier);
+      }
+    }
+ catch (    ResourceException e) {
+      mailsUnsuccessful.put(mailIdentifier,e.getMessage());
+    }
+  }
+  getResponse().setEntity(getResponseRepresentation(mailsSuccessful,mailsUnsuccessful));
+  getResponse().setStatus(getResponseStatus(mailsSuccessful,mailsUnsuccessful));
+}

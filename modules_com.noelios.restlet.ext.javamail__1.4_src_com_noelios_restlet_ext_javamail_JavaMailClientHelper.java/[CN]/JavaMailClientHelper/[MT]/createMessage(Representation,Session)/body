@@ -1,3 +1,16 @@
 {
-  return new RepresentationMessage(xmlMessage,session);
+  String representationMessageClassName=getRepresentationMessageClass();
+  if (representationMessageClassName == null) {
+    return new RepresentationMessage(xmlMessage,session);
+  }
+ else {
+    try {
+      Class<? extends RepresentationMessage> representationMessageClass=(Class<? extends RepresentationMessage>)Class.forName(representationMessageClassName);
+      return representationMessageClass.getConstructor(Representation.class,Session.class).newInstance(xmlMessage,session);
+    }
+ catch (    Exception e) {
+      logger.log(Level.SEVERE,"Unable to create a new instance of " + representationMessageClassName,e);
+      return new RepresentationMessage(xmlMessage,session);
+    }
+  }
 }
