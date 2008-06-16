@@ -1,0 +1,45 @@
+{
+  super.start();
+  if (this.controller == null) {
+    this.controller=new Controller();
+    configure(this.controller);
+  }
+  getLogger().info("Starting the Grizzly " + getProtocols() + " server");
+  final CountDownLatch latch=new CountDownLatch(1);
+  final Controller controller=this.controller;
+  new Thread(){
+    @Override public void run(){
+      try {
+        controller.addStateListener(new ControllerStateListener(){
+          public void onException(          Throwable arg0){
+            latch.countDown();
+          }
+          public void onReady(){
+            if (getHelped().getPort() == 0) {
+              TCPSelectorHandler tsh=(TCPSelectorHandler)controller.getSelectorHandler(Controller.Protocol.TCP);
+              setEphemeralPort(tsh.getPortLowLevel());
+            }
+            latch.countDown();
+          }
+          public void onStarted(){
+          }
+          public void onStopped(){
+          }
+        }
+);
+        controller.start();
+      }
+ catch (      IOException e) {
+        getLogger().log(Level.WARNING,"Error while starting the Grizzly controller",e);
+      }
+    }
+  }
+.start();
+  try {
+    latch.await();
+  }
+ catch (  InterruptedException ex) {
+    getLogger().log(Level.WARNING,"Interrupted while waiting for starting latch. Stopping...",ex);
+    stop();
+  }
+}

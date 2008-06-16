@@ -1,0 +1,17 @@
+{
+  Socket socket=getSocket();
+  if (socket instanceof SSLSocket) {
+    SSLSocket sslSocket=(SSLSocket)socket;
+    SSLSession sslSession=sslSocket.getSession();
+    if (sslSession != null) {
+      try {
+        List<Certificate> clientCertificates=Arrays.asList(sslSession.getPeerCertificates());
+        return clientCertificates;
+      }
+ catch (      SSLPeerUnverifiedException e) {
+        getLogger().log(Level.FINE,"Can't get the client certificates.",e);
+      }
+    }
+  }
+  return null;
+}
