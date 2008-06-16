@@ -18,14 +18,14 @@
   MessageBodyWriterSubSet mbws=entityProviders.writerSubSet(entityClass,genericReturnType,methodAnnotations);
   List<MediaType> respMediaTypes;
   if (responseMediaType != null)   respMediaTypes=Collections.singletonList(responseMediaType);
- else   if (resourceMethod instanceof ResourceMethod)   respMediaTypes=determineMediaType16((ResourceMethod)resourceMethod,mbws);
+ else   if (resourceMethod instanceof ResourceMethod)   respMediaTypes=determineMediaTypeA((ResourceMethod)resourceMethod,mbws);
  else   respMediaTypes=Collections.singletonList(MediaType.TEXT_PLAIN);
   MessageBodyWriter<?> mbw=mbws.getBestWriter(respMediaTypes,accMediaTypes);
   Response response=tlContext.get().getResponse();
   if (mbw == null)   excHandler.noMessageBodyWriter();
   MediaType mediaType;
   if (responseMediaType != null)   mediaType=responseMediaType;
- else   mediaType=determineMediaType79(respMediaTypes);
+ else   mediaType=determineMediaTypeB(respMediaTypes);
   MultivaluedMap<String,Object> httpResponseHeaders=new WrappedRequestForHttpHeaders(response,jaxRsRespHeaders,getLogger());
   Representation repr=new JaxRsOutputRepresentation(entity,genericReturnType,mediaType,methodAnnotations,mbw,httpResponseHeaders);
   repr.setCharacterSet(getSupportedCharSet(httpResponseHeaders));

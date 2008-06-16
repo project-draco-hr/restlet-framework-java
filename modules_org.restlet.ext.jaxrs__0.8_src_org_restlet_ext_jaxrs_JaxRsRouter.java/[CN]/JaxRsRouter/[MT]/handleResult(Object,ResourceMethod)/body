@@ -5,20 +5,18 @@
     restletResponse.setEntity(null);
     return;
   }
+  if (result instanceof javax.ws.rs.core.Response) {
+    jaxRsRespToRestletResp((javax.ws.rs.core.Response)result,resourceMethod);
+  }
+ else   if (result instanceof ResponseBuilder) {
+    String warning="the method " + resourceMethod + " returnef a ResponseBuilder. You should "+ "call responseBuilder.build() in the resource method";
+    getLogger().warning(warning);
+    jaxRsRespToRestletResp(((ResponseBuilder)result).build(),resourceMethod);
+  }
  else {
     restletResponse.setStatus(Status.SUCCESS_OK);
-    if (result instanceof javax.ws.rs.core.Response) {
-      jaxRsRespToRestletResp((javax.ws.rs.core.Response)result,resourceMethod);
-    }
- else     if (result instanceof javax.ws.rs.core.Response.ResponseBuilder) {
-      String warning="the method " + resourceMethod + " returnef a ResponseBuilder. This is not allowed by default. Call responseBuilder.build() in the resource method";
-      getLogger().warning(warning);
-      javax.ws.rs.core.Response jaxRsResponse=((javax.ws.rs.core.Response.ResponseBuilder)result).build();
-      jaxRsRespToRestletResp(jaxRsResponse,resourceMethod);
-    }
- else {
-      SortedMetadata<MediaType> accMediaTypes=tlContext.get().getAccMediaTypes();
-      restletResponse.setEntity(convertToRepresentation(result,resourceMethod,null,null,accMediaTypes));
-    }
+    SortedMetadata<MediaType> accMediaTypes;
+    accMediaTypes=tlContext.get().getAccMediaTypes();
+    restletResponse.setEntity(convertToRepresentation(result,resourceMethod,null,null,accMediaTypes));
   }
 }
