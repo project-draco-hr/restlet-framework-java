@@ -1,8 +1,16 @@
 {
-  try {
-    return getRequest().getInputStream();
+  if (requestEntityStream == null) {
+    try {
+      if (isRequestChunked()) {
+        requestEntityStream=new ChunkedInputStream(getRequest().getInputStream());
+      }
+ else {
+        requestEntityStream=new InputEntityStream(getRequest().getInputStream(),size);
+      }
+    }
+ catch (    IOException e) {
+      e.printStackTrace();
+    }
   }
- catch (  IOException e) {
-    return null;
-  }
+  return requestEntityStream;
 }
