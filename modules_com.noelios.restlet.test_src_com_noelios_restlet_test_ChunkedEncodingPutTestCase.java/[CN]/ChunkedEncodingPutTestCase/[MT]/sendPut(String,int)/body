@@ -1,0 +1,10 @@
+{
+  Request request=new Request(Method.PUT,uri,createChunckedRepresentation(size));
+  Response r=new Client(Protocol.HTTP).handle(request);
+  try {
+    assertEquals(createChunckedRepresentation(size).getText(),r.getEntity().getText());
+  }
+  finally {
+    r.release();
+  }
+}
