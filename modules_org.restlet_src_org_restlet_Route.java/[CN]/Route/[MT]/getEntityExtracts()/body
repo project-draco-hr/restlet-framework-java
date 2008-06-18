@@ -1,3 +1,10 @@
 {
-  return this.entityExtracts;
+  List<ExtractInfo> ee=this.entityExtracts;
+  if (ee == null) {
+synchronized (this) {
+      ee=this.entityExtracts;
+      if (ee == null)       this.entityExtracts=ee=new CopyOnWriteArrayList<ExtractInfo>();
+    }
+  }
+  return ee;
 }

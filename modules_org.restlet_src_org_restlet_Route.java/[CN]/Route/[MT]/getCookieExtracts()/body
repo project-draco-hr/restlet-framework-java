@@ -1,3 +1,10 @@
 {
-  return this.cookieExtracts;
+  List<ExtractInfo> ce=this.cookieExtracts;
+  if (ce == null) {
+synchronized (this) {
+      ce=this.cookieExtracts;
+      if (ce == null)       this.cookieExtracts=ce=new CopyOnWriteArrayList<ExtractInfo>();
+    }
+  }
+  return ce;
 }

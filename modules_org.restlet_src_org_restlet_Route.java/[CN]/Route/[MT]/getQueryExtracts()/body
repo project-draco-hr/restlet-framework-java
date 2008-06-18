@@ -1,3 +1,10 @@
 {
-  return this.queryExtracts;
+  List<ExtractInfo> qe=this.queryExtracts;
+  if (qe == null) {
+synchronized (this) {
+      qe=this.queryExtracts;
+      if (qe == null)       this.queryExtracts=qe=new CopyOnWriteArrayList<ExtractInfo>();
+    }
+  }
+  return qe;
 }

@@ -1,14 +1,20 @@
 {
-  if (this.subTags == null) {
-    this.subTags=new ArrayList<String>();
-    if (getName() != null) {
-      String[] tags=getName().split("-");
-      if (tags.length > 0) {
-        for (int i=1; i < tags.length; i++) {
-          this.subTags.add(tags[i]);
+  List<String> v=this.subTags;
+  if (v == null) {
+synchronized (this) {
+      v=this.subTags;
+      if (v == null) {
+        this.subTags=v=new CopyOnWriteArrayList<String>();
+        if (getName() != null) {
+          String[] tags=getName().split("-");
+          if (tags.length > 0) {
+            for (int i=1; i < tags.length; i++) {
+              this.subTags.add(tags[i]);
+            }
+          }
         }
       }
     }
   }
-  return this.subTags;
+  return v;
 }

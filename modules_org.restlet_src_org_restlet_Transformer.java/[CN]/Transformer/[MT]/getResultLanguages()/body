@@ -1,3 +1,10 @@
 {
-  return this.resultLanguages;
+  List<Language> v=this.resultLanguages;
+  if (v == null) {
+synchronized (this) {
+      v=this.resultLanguages;
+      if (v == null)       this.resultLanguages=v=new CopyOnWriteArrayList<Language>();
+    }
+  }
+  return v;
 }
