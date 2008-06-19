@@ -1,0 +1,17 @@
+{
+  CallContext callContext=tlContext.get();
+  Collection<MediaType> p=resourceMethod.getProducedMimes();
+  if (p.isEmpty()) {
+    p=mbws.getAllProducibleMediaTypes();
+    if (p.isEmpty())     return MediaType.APPLICATION_OCTET_STREAM;
+  }
+  SortedMetadata<MediaType> a=callContext.getAccMediaTypes();
+  if (a.isEmpty())   a=SortedMetadata.getMediaTypeAll();
+  List<MediaType> pSorted=sortByConcreteness(p);
+  List<MediaType> m=new ArrayList<MediaType>();
+  for (  MediaType prod : pSorted)   for (  MediaType acc : a)   if (prod.isCompatible(acc))   m.add(MediaType.getMostSpecific(prod,acc));
+  if (m.isEmpty())   excHandler.notAcceptableWhileDetermineMediaType();
+  for (  MediaType mediaType : m)   if (mediaType.isConcrete())   return mediaType;
+  if (m.contains(MediaType.ALL) || m.contains(MediaType.APPLICATION_ALL))   return MediaType.APPLICATION_OCTET_STREAM;
+  throw excHandler.notAcceptableWhileDetermineMediaType();
+}
