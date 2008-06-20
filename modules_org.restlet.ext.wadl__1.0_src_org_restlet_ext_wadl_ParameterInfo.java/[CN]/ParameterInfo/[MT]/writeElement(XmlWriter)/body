@@ -1,0 +1,45 @@
+{
+  AttributesImpl attributes=new AttributesImpl();
+  if (getDefaultValue() != null && !getDefaultValue().equals("")) {
+    attributes.addAttribute("","default",null,"xs:string",getDefaultValue());
+  }
+  if (getFixed() != null && !getFixed().equals("")) {
+    attributes.addAttribute("","fixed",null,"xs:string",getFixed());
+  }
+  if (getIdentifier() != null && !getIdentifier().equals("")) {
+    attributes.addAttribute("","id",null,"xs:ID",getIdentifier());
+  }
+  if (getPath() != null && !getPath().equals("")) {
+    attributes.addAttribute("","path",null,"xs:string",getPath());
+  }
+  if (getStyle() != null) {
+    attributes.addAttribute("","style",null,"xs:string",getStyle().toString());
+  }
+  if (getToken() != null && !getToken().equals("")) {
+    attributes.addAttribute("","name",null,"xs:NMTOKEN",getToken());
+  }
+  if (getType() != null && !getType().equals("")) {
+    attributes.addAttribute("","type",null,"xs:QName",getType());
+  }
+  if (isRepeating()) {
+    attributes.addAttribute("","repeating",null,"xs:boolean","true");
+  }
+  if (isRequired()) {
+    attributes.addAttribute("","required",null,"xs:boolean","true");
+  }
+  writer.startElement("","param",null,attributes);
+  if (getLink() != null) {
+    getLink().writeElement(writer);
+  }
+  if (getDocumentations() != null) {
+    for (    DocumentationInfo documentationInfo : getDocumentations()) {
+      documentationInfo.writeElement(writer);
+    }
+  }
+  if (getOptions() != null) {
+    for (    OptionInfo optionInfo : getOptions()) {
+      optionInfo.writeElement(writer);
+    }
+  }
+  writer.endElement("","param");
+}

@@ -1,0 +1,16 @@
+{
+  AttributesImpl attributes=new AttributesImpl();
+  if (getRelationship() != null && !getRelationship().equals("")) {
+    attributes.addAttribute("","rel",null,"xs:token",getRelationship());
+  }
+  if (getReverseRelationship() != null && !getReverseRelationship().equals("")) {
+    attributes.addAttribute("","rev",null,"xs:token",getReverseRelationship());
+  }
+  writer.startElement("","link",null,attributes);
+  if (getDocumentations() != null) {
+    for (    DocumentationInfo documentationInfo : getDocumentations()) {
+      documentationInfo.writeElement(writer);
+    }
+  }
+  writer.endElement("link");
+}

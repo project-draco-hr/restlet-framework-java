@@ -1,0 +1,23 @@
+{
+  AttributesImpl attributes=new AttributesImpl();
+  if (getIdentifier() != null && !getIdentifier().equals("")) {
+    attributes.addAttribute("","id",null,"xs:ID",getIdentifier());
+  }
+  writer.startElement("","resource_type",null,attributes);
+  if (getDocumentations() != null) {
+    for (    DocumentationInfo documentationInfo : getDocumentations()) {
+      documentationInfo.writeElement(writer);
+    }
+  }
+  if (getMethods() != null) {
+    for (    MethodInfo methodInfo : getMethods()) {
+      methodInfo.writeElement(writer);
+    }
+  }
+  if (getParameters() != null) {
+    for (    ParameterInfo parameterInfo : getParameters()) {
+      parameterInfo.writeElement(writer);
+    }
+  }
+  writer.endElement("","resource_type");
+}

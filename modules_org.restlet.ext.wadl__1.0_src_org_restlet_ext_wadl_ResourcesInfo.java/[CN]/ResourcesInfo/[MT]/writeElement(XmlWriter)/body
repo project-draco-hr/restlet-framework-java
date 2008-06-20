@@ -1,0 +1,18 @@
+{
+  AttributesImpl attributes=new AttributesImpl();
+  if (getBaseRef() != null) {
+    attributes.addAttribute("","base",null,"xs:anyURI",getBaseRef().toString());
+  }
+  writer.startElement("","resources",null,attributes);
+  if (getDocumentations() != null) {
+    for (    DocumentationInfo documentationInfo : getDocumentations()) {
+      documentationInfo.writeElement(writer);
+    }
+  }
+  if (getResources() != null) {
+    for (    ResourceInfo resourceInfo : getResources()) {
+      resourceInfo.writeElement(writer);
+    }
+  }
+  writer.endElement("","resources");
+}

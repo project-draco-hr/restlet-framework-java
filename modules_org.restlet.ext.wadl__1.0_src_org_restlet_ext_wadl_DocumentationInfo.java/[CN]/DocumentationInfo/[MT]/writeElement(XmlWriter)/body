@@ -1,0 +1,19 @@
+{
+  AttributesImpl attributes=new AttributesImpl();
+  if (getTitle() != null && !getTitle().equals("")) {
+    attributes.addAttribute("","title",null,"xs:string",getTitle());
+  }
+  if (getLanguage() != null && getLanguage().toString() != null) {
+    attributes.addAttribute("","xml:lang",null,"xs:string",getLanguage().toString());
+  }
+  if ((getTextContent() == null || getTextContent().equals("")) && getXmlContent() == null) {
+    writer.emptyElement("","doc",null,attributes);
+  }
+ else {
+    if (getXmlContent() != null) {
+    }
+ else {
+      writer.dataElement("","doc",null,attributes,getTextContent());
+    }
+  }
+}

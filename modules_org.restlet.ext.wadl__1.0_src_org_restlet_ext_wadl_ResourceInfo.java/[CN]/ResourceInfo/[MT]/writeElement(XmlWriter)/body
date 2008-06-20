@@ -1,0 +1,45 @@
+{
+  AttributesImpl attributes=new AttributesImpl();
+  if (getIdentifier() != null && !getIdentifier().equals("")) {
+    attributes.addAttribute("","id",null,"xs:ID",getIdentifier());
+  }
+  if (getPath() != null && !getPath().equals("")) {
+    attributes.addAttribute("","path",null,"xs:string",getPath());
+  }
+  if (getQueryType() != null) {
+    attributes.addAttribute("","queryType",null,"xs:string",getQueryType().getMainType());
+  }
+  if (getType() != null && !getType().isEmpty()) {
+    StringBuilder builder=new StringBuilder();
+    for (Iterator<Reference> iterator=getType().iterator(); iterator.hasNext(); ) {
+      Reference reference=iterator.next();
+      builder.append(reference.toString());
+      if (iterator.hasNext()) {
+        builder.append(" ");
+      }
+    }
+    attributes.addAttribute("","type",null,"xs:string",builder.toString());
+  }
+  writer.startElement("","resource",null,attributes);
+  if (getChildResources() != null) {
+    for (    ResourceInfo resourceInfo : getChildResources()) {
+      resourceInfo.writeElement(writer);
+    }
+  }
+  if (getDocumentations() != null) {
+    for (    DocumentationInfo documentationInfo : getDocumentations()) {
+      documentationInfo.writeElement(writer);
+    }
+  }
+  if (getMethods() != null) {
+    for (    MethodInfo methodInfo : getMethods()) {
+      methodInfo.writeElement(writer);
+    }
+  }
+  if (getParameters() != null) {
+    for (    ParameterInfo parameterInfo : getParameters()) {
+      parameterInfo.writeElement(writer);
+    }
+  }
+  writer.endElement("","resource");
+}
