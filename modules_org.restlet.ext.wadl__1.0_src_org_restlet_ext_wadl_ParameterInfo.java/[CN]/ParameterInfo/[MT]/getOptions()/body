@@ -1,3 +1,10 @@
 {
-  return options;
+  List<OptionInfo> o=this.options;
+  if (o == null) {
+synchronized (this) {
+      o=this.options;
+      if (o == null)       this.options=o=new ArrayList<OptionInfo>();
+    }
+  }
+  return o;
 }

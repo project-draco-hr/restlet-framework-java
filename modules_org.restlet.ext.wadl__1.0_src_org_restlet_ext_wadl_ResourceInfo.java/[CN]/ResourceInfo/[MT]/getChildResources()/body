@@ -1,3 +1,10 @@
 {
-  return childResources;
+  List<ResourceInfo> r=this.childResources;
+  if (r == null) {
+synchronized (this) {
+      r=this.childResources;
+      if (r == null)       this.childResources=r=new ArrayList<ResourceInfo>();
+    }
+  }
+  return r;
 }

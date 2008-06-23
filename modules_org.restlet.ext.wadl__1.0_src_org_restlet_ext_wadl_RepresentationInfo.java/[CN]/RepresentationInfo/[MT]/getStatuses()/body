@@ -1,3 +1,10 @@
 {
-  return statuses;
+  List<Status> s=this.statuses;
+  if (s == null) {
+synchronized (this) {
+      s=this.statuses;
+      if (s == null)       this.statuses=s=new ArrayList<Status>();
+    }
+  }
+  return s;
 }

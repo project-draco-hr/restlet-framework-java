@@ -1,3 +1,10 @@
 {
-  return type;
+  List<Reference> t=this.type;
+  if (t == null) {
+synchronized (this) {
+      t=this.type;
+      if (t == null)       this.type=t=new ArrayList<Reference>();
+    }
+  }
+  return t;
 }

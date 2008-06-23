@@ -1,3 +1,10 @@
 {
-  return profiles;
+  List<Reference> p=this.profiles;
+  if (p == null) {
+synchronized (this) {
+      p=this.profiles;
+      if (p == null)       this.profiles=p=new ArrayList<Reference>();
+    }
+  }
+  return p;
 }

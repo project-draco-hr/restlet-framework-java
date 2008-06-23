@@ -1,3 +1,10 @@
 {
-  return includes;
+  List<IncludeInfo> i=this.includes;
+  if (i == null) {
+synchronized (this) {
+      i=this.includes;
+      if (i == null)       this.includes=i=new ArrayList<IncludeInfo>();
+    }
+  }
+  return i;
 }

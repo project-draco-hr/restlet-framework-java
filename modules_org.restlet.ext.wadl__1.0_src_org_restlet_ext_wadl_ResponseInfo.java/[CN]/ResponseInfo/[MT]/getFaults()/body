@@ -1,3 +1,10 @@
 {
-  return faults;
+  List<FaultInfo> f=this.faults;
+  if (f == null) {
+synchronized (this) {
+      f=this.faults;
+      if (f == null)       this.faults=f=new ArrayList<FaultInfo>();
+    }
+  }
+  return f;
 }

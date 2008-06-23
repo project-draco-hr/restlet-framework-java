@@ -1,3 +1,10 @@
 {
-  return representations;
+  List<RepresentationInfo> r=this.representations;
+  if (r == null) {
+synchronized (this) {
+      r=this.representations;
+      if (r == null)       this.representations=r=new ArrayList<RepresentationInfo>();
+    }
+  }
+  return r;
 }
