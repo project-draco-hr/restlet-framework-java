@@ -1,4 +1,14 @@
 {
   Representation representation=null;
+  URL wadlHtmlXsltUrl=Engine.getClassLoader().getResource("org/restlet/ext/wadl/wadl_documentation.xsl");
+  if (wadlHtmlXsltUrl != null) {
+    try {
+      InputRepresentation xslRep=new InputRepresentation(wadlHtmlXsltUrl.openStream(),MediaType.APPLICATION_W3C_XSLT);
+      representation=new TransformRepresentation(this,xslRep);
+    }
+ catch (    IOException e) {
+      e.printStackTrace();
+    }
+  }
   return representation;
 }
