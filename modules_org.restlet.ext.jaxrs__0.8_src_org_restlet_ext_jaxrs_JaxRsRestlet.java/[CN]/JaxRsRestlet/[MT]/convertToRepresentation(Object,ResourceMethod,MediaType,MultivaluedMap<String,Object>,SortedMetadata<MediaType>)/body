@@ -19,7 +19,7 @@
   if (mbws.isEmpty())   throw excHandler.noMessageBodyWriter();
   MediaType respMediaType;
   if (givenResponseMediaType != null)   respMediaType=givenResponseMediaType;
- else   if (resourceMethod instanceof ResourceMethod)   respMediaType=determineMediaType((ResourceMethod)resourceMethod,mbws);
+ else   if (resourceMethod != null)   respMediaType=determineMediaType(resourceMethod,mbws);
  else   respMediaType=MediaType.TEXT_PLAIN;
   MessageBodyWriter<?> mbw=mbws.getBestWriter(respMediaType,accMediaTypes);
   if (mbw == null)   throw excHandler.noMessageBodyWriter();
