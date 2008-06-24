@@ -1,0 +1,13 @@
+{
+  Variant result=null;
+  List<Variant> variants=new ArrayList<Variant>();
+  variants.add(new Variant(MediaType.APPLICATION_WADL_XML));
+  variants.add(new Variant(MediaType.TEXT_HTML));
+  Application app=Application.getCurrent();
+  Language language=null;
+  if (app != null) {
+    language=app.getMetadataService().getDefaultLanguage();
+  }
+  result=getRequest().getClientInfo().getPreferredVariant(variants,language);
+  return result;
+}
