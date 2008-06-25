@@ -1,0 +1,12 @@
+{
+  if (Method.OPTIONS.equals(request.getMethod())) {
+    ApplicationInfo applicationInfo=new ApplicationInfo();
+    applicationInfo.getResources().setBaseRef(this.getBaseRef());
+    getResourceInfos(getRouter(),applicationInfo.getResources().getResources());
+    response.setEntity(new WadlRepresentation(applicationInfo));
+    response.setStatus(Status.SUCCESS_OK);
+  }
+ else {
+    super.handle(request,response);
+  }
+}

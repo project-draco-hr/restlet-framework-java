@@ -3,14 +3,14 @@
   if (getTargetRef() != null && getTargetRef().toString() != null) {
     attributes.addAttribute("","href",null,"xs:anyURI",getTargetRef().toString());
   }
-  if (getDocumentations() != null && !getDocumentations().isEmpty()) {
+  if (getDocumentations().isEmpty()) {
+    writer.emptyElement("","include",null,attributes);
+  }
+ else {
     writer.startElement("","include",null,attributes);
     for (    DocumentationInfo documentationInfo : getDocumentations()) {
       documentationInfo.writeElement(writer);
     }
     writer.endElement("","include");
-  }
- else {
-    writer.emptyElement("","include",null,attributes);
   }
 }

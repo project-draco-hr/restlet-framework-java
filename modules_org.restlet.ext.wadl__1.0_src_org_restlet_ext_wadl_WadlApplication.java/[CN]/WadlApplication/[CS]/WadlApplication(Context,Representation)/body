@@ -11,8 +11,10 @@
     Router root=new Router(getContext());
     this.router=root;
     setRoot(root);
-    for (    ResourceInfo resource : wadlRep.getApplication().getResources().getResources()) {
-      attachResource(resource,null,router);
+    if (wadlRep.getApplication() != null && wadlRep.getApplication().getResources() != null) {
+      for (      ResourceInfo resource : wadlRep.getApplication().getResources().getResources()) {
+        attachResource(resource,null,router);
+      }
     }
     setBaseRef(wadlRep.getApplication().getResources().getBaseRef());
   }

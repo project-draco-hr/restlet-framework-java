@@ -1,6 +1,12 @@
 {
   if (getBaseRef() != null) {
-    host.attach(getBaseRef().getPath(),this);
+    String path=getBaseRef().getPath();
+    if (path == null) {
+      host.attach("",this);
+    }
+ else {
+      host.attach(path,this);
+    }
   }
  else {
     getLogger().warning("The WADL application has no base reference defined. Unable to guess the virtual host.");

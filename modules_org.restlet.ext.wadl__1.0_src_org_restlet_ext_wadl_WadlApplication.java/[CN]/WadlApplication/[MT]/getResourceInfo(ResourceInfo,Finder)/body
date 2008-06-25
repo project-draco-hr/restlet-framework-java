@@ -1,0 +1,34 @@
+{
+  Handler handler=finder.createTarget(finder.getTargetClass(),null,null);
+  Set<Method> methods=handler.getAllowedMethods();
+  if (handler instanceof WadlResource) {
+    WadlResource resource=(WadlResource)handler;
+    for (    Method method : methods) {
+      resourceInfo.getMethods().add(resource.getMethodInfo(method));
+    }
+  }
+ else   if (handler instanceof Resource) {
+    Resource resource=(Resource)handler;
+    for (    Method method : methods) {
+      MethodInfo methodInfo=new MethodInfo();
+      methodInfo.setName(method);
+      if (Method.GET.equals(method)) {
+        ResponseInfo responseInfo=new ResponseInfo();
+        for (        Variant variant : resource.getVariants()) {
+          RepresentationInfo representationInfo=new RepresentationInfo();
+          representationInfo.setMediaType(variant.getMediaType());
+          responseInfo.getRepresentations().add(representationInfo);
+        }
+        methodInfo.setResponse(responseInfo);
+      }
+      resourceInfo.getMethods().add(methodInfo);
+    }
+  }
+ else {
+    for (    Method method : methods) {
+      MethodInfo methodInfo=new MethodInfo();
+      methodInfo.setName(method);
+      resourceInfo.getMethods().add(methodInfo);
+    }
+  }
+}

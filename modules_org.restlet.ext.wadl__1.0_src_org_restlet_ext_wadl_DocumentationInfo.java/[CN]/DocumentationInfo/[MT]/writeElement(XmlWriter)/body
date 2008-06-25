@@ -13,7 +13,14 @@
     if (getXmlContent() != null) {
     }
  else {
-      writer.dataElement("","doc",null,attributes,getTextContent());
+      writer.startElement("","doc",null,attributes);
+      try {
+        writer.getWriter().write(getTextContent());
+      }
+ catch (      IOException e) {
+        e.printStackTrace();
+      }
+      writer.endElement("","doc");
     }
   }
 }

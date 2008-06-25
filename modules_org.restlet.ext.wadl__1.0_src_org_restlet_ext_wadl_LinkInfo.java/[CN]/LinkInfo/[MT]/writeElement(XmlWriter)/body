@@ -9,11 +9,14 @@
   if (getResourceType() != null && getResourceType().toString() != null) {
     attributes.addAttribute("","resource_type",null,"xs:anyURI",getResourceType().toString());
   }
-  writer.startElement("","link",null,attributes);
-  if (getDocumentations() != null) {
+  if (getDocumentations().isEmpty()) {
+    writer.emptyElement("","link",null,attributes);
+  }
+ else {
+    writer.startElement("","link",null,attributes);
     for (    DocumentationInfo documentationInfo : getDocumentations()) {
       documentationInfo.writeElement(writer);
     }
+    writer.endElement("link");
   }
-  writer.endElement("link");
 }

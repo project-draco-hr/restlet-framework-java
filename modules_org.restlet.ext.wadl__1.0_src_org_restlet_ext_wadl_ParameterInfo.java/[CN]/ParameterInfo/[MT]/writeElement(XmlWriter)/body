@@ -27,19 +27,20 @@
   if (isRequired()) {
     attributes.addAttribute("","required",null,"xs:boolean","true");
   }
-  writer.startElement("","param",null,attributes);
-  if (getLink() != null) {
-    getLink().writeElement(writer);
+  if (getLink() == null && getDocumentations().isEmpty() && getOptions().isEmpty()) {
+    writer.emptyElement("","param",null,attributes);
   }
-  if (getDocumentations() != null) {
+ else {
+    writer.startElement("","param",null,attributes);
+    if (getLink() != null) {
+      getLink().writeElement(writer);
+    }
     for (    DocumentationInfo documentationInfo : getDocumentations()) {
       documentationInfo.writeElement(writer);
     }
-  }
-  if (getOptions() != null) {
     for (    OptionInfo optionInfo : getOptions()) {
       optionInfo.writeElement(writer);
     }
+    writer.endElement("","param");
   }
-  writer.endElement("","param");
 }
