@@ -7,20 +7,20 @@
     attributes.addAttribute("","xml:lang",null,"xs:string",getLanguage().toString());
   }
   if ((getTextContent() == null || getTextContent().equals("")) && getXmlContent() == null) {
-    writer.emptyElement("","doc",null,attributes);
+    writer.emptyElement(APP_NAMESPACE,"doc",null,attributes);
   }
  else {
     if (getXmlContent() != null) {
     }
  else {
-      writer.startElement("","doc",null,attributes);
+      writer.startElement(APP_NAMESPACE,"doc",null,attributes);
       try {
         writer.getWriter().write(getTextContent());
       }
  catch (      IOException e) {
-        e.printStackTrace();
+        logger.log(Level.SEVERE,"Error when writing the text content of the current \"doc\" tag.",e);
       }
-      writer.endElement("","doc");
+      writer.endElement(APP_NAMESPACE,"doc");
     }
   }
 }
