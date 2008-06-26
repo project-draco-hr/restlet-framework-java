@@ -1,6 +1,13 @@
 {
   Handler handler=finder.createTarget(finder.getTargetClass(),null,null);
-  Set<Method> methods=handler.getAllowedMethods();
+  List<Method> methods=new ArrayList<Method>();
+  methods.addAll(handler.getAllowedMethods());
+  Collections.sort(methods,new Comparator<Method>(){
+    public int compare(    Method m1,    Method m2){
+      return m1.getName().compareTo(m2.getName());
+    }
+  }
+);
   if (handler instanceof WadlResource) {
     WadlResource resource=(WadlResource)handler;
     for (    Method method : methods) {
