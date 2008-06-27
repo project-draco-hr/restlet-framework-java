@@ -1,0 +1,22 @@
+{
+  for (; ; ) {
+    console.setCandidates(new TreeSet(scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).keySet()));
+    String line=console.readLine(prompt);
+    if (line == null) {
+      break;
+    }
+    if (line.equals("")) {
+      continue;
+    }
+    if (scriptEngine.get(line) != null) {
+      System.out.println(scriptEngine.get(line));
+    }
+    try {
+      scriptEngine.eval(line);
+    }
+ catch (    ScriptException e) {
+      System.err.println(e.getMessage());
+    }
+  }
+  console.writeLine("");
+}

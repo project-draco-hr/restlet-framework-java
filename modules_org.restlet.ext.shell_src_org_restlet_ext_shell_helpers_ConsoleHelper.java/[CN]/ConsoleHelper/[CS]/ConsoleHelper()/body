@@ -1,0 +1,18 @@
+{
+  try {
+    consoleReader=new ConsoleReader();
+  }
+ catch (  IOException e) {
+    throw new RuntimeException("cannot initialize jline",e);
+  }
+  try {
+    history=new History(historyFile);
+  }
+ catch (  IOException e) {
+    throw new RuntimeException(String.format("cannot initialize history file %s",historyFile),e);
+  }
+  consoleReader.setHistory(history);
+  consoleReader.setUseHistory(true);
+  completor=new SimpleCompletor(new String[]{"help","version"});
+  consoleReader.addCompletor(completor);
+}

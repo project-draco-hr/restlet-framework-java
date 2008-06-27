@@ -1,0 +1,14 @@
+{
+  ScriptEngine scriptEngine=create("js");
+  URL builtins=ClassLoader.getSystemResource("javascript/builtins.js");
+  try {
+    scriptEngine.eval(new InputStreamReader(builtins.openStream()));
+  }
+ catch (  ScriptException e) {
+    throw new RuntimeException("cannot load builtins.js: " + e.getMessage(),e);
+  }
+catch (  IOException e) {
+    throw new RuntimeException("cannot load builtins.js: " + e.getMessage(),e);
+  }
+  return scriptEngine;
+}
