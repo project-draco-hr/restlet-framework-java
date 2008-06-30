@@ -32,13 +32,14 @@
     NodeList serverNodes=document.getElementsByTagName("server");
     for (int i=0; i < serverNodes.getLength(); i++) {
       Node serverNode=serverNodes.item(i);
-      Node node=serverNode.getAttributes().getNamedItem("protocol");
+      Node item=serverNode.getAttributes().getNamedItem("protocol");
       Node portNode=serverNode.getAttributes().getNamedItem("port");
+      Node addressNode=serverNode.getAttributes().getNamedItem("address");
       Server server=null;
-      if (node == null) {
-        node=serverNode.getAttributes().getNamedItem("protocols");
-        if (node != null) {
-          String[] protocols=node.getNodeValue().split(" ");
+      if (item == null) {
+        item=serverNode.getAttributes().getNamedItem("protocols");
+        if (item != null) {
+          String[] protocols=item.getNodeValue().split(" ");
           List<Protocol> protocolsList=new ArrayList<Protocol>();
           for (int j=0; j < protocols.length; j++) {
             protocolsList.add(getProtocol(protocols[j]));
@@ -53,10 +54,14 @@
         }
       }
  else {
-        Protocol protocol=getProtocol(node.getNodeValue());
+        Protocol protocol=getProtocol(item.getNodeValue());
         server=new Server(getContext(),protocol,getInt(portNode,protocol.getDefaultPort()),this.getServers().getTarget());
       }
       if (server != null) {
+        String address=addressNode.getNodeValue();
+        if (address != null) {
+          server.setAddress(address);
+        }
         this.getServers().add(server);
       }
       NodeList defaultHostNodes=document.getElementsByTagName("defaultHost");
@@ -72,28 +77,7 @@
     }
     NodeList internalRouterNodes=document.getElementsByTagName("internalRouter");
     if (internalRouterNodes.getLength() > 0) {
-      Node node=internalRouterNodes.item(0);
-      Node item=node.getAttributes().getNamedItem("defaultMatchingMode");
-      if (item != null) {
-        this.getInternalRouter().setDefaultMatchingMode(getInt(item,getInternalRouter().getDefaultMatchingMode()));
-      }
-      item=node.getAttributes().getNamedItem("maxAttempts");
-      if (item != null) {
-        this.getInternalRouter().setMaxAttempts(getInt(item,this.getInternalRouter().getMaxAttempts()));
-      }
-      item=node.getAttributes().getNamedItem("routingMode");
-      if (item != null) {
-        this.getInternalRouter().setRoutingMode(getInt(item,this.getInternalRouter().getRoutingMode()));
-      }
-      item=node.getAttributes().getNamedItem("requiredScore");
-      if (item != null) {
-        this.getInternalRouter().setRequiredScore(getFloat(item,this.getInternalRouter().getRequiredScore()));
-      }
-      item=node.getAttributes().getNamedItem("retryDelay");
-      if (item != null) {
-        this.getInternalRouter().setRetryDelay(getLong(item,this.getInternalRouter().getRetryDelay()));
-      }
-      setAttach(getInternalRouter(),node);
+      parseRouter(getInternalRouter(),internalRouterNodes.item(0));
     }
     NodeList logServiceNodes=document.getElementsByTagName("logService");
     if (logServiceNodes.getLength() > 0) {
