@@ -1,6 +1,6 @@
 {
   if (getTemplate() != null) {
-    String remainingPart=request.getResourceRef().getRemainingPart();
+    String remainingPart=request.getResourceRef().getRemainingPart(false,getMatchQuery());
     int matchedLength=getTemplate().parse(remainingPart,request);
     if (getLogger().isLoggable(Level.FINER)) {
       getLogger().finer("Attempting to match this pattern: " + getTemplate().getPattern() + " >> "+ matchedLength);
@@ -17,7 +17,7 @@
       request.getResourceRef().setBaseRef(baseRef);
       if (getLogger().isLoggable(Level.FINE)) {
         getLogger().fine("New base URI: " + request.getResourceRef().getBaseRef());
-        getLogger().fine("New remaining part: " + request.getResourceRef().getRemainingPart());
+        getLogger().fine("New remaining part: " + request.getResourceRef().getRemainingPart(false,getMatchQuery()));
       }
       if (getLogger().isLoggable(Level.FINE)) {
         getLogger().fine("Delegating the call to the target Restlet");
