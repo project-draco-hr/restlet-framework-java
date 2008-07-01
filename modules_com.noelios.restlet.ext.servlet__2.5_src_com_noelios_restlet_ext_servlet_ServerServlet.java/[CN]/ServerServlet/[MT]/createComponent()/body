@@ -34,5 +34,12 @@ catch (    IllegalAccessException e) {
     component.getStatusService().setEnabled(false);
     component.getClients().add(createWarClient(component.getContext(),getServletConfig()));
   }
+  String clientProtocolsString=getInitParameter(CLIENTS_KEY,null);
+  if (component != null && clientProtocolsString != null) {
+    String[] clientProtocols=clientProtocolsString.split(" ");
+    for (    String clientProtocol : clientProtocols) {
+      component.getClients().add(Protocol.valueOf(clientProtocol));
+    }
+  }
   return component;
 }

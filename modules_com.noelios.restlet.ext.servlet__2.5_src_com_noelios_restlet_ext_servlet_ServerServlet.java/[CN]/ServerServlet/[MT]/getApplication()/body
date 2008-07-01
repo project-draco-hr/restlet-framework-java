@@ -2,13 +2,15 @@
   Application result=this.application;
   if (result == null) {
 synchronized (ServerServlet.class) {
-      String applicationAttributeName=getInitParameter(NAME_APPLICATION_ATTRIBUTE,NAME_APPLICATION_ATTRIBUTE_DEFAULT);
-      result=(Application)getServletContext().getAttribute(applicationAttributeName);
       if (result == null) {
-        result=createApplication(getComponent().getContext());
-        getServletContext().setAttribute(applicationAttributeName,result);
+        String applicationAttributeName=getInitParameter(NAME_APPLICATION_ATTRIBUTE,NAME_APPLICATION_ATTRIBUTE_DEFAULT);
+        result=(Application)getServletContext().getAttribute(applicationAttributeName);
+        if (result == null) {
+          result=createApplication(getComponent().getContext());
+          getServletContext().setAttribute(applicationAttributeName,result);
+        }
+        this.application=result;
       }
-      this.application=result;
     }
   }
   return result;
