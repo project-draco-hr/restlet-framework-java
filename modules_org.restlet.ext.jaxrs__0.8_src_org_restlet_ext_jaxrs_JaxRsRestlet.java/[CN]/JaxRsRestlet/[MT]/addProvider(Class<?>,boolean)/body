@@ -33,6 +33,11 @@ catch (  MissingConstructorException mce) {
     getLogger().warning(msg);
     return false;
   }
+catch (  IllegalConstrParamTypeException e) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + ", because no valid constructor was found";
+    getLogger().warning(msg);
+    return false;
+  }
   this.entityProviders.add(provider,defaultProvider);
   if (provider.isContextResolver())   this.contextResolvers.add(provider.getContextResolver());
   if (provider.isExceptionMapper())   this.excMappers.add(provider);

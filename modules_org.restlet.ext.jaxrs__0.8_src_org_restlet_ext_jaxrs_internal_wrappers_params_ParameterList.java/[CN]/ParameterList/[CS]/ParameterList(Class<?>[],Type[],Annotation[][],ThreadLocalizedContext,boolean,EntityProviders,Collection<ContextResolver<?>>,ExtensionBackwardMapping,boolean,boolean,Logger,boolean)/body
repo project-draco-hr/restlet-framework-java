@@ -1,0 +1,60 @@
+{
+  this.paramCount=parameterTypes.length;
+  this.parameters=new ParamGetter[paramCount];
+  boolean entityAlreadyRead=false;
+  for (int i=0; i < paramCount; i++) {
+    Class<?> parameterType=parameterTypes[i];
+    Type genParamType=genParamTypes[i];
+    Annotation[] paramAnnos=paramAnnoss[i];
+    Context conntextAnno=getAnno(paramAnnos,Context.class);
+    if (conntextAnno != null) {
+      if (parameterType.equals(UriInfo.class)) {
+        parameters[i]=new UriInfoGetter(tlContext,allMustBeAvailable);
+      }
+ else {
+        parameters[i]=new ContextHolder(ContextInjector.getInjectObject(parameterType,genParamType,tlContext,entityProviders,allCtxResolvers,extensionBackwardMapping));
+      }
+      continue;
+    }
+    if (paramsAllowed) {
+      boolean leaveThisEncoded=getLeaveEncoded(paramAnnos);
+      DefaultValue defValue=getAnno(paramAnnos,DefaultValue.class);
+      CookieParam cookieParam=getAnno(paramAnnos,CookieParam.class);
+      HeaderParam headerParam=getAnno(paramAnnos,HeaderParam.class);
+      MatrixParam matrixParam=getAnno(paramAnnos,MatrixParam.class);
+      PathParam pathParam=getAnno(paramAnnos,PathParam.class);
+      QueryParam queryParam=getAnno(paramAnnos,QueryParam.class);
+      if (pathParam != null) {
+        parameters[i]=new PathParamGetter(pathParam,defValue,parameterType,genParamType,tlContext,leaveAllEncoded || leaveThisEncoded);
+        continue;
+      }
+ else       if (cookieParam != null) {
+        parameters[i]=new CookieParamGetter(cookieParam,defValue,parameterType,genParamType,tlContext,leaveThisEncoded);
+        continue;
+      }
+ else       if (headerParam != null) {
+        parameters[i]=new HeaderParamGetter(headerParam,defValue,parameterType,genParamType,tlContext,leaveThisEncoded);
+        continue;
+      }
+ else       if (matrixParam != null) {
+        parameters[i]=new MatrixParamGetter(matrixParam,defValue,parameterType,genParamType,tlContext,leaveAllEncoded || leaveThisEncoded);
+        continue;
+      }
+ else       if (queryParam != null) {
+        parameters[i]=new QueryParamGetter(queryParam,defValue,parameterType,genParamType,tlContext,leaveAllEncoded || leaveThisEncoded);
+        continue;
+      }
+    }
+    if (!entityAllowed) {
+      throw new MissingAnnotationException("All parameters requires one of the following annotations: " + VALID_ANNOTATIONS);
+    }
+    if (entityAlreadyRead)     throw new MissingAnnotationException("The entity is already read.  The " + i + ". parameter requires one of "+ "the following annotations: "+ VALID_ANNOTATIONS);
+    if (Representation.class.isAssignableFrom(parameterType)) {
+      parameters[i]=ReprEntityGetter.create(parameterType,genParamType,logger);
+    }
+    if (parameters[i] == null) {
+      parameters[i]=new EntityGetter(parameterType,genParamType,tlContext,entityProviders,paramAnnos);
+    }
+    entityAlreadyRead=true;
+  }
+}

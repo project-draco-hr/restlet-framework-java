@@ -7,5 +7,7 @@
     logger.config(msg);
     return new GetLastPathSegment(tlContext);
   }
-  return tlContext;
+  if (declaringClass.equals(SecurityContext.class) || declaringClass.equals(HttpHeaders.class) || declaringClass.equals(Request.class))   return tlContext;
+  if (declaringClass.equals(UriInfo.class))   throw new ImplementationException("You must not call the method ContextInjector.getInjectObject(.......) with class UriInfo");
+  throw new IllegalTypeException(declaringClass + " must not be annotated with @Context");
 }

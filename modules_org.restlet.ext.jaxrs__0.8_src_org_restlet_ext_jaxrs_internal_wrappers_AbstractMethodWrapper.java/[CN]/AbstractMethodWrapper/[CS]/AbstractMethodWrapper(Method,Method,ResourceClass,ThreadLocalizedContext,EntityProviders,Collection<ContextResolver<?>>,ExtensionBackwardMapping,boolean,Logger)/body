@@ -4,5 +4,10 @@
   this.executeMethod.setAccessible(true);
   this.resourceClass=resourceClass;
   boolean leaveEncoded=resourceClass.isLeaveEncoded() || annotatedMethod.isAnnotationPresent(Encoded.class);
-  this.parameters=new ParameterList(executeMethod,annotatedMethod,tlContext,leaveEncoded,entityProviders,allCtxResolvers,extensionBackwardMapping,entityAllowed,logger);
+  try {
+    this.parameters=new ParameterList(executeMethod,annotatedMethod,tlContext,leaveEncoded,entityProviders,allCtxResolvers,extensionBackwardMapping,entityAllowed,logger);
+  }
+ catch (  IllegalTypeException e) {
+    throw new IllegalMethodParamTypeException(e);
+  }
 }

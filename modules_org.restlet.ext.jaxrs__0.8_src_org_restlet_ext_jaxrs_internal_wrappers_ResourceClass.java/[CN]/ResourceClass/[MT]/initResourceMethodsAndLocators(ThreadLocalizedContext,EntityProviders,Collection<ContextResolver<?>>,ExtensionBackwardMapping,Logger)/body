@@ -8,7 +8,14 @@
     try {
       if (httpMethod != null) {
         if (isVolatile(execMethod))         continue;
-        ResourceMethod subResMeth=new ResourceMethod(execMethod,annotatedMethod,this,httpMethod,tlContext,entityProviders,allCtxResolvers,extensionBackwardMapping,logger);
+        ResourceMethod subResMeth;
+        try {
+          subResMeth=new ResourceMethod(execMethod,annotatedMethod,this,httpMethod,tlContext,entityProviders,allCtxResolvers,extensionBackwardMapping,logger);
+        }
+ catch (        IllegalMethodParamTypeException e) {
+          Logger.getAnonymousLogger().log(Level.WARNING,"An annotated parameter of the resource method " + annotatedMethod + " is has an illegal type",e);
+          continue;
+        }
         this.resourceMethods.add(subResMeth);
         this.resourceMethodsAndLocators.add(subResMeth);
         checkForPrimitiveParameters(execMethod,logger);
@@ -16,7 +23,14 @@
  else {
         if (path != null) {
           if (isVolatile(execMethod))           continue;
-          SubResourceLocator subResLoc=new SubResourceLocator(execMethod,annotatedMethod,this,tlContext,entityProviders,allCtxResolvers,extensionBackwardMapping,logger);
+          SubResourceLocator subResLoc;
+          try {
+            subResLoc=new SubResourceLocator(execMethod,annotatedMethod,this,tlContext,entityProviders,allCtxResolvers,extensionBackwardMapping,logger);
+          }
+ catch (          IllegalMethodParamTypeException e) {
+            Logger.getAnonymousLogger().log(Level.WARNING,"An annotated parameter of the resource method " + annotatedMethod + " is has an illegal type",e);
+            continue;
+          }
           this.subResourceLocators.add(subResLoc);
           this.resourceMethodsAndLocators.add(subResLoc);
           checkForPrimitiveParameters(execMethod,logger);

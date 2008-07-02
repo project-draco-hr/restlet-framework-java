@@ -1,9 +1,18 @@
 {
-  super(request.getOriginalRef(),request.getResourceRef(),false);
+  if (request == null)   throw new IllegalArgumentException("The Restlet Request must not be null");
   if (response == null)   throw new IllegalArgumentException("The Restlet Response must not be null");
   if (roleChecker == null)   throw new IllegalArgumentException("The RoleChecker must not be null.");
+  Reference referenceCut=request.getResourceRef();
+  if (referenceCut == null)   throw new IllegalArgumentException("The request reference must not be null");
+  if (referenceCut.getBaseRef() == null)   throw new IllegalArgumentException("The request reference must contains a baseRef");
+  Reference referenceOriginal=request.getOriginalRef();
+  if (referenceOriginal == null)   throw new IllegalArgumentException("The request.originalRef must not be null");
+  this.referenceCut=referenceCut;
+  this.referenceOriginal=referenceOriginal;
+  this.readOnly=false;
   this.request=request;
   this.response=response;
-  this.roleChecker=roleChecker;
+  if (roleChecker != null)   this.roleChecker=roleChecker;
+ else   this.roleChecker=RoleChecker.REJECT_WITH_ERROR;
   this.accMediaTypes=SortedMetadata.getForMediaTypes(request.getClientInfo().getAcceptedMediaTypes());
 }

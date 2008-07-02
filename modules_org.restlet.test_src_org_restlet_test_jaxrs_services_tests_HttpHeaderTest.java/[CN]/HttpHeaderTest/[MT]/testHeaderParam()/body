@@ -1,19 +1,18 @@
 {
   Request request=createGetRequest("HeaderParam");
   Util.getHttpHeaders(request).add(HttpHeaderTestService.TEST_HEADER_NAME,"abc");
-  Restlet client=getClientConnector();
-  Response response=client.handle(request);
+  Response response=accessServer(request);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   assertEquals("abc",response.getEntity().getText());
   request=createGetRequest("HeaderParam");
   Util.getHttpHeaders(request).add(HttpHeaderTestService.TEST_HEADER_NAME.toLowerCase(),"abc");
-  response=client.handle(request);
+  response=accessServer(request);
   sysOutEntityIfError(response);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   assertEquals("abc",response.getEntity().getText());
   request=createGetRequest("HeaderParam");
   Util.getHttpHeaders(request).add(HttpHeaderTestService.TEST_HEADER_NAME.toUpperCase(),"abc");
-  response=client.handle(request);
+  response=accessServer(request);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   assertEquals("abc",response.getEntity().getText());
 }

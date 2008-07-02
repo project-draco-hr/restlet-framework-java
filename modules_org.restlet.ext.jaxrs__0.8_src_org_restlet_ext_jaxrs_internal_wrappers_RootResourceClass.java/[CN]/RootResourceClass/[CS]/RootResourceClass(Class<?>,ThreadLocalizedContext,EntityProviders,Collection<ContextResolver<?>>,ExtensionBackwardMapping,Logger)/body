@@ -5,5 +5,10 @@
   this.injectHelper=new IntoRrcInjector(jaxRsClass,tlContext,isLeaveEncoded(),entityProviders,allCtxResolvers,extensionBackwardMapping);
   this.constructor=WrapperUtil.findJaxRsConstructor(getJaxRsClass(),"root resource class");
   boolean constructorLeaveEncoded=this.isLeaveEncoded() || constructor.isAnnotationPresent(Encoded.class);
-  this.constructorParameters=new ParameterList(this.constructor,tlContext,constructorLeaveEncoded,entityProviders,allCtxResolvers,extensionBackwardMapping,true,logger);
+  try {
+    this.constructorParameters=new ParameterList(this.constructor,tlContext,constructorLeaveEncoded,entityProviders,allCtxResolvers,extensionBackwardMapping,true,logger,!this.singelton);
+  }
+ catch (  IllegalTypeException e) {
+    throw new IllegalConstrParamTypeException(e);
+  }
 }

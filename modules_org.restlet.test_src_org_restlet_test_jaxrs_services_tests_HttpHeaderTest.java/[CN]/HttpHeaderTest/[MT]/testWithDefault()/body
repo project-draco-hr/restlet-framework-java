@@ -1,12 +1,11 @@
 {
   Request request=createGetRequest("headerWithDefault");
   Util.getHttpHeaders(request).add(HttpHeaderTestService.TEST_HEADER_NAME,"abc");
-  Restlet client=getClientConnector();
-  Response response=client.handle(request);
+  Response response=accessServer(request);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   assertEquals("abc",response.getEntity().getText());
   request=createGetRequest("headerWithDefault");
-  response=client.handle(request);
+  response=accessServer(request);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   assertEquals("default",response.getEntity().getText());
 }
