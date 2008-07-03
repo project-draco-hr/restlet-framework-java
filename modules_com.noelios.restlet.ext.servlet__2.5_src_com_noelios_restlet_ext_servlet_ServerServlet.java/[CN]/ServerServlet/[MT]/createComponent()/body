@@ -1,22 +1,41 @@
 {
   Component component=null;
-  String componentClassName=getInitParameter(COMPONENT_KEY,null);
-  if (componentClassName != null) {
-    try {
-      Class<?> targetClass=getClass(componentClassName);
-      component=(Component)targetClass.newInstance();
+  String configPath=getServletContext().getRealPath("/WEB-INF/restlet.xml");
+  File configFile=new File(configPath);
+  if (configPath != null && configFile.exists()) {
+    component=new Component(LocalReference.createFileReference(configPath));
+  }
+ else {
+    String componentClassName=getInitParameter(COMPONENT_KEY,null);
+    if (componentClassName != null) {
+      try {
+        Class<?> targetClass=getClass(componentClassName);
+        component=(Component)targetClass.newInstance();
+      }
+ catch (      ClassNotFoundException e) {
+        log("[Noelios Restlet Engine] - The ServerServlet couldn't find the target class. Please check that your classpath includes " + componentClassName,e);
+      }
+catch (      InstantiationException e) {
+        log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check this class has an empty constructor " + componentClassName,e);
+      }
+catch (      IllegalAccessException e) {
+        log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check that you have to proper access rights to " + componentClassName,e);
+      }
     }
- catch (    ClassNotFoundException e) {
-      log("[Noelios Restlet Engine] - The ServerServlet couldn't find the target class. Please check that your classpath includes " + componentClassName,e);
-    }
-catch (    InstantiationException e) {
-      log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check this class has an empty constructor " + componentClassName,e);
-    }
-catch (    IllegalAccessException e) {
-      log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check that you have to proper access rights to " + componentClassName,e);
+    if (component == null) {
+      component=new Component();
+      component.getStatusService().setEnabled(false);
+      String clientProtocolsString=getInitParameter(CLIENTS_KEY,null);
+      if (component != null && clientProtocolsString != null) {
+        String[] clientProtocols=clientProtocolsString.split(" ");
+        for (        String clientProtocol : clientProtocols) {
+          component.getClients().add(Protocol.valueOf(clientProtocol));
+        }
+      }
     }
   }
   if (component != null) {
+    component.getClients().add(createWarClient(component.getContext(),getServletConfig()));
     ComponentContext componentContext=(ComponentContext)component.getContext();
     String initParam;
     javax.servlet.ServletConfig servletConfig=getServletConfig();
@@ -27,18 +46,6 @@ catch (    IllegalAccessException e) {
     for (Enumeration<String> enum1=getServletContext().getInitParameterNames(); enum1.hasMoreElements(); ) {
       initParam=enum1.nextElement();
       componentContext.getParameters().add(initParam,getServletContext().getInitParameter(initParam));
-    }
-  }
- else {
-    component=new Component();
-    component.getStatusService().setEnabled(false);
-    component.getClients().add(createWarClient(component.getContext(),getServletConfig()));
-  }
-  String clientProtocolsString=getInitParameter(CLIENTS_KEY,null);
-  if (clientProtocolsString != null) {
-    String[] clientProtocols=clientProtocolsString.split(" ");
-    for (    String clientProtocol : clientProtocols) {
-      component.getClients().add(Protocol.valueOf(clientProtocol));
     }
   }
   return component;

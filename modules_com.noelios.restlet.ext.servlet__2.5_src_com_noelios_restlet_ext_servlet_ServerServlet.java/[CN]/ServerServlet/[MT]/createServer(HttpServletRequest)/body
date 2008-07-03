@@ -1,13 +1,37 @@
 {
   HttpServerHelper result=null;
   Component component=getComponent();
-  Application application=getApplication();
-  if ((component != null) && (application != null)) {
+  if (component != null) {
     Server server=new Server(component.getContext(),(List<Protocol>)null,request.getLocalAddr(),request.getLocalPort(),component);
     result=new HttpServerHelper(server);
     String uriPattern=request.getContextPath() + request.getServletPath();
-    log("[Noelios Restlet Engine] - Attaching application: " + application + " to URI: "+ uriPattern);
-    component.getDefaultHost().attach(uriPattern,application);
+    if (isDefaultComponent()) {
+      if (application != null) {
+        if (application != null) {
+          log("[Noelios Restlet Engine] - Attaching application: " + application + " to URI: "+ uriPattern);
+          component.getDefaultHost().attach(uriPattern,application);
+        }
+      }
+    }
+ else {
+      String autoWire=getInitParameter(AUTO_WIRE_ATTRIBUTE,AUTO_WIRE_ATTRIBUTE_DEFAULT);
+      if (AUTO_WIRE_ATTRIBUTE_DEFAULT.equalsIgnoreCase(autoWire)) {
+        for (        Route route : component.getDefaultHost().getRoutes()) {
+          if (route.getTemplate().getPattern() == null || !route.getTemplate().getPattern().startsWith(uriPattern)) {
+            log("[Noelios Restlet Engine] - Attaching restlet: " + route.getNext() + " to URI: "+ uriPattern+ route.getTemplate().getPattern());
+            route.getTemplate().setPattern(uriPattern + route.getTemplate().getPattern());
+          }
+        }
+        for (        VirtualHost virtualHost : component.getHosts()) {
+          for (          Route route : virtualHost.getRoutes()) {
+            if (route.getTemplate().getPattern() == null || !route.getTemplate().getPattern().startsWith(uriPattern)) {
+              log("[Noelios Restlet Engine] - Attaching restlet: " + route.getNext() + " to URI: "+ uriPattern+ route.getTemplate().getPattern());
+              route.getTemplate().setPattern(uriPattern + route.getTemplate().getPattern());
+            }
+          }
+        }
+      }
+    }
   }
   return result;
 }
