@@ -4,7 +4,7 @@
   }
   final PipeStream pipe=new PipeStream();
   final Context context=Context.getCurrent();
-  Thread writer=context.getThread(new Runnable(){
+  context.getExecutorService().execute(new Runnable(){
     public void run(){
       try {
         OutputStream os=pipe.getOutputStream();
@@ -18,7 +18,5 @@
     }
   }
 );
-  writer.setDaemon(false);
-  writer.start();
   return pipe.getInputStream();
 }

@@ -1,7 +1,7 @@
 {
   final Pipe pipe=Pipe.open();
   final Context context=Context.getCurrent();
-  Thread writer=context.getThread(new Runnable(){
+  context.getExecutorService().execute(new Runnable(){
     public void run(){
       try {
         WritableByteChannel wbc=pipe.sink();
@@ -14,7 +14,5 @@
     }
   }
 );
-  writer.setDaemon(false);
-  writer.start();
   return pipe.source();
 }

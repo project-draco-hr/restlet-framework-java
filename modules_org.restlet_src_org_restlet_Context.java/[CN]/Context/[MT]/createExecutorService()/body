@@ -1,0 +1,26 @@
+{
+  return Executors.newCachedThreadPool(new ThreadFactory(){
+    public Thread newThread(    final Runnable runnable){
+      final Application currentApplication=Application.getCurrent();
+      final Context currentContext=Context.getCurrent();
+      final Integer currentVirtualHost=VirtualHost.getCurrent();
+      final Response currentResponse=Response.getCurrent();
+      Thread result=new Thread(new Runnable(){
+        public void run(){
+          Response.setCurrent(currentResponse);
+          Context.setCurrent(currentContext);
+          VirtualHost.setCurrent(currentVirtualHost);
+          Application.setCurrent(currentApplication);
+          runnable.run();
+          Response.setCurrent(null);
+          Context.setCurrent(null);
+          VirtualHost.setCurrent(-1);
+          Application.setCurrent(null);
+        }
+      }
+);
+      return result;
+    }
+  }
+);
+}

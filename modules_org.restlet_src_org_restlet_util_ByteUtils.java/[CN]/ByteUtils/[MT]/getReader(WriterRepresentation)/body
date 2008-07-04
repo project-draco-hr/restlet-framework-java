@@ -2,7 +2,7 @@
   final PipedWriter pipedWriter=new PipedWriter();
   final PipedReader pipedReader=new PipedReader(pipedWriter);
   final Context context=Context.getCurrent();
-  Thread writer=context.getThread(new Runnable(){
+  context.getExecutorService().execute(new Runnable(){
     public void run(){
       try {
         representation.write(pipedWriter);
@@ -13,7 +13,5 @@
     }
   }
 );
-  writer.setDaemon(false);
-  writer.start();
   return pipedReader;
 }
