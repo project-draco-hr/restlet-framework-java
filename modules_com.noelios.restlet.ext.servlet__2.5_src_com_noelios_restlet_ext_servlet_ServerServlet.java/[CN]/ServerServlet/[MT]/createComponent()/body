@@ -26,7 +26,7 @@ catch (      IllegalAccessException e) {
       component=new Component();
       component.getStatusService().setEnabled(false);
       String clientProtocolsString=getInitParameter(CLIENTS_KEY,null);
-      if (component != null && clientProtocolsString != null) {
+      if (clientProtocolsString != null) {
         String[] clientProtocols=clientProtocolsString.split(" ");
         for (        String clientProtocol : clientProtocols) {
           component.getClients().add(Protocol.valueOf(clientProtocol));
@@ -34,19 +34,17 @@ catch (      IllegalAccessException e) {
       }
     }
   }
-  if (component != null) {
-    component.getClients().add(createWarClient(component.getContext(),getServletConfig()));
-    ComponentContext componentContext=(ComponentContext)component.getContext();
-    String initParam;
-    javax.servlet.ServletConfig servletConfig=getServletConfig();
-    for (Enumeration<String> enum1=servletConfig.getInitParameterNames(); enum1.hasMoreElements(); ) {
-      initParam=enum1.nextElement();
-      componentContext.getParameters().add(initParam,servletConfig.getInitParameter(initParam));
-    }
-    for (Enumeration<String> enum1=getServletContext().getInitParameterNames(); enum1.hasMoreElements(); ) {
-      initParam=enum1.nextElement();
-      componentContext.getParameters().add(initParam,getServletContext().getInitParameter(initParam));
-    }
+  component.getClients().add(createWarClient(component.getContext(),getServletConfig()));
+  ComponentContext componentContext=(ComponentContext)component.getContext();
+  String initParam;
+  javax.servlet.ServletConfig servletConfig=getServletConfig();
+  for (Enumeration<String> enum1=servletConfig.getInitParameterNames(); enum1.hasMoreElements(); ) {
+    initParam=enum1.nextElement();
+    componentContext.getParameters().add(initParam,servletConfig.getInitParameter(initParam));
+  }
+  for (Enumeration<String> enum1=getServletContext().getInitParameterNames(); enum1.hasMoreElements(); ) {
+    initParam=enum1.nextElement();
+    componentContext.getParameters().add(initParam,getServletContext().getInitParameter(initParam));
   }
   return component;
 }

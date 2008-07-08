@@ -4,9 +4,7 @@
   System.setProperty("javax.net.ssl.keyStore",System.getProperty("javax.net.ssl.keyStore","dummy.jks"));
   System.setProperty("javax.net.ssl.trustStore",System.getProperty("javax.net.ssl.trustStore","dummy.jks"));
   component=new Component();
-  component.getContext().getParameters().add("keyPassword",System.getProperty("javax.net.ssl.keyStorePassword"));
-  component.getContext().getParameters().add("keystorePassword",System.getProperty("javax.net.ssl.keyStorePassword"));
-  component.getContext().getParameters().add("keystorePath",System.getProperty("javax.net.ssl.keyStore"));
+  configureSslParameters(component.getContext());
   Server server=component.getServers().add(Protocol.HTTPS,0);
   Application application=createApplication(component);
   component.getDefaultHost().attach(application);

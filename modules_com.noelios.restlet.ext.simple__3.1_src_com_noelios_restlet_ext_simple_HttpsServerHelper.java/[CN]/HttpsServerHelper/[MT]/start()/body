@@ -1,14 +1,24 @@
 {
-  KeyStore keyStore=KeyStore.getInstance(getKeystoreType());
-  FileInputStream fis=getKeystorePath() == null ? null : new FileInputStream(getKeystorePath());
-  char[] password=getKeystorePassword() == null ? null : getKeystorePassword().toCharArray();
-  keyStore.load(fis,password);
-  KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(getCertAlgorithm());
-  keyManagerFactory.init(keyStore,getKeyPassword().toCharArray());
-  TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance(getCertAlgorithm());
-  trustManagerFactory.init(keyStore);
-  SSLContext sslContext=SSLContext.getInstance(getSslProtocol());
-  sslContext.init(keyManagerFactory.getKeyManagers(),trustManagerFactory.getTrustManagers(),null);
+  final SslContextFactory sslContextFactory=getSslContextFactory();
+  SSLContext sslContext;
+  if (sslContextFactory == null) {
+    KeyStore keyStore=KeyStore.getInstance(getKeystoreType());
+    FileInputStream fis=getKeystorePath() == null ? null : new FileInputStream(getKeystorePath());
+    char[] password=getKeystorePassword() == null ? null : getKeystorePassword().toCharArray();
+    keyStore.load(fis,password);
+    if (fis != null) {
+      fis.close();
+    }
+    KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(getCertAlgorithm());
+    keyManagerFactory.init(keyStore,getKeyPassword().toCharArray());
+    TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance(getCertAlgorithm());
+    trustManagerFactory.init(keyStore);
+    sslContext=SSLContext.getInstance(getSslProtocol());
+    sslContext.init(keyManagerFactory.getKeyManagers(),trustManagerFactory.getTrustManagers(),null);
+  }
+ else {
+    sslContext=sslContextFactory.createSslContext();
+  }
   SSLServerSocket serverSocket=null;
   String addr=getHelped().getAddress();
   if (addr != null) {
@@ -26,7 +36,6 @@
   }
   serverSocket.setSoTimeout(60000);
   setSocket(serverSocket);
-  fis.close();
   setConfidential(true);
   setHandler(PipelineHandlerFactory.getInstance(new SimpleProtocolHandler(this),getDefaultThreads(),getMaxWaitTimeMs()));
   setConnection(ConnectionFactory.getConnection(getHandler(),new SimplePipelineFactory()));

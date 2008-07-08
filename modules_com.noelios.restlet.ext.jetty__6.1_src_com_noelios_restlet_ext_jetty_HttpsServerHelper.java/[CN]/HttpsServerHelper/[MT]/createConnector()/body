@@ -1,28 +1,42 @@
 {
   AbstractConnector result=null;
+  final SslContextFactory sslContextFactory=getSslContextFactory();
 switch (getType()) {
 case 1:
-    SslSelectChannelConnector nioResult=new SslSelectChannelConnector();
-  nioResult.setKeyPassword(getKeyPassword());
-nioResult.setKeystore(getKeystorePath());
-nioResult.setKeystoreType(getKeystoreType());
-nioResult.setPassword(getKeystorePassword());
-nioResult.setProtocol(getSslProtocol());
-nioResult.setProvider(getSecurityProvider());
-nioResult.setSecureRandomAlgorithm(getSecureRandomAlgorithm());
-nioResult.setSslKeyManagerFactoryAlgorithm(getCertAlgorithm());
-nioResult.setSslTrustManagerFactoryAlgorithm(getCertAlgorithm());
-nioResult.setTrustPassword(getKeystorePassword());
+    SslSelectChannelConnector nioResult;
+  if (sslContextFactory == null) {
+    nioResult=new SslSelectChannelConnector();
+    nioResult.setKeyPassword(getKeyPassword());
+    nioResult.setKeystore(getKeystorePath());
+    nioResult.setKeystoreType(getKeystoreType());
+    nioResult.setPassword(getKeystorePassword());
+    nioResult.setProtocol(getSslProtocol());
+    nioResult.setProvider(getSecurityProvider());
+    nioResult.setSecureRandomAlgorithm(getSecureRandomAlgorithm());
+    nioResult.setSslKeyManagerFactoryAlgorithm(getCertAlgorithm());
+    nioResult.setSslTrustManagerFactoryAlgorithm(getCertAlgorithm());
+    nioResult.setTrustPassword(getKeystorePassword());
+  }
+ else {
+    nioResult=new SslSelectChannelConnector(){
+      @Override protected SSLContext createSSLContext() throws Exception {
+        return sslContextFactory.createSslContext();
+      }
+    }
+;
+  }
 if (isNeedClientAuthentication()) {
-nioResult.setNeedClientAuth(true);
+  nioResult.setNeedClientAuth(true);
 }
  else if (isWantClientAuthentication()) {
-nioResult.setWantClientAuth(true);
+  nioResult.setWantClientAuth(true);
 }
 result=nioResult;
 break;
 case 2:
-SslSocketConnector bioResult=new SslSocketConnector();
+SslSocketConnector bioResult;
+if (sslContextFactory == null) {
+bioResult=new SslSocketConnector();
 bioResult.setKeyPassword(getKeyPassword());
 bioResult.setKeystore(getKeystorePath());
 bioResult.setKeystoreType(getKeystoreType());
@@ -33,6 +47,16 @@ bioResult.setSecureRandomAlgorithm(getSecureRandomAlgorithm());
 bioResult.setSslKeyManagerFactoryAlgorithm(getCertAlgorithm());
 bioResult.setSslTrustManagerFactoryAlgorithm(getCertAlgorithm());
 bioResult.setTrustPassword(getKeystorePassword());
+}
+ else {
+bioResult=new SslSocketConnector(){
+@Override protected SSLServerSocketFactory createFactory() throws Exception {
+SSLContext sslContext=sslContextFactory.createSslContext();
+return sslContext.getServerSocketFactory();
+}
+}
+;
+}
 if (isNeedClientAuthentication()) {
 bioResult.setNeedClientAuth(true);
 }

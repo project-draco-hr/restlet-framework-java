@@ -1,11 +1,18 @@
 {
-  KeyStore keyStore=KeyStore.getInstance(getKeystoreType());
-  FileInputStream fis=new FileInputStream(getKeystorePath());
-  keyStore.load(fis,getKeystorePassword().toCharArray());
-  KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(getCertAlgorithm());
-  keyManagerFactory.init(keyStore,getKeyPassword().toCharArray());
-  SSLContext sslContext=SSLContext.getInstance(getSslProtocol());
-  sslContext.init(keyManagerFactory.getKeyManagers(),null,null);
+  final SslContextFactory sslContextFactory=getSslContextFactory();
+  SSLContext sslContext;
+  if (sslContextFactory == null) {
+    KeyStore keyStore=KeyStore.getInstance(getKeystoreType());
+    FileInputStream fis=new FileInputStream(getKeystorePath());
+    keyStore.load(fis,getKeystorePassword().toCharArray());
+    KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(getCertAlgorithm());
+    keyManagerFactory.init(keyStore,getKeyPassword().toCharArray());
+    sslContext=SSLContext.getInstance(getSslProtocol());
+    sslContext.init(keyManagerFactory.getKeyManagers(),null,null);
+  }
+ else {
+    sslContext=sslContextFactory.createSslContext();
+  }
   TCPSelectorHandler selectorHandler=new TCPSelectorHandler();
   final SSLReadFilter readFilter=new SSLReadFilter();
   readFilter.setSSLContext(sslContext);
