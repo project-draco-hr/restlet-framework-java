@@ -1,0 +1,34 @@
+{
+  if (values == null)   throw new IllegalArgumentException("The values must not be null");
+  CharSequence ncs;
+  ncs=EncodeOrCheck.nameOrValue(name,encode,"query parameter name");
+  List<String> valuesStr=new ArrayList<String>();
+  for (  Object value : values) {
+    String vcs=EncodeOrCheck.nameOrValue(value,encode,"query parameter value");
+    valuesStr.add(vcs);
+  }
+  Iterator<String> valueIter=valuesStr.iterator();
+  StringBuilder query;
+  if (this.query == null) {
+    query=new StringBuilder();
+    this.query=query;
+  }
+ else   if (this.query instanceof StringBuilder) {
+    query=(StringBuilder)this.query;
+    query.append('&');
+  }
+ else {
+    query=new StringBuilder(this.query.toString());
+    query.append('&');
+  }
+  query.append(ncs);
+  query.append('=');
+  query.append(valueIter.next());
+  while (valueIter.hasNext()) {
+    query.append('&');
+    query.append(ncs);
+    query.append('=');
+    query.append(valueIter.next());
+  }
+  return this;
+}

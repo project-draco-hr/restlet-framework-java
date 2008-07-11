@@ -1,0 +1,18 @@
+{
+  if (values == null)   throw new IllegalArgumentException("The values must not be null");
+  CharSequence ncs;
+  ncs=EncodeOrCheck.nameOrValue(name,encode,"matrix parameter name");
+  List<String> valuesStr=new ArrayList<String>();
+  for (  Object value : values) {
+    String vcs=EncodeOrCheck.nameOrValue(value,encode,"matrix parameter value");
+    valuesStr.add(vcs);
+  }
+  StringBuilder path=getPath();
+  for (  String vcs : valuesStr) {
+    path.append(';');
+    path.append(ncs);
+    path.append('=');
+    path.append(vcs);
+  }
+  return this;
+}

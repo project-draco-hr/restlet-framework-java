@@ -1,0 +1,17 @@
+{
+  StringBuilder stb=new StringBuilder();
+  int l=uriPart.length();
+  for (int i=0; i < l; i++) {
+    char c=uriPart.charAt(i);
+    if (c == '{')     i=processTemplVarname(uriPart,i,stb);
+ else     if (c == '%')     i=processPercent(i,true,uriPart,stb);
+ else     if (c == '}')     throw new IllegalArgumentException("'}' is only allowed as " + "end of a variable name in \"" + uriPart + "\"");
+ else     if (c == ';') {
+      if (allowSemicolon)       encode(c,stb);
+ else       throw new IllegalArgumentException("A semicolon is not allowed in a path");
+    }
+ else     if (!encodeSlash && c == '/')     stb.append(c);
+ else     encode(c,stb);
+  }
+  return stb.toString();
+}

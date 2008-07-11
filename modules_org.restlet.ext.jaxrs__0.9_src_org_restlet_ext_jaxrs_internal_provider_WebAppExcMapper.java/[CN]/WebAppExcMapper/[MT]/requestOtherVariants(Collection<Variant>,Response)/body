@@ -1,0 +1,44 @@
+{
+  if (supportedVariants != null && supportedVariants.isEmpty())   supportedVariants=null;
+  ResponseBuilder rb=Response.fromResponse(response);
+  boolean xhtml=false;
+  boolean html=httpHeaders.getAcceptableMediaTypes().contains(MediaType.TEXT_HTML_TYPE);
+  if (!html) {
+    xhtml=httpHeaders.getAcceptableMediaTypes().contains(MediaType.APPLICATION_XHTML_XML_TYPE);
+    html=xhtml;
+  }
+  StringBuilder stb=new StringBuilder();
+  if (html) {
+    stb.append("<html><head>\n");
+    stb.append("<title>The requested variant is not available</title>");
+    stb.append("\n</head>\n<body>\n<p>\n");
+  }
+  stb.append("The requested variant is not available.");
+  if (supportedVariants != null) {
+    stb.append(" Try one of the following:\n");
+    if (html)     stb.append("</p><ul>");
+    stb.append("\n");
+    for (    Variant variant : supportedVariants) {
+      UriBuilder uriBuilder=uriInfo.getRequestUriBuilder();
+      boolean added=addExtensions(uriBuilder,variant);
+      if (!added)       continue;
+      String uri=uriBuilder.build().toString();
+      if (html)       stb.append("<li><a href=\"");
+ else       stb.append("* ");
+      stb.append(uri);
+      if (html) {
+        stb.append("\">");
+        stb.append(uri);
+        stb.append("</a></li>");
+      }
+      stb.append("\n");
+    }
+    if (html)     stb.append("</ul>");
+  }
+  if (html)   stb.append("</body></html>");
+  rb.entity(stb);
+  if (xhtml)   rb.type(MediaType.APPLICATION_XHTML_XML_TYPE);
+ else   if (html)   rb.type(MediaType.TEXT_HTML_TYPE);
+ else   rb.type(MediaType.TEXT_PLAIN_TYPE);
+  return rb.build();
+}

@@ -1,0 +1,53 @@
+{
+  if (jaxRsProviderClass == null)   throw new IllegalArgumentException("The JAX-RS provider class must not be null");
+  Util.checkClassConcrete(jaxRsProviderClass,"provider");
+  Object jaxRsProvider=null;
+  if (objectFactory != null)   jaxRsProvider=objectFactory.getInstance(jaxRsProviderClass);
+  if (jaxRsProvider == null) {
+    Constructor<?> providerConstructor=WrapperUtil.findJaxRsConstructor(jaxRsProviderClass,"provider");
+    jaxRsProvider=createInstance(providerConstructor,jaxRsProviderClass,tlContext,mbWorkers,allResolvers,extensionBackwardMapping,logger);
+  }
+  this.jaxRsProvider=jaxRsProvider;
+  boolean isProvider=false;
+  if (jaxRsProvider instanceof javax.ws.rs.ext.MessageBodyWriter) {
+    this.writer=(javax.ws.rs.ext.MessageBodyWriter<T>)jaxRsProvider;
+    isProvider=true;
+  }
+ else {
+    this.writer=null;
+  }
+  if (jaxRsProvider instanceof javax.ws.rs.ext.MessageBodyReader) {
+    this.reader=(javax.ws.rs.ext.MessageBodyReader<T>)jaxRsProvider;
+    isProvider=true;
+  }
+ else {
+    this.reader=null;
+  }
+  if (jaxRsProvider instanceof javax.ws.rs.ext.ExceptionMapper) {
+    this.excMapper=(javax.ws.rs.ext.ExceptionMapper<T>)jaxRsProvider;
+    isProvider=true;
+  }
+ else {
+    this.excMapper=null;
+  }
+  if (jaxRsProvider instanceof javax.ws.rs.ext.ContextResolver) {
+    this.contextResolver=(javax.ws.rs.ext.ContextResolver<T>)jaxRsProvider;
+    isProvider=true;
+  }
+ else {
+    this.contextResolver=null;
+  }
+  if (!isProvider) {
+    logger.config("The provider " + jaxRsProviderClass + " is neither a MessageBodyWriter nor a MessageBodyReader nor a ContextResolver nor an ExceptionMapper");
+  }
+  Consumes pm=jaxRsProvider.getClass().getAnnotation(Consumes.class);
+  if (pm != null)   this.consumedMimes=WrapperUtil.convertToMediaTypes(pm.value());
+ else   this.consumedMimes=Collections.singletonList(MediaType.ALL);
+  Produces cm=jaxRsProvider.getClass().getAnnotation(Produces.class);
+  if (cm != null) {
+    this.producedMimes=WrapperUtil.convertToMediaTypes(cm.value());
+  }
+ else {
+    this.producedMimes=Collections.singletonList(MediaType.ALL);
+  }
+}
