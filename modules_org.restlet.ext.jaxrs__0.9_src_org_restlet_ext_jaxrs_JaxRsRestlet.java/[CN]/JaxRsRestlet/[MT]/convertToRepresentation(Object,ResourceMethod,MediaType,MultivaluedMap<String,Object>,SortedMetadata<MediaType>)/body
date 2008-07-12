@@ -1,31 +1,56 @@
 {
-  if (entity == null)   return null;
   if (entity instanceof Representation) {
     Representation repr=(Representation)entity;
     repr.setCharacterSet(getSupportedCharSet(repr.getCharacterSet()));
+    if (jaxRsResponseMediaType != null) {
+      repr.setMediaType(Converter.getMediaTypeWithoutParams(jaxRsResponseMediaType));
+    }
     return repr;
   }
-  Class<? extends Object> entityClass=entity.getClass();
-  Type genericReturnType=null;
-  Annotation[] methodAnnotations=null;
-  if (resourceMethod != null) {
-    genericReturnType=resourceMethod.getGenericReturnType();
-    methodAnnotations=resourceMethod.getAnnotations();
+  Type genericReturnType;
+  Class<? extends Object> entityClass;
+  Annotation[] methodAnnotations;
+  if (resourceMethod != null)   methodAnnotations=resourceMethod.getAnnotations();
+ else   methodAnnotations=EMPTY_ANNOTATION_ARRAY;
+  if (entity instanceof GenericEntity) {
+    GenericEntity<?> genericEntity=(GenericEntity)entity;
+    genericReturnType=genericEntity.getType();
+    entityClass=genericEntity.getRawType();
+    entity=genericEntity.getEntity();
   }
-  if (genericReturnType instanceof Class && ((Class)genericReturnType).isAssignableFrom(javax.ws.rs.core.Response.class)) {
-    genericReturnType=entityClass;
+ else {
+    entityClass=(entity != null) ? entity.getClass() : null;
+    if (resourceMethod != null)     genericReturnType=resourceMethod.getGenericReturnType();
+ else     genericReturnType=null;
+    if (genericReturnType instanceof Class && ((Class)genericReturnType).isAssignableFrom(javax.ws.rs.core.Response.class)) {
+      genericReturnType=entityClass;
+    }
   }
-  MessageBodyWriterSubSet mbws=entityProviders.writerSubSet(entityClass,genericReturnType,methodAnnotations);
-  if (mbws.isEmpty())   throw excHandler.noMessageBodyWriter();
+  MessageBodyWriterSubSet mbws;
+  if (entity != null) {
+    mbws=entityProviders.writerSubSet(entityClass,genericReturnType,methodAnnotations);
+    if (mbws.isEmpty())     throw excHandler.noMessageBodyWriter(entityClass,genericReturnType,methodAnnotations);
+  }
+ else {
+    mbws=MessageBodyWriterSubSet.empty();
+  }
   MediaType respMediaType;
-  if (givenResponseMediaType != null)   respMediaType=givenResponseMediaType;
+  if (jaxRsResponseMediaType != null)   respMediaType=jaxRsResponseMediaType;
  else   if (resourceMethod != null)   respMediaType=determineMediaType(resourceMethod,mbws);
  else   respMediaType=MediaType.TEXT_PLAIN;
-  MessageBodyWriter<?> mbw=mbws.getBestWriter(respMediaType,accMediaTypes);
-  if (mbw == null)   throw excHandler.noMessageBodyWriter();
   Response response=tlContext.get().getResponse();
   MultivaluedMap<String,Object> httpResponseHeaders=new WrappedRequestForHttpHeaders(response,jaxRsRespHeaders,getLogger());
-  Representation repr=new JaxRsOutputRepresentation(entity,genericReturnType,respMediaType,methodAnnotations,mbw,httpResponseHeaders);
+  Representation repr;
+  if (entity == null) {
+    repr=Representation.createEmpty();
+    repr.setMediaType(respMediaType);
+  }
+ else {
+    MessageBodyWriter<?> mbw;
+    mbw=mbws.getBestWriter(respMediaType,accMediaTypes);
+    if (mbw == null)     throw excHandler.noMessageBodyWriter(entityClass,genericReturnType,methodAnnotations);
+    repr=new JaxRsOutputRepresentation(entity,genericReturnType,respMediaType,methodAnnotations,mbw,httpResponseHeaders);
+  }
   repr.setCharacterSet(getSupportedCharSet(httpResponseHeaders));
   return repr;
 }
