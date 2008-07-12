@@ -48,8 +48,21 @@
     response.getHttpCall().complete();
   }
  catch (  Exception e) {
-    getLogger().log(Level.INFO,"Exception intercepted",e);
-    response.getHttpCall().setStatusCode(Status.SERVER_ERROR_INTERNAL.getCode());
-    response.getHttpCall().setReasonPhrase("An unexpected exception occured");
+    if (response.getHttpCall().isConnectionBroken(e)) {
+      getLogger().log(Level.INFO,"The connection was broken. It was probably closed by the client.",e);
+    }
+ else {
+      getLogger().log(Level.SEVERE,"An exception occured writing the response entity",e);
+      response.getHttpCall().setStatusCode(Status.SERVER_ERROR_INTERNAL.getCode());
+      response.getHttpCall().setReasonPhrase("An exception occured writing the response entity");
+      response.setEntity(null);
+      try {
+        response.getHttpCall().sendResponse(response);
+      }
+ catch (      IOException ioe) {
+        getLogger().log(Level.WARNING,"Unable to send error response",ioe);
+      }
+      response.getHttpCall().complete();
+    }
   }
 }
