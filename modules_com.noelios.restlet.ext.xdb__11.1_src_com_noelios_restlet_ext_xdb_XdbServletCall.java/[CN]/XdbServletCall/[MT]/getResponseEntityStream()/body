@@ -1,14 +1,16 @@
 {
-  if (responseEntityStream == null)   try {
-    if (isResponseChunked()) {
-      responseEntityStream=new ChunkedOutputStream(getResponse().getOutputStream());
-    }
+  if (this.responseEntityStream == null) {
+    try {
+      if (isResponseChunked()) {
+        this.responseEntityStream=new ChunkedOutputStream(getResponse().getOutputStream());
+      }
  else {
-      responseEntityStream=new KeepAliveOutputStream(getResponse().getOutputStream());
+        this.responseEntityStream=new KeepAliveOutputStream(getResponse().getOutputStream());
+      }
+    }
+ catch (    final IOException e) {
+      e.printStackTrace();
     }
   }
- catch (  IOException e) {
-    e.printStackTrace();
-  }
-  return responseEntityStream;
+  return this.responseEntityStream;
 }
