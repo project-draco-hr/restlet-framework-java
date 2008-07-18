@@ -1,12 +1,12 @@
 {
-  List<Preference<Language>> acceptedLanguages=new ArrayList<Preference<Language>>();
+  final List<Preference<Language>> acceptedLanguages=new ArrayList<Preference<Language>>();
   acceptedLanguages.add(new Preference<Language>(Language.ENGLISH));
-  ClientInfo clientInfo=new ClientInfo();
+  final ClientInfo clientInfo=new ClientInfo();
   clientInfo.setAcceptedLanguages(acceptedLanguages);
-  Request request=new Request(Method.POST,createReference(HttpHeaderTestService.class,"language"));
+  final Request request=new Request(Method.POST,createReference(HttpHeaderTestService.class,"language"));
   request.setClientInfo(clientInfo);
   request.setEntity(new StringRepresentation("entity",Language.ENGLISH));
-  Response response=accessServer(request);
+  final Response response=accessServer(request);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   assertEquals("en",response.getEntity().getText());
 }

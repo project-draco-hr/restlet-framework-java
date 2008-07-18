@@ -1,20 +1,20 @@
 {
-  uniqueReference=null;
-  ReferenceList result=new ReferenceList(0);
+  this.uniqueReference=null;
+  final ReferenceList result=new ReferenceList(0);
   try {
-    Request contextCall=new Request(Method.GET,this.targetUri);
+    final Request contextCall=new Request(Method.GET,this.targetUri);
     contextCall.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.TEXT_URI_LIST));
-    Response contextResponse=getClientDispatcher().handle(contextCall);
+    final Response contextResponse=getClientDispatcher().handle(contextCall);
     if (contextResponse.getEntity() != null) {
       if (MediaType.TEXT_URI_LIST.equals(contextResponse.getEntity().getMediaType())) {
-        ReferenceList listVariants=new ReferenceList(contextResponse.getEntity());
+        final ReferenceList listVariants=new ReferenceList(contextResponse.getEntity());
         Set<String> extensions=null;
         String entryUri;
         String fullEntryName;
         String baseEntryName;
         int lastSlashIndex;
         int firstDotIndex;
-        for (        Reference ref : listVariants) {
+        for (        final Reference ref : listVariants) {
           entryUri=ref.toString();
           lastSlashIndex=entryUri.lastIndexOf('/');
           fullEntryName=(lastSlashIndex == -1) ? entryUri : entryUri.substring(lastSlashIndex + 1);
@@ -28,7 +28,7 @@
             extensions=getExtensions(fullEntryName);
             validVariant=(((extensions == null) && (this.baseExtensions == null)) || (this.baseExtensions == null) || extensions.containsAll(this.baseExtensions));
             if (validVariant && (this.baseExtensions != null) && this.baseExtensions.containsAll(extensions)) {
-              uniqueReference=ref;
+              this.uniqueReference=ref;
             }
             if (validVariant) {
               result.add(ref);
@@ -41,7 +41,7 @@
       }
     }
   }
- catch (  IOException ioe) {
+ catch (  final IOException ioe) {
     getLogger().log(Level.WARNING,"Unable to get resource variants",ioe);
   }
   return result;

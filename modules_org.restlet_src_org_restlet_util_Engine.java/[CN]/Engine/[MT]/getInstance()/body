@@ -16,10 +16,12 @@
       BufferedReader reader=null;
       try {
         reader=new BufferedReader(new InputStreamReader(configURL.openStream(),"utf-8"));
-        String providerName=reader.readLine();
-        if (providerName != null)         engineClassName=providerName.substring(0,providerName.indexOf('#')).trim();
+        final String providerName=reader.readLine();
+        if (providerName != null) {
+          engineClassName=providerName.substring(0,providerName.indexOf('#')).trim();
+        }
       }
- catch (      IOException e) {
+ catch (      final IOException e) {
         logger.log(Level.SEVERE,"Unable to register the Restlet API implementation. Please check that the JAR file is in your classpath.");
       }
  finally {
@@ -27,7 +29,7 @@
           try {
             reader.close();
           }
- catch (          IOException e) {
+ catch (          final IOException e) {
             logger.warning("IOException encountered while closing an open BufferedReader" + e.getMessage());
           }
         }
@@ -36,7 +38,7 @@
         instance=(Engine)Class.forName(engineClassName).newInstance();
         result=instance;
       }
- catch (      Exception e) {
+ catch (      final Exception e) {
         logger.log(Level.SEVERE,"Unable to register the Restlet API implementation",e);
         throw new RuntimeException("Unable to register the Restlet API implementation");
       }

@@ -1,17 +1,25 @@
 {
-  if (javaMethod == null)   return null;
-  boolean useMethod=checkForJaxRsAnnotations(javaMethod);
-  if (useMethod)   return javaMethod;
-  Class<?> methodClass=javaMethod.getDeclaringClass();
-  Class<?> superclass=methodClass.getSuperclass();
-  Method scMethod=getMethodFromClass(superclass,javaMethod);
+  if (javaMethod == null) {
+    return null;
+  }
+  final boolean useMethod=checkForJaxRsAnnotations(javaMethod);
+  if (useMethod) {
+    return javaMethod;
+  }
+  final Class<?> methodClass=javaMethod.getDeclaringClass();
+  final Class<?> superclass=methodClass.getSuperclass();
+  final Method scMethod=getMethodFromClass(superclass,javaMethod);
   Method annotatedMeth=getAnnotatedJavaMethod(scMethod);
-  if (annotatedMeth != null)   return annotatedMeth;
-  Class<?>[] interfaces=methodClass.getInterfaces();
-  for (  Class<?> interfaze : interfaces) {
-    Method ifMethod=getMethodFromClass(interfaze,javaMethod);
+  if (annotatedMeth != null) {
+    return annotatedMeth;
+  }
+  final Class<?>[] interfaces=methodClass.getInterfaces();
+  for (  final Class<?> interfaze : interfaces) {
+    final Method ifMethod=getMethodFromClass(interfaze,javaMethod);
     annotatedMeth=getAnnotatedJavaMethod(ifMethod);
-    if (annotatedMeth != null)     return annotatedMeth;
+    if (annotatedMeth != null) {
+      return annotatedMeth;
+    }
   }
   return null;
 }

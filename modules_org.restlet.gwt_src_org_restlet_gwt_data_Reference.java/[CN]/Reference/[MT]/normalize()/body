@@ -1,8 +1,10 @@
 {
-  StringBuilder output=new StringBuilder();
-  StringBuilder input=new StringBuilder();
-  String path=getPath();
-  if (path != null)   input.append(path);
+  final StringBuilder output=new StringBuilder();
+  final StringBuilder input=new StringBuilder();
+  final String path=getPath();
+  if (path != null) {
+    input.append(path);
+  }
   while (input.length() > 0) {
     if ((input.length() >= 3) && input.substring(0,3).equals("../")) {
       input.delete(0,3);
@@ -33,7 +35,9 @@
  else {
       int max=-1;
       for (int i=1; (max == -1) && (i < input.length()); i++) {
-        if (input.charAt(i) == '/')         max=i;
+        if (input.charAt(i) == '/') {
+          max=i;
+        }
       }
       if (max != -1) {
         output.append(input.substring(0,max));
@@ -48,9 +52,9 @@
   setPath(output.toString());
   setScheme(getScheme());
   setHostDomain(getHostDomain());
-  int hostPort=getHostPort();
+  final int hostPort=getHostPort();
   if (hostPort != -1) {
-    int defaultPort=Protocol.valueOf(getScheme()).getDefaultPort();
+    final int defaultPort=Protocol.valueOf(getScheme()).getDefaultPort();
     if (hostPort == defaultPort) {
       setHostPort(null);
     }

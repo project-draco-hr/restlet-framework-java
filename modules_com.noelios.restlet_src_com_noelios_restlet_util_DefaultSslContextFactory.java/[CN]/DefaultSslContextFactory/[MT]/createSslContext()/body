@@ -1,7 +1,7 @@
 {
   KeyManagerFactory kmf=null;
   if ((this.keyStorePath != null) || (this.keyStoreProvider != null) || (this.keyStoreType != null)) {
-    KeyStore keyStore=(this.keyStoreProvider != null) ? KeyStore.getInstance(this.keyStoreType,this.keyStoreProvider) : KeyStore.getInstance(this.keyStoreType);
+    final KeyStore keyStore=(this.keyStoreProvider != null) ? KeyStore.getInstance(this.keyStoreType,this.keyStoreProvider) : KeyStore.getInstance(this.keyStoreType);
     FileInputStream keyStoreInputStream=null;
     try {
       keyStoreInputStream=((this.keyStorePath != null) && (!"NONE".equals(this.keyStorePath))) ? new FileInputStream(this.keyStorePath) : null;
@@ -17,7 +17,7 @@
   }
   TrustManagerFactory tmf=null;
   if ((this.trustStorePath != null) || (this.trustStoreProvider != null) || (this.trustStoreType != null)) {
-    KeyStore trustStore=(this.trustStoreProvider != null) ? KeyStore.getInstance(this.trustStoreType,this.trustStoreProvider) : KeyStore.getInstance(this.trustStoreType);
+    final KeyStore trustStore=(this.trustStoreProvider != null) ? KeyStore.getInstance(this.trustStoreType,this.trustStoreProvider) : KeyStore.getInstance(this.trustStoreType);
     FileInputStream trustStoreInputStream=null;
     try {
       trustStoreInputStream=((this.trustStorePath != null) && (!"NONE".equals(this.trustStorePath))) ? new FileInputStream(this.trustStorePath) : null;
@@ -31,7 +31,7 @@
     tmf=TrustManagerFactory.getInstance(this.trustManagerAlgorithm);
     tmf.init(trustStore);
   }
-  SSLContext sslContext=SSLContext.getInstance(this.secureSocketProtocol);
+  final SSLContext sslContext=SSLContext.getInstance(this.secureSocketProtocol);
   SecureRandom sr=null;
   if (this.secureRandomAlgorithm != null) {
     sr=SecureRandom.getInstance(this.secureRandomAlgorithm);

@@ -3,15 +3,15 @@
   if (currentResource.getIdentifier() != null) {
     if (parentResource != null) {
       String parentUriPattern=parentResource.getPath();
-      if (parentUriPattern.endsWith("/") == false && uriPattern.startsWith("/") == false) {
+      if ((parentUriPattern.endsWith("/") == false) && (uriPattern.startsWith("/") == false)) {
         parentUriPattern+="/";
       }
       uriPattern=parentUriPattern + uriPattern;
       currentResource.setPath(uriPattern);
     }
-    Class targetClass=Class.forName(currentResource.getIdentifier());
+    final Class targetClass=Class.forName(currentResource.getIdentifier());
     router.attach(uriPattern,targetClass);
-    for (    ResourceInfo childResource : currentResource.getChildResources()) {
+    for (    final ResourceInfo childResource : currentResource.getChildResources()) {
       attachResource(childResource,currentResource,router);
     }
   }

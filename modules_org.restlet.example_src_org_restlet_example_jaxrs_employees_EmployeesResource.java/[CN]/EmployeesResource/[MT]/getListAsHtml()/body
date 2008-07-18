@@ -2,13 +2,13 @@
   final EmployeeList employees=getEmployees();
   return new StreamingOutput(){
     public void write(    OutputStream output) throws IOException {
-      PrintStream ps=new PrintStream(output);
+      final PrintStream ps=new PrintStream(output);
       ps.println("<html><head>");
       ps.println("<title>Employees</title>");
       ps.println("</head></body>");
       ps.println("<h2>Employees</h2>");
       ps.println("<ul>");
-      for (      SmallEmployee employee : employees) {
+      for (      final SmallEmployee employee : employees) {
         ps.print("<li><a href=\"");
         ps.print(employee.getDetails());
         ps.print("\">");
@@ -19,7 +19,7 @@
       }
       ps.println("</ul>");
       ps.print("<form action=\"");
-      ps.print(uriInfo.getAbsolutePath());
+      ps.print(EmployeesResource.this.uriInfo.getAbsolutePath());
       ps.println("\" method=\"POST\">");
       ps.println("<table><tr>");
       ps.println("<td>firstname:</td>");

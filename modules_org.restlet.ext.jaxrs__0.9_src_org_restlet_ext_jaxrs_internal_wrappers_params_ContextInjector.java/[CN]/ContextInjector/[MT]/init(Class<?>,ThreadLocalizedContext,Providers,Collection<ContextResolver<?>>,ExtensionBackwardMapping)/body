@@ -1,37 +1,37 @@
 {
   do {
     try {
-      for (      Field field : jaxRsClass.getDeclaredFields()) {
+      for (      final Field field : jaxRsClass.getDeclaredFields()) {
         if (field.isAnnotationPresent(Context.class)) {
-          InjectionAim aim=new FieldWrapper(field);
-          Class<?> declaringClass=field.getType();
-          Type genericType=field.getGenericType();
-          Injector injector=getInjector(declaringClass,genericType,aim,tlContext,mbWorkers,allResolvers,extensionBackwardMapping);
-          injEverSameAims.add(injector);
+          final InjectionAim aim=new FieldWrapper(field);
+          final Class<?> declaringClass=field.getType();
+          final Type genericType=field.getGenericType();
+          final Injector injector=getInjector(declaringClass,genericType,aim,tlContext,mbWorkers,allResolvers,extensionBackwardMapping);
+          this.injEverSameAims.add(injector);
         }
       }
     }
- catch (    SecurityException e) {
+ catch (    final SecurityException e) {
       throw e;
     }
-catch (    IllegalTypeException e) {
+catch (    final IllegalTypeException e) {
       throw new IllegalFieldTypeException(e);
     }
     try {
-      for (      Method method : jaxRsClass.getDeclaredMethods()) {
+      for (      final Method method : jaxRsClass.getDeclaredMethods()) {
         if (isBeanSetter(method,Context.class)) {
-          BeanSetter aim=new BeanSetter(method);
-          Class<?> paramClass=method.getParameterTypes()[0];
-          Type genericType=method.getGenericParameterTypes()[0];
-          Injector injector=getInjector(paramClass,genericType,aim,tlContext,mbWorkers,allResolvers,extensionBackwardMapping);
-          injEverSameAims.add(injector);
+          final BeanSetter aim=new BeanSetter(method);
+          final Class<?> paramClass=method.getParameterTypes()[0];
+          final Type genericType=method.getGenericParameterTypes()[0];
+          final Injector injector=getInjector(paramClass,genericType,aim,tlContext,mbWorkers,allResolvers,extensionBackwardMapping);
+          this.injEverSameAims.add(injector);
         }
       }
     }
- catch (    SecurityException e) {
+ catch (    final SecurityException e) {
       throw e;
     }
-catch (    IllegalTypeException e) {
+catch (    final IllegalTypeException e) {
       throw new IllegalBeanSetterTypeException(e);
     }
     jaxRsClass=jaxRsClass.getSuperclass();

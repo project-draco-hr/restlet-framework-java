@@ -1,12 +1,12 @@
 {
-  bb.clear();
-  bb.put(b,off,len);
-  bb.flip();
-  if ((this.channel != null) && (bb != null)) {
+  this.bb.clear();
+  this.bb.put(b,off,len);
+  this.bb.flip();
+  if ((this.channel != null) && (this.bb != null)) {
     try {
       int bytesWritten;
-      while (bb.hasRemaining()) {
-        bytesWritten=this.channel.write(bb);
+      while (this.bb.hasRemaining()) {
+        bytesWritten=this.channel.write(this.bb);
         if (bytesWritten < 0) {
           throw new IOException("Unexpected negative number of bytes written.");
         }
@@ -17,11 +17,11 @@
         }
       }
     }
- catch (    IOException ioe) {
+ catch (    final IOException ioe) {
       throw new IOException("Unable to write to the non-blocking channel. " + ioe.getLocalizedMessage());
     }
  finally {
-      bb.clear();
+      this.bb.clear();
     }
   }
  else {

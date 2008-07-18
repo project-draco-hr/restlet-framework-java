@@ -1,25 +1,37 @@
 {
-  if (!(genType instanceof ParameterizedType))   return ReturnNullContextResolver.get();
-  Type t=((ParameterizedType)genType).getActualTypeArguments()[0];
-  if (!(t instanceof Class))   return ReturnNullContextResolver.get();
-  Class crType=(Class)t;
-  List<ContextResolver<?>> returnResolvers=new ArrayList<javax.ws.rs.ext.ContextResolver<?>>();
-  for (  ContextResolver<?> cr : allCtxResolvers) {
-    Class<?> crClaz=cr.getClass();
-    Class<?> genClass=getCtxResGenClass(crClaz);
-    if (genClass == null || !genClass.equals(crType))     continue;
-    try {
-      Method getContext=crClaz.getMethod("getContext",Class.class);
-      if (getContext.getReturnType().equals(crType))       returnResolvers.add(cr);
+  if (!(genType instanceof ParameterizedType)) {
+    return ReturnNullContextResolver.get();
+  }
+  final Type t=((ParameterizedType)genType).getActualTypeArguments()[0];
+  if (!(t instanceof Class)) {
+    return ReturnNullContextResolver.get();
+  }
+  final Class crType=(Class)t;
+  final List<ContextResolver<?>> returnResolvers=new ArrayList<javax.ws.rs.ext.ContextResolver<?>>();
+  for (  final ContextResolver<?> cr : allCtxResolvers) {
+    final Class<?> crClaz=cr.getClass();
+    final Class<?> genClass=getCtxResGenClass(crClaz);
+    if ((genClass == null) || !genClass.equals(crType)) {
+      continue;
     }
- catch (    SecurityException e) {
+    try {
+      final Method getContext=crClaz.getMethod("getContext",Class.class);
+      if (getContext.getReturnType().equals(crType)) {
+        returnResolvers.add(cr);
+      }
+    }
+ catch (    final SecurityException e) {
       throw new RuntimeException("sorry, the method getContext(Class) of ContextResolver " + crClaz + " is not accessible");
     }
-catch (    NoSuchMethodException e) {
+catch (    final NoSuchMethodException e) {
       throw new RuntimeException("The ContextResolver " + crClaz + " is not valid, because it has no method getContext(Class)");
     }
   }
-  if (returnResolvers.isEmpty())   return ReturnNullContextResolver.get();
-  if (returnResolvers.size() == 1)   return returnResolvers.get(0);
+  if (returnResolvers.isEmpty()) {
+    return ReturnNullContextResolver.get();
+  }
+  if (returnResolvers.size() == 1) {
+    return returnResolvers.get(0);
+  }
   return new ContextResolverCollection(returnResolvers);
 }

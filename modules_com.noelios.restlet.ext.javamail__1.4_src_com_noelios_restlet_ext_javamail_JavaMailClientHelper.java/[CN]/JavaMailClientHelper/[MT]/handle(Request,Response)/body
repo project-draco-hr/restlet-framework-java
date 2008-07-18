@@ -1,6 +1,6 @@
 {
   try {
-    Protocol protocol=request.getProtocol();
+    final Protocol protocol=request.getProtocol();
     if (Protocol.SMTP.equals(protocol) || Protocol.SMTPS.equals(protocol)) {
       handleSmtp(request,response);
     }
@@ -8,19 +8,19 @@
       handlePop(request,response);
     }
   }
- catch (  IOException e) {
+ catch (  final IOException e) {
     getLogger().log(Level.WARNING,"JavaMail client error",e);
     response.setStatus(Status.CONNECTOR_ERROR_INTERNAL,e.getMessage());
   }
-catch (  NoSuchProviderException e) {
+catch (  final NoSuchProviderException e) {
     getLogger().log(Level.WARNING,"JavaMail client error",e);
     response.setStatus(Status.SERVER_ERROR_INTERNAL,e.getMessage());
   }
-catch (  AddressException e) {
+catch (  final AddressException e) {
     getLogger().log(Level.WARNING,"JavaMail client error",e);
     response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,e.getMessage());
   }
-catch (  MessagingException e) {
+catch (  final MessagingException e) {
     getLogger().log(Level.WARNING,"JavaMail client error",e);
     response.setStatus(Status.SERVER_ERROR_INTERNAL,e.getMessage());
   }

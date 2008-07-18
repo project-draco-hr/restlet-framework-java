@@ -1,8 +1,8 @@
 {
-  Series<Parameter> responseHeaders=response.getHttpCall().getResponseHeaders();
+  final Series<Parameter> responseHeaders=response.getHttpCall().getResponseHeaders();
   try {
     addResponseHeaders(response,responseHeaders);
-    Series<Parameter> additionalHeaders=(Series<Parameter>)response.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
+    final Series<Parameter> additionalHeaders=(Series<Parameter>)response.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
     addAdditionalHeaders(responseHeaders,additionalHeaders);
     response.getHttpCall().getResponseHeaders().add(HttpConstants.HEADER_SERVER,response.getServerInfo().getAgent());
     if (response.getStatus() != null) {
@@ -10,7 +10,7 @@
       response.getHttpCall().setReasonPhrase(response.getStatus().getDescription());
     }
   }
- catch (  Exception e) {
+ catch (  final Exception e) {
     getLogger().log(Level.INFO,"Exception intercepted while adding the response headers",e);
     response.getHttpCall().setStatusCode(Status.SERVER_ERROR_INTERNAL.getCode());
     response.getHttpCall().setReasonPhrase(Status.SERVER_ERROR_INTERNAL.getDescription());

@@ -16,7 +16,7 @@
           }
           public void onReady(){
             if (getHelped().getPort() == 0) {
-              TCPSelectorHandler tsh=(TCPSelectorHandler)controller.getSelectorHandler(Controller.Protocol.TCP);
+              final TCPSelectorHandler tsh=(TCPSelectorHandler)controller.getSelectorHandler(Controller.Protocol.TCP);
               setEphemeralPort(tsh.getPortLowLevel());
             }
             latch.countDown();
@@ -29,7 +29,7 @@
 );
         controller.start();
       }
- catch (      IOException e) {
+ catch (      final IOException e) {
         getLogger().log(Level.WARNING,"Error while starting the Grizzly controller",e);
       }
     }
@@ -38,7 +38,7 @@
   try {
     latch.await();
   }
- catch (  InterruptedException ex) {
+ catch (  final InterruptedException ex) {
     getLogger().log(Level.WARNING,"Interrupted while waiting for starting latch. Stopping...",ex);
     stop();
   }

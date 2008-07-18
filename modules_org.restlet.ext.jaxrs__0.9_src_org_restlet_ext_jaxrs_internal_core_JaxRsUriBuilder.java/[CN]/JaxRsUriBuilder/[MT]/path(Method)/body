@@ -1,15 +1,17 @@
 {
-  if (methods == null || methods.length == 0)   return this;
-  List<CharSequence> newPathSegments=new ArrayList<CharSequence>();
-  for (  Method method : methods) {
+  if ((methods == null) || (methods.length == 0)) {
+    return this;
+  }
+  final List<CharSequence> newPathSegments=new ArrayList<CharSequence>();
+  for (  final Method method : methods) {
     String validSegment;
     try {
       validSegment=Util.getPathTemplate(method);
     }
- catch (    MissingAnnotationException e) {
+ catch (    final MissingAnnotationException e) {
       throw new IllegalArgumentException(e);
     }
-catch (    IllegalPathException e) {
+catch (    final IllegalPathException e) {
       throw e.getCause();
     }
     newPathSegments.add(validSegment);

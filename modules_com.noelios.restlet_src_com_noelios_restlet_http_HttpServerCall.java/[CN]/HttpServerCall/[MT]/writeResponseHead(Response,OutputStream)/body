@@ -1,5 +1,5 @@
 {
-  String version=(getVersion() == null) ? "1.1" : getVersion();
+  final String version=(getVersion() == null) ? "1.1" : getVersion();
   headStream.write(version.getBytes());
   headStream.write(' ');
   headStream.write(Integer.toString(getStatusCode()).getBytes());
@@ -16,7 +16,7 @@
   if (shouldResponseBeChunked(response)) {
     getResponseHeaders().add(HttpConstants.HEADER_TRANSFER_ENCODING,"chunked");
   }
-  for (  Parameter header : getResponseHeaders()) {
+  for (  final Parameter header : getResponseHeaders()) {
     HttpUtils.writeHeader(header,headStream);
   }
   headStream.write(13);

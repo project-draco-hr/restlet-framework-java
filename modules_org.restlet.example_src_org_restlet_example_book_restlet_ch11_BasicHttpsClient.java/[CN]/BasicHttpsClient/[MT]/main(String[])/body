@@ -1,15 +1,15 @@
 {
-  Client client=new Client(Protocol.HTTPS);
-  Request request=new Request(Method.GET,"https://localhost:8182/helloWorld");
-  File keystoreFile=new File("d:\\temp\\certificats","myClientKeystore");
+  final Client client=new Client(Protocol.HTTPS);
+  final Request request=new Request(Method.GET,"https://localhost:8182/helloWorld");
+  final File keystoreFile=new File("d:\\temp\\certificats","myClientKeystore");
   System.setProperty("javax.net.ssl.trustStore",keystoreFile.getAbsolutePath());
-  Response response=client.handle(request);
+  final Response response=client.handle(request);
   System.out.println(response.getStatus());
   if (response.isEntityAvailable()) {
     try {
       response.getEntity().write(System.out);
     }
- catch (    IOException e) {
+ catch (    final IOException e) {
       e.printStackTrace();
     }
   }

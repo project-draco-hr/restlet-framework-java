@@ -1,16 +1,16 @@
 {
   ChallengeRequest result=null;
   if (header != null) {
-    int space=header.indexOf(' ');
+    final int space=header.indexOf(' ');
     if (space != -1) {
-      String scheme=header.substring(0,space);
+      final String scheme=header.substring(0,space);
       result=new ChallengeRequest(new ChallengeScheme("HTTP_" + scheme,scheme),null);
-      String rest=header.substring(space + 1);
+      final String rest=header.substring(space + 1);
       parseParameters(rest,result.getParameters());
       result.setRealm(result.getParameters().getFirstValue("realm"));
     }
   }
-  AuthenticationHelper helper=Engine.getInstance().findHelper(result.getScheme(),true,false);
+  final AuthenticationHelper helper=Engine.getInstance().findHelper(result.getScheme(),true,false);
   if (helper != null) {
     helper.parseRequest(result,header);
   }

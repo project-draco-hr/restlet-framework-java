@@ -1,16 +1,20 @@
 {
   if (this.pathParametersDecoded == null) {
-    MultivaluedMapImpl<String,String> pathParamsDec=new MultivaluedMapImpl<String,String>();
-    for (    Map.Entry<String,List<String>> entryEnc : this.interalGetPathParamsEncoded().entrySet()) {
-      String keyDec=Reference.decode(entryEnc.getKey());
-      List<String> valuesEnc=entryEnc.getValue();
-      List<String> valuesDec=new ArrayList<String>(valuesEnc.size());
-      for (      String valueEnc : valuesEnc)       valuesDec.add(Reference.decode(valueEnc));
+    final MultivaluedMapImpl<String,String> pathParamsDec=new MultivaluedMapImpl<String,String>();
+    for (    final Map.Entry<String,List<String>> entryEnc : interalGetPathParamsEncoded().entrySet()) {
+      final String keyDec=Reference.decode(entryEnc.getKey());
+      final List<String> valuesEnc=entryEnc.getValue();
+      final List<String> valuesDec=new ArrayList<String>(valuesEnc.size());
+      for (      final String valueEnc : valuesEnc) {
+        valuesDec.add(Reference.decode(valueEnc));
+      }
       pathParamsDec.put(keyDec,valuesDec);
     }
     UnmodifiableMultivaluedMap<String,String> ppd;
     ppd=UnmodifiableMultivaluedMap.get(pathParamsDec,false);
-    if (isChangeable())     return ppd;
+    if (isChangeable()) {
+      return ppd;
+    }
     this.pathParametersDecoded=ppd;
   }
   return this.pathParametersDecoded;

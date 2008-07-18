@@ -1,17 +1,17 @@
 {
-  Request request=createGetRequest("Set");
+  final Request request=createGetRequest("Set");
   request.getCookies().add(new Cookie("c","c1"));
   request.getCookies().add(new Cookie("c","c2"));
   request.getCookies().add(new Cookie("d","c3"));
-  Response response=accessServer(request);
+  final Response response=accessServer(request);
   sysOutEntityIfError(response);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
-  String entity=response.getEntity().getText();
-  String entityWithoutBrackets=entity.substring(1,entity.length() - 1);
+  final String entity=response.getEntity().getText();
+  final String entityWithoutBrackets=entity.substring(1,entity.length() - 1);
   try {
     assertEquals("c1, c2",entityWithoutBrackets);
   }
- catch (  AssertionFailedError afe) {
+ catch (  final AssertionFailedError afe) {
     assertEquals("c2, c1",entityWithoutBrackets);
   }
 }

@@ -1,14 +1,14 @@
 {
-  Mail mail=new Mail();
-  mail.setId(Integer.toString(mailSequence++));
+  final Mail mail=new Mail();
+  mail.setId(Integer.toString(this.mailSequence++));
   mail.setRecipients(new ArrayList<Contact>(recipients.subList(0,(Integer.parseInt(mail.getId())) % recipients.size() + 1)));
   mail.setMessage("Cheers -" + sender.getFirstName());
   mail.setSendingDate(new Date());
   mail.setSubject("Hello!");
-  mail.setStatus(mailStatuses[(Integer.parseInt(mail.getId())) % mailStatuses.length]);
-  mail.setTags(new ArrayList<String>(mailTags.subList(0,(Integer.parseInt(mail.getId())) % (mailTags.size() + 1))));
+  mail.setStatus(this.mailStatuses[(Integer.parseInt(mail.getId())) % this.mailStatuses.length]);
+  mail.setTags(new ArrayList<String>(this.mailTags.subList(0,(Integer.parseInt(mail.getId())) % (this.mailTags.size() + 1))));
   if (!mail.getTags().isEmpty()) {
-    for (    Feed feed : feeds) {
+    for (    final Feed feed : feeds) {
       if (mail.getTags().containsAll(feed.getTags())) {
         feed.getMails().add(mail);
       }

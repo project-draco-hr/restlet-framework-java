@@ -1,24 +1,26 @@
 {
-  if (appConfig == null)   throw new IllegalArgumentException("The ApplicationConfig must not be null");
-  if (clearMetadataIfFirst && !appConfigAttached) {
-    this.getMetadataService().clearExtensions();
+  if (appConfig == null) {
+    throw new IllegalArgumentException("The ApplicationConfig must not be null");
   }
-  this.addExtensionMappings(appConfig);
-  JaxRsRestlet r=this.jaxRsRestlet;
-  Collection<Class<?>> rrcs=appConfig.getResourceClasses();
-  Collection<Class<?>> providerClasses=appConfig.getProviderClasses();
+  if (clearMetadataIfFirst && !this.appConfigAttached) {
+    getMetadataService().clearExtensions();
+  }
+  addExtensionMappings(appConfig);
+  final JaxRsRestlet r=this.jaxRsRestlet;
+  final Collection<Class<?>> rrcs=appConfig.getResourceClasses();
+  final Collection<Class<?>> providerClasses=appConfig.getProviderClasses();
   boolean everythingFine=true;
-  if (rrcs == null || rrcs.isEmpty()) {
+  if ((rrcs == null) || rrcs.isEmpty()) {
     r.getLogger().warning("The ApplicationConfig " + appConfig.getClass().getName() + " contains no root resource classes.");
     everythingFine=false;
   }
  else {
-    for (    Class<?> rrc : rrcs) {
+    for (    final Class<?> rrc : rrcs) {
       everythingFine&=r.addRootResourceClass(rrc);
     }
   }
   if (providerClasses != null) {
-    for (    Class<?> providerClass : providerClasses) {
+    for (    final Class<?> providerClass : providerClasses) {
       everythingFine&=r.addProvider(providerClass);
     }
   }

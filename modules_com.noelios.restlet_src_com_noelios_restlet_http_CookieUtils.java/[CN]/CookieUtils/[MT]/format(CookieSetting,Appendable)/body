@@ -1,7 +1,7 @@
 {
-  String name=cookieSetting.getName();
-  String value=cookieSetting.getValue();
-  int version=cookieSetting.getVersion();
+  final String name=cookieSetting.getName();
+  final String value=cookieSetting.getValue();
+  final int version=cookieSetting.getVersion();
   if ((name == null) || (name.length() == 0)) {
     throw new IllegalArgumentException("Can't write cookie. Invalid name detected");
   }
@@ -14,7 +14,7 @@
       destination.append("; Version=");
       appendValue(Integer.toString(version),version,destination);
     }
-    String path=cookieSetting.getPath();
+    final String path=cookieSetting.getPath();
     if ((path != null) && (path.length() > 0)) {
       destination.append("; Path=");
       if (version == 0) {
@@ -24,13 +24,13 @@
         HttpUtils.appendQuote(path,destination);
       }
     }
-    int maxAge=cookieSetting.getMaxAge();
+    final int maxAge=cookieSetting.getMaxAge();
     if (maxAge >= 0) {
       if (version == 0) {
-        long currentTime=System.currentTimeMillis();
-        long maxTime=(maxAge * 1000L);
-        long expiresTime=currentTime + maxTime;
-        Date expires=new Date(expiresTime);
+        final long currentTime=System.currentTimeMillis();
+        final long maxTime=(maxAge * 1000L);
+        final long expiresTime=currentTime + maxTime;
+        final Date expires=new Date(expiresTime);
         destination.append("; Expires=");
         appendValue(DateUtils.format(expires,DateUtils.FORMAT_RFC_1036.get(0)),version,destination);
       }
@@ -44,7 +44,7 @@
     }
  else {
     }
-    String domain=cookieSetting.getDomain();
+    final String domain=cookieSetting.getDomain();
     if ((domain != null) && (domain.length() > 0)) {
       destination.append("; Domain=");
       appendValue(domain.toLowerCase(),version,destination);
@@ -56,7 +56,7 @@
       destination.append("; HttpOnly");
     }
     if (version > 0) {
-      String comment=cookieSetting.getComment();
+      final String comment=cookieSetting.getComment();
       if ((comment != null) && (comment.length() > 0)) {
         destination.append("; Comment=");
         appendValue(comment,version,destination);

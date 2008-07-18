@@ -1,10 +1,12 @@
 {
-  JAXBContext jaxbContext=contextResolver.getContext(type);
-  if (jaxbContext != null)   return jaxbContext;
+  final JAXBContext jaxbContext=this.contextResolver.getContext(type);
+  if (jaxbContext != null) {
+    return jaxbContext;
+  }
   try {
     return JAXBContext.newInstance(type);
   }
- catch (  NoClassDefFoundError e) {
+ catch (  final NoClassDefFoundError e) {
     throw new WebApplicationException(Response.serverError().entity(e.getMessage()).build());
   }
 }

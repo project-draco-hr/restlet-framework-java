@@ -4,11 +4,11 @@
   this.relativePart=request.getResourceRef().getRemainingPart();
   setModifiable(this.directory.isModifiable());
   setNegotiateContent(this.directory.isNegotiateContent());
-  if (getApplication() != null && getApplication().getTunnelService().isExtensionsTunnel()) {
-    originalRef=request.getOriginalRef();
-    if (originalRef != null) {
-      originalRef.setBaseRef(request.getResourceRef().getBaseRef());
-      this.relativePart=originalRef.getRemainingPart();
+  if ((getApplication() != null) && getApplication().getTunnelService().isExtensionsTunnel()) {
+    this.originalRef=request.getOriginalRef();
+    if (this.originalRef != null) {
+      this.originalRef.setBaseRef(request.getResourceRef().getBaseRef());
+      this.relativePart=this.originalRef.getRemainingPart();
     }
   }
   if (this.relativePart.startsWith("/")) {
@@ -31,7 +31,7 @@
         this.targetUri+="/";
         this.relativePart+="/";
       }
-      if (getDirectory().getIndexName() != null && getDirectory().getIndexName().length() > 0) {
+      if ((getDirectory().getIndexName() != null) && (getDirectory().getIndexName().length() > 0)) {
         this.directoryUri=this.targetUri;
         this.baseName=getDirectory().getIndexName();
         this.targetUri=this.directoryUri + this.baseName;
@@ -52,7 +52,7 @@
     this.directoryTarget=false;
     this.fileTarget=false;
     if (this.targetUri.endsWith("/")) {
-      if (getDirectory().getIndexName() != null && getDirectory().getIndexName().length() > 0) {
+      if ((getDirectory().getIndexName() != null) && (getDirectory().getIndexName().length() > 0)) {
         this.directoryUri=this.targetUri;
         this.baseName=getDirectory().getIndexName();
         this.targetUri=this.directoryUri + this.baseName;
@@ -66,7 +66,7 @@
       }
     }
  else {
-      if (getDirectory().getIndexName() != null && getDirectory().getIndexName().length() > 0) {
+      if ((getDirectory().getIndexName() != null) && (getDirectory().getIndexName().length() > 0)) {
         contextResponse=getClientDispatcher().get(this.targetUri + "/" + getDirectory().getIndexName());
         if (contextResponse.getEntity() != null) {
           this.directoryUri=this.targetUri + "/";
@@ -81,7 +81,7 @@
       }
     }
   }
-  if (isNegotiateContent() && !directoryTarget && !fileTarget&& originalRef != null) {
+  if (isNegotiateContent() && !this.directoryTarget && !this.fileTarget&& (this.originalRef != null)) {
     this.relativePart=request.getResourceRef().getRemainingPart();
     this.targetUri=new Reference(directory.getRootRef().toString() + this.relativePart).normalize().toString(false,false);
     if (!this.targetUri.startsWith(directory.getRootRef().toString())) {
@@ -89,14 +89,14 @@
     }
   }
   if (!this.directoryTarget) {
-    int lastSlashIndex=targetUri.lastIndexOf('/');
+    final int lastSlashIndex=this.targetUri.lastIndexOf('/');
     if (lastSlashIndex == -1) {
       this.directoryUri="";
-      this.baseName=targetUri;
+      this.baseName=this.targetUri;
     }
  else {
-      this.directoryUri=targetUri.substring(0,lastSlashIndex + 1);
-      this.baseName=targetUri.substring(lastSlashIndex + 1);
+      this.directoryUri=this.targetUri.substring(0,lastSlashIndex + 1);
+      this.baseName=this.targetUri.substring(lastSlashIndex + 1);
     }
     contextResponse=getClientDispatcher().get(this.directoryUri);
     if ((contextResponse.getEntity() != null) && MediaType.TEXT_URI_LIST.equals(contextResponse.getEntity().getMediaType())) {
@@ -104,13 +104,13 @@
     }
   }
   if (this.baseName != null) {
-    int firstDotIndex=this.baseName.indexOf('.');
+    final int firstDotIndex=this.baseName.indexOf('.');
     if (firstDotIndex != -1) {
       this.baseExtensions=getExtensions(this.baseName);
       this.baseName=this.baseName.substring(0,firstDotIndex);
     }
   }
-  List<Variant> variants=getVariants();
+  final List<Variant> variants=getVariants();
   if ((variants == null) || (variants.isEmpty())) {
     setAvailable(false);
   }

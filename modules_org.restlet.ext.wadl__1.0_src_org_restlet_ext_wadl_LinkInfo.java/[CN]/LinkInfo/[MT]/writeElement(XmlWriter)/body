@@ -1,12 +1,12 @@
 {
-  AttributesImpl attributes=new AttributesImpl();
-  if (getRelationship() != null && !getRelationship().equals("")) {
+  final AttributesImpl attributes=new AttributesImpl();
+  if ((getRelationship() != null) && !getRelationship().equals("")) {
     attributes.addAttribute("","rel",null,"xs:token",getRelationship());
   }
-  if (getReverseRelationship() != null && !getReverseRelationship().equals("")) {
+  if ((getReverseRelationship() != null) && !getReverseRelationship().equals("")) {
     attributes.addAttribute("","rev",null,"xs:token",getReverseRelationship());
   }
-  if (getResourceType() != null && getResourceType().toString() != null) {
+  if ((getResourceType() != null) && (getResourceType().toString() != null)) {
     attributes.addAttribute("","resource_type",null,"xs:anyURI",getResourceType().toString());
   }
   if (getDocumentations().isEmpty()) {
@@ -14,7 +14,7 @@
   }
  else {
     writer.startElement(APP_NAMESPACE,"link",null,attributes);
-    for (    DocumentationInfo documentationInfo : getDocumentations()) {
+    for (    final DocumentationInfo documentationInfo : getDocumentations()) {
       documentationInfo.writeElement(writer);
     }
     writer.endElement(APP_NAMESPACE,"link");

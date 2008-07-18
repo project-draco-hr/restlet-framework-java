@@ -1,6 +1,8 @@
 {
-  if (!startServer(RoleChecker.FORBID_ALL))   return;
-  Response response=post(null,new Form().getWebRepresentation(),new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"alice","alicesSecret"));
+  if (!startServer(RoleChecker.FORBID_ALL)) {
+    return;
+  }
+  final Response response=post(null,new Form().getWebRepresentation(),new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"alice","alicesSecret"));
   sysOutEntityIfNotStatus(Status.CLIENT_ERROR_FORBIDDEN,response);
   assertEquals(Status.CLIENT_ERROR_FORBIDDEN,response.getStatus());
 }

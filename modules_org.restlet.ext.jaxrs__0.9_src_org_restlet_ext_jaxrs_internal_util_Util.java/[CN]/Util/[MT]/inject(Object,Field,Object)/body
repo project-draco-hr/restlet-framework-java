@@ -1,20 +1,22 @@
 {
   try {
-    IllegalAccessException iae=AccessController.doPrivileged(new PrivilegedAction<IllegalAccessException>(){
+    final IllegalAccessException iae=AccessController.doPrivileged(new PrivilegedAction<IllegalAccessException>(){
       public IllegalAccessException run(){
         try {
           field.set(resource,toInject);
           return null;
         }
- catch (        IllegalAccessException e) {
+ catch (        final IllegalAccessException e) {
           return e;
         }
       }
     }
 );
-    if (iae != null)     throw new InjectException("Could not inject the " + toInject.getClass() + " into field "+ field+ " of object "+ resource,iae);
+    if (iae != null) {
+      throw new InjectException("Could not inject the " + toInject.getClass() + " into field "+ field+ " of object "+ resource,iae);
+    }
   }
- catch (  RuntimeException e) {
+ catch (  final RuntimeException e) {
     throw new InjectException("Could not inject the " + toInject.getClass() + " into field "+ field+ " of object "+ resource,e);
   }
 }

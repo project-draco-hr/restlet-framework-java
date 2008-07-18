@@ -1,10 +1,10 @@
 {
-  List<Product> result=new ArrayList<Product>();
+  final List<Product> result=new ArrayList<Product>();
   if (userAgent != null) {
     String token=null;
     String version=null;
     String comment=null;
-    char[] tab=userAgent.trim().toCharArray();
+    final char[] tab=userAgent.trim().toCharArray();
     StringBuilder tokenBuilder=new StringBuilder();
     StringBuilder versionBuilder=null;
     StringBuilder commentBuilder=null;
@@ -13,9 +13,9 @@
     boolean insideVersion=false;
     boolean insideComment=false;
     for (index=0; index < tab.length; index++) {
-      char c=tab[index];
+      final char c=tab[index];
       if (insideToken) {
-        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ') {
+        if (((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || (c == ' ')) {
           tokenBuilder.append(c);
         }
  else {
@@ -79,7 +79,7 @@
         result.add(new Product(token,version,null));
       }
  else {
-        if (insideToken && tokenBuilder.length() > 0) {
+        if (insideToken && (tokenBuilder.length() > 0)) {
           token=tokenBuilder.toString();
           result.add(new Product(token,null,null));
         }

@@ -1,11 +1,23 @@
 {
-  if (SecurityUtil.isSslClientCertAuth(request))   return SecurityContext.CLIENT_CERT_AUTH;
-  ChallengeResponse challengeResponse=request.getChallengeResponse();
-  if (challengeResponse == null)   return null;
-  if (!challengeResponse.isAuthenticated())   return null;
-  ChallengeScheme authScheme=challengeResponse.getScheme();
-  if (authScheme == null)   return null;
-  if (authScheme.equals(ChallengeScheme.HTTP_BASIC))   return SecurityContext.BASIC_AUTH;
-  if (authScheme.equals(ChallengeScheme.HTTP_DIGEST))   return SecurityContext.DIGEST_AUTH;
+  if (SecurityUtil.isSslClientCertAuth(this.request)) {
+    return SecurityContext.CLIENT_CERT_AUTH;
+  }
+  final ChallengeResponse challengeResponse=this.request.getChallengeResponse();
+  if (challengeResponse == null) {
+    return null;
+  }
+  if (!challengeResponse.isAuthenticated()) {
+    return null;
+  }
+  final ChallengeScheme authScheme=challengeResponse.getScheme();
+  if (authScheme == null) {
+    return null;
+  }
+  if (authScheme.equals(ChallengeScheme.HTTP_BASIC)) {
+    return SecurityContext.BASIC_AUTH;
+  }
+  if (authScheme.equals(ChallengeScheme.HTTP_DIGEST)) {
+    return SecurityContext.DIGEST_AUTH;
+  }
   return authScheme.getName();
 }

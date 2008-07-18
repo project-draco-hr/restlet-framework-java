@@ -1,14 +1,14 @@
 {
   boolean result=true;
   if (host != null) {
-    for (    Route route : host.getRoutes()) {
-      Restlet next=route.getNext();
+    for (    final Route route : host.getRoutes()) {
+      final Restlet next=route.getNext();
       if (next instanceof Application) {
-        Application application=(Application)next;
-        for (        Protocol clientProtocol : application.getConnectorService().getClientProtocols()) {
+        final Application application=(Application)next;
+        for (        final Protocol clientProtocol : application.getConnectorService().getClientProtocols()) {
           boolean clientFound=false;
           Client client;
-          for (Iterator<Client> iter=getHelped().getClients().iterator(); !clientFound && iter.hasNext(); ) {
+          for (final Iterator<Client> iter=getHelped().getClients().iterator(); !clientFound && iter.hasNext(); ) {
             client=iter.next();
             clientFound=client.getProtocols().contains(clientProtocol);
           }
@@ -17,10 +17,10 @@
             result=false;
           }
         }
-        for (        Protocol serverProtocol : application.getConnectorService().getServerProtocols()) {
+        for (        final Protocol serverProtocol : application.getConnectorService().getServerProtocols()) {
           boolean serverFound=false;
           Server server;
-          for (Iterator<Server> iter=getHelped().getServers().iterator(); !serverFound && iter.hasNext(); ) {
+          for (final Iterator<Server> iter=getHelped().getServers().iterator(); !serverFound && iter.hasNext(); ) {
             server=iter.next();
             serverFound=server.getProtocols().contains(serverProtocol);
           }

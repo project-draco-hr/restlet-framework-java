@@ -1,13 +1,17 @@
 {
-  if (eWithMethod == null || eWithMethod.isEmpty())   return null;
-  Iterator<ResourceMethodOrLocator> srmlIter=eWithMethod.iterator();
+  if ((eWithMethod == null) || eWithMethod.isEmpty()) {
+    return null;
+  }
+  final Iterator<ResourceMethodOrLocator> srmlIter=eWithMethod.iterator();
   ResourceMethodOrLocator bestSrml=srmlIter.next();
-  if (eWithMethod.size() == 1)   return bestSrml;
+  if (eWithMethod.size() == 1) {
+    return bestSrml;
+  }
   int bestSrmlChars=Integer.MIN_VALUE;
   int bestSrmlNoCaptGroups=Integer.MIN_VALUE;
-  for (  ResourceMethodOrLocator srml : eWithMethod) {
-    int srmlNoLitChars=srml.getPathRegExp().getNumberOfLiteralChars();
-    int srmlNoCaptGroups=srml.getPathRegExp().getNumberOfCapturingGroups();
+  for (  final ResourceMethodOrLocator srml : eWithMethod) {
+    final int srmlNoLitChars=srml.getPathRegExp().getNumberOfLiteralChars();
+    final int srmlNoCaptGroups=srml.getPathRegExp().getNumberOfCapturingGroups();
     if (srmlNoLitChars > bestSrmlChars) {
       bestSrml=srml;
       bestSrmlChars=srmlNoLitChars;

@@ -1,18 +1,18 @@
 {
-  latch.countDown();
+  this.latch.countDown();
   for (; ; ) {
     try {
-      SocketChannel client=serverSocket.accept();
-      if (!handlerService.isShutdown()) {
-        handlerService.submit(new ConnectionHandler(helper,client.socket()));
+      final SocketChannel client=this.serverSocket.accept();
+      if (!this.handlerService.isShutdown()) {
+        this.handlerService.submit(new ConnectionHandler(this.helper,client.socket()));
       }
     }
- catch (    ClosedByInterruptException ex) {
-      helper.getLogger().log(Level.FINE,"ServerSocket channel was closed by interrupt",ex);
+ catch (    final ClosedByInterruptException ex) {
+      this.helper.getLogger().log(Level.FINE,"ServerSocket channel was closed by interrupt",ex);
       break;
     }
-catch (    IOException ex) {
-      helper.getLogger().log(Level.WARNING,"Unexpected error while accepting new connection",ex);
+catch (    final IOException ex) {
+      this.helper.getLogger().log(Level.WARNING,"Unexpected error while accepting new connection",ex);
     }
   }
 }

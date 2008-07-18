@@ -1,5 +1,5 @@
 {
-  MetadataService metadataService=getMetadataService(request);
+  final MetadataService metadataService=getMetadataService(request);
   if (request.getMethod().equals(Method.GET) || request.getMethod().equals(Method.HEAD)) {
     String path=request.getResourceRef().getPath();
     URL url=null;
@@ -15,7 +15,7 @@
     }
     if (url != null) {
       if (url.getProtocol().equals("file")) {
-        File file=new File(url.getFile());
+        final File file=new File(url.getFile());
         modificationDate=new Date(file.lastModified());
         if (file.isDirectory()) {
           url=null;
@@ -24,15 +24,15 @@
     }
     if (url != null) {
       try {
-        Representation output=new InputRepresentation(url.openStream(),metadataService.getDefaultMediaType());
+        final Representation output=new InputRepresentation(url.openStream(),metadataService.getDefaultMediaType());
         output.setIdentifier(request.getResourceRef());
         output.setModificationDate(modificationDate);
-        String name=path.substring(path.lastIndexOf('/') + 1);
+        final String name=path.substring(path.lastIndexOf('/') + 1);
         updateMetadata(metadataService,name,output);
         response.setEntity(output);
         response.setStatus(Status.SUCCESS_OK);
       }
- catch (      IOException ioe) {
+ catch (      final IOException ioe) {
         getLogger().log(Level.WARNING,"Unable to open the representation's input stream",ioe);
         response.setStatus(Status.SERVER_ERROR_INTERNAL);
       }

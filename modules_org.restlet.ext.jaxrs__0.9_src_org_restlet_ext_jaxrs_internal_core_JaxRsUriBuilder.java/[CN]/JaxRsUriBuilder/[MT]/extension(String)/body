@@ -1,12 +1,16 @@
 {
-  StringBuilder path=getPath();
-  int lastPathSt=path.lastIndexOf("/");
-  int lastSegmSt=path.indexOf(".",lastPathSt);
-  if (lastSegmSt > 0)   path.delete(lastSegmSt,Integer.MAX_VALUE);
+  final StringBuilder path=getPath();
+  final int lastPathSt=path.lastIndexOf("/");
+  final int lastSegmSt=path.indexOf(".",lastPathSt);
+  if (lastSegmSt > 0) {
+    path.delete(lastSegmSt,Integer.MAX_VALUE);
+  }
   if (extension != null) {
     CharSequence ext;
-    ext=EncodeOrCheck.pathSegmentWithMatrix(extension,encode);
-    if (ext.length() == 0 || ext.charAt(0) != '.')     path.append('.');
+    ext=EncodeOrCheck.pathSegmentWithMatrix(extension,this.encode);
+    if ((ext.length() == 0) || (ext.charAt(0) != '.')) {
+      path.append('.');
+    }
     path.append(ext);
   }
   return this;

@@ -1,12 +1,12 @@
 {
   Response.setCurrent(response);
-  Protocol protocol=request.getProtocol();
+  final Protocol protocol=request.getProtocol();
   if (protocol == null) {
     throw new UnsupportedOperationException("Unable to determine the protocol to use for this call.");
   }
-  String targetUri=request.getResourceRef().toString(true,false);
+  final String targetUri=request.getResourceRef().toString(true,false);
   if (targetUri.contains("{")) {
-    Template template=new Template(getContext().getLogger(),targetUri);
+    final Template template=new Template(getContext().getLogger(),targetUri);
     request.setResourceRef(template.format(request,response));
   }
   doHandle(request,response);

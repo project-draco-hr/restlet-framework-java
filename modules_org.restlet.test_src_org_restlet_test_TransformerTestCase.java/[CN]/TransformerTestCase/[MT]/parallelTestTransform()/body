@@ -1,28 +1,28 @@
 {
-  Component comp=new Component();
-  final TransformRepresentation tr=new TransformRepresentation(comp.getContext(),source,xslt);
+  final Component comp=new Component();
+  final TransformRepresentation tr=new TransformRepresentation(comp.getContext(),this.source,this.xslt);
   final FailureTracker tracker=new FailureTracker();
-  int testVolume=5000;
-  Thread[] parallelTransform=new Thread[testVolume];
+  final int testVolume=5000;
+  final Thread[] parallelTransform=new Thread[testVolume];
   for (int i=0; i < parallelTransform.length; i++) {
     final int index=i;
     parallelTransform[i]=new Thread(){
       @Override public void run(){
         try {
-          ByteArrayOutputStream out=new ByteArrayOutputStream();
+          final ByteArrayOutputStream out=new ByteArrayOutputStream();
           tr.write(out);
-          String result=out.toString();
-          assertEquals(output,result);
+          final String result=out.toString();
+          assertEquals(TransformerTestCase.this.output,result);
           out.close();
         }
- catch (        Throwable e) {
+ catch (        final Throwable e) {
           tracker.trackFailure("Exception during write in thread ",index,e);
         }
       }
     }
 ;
   }
-  for (  Thread pt : parallelTransform) {
+  for (  final Thread pt : parallelTransform) {
     pt.start();
   }
   tracker.report();

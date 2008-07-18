@@ -1,23 +1,33 @@
 {
-  if (methodName == null)   throw new IllegalArgumentException("The method name must not be null");
+  if (methodName == null) {
+    throw new IllegalArgumentException("The method name must not be null");
+  }
   String resMethodPath=null;
-  for (  Method method : resource.getMethods()) {
-    if (!method.getName().equals(methodName))     continue;
+  for (  final Method method : resource.getMethods()) {
+    if (!method.getName().equals(methodName)) {
+      continue;
+    }
     String path;
     try {
       path=Util.getPathTemplate(method);
     }
- catch (    IllegalPathOnMethodException e) {
+ catch (    final IllegalPathOnMethodException e) {
       throw e.getCause();
     }
-catch (    MissingAnnotationException e) {
+catch (    final MissingAnnotationException e) {
       throw new IllegalArgumentException(e);
     }
-    if (path == null)     continue;
-    if (resMethodPath != null && !resMethodPath.equals(path))     throw new IllegalArgumentException("The class " + resource + " has more than one methods with the name "+ methodName+ " annotated with @Path");
+    if (path == null) {
+      continue;
+    }
+    if ((resMethodPath != null) && !resMethodPath.equals(path)) {
+      throw new IllegalArgumentException("The class " + resource + " has more than one methods with the name "+ methodName+ " annotated with @Path");
+    }
     resMethodPath=path;
   }
-  if (resMethodPath == null)   throw new IllegalArgumentException("The class " + resource + " has no method with the name "+ methodName+ " annotated with @Path");
+  if (resMethodPath == null) {
+    throw new IllegalArgumentException("The class " + resource + " has no method with the name "+ methodName+ " annotated with @Path");
+  }
   path(resource);
   addValidPathSegment(resMethodPath);
   return this;

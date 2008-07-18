@@ -1,133 +1,133 @@
 {
-  if (currentText != null) {
-    currentText.setContent(contentBuffer.toString());
+  if (this.currentText != null) {
+    this.currentText.setContent(this.contentBuffer.toString());
   }
-  if (currentDate != null) {
-    String formattedDate=contentBuffer.toString();
-    Date parsedDate=DateUtils.parse(formattedDate,DateUtils.FORMAT_RFC_3339);
+  if (this.currentDate != null) {
+    final String formattedDate=this.contentBuffer.toString();
+    final Date parsedDate=DateUtils.parse(formattedDate,DateUtils.FORMAT_RFC_3339);
     if (parsedDate != null) {
-      currentDate.setTime(parsedDate.getTime());
+      this.currentDate.setTime(parsedDate.getTime());
     }
  else {
-      currentDate=null;
+      this.currentDate=null;
     }
   }
   if (uri.equalsIgnoreCase(ATOM_NAMESPACE)) {
     if (localName.equals("feed")) {
-      state=State.NONE;
+      this.state=State.NONE;
     }
  else     if (localName.equals("title")) {
-      if (state == State.FEED_TITLE) {
-        currentFeed.setTitle(currentText);
-        state=State.FEED;
+      if (this.state == State.FEED_TITLE) {
+        this.currentFeed.setTitle(this.currentText);
+        this.state=State.FEED;
       }
- else       if (state == State.FEED_ENTRY_TITLE) {
-        currentEntry.setTitle(currentText);
-        state=State.FEED_ENTRY;
+ else       if (this.state == State.FEED_ENTRY_TITLE) {
+        this.currentEntry.setTitle(this.currentText);
+        this.state=State.FEED_ENTRY;
       }
- else       if (state == State.FEED_ENTRY_SOURCE_TITLE) {
-        currentEntry.getSource().setTitle(currentText);
-        state=State.FEED_ENTRY_SOURCE;
+ else       if (this.state == State.FEED_ENTRY_SOURCE_TITLE) {
+        this.currentEntry.getSource().setTitle(this.currentText);
+        this.state=State.FEED_ENTRY_SOURCE;
       }
     }
  else     if (localName.equals("updated")) {
-      if (state == State.FEED_UPDATED) {
-        currentFeed.setUpdated(currentDate);
-        state=State.FEED;
+      if (this.state == State.FEED_UPDATED) {
+        this.currentFeed.setUpdated(this.currentDate);
+        this.state=State.FEED;
       }
- else       if (state == State.FEED_ENTRY_UPDATED) {
-        currentEntry.setUpdated(currentDate);
-        state=State.FEED_ENTRY;
+ else       if (this.state == State.FEED_ENTRY_UPDATED) {
+        this.currentEntry.setUpdated(this.currentDate);
+        this.state=State.FEED_ENTRY;
       }
- else       if (state == State.FEED_ENTRY_SOURCE_UPDATED) {
-        currentEntry.getSource().setUpdated(currentDate);
-        state=State.FEED_ENTRY_SOURCE;
+ else       if (this.state == State.FEED_ENTRY_SOURCE_UPDATED) {
+        this.currentEntry.getSource().setUpdated(this.currentDate);
+        this.state=State.FEED_ENTRY_SOURCE;
       }
     }
  else     if (localName.equals("author")) {
-      if (state == State.FEED_AUTHOR) {
-        currentFeed.getAuthors().add(currentPerson);
-        state=State.FEED;
+      if (this.state == State.FEED_AUTHOR) {
+        this.currentFeed.getAuthors().add(this.currentPerson);
+        this.state=State.FEED;
       }
- else       if (state == State.FEED_ENTRY_AUTHOR) {
-        currentEntry.getAuthors().add(currentPerson);
-        state=State.FEED_ENTRY;
+ else       if (this.state == State.FEED_ENTRY_AUTHOR) {
+        this.currentEntry.getAuthors().add(this.currentPerson);
+        this.state=State.FEED_ENTRY;
       }
- else       if (state == State.FEED_ENTRY_SOURCE_AUTHOR) {
-        currentEntry.getSource().getAuthors().add(currentPerson);
-        state=State.FEED_ENTRY_SOURCE;
+ else       if (this.state == State.FEED_ENTRY_SOURCE_AUTHOR) {
+        this.currentEntry.getSource().getAuthors().add(this.currentPerson);
+        this.state=State.FEED_ENTRY_SOURCE;
       }
     }
  else     if (localName.equals("name")) {
-      currentPerson.setName(contentBuffer.toString());
-      if (state == State.FEED_AUTHOR_NAME) {
-        state=State.FEED_AUTHOR;
+      this.currentPerson.setName(this.contentBuffer.toString());
+      if (this.state == State.FEED_AUTHOR_NAME) {
+        this.state=State.FEED_AUTHOR;
       }
- else       if (state == State.FEED_ENTRY_AUTHOR_NAME) {
-        state=State.FEED_ENTRY_AUTHOR;
+ else       if (this.state == State.FEED_ENTRY_AUTHOR_NAME) {
+        this.state=State.FEED_ENTRY_AUTHOR;
       }
- else       if (state == State.FEED_ENTRY_SOURCE_AUTHOR_NAME) {
-        state=State.FEED_ENTRY_SOURCE_AUTHOR;
+ else       if (this.state == State.FEED_ENTRY_SOURCE_AUTHOR_NAME) {
+        this.state=State.FEED_ENTRY_SOURCE_AUTHOR;
       }
     }
  else     if (localName.equals("id")) {
-      if (state == State.FEED_ID) {
-        currentFeed.setId(contentBuffer.toString());
-        state=State.FEED;
+      if (this.state == State.FEED_ID) {
+        this.currentFeed.setId(this.contentBuffer.toString());
+        this.state=State.FEED;
       }
- else       if (state == State.FEED_ENTRY_ID) {
-        currentEntry.setId(contentBuffer.toString());
-        state=State.FEED_ENTRY;
+ else       if (this.state == State.FEED_ENTRY_ID) {
+        this.currentEntry.setId(this.contentBuffer.toString());
+        this.state=State.FEED_ENTRY;
       }
- else       if (state == State.FEED_ENTRY_SOURCE_ID) {
-        currentEntry.getSource().setId(contentBuffer.toString());
-        state=State.FEED_ENTRY_SOURCE;
+ else       if (this.state == State.FEED_ENTRY_SOURCE_ID) {
+        this.currentEntry.getSource().setId(this.contentBuffer.toString());
+        this.state=State.FEED_ENTRY_SOURCE;
       }
     }
  else     if (localName.equals("link")) {
-      if (state == State.FEED_LINK) {
-        currentFeed.getLinks().add(currentLink);
-        state=State.FEED;
+      if (this.state == State.FEED_LINK) {
+        this.currentFeed.getLinks().add(this.currentLink);
+        this.state=State.FEED;
       }
- else       if (state == State.FEED_ENTRY_LINK) {
-        currentEntry.getLinks().add(currentLink);
-        state=State.FEED_ENTRY;
+ else       if (this.state == State.FEED_ENTRY_LINK) {
+        this.currentEntry.getLinks().add(this.currentLink);
+        this.state=State.FEED_ENTRY;
       }
- else       if (state == State.FEED_ENTRY_SOURCE_LINK) {
-        currentEntry.getSource().getLinks().add(currentLink);
-        state=State.FEED_ENTRY_SOURCE;
+ else       if (this.state == State.FEED_ENTRY_SOURCE_LINK) {
+        this.currentEntry.getSource().getLinks().add(this.currentLink);
+        this.state=State.FEED_ENTRY_SOURCE;
       }
     }
  else     if (localName.equalsIgnoreCase("entry")) {
-      if (state == State.FEED_ENTRY) {
-        currentFeed.getEntries().add(currentEntry);
-        state=State.FEED;
+      if (this.state == State.FEED_ENTRY) {
+        this.currentFeed.getEntries().add(this.currentEntry);
+        this.state=State.FEED;
       }
     }
  else     if (localName.equals("category")) {
-      if (state == State.FEED_CATEGORY) {
-        currentFeed.getCategories().add(currentCategory);
-        state=State.FEED;
+      if (this.state == State.FEED_CATEGORY) {
+        this.currentFeed.getCategories().add(this.currentCategory);
+        this.state=State.FEED;
       }
- else       if (state == State.FEED_ENTRY_CATEGORY) {
-        currentEntry.getCategories().add(currentCategory);
-        state=State.FEED_ENTRY;
+ else       if (this.state == State.FEED_ENTRY_CATEGORY) {
+        this.currentEntry.getCategories().add(this.currentCategory);
+        this.state=State.FEED_ENTRY;
       }
- else       if (state == State.FEED_ENTRY_SOURCE_CATEGORY) {
-        currentEntry.getSource().getCategories().add(currentCategory);
-        state=State.FEED_ENTRY_SOURCE;
+ else       if (this.state == State.FEED_ENTRY_SOURCE_CATEGORY) {
+        this.currentEntry.getSource().getCategories().add(this.currentCategory);
+        this.state=State.FEED_ENTRY_SOURCE;
       }
     }
  else     if (localName.equalsIgnoreCase("content")) {
-      if (state == State.FEED_ENTRY_CONTENT) {
-        if (currentEntry.getContent().isInline()) {
-          StringRepresentation sr=(StringRepresentation)currentEntry.getContent().getInlineContent();
-          sr.setText(contentBuffer.toString());
+      if (this.state == State.FEED_ENTRY_CONTENT) {
+        if (this.currentEntry.getContent().isInline()) {
+          final StringRepresentation sr=(StringRepresentation)this.currentEntry.getContent().getInlineContent();
+          sr.setText(this.contentBuffer.toString());
         }
-        state=State.FEED_ENTRY;
+        this.state=State.FEED_ENTRY;
       }
     }
   }
-  currentText=null;
-  currentDate=null;
+  this.currentText=null;
+  this.currentDate=null;
 }

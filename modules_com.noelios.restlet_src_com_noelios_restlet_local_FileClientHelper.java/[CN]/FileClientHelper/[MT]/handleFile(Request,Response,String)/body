@@ -1,24 +1,24 @@
 {
-  String decodedPath=LocalReference.localizePath(Reference.decode(path));
+  final String decodedPath=LocalReference.localizePath(Reference.decode(path));
   File file=new File(decodedPath);
-  MetadataService metadataService=getMetadataService(request);
+  final MetadataService metadataService=getMetadataService(request);
   if (request.getMethod().equals(Method.GET) || request.getMethod().equals(Method.HEAD)) {
     Representation output=null;
     boolean found=false;
-    Iterator<Preference<MediaType>> iterator=request.getClientInfo().getAcceptedMediaTypes().iterator();
+    final Iterator<Preference<MediaType>> iterator=request.getClientInfo().getAcceptedMediaTypes().iterator();
     while (iterator.hasNext() && !found) {
-      Preference<MediaType> pref=iterator.next();
+      final Preference<MediaType> pref=iterator.next();
       found=pref.getMetadata().equals(MediaType.TEXT_URI_LIST);
     }
     if (found) {
-      String baseName=getBaseName(file,metadataService);
+      final String baseName=getBaseName(file,metadataService);
       if (file.getParentFile() != null) {
-        File[] files=file.getParentFile().listFiles();
+        final File[] files=file.getParentFile().listFiles();
         if (files != null) {
-          ReferenceList rl=new ReferenceList(files.length);
-          String encodedParentDirectoryURI=path.substring(0,path.lastIndexOf("/"));
-          String encodedFileName=path.substring(path.lastIndexOf("/") + 1);
-          for (          File entry : files) {
+          final ReferenceList rl=new ReferenceList(files.length);
+          final String encodedParentDirectoryURI=path.substring(0,path.lastIndexOf("/"));
+          final String encodedFileName=path.substring(path.lastIndexOf("/") + 1);
+          for (          final File entry : files) {
             if (baseName.equals(getBaseName(entry,metadataService))) {
               rl.add(LocalReference.createFileReference(encodedParentDirectoryURI + "/" + getReencodedVariantFileName(encodedFileName,entry.getName())));
             }
@@ -30,13 +30,13 @@
  else {
       if (file.exists()) {
         if (file.isDirectory()) {
-          File[] files=file.listFiles();
-          ReferenceList rl=new ReferenceList(files.length);
+          final File[] files=file.listFiles();
+          final ReferenceList rl=new ReferenceList(files.length);
           String directoryUri=request.getResourceRef().toString();
           if (!directoryUri.endsWith("/")) {
             directoryUri+="/";
           }
-          for (          File entry : files) {
+          for (          final File entry : files) {
             rl.add(directoryUri + Reference.encode(entry.getName()));
           }
           output=rl.getTextRepresentation();
@@ -47,14 +47,14 @@
         }
       }
  else {
-        String baseName=getBaseName(file,metadataService);
-        Set<String> extensions=getExtensions(file,metadataService);
-        File[] files=file.getParentFile().listFiles();
+        final String baseName=getBaseName(file,metadataService);
+        final Set<String> extensions=getExtensions(file,metadataService);
+        final File[] files=file.getParentFile().listFiles();
         File uniqueVariant=null;
         if (files != null) {
-          for (          File entry : files) {
+          for (          final File entry : files) {
             if (baseName.equals(getBaseName(entry,metadataService))) {
-              Set<String> entryExtensions=getExtensions(entry,metadataService);
+              final Set<String> entryExtensions=getExtensions(entry,metadataService);
               if (entryExtensions.containsAll(extensions) && extensions.containsAll(entryExtensions)) {
                 uniqueVariant=entry;
                 break;
@@ -102,15 +102,15 @@
         }
       }
       if (!isDirectory) {
-        String baseName=getBaseName(file,metadataService);
-        Set<String> extensions=getExtensions(file,metadataService);
-        File[] files=file.getParentFile().listFiles();
+        final String baseName=getBaseName(file,metadataService);
+        final Set<String> extensions=getExtensions(file,metadataService);
+        final File[] files=file.getParentFile().listFiles();
         File uniqueVariant=null;
-        List<File> variantsList=new ArrayList<File>();
+        final List<File> variantsList=new ArrayList<File>();
         if (files != null) {
-          for (          File entry : files) {
+          for (          final File entry : files) {
             if (baseName.equals(getBaseName(entry,metadataService))) {
-              Set<String> entryExtensions=getExtensions(entry,metadataService);
+              final Set<String> entryExtensions=getExtensions(entry,metadataService);
               if (entryExtensions.containsAll(extensions)) {
                 variantsList.add(entry);
                 if (extensions.containsAll(entryExtensions)) {
@@ -138,20 +138,20 @@
               request.getEntity().setMediaType(metadataService.getDefaultMediaType());
             }
             if (request.getEntity().getEncodings().isEmpty()) {
-              if (metadataService.getDefaultEncoding() != null && !metadataService.getDefaultEncoding().equals(Encoding.IDENTITY)) {
+              if ((metadataService.getDefaultEncoding() != null) && !metadataService.getDefaultEncoding().equals(Encoding.IDENTITY)) {
                 request.getEntity().getEncodings().add(metadataService.getDefaultEncoding());
               }
             }
-            StringBuilder fileName=new StringBuilder(baseName);
+            final StringBuilder fileName=new StringBuilder(baseName);
             if (metadataService.getExtension(request.getEntity().getMediaType()) != null) {
               fileName.append("." + metadataService.getExtension(request.getEntity().getMediaType()));
             }
-            for (            Language language : request.getEntity().getLanguages()) {
+            for (            final Language language : request.getEntity().getLanguages()) {
               if (metadataService.getExtension(language) != null) {
                 fileName.append("." + metadataService.getExtension(language));
               }
             }
-            for (            Encoding encoding : request.getEntity().getEncodings()) {
+            for (            final Encoding encoding : request.getEntity().getEncodings()) {
               if (metadataService.getExtension(encoding) != null) {
                 fileName.append("." + metadataService.getExtension(encoding));
               }
@@ -173,15 +173,17 @@
                 ByteUtils.write(request.getEntity().getStream(),fos);
               }
             }
- catch (            IOException ioe) {
+ catch (            final IOException ioe) {
               getLogger().log(Level.WARNING,"Unable to create the temporary file",ioe);
               response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to create a temporary file"));
             }
  finally {
               try {
-                if (fos != null)                 fos.close();
+                if (fos != null) {
+                  fos.close();
+                }
               }
- catch (              IOException ioe) {
+ catch (              final IOException ioe) {
                 getLogger().log(Level.WARNING,"Unable to close the temporary file",ioe);
                 response.setStatus(Status.SERVER_ERROR_INTERNAL,ioe);
               }
@@ -198,19 +200,21 @@
                 renameSuccessfull=true;
               }
  else {
-                if (tmp != null && tmp.exists()) {
+                if ((tmp != null) && tmp.exists()) {
                   try {
-                    BufferedReader br=new BufferedReader(new FileReader(tmp));
-                    BufferedWriter wr=new BufferedWriter(new FileWriter(file));
+                    final BufferedReader br=new BufferedReader(new FileReader(tmp));
+                    final BufferedWriter wr=new BufferedWriter(new FileWriter(file));
                     String s;
-                    while ((s=br.readLine()) != null)                     wr.append(s);
+                    while ((s=br.readLine()) != null) {
+                      wr.append(s);
+                    }
                     br.close();
                     wr.flush();
                     wr.close();
                     renameSuccessfull=true;
                     tmp.delete();
                   }
- catch (                  Exception e) {
+ catch (                  final Exception e) {
                     renameSuccessfull=false;
                   }
                 }
@@ -226,7 +230,7 @@
             }
           }
  else {
-            File parent=file.getParentFile();
+            final File parent=file.getParentFile();
             if ((parent != null) && !parent.exists()) {
               if (!parent.mkdirs()) {
                 getLogger().log(Level.WARNING,"Unable to create the parent directory");
@@ -250,19 +254,21 @@
                 response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to create the new file"));
               }
             }
- catch (            FileNotFoundException fnfe) {
+ catch (            final FileNotFoundException fnfe) {
               getLogger().log(Level.WARNING,"Unable to create the new file",fnfe);
               response.setStatus(Status.SERVER_ERROR_INTERNAL,fnfe);
             }
-catch (            IOException ioe) {
+catch (            final IOException ioe) {
               getLogger().log(Level.WARNING,"Unable to create the new file",ioe);
               response.setStatus(Status.SERVER_ERROR_INTERNAL,ioe);
             }
  finally {
               try {
-                if (fos != null)                 fos.close();
+                if (fos != null) {
+                  fos.close();
+                }
               }
- catch (              IOException ioe) {
+ catch (              final IOException ioe) {
                 getLogger().log(Level.WARNING,"Unable to close the temporary file",ioe);
                 response.setStatus(Status.SERVER_ERROR_INTERNAL,ioe);
               }

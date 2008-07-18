@@ -1,12 +1,12 @@
 {
   boolean added=false;
-  Type[] gis=excMapper.getClass().getGenericInterfaces();
-  for (  Type gi : gis) {
+  final Type[] gis=excMapper.getClass().getGenericInterfaces();
+  for (  final Type gi : gis) {
     if (gi instanceof ParameterizedType) {
-      ParameterizedType ifpt=(ParameterizedType)gi;
+      final ParameterizedType ifpt=(ParameterizedType)gi;
       if (ifpt.getRawType().equals(ExceptionMapper.class)) {
-        @SuppressWarnings("unchecked") Class<? extends Throwable> excClass=(Class)ifpt.getActualTypeArguments()[0];
-        excMappers.put(excClass,excMapper);
+        @SuppressWarnings("unchecked") final Class<? extends Throwable> excClass=(Class)ifpt.getActualTypeArguments()[0];
+        this.excMappers.put(excClass,excMapper);
         added=true;
       }
     }

@@ -1,17 +1,17 @@
 {
-  Form form=new Form(entity);
+  final Form form=new Form(entity);
   Mail mail=new Mail();
   mail.setStatus(Mail.STATUS_DRAFT);
-  Contact sender=new Contact();
+  final Contact sender=new Contact();
   sender.setName(getCurrentUser().getFirstName() + " " + getCurrentUser().getLastName());
-  sender.setMailAddress(getRequest().getRootRef().getIdentifier() + "/mailboxes/" + mailbox.getId());
+  sender.setMailAddress(getRequest().getRootRef().getIdentifier() + "/mailboxes/" + this.mailbox.getId());
   mail.setSender(sender);
   mail.setSubject(form.getFirstValue("subject"));
   mail.setMessage(form.getFirstValue("message"));
   if (form.getFirstValue("recipients") != null) {
-    List<Contact> recipients=new ArrayList<Contact>();
-    for (    Parameter parameter : form.subList("recipients")) {
-      for (      Contact contact : mailbox.getContacts()) {
+    final List<Contact> recipients=new ArrayList<Contact>();
+    for (    final Parameter parameter : form.subList("recipients")) {
+      for (      final Contact contact : this.mailbox.getContacts()) {
         if (contact.getId().equals(parameter.getValue())) {
           recipients.add(contact);
         }
@@ -28,6 +28,6 @@
  else {
     mail.setTags(null);
   }
-  mail=getObjectsFacade().createMail(mailbox,mail);
+  mail=getObjectsFacade().createMail(this.mailbox,mail);
   getResponse().redirectSeeOther(getChildReference(getRequest().getResourceRef(),mail.getId()));
 }

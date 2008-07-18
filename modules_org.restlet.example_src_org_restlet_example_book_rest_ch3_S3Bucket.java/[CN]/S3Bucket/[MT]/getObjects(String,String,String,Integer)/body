@@ -1,6 +1,6 @@
 {
-  List<S3Object> result=new ArrayList<S3Object>();
-  StringBuilder uri=new StringBuilder().append(getUri());
+  final List<S3Object> result=new ArrayList<S3Object>();
+  final StringBuilder uri=new StringBuilder().append(getUri());
   String suffix="?";
   if (prefix != null) {
     uri.append(suffix).append("prefix=").append(prefix);
@@ -18,10 +18,10 @@
     uri.append(suffix).append("maxKeys=").append(maxKeys);
     suffix="&";
   }
-  Response response=authorizedGet(uri.toString());
-  DomRepresentation document=response.getEntityAsDom();
+  final Response response=authorizedGet(uri.toString());
+  final DomRepresentation document=response.getEntityAsDom();
   this.truncated=document.getNodes("//IsTruncated").get(0).getTextContent().equals("true");
-  for (  Node node : document.getNodes("//Contents/Key")) {
+  for (  final Node node : document.getNodes("//Contents/Key")) {
     result.add(new S3Object(this,node.getTextContent()));
   }
   return result;

@@ -2,10 +2,10 @@
   final SslContextFactory sslContextFactory=getSslContextFactory();
   SSLContext sslContext;
   if (sslContextFactory == null) {
-    KeyStore keyStore=KeyStore.getInstance(getKeystoreType());
-    FileInputStream fis=new FileInputStream(getKeystorePath());
+    final KeyStore keyStore=KeyStore.getInstance(getKeystoreType());
+    final FileInputStream fis=new FileInputStream(getKeystorePath());
     keyStore.load(fis,getKeystorePassword().toCharArray());
-    KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(getCertAlgorithm());
+    final KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(getCertAlgorithm());
     keyManagerFactory.init(keyStore,getKeyPassword().toCharArray());
     sslContext=SSLContext.getInstance(getSslProtocol());
     sslContext.init(keyManagerFactory.getKeyManagers(),null,null);
@@ -13,7 +13,7 @@
  else {
     sslContext=sslContextFactory.createSslContext();
   }
-  TCPSelectorHandler selectorHandler=new TCPSelectorHandler();
+  final TCPSelectorHandler selectorHandler=new TCPSelectorHandler();
   final SSLReadFilter readFilter=new SSLReadFilter();
   readFilter.setSSLContext(sslContext);
   if (isNeedClientAuthentication()) {
@@ -30,7 +30,7 @@
   controller.setSelectorHandler(selectorHandler);
   controller.setProtocolChainInstanceHandler(new DefaultProtocolChainInstanceHandler(){
     @Override public ProtocolChain poll(){
-      ProtocolChain protocolChain=protocolChains.poll();
+      ProtocolChain protocolChain=this.protocolChains.poll();
       if (protocolChain == null) {
         protocolChain=new DefaultProtocolChain();
         protocolChain.addFilter(readFilter);

@@ -2,24 +2,28 @@
 synchronized (selectors) {
     Selector selector=null;
     try {
-      if (selectors.size() != 0)       selector=selectors.pop();
+      if (selectors.size() != 0) {
+        selector=selectors.pop();
+      }
     }
- catch (    EmptyStackException ex) {
+ catch (    final EmptyStackException ex) {
     }
     int attempts=0;
     try {
-      while (selector == null && attempts < 2) {
+      while ((selector == null) && (attempts < 2)) {
         selectors.wait(timeout);
         try {
-          if (selectors.size() != 0)           selector=selectors.pop();
+          if (selectors.size() != 0) {
+            selector=selectors.pop();
+          }
         }
- catch (        EmptyStackException ex) {
+ catch (        final EmptyStackException ex) {
           break;
         }
         attempts++;
       }
     }
- catch (    InterruptedException ex) {
+ catch (    final InterruptedException ex) {
     }
     return selector;
   }

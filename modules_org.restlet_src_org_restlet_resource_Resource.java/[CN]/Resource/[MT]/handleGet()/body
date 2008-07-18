@@ -4,17 +4,17 @@
   }
  else {
     Representation selectedRepresentation=null;
-    List<Variant> variants=getVariants();
+    final List<Variant> variants=getVariants();
     if ((variants == null) || (variants.isEmpty())) {
       getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND);
       getLogger().warning("A resource should normally have at least one variant added by calling getVariants().add() in the constructor. Check your resource \"" + getRequest().getResourceRef() + "\".");
     }
  else     if (isNegotiateContent()) {
-      Variant preferredVariant=getPreferredVariant();
+      final Variant preferredVariant=getPreferredVariant();
       if (preferredVariant == null) {
         getResponse().setStatus(Status.CLIENT_ERROR_NOT_ACCEPTABLE);
-        ReferenceList refs=new ReferenceList(variants.size());
-        for (        Variant variant : variants) {
+        final ReferenceList refs=new ReferenceList(variants.size());
+        for (        final Variant variant : variants) {
           if (variant.getIdentifier() != null) {
             refs.add(variant.getIdentifier());
           }
@@ -37,8 +37,8 @@
         selectedRepresentation=getResponse().getEntity();
       }
  else {
-        ReferenceList variantRefs=new ReferenceList();
-        for (        Variant variant : variants) {
+        final ReferenceList variantRefs=new ReferenceList();
+        for (        final Variant variant : variants) {
           if (variant.getIdentifier() != null) {
             variantRefs.add(variant.getIdentifier());
           }
@@ -64,7 +64,7 @@
     }
  else {
       if (getRequest().getConditions().hasSome()) {
-        Status status=getRequest().getConditions().getStatus(getRequest().getMethod(),selectedRepresentation);
+        final Status status=getRequest().getConditions().getStatus(getRequest().getMethod(),selectedRepresentation);
         if (status != null) {
           getResponse().setStatus(status);
           getResponse().setEntity(null);

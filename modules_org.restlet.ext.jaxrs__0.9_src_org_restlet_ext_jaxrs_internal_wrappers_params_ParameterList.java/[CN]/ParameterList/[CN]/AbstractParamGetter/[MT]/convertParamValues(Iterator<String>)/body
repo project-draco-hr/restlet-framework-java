@@ -1,11 +1,17 @@
 {
-  Collection<Object> coll=createColl();
+  final Collection<Object> coll=createColl();
   while (paramValueIter.hasNext()) {
-    String queryParamValue=paramValueIter.next();
-    Object convertedValue=convertParamValue(queryParamValue,null);
-    if (convertedValue != null)     coll.add(convertedValue);
+    final String queryParamValue=paramValueIter.next();
+    final Object convertedValue=convertParamValue(queryParamValue,null);
+    if (convertedValue != null) {
+      coll.add(convertedValue);
+    }
   }
-  if (coll.isEmpty())   coll.add(convertParamValue(null));
-  if (isArray)   return Util.toArray(coll,this.convertTo);
+  if (coll.isEmpty()) {
+    coll.add(convertParamValue(null));
+  }
+  if (this.isArray) {
+    return Util.toArray(coll,this.convertTo);
+  }
   return coll;
 }

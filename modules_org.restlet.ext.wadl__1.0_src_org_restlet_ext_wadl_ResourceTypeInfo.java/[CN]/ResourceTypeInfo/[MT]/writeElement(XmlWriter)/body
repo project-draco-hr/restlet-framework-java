@@ -1,6 +1,6 @@
 {
-  AttributesImpl attributes=new AttributesImpl();
-  if (getIdentifier() != null && !getIdentifier().equals("")) {
+  final AttributesImpl attributes=new AttributesImpl();
+  if ((getIdentifier() != null) && !getIdentifier().equals("")) {
     attributes.addAttribute("","id",null,"xs:ID",getIdentifier());
   }
   if (getDocumentations().isEmpty() && getMethods().isEmpty() && getParameters().isEmpty()) {
@@ -8,13 +8,13 @@
   }
  else {
     writer.startElement(APP_NAMESPACE,"resource_type",null,attributes);
-    for (    DocumentationInfo documentationInfo : getDocumentations()) {
+    for (    final DocumentationInfo documentationInfo : getDocumentations()) {
       documentationInfo.writeElement(writer);
     }
-    for (    MethodInfo methodInfo : getMethods()) {
+    for (    final MethodInfo methodInfo : getMethods()) {
       methodInfo.writeElement(writer);
     }
-    for (    ParameterInfo parameterInfo : getParameters()) {
+    for (    final ParameterInfo parameterInfo : getParameters()) {
       parameterInfo.writeElement(writer);
     }
     writer.endElement(APP_NAMESPACE,"resource_type");

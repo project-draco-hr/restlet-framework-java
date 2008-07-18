@@ -1,15 +1,15 @@
 {
   Representation representation=null;
-  MediaType mediaType=variant.getMediaType();
+  final MediaType mediaType=variant.getMediaType();
   if (MediaType.TEXT_HTML.equals(mediaType)) {
-    Map<String,Object> dataModel=new TreeMap<String,Object>();
+    final Map<String,Object> dataModel=new TreeMap<String,Object>();
     dataModel.put("currentUser",getCurrentUser());
-    dataModel.put("mailbox",mailbox);
-    dataModel.put("feed",feed);
-    dataModel.put("mails",mails);
+    dataModel.put("mailbox",this.mailbox);
+    dataModel.put("feed",this.feed);
+    dataModel.put("mails",this.mails);
     dataModel.put("resourceRef",getRequest().getResourceRef());
     dataModel.put("rootRef",getRequest().getRootRef());
-    StringBuilder builder=new StringBuilder();
+    final StringBuilder builder=new StringBuilder();
     builder.append("<link ");
     builder.append("rel=\"alternate\" ");
     builder.append("type=\"application/atom+xml\" ");
@@ -22,27 +22,27 @@
     representation=getHTMLTemplateRepresentation("feed.html",dataModel);
   }
  else   if (MediaType.APPLICATION_ATOM_XML.equals(mediaType)) {
-    org.restlet.ext.atom.Feed atomFeed=new org.restlet.ext.atom.Feed();
-    Person currentAuthor=new Person();
-    currentAuthor.setName(mailbox.getSenderName());
-    currentAuthor.setUri(new Reference(getRequest().getRootRef().toString() + "/mailboxes/" + Reference.encode(mailbox.getId(),CharacterSet.US_ASCII)));
+    final org.restlet.ext.atom.Feed atomFeed=new org.restlet.ext.atom.Feed();
+    final Person currentAuthor=new Person();
+    currentAuthor.setName(this.mailbox.getSenderName());
+    currentAuthor.setUri(new Reference(getRequest().getRootRef().toString() + "/mailboxes/" + Reference.encode(this.mailbox.getId(),CharacterSet.US_ASCII)));
     atomFeed.getAuthors().add(currentAuthor);
-    StringBuilder titleBuilder=new StringBuilder("Feed");
-    for (    String tag : feed.getTags()) {
-      Category category=new Category();
+    final StringBuilder titleBuilder=new StringBuilder("Feed");
+    for (    final String tag : this.feed.getTags()) {
+      final Category category=new Category();
       category.setLabel(tag);
       category.setTerm(tag);
       atomFeed.getCategories().add(category);
       titleBuilder.append(" ").append(tag);
     }
-    Generator generator=new Generator();
+    final Generator generator=new Generator();
     generator.setName("Atom extension for Restlet.");
     generator.setUri(new Reference("http://restlet.org"));
     generator.setVersion(Engine.VERSION);
     atomFeed.setGenerator(generator);
-    atomFeed.setId(getRequest().getRootRef().toString() + "/mailboxes/" + mailbox.getId()+ "/feeds/"+ feed.getId());
+    atomFeed.setId(getRequest().getRootRef().toString() + "/mailboxes/" + this.mailbox.getId()+ "/feeds/"+ this.feed.getId());
     Link link=new Link();
-    link.setHref(new Reference(getRequest().getRootRef().toString() + "/mailboxes/" + mailbox.getId()+ "/feeds/"+ feed.getId()));
+    link.setHref(new Reference(getRequest().getRootRef().toString() + "/mailboxes/" + this.mailbox.getId()+ "/feeds/"+ this.feed.getId()));
     link.setRel(Relation.ALTERNATE);
     link.setTitle(titleBuilder.toString());
     link.setType(MediaType.TEXT_HTML);
@@ -55,38 +55,38 @@
     atomFeed.getLinks().add(link);
     atomFeed.setTitle(new Text(MediaType.TEXT_PLAIN,titleBuilder.toString()));
     atomFeed.setUpdated(new Date());
-    for (    Mail mail : mails) {
-      Entry entry=new Entry();
-      Person author=new Person();
+    for (    Mail mail : this.mails) {
+      final Entry entry=new Entry();
+      final Person author=new Person();
       author.setName(mail.getSender().getName());
       author.setUri(new Reference(mail.getSender().getMailAddress()));
       entry.getAuthors().add(author);
-      StringBuilder entryTitleBuilder=new StringBuilder("Feed");
-      for (      String tag : mail.getTags()) {
-        Category category=new Category();
+      final StringBuilder entryTitleBuilder=new StringBuilder("Feed");
+      for (      final String tag : mail.getTags()) {
+        final Category category=new Category();
         category.setLabel(tag);
         category.setTerm(tag);
         entry.getCategories().add(category);
         entryTitleBuilder.append(" ").append(tag);
       }
-      Content content=new Content();
+      final Content content=new Content();
       content.setInlineContent(new StringRepresentation(mail.getMessage(),MediaType.TEXT_PLAIN));
       entry.setContent(content);
       for (      Contact recipient : mail.getRecipients()) {
-        Person contributor=new Person();
+        final Person contributor=new Person();
         contributor.setName(recipient.getName());
         contributor.setUri(new Reference(recipient.getMailAddress()));
         entry.getContributors().add(contributor);
       }
-      entry.setId(getRequest().getRootRef().toString() + "/mailboxes/" + mailbox.getId()+ "/mails"+ mail.getId());
+      entry.setId(getRequest().getRootRef().toString() + "/mailboxes/" + this.mailbox.getId()+ "/mails"+ mail.getId());
       Link entryLink=new Link();
-      entryLink.setHref(new Reference(getRequest().getRootRef().toString() + "/mailboxes/" + mailbox.getId()+ "/mails"+ mail.getId()));
+      entryLink.setHref(new Reference(getRequest().getRootRef().toString() + "/mailboxes/" + this.mailbox.getId()+ "/mails"+ mail.getId()));
       entryLink.setRel(Relation.ALTERNATE);
       entryLink.setTitle(entryTitleBuilder.toString());
       entryLink.setType(MediaType.TEXT_HTML);
       entry.getLinks().add(entryLink);
       entryLink=new Link();
-      entryLink.setHref(new Reference(getRequest().getRootRef().toString() + "/mailboxes/" + mailbox.getId()+ "/mails"+ mail.getId()));
+      entryLink.setHref(new Reference(getRequest().getRootRef().toString() + "/mailboxes/" + this.mailbox.getId()+ "/mails"+ mail.getId()));
       entryLink.setRel(Relation.SELF);
       entryLink.setTitle(entryTitleBuilder.toString());
       entryLink.setType(mediaType);

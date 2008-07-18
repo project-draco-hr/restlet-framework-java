@@ -1,15 +1,15 @@
 {
-  AttributesImpl attributes=new AttributesImpl();
-  if (getIdentifier() != null && !getIdentifier().equals("")) {
+  final AttributesImpl attributes=new AttributesImpl();
+  if ((getIdentifier() != null) && !getIdentifier().equals("")) {
     attributes.addAttribute("","id",null,"xs:ID",getIdentifier());
   }
   if (getMediaType() != null) {
     attributes.addAttribute("","mediaType",null,"xs:string",getMediaType().toString());
   }
-  if (getProfiles() != null && !getProfiles().isEmpty()) {
-    StringBuilder builder=new StringBuilder();
-    for (Iterator<Reference> iterator=getProfiles().iterator(); iterator.hasNext(); ) {
-      Reference reference=iterator.next();
+  if ((getProfiles() != null) && !getProfiles().isEmpty()) {
+    final StringBuilder builder=new StringBuilder();
+    for (final Iterator<Reference> iterator=getProfiles().iterator(); iterator.hasNext(); ) {
+      final Reference reference=iterator.next();
       builder.append(reference.toString());
       if (iterator.hasNext()) {
         builder.append(" ");
@@ -17,10 +17,10 @@
     }
     attributes.addAttribute("","profile",null,"xs:string",builder.toString());
   }
-  if (getStatuses() != null && !getStatuses().isEmpty()) {
-    StringBuilder builder=new StringBuilder();
-    for (Iterator<Status> iterator=getStatuses().iterator(); iterator.hasNext(); ) {
-      Status status=iterator.next();
+  if ((getStatuses() != null) && !getStatuses().isEmpty()) {
+    final StringBuilder builder=new StringBuilder();
+    for (final Iterator<Status> iterator=getStatuses().iterator(); iterator.hasNext(); ) {
+      final Status status=iterator.next();
       builder.append(status.getCode());
       if (iterator.hasNext()) {
         builder.append(" ");
@@ -28,7 +28,7 @@
     }
     attributes.addAttribute("","status",null,"xs:string",builder.toString());
   }
-  if (getXmlElement() != null && !getXmlElement().equals("")) {
+  if ((getXmlElement() != null) && !getXmlElement().equals("")) {
     attributes.addAttribute("","element",null,"xs:QName",getXmlElement());
   }
   if (getDocumentations().isEmpty() && getParameters().isEmpty()) {
@@ -36,10 +36,10 @@
   }
  else {
     writer.startElement(APP_NAMESPACE,"fault",null,attributes);
-    for (    DocumentationInfo documentationInfo : getDocumentations()) {
+    for (    final DocumentationInfo documentationInfo : getDocumentations()) {
       documentationInfo.writeElement(writer);
     }
-    for (    ParameterInfo parameterInfo : getParameters()) {
+    for (    final ParameterInfo parameterInfo : getParameters()) {
       parameterInfo.writeElement(writer);
     }
     writer.endElement(APP_NAMESPACE,"fault");

@@ -1,17 +1,17 @@
 {
-  MetadataService metadataService=this.getMetadataService();
-  Map<String,MediaType> mediaTypeMapping=appConfig.getMediaTypeMappings();
+  final MetadataService metadataService=getMetadataService();
+  final Map<String,MediaType> mediaTypeMapping=appConfig.getMediaTypeMappings();
   if (mediaTypeMapping != null) {
-    for (    Map.Entry<String,MediaType> e : mediaTypeMapping.entrySet()) {
+    for (    final Map.Entry<String,MediaType> e : mediaTypeMapping.entrySet()) {
       org.restlet.data.MediaType restletMediaType;
       restletMediaType=Converter.toRestletMediaType(e.getValue());
       metadataService.addExtension(e.getKey(),restletMediaType);
     }
   }
-  Map<String,String> languageMapping=appConfig.getLanguageMappings();
+  final Map<String,String> languageMapping=appConfig.getLanguageMappings();
   if (mediaTypeMapping != null) {
-    for (    Map.Entry<String,String> e : languageMapping.entrySet()) {
-      Language language=Language.valueOf(e.getValue());
+    for (    final Map.Entry<String,String> e : languageMapping.entrySet()) {
+      final Language language=Language.valueOf(e.getValue());
       metadataService.addExtension(e.getKey(),language);
     }
   }

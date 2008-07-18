@@ -1,11 +1,11 @@
 {
-  for (  VirtualHost host : getComponent().getHosts()) {
+  for (  final VirtualHost host : getComponent().getHosts()) {
     getRoutes().add(new HostRoute(this,host));
   }
   if (getComponent().getDefaultHost() != null) {
     getRoutes().add(new HostRoute(this,getComponent().getDefaultHost()));
   }
-  Restlet noHostMatched=new Restlet(getComponent().getContext()){
+  final Restlet noHostMatched=new Restlet(getComponent().getContext()){
     @Override public void handle(    Request request,    Response response){
       response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,"No virtual host could handle the request");
     }

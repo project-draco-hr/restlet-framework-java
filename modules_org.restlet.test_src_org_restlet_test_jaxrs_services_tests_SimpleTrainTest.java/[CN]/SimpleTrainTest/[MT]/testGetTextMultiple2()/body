@@ -1,9 +1,11 @@
 {
-  if (ONLY_TEXT_ALL)   return;
-  Response response=accessServer(Method.GET,SimpleTrain.class,TestUtils.createList(new Object[]{PREF_TEXTPLAIN_QUAL05,MediaType.TEXT_HTML}));
+  if (ONLY_TEXT_ALL) {
+    return;
+  }
+  final Response response=accessServer(Method.GET,SimpleTrain.class,TestUtils.createList(new Object[]{PREF_TEXTPLAIN_QUAL05,MediaType.TEXT_HTML}));
   sysOutEntityIfError(response);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
-  Representation representation=response.getEntity();
+  final Representation representation=response.getEntity();
   assertEqualMediaType(MediaType.TEXT_HTML,representation.getMediaType());
   assertEquals(SimpleTrain.RERP_HTML_TEXT,representation.getText());
 }

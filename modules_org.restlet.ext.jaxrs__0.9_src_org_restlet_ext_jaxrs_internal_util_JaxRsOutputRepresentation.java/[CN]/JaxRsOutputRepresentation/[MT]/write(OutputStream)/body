@@ -2,21 +2,21 @@
   try {
     javax.ws.rs.core.MediaType jaxRsMediaType;
     jaxRsMediaType=Converter.toJaxRsMediaType(getMediaType(),null);
-    this.mbw.writeTo(object,object.getClass(),genericType,annotations,jaxRsMediaType,httpHeaders,outputStream);
+    this.mbw.writeTo(this.object,this.object.getClass(),this.genericType,this.annotations,jaxRsMediaType,this.httpHeaders,outputStream);
   }
- catch (  WebApplicationException e) {
-    String msg="The Restlet extension for JAX-RS do not support the throwing of WebApplicationException in a MessageBodyWriter.";
+ catch (  final WebApplicationException e) {
+    final String msg="The Restlet extension for JAX-RS do not support the throwing of WebApplicationException in a MessageBodyWriter.";
     LOGGER.config(msg);
     outputStream.close();
     throw e;
   }
-catch (  UnsupportedOperationException e) {
+catch (  final UnsupportedOperationException e) {
     LOGGER.log(Level.CONFIG,"operation not supported",e);
     outputStream.close();
     throw e;
   }
-catch (  RuntimeException e) {
-    String msg=e.getClass().getName() + " while running MessageOutputWriter:";
+catch (  final RuntimeException e) {
+    final String msg=e.getClass().getName() + " while running MessageOutputWriter:";
     LOGGER.log(Level.CONFIG,msg,e);
     outputStream.close();
     throw e;

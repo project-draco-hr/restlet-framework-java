@@ -1,13 +1,15 @@
 {
-  if (values == null)   throw new IllegalArgumentException("The values must not be null");
+  if (values == null) {
+    throw new IllegalArgumentException("The values must not be null");
+  }
   CharSequence ncs;
-  ncs=EncodeOrCheck.nameOrValue(name,encode,"query parameter name");
-  List<String> valuesStr=new ArrayList<String>();
-  for (  Object value : values) {
-    String vcs=EncodeOrCheck.nameOrValue(value,encode,"query parameter value");
+  ncs=EncodeOrCheck.nameOrValue(name,this.encode,"query parameter name");
+  final List<String> valuesStr=new ArrayList<String>();
+  for (  final Object value : values) {
+    final String vcs=EncodeOrCheck.nameOrValue(value,this.encode,"query parameter value");
     valuesStr.add(vcs);
   }
-  Iterator<String> valueIter=valuesStr.iterator();
+  final Iterator<String> valueIter=valuesStr.iterator();
   StringBuilder query;
   if (this.query == null) {
     query=new StringBuilder();

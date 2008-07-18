@@ -1,13 +1,15 @@
 {
-  if (mediaTypes == null || mediaTypes.isEmpty())   return;
-  Collection<Preference<MediaType>> mediaTypePrefs=new ArrayList<Preference<MediaType>>(mediaTypes.size());
-  for (  Object mediaType : mediaTypes) {
+  if ((mediaTypes == null) || mediaTypes.isEmpty()) {
+    return;
+  }
+  final Collection<Preference<MediaType>> mediaTypePrefs=new ArrayList<Preference<MediaType>>(mediaTypes.size());
+  for (  final Object mediaType : mediaTypes) {
     if (mediaType instanceof MediaType) {
       mediaTypePrefs.add(new Preference<MediaType>((MediaType)mediaType));
       continue;
     }
     if (mediaType instanceof Preference) {
-      Preference<Metadata> preference=(Preference)mediaType;
+      final Preference<Metadata> preference=(Preference)mediaType;
       if (preference.getMetadata() instanceof MediaType) {
         mediaTypePrefs.add((Preference)preference);
         continue;

@@ -1,9 +1,9 @@
 {
   super(context,request,response);
-  String mailboxId=Reference.decode((String)request.getAttributes().get("mailboxId"),CharacterSet.ISO_8859_1);
-  mailbox=getObjectsFacade().getMailboxById(mailboxId);
+  final String mailboxId=Reference.decode((String)request.getAttributes().get("mailboxId"),CharacterSet.ISO_8859_1);
+  this.mailbox=getObjectsFacade().getMailboxById(mailboxId);
   System.out.println(Reference.encode(mailboxId));
-  if (mailbox != null) {
+  if (this.mailbox != null) {
     getVariants().add(new Variant(MediaType.TEXT_HTML));
   }
   setModifiable(true);

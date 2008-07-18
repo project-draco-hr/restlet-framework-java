@@ -1,35 +1,35 @@
 {
   try {
-    testDir=new File(System.getProperty("java.io.tmpdir"),"TemplateFilterTestCase");
-    deleteDir(testDir);
-    testDir.mkdir();
-    File testFileFm1=new File(testDir,"testFm1.txt.fmt");
+    this.testDir=new File(System.getProperty("java.io.tmpdir"),"TemplateFilterTestCase");
+    deleteDir(this.testDir);
+    this.testDir.mkdir();
+    final File testFileFm1=new File(this.testDir,"testFm1.txt.fmt");
     FileWriter fw=new FileWriter(testFileFm1);
     fw.write("Method=${m}/Authority=${ra}");
     fw.close();
-    File testFileFm2=new File(testDir,"testFm2.txt");
+    final File testFileFm2=new File(this.testDir,"testFm2.txt");
     fw=new FileWriter(testFileFm2);
     fw.write("Method=${m}/Authority=${ra}");
     fw.close();
-    File testFileVl1=new File(testDir,"testVl1.txt.vm");
+    final File testFileVl1=new File(this.testDir,"testVl1.txt.vm");
     fw=new FileWriter(testFileVl1);
     fw.write("Method=${m}/Path=${rp}");
     fw.close();
-    File testFileVl2=new File(testDir,"testVl2.txt");
+    final File testFileVl2=new File(this.testDir,"testVl2.txt");
     fw=new FileWriter(testFileVl2);
     fw.write("Method=${m}/Path=${rp}");
     fw.close();
-    Component component=new Component();
+    final Component component=new Component();
     component.getServers().add(Protocol.HTTP,8182);
     component.getClients().add(Protocol.FILE);
-    MyFreemakerApplication freemarkerApplication=new MyFreemakerApplication(component.getContext(),testDir);
-    MyVelocityApplication velocityApplication=new MyVelocityApplication(component.getContext(),testDir);
+    final MyFreemakerApplication freemarkerApplication=new MyFreemakerApplication(component.getContext(),this.testDir);
+    final MyVelocityApplication velocityApplication=new MyVelocityApplication(component.getContext(),this.testDir);
     component.getDefaultHost().attach("/freemarker",freemarkerApplication);
     component.getDefaultHost().attach("/velocity",velocityApplication);
     component.start();
     freemarkerApplication.getTunnelService().setExtensionsTunnel(true);
     velocityApplication.getTunnelService().setExtensionsTunnel(true);
-    Client client=new Client(Protocol.HTTP);
+    final Client client=new Client(Protocol.HTTP);
     Response response=client.get("http://localhost:8182/freemarker/" + testFileFm1.getName());
     if (response.isEntityAvailable()) {
       assertEquals(response.getEntity().getText(),"Method=GET/Authority=localhost:8182");
@@ -50,7 +50,7 @@
     }
     component.stop();
   }
- catch (  Exception e) {
+ catch (  final Exception e) {
     e.printStackTrace();
   }
 }

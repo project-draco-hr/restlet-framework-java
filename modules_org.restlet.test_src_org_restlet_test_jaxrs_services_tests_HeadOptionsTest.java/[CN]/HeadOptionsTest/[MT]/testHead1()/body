@@ -1,12 +1,16 @@
 {
-  Response responseGett=get("headTest1",MediaType.TEXT_HTML);
-  Response responseHead=head("headTest1",MediaType.TEXT_HTML);
-  if (responseGett.getStatus().isError())   System.out.println(responseGett.getEntity().getText());
+  final Response responseGett=get("headTest1",MediaType.TEXT_HTML);
+  final Response responseHead=head("headTest1",MediaType.TEXT_HTML);
+  if (responseGett.getStatus().isError()) {
+    System.out.println(responseGett.getEntity().getText());
+  }
   assertEquals(Status.SUCCESS_OK,responseGett.getStatus());
-  if (responseHead.getStatus().isError())   System.out.println(responseHead.getEntity().getText());
+  if (responseHead.getStatus().isError()) {
+    System.out.println(responseHead.getEntity().getText());
+  }
   assertEquals(Status.SUCCESS_OK,responseHead.getStatus());
-  Representation entityGett=responseGett.getEntity();
-  Representation entityHead=responseHead.getEntity();
+  final Representation entityGett=responseGett.getEntity();
+  final Representation entityHead=responseHead.getEntity();
   assertNotNull(entityGett);
   assertNotNull("Must not be null to read the entity headers",entityHead);
   assertEqualMediaType(MediaType.TEXT_HTML,entityGett.getMediaType());

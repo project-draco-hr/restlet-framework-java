@@ -1,10 +1,10 @@
 {
-  Map<String,String> agentAttributes=request.getClientInfo().getAgentAttributes();
+  final Map<String,String> agentAttributes=request.getClientInfo().getAgentAttributes();
   if (agentAttributes != null) {
-    URL userAgentPropertiesUrl=Engine.getClassLoader().getResource("org/restlet/service/accept.properties");
+    final URL userAgentPropertiesUrl=Engine.getClassLoader().getResource("org/restlet/service/accept.properties");
     if (userAgentPropertiesUrl != null) {
-      Form headers=(Form)request.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
-      String acceptOld=headers.getFirstValue(HttpConstants.HEADER_ACCEPT);
+      final Form headers=(Form)request.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
+      final String acceptOld=headers.getFirstValue(HttpConstants.HEADER_ACCEPT);
       BufferedReader reader;
       try {
         reader=new BufferedReader(new InputStreamReader(userAgentPropertiesUrl.openStream(),CharacterSet.UTF_8.getName()));
@@ -12,13 +12,13 @@
         String line=reader.readLine();
         for (; line != null; line=reader.readLine()) {
           if (!line.startsWith("#")) {
-            String[] keyValue=line.split(":");
+            final String[] keyValue=line.split(":");
             if (keyValue.length == 2) {
-              String key=keyValue[0].trim();
-              String value=keyValue[1].trim();
+              final String key=keyValue[0].trim();
+              final String value=keyValue[1].trim();
               if ("acceptNew".equalsIgnoreCase(key)) {
                 if (processAcceptHeader) {
-                  ClientInfo clientInfo=new ClientInfo();
+                  final ClientInfo clientInfo=new ClientInfo();
                   PreferenceUtils.parseMediaTypes(value,clientInfo);
                   request.getClientInfo().setAcceptedMediaTypes(clientInfo.getAcceptedMediaTypes());
                   break;
@@ -27,12 +27,12 @@
               }
  else {
                 if (processAcceptHeader) {
-                  if ("acceptOld".equalsIgnoreCase(key) && !(value == null || value.length() == 0)) {
+                  if ("acceptOld".equalsIgnoreCase(key) && !((value == null) || (value.length() == 0))) {
                     processAcceptHeader=value.equalsIgnoreCase(acceptOld);
                   }
  else {
-                    String attribute=agentAttributes.get(key);
-                    processAcceptHeader=attribute != null && attribute.equalsIgnoreCase(value);
+                    final String attribute=agentAttributes.get(key);
+                    processAcceptHeader=(attribute != null) && attribute.equalsIgnoreCase(value);
                   }
                 }
               }
@@ -41,7 +41,7 @@
         }
         reader.close();
       }
- catch (      IOException e) {
+ catch (      final IOException e) {
       }
     }
   }

@@ -1,30 +1,30 @@
 {
   HttpServerHelper result=null;
-  Component component=getComponent();
+  final Component component=getComponent();
   if (component != null) {
-    Server server=new Server(component.getContext(),(List<Protocol>)null,request.getLocalAddr(),request.getLocalPort(),component);
+    final Server server=new Server(component.getContext(),(List<Protocol>)null,request.getLocalAddr(),request.getLocalPort(),component);
     result=new HttpServerHelper(server);
-    String uriPattern=request.getContextPath() + request.getServletPath();
+    final String uriPattern=request.getContextPath() + request.getServletPath();
     if (isDefaultComponent()) {
-      if (application != null) {
-        if (application != null) {
-          log("[Noelios Restlet Engine] - Attaching application: " + application + " to URI: "+ uriPattern);
-          component.getDefaultHost().attach(uriPattern,application);
+      if (this.application != null) {
+        if (this.application != null) {
+          log("[Noelios Restlet Engine] - Attaching application: " + this.application + " to URI: "+ uriPattern);
+          component.getDefaultHost().attach(uriPattern,this.application);
         }
       }
     }
  else {
-      String autoWire=getInitParameter(AUTO_WIRE_KEY,AUTO_WIRE_KEY_DEFAULT);
+      final String autoWire=getInitParameter(AUTO_WIRE_KEY,AUTO_WIRE_KEY_DEFAULT);
       if (AUTO_WIRE_KEY_DEFAULT.equalsIgnoreCase(autoWire)) {
-        for (        Route route : component.getDefaultHost().getRoutes()) {
-          if (route.getTemplate().getPattern() == null || !route.getTemplate().getPattern().startsWith(uriPattern)) {
+        for (        final Route route : component.getDefaultHost().getRoutes()) {
+          if ((route.getTemplate().getPattern() == null) || !route.getTemplate().getPattern().startsWith(uriPattern)) {
             log("[Noelios Restlet Engine] - Attaching restlet: " + route.getNext() + " to URI: "+ uriPattern+ route.getTemplate().getPattern());
             route.getTemplate().setPattern(uriPattern + route.getTemplate().getPattern());
           }
         }
-        for (        VirtualHost virtualHost : component.getHosts()) {
-          for (          Route route : virtualHost.getRoutes()) {
-            if (route.getTemplate().getPattern() == null || !route.getTemplate().getPattern().startsWith(uriPattern)) {
+        for (        final VirtualHost virtualHost : component.getHosts()) {
+          for (          final Route route : virtualHost.getRoutes()) {
+            if ((route.getTemplate().getPattern() == null) || !route.getTemplate().getPattern().startsWith(uriPattern)) {
               log("[Noelios Restlet Engine] - Attaching restlet: " + route.getNext() + " to URI: "+ uriPattern+ route.getTemplate().getPattern());
               route.getTemplate().setPattern(uriPattern + route.getTemplate().getPattern());
             }

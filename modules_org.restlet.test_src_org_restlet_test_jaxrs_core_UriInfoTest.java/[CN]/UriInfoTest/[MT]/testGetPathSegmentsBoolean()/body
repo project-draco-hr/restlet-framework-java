@@ -3,14 +3,14 @@
   checkPathSegments(createUriInfo1().getPathSegments(false),"relativ",0,"a",0,"b",0);
   checkPathSegments(createUriInfo2().getPathSegments(true),"relativ",0," a ",0,"!b@,",0);
   checkPathSegments(createUriInfo2().getPathSegments(false),"relativ",0,"%20a%20",0,"%21b%40%2C",0);
-  UriInfo uriInfo=newUriInfo(new Reference(BASE_REF,BASE_REF_STR + "abc/def;ghi=jkl;mno=pqr/stu;vwx=yz"));
-  List<PathSegment> pathSegments=uriInfo.getPathSegments();
+  final UriInfo uriInfo=newUriInfo(new Reference(BASE_REF,BASE_REF_STR + "abc/def;ghi=jkl;mno=pqr/stu;vwx=yz"));
+  final List<PathSegment> pathSegments=uriInfo.getPathSegments();
   checkPathSegments(pathSegments,"abc",0,"def",2,"stu",1);
-  MultivaluedMap<String,String> templateParameters1=pathSegments.get(1).getMatrixParameters();
+  final MultivaluedMap<String,String> templateParameters1=pathSegments.get(1).getMatrixParameters();
   assertEquals(2,templateParameters1.size());
   checkEntry("jkl","ghi",templateParameters1);
   checkEntry("pqr","mno",templateParameters1);
-  MultivaluedMap<String,String> templateParameters2=pathSegments.get(2).getMatrixParameters();
+  final MultivaluedMap<String,String> templateParameters2=pathSegments.get(2).getMatrixParameters();
   assertEquals(1,templateParameters2.size());
   checkEntry("yz","vwx",templateParameters2);
 }

@@ -1,9 +1,9 @@
 {
   Integer keySize=keySizesCache.get(sslCipherSuite);
   if (keySize == null) {
-    int encAlgorithmIndex=sslCipherSuite.indexOf("WITH_");
+    final int encAlgorithmIndex=sslCipherSuite.indexOf("WITH_");
     if (encAlgorithmIndex >= 0) {
-      String encAlgorithm=sslCipherSuite.substring(encAlgorithmIndex + 5);
+      final String encAlgorithm=sslCipherSuite.substring(encAlgorithmIndex + 5);
       if (encAlgorithm != null) {
         if (encAlgorithm.startsWith("NULL_")) {
           keySize=Integer.valueOf(0);
@@ -30,13 +30,13 @@
           keySize=Integer.valueOf(168);
         }
  else {
-          StringTokenizer st=new StringTokenizer(encAlgorithm,"_");
+          final StringTokenizer st=new StringTokenizer(encAlgorithm,"_");
           while (st.hasMoreTokens()) {
             try {
               keySize=Integer.valueOf(st.nextToken());
               break;
             }
- catch (            NumberFormatException e) {
+ catch (            final NumberFormatException e) {
             }
           }
         }

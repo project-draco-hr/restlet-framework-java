@@ -1,12 +1,16 @@
 {
-  Response restletResponse=tlContext.get().getResponse();
+  final Response restletResponse=this.tlContext.get().getResponse();
   restletResponse.setStatus(Status.valueOf(jaxRsResponse.getStatus()));
-  MultivaluedMap<String,Object> httpHeaders=jaxRsResponse.getMetadata();
-  MediaType respMediaType=getMediaType(httpHeaders);
-  Object jaxRsEntity=jaxRsResponse.getEntity();
+  final MultivaluedMap<String,Object> httpHeaders=jaxRsResponse.getMetadata();
+  final MediaType respMediaType=getMediaType(httpHeaders);
+  final Object jaxRsEntity=jaxRsResponse.getEntity();
   SortedMetadata<MediaType> accMediaType;
-  if (respMediaType != null)   accMediaType=SortedMetadata.get(respMediaType);
- else   accMediaType=tlContext.get().getAccMediaTypes();
+  if (respMediaType != null) {
+    accMediaType=SortedMetadata.get(respMediaType);
+  }
+ else {
+    accMediaType=this.tlContext.get().getAccMediaTypes();
+  }
   restletResponse.setEntity(convertToRepresentation(jaxRsEntity,resourceMethod,respMediaType,httpHeaders,accMediaType));
   copyResponseHeaders(httpHeaders,restletResponse,getLogger());
 }

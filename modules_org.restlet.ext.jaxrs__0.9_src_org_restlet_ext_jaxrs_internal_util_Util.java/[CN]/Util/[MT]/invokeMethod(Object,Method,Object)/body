@@ -1,5 +1,7 @@
 {
-  if (javaMethod == null)   return;
+  if (javaMethod == null) {
+    return;
+  }
   try {
     AccessController.doPrivileged(new PrivilegedExceptionAction<Object>(){
       public Object run() throws Exception {
@@ -9,12 +11,20 @@
     }
 );
   }
- catch (  PrivilegedActionException e) {
-    Throwable cause=e.getCause();
-    if (cause instanceof IllegalAccessException)     throw new MethodInvokeException("Not allowed to invoke post construct method " + javaMethod,cause);
-    if (cause instanceof InvocationTargetException)     throw (InvocationTargetException)cause;
-    if (cause instanceof ExceptionInInitializerError)     throw new MethodInvokeException("Could not invoke post construct method " + javaMethod,cause);
-    if (cause instanceof RuntimeException)     throw (RuntimeException)cause;
+ catch (  final PrivilegedActionException e) {
+    final Throwable cause=e.getCause();
+    if (cause instanceof IllegalAccessException) {
+      throw new MethodInvokeException("Not allowed to invoke post construct method " + javaMethod,cause);
+    }
+    if (cause instanceof InvocationTargetException) {
+      throw (InvocationTargetException)cause;
+    }
+    if (cause instanceof ExceptionInInitializerError) {
+      throw new MethodInvokeException("Could not invoke post construct method " + javaMethod,cause);
+    }
+    if (cause instanceof RuntimeException) {
+      throw (RuntimeException)cause;
+    }
     throw new JaxRsRuntimeException("Error while invoking post construct method " + javaMethod,cause);
   }
 }

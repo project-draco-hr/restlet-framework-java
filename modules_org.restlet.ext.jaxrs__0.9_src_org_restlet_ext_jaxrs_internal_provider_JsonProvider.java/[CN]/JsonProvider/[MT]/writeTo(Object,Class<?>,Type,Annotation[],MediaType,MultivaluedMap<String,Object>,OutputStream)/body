@@ -1,21 +1,35 @@
 {
   try {
-    OutputStreamWriter writer=new OutputStreamWriter(entityStream);
-    if (object instanceof JSONString)     writer.write(((JSONString)object).toJSONString());
- else     if (object instanceof JSONArray)     writer.write(((JSONArray)object).toString());
- else     if (object instanceof CharSequence)     writer.write(object.toString());
+    final OutputStreamWriter writer=new OutputStreamWriter(entityStream);
+    if (object instanceof JSONString) {
+      writer.write(((JSONString)object).toJSONString());
+    }
+ else     if (object instanceof JSONArray) {
+      writer.write(((JSONArray)object).toString());
+    }
+ else     if (object instanceof CharSequence) {
+      writer.write(object.toString());
+    }
  else {
       JSONObject jsonObject;
-      if (object instanceof JSONObject)       jsonObject=(JSONObject)object;
- else       if (object instanceof JSONTokener)       jsonObject=new JSONObject((JSONTokener)object);
- else       if (object instanceof Map)       jsonObject=new JSONObject((Map<?,?>)object);
- else       jsonObject=new JSONObject(object);
+      if (object instanceof JSONObject) {
+        jsonObject=(JSONObject)object;
+      }
+ else       if (object instanceof JSONTokener) {
+        jsonObject=new JSONObject((JSONTokener)object);
+      }
+ else       if (object instanceof Map) {
+        jsonObject=new JSONObject((Map<?,?>)object);
+      }
+ else {
+        jsonObject=new JSONObject(object);
+      }
       jsonObject.write(writer);
     }
     writer.flush();
   }
- catch (  JSONException e) {
-    IOException ioe=new IOException(e.getMessage());
+ catch (  final JSONException e) {
+    final IOException ioe=new IOException(e.getMessage());
     ioe.initCause(e);
     throw ioe;
   }

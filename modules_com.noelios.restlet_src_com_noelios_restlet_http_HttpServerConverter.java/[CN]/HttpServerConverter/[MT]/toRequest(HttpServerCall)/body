@@ -1,19 +1,19 @@
 {
-  HttpRequest result=new HttpRequest(getContext(),httpCall);
+  final HttpRequest result=new HttpRequest(getContext(),httpCall);
   result.getAttributes().put(HttpConstants.ATTRIBUTE_HEADERS,httpCall.getRequestHeaders());
   if (httpCall.getVersion() != null) {
     result.getAttributes().put(HttpConstants.ATTRIBUTE_VERSION,httpCall.getVersion());
   }
   if (httpCall.isConfidential()) {
-    List<Certificate> clientCertificates=httpCall.getSslClientCertificates();
+    final List<Certificate> clientCertificates=httpCall.getSslClientCertificates();
     if (clientCertificates != null) {
       result.getAttributes().put(HttpConstants.ATTRIBUTE_HTTPS_CLIENT_CERTIFICATES,clientCertificates);
     }
-    String cipherSuite=httpCall.getSslCipherSuite();
+    final String cipherSuite=httpCall.getSslCipherSuite();
     if (cipherSuite != null) {
       result.getAttributes().put(HttpConstants.ATTRIBUTE_HTTPS_CIPHER_SUITE,cipherSuite);
     }
-    Integer keySize=httpCall.getSslKeySize();
+    final Integer keySize=httpCall.getSslKeySize();
     if (keySize != null) {
       result.getAttributes().put(HttpConstants.ATTRIBUTE_HTTPS_KEY_SIZE,keySize);
     }

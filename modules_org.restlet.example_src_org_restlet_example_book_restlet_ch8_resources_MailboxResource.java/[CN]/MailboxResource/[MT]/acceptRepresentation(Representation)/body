@@ -1,10 +1,10 @@
 {
-  Form form=new Form(entity);
-  Mail mail=new Mail();
+  final Form form=new Form(entity);
+  final Mail mail=new Mail();
   mail.setStatus(Mail.STATUS_RECEIVED);
-  String senderAddress=form.getFirstValue("senderAddress");
-  String senderName=form.getFirstValue("senderName");
-  Contact contact=getObjectsFacade().lookForContact(senderAddress,mailbox);
+  final String senderAddress=form.getFirstValue("senderAddress");
+  final String senderName=form.getFirstValue("senderName");
+  Contact contact=getObjectsFacade().lookForContact(senderAddress,this.mailbox);
   if (contact == null) {
     contact=new Contact();
     contact.setMailAddress(senderAddress);
@@ -13,16 +13,16 @@
   mail.setSender(contact);
   mail.setMessage(form.getFirstValue("message"));
   mail.setSubject(form.getFirstValue("subject"));
-  Series<Parameter> recipients=form.subList("recipient");
-  for (  Parameter recipient : recipients) {
-    contact=getObjectsFacade().lookForContact(recipient.getValue(),mailbox);
+  final Series<Parameter> recipients=form.subList("recipient");
+  for (  final Parameter recipient : recipients) {
+    contact=getObjectsFacade().lookForContact(recipient.getValue(),this.mailbox);
     if (contact == null) {
       contact=new Contact();
-      String[] recipientValues=recipient.getValue().split("\\$");
+      final String[] recipientValues=recipient.getValue().split("\\$");
       contact.setMailAddress(recipientValues[0]);
       contact.setName(recipientValues[1]);
     }
     mail.getRecipients().add(contact);
   }
-  getObjectsFacade().createMail(mailbox,mail);
+  getObjectsFacade().createMail(this.mailbox,mail);
 }

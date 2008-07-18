@@ -2,11 +2,11 @@
   return new OutputStream(){
     @Override public void write(    int b) throws IOException {
       try {
-        if (!queue.offer(b,QUEUE_TIMEOUT,TimeUnit.SECONDS)) {
+        if (!PipeStream.this.queue.offer(b,QUEUE_TIMEOUT,TimeUnit.SECONDS)) {
           throw new IOException("Timeout while writing to the queue-based output stream");
         }
       }
- catch (      InterruptedException ie) {
+ catch (      final InterruptedException ie) {
         throw new IOException("Interruption occurred while writing in the queue");
       }
     }

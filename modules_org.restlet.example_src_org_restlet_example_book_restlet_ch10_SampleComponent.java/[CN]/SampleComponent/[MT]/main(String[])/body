@@ -1,5 +1,5 @@
 {
-  Component component=new Component();
+  final Component component=new Component();
   component.getServers().add(Protocol.HTTP,8182);
   component.getClients().add(Protocol.FILE);
   component.getDefaultHost().attach("/directoryApplication",new DirectoryApplication(component.getContext()));
@@ -9,12 +9,12 @@
   component.getDefaultHost().attach("/tunnelApplication",new TunnelApplication(component.getContext()));
   component.getDefaultHost().attach("/nonStandardMethodsApplication",new NonStandardMethodsApplication(component.getContext()));
   component.start();
-  Client client=new Client(Protocol.HTTP);
+  final Client client=new Client(Protocol.HTTP);
   Response response=client.get("http://localhost:8182/xmlApplication/xml/mail.xml");
   if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
-    DomRepresentation domRep=response.getEntityAsDom();
-    NodeSet nodes=domRep.getNodes("/mail/recipients/to/text()");
-    for (    Node node : nodes) {
+    final DomRepresentation domRep=response.getEntityAsDom();
+    final NodeSet nodes=domRep.getNodes("/mail/recipients/to/text()");
+    for (    final Node node : nodes) {
       System.out.println(node.getNodeValue());
     }
     response=client.get("http://localhost:8182/xmlApplication/xml/mail.xsd");
@@ -24,8 +24,8 @@
   }
   response=client.get("http://localhost:8182/xmlApplication/xml/mail.xml");
   if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
-    SaxRepresentation saxRep=response.getEntityAsSax();
-    ContentHandler contentHandler=new DefaultHandler(){
+    final SaxRepresentation saxRep=response.getEntityAsSax();
+    final ContentHandler contentHandler=new DefaultHandler(){
       @Override public void startElement(      String uri,      String localName,      String name,      Attributes attributes) throws SAXException {
         System.out.println("processing element : " + name);
       }
@@ -34,7 +34,7 @@
     saxRep.parse(contentHandler);
   }
   response=client.get("http://localhost:8182/cookiesRestlet");
-  for (  CookieSetting cookieSetting : response.getCookieSettings()) {
+  for (  final CookieSetting cookieSetting : response.getCookieSettings()) {
     System.out.print("[");
     System.out.print(cookieSetting.getName());
     System.out.print("/");

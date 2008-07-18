@@ -1,19 +1,33 @@
 {
   Object result;
   try {
-    int paramCount=method.getParameterTypes().length;
-    if (paramCount == 0)     throw new AssertionFailedError(("The method " + method + " must have between 1 and 3 parameters"));
- else     if (paramCount == 1)     result=method.invoke(null,in);
- else     if (paramCount == 2 && encode != null)     result=method.invoke(null,in,encode);
- else     if (paramCount == 3 && encode != null)     result=method.invoke(null,in,encode,"{generic test error message}");
- else     throw new AssertionFailedError(("The method " + method + " has to much parameters"));
-    if (out == null)     fail("must throw an IllegalArgumentException for \"" + in + "\" and encode = "+ encode);
+    final int paramCount=method.getParameterTypes().length;
+    if (paramCount == 0) {
+      throw new AssertionFailedError(("The method " + method + " must have between 1 and 3 parameters"));
+    }
+ else     if (paramCount == 1) {
+      result=method.invoke(null,in);
+    }
+ else     if ((paramCount == 2) && (encode != null)) {
+      result=method.invoke(null,in,encode);
+    }
+ else     if ((paramCount == 3) && (encode != null)) {
+      result=method.invoke(null,in,encode,"{generic test error message}");
+    }
+ else {
+      throw new AssertionFailedError(("The method " + method + " has to much parameters"));
+    }
+    if (out == null) {
+      fail("must throw an IllegalArgumentException for \"" + in + "\" and encode = "+ encode);
+    }
     assertEquals(out,result != null ? result.toString() : null);
   }
- catch (  InvocationTargetException e) {
-    if (!(e.getCause() instanceof IllegalArgumentException))     throw (RuntimeException)e.getCause();
+ catch (  final InvocationTargetException e) {
+    if (!(e.getCause() instanceof IllegalArgumentException)) {
+      throw (RuntimeException)e.getCause();
+    }
   }
-catch (  IllegalAccessException e) {
+catch (  final IllegalAccessException e) {
     throw new RuntimeException(e);
   }
 }

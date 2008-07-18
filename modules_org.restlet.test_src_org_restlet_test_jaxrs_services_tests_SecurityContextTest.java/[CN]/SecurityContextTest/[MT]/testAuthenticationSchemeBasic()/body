@@ -1,8 +1,10 @@
 {
-  if (!startServer(RoleChecker.ALLOW_ALL))   return;
-  ChallengeResponse cr=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"bob","bobsSecret");
-  Response response=get("authenticationScheme",cr);
+  if (!startServer(RoleChecker.ALLOW_ALL)) {
+    return;
+  }
+  final ChallengeResponse cr=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"bob","bobsSecret");
+  final Response response=get("authenticationScheme",cr);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
-  String entity=response.getEntity().getText();
+  final String entity=response.getEntity().getText();
   assertEquals(SecurityContext.BASIC_AUTH,entity);
 }

@@ -1,16 +1,16 @@
 {
-  Restlet restlet=new Restlet(){
+  final Restlet restlet=new Restlet(){
     @Override public void handle(    Request request,    Response response){
       response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
     }
   }
 ;
-  StatusFilter statusFilter=new StatusFilter(null,true,"admin@example.com","http://www.example.com");
+  final StatusFilter statusFilter=new StatusFilter(null,true,"admin@example.com","http://www.example.com");
   statusFilter.setNext(restlet);
   try {
     new Server(Protocol.HTTP,statusFilter).start();
   }
- catch (  Exception e) {
+ catch (  final Exception e) {
     e.printStackTrace();
   }
 }

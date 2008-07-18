@@ -1,12 +1,12 @@
 {
-  Form form=new Form(entity);
-  feed.setNickname(form.getFirstValue("nickname"));
+  final Form form=new Form(entity);
+  this.feed.setNickname(form.getFirstValue("nickname"));
   if (form.getFirstValue("tags") != null) {
-    feed.setTags(new ArrayList<String>(Arrays.asList(form.getFirstValue("tags").split(" "))));
+    this.feed.setTags(new ArrayList<String>(Arrays.asList(form.getFirstValue("tags").split(" "))));
   }
  else {
-    feed.setTags(null);
+    this.feed.setTags(null);
   }
-  getObjectsFacade().updateFeed(mailbox,feed);
+  getObjectsFacade().updateFeed(this.mailbox,this.feed);
   getResponse().redirectSeeOther(getRequest().getResourceRef());
 }

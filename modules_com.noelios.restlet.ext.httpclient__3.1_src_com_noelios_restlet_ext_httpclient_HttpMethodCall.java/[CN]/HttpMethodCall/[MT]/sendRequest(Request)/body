@@ -2,11 +2,11 @@
   Status result=null;
   try {
     final Representation entity=request.getEntity();
-    for (    Parameter header : getRequestHeaders()) {
+    for (    final Parameter header : getRequestHeaders()) {
       getHttpMethod().addRequestHeader(header.getName(),header.getValue());
     }
     if ((entity != null) && (getHttpMethod() instanceof EntityEnclosingMethod)) {
-      EntityEnclosingMethod eem=(EntityEnclosingMethod)getHttpMethod();
+      final EntityEnclosingMethod eem=(EntityEnclosingMethod)getHttpMethod();
       eem.setRequestEntity(new RequestEntity(){
         public long getContentLength(){
           return entity.getSize();
@@ -29,7 +29,7 @@
       getHttpMethod().releaseConnection();
     }
   }
- catch (  IOException ioe) {
+ catch (  final IOException ioe) {
     this.clientHelper.getLogger().log(Level.WARNING,"An error occurred during the communication with the remote HTTP server.",ioe);
     result=new Status(Status.CONNECTOR_ERROR_COMMUNICATION,ioe);
     getHttpMethod().releaseConnection();

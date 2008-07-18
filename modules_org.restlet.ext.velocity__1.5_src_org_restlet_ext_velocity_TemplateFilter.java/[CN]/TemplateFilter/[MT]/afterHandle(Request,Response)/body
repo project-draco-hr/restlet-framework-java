@@ -1,27 +1,27 @@
 {
   if (response.isEntityAvailable() && response.getEntity().getEncodings().contains(Encoding.VELOCITY)) {
     try {
-      TemplateRepresentation representation=new TemplateRepresentation(response.getEntity(),response.getEntity().getMediaType());
-      if (this.mapDataModel == null && this.resolverDataModel == null) {
+      final TemplateRepresentation representation=new TemplateRepresentation(response.getEntity(),response.getEntity().getMediaType());
+      if ((this.mapDataModel == null) && (this.resolverDataModel == null)) {
         representation.setDataModel(request,response);
       }
  else {
         if (this.mapDataModel == null) {
-          representation.setDataModel(resolverDataModel);
+          representation.setDataModel(this.resolverDataModel);
         }
  else {
-          representation.setDataModel(mapDataModel);
+          representation.setDataModel(this.mapDataModel);
         }
       }
       response.setEntity(representation);
     }
- catch (    ResourceNotFoundException e) {
+ catch (    final ResourceNotFoundException e) {
       response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,e);
     }
-catch (    ParseErrorException e) {
+catch (    final ParseErrorException e) {
       response.setStatus(Status.SERVER_ERROR_INTERNAL,e);
     }
-catch (    IOException e) {
+catch (    final IOException e) {
       response.setStatus(Status.SERVER_ERROR_INTERNAL,e);
     }
   }

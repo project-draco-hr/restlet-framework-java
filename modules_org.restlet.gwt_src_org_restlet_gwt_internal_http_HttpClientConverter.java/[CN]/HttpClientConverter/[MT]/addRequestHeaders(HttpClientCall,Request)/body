@@ -1,10 +1,10 @@
 {
   if (httpCall != null) {
-    Series<Parameter> requestHeaders=httpCall.getRequestHeaders();
-    Reference hostRef=(request.getResourceRef().getBaseRef() != null) ? request.getResourceRef().getBaseRef() : request.getResourceRef();
+    final Series<Parameter> requestHeaders=httpCall.getRequestHeaders();
+    final Reference hostRef=(request.getResourceRef().getBaseRef() != null) ? request.getResourceRef().getBaseRef() : request.getResourceRef();
     if (hostRef.getHostDomain() != null) {
       String host=hostRef.getHostDomain();
-      int hostRefPortValue=hostRef.getHostPort();
+      final int hostRefPortValue=hostRef.getHostPort();
       if ((hostRefPortValue != -1) && (hostRefPortValue != request.getProtocol().getDefaultPort())) {
         host=host + ':' + hostRefPortValue;
       }
@@ -16,44 +16,48 @@
  else {
       requestHeaders.add(HttpConstants.HEADER_USER_AGENT,Engine.VERSION_HEADER);
     }
-    Conditions condition=request.getConditions();
+    final Conditions condition=request.getConditions();
     if (!condition.getMatch().isEmpty()) {
-      StringBuilder value=new StringBuilder();
+      final StringBuilder value=new StringBuilder();
       for (int i=0; i < condition.getMatch().size(); i++) {
-        if (i > 0)         value.append(", ");
+        if (i > 0) {
+          value.append(", ");
+        }
         value.append(condition.getMatch().get(i).format());
       }
       httpCall.getRequestHeaders().add(HttpConstants.HEADER_IF_MATCH,value.toString());
     }
     if (condition.getModifiedSince() != null) {
-      String imsDate=DateUtils.format(condition.getModifiedSince(),DateUtils.FORMAT_RFC_1123.get(0));
+      final String imsDate=DateUtils.format(condition.getModifiedSince(),DateUtils.FORMAT_RFC_1123.get(0));
       requestHeaders.add(HttpConstants.HEADER_IF_MODIFIED_SINCE,imsDate);
     }
     if (!condition.getNoneMatch().isEmpty()) {
-      StringBuilder value=new StringBuilder();
+      final StringBuilder value=new StringBuilder();
       for (int i=0; i < condition.getNoneMatch().size(); i++) {
-        if (i > 0)         value.append(", ");
+        if (i > 0) {
+          value.append(", ");
+        }
         value.append(condition.getNoneMatch().get(i).format());
       }
       requestHeaders.add(HttpConstants.HEADER_IF_NONE_MATCH,value.toString());
     }
     if (condition.getUnmodifiedSince() != null) {
-      String iusDate=DateUtils.format(condition.getUnmodifiedSince(),DateUtils.FORMAT_RFC_1123.get(0));
+      final String iusDate=DateUtils.format(condition.getUnmodifiedSince(),DateUtils.FORMAT_RFC_1123.get(0));
       requestHeaders.add(HttpConstants.HEADER_IF_UNMODIFIED_SINCE,iusDate);
     }
     if (request.getCookies().size() > 0) {
-      String cookies=CookieUtils.format(request.getCookies());
+      final String cookies=CookieUtils.format(request.getCookies());
       requestHeaders.add(HttpConstants.HEADER_COOKIE,cookies);
     }
     if (request.getReferrerRef() != null) {
       requestHeaders.add(HttpConstants.HEADER_REFERRER,request.getReferrerRef().toString());
     }
-    ClientInfo client=request.getClientInfo();
+    final ClientInfo client=request.getClientInfo();
     if (client.getAcceptedMediaTypes().size() > 0) {
       try {
         requestHeaders.add(HttpConstants.HEADER_ACCEPT,PreferenceUtils.format(client.getAcceptedMediaTypes()));
       }
- catch (      Exception ioe) {
+ catch (      final Exception ioe) {
         System.err.println("Unable to format the HTTP Accept header");
       }
     }
@@ -64,7 +68,7 @@
       try {
         requestHeaders.add(HttpConstants.HEADER_ACCEPT_CHARSET,PreferenceUtils.format(client.getAcceptedCharacterSets()));
       }
- catch (      Exception ioe) {
+ catch (      final Exception ioe) {
         System.err.println("Unable to format the HTTP Accept header");
       }
     }
@@ -72,7 +76,7 @@
       try {
         requestHeaders.add(HttpConstants.HEADER_ACCEPT_ENCODING,PreferenceUtils.format(client.getAcceptedEncodings()));
       }
- catch (      Exception ioe) {
+ catch (      final Exception ioe) {
         System.err.println("Unable to format the HTTP Accept header");
       }
     }
@@ -80,7 +84,7 @@
       try {
         requestHeaders.add(HttpConstants.HEADER_ACCEPT_LANGUAGE,PreferenceUtils.format(client.getAcceptedLanguages()));
       }
- catch (      Exception ioe) {
+ catch (      final Exception ioe) {
         System.err.println("Unable to format the HTTP Accept header");
       }
     }
@@ -93,17 +97,21 @@
         requestHeaders.add(HttpConstants.HEADER_CONTENT_TYPE,contentType);
       }
       if (!request.getEntity().getEncodings().isEmpty()) {
-        StringBuilder value=new StringBuilder();
+        final StringBuilder value=new StringBuilder();
         for (int i=0; i < request.getEntity().getEncodings().size(); i++) {
-          if (i > 0)           value.append(", ");
+          if (i > 0) {
+            value.append(", ");
+          }
           value.append(request.getEntity().getEncodings().get(i).getName());
         }
         requestHeaders.add(HttpConstants.HEADER_CONTENT_ENCODING,value.toString());
       }
       if (!request.getEntity().getLanguages().isEmpty()) {
-        StringBuilder value=new StringBuilder();
+        final StringBuilder value=new StringBuilder();
         for (int i=0; i < request.getEntity().getLanguages().size(); i++) {
-          if (i > 0)           value.append(", ");
+          if (i > 0) {
+            value.append(", ");
+          }
           value.append(request.getEntity().getLanguages().get(i).getName());
         }
         requestHeaders.add(HttpConstants.HEADER_CONTENT_LANGUAGE,value.toString());
@@ -112,7 +120,7 @@
         requestHeaders.add(HttpConstants.HEADER_CONTENT_LENGTH,String.valueOf(request.getEntity().getSize()));
       }
     }
-    Series<Parameter> additionalHeaders=(Series<Parameter>)request.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
+    final Series<Parameter> additionalHeaders=(Series<Parameter>)request.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
     addAdditionalHeaders(requestHeaders,additionalHeaders);
   }
 }

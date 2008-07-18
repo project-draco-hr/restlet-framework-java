@@ -1,18 +1,26 @@
 {
-  Collection<RootResourceClass> eAndCs=new ArrayList<RootResourceClass>();
-  for (  RootResourceClass rootResourceClass : this.rootResourceClasses) {
-    PathRegExp rrcPathRegExp=rootResourceClass.getPathRegExp();
-    MatchingResult matchingResult=rrcPathRegExp.match(u);
-    if (matchingResult == null)     continue;
-    if (matchingResult.getFinalCapturingGroup().isEmptyOrSlash())     eAndCs.add(rootResourceClass);
- else     if (rootResourceClass.hasSubResourceMethodsOrLocators())     eAndCs.add(rootResourceClass);
+  final Collection<RootResourceClass> eAndCs=new ArrayList<RootResourceClass>();
+  for (  final RootResourceClass rootResourceClass : this.rootResourceClasses) {
+    final PathRegExp rrcPathRegExp=rootResourceClass.getPathRegExp();
+    final MatchingResult matchingResult=rrcPathRegExp.match(u);
+    if (matchingResult == null) {
+      continue;
+    }
+    if (matchingResult.getFinalCapturingGroup().isEmptyOrSlash()) {
+      eAndCs.add(rootResourceClass);
+    }
+ else     if (rootResourceClass.hasSubResourceMethodsOrLocators()) {
+      eAndCs.add(rootResourceClass);
+    }
   }
-  if (eAndCs.isEmpty())   excHandler.rootResourceNotFound();
-  RootResourceClass tClass=getFirstRrcByNumberOfLiteralCharactersAndByNumberOfCapturingGroups(eAndCs);
-  PathRegExp rMatch=tClass.getPathRegExp();
-  MatchingResult matchResult=rMatch.match(u);
+  if (eAndCs.isEmpty()) {
+    this.excHandler.rootResourceNotFound();
+  }
+  final RootResourceClass tClass=getFirstRrcByNumberOfLiteralCharactersAndByNumberOfCapturingGroups(eAndCs);
+  final PathRegExp rMatch=tClass.getPathRegExp();
+  final MatchingResult matchResult=rMatch.match(u);
   u=matchResult.getFinalCapturingGroup();
-  addPathVarsToMap(matchResult,tlContext.get());
-  ResourceObject o=instantiateRrc(tClass);
+  addPathVarsToMap(matchResult,this.tlContext.get());
+  final ResourceObject o=instantiateRrc(tClass);
   return new RroRemPathAndMatchedPath(o,u,matchResult.getMatched());
 }

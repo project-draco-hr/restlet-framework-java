@@ -1,5 +1,5 @@
 {
-  Form form=new Form(entity);
+  final Form form=new Form(entity);
   User user=new User();
   user.setFirstName(form.getFirstValue("firstName"));
   user.setLastName(form.getFirstValue("lastName"));
@@ -10,10 +10,10 @@
     user=getObjectsFacade().createUser(user);
     getResponse().redirectSeeOther(getChildReference(getRequest().getResourceRef(),user.getId()));
   }
- catch (  ObjectsException e) {
-    Map<String,Object> dataModel=new TreeMap<String,Object>();
+ catch (  final ObjectsException e) {
+    final Map<String,Object> dataModel=new TreeMap<String,Object>();
     dataModel.put("currentUser",getCurrentUser());
-    dataModel.put("users",users);
+    dataModel.put("users",this.users);
     dataModel.put("resourceRef",getRequest().getResourceRef());
     dataModel.put("rootRef",getRequest().getRootRef());
     dataModel.put("firstName",form.getFirstValue("firstName"));

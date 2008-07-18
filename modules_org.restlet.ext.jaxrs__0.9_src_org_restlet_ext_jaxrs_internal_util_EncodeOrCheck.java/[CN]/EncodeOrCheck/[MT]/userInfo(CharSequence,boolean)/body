@@ -1,16 +1,26 @@
 {
-  int length=userInfo.length();
-  StringBuilder stb=new StringBuilder(length);
+  final int length=userInfo.length();
+  final StringBuilder stb=new StringBuilder(length);
   for (int i=0; i < length; i++) {
-    char c=userInfo.charAt(i);
-    if (c == '{')     i=processTemplVarname(userInfo,i,stb);
- else     if (Reference.isUnreserved(c) || Reference.isSubDelimiter(c))     stb.append(c);
- else     if (c == '}')     throw new IllegalArgumentException("'}' is only allowed " + "as end of a variable name in \"" + userInfo + "\"");
- else     if (c == ':')     stb.append(c);
+    final char c=userInfo.charAt(i);
+    if (c == '{') {
+      i=processTemplVarname(userInfo,i,stb);
+    }
+ else     if (Reference.isUnreserved(c) || Reference.isSubDelimiter(c)) {
+      stb.append(c);
+    }
+ else     if (c == '}') {
+      throw new IllegalArgumentException("'}' is only allowed " + "as end of a variable name in \"" + userInfo + "\"");
+    }
+ else     if (c == ':') {
+      stb.append(c);
+    }
  else     if (c == '%') {
       i=processPercent(i,encode,userInfo,stb);
     }
- else     toHexOrReject(c,stb,encode);
+ else {
+      toHexOrReject(c,stb,encode);
+    }
   }
   return stb;
 }

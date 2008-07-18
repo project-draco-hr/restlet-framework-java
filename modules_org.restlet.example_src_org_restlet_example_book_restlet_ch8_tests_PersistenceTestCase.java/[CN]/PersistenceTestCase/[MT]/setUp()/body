@@ -1,19 +1,19 @@
 {
   super.setUp();
-  db4oFile.delete();
-  Configuration configuration=Db4o.newConfiguration();
+  this.db4oFile.delete();
+  final Configuration configuration=Db4o.newConfiguration();
   configuration.activationDepth(10);
   configuration.add(new TransparentPersistenceSupport());
-  objectContainer=Db4o.openFile(configuration,db4oFile.getAbsolutePath());
-  domainObjects=new DomainObjects();
-  mailRoot=domainObjects.getMailRoot();
-  objectContainer.store(mailRoot);
-  mailRoot=null;
-  ObjectSet<MailRoot> list=objectContainer.queryByExample(new MailRoot());
+  this.objectContainer=Db4o.openFile(configuration,this.db4oFile.getAbsolutePath());
+  this.domainObjects=new DomainObjects();
+  this.mailRoot=this.domainObjects.getMailRoot();
+  this.objectContainer.store(this.mailRoot);
+  this.mailRoot=null;
+  final ObjectSet<MailRoot> list=this.objectContainer.queryByExample(new MailRoot());
   if (list.isEmpty()) {
     throw new Exception("The database has not been properly mounted.");
   }
  else {
-    mailRoot=list.get(0);
+    this.mailRoot=list.get(0);
   }
 }

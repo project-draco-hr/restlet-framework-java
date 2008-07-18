@@ -1,14 +1,22 @@
 {
-  if (resourceObject == null)   throw new IllegalArgumentException("The resource object must not be null");
-  if (newUriPart == null)   throw new IllegalArgumentException("The new URI part must not be null");
-  StringBuilder newUri=new StringBuilder();
-  if (lastAncestorResourceURI != null) {
-    if (newUriPart.length() == 0)     throw new IllegalArgumentException("The new URI part must not be empty");
-    ancestorResources.addFirst(lastAncestorResource);
-    ancestorResourceURIs.addFirst(lastAncestorResourceURI);
-    newUri.append(lastAncestorResourceURI);
+  if (resourceObject == null) {
+    throw new IllegalArgumentException("The resource object must not be null");
   }
-  if (newUriPart.length() == 0 || newUriPart.charAt(0) != '/')   newUri.append('/');
+  if (newUriPart == null) {
+    throw new IllegalArgumentException("The new URI part must not be null");
+  }
+  final StringBuilder newUri=new StringBuilder();
+  if (this.lastAncestorResourceURI != null) {
+    if (newUriPart.length() == 0) {
+      throw new IllegalArgumentException("The new URI part must not be empty");
+    }
+    this.ancestorResources.addFirst(this.lastAncestorResource);
+    this.ancestorResourceURIs.addFirst(this.lastAncestorResourceURI);
+    newUri.append(this.lastAncestorResourceURI);
+  }
+  if ((newUriPart.length() == 0) || (newUriPart.charAt(0) != '/')) {
+    newUri.append('/');
+  }
   newUri.append(newUriPart);
   this.lastAncestorResource=resourceObject;
   this.lastAncestorResourceURI=newUri.toString();

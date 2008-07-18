@@ -1,17 +1,17 @@
 {
   super.start();
   getLogger().info("Starting the internal HTTP server");
-  ThreadFactory factory=new LoggingThreadFactory(getLogger());
-  handlerService=Executors.newFixedThreadPool(10,factory);
-  listenerService=Executors.newSingleThreadExecutor(factory);
-  serverSocketChannel=createServerSocket();
-  setEphemeralPort(serverSocketChannel.socket());
-  latch=new CountDownLatch(1);
-  listenerService.submit(new Listener(this,serverSocketChannel,latch,handlerService));
+  final ThreadFactory factory=new LoggingThreadFactory(getLogger());
+  this.handlerService=Executors.newFixedThreadPool(10,factory);
+  this.listenerService=Executors.newSingleThreadExecutor(factory);
+  this.serverSocketChannel=createServerSocket();
+  setEphemeralPort(this.serverSocketChannel.socket());
+  this.latch=new CountDownLatch(1);
+  this.listenerService.submit(new Listener(this,this.serverSocketChannel,this.latch,this.handlerService));
   try {
-    latch.await();
+    this.latch.await();
   }
- catch (  InterruptedException ex) {
+ catch (  final InterruptedException ex) {
     getLogger().log(Level.WARNING,"Interrupted while waiting for starting latch. Stopping...",ex);
     stop();
   }

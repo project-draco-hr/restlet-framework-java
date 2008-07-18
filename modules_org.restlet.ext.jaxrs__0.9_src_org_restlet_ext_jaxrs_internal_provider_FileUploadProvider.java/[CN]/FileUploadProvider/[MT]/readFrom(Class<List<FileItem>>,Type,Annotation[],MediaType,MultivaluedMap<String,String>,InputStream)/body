@@ -1,12 +1,14 @@
 {
-  FileUpload rfu=new FileUpload();
-  RequestContext requCtx=new RequestContext(entityStream,respHeaders);
+  final FileUpload rfu=new FileUpload();
+  final RequestContext requCtx=new RequestContext(entityStream,respHeaders);
   try {
     return rfu.parseRequest(requCtx);
   }
- catch (  FileUploadException e) {
-    if (e.getCause() instanceof IOException)     throw (IOException)e.getCause();
-    IOException ioExc=new IOException("Could not read the multipart/form-data");
+ catch (  final FileUploadException e) {
+    if (e.getCause() instanceof IOException) {
+      throw (IOException)e.getCause();
+    }
+    final IOException ioExc=new IOException("Could not read the multipart/form-data");
     ioExc.initCause(e);
     throw ioExc;
   }

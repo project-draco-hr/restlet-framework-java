@@ -3,8 +3,8 @@
   try {
     boolean readingName=true;
     boolean readingValue=false;
-    StringBuilder nameBuffer=new StringBuilder();
-    StringBuilder valueBuffer=new StringBuilder();
+    final StringBuilder nameBuffer=new StringBuilder();
+    final StringBuilder valueBuffer=new StringBuilder();
     int nextChar=0;
     while ((result == null) && (nextChar != -1)) {
       nextChar=this.stream.read();
@@ -20,7 +20,7 @@
         }
  else         if ((nextChar == this.separator) || (nextChar == -1)) {
           if (nameBuffer.length() > 0) {
-            result=FormUtils.create(nameBuffer,null,this.decode,characterSet);
+            result=FormUtils.create(nameBuffer,null,this.decode,this.characterSet);
           }
  else           if (nextChar == -1) {
           }
@@ -35,10 +35,10 @@
  else       if (readingValue) {
         if ((nextChar == this.separator) || (nextChar == -1)) {
           if (valueBuffer.length() > 0) {
-            result=FormUtils.create(nameBuffer,valueBuffer,this.decode,characterSet);
+            result=FormUtils.create(nameBuffer,valueBuffer,this.decode,this.characterSet);
           }
  else {
-            result=FormUtils.create(nameBuffer,null,this.decode,characterSet);
+            result=FormUtils.create(nameBuffer,null,this.decode,this.characterSet);
           }
         }
  else {
@@ -47,7 +47,7 @@
       }
     }
   }
- catch (  UnsupportedEncodingException uee) {
+ catch (  final UnsupportedEncodingException uee) {
     throw new IOException("Unsupported encoding. Please contact the administrator");
   }
   return result;

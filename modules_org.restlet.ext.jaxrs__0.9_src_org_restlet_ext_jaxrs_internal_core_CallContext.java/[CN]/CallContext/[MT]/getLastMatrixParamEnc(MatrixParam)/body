@@ -1,12 +1,14 @@
 {
-  String mpName=matrixParamAnnot.value();
-  List<PathSegment> pathSegments=getPathSegments(false);
+  final String mpName=matrixParamAnnot.value();
+  final List<PathSegment> pathSegments=getPathSegments(false);
   for (int i=pathSegments.size() - 1; i >= 0; i--) {
-    PathSegment pathSegment=pathSegments.get(i);
-    List<String> mpValues=pathSegment.getMatrixParameters().get(mpName);
-    if (mpValues != null && !mpValues.isEmpty()) {
-      String result=Util.getLastElement(mpValues);
-      if (result == null)       return "";
+    final PathSegment pathSegment=pathSegments.get(i);
+    final List<String> mpValues=pathSegment.getMatrixParameters().get(mpName);
+    if ((mpValues != null) && !mpValues.isEmpty()) {
+      final String result=Util.getLastElement(mpValues);
+      if (result == null) {
+        return "";
+      }
       return result;
     }
   }

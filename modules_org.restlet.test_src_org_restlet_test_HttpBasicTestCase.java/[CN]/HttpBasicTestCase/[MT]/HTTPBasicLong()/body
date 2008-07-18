@@ -1,9 +1,9 @@
 {
-  Request request=new Request(Method.GET,uri);
-  Client client=new Client(Protocol.HTTP);
-  ChallengeResponse authentication=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,LONG_USERNAME,LONG_PASSWORD);
+  final Request request=new Request(Method.GET,this.uri);
+  final Client client=new Client(Protocol.HTTP);
+  final ChallengeResponse authentication=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,LONG_USERNAME,LONG_PASSWORD);
   request.setChallengeResponse(authentication);
-  Response response=client.handle(request);
+  final Response response=client.handle(request);
   assertEquals("Long username did not return 200 OK",Status.SUCCESS_OK,response.getStatus());
   assertEquals(AUTHENTICATED_MSG,response.getEntity().getText());
 }

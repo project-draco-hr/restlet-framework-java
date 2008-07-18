@@ -2,8 +2,8 @@
   JdbcResult result=null;
   try {
     connection.setAutoCommit(true);
-    Statement statement=connection.createStatement();
-    for (    String sqlRequest : sqlRequests) {
+    final Statement statement=connection.createStatement();
+    for (    final String sqlRequest : sqlRequests) {
       statement.execute(sqlRequest,returnGeneratedKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
       result=new JdbcResult(statement);
     }
@@ -11,14 +11,14 @@
       connection.commit();
     }
   }
- catch (  SQLException se) {
+ catch (  final SQLException se) {
     getLogger().log(Level.WARNING,"Error while processing the SQL requests",se);
     try {
       if (!connection.getAutoCommit()) {
         connection.rollback();
       }
     }
- catch (    SQLException se2) {
+ catch (    final SQLException se2) {
       getLogger().log(Level.WARNING,"Error while rollbacking the transaction",se);
     }
   }

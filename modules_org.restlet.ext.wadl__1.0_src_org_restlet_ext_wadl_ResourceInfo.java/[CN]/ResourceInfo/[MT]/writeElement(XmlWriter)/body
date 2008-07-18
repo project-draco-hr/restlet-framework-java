@@ -1,18 +1,18 @@
 {
-  AttributesImpl attributes=new AttributesImpl();
-  if (getIdentifier() != null && !getIdentifier().equals("")) {
+  final AttributesImpl attributes=new AttributesImpl();
+  if ((getIdentifier() != null) && !getIdentifier().equals("")) {
     attributes.addAttribute("","id",null,"xs:ID",getIdentifier());
   }
-  if (getPath() != null && !getPath().equals("")) {
+  if ((getPath() != null) && !getPath().equals("")) {
     attributes.addAttribute("","path",null,"xs:string",getPath());
   }
   if (getQueryType() != null) {
     attributes.addAttribute("","queryType",null,"xs:string",getQueryType().getMainType());
   }
-  if (getType() != null && !getType().isEmpty()) {
-    StringBuilder builder=new StringBuilder();
-    for (Iterator<Reference> iterator=getType().iterator(); iterator.hasNext(); ) {
-      Reference reference=iterator.next();
+  if ((getType() != null) && !getType().isEmpty()) {
+    final StringBuilder builder=new StringBuilder();
+    for (final Iterator<Reference> iterator=getType().iterator(); iterator.hasNext(); ) {
+      final Reference reference=iterator.next();
       builder.append(reference.toString());
       if (iterator.hasNext()) {
         builder.append(" ");
@@ -25,16 +25,16 @@
   }
  else {
     writer.startElement(APP_NAMESPACE,"resource",null,attributes);
-    for (    ResourceInfo resourceInfo : getChildResources()) {
+    for (    final ResourceInfo resourceInfo : getChildResources()) {
       resourceInfo.writeElement(writer);
     }
-    for (    DocumentationInfo documentationInfo : getDocumentations()) {
+    for (    final DocumentationInfo documentationInfo : getDocumentations()) {
       documentationInfo.writeElement(writer);
     }
-    for (    MethodInfo methodInfo : getMethods()) {
+    for (    final MethodInfo methodInfo : getMethods()) {
       methodInfo.writeElement(writer);
     }
-    for (    ParameterInfo parameterInfo : getParameters()) {
+    for (    final ParameterInfo parameterInfo : getParameters()) {
       parameterInfo.writeElement(writer);
     }
     writer.endElement(APP_NAMESPACE,"resource");

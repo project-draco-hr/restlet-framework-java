@@ -1,12 +1,12 @@
 {
-  for (  Preference<MediaType> preference : request.getClientInfo().getAcceptedMediaTypes()) {
+  for (  final Preference<MediaType> preference : request.getClientInfo().getAcceptedMediaTypes()) {
     System.out.println(preference.getMetadata());
     System.out.println(preference.getQuality());
   }
-  StringBuilder resp=new StringBuilder();
+  final StringBuilder resp=new StringBuilder();
   if (!request.getCookies().isEmpty()) {
     resp.append("Cookies sent by client: ");
-    for (    Cookie cookie : request.getCookies()) {
+    for (    final Cookie cookie : request.getCookies()) {
       resp.append("[").append(cookie.getName());
       resp.append("/");
       resp.append(cookie.getValue()).append("]");
@@ -14,7 +14,7 @@
   }
  else {
     resp.append("No Cookies sent by client.");
-    CookieSetting cookieSetting=new CookieSetting(0,"IP",request.getClientInfo().getAddress());
+    final CookieSetting cookieSetting=new CookieSetting(0,"IP",request.getClientInfo().getAddress());
     cookieSetting.setMaxAge(-1);
     response.getCookieSettings().add(cookieSetting);
   }

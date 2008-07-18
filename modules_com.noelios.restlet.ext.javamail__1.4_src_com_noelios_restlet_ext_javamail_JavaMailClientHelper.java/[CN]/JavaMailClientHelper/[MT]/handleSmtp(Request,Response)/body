@@ -4,7 +4,7 @@
     response.getAllowedMethods().add(Method.POST);
   }
  else {
-    String smtpHost=request.getResourceRef().getHostDomain();
+    final String smtpHost=request.getResourceRef().getHostDomain();
     int smtpPort=request.getResourceRef().getHostPort();
     if (smtpPort == -1) {
       smtpPort=request.getProtocol().getDefaultPort();
@@ -12,7 +12,7 @@
     if ((smtpHost == null) || (smtpHost.equals(""))) {
       throw new IllegalArgumentException("Invalid SMTP host specified");
     }
-    boolean authenticate=((getLogin(request) != null) && (getPassword(request) != null));
+    final boolean authenticate=((getLogin(request) != null) && (getPassword(request) != null));
     String transport=null;
     if (Protocol.SMTP.equals(request.getProtocol())) {
       transport="smtp";
@@ -20,14 +20,14 @@
  else     if (Protocol.SMTPS.equals(request.getProtocol())) {
       transport="smtps";
     }
-    Properties props=System.getProperties();
+    final Properties props=System.getProperties();
     props.put("mail." + transport + ".host",smtpHost);
     props.put("mail." + transport + ".port",Integer.toString(smtpPort));
     props.put("mail." + transport + ".auth",Boolean.toString(authenticate).toLowerCase());
     props.put("mail." + transport + ".starttls.enable",Boolean.toString(isStartTls()));
-    Session session=Session.getDefaultInstance(props);
+    final Session session=Session.getDefaultInstance(props);
     session.setDebug(isDebug());
-    Transport tr=session.getTransport(transport);
+    final Transport tr=session.getTransport(transport);
     if (tr != null) {
       if (authenticate) {
         tr.connect(smtpHost,getLogin(request),getPassword(request));
@@ -37,7 +37,7 @@
       }
       if (tr.isConnected()) {
         getLogger().info("JavaMail client connection successfully established. Attempting to send the message");
-        Message msg=createMessage(request.getEntity(),session);
+        final Message msg=createMessage(request.getEntity(),session);
         tr.sendMessage(msg,msg.getAllRecipients());
         tr.close();
         getLogger().info("JavaMail client successfully sent the message.");

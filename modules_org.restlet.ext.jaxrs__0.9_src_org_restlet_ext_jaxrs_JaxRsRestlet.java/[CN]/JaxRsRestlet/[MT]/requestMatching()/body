@@ -1,12 +1,16 @@
 {
-  Request restletRequest=tlContext.get().getRequest();
-  RemainingPath u=new RemainingPath(restletRequest.getResourceRef().getRemainingPart());
-  RroRemPathAndMatchedPath rrm=identifyRootResource(u);
-  ResObjAndRemPath resourceObjectAndPath=obtainObject(rrm);
-  Representation entity=restletRequest.getEntity();
+  final Request restletRequest=this.tlContext.get().getRequest();
+  final RemainingPath u=new RemainingPath(restletRequest.getResourceRef().getRemainingPart());
+  final RroRemPathAndMatchedPath rrm=identifyRootResource(u);
+  final ResObjAndRemPath resourceObjectAndPath=obtainObject(rrm);
+  final Representation entity=restletRequest.getEntity();
   MediaType givenMediaType;
-  if (entity != null)   givenMediaType=entity.getMediaType();
- else   givenMediaType=null;
-  ResObjAndMeth method=identifyMethod(resourceObjectAndPath,givenMediaType);
+  if (entity != null) {
+    givenMediaType=entity.getMediaType();
+  }
+ else {
+    givenMediaType=null;
+  }
+  final ResObjAndMeth method=identifyMethod(resourceObjectAndPath,givenMediaType);
   return method;
 }

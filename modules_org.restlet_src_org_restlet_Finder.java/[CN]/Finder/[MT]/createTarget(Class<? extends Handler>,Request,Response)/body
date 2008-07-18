@@ -7,7 +7,7 @@
         constructor=targetClass.getConstructor(Context.class,Request.class,Response.class);
         result=(Handler)constructor.newInstance(getContext(),request,response);
       }
- catch (      NoSuchMethodException nsme) {
+ catch (      final NoSuchMethodException nsme) {
         constructor=targetClass.getConstructor();
         if (constructor != null) {
           result=(Handler)constructor.newInstance();
@@ -15,7 +15,7 @@
         }
       }
     }
- catch (    InvocationTargetException e) {
+ catch (    final InvocationTargetException e) {
       if (e.getCause() instanceof Error) {
         throw (Error)e.getCause();
       }
@@ -26,7 +26,7 @@
         getLogger().log(Level.WARNING,"Exception while instantiating the target handler.",e);
       }
     }
-catch (    Exception e) {
+catch (    final Exception e) {
       getLogger().log(Level.WARNING,"Exception while instantiating the target handler.",e);
     }
   }

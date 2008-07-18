@@ -1,19 +1,19 @@
 {
-  if (network != null) {
+  if (this.network != null) {
     return;
   }
   try {
-    network=new Network(new AbstractConfigurator(HOME,Profile.get(getClass().getResource(PROFILE_RESOURCE).toURI())){
+    this.network=new Network(new AbstractConfigurator(HOME,Profile.get(getClass().getResource(PROFILE_RESOURCE).toURI())){
       @Override public PlatformConfig createPlatformConfig(      Configurator c) throws ConfiguratorException {
         c.setName(CONFIG_NAME);
         c.setSecurity(CONFIG_USER,CONFIG_PASSWORD);
         return c.getPlatformConfig();
       }
     }
-,listener);
-    network.start();
+,this.listener);
+    this.network.start();
   }
- catch (  URISyntaxException use) {
+ catch (  final URISyntaxException use) {
     throw new NetworkException("invalid uri: " + getClass().getResource(PROFILE_RESOURCE),use);
   }
 }

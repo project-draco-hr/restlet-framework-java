@@ -1,11 +1,11 @@
 {
   super(helper,method,requestUri);
   if (requestUri.startsWith("http")) {
-    URL url=new URL(requestUri);
+    final URL url=new URL(requestUri);
     this.connection=(HttpURLConnection)url.openConnection();
-    int majorVersionNumber=Engine.getJavaMajorVersion();
-    int minorVersionNumber=Engine.getJavaMinorVersion();
-    if ((majorVersionNumber > 1) || (majorVersionNumber == 1 && minorVersionNumber >= 5)) {
+    final int majorVersionNumber=Engine.getJavaMajorVersion();
+    final int minorVersionNumber=Engine.getJavaMinorVersion();
+    if ((majorVersionNumber > 1) || ((majorVersionNumber == 1) && (minorVersionNumber >= 5))) {
       this.connection.setConnectTimeout(getHelper().getConnectTimeout());
       this.connection.setReadTimeout(getHelper().getReadTimeout());
     }
@@ -16,9 +16,9 @@
     this.responseHeadersAdded=false;
     if (this.connection instanceof HttpsURLConnection) {
       setConfidential(true);
-      HostnameVerifier verifier=helper.getHostnameVerifier();
+      final HostnameVerifier verifier=helper.getHostnameVerifier();
       if (verifier != null) {
-        HttpsURLConnection https=(HttpsURLConnection)this.connection;
+        final HttpsURLConnection https=(HttpsURLConnection)this.connection;
         https.setHostnameVerifier(verifier);
       }
     }

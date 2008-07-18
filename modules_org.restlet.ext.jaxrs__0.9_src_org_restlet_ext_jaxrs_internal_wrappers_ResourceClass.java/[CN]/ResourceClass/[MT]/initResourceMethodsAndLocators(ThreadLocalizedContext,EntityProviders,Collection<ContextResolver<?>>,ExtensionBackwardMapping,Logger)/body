@@ -1,18 +1,22 @@
 {
-  for (  Method execMethod : jaxRsClass.getMethods()) {
-    Method annotatedMethod=getAnnotatedJavaMethod(execMethod);
-    if (annotatedMethod == null)     continue;
-    Path path=annotatedMethod.getAnnotation(Path.class);
+  for (  final Method execMethod : this.jaxRsClass.getMethods()) {
+    final Method annotatedMethod=getAnnotatedJavaMethod(execMethod);
+    if (annotatedMethod == null) {
+      continue;
+    }
+    final Path path=annotatedMethod.getAnnotation(Path.class);
     org.restlet.data.Method httpMethod;
     httpMethod=getHttpMethod(annotatedMethod);
     try {
       if (httpMethod != null) {
-        if (isVolatile(execMethod))         continue;
+        if (isVolatile(execMethod)) {
+          continue;
+        }
         ResourceMethod subResMeth;
         try {
           subResMeth=new ResourceMethod(execMethod,annotatedMethod,this,httpMethod,tlContext,entityProviders,allCtxResolvers,extensionBackwardMapping,logger);
         }
- catch (        IllegalMethodParamTypeException e) {
+ catch (        final IllegalMethodParamTypeException e) {
           Logger.getAnonymousLogger().log(Level.WARNING,"An annotated parameter of the resource method " + annotatedMethod + " is has an illegal type",e);
           continue;
         }
@@ -22,12 +26,14 @@
       }
  else {
         if (path != null) {
-          if (isVolatile(execMethod))           continue;
+          if (isVolatile(execMethod)) {
+            continue;
+          }
           SubResourceLocator subResLoc;
           try {
             subResLoc=new SubResourceLocator(execMethod,annotatedMethod,this,tlContext,entityProviders,allCtxResolvers,extensionBackwardMapping,logger);
           }
- catch (          IllegalMethodParamTypeException e) {
+ catch (          final IllegalMethodParamTypeException e) {
             Logger.getAnonymousLogger().log(Level.WARNING,"An annotated parameter of the resource method " + annotatedMethod + " is has an illegal type",e);
             continue;
           }
@@ -37,7 +43,7 @@
         }
       }
     }
- catch (    IllegalPathOnMethodException e) {
+ catch (    final IllegalPathOnMethodException e) {
       logger.warning("The method " + annotatedMethod + " is annotated with an illegal path: "+ e.getPath()+ ". Ignoring this method. ("+ e.getMessage()+ ")");
     }
   }

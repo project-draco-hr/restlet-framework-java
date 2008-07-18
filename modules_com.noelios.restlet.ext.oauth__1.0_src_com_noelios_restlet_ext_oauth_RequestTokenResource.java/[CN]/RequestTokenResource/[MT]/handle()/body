@@ -1,31 +1,31 @@
 {
-  OAuthMessage requestMessage=OAuthHelper.getMessage(getRequest(),getLogger());
-  OAuthConsumer consumer=provider.getConsumer(requestMessage);
-  ChallengeRequest challengeRequest=new ChallengeRequest(OAuthGuard.SCHEME,realm);
+  final OAuthMessage requestMessage=OAuthHelper.getMessage(getRequest(),getLogger());
+  final OAuthConsumer consumer=this.provider.getConsumer(requestMessage);
+  final ChallengeRequest challengeRequest=new ChallengeRequest(OAuthGuard.SCHEME,this.realm);
   if (consumer == null) {
     getResponse().setChallengeRequest(challengeRequest);
     getResponse().setStatus(Status.CLIENT_ERROR_UNAUTHORIZED,"Invalid Consumer Key");
     challengeRequest.getParameters().add("oauth_problem","consumer_key_unknown");
     return;
   }
-  OAuthAccessor accessor=new OAuthAccessor(consumer);
+  final OAuthAccessor accessor=new OAuthAccessor(consumer);
   try {
     requestMessage.validateSignature(accessor);
   }
- catch (  OAuthProblemException oape) {
+ catch (  final OAuthProblemException oape) {
     getResponse().setChallengeRequest(challengeRequest);
     getResponse().setStatus(Status.CLIENT_ERROR_UNAUTHORIZED,oape);
     challengeRequest.getParameters().add("oauth_problem","signature_invalid");
     return;
   }
-catch (  Exception e) {
+catch (  final Exception e) {
     throw new RuntimeException(e);
   }
-  provider.generateRequestToken(accessor);
+  this.provider.generateRequestToken(accessor);
   try {
     getResponse().setEntity(new StringRepresentation(OAuth.formEncode(OAuth.newList("oauth_token",accessor.requestToken,"oauth_token_secret",accessor.tokenSecret))));
   }
- catch (  IOException e) {
+ catch (  final IOException e) {
     e.printStackTrace();
   }
 }

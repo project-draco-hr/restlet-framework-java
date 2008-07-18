@@ -1,20 +1,20 @@
 {
   sysout("start accMediaType=" + getAccMediaType());
   boolean counterAtStart;
-synchronized (counterSync) {
-    counterAtStart=marker;
-    marker=!marker;
+synchronized (this.counterSync) {
+    counterAtStart=this.marker;
+    this.marker=!this.marker;
   }
   do {
     TestUtils.sleep();
   }
- while (counterAtStart == marker);
-  MediaType accMediaType=getAccMediaType();
+ while (counterAtStart == this.marker);
+  final MediaType accMediaType=getAccMediaType();
   sysout("middle accMediaType=" + accMediaType);
-synchronized (counterSync) {
-    marker=!marker;
+synchronized (this.counterSync) {
+    this.marker=!this.marker;
   }
-  ResponseBuilder rb=Response.serverError();
+  final ResponseBuilder rb=Response.serverError();
   rb.type(accMediaType);
   rb.entity("Database access error");
   sysout("end accMediaType=" + accMediaType);

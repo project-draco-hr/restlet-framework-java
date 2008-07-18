@@ -1,24 +1,24 @@
 {
-  AttributesImpl attributes=new AttributesImpl();
-  if (getDefaultValue() != null && !getDefaultValue().equals("")) {
+  final AttributesImpl attributes=new AttributesImpl();
+  if ((getDefaultValue() != null) && !getDefaultValue().equals("")) {
     attributes.addAttribute("","default",null,"xs:string",getDefaultValue());
   }
-  if (getFixed() != null && !getFixed().equals("")) {
+  if ((getFixed() != null) && !getFixed().equals("")) {
     attributes.addAttribute("","fixed",null,"xs:string",getFixed());
   }
-  if (getIdentifier() != null && !getIdentifier().equals("")) {
+  if ((getIdentifier() != null) && !getIdentifier().equals("")) {
     attributes.addAttribute("","id",null,"xs:ID",getIdentifier());
   }
-  if (getPath() != null && !getPath().equals("")) {
+  if ((getPath() != null) && !getPath().equals("")) {
     attributes.addAttribute("","path",null,"xs:string",getPath());
   }
   if (getStyle() != null) {
     attributes.addAttribute("","style",null,"xs:string",getStyle().toString());
   }
-  if (getName() != null && !getName().equals("")) {
+  if ((getName() != null) && !getName().equals("")) {
     attributes.addAttribute("","name",null,"xs:NMTOKEN",getName());
   }
-  if (getType() != null && !getType().equals("")) {
+  if ((getType() != null) && !getType().equals("")) {
     attributes.addAttribute("","type",null,"xs:QName",getType());
   }
   if (isRepeating()) {
@@ -27,7 +27,7 @@
   if (isRequired()) {
     attributes.addAttribute("","required",null,"xs:boolean","true");
   }
-  if (getLink() == null && getDocumentations().isEmpty() && getOptions().isEmpty()) {
+  if ((getLink() == null) && getDocumentations().isEmpty() && getOptions().isEmpty()) {
     writer.emptyElement(APP_NAMESPACE,"param",null,attributes);
   }
  else {
@@ -35,10 +35,10 @@
     if (getLink() != null) {
       getLink().writeElement(writer);
     }
-    for (    DocumentationInfo documentationInfo : getDocumentations()) {
+    for (    final DocumentationInfo documentationInfo : getDocumentations()) {
       documentationInfo.writeElement(writer);
     }
-    for (    OptionInfo optionInfo : getOptions()) {
+    for (    final OptionInfo optionInfo : getOptions()) {
       optionInfo.writeElement(writer);
     }
     writer.endElement(APP_NAMESPACE,"param");

@@ -1,7 +1,7 @@
 {
   this.identifier=identifier;
   if (mail != null) {
-    map=new HashMap<String,Object>();
+    this.map=new HashMap<String,Object>();
     DomRepresentation rep=null;
     if (mail instanceof DomRepresentation) {
       rep=(DomRepresentation)mail;
@@ -13,9 +13,9 @@
     if (node != null) {
       add("from",node.getNodeValue());
     }
-    NodeList nodes=rep.getNodes("/email/head/to/text()");
-    if (nodes != null && nodes.getLength() > 0) {
-      StringBuilder builder=new StringBuilder(nodes.item(0).getNodeValue());
+    final NodeList nodes=rep.getNodes("/email/head/to/text()");
+    if ((nodes != null) && (nodes.getLength() > 0)) {
+      final StringBuilder builder=new StringBuilder(nodes.item(0).getNodeValue());
       for (int i=1; i < nodes.getLength(); i++) {
         builder.append(", ").append(nodes.item(i).getNodeValue());
       }

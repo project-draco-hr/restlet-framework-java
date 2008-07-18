@@ -1,15 +1,17 @@
 {
-  if (usesTcp())   return;
-  Person newPerson=new Person("Kurt","Beck");
-  Response response1=post(new JaxbRepresentation<Person>(newPerson));
+  if (usesTcp()) {
+    return;
+  }
+  final Person newPerson=new Person("Kurt","Beck");
+  final Response response1=post(new JaxbRepresentation<Person>(newPerson));
   sysOutEntityIfError(response1);
   assertEquals(Status.SUCCESS_CREATED,response1.getStatus());
-  Reference newLocation=response1.getLocationRef();
-  Response response2=get(newLocation,MediaType.TEXT_XML);
+  final Reference newLocation=response1.getLocationRef();
+  final Response response2=get(newLocation,MediaType.TEXT_XML);
   sysOutEntityIfError(response2);
   assertEquals(Status.SUCCESS_OK,response2.getStatus());
-  JaxbRepresentation<Person> repr=new JaxbRepresentation<Person>(response2.getEntity(),Person.class);
-  Person person=repr.getObject();
+  final JaxbRepresentation<Person> repr=new JaxbRepresentation<Person>(response2.getEntity(),Person.class);
+  final Person person=repr.getObject();
   assertTrue(person.getFirstname().startsWith("firstname"));
   assertEquals("lastname",person.getLastname());
 }

@@ -1,19 +1,19 @@
 {
-  File testDir=new File(System.getProperty("java.io.tmpdir"),"AtomTestCase");
+  final File testDir=new File(System.getProperty("java.io.tmpdir"),"AtomTestCase");
   deleteDir(testDir);
   testDir.mkdir();
   try {
-    Service atomService=new Service("http://bitworking.org/projects/apptestsite/app.cgi/service/;service_document");
-    Feed atomFeed=atomService.getWorkspaces().get(0).getCollections().get(0).getFeed();
-    File feedFile=new File(testDir,"feed.xml");
+    final Service atomService=new Service("http://bitworking.org/projects/apptestsite/app.cgi/service/;service_document");
+    final Feed atomFeed=atomService.getWorkspaces().get(0).getCollections().get(0).getFeed();
+    final File feedFile=new File(testDir,"feed.xml");
     atomFeed.write(new BufferedOutputStream(new FileOutputStream(feedFile)));
-    FileRepresentation fileRepresentation=new FileRepresentation(feedFile,MediaType.TEXT_XML);
-    Feed atomFeed2=new Feed(fileRepresentation);
+    final FileRepresentation fileRepresentation=new FileRepresentation(feedFile,MediaType.TEXT_XML);
+    final Feed atomFeed2=new Feed(fileRepresentation);
     assertEquals(atomFeed2.getAuthors().get(0).getName(),atomFeed.getAuthors().get(0).getName());
     assertEquals(atomFeed2.getEntries().get(0).getContent().getInlineContent().getText(),atomFeed2.getEntries().get(0).getContent().getInlineContent().getText());
     assertEquals(atomFeed2.getEntries().get(0).getTitle().getContent(),atomFeed2.getEntries().get(0).getTitle().getContent());
   }
- catch (  Exception e) {
+ catch (  final Exception e) {
     e.printStackTrace();
   }
   deleteDir(testDir);

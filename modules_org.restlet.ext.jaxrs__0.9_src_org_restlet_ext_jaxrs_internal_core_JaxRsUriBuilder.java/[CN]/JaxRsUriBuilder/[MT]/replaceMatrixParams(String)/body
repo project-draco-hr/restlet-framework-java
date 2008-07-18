@@ -1,14 +1,22 @@
 {
   CharSequence mpcs=null;
-  if (matrixParams != null)   mpcs=EncodeOrCheck.fullMatrix(matrixParams,encode);
-  StringBuilder path=getPath();
-  int beginLastPs=path.lastIndexOf("/");
-  if (beginLastPs >= 0) {
-    int beginMp=path.indexOf(";",beginLastPs);
-    if (beginMp >= 0)     path.delete(beginMp,path.length());
+  if (matrixParams != null) {
+    mpcs=EncodeOrCheck.fullMatrix(matrixParams,this.encode);
   }
-  if (mpcs == null)   return this;
-  if (mpcs.length() == 0 || mpcs.charAt(0) != ';')   path.append(";");
+  final StringBuilder path=getPath();
+  final int beginLastPs=path.lastIndexOf("/");
+  if (beginLastPs >= 0) {
+    final int beginMp=path.indexOf(";",beginLastPs);
+    if (beginMp >= 0) {
+      path.delete(beginMp,path.length());
+    }
+  }
+  if (mpcs == null) {
+    return this;
+  }
+  if ((mpcs.length() == 0) || (mpcs.charAt(0) != ';')) {
+    path.append(";");
+  }
   path.append(mpcs);
   return this;
 }

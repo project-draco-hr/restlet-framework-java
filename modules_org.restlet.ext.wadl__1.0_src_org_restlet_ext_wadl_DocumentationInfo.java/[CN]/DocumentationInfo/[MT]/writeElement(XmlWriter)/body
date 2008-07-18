@@ -1,12 +1,12 @@
 {
-  AttributesImpl attributes=new AttributesImpl();
-  if (getTitle() != null && !getTitle().equals("")) {
+  final AttributesImpl attributes=new AttributesImpl();
+  if ((getTitle() != null) && !getTitle().equals("")) {
     attributes.addAttribute("","title",null,"xs:string",getTitle());
   }
-  if (getLanguage() != null && getLanguage().toString() != null) {
+  if ((getLanguage() != null) && (getLanguage().toString() != null)) {
     attributes.addAttribute("","xml:lang",null,"xs:string",getLanguage().toString());
   }
-  if ((getTextContent() == null || getTextContent().equals("")) && getXmlContent() == null) {
+  if (((getTextContent() == null) || getTextContent().equals("")) && (getXmlContent() == null)) {
     writer.emptyElement(APP_NAMESPACE,"doc",null,attributes);
   }
  else {
@@ -17,7 +17,7 @@
       try {
         writer.getWriter().write(getTextContent());
       }
- catch (      IOException e) {
+ catch (      final IOException e) {
         logger.log(Level.SEVERE,"Error when writing the text content of the current \"doc\" tag.",e);
       }
       writer.endElement(APP_NAMESPACE,"doc");

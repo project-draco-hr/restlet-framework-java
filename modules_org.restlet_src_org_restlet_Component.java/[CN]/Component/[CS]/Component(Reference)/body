@@ -1,23 +1,23 @@
 {
   this();
-  DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
+  final DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
   dbf.setNamespaceAware(false);
   dbf.setValidating(false);
   try {
-    DocumentBuilder db=dbf.newDocumentBuilder();
-    Document document=db.parse(new FileInputStream(new LocalReference(xmlConfigReference).getFile()));
-    NodeList clientNodes=document.getElementsByTagName("client");
+    final DocumentBuilder db=dbf.newDocumentBuilder();
+    final Document document=db.parse(new FileInputStream(new LocalReference(xmlConfigReference).getFile()));
+    final NodeList clientNodes=document.getElementsByTagName("client");
     for (int i=0; i < clientNodes.getLength(); i++) {
-      Node clientNode=clientNodes.item(i);
+      final Node clientNode=clientNodes.item(i);
       Node item=clientNode.getAttributes().getNamedItem("protocol");
       Client client=null;
       if (item == null) {
         item=clientNode.getAttributes().getNamedItem("protocols");
         if (item != null) {
-          String[] protocols=item.getNodeValue().split(" ");
-          List<Protocol> protocolsList=new ArrayList<Protocol>();
-          for (int j=0; j < protocols.length; j++) {
-            protocolsList.add(getProtocol(protocols[j]));
+          final String[] protocols=item.getNodeValue().split(" ");
+          final List<Protocol> protocolsList=new ArrayList<Protocol>();
+          for (          final String protocol : protocols) {
+            protocolsList.add(getProtocol(protocol));
           }
           client=new Client(getContext(),protocolsList);
         }
@@ -26,103 +26,103 @@
         client=new Client(getContext(),getProtocol(item.getNodeValue()));
       }
       if (client != null) {
-        this.getClients().add(client);
+        getClients().add(client);
       }
     }
-    NodeList serverNodes=document.getElementsByTagName("server");
+    final NodeList serverNodes=document.getElementsByTagName("server");
     for (int i=0; i < serverNodes.getLength(); i++) {
-      Node serverNode=serverNodes.item(i);
+      final Node serverNode=serverNodes.item(i);
       Node item=serverNode.getAttributes().getNamedItem("protocol");
-      Node portNode=serverNode.getAttributes().getNamedItem("port");
-      Node addressNode=serverNode.getAttributes().getNamedItem("address");
+      final Node portNode=serverNode.getAttributes().getNamedItem("port");
+      final Node addressNode=serverNode.getAttributes().getNamedItem("address");
       Server server=null;
       if (item == null) {
         item=serverNode.getAttributes().getNamedItem("protocols");
         if (item != null) {
-          String[] protocols=item.getNodeValue().split(" ");
-          List<Protocol> protocolsList=new ArrayList<Protocol>();
-          for (int j=0; j < protocols.length; j++) {
-            protocolsList.add(getProtocol(protocols[j]));
+          final String[] protocols=item.getNodeValue().split(" ");
+          final List<Protocol> protocolsList=new ArrayList<Protocol>();
+          for (          final String protocol : protocols) {
+            protocolsList.add(getProtocol(protocol));
           }
-          int port=getInt(portNode,Protocol.UNKNOWN_PORT);
+          final int port=getInt(portNode,Protocol.UNKNOWN_PORT);
           if (port == Protocol.UNKNOWN_PORT) {
             getLogger().warning("Please specify a port when defining a list of protocols.");
           }
  else {
-            server=new Server(getContext(),protocolsList,getInt(portNode,Protocol.UNKNOWN_PORT),this.getServers().getTarget());
+            server=new Server(getContext(),protocolsList,getInt(portNode,Protocol.UNKNOWN_PORT),getServers().getTarget());
           }
         }
       }
  else {
-        Protocol protocol=getProtocol(item.getNodeValue());
-        server=new Server(getContext(),protocol,getInt(portNode,protocol.getDefaultPort()),this.getServers().getTarget());
+        final Protocol protocol=getProtocol(item.getNodeValue());
+        server=new Server(getContext(),protocol,getInt(portNode,protocol.getDefaultPort()),getServers().getTarget());
       }
       if (server != null) {
         if (addressNode != null) {
-          String address=addressNode.getNodeValue();
+          final String address=addressNode.getNodeValue();
           if (address != null) {
             server.setAddress(address);
           }
         }
-        this.getServers().add(server);
+        getServers().add(server);
       }
-      NodeList defaultHostNodes=document.getElementsByTagName("defaultHost");
+      final NodeList defaultHostNodes=document.getElementsByTagName("defaultHost");
       if (defaultHostNodes.getLength() > 0) {
-        parseHost(this.getDefaultHost(),defaultHostNodes.item(0));
+        parseHost(getDefaultHost(),defaultHostNodes.item(0));
       }
-      NodeList hostNodes=document.getElementsByTagName("host");
+      final NodeList hostNodes=document.getElementsByTagName("host");
       for (int j=0; j < hostNodes.getLength(); j++) {
-        VirtualHost host=new VirtualHost();
+        final VirtualHost host=new VirtualHost();
         parseHost(host,hostNodes.item(j));
-        this.getHosts().add(host);
+        getHosts().add(host);
       }
     }
-    NodeList internalRouterNodes=document.getElementsByTagName("internalRouter");
+    final NodeList internalRouterNodes=document.getElementsByTagName("internalRouter");
     if (internalRouterNodes.getLength() > 0) {
       parseRouter(getInternalRouter(),internalRouterNodes.item(0));
     }
-    NodeList logServiceNodes=document.getElementsByTagName("logService");
+    final NodeList logServiceNodes=document.getElementsByTagName("logService");
     if (logServiceNodes.getLength() > 0) {
-      Node node=logServiceNodes.item(0);
+      final Node node=logServiceNodes.item(0);
       Node item=node.getAttributes().getNamedItem("logFormat");
       if (item != null) {
-        this.getLogService().setLogFormat(item.getNodeValue());
+        getLogService().setLogFormat(item.getNodeValue());
       }
       item=node.getAttributes().getNamedItem("loggerName");
       if (item != null) {
-        this.getLogService().setLoggerName(item.getNodeValue());
+        getLogService().setLoggerName(item.getNodeValue());
       }
       item=node.getAttributes().getNamedItem("enabled");
       if (item != null) {
-        this.getLogService().setEnabled(getBoolean(item,true));
+        getLogService().setEnabled(getBoolean(item,true));
       }
       item=node.getAttributes().getNamedItem("identityCheck");
       if (item != null) {
-        this.getLogService().setIdentityCheck(getBoolean(item,true));
+        getLogService().setIdentityCheck(getBoolean(item,true));
       }
     }
-    NodeList statusServiceNodes=document.getElementsByTagName("statusService");
+    final NodeList statusServiceNodes=document.getElementsByTagName("statusService");
     if (statusServiceNodes.getLength() > 0) {
-      Node node=statusServiceNodes.item(0);
+      final Node node=statusServiceNodes.item(0);
       Node item=node.getAttributes().getNamedItem("contactEmail");
       if (item != null) {
-        this.getStatusService().setContactEmail(item.getNodeValue());
+        getStatusService().setContactEmail(item.getNodeValue());
       }
       item=node.getAttributes().getNamedItem("enabled");
       if (item != null) {
-        this.getStatusService().setEnabled(getBoolean(item,true));
+        getStatusService().setEnabled(getBoolean(item,true));
       }
       item=node.getAttributes().getNamedItem("homeRef");
       if (item != null) {
-        this.getStatusService().setHomeRef(new Reference(item.getNodeValue()));
+        getStatusService().setHomeRef(new Reference(item.getNodeValue()));
       }
       item=node.getAttributes().getNamedItem("overwrite");
       if (item != null) {
-        this.getStatusService().setOverwrite(getBoolean(item,true));
+        getStatusService().setOverwrite(getBoolean(item,true));
       }
     }
   }
- catch (  Exception e) {
+ catch (  final Exception e) {
     getLogger().log(Level.WARNING,"Unable to parse the Component XML configuration.",e);
   }
 }

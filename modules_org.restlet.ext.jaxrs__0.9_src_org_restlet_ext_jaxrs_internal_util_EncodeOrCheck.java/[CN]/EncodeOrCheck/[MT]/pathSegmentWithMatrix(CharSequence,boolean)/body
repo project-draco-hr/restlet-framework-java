@@ -1,15 +1,23 @@
 {
-  int l=path.length();
-  StringBuilder stb=new StringBuilder(l + 6);
+  final int l=path.length();
+  final StringBuilder stb=new StringBuilder(l + 6);
   for (int i=0; i < l; i++) {
-    char c=path.charAt(i);
-    if (c == '{')     i=processTemplVarname(path,i,stb);
- else     if (Reference.isUnreserved(c) || Reference.isReserved(c))     stb.append(c);
- else     if (c == '}')     throw new IllegalArgumentException("'}' is only allowed " + "as end of a variable name in \"" + path + "\"");
+    final char c=path.charAt(i);
+    if (c == '{') {
+      i=processTemplVarname(path,i,stb);
+    }
+ else     if (Reference.isUnreserved(c) || Reference.isReserved(c)) {
+      stb.append(c);
+    }
+ else     if (c == '}') {
+      throw new IllegalArgumentException("'}' is only allowed " + "as end of a variable name in \"" + path + "\"");
+    }
  else     if (c == '%') {
       i=processPercent(i,encode,path,stb);
     }
- else     toHexOrReject(c,stb,encode);
+ else {
+      toHexOrReject(c,stb,encode);
+    }
   }
   return stb;
 }

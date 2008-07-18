@@ -1,10 +1,16 @@
 {
-  if (mediaTypes == null || mediaTypes.length == 0)   throw new IllegalArgumentException("You must give at least one MediaType");
-  if (mediaTypes.length == 1)   return mediaTypes[0];
+  if ((mediaTypes == null) || (mediaTypes.length == 0)) {
+    throw new IllegalArgumentException("You must give at least one MediaType");
+  }
+  if (mediaTypes.length == 1) {
+    return mediaTypes[0];
+  }
   MediaType mostSpecific=mediaTypes[mediaTypes.length - 1];
   for (int i=mediaTypes.length - 2; i >= 0; i--) {
-    MediaType mediaType=mediaTypes[i];
-    if (mediaType.getMainType().equals("*"))     continue;
+    final MediaType mediaType=mediaTypes[i];
+    if (mediaType.getMainType().equals("*")) {
+      continue;
+    }
     if (mostSpecific.getMainType().equals("*")) {
       mostSpecific=mediaType;
       continue;

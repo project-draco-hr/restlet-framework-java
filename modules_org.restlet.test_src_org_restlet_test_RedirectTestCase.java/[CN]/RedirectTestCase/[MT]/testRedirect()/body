@@ -1,14 +1,14 @@
 {
-  Component clientComponent=new Component();
-  Component proxyComponent=new Component();
-  Component originComponent=new Component();
+  final Component clientComponent=new Component();
+  final Component proxyComponent=new Component();
+  final Component originComponent=new Component();
   clientComponent.getClients().add(Protocol.HTTP);
   proxyComponent.getClients().add(Protocol.HTTP);
-  String target="http://localhost:9090{rr}";
-  Redirector proxy=new Redirector(proxyComponent.getContext(),target,Redirector.MODE_DISPATCHER);
-  Restlet trace=new Restlet(originComponent.getContext()){
+  final String target="http://localhost:9090{rr}";
+  final Redirector proxy=new Redirector(proxyComponent.getContext(),target,Redirector.MODE_DISPATCHER);
+  final Restlet trace=new Restlet(originComponent.getContext()){
     @Override public void handle(    Request request,    Response response){
-      String message="Resource URI:  " + request.getResourceRef() + '\n'+ "Base URI:      "+ request.getResourceRef().getBaseRef()+ '\n'+ "Remaining part: "+ request.getResourceRef().getRemainingPart()+ '\n'+ "Method name:   "+ request.getMethod()+ '\n';
+      final String message="Resource URI:  " + request.getResourceRef() + '\n'+ "Base URI:      "+ request.getResourceRef().getBaseRef()+ '\n'+ "Remaining part: "+ request.getResourceRef().getRemainingPart()+ '\n'+ "Method name:   "+ request.getMethod()+ '\n';
       response.setEntity(new StringRepresentation(message,MediaType.TEXT_PLAIN));
     }
   }
@@ -20,7 +20,7 @@
   originComponent.start();
   proxyComponent.start();
   clientComponent.start();
-  Context context=clientComponent.getContext();
+  final Context context=clientComponent.getContext();
   String uri="http://localhost:8182/?foo=bar";
   testCall(context,Method.GET,uri);
   testCall(context,Method.DELETE,uri);

@@ -3,22 +3,22 @@
   mail.setMessage(message);
   mail.setTags(tags);
   if (Mail.STATUS_DRAFT.equalsIgnoreCase(mail.getStatus())) {
-    List<Contact> mailRecipients=new ArrayList<Contact>();
+    final List<Contact> mailRecipients=new ArrayList<Contact>();
     if (mailAddresses != null) {
       if (mail.getRecipients() != null) {
-        for (        Contact recipient : mail.getRecipients()) {
+        for (        final Contact recipient : mail.getRecipients()) {
           if (!mailAddresses.contains(recipient.getMailAddress())) {
-            dataFacade.deleteContact(recipient);
+            this.dataFacade.deleteContact(recipient);
           }
         }
       }
-      for (      String mailAddress : mailAddresses) {
-        Contact contact=lookForContact(mailAddress,mailbox);
+      for (      final String mailAddress : mailAddresses) {
+        final Contact contact=lookForContact(mailAddress,mailbox);
         if (contact != null) {
           mailRecipients.add(contact);
         }
  else {
-          for (          Contact recipient : mail.getRecipients()) {
+          for (          final Contact recipient : mail.getRecipients()) {
             if (recipient.getMailAddress().equals(mailAddress)) {
               mailRecipients.add(recipient);
               break;
@@ -30,8 +30,8 @@
     }
  else {
       if (mail.getRecipients() != null) {
-        for (        Contact recipient : mail.getRecipients()) {
-          dataFacade.deleteContact(recipient);
+        for (        final Contact recipient : mail.getRecipients()) {
+          this.dataFacade.deleteContact(recipient);
         }
       }
       mail.setRecipients(null);

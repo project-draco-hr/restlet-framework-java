@@ -1,9 +1,11 @@
 {
-  Date modificDate=getLastModificationDateFromDatastore();
-  EntityTag entityTag=getEntityTagFromDatastore();
-  ResponseBuilder resp=request.evaluatePreconditions(modificDate,entityTag);
-  if (resp != null)   return resp.build();
-  ResponseBuilder responseBuilder=Response.status(200);
+  final Date modificDate=getLastModificationDateFromDatastore();
+  final EntityTag entityTag=getEntityTagFromDatastore();
+  final ResponseBuilder resp=request.evaluatePreconditions(modificDate,entityTag);
+  if (resp != null) {
+    return resp.build();
+  }
+  final ResponseBuilder responseBuilder=Response.status(200);
   responseBuilder.entity("This is the Entity from " + modificDate);
   responseBuilder.lastModified(modificDate);
   responseBuilder.tag(entityTag);

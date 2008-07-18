@@ -1,12 +1,18 @@
 {
-  Collection<Parameter> headers=new ArrayList<Parameter>();
-  for (  Map.Entry<String,List<Object>> m : jaxRsHeaders.entrySet()) {
-    String headerName=m.getKey();
-    for (    Object headerValue : m.getValue()) {
+  final Collection<Parameter> headers=new ArrayList<Parameter>();
+  for (  final Map.Entry<String,List<Object>> m : jaxRsHeaders.entrySet()) {
+    final String headerName=m.getKey();
+    for (    final Object headerValue : m.getValue()) {
       String hValue;
-      if (headerValue == null)       hValue=null;
- else       if (headerValue instanceof Date)       hValue=formatDate((Date)headerValue,false);
- else       hValue=headerValue.toString();
+      if (headerValue == null) {
+        hValue=null;
+      }
+ else       if (headerValue instanceof Date) {
+        hValue=formatDate((Date)headerValue,false);
+      }
+ else {
+        hValue=headerValue.toString();
+      }
       headers.add(new Parameter(headerName,hValue));
     }
   }

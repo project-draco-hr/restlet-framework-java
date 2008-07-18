@@ -1,16 +1,16 @@
 {
   try {
-    Component component=new Component();
+    final Component component=new Component();
     component.getServers().add(Protocol.HTTP,9876);
-    Restlet handler=new Restlet(component.getContext()){
+    final Restlet handler=new Restlet(component.getContext()){
       @Override public void handle(      Request request,      Response response){
         if (request.getMethod().equals(Method.PUT)) {
           System.out.println("Handling the call...");
           System.out.println("Trying to get the entity as a form...");
-          Form form=request.getEntityAsForm();
+          final Form form=request.getEntityAsForm();
           System.out.println("Trying to getParameters...");
-          StringBuffer sb=new StringBuffer("foo");
-          for (          Parameter p : form) {
+          final StringBuffer sb=new StringBuffer("foo");
+          for (          final Parameter p : form) {
             System.out.println(p);
             sb.append("field name = ");
             sb.append(p.getName());
@@ -31,7 +31,7 @@
     component.getDefaultHost().attach("/test",handler);
     component.start();
   }
- catch (  Exception e) {
+ catch (  final Exception e) {
     e.printStackTrace();
   }
 }

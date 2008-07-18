@@ -1,48 +1,48 @@
 {
   Component component=null;
-  String configPath=getServletContext().getRealPath("/WEB-INF/restlet.xml");
-  File configFile=new File(configPath);
-  if (configPath != null && configFile.exists()) {
+  final String configPath=getServletContext().getRealPath("/WEB-INF/restlet.xml");
+  final File configFile=new File(configPath);
+  if ((configPath != null) && configFile.exists()) {
     component=new Component(LocalReference.createFileReference(configPath));
   }
  else {
-    String componentClassName=getInitParameter(COMPONENT_KEY,null);
+    final String componentClassName=getInitParameter(COMPONENT_KEY,null);
     if (componentClassName != null) {
       try {
-        Class<?> targetClass=getClass(componentClassName);
+        final Class<?> targetClass=getClass(componentClassName);
         component=(Component)targetClass.newInstance();
       }
- catch (      ClassNotFoundException e) {
+ catch (      final ClassNotFoundException e) {
         log("[Noelios Restlet Engine] - The ServerServlet couldn't find the target class. Please check that your classpath includes " + componentClassName,e);
       }
-catch (      InstantiationException e) {
+catch (      final InstantiationException e) {
         log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check this class has an empty constructor " + componentClassName,e);
       }
-catch (      IllegalAccessException e) {
+catch (      final IllegalAccessException e) {
         log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check that you have to proper access rights to " + componentClassName,e);
       }
     }
     if (component == null) {
       component=new Component();
       component.getStatusService().setEnabled(false);
-      String clientProtocolsString=getInitParameter(CLIENTS_KEY,null);
+      final String clientProtocolsString=getInitParameter(CLIENTS_KEY,null);
       if (clientProtocolsString != null) {
-        String[] clientProtocols=clientProtocolsString.split(" ");
-        for (        String clientProtocol : clientProtocols) {
+        final String[] clientProtocols=clientProtocolsString.split(" ");
+        for (        final String clientProtocol : clientProtocols) {
           component.getClients().add(Protocol.valueOf(clientProtocol));
         }
       }
     }
   }
   component.getClients().add(createWarClient(component.getContext(),getServletConfig()));
-  ComponentContext componentContext=(ComponentContext)component.getContext();
+  final ComponentContext componentContext=(ComponentContext)component.getContext();
   String initParam;
-  javax.servlet.ServletConfig servletConfig=getServletConfig();
-  for (Enumeration<String> enum1=servletConfig.getInitParameterNames(); enum1.hasMoreElements(); ) {
+  final javax.servlet.ServletConfig servletConfig=getServletConfig();
+  for (final Enumeration<String> enum1=servletConfig.getInitParameterNames(); enum1.hasMoreElements(); ) {
     initParam=enum1.nextElement();
     componentContext.getParameters().add(initParam,servletConfig.getInitParameter(initParam));
   }
-  for (Enumeration<String> enum1=getServletContext().getInitParameterNames(); enum1.hasMoreElements(); ) {
+  for (final Enumeration<String> enum1=getServletContext().getInitParameterNames(); enum1.hasMoreElements(); ) {
     initParam=enum1.nextElement();
     componentContext.getParameters().add(initParam,getServletContext().getInitParameter(initParam));
   }

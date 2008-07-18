@@ -1,25 +1,25 @@
 {
   super.stop();
   getLogger().info("Stopping the internal HTTP server");
-  if (handlerService != null) {
-    handlerService.shutdown();
+  if (this.handlerService != null) {
+    this.handlerService.shutdown();
     try {
-      handlerService.awaitTermination(Long.MAX_VALUE,TimeUnit.SECONDS);
+      this.handlerService.awaitTermination(Long.MAX_VALUE,TimeUnit.SECONDS);
     }
- catch (    InterruptedException ex) {
+ catch (    final InterruptedException ex) {
       ex.printStackTrace();
     }
   }
-  if (listenerService != null) {
-    listenerService.shutdownNow();
+  if (this.listenerService != null) {
+    this.listenerService.shutdownNow();
     try {
-      listenerService.awaitTermination(Long.MAX_VALUE,TimeUnit.SECONDS);
+      this.listenerService.awaitTermination(Long.MAX_VALUE,TimeUnit.SECONDS);
     }
- catch (    Exception ex) {
+ catch (    final Exception ex) {
       ex.printStackTrace();
     }
   }
-  if (serverSocketChannel != null) {
-    serverSocketChannel.close();
+  if (this.serverSocketChannel != null) {
+    this.serverSocketChannel.close();
   }
 }

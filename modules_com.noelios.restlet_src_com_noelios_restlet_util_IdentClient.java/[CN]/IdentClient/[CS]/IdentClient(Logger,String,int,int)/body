@@ -3,35 +3,37 @@
   if ((logger != null) && (clientAddress != null) && (clientPort != -1)&& (serverPort != -1)) {
     BufferedReader in=null;
     try {
-      StringBuilder sb=new StringBuilder();
+      final StringBuilder sb=new StringBuilder();
       sb.append(clientPort).append(" , ").append(serverPort).append("\r\n");
-      String request=sb.toString();
+      final String request=sb.toString();
       socket=new Socket();
       socket.setSoTimeout(SO_TIMEOUT);
       socket.connect(new InetSocketAddress(clientAddress,113),CONNECT_TIMEOUT);
       socket.getOutputStream().write(request.getBytes());
       in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-      String response=in.readLine();
+      final String response=in.readLine();
       if (response != null) {
-        StringTokenizer st=new StringTokenizer(response,":");
+        final StringTokenizer st=new StringTokenizer(response,":");
         if (st.countTokens() >= 3) {
           st.nextToken();
-          String command=st.nextToken().trim();
-          if (command.equalsIgnoreCase("USERID") && st.countTokens() >= 2) {
+          final String command=st.nextToken().trim();
+          if (command.equalsIgnoreCase("USERID") && (st.countTokens() >= 2)) {
             this.hostType=st.nextToken().trim();
             this.userIdentifier=st.nextToken("").substring(1);
           }
         }
       }
     }
- catch (    IOException ioe) {
+ catch (    final IOException ioe) {
       logger.log(Level.FINE,"Unable to complete the IDENT request",ioe);
     }
  finally {
       try {
-        if (in != null)         in.close();
+        if (in != null) {
+          in.close();
+        }
       }
- catch (      IOException ioe) {
+ catch (      final IOException ioe) {
         logger.log(Level.FINE,"Unable to close the socket",ioe);
       }
     }

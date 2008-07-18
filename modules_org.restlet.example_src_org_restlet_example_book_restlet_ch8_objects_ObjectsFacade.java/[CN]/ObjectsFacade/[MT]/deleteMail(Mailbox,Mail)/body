@@ -1,20 +1,20 @@
 {
   boolean found=false;
-  for (int i=0; i < mailbox.getMails().size() && !found; i++) {
-    Mail mail2=mailbox.getMails().get(i);
+  for (int i=0; (i < mailbox.getMails().size()) && !found; i++) {
+    final Mail mail2=mailbox.getMails().get(i);
     if (mail2.getId().equals(mail.getId())) {
       mailbox.getMails().remove(i);
       found=true;
     }
   }
-  for (  Contact contact : mail.getRecipients()) {
+  for (  final Contact contact : mail.getRecipients()) {
     if (contact.getId() == null) {
-      dataFacade.deleteContact(contact);
+      this.dataFacade.deleteContact(contact);
     }
   }
   if (mail.getSender().getId() == null) {
-    dataFacade.deleteContact(mail.getSender());
+    this.dataFacade.deleteContact(mail.getSender());
   }
-  dataFacade.deleteMail(mail);
-  dataFacade.updateMailbox(mailbox);
+  this.dataFacade.deleteMail(mail);
+  this.dataFacade.updateMailbox(mailbox);
 }

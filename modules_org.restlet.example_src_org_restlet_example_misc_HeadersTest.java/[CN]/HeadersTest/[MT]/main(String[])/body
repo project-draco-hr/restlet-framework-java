@@ -1,5 +1,5 @@
 {
-  Restlet restlet=new Restlet(){
+  final Restlet restlet=new Restlet(){
     @SuppressWarnings("unchecked") @Override public void handle(    Request request,    Response response){
       Series<Parameter> headers=(Series)request.getAttributes().get("org.restlet.http.headers");
       response.setEntity("Accept header: " + headers.getFirstValue("accept",true),MediaType.TEXT_PLAIN);
@@ -10,6 +10,6 @@
     }
   }
 ;
-  Server server=new Server(Protocol.HTTP,8182,restlet);
+  final Server server=new Server(Protocol.HTTP,8182,restlet);
   server.start();
 }

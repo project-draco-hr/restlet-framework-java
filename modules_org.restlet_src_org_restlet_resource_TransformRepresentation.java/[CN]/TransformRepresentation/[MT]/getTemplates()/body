@@ -1,17 +1,17 @@
 {
   if (this.templates == null) {
     try {
-      StreamSource transformSource=new StreamSource(getTransformSheet().getStream());
+      final StreamSource transformSource=new StreamSource(getTransformSheet().getStream());
       if (getTransformSheet().getIdentifier() != null) {
         transformSource.setSystemId(getTransformSheet().getIdentifier().getTargetRef().toString());
       }
-      TransformerFactory transformerFactory=TransformerFactory.newInstance();
+      final TransformerFactory transformerFactory=TransformerFactory.newInstance();
       if (getUriResolver() != null) {
         transformerFactory.setURIResolver(getUriResolver());
       }
       this.templates=transformerFactory.newTemplates(transformSource);
     }
- catch (    TransformerConfigurationException tce) {
+ catch (    final TransformerConfigurationException tce) {
       throw new IOException("Transformer configuration exception. " + tce.getMessage());
     }
   }

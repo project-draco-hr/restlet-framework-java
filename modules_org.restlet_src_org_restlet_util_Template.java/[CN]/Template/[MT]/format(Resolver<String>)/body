@@ -1,9 +1,9 @@
 {
-  StringBuilder result=new StringBuilder();
+  final StringBuilder result=new StringBuilder();
   StringBuilder varBuffer=null;
   char next;
   boolean inVariable=false;
-  int patternLength=getPattern().length();
+  final int patternLength=getPattern().length();
   for (int i=0; i < patternLength; i++) {
     next=getPattern().charAt(i);
     if (inVariable) {
@@ -15,7 +15,7 @@
           getLogger().warning("Empty pattern variables are not allowed : " + this.regexPattern);
         }
  else {
-          String varName=varBuffer.toString();
+          final String varName=varBuffer.toString();
           String varValue=resolver.resolve(varName);
           Variable var=getVariables().get(varName);
           if (varValue == null) {
@@ -26,7 +26,7 @@
               varValue=var.getDefaultValue();
             }
           }
-          if (encodeVariables) {
+          if (this.encodeVariables) {
             if (var != null) {
               result.append(var.encode(varValue));
             }
@@ -35,7 +35,7 @@
             }
           }
  else {
-            if (var != null && var.isEncodedOnFormat()) {
+            if ((var != null) && var.isEncodedOnFormat()) {
               result.append(Reference.encode(varValue));
             }
  else {

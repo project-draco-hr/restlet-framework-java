@@ -1,10 +1,18 @@
 {
   Set<org.restlet.data.Method> allowedMethods=this.allowedMethods.get(remainingPath);
-  if (allowedMethods != null)   return allowedMethods;
+  if (allowedMethods != null) {
+    return allowedMethods;
+  }
   allowedMethods=new HashSet<org.restlet.data.Method>(6);
-  for (  ResourceMethod rm : getMethodsForPath(remainingPath))   allowedMethods.add(rm.getHttpMethod());
-  if (!allowedMethods.isEmpty())   if (allowedMethods.contains(org.restlet.data.Method.GET))   allowedMethods.add(org.restlet.data.Method.HEAD);
-  Set<org.restlet.data.Method> unmodifiable=Collections.unmodifiableSet(allowedMethods);
+  for (  final ResourceMethod rm : getMethodsForPath(remainingPath)) {
+    allowedMethods.add(rm.getHttpMethod());
+  }
+  if (!allowedMethods.isEmpty()) {
+    if (allowedMethods.contains(org.restlet.data.Method.GET)) {
+      allowedMethods.add(org.restlet.data.Method.HEAD);
+    }
+  }
+  final Set<org.restlet.data.Method> unmodifiable=Collections.unmodifiableSet(allowedMethods);
   this.allowedMethods.put(remainingPath,unmodifiable);
   return unmodifiable;
 }

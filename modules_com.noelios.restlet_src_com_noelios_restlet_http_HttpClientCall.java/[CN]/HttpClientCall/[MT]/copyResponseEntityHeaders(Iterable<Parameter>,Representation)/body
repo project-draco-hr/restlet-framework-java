@@ -1,12 +1,14 @@
 {
-  Representation result=(representation == null) ? Representation.createEmpty() : representation;
+  final Representation result=(representation == null) ? Representation.createEmpty() : representation;
   boolean entityHeaderFound=false;
-  for (  Parameter header : responseHeaders) {
+  for (  final Parameter header : responseHeaders) {
     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_TYPE)) {
-      ContentType contentType=new ContentType(header.getValue());
+      final ContentType contentType=new ContentType(header.getValue());
       result.setMediaType(contentType.getMediaType());
-      CharacterSet characterSet=contentType.getCharacterSet();
-      if (characterSet != null)       result.setCharacterSet(characterSet);
+      final CharacterSet characterSet=contentType.getCharacterSet();
+      if (characterSet != null) {
+        result.setCharacterSet(characterSet);
+      }
       entityHeaderFound=true;
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LENGTH)) {
@@ -17,10 +19,10 @@
       entityHeaderFound=true;
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_ENCODING)) {
-      HeaderReader hr=new HeaderReader(header.getValue());
+      final HeaderReader hr=new HeaderReader(header.getValue());
       String value=hr.readValue();
       while (value != null) {
-        Encoding encoding=new Encoding(value);
+        final Encoding encoding=new Encoding(value);
         if (!encoding.equals(Encoding.IDENTITY)) {
           result.getEncodings().add(encoding);
         }
@@ -29,7 +31,7 @@
       entityHeaderFound=true;
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LANGUAGE)) {
-      HeaderReader hr=new HeaderReader(header.getValue());
+      final HeaderReader hr=new HeaderReader(header.getValue());
       String value=hr.readValue();
       while (value != null) {
         result.getLanguages().add(new Language(value));

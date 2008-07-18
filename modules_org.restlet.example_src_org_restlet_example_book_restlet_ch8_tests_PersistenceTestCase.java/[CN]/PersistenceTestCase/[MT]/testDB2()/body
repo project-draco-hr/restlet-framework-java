@@ -1,10 +1,10 @@
 {
-  Contact contactProto=new Contact();
-  Predicate<Mail> mailByContactNamePredicate=new Predicate<Mail>(){
+  final Contact contactProto=new Contact();
+  final Predicate<Mail> mailByContactNamePredicate=new Predicate<Mail>(){
     static final long serialVersionUID=1l;
     @Override public boolean match(    Mail mail){
       boolean found=false;
-      for (      Contact contact : mail.getRecipients()) {
+      for (      final Contact contact : mail.getRecipients()) {
         if ("contact-5".equals(contact.getName())) {
           found=true;
           break;
@@ -14,11 +14,11 @@
     }
   }
 ;
-  Predicate<Mailbox> mailboxByContactNamePredicate=new Predicate<Mailbox>(){
+  final Predicate<Mailbox> mailboxByContactNamePredicate=new Predicate<Mailbox>(){
     static final long serialVersionUID=1l;
     @Override public boolean match(    Mailbox mailbox){
       boolean found=false;
-      for (      Contact contact : mailbox.getContacts()) {
+      for (      final Contact contact : mailbox.getContacts()) {
         if ("contact-5".equals(contact.getName())) {
           found=true;
           break;
@@ -32,50 +32,50 @@
   ObjectSet<Mail> mailList;
   ObjectSet<Mailbox> mailboxList;
   contactProto.setName("contact-4");
-  contactList=objectContainer.queryByExample(contactProto);
+  contactList=this.objectContainer.queryByExample(contactProto);
   assertEquals(contactList.size(),1);
-  mailList=objectContainer.query(mailByContactNamePredicate);
+  mailList=this.objectContainer.query(mailByContactNamePredicate);
   assertEquals(mailList.size(),1);
-  Contact contact=contactList.get(0);
+  final Contact contact=contactList.get(0);
   contact.setName("contact-5");
-  objectContainer.store(contact);
-  objectContainer.commit();
-  mailList=objectContainer.query(mailByContactNamePredicate);
+  this.objectContainer.store(contact);
+  this.objectContainer.commit();
+  mailList=this.objectContainer.query(mailByContactNamePredicate);
   assertEquals(mailList.size(),2);
-  mailboxList=objectContainer.query(mailboxByContactNamePredicate);
+  mailboxList=this.objectContainer.query(mailboxByContactNamePredicate);
   assertEquals(mailboxList.size(),1);
   contactProto.setName("contact-5");
-  contactList=objectContainer.queryByExample(contactProto);
-  for (  Contact contact2 : contactList) {
-    for (    Mailbox mailbox : mailboxList) {
+  contactList=this.objectContainer.queryByExample(contactProto);
+  for (  final Contact contact2 : contactList) {
+    for (    final Mailbox mailbox : mailboxList) {
       boolean found=false;
-      for (int i=0; i < mailbox.getContacts().size() && !found; i++) {
-        Contact contact3=mailbox.getContacts().get(i);
+      for (int i=0; (i < mailbox.getContacts().size()) && !found; i++) {
+        final Contact contact3=mailbox.getContacts().get(i);
         if (contact2.getId().equals(contact3.getId())) {
           mailbox.getContacts().remove(i);
           found=true;
         }
       }
-      objectContainer.store(mailbox);
+      this.objectContainer.store(mailbox);
     }
-    for (    Mail mail : mailList) {
-      List<Contact> list=new ArrayList<Contact>();
+    for (    final Mail mail : mailList) {
+      final List<Contact> list=new ArrayList<Contact>();
       for (int i=0; i < mail.getRecipients().size(); i++) {
-        Contact contact3=mail.getRecipients().get(i);
+        final Contact contact3=mail.getRecipients().get(i);
         if (!contact2.getId().equals(contact3.getId())) {
           list.add(contact3);
         }
       }
       mail.setRecipients(list);
-      objectContainer.store(mail);
+      this.objectContainer.store(mail);
     }
-    objectContainer.delete(contact2);
+    this.objectContainer.delete(contact2);
   }
-  objectContainer.commit();
-  contactList=objectContainer.queryByExample(contactProto);
+  this.objectContainer.commit();
+  contactList=this.objectContainer.queryByExample(contactProto);
   assertTrue(contactList.isEmpty());
-  mailboxList=objectContainer.query(mailboxByContactNamePredicate);
+  mailboxList=this.objectContainer.query(mailboxByContactNamePredicate);
   assertTrue(mailboxList.isEmpty());
-  mailList=objectContainer.query(mailByContactNamePredicate);
+  mailList=this.objectContainer.query(mailByContactNamePredicate);
   assertTrue(mailList.isEmpty());
 }

@@ -2,7 +2,7 @@
   if (this.regexPattern == null) {
 synchronized (this) {
       if (this.regexPattern == null) {
-        StringBuilder patternBuffer=new StringBuilder();
+        final StringBuilder patternBuffer=new StringBuilder();
         StringBuilder varBuffer=null;
         char next;
         boolean inVariable=false;
@@ -17,15 +17,17 @@ synchronized (this) {
                 getLogger().warning("Empty pattern variables are not allowed : " + this.regexPattern);
               }
  else {
-                String varName=varBuffer.toString();
-                int varIndex=getRegexVariables().indexOf(varName);
+                final String varName=varBuffer.toString();
+                final int varIndex=getRegexVariables().indexOf(varName);
                 if (varIndex != -1) {
                   patternBuffer.append("\\" + (varIndex + 1));
                 }
  else {
                   getRegexVariables().add(varName);
                   Variable var=getVariables().get(varName);
-                  if (var == null)                   var=getDefaultVariable();
+                  if (var == null) {
+                    var=getDefaultVariable();
+                  }
                   patternBuffer.append(getVariableRegex(var));
                 }
                 varBuffer=new StringBuilder();

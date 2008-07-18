@@ -1,19 +1,27 @@
 {
-  RoleChecker exampleAuthorizator=new RoleChecker(){
+  final RoleChecker exampleAuthorizator=new RoleChecker(){
     /** 
  * @return true, if the role name and the username starts with the
  * same char.
  * @see RoleChecker#isUserInRole(String)
  */
     public boolean isInRole(    Principal principal,    String role){
-      if (principal == null)       throw new IllegalArgumentException("No principal given");
-      if (role == null)       throw new IllegalArgumentException("No role given");
-      if (role.charAt(0) == principal.getName().charAt(0))       return true;
+      if (principal == null) {
+        throw new IllegalArgumentException("No principal given");
+      }
+      if (role == null) {
+        throw new IllegalArgumentException("No role given");
+      }
+      if (role.charAt(0) == principal.getName().charAt(0)) {
+        return true;
+      }
       return false;
     }
   }
 ;
-  if (!startServer(exampleAuthorizator))   return;
+  if (!startServer(exampleAuthorizator)) {
+    return;
+  }
   Response response=getAuth(null,"fsdf","xyz");
   assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED,response.getStatus());
   response=getAuth(null,"fsdf","baj");

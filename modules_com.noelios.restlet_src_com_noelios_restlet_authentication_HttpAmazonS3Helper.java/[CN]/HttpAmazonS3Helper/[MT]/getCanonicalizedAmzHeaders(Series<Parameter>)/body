@@ -1,7 +1,7 @@
 {
-  SortedMap<String,String> amzHeaders=new TreeMap<String,String>();
+  final SortedMap<String,String> amzHeaders=new TreeMap<String,String>();
   String headerName;
-  for (  Parameter param : requestHeaders) {
+  for (  final Parameter param : requestHeaders) {
     headerName=param.getName().toLowerCase();
     if (headerName.startsWith("x-amz-")) {
       if (!amzHeaders.containsKey(headerName)) {
@@ -9,8 +9,8 @@
       }
     }
   }
-  StringBuilder sb=new StringBuilder();
-  for (  Entry<String,String> entry : amzHeaders.entrySet()) {
+  final StringBuilder sb=new StringBuilder();
+  for (  final Entry<String,String> entry : amzHeaders.entrySet()) {
     sb.append(entry.getKey()).append(':').append(entry.getValue()).append("\n");
   }
   return sb.toString();

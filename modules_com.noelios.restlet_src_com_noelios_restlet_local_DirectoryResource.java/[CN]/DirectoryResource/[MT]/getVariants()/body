@@ -1,27 +1,27 @@
 {
-  List<Variant> results=super.getVariants();
+  final List<Variant> results=super.getVariants();
   if (!results.isEmpty()) {
     return results;
   }
   getLogger().info("Getting variants for : " + getTargetUri());
   if ((this.directoryContent != null) && (getRequest().getResourceRef() != null) && (getRequest().getResourceRef().getBaseRef() != null)) {
-    SortedSet<Representation> resultSet=new TreeSet<Representation>(getRepresentationsComparator());
+    final SortedSet<Representation> resultSet=new TreeSet<Representation>(getRepresentationsComparator());
     String baseRef=getRequest().getResourceRef().getBaseRef().toString(false,false);
     if (!baseRef.endsWith("/")) {
       baseRef+="/";
     }
-    int lastIndex=this.relativePart.lastIndexOf("/");
+    final int lastIndex=this.relativePart.lastIndexOf("/");
     if (lastIndex != -1) {
       baseRef+=this.relativePart.substring(0,lastIndex);
     }
-    int rootLength=getDirectoryUri().length();
+    final int rootLength=getDirectoryUri().length();
     if (this.baseName != null) {
       String filePath;
-      for (      Reference ref : getVariantsReferences()) {
-        Response contextResponse=getClientDispatcher().get(ref.toString());
+      for (      final Reference ref : getVariantsReferences()) {
+        final Response contextResponse=getClientDispatcher().get(ref.toString());
         if (contextResponse.getStatus().isSuccess() && (contextResponse.getEntity() != null)) {
           filePath=ref.toString(false,false).substring(rootLength);
-          Representation rep=contextResponse.getEntity();
+          final Representation rep=contextResponse.getEntity();
           rep.setIdentifier(baseRef + filePath);
           resultSet.add(rep);
         }
@@ -30,21 +30,21 @@
     results.addAll(resultSet);
     if (resultSet.isEmpty()) {
       if (this.directoryTarget && getDirectory().isListingAllowed()) {
-        ReferenceList userList=new ReferenceList(this.directoryContent.size());
+        final ReferenceList userList=new ReferenceList(this.directoryContent.size());
         userList.setIdentifier(baseRef);
-        SortedSet<Reference> sortedSet=new TreeSet<Reference>(getDirectory().getComparator());
+        final SortedSet<Reference> sortedSet=new TreeSet<Reference>(getDirectory().getComparator());
         sortedSet.addAll(this.directoryContent);
-        for (        Reference ref : sortedSet) {
-          String filePart=ref.toString(false,false).substring(rootLength);
-          StringBuilder filePath=new StringBuilder();
+        for (        final Reference ref : sortedSet) {
+          final String filePart=ref.toString(false,false).substring(rootLength);
+          final StringBuilder filePath=new StringBuilder();
           if ((!baseRef.endsWith("/")) && (!filePart.startsWith("/"))) {
             filePath.append('/');
           }
           filePath.append(filePart);
           userList.add(baseRef + filePath);
         }
-        List<Variant> list=getDirectory().getIndexVariants(userList);
-        for (        Variant variant : list) {
+        final List<Variant> list=getDirectory().getIndexVariants(userList);
+        for (        final Variant variant : list) {
           results.add(getDirectory().getIndexRepresentation(variant,userList));
         }
       }

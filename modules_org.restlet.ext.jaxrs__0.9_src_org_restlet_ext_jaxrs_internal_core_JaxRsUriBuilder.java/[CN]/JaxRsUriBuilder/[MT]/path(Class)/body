@@ -1,17 +1,21 @@
 {
-  if (resource == null)   throw new IllegalArgumentException("The root resource class must not be null");
+  if (resource == null) {
+    throw new IllegalArgumentException("The root resource class must not be null");
+  }
   String newPathSegment;
   try {
     newPathSegment=Util.getPathTemplate(resource);
   }
- catch (  IllegalPathOnClassException e) {
+ catch (  final IllegalPathOnClassException e) {
     throw e.getCause();
   }
-catch (  MissingAnnotationException e) {
+catch (  final MissingAnnotationException e) {
     throw new IllegalArgumentException("The resource class " + resource.getName() + " requires an annotation @Path");
   }
-  StringBuilder path=getPath();
-  if (newPathSegment.charAt(0) != '/')   path.append('/');
+  final StringBuilder path=getPath();
+  if (newPathSegment.charAt(0) != '/') {
+    path.append('/');
+  }
   path.append(newPathSegment);
   return this;
 }

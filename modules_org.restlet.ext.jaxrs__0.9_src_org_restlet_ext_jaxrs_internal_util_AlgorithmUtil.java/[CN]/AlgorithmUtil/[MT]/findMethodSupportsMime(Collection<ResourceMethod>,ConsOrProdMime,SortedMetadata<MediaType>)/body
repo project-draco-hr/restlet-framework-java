@@ -1,10 +1,14 @@
 {
-  if (mediaTypes == null || mediaTypes.isEmpty())   return findMethodsSupportAllTypes(resourceMethods,inOut);
+  if ((mediaTypes == null) || mediaTypes.isEmpty()) {
+    return findMethodsSupportAllTypes(resourceMethods,inOut);
+  }
   Map<ResourceMethod,List<MediaType>> mms;
   mms=findMethodsSupportTypeAndSubType(resourceMethods,inOut,mediaTypes);
   if (mms.isEmpty()) {
     mms=findMethodsSupportType(resourceMethods,inOut,mediaTypes);
-    if (mms.isEmpty())     mms=findMethodsSupportAllTypes(resourceMethods,inOut);
+    if (mms.isEmpty()) {
+      mms=findMethodsSupportAllTypes(resourceMethods,inOut);
+    }
   }
   return mms;
 }

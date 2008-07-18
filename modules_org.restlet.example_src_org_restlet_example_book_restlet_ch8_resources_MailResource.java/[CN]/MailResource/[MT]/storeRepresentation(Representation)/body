@@ -1,35 +1,35 @@
 {
-  Form form=new Form(entity);
-  List<String> mailAddresses=new ArrayList<String>();
-  for (  Parameter parameter : form.subList("recipients")) {
+  final Form form=new Form(entity);
+  final List<String> mailAddresses=new ArrayList<String>();
+  for (  final Parameter parameter : form.subList("recipients")) {
     mailAddresses.add(parameter.getValue());
   }
   List<String> tags=null;
   if (form.getFirstValue("tags") != null) {
     tags=new ArrayList<String>(Arrays.asList(form.getFirstValue("tags").split(" ")));
   }
-  getObjectsFacade().updateMail(mailbox,mail,form.getFirstValue("status"),form.getFirstValue("subject"),form.getFirstValue("message"),mailAddresses,tags);
-  if (Mail.STATUS_SENDING.equalsIgnoreCase(mail.getStatus())) {
-    mail.setSendingDate(new Date());
+  getObjectsFacade().updateMail(this.mailbox,this.mail,form.getFirstValue("status"),form.getFirstValue("subject"),form.getFirstValue("message"),mailAddresses,tags);
+  if (Mail.STATUS_SENDING.equalsIgnoreCase(this.mail.getStatus())) {
+    this.mail.setSendingDate(new Date());
     boolean success=true;
-    if (mail.getRecipients() != null) {
-      Client client=new Client(Protocol.HTTP);
-      Form form2=new Form();
+    if (this.mail.getRecipients() != null) {
+      final Client client=new Client(Protocol.HTTP);
+      final Form form2=new Form();
       form2.add("status",Mail.STATUS_RECEIVING);
-      form2.add("senderAddress",getRequest().getRootRef() + "/mailboxes/" + mailbox.getId());
-      form2.add("senderName",mailbox.getSenderName());
-      form2.add("subject",mail.getSubject());
-      form2.add("message",mail.getMessage());
-      form2.add("sendingDate",mail.getSendingDate().toString());
-      for (      Contact recipient : mail.getRecipients()) {
+      form2.add("senderAddress",getRequest().getRootRef() + "/mailboxes/" + this.mailbox.getId());
+      form2.add("senderName",this.mailbox.getSenderName());
+      form2.add("subject",this.mail.getSubject());
+      form2.add("message",this.mail.getMessage());
+      form2.add("sendingDate",this.mail.getSendingDate().toString());
+      for (      final Contact recipient : this.mail.getRecipients()) {
         form2.add("recipient",recipient.getMailAddress() + "$" + recipient.getName());
       }
-      StringBuilder builder=new StringBuilder();
+      final StringBuilder builder=new StringBuilder();
       Response response;
-      Request request=new Request();
+      final Request request=new Request();
       request.setMethod(Method.POST);
       request.setEntity(form2.getWebRepresentation());
-      for (      Contact contact : mail.getRecipients()) {
+      for (      final Contact contact : this.mail.getRecipients()) {
         request.setResourceRef(contact.getMailAddress());
         response=client.handle(request);
         if (!response.getStatus().isSuccess()) {
@@ -40,24 +40,24 @@
         }
       }
       if (success) {
-        mail.setStatus(Mail.STATUS_SENT);
-        getObjectsFacade().updateMail(mailbox,mail);
+        this.mail.setStatus(Mail.STATUS_SENT);
+        getObjectsFacade().updateMail(this.mailbox,this.mail);
         getResponse().redirectSeeOther(getRequest().getResourceRef());
       }
  else {
-        Map<String,Object> dataModel=new TreeMap<String,Object>();
+        final Map<String,Object> dataModel=new TreeMap<String,Object>();
         dataModel.put("currentUser",getCurrentUser());
-        dataModel.put("mailbox",mailbox);
-        dataModel.put("mail",mail);
+        dataModel.put("mailbox",this.mailbox);
+        dataModel.put("mail",this.mail);
         dataModel.put("resourceRef",getRequest().getResourceRef());
         dataModel.put("rootRef",getRequest().getRootRef());
         dataModel.put("message",builder.toString());
-        getResponse().setEntity(getHTMLTemplateRepresentation("mail_" + mail.getStatus() + ".html",dataModel));
+        getResponse().setEntity(getHTMLTemplateRepresentation("mail_" + this.mail.getStatus() + ".html",dataModel));
       }
     }
  else {
-      mail.setStatus(Mail.STATUS_DRAFT);
-      getObjectsFacade().updateMail(mailbox,mail);
+      this.mail.setStatus(Mail.STATUS_DRAFT);
+      getObjectsFacade().updateMail(this.mailbox,this.mail);
       getResponse().redirectSeeOther(getRequest().getResourceRef());
     }
   }

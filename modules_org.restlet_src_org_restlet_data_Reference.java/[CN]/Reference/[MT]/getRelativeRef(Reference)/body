@@ -13,8 +13,8 @@
     result=this;
   }
  else {
-    String localPath=getPath();
-    String basePath=base.getPath();
+    final String localPath=getPath();
+    final String basePath=base.getPath();
     String relativePath=null;
     if ((basePath == null) || (localPath == null)) {
       relativePath=localPath;
@@ -30,7 +30,9 @@
           diffFound=true;
         }
  else {
-          if (current == '/')           lastSlashIndex=i;
+          if (current == '/') {
+            lastSlashIndex=i;
+          }
           i++;
         }
       }
@@ -44,7 +46,7 @@
               relativePath=".";
             }
  else {
-              StringBuilder sb=new StringBuilder();
+              final StringBuilder sb=new StringBuilder();
               sb.append("..");
               boolean canAdd=false;
               for (int j=i + 1; j < basePath.length(); j++) {
@@ -60,7 +62,7 @@
             }
           }
  else {
-            StringBuilder sb=new StringBuilder();
+            final StringBuilder sb=new StringBuilder();
             boolean firstAdd=true;
             boolean canAdd=false;
             for (int j=i; j < basePath.length(); j++) {
@@ -79,11 +81,15 @@
               }
             }
             if (lastSlashIndex + 1 < localPath.length()) {
-              if (!firstAdd)               sb.append('/');
+              if (!firstAdd) {
+                sb.append('/');
+              }
               sb.append(localPath.substring(lastSlashIndex + 1));
             }
             relativePath=sb.toString();
-            if (relativePath.equals(""))             relativePath=".";
+            if (relativePath.equals("")) {
+              relativePath=".";
+            }
           }
         }
  else         if (i == basePath.length()) {
@@ -106,7 +112,7 @@
         }
       }
  else {
-        StringBuilder sb=new StringBuilder();
+        final StringBuilder sb=new StringBuilder();
         boolean canAdd=false;
         boolean firstAdd=true;
         for (int j=i; j < basePath.length(); j++) {
@@ -124,14 +130,16 @@
             canAdd=false;
           }
         }
-        if (!firstAdd)         sb.append('/');
+        if (!firstAdd) {
+          sb.append('/');
+        }
         sb.append(localPath.substring(lastSlashIndex + 1));
         relativePath=sb.toString();
       }
     }
     result=new Reference();
-    String query=getQuery();
-    String fragment=getFragment();
+    final String query=getQuery();
+    final String fragment=getFragment();
     boolean modified=false;
     if ((query != null) && (!query.equals(base.getQuery()))) {
       result.setQuery(query);

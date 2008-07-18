@@ -1,25 +1,25 @@
 {
-  StreamResult streamResult=new StreamResult(entityStream);
+  final StreamResult streamResult=new StreamResult(entityStream);
   Transformer transformer;
   try {
-    transformer=transformerFactory.newTransformer();
+    transformer=this.transformerFactory.newTransformer();
   }
- catch (  TransformerConfigurationException e) {
-    logger.log(Level.WARNING,"Could not create Transformer",e);
-    IOException ioException=new IOException("Could not create javax.xml.transform.Transformer");
+ catch (  final TransformerConfigurationException e) {
+    this.logger.log(Level.WARNING,"Could not create Transformer",e);
+    final IOException ioException=new IOException("Could not create javax.xml.transform.Transformer");
     ioException.setStackTrace(e.getStackTrace());
     throw ioException;
   }
   try {
     transformer.transform(source,streamResult);
   }
- catch (  Exception e) {
-    IOException ioException=new IOException("Could not transform the javax.xml.transform.Source");
+ catch (  final Exception e) {
+    final IOException ioException=new IOException("Could not transform the javax.xml.transform.Source");
     ioException.setStackTrace(e.getStackTrace());
     throw ioException;
   }
-catch (  TransformerFactoryConfigurationError e) {
-    IOException ioException=new IOException("Could not transform the javax.xml.transform.Source");
+catch (  final TransformerFactoryConfigurationError e) {
+    final IOException ioException=new IOException("Could not transform the javax.xml.transform.Source");
     ioException.setStackTrace(e.getStackTrace());
     throw ioException;
   }

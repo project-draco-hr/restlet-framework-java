@@ -6,7 +6,7 @@
       preferredVariant=getPreferredVariant();
     }
  else {
-      List<Variant> variants=getVariants();
+      final List<Variant> variants=getVariants();
       if (variants.size() == 1) {
         preferredVariant=variants.get(0);
       }
@@ -16,7 +16,7 @@
       }
     }
     if (canPut) {
-      Status status=getRequest().getConditions().getStatus(getRequest().getMethod(),getRepresentation(preferredVariant));
+      final Status status=getRequest().getConditions().getStatus(getRequest().getMethod(),getRepresentation(preferredVariant));
       if (status != null) {
         getResponse().setStatus(status);
         canPut=false;
@@ -24,9 +24,9 @@
     }
   }
   if (canPut) {
-    Object oHeaders=getRequest().getAttributes().get("org.restlet.http.headers");
+    final Object oHeaders=getRequest().getAttributes().get("org.restlet.http.headers");
     if (oHeaders != null) {
-      Series<Parameter> headers=(Series<Parameter>)oHeaders;
+      final Series<Parameter> headers=(Series<Parameter>)oHeaders;
       if (headers.getFirst("Content-Range",true) != null) {
         getResponse().setStatus(new Status(Status.SERVER_ERROR_NOT_IMPLEMENTED,"The Content-Range header is not understood"));
         canPut=false;

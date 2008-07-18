@@ -1,19 +1,21 @@
 {
-  if (nextMpValue != null)   return true;
-  while (mpValueIter != null && mpValueIter.hasNext()) {
-    this.nextMpValue=mpValueIter.next();
+  if (this.nextMpValue != null) {
     return true;
   }
-  while (matrixParamIter != null && matrixParamIter.hasNext()) {
-    Map.Entry<String,List<String>> entry=matrixParamIter.next();
-    if (entry.getKey().equals(mpName)) {
+  while ((this.mpValueIter != null) && this.mpValueIter.hasNext()) {
+    this.nextMpValue=this.mpValueIter.next();
+    return true;
+  }
+  while ((this.matrixParamIter != null) && this.matrixParamIter.hasNext()) {
+    final Map.Entry<String,List<String>> entry=this.matrixParamIter.next();
+    if (entry.getKey().equals(this.mpName)) {
       this.mpValueIter=entry.getValue().iterator();
-      return this.hasNext();
+      return hasNext();
     }
   }
-  while (pathSegmentIter.hasNext()) {
-    this.matrixParamIter=pathSegmentIter.next().getMatrixParameters().entrySet().iterator();
-    return this.hasNext();
+  while (this.pathSegmentIter.hasNext()) {
+    this.matrixParamIter=this.pathSegmentIter.next().getMatrixParameters().entrySet().iterator();
+    return hasNext();
   }
   return false;
 }

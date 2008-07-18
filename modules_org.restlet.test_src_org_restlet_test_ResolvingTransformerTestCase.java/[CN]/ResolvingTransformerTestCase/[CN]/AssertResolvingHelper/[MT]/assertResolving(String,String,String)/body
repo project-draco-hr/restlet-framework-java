@@ -1,23 +1,25 @@
 {
   final Source resolvedSource=this.resolver.resolve(testUri,this.baseUri);
   assertNotNull("resolved source for " + testUri + " should not be null",resolvedSource);
-  StringBuilder data=new StringBuilder();
+  final StringBuilder data=new StringBuilder();
   if (resolvedSource instanceof StreamSource) {
     final StreamSource streamSource=(StreamSource)resolvedSource;
     Reader dataReader=(streamSource).getReader();
     if (dataReader == null) {
-      InputStream in=(streamSource.getInputStream());
+      final InputStream in=(streamSource.getInputStream());
       assertNotNull("no reader or inputstream available",in);
       dataReader=new InputStreamReader(in);
     }
     assertNotNull("no reader to data in source.",dataReader);
-    char[] buf=new char[1024];
+    final char[] buf=new char[1024];
     int len=0;
     while ((len=dataReader.read(buf)) != -1) {
       data.append(buf,0,len);
     }
     dataReader.close();
   }
- else   fail("test implementation currently doesn't handle other source (e.g. sax) implementations");
+ else {
+    fail("test implementation currently doesn't handle other source (e.g. sax) implementations");
+  }
   assertEquals(message,testData,data.toString());
 }

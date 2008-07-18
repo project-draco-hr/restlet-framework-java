@@ -1,10 +1,10 @@
 {
-  Reference feedRef=getHref();
+  final Reference feedRef=getHref();
   if (feedRef.isRelative()) {
     feedRef.setBaseRef(getWorkspace().getService().getReference());
   }
-  Request request=new Request(Method.GET,feedRef.getTargetRef());
-  Response response=getWorkspace().getService().getClientDispatcher().handle(request);
+  final Request request=new Request(Method.GET,feedRef.getTargetRef());
+  final Response response=getWorkspace().getService().getClientDispatcher().handle(request);
   if (response.getStatus().equals(Status.SUCCESS_OK)) {
     return new Feed(response.getEntity());
   }

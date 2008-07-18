@@ -1,7 +1,9 @@
 {
-  String defaultNS=nsSupport.getURI("");
+  final String defaultNS=this.nsSupport.getURI("");
   if ("".equals(uri)) {
-    if (isElement && (defaultNS != null))     nsSupport.declarePrefix("","");
+    if (isElement && (defaultNS != null)) {
+      this.nsSupport.declarePrefix("","");
+    }
     return null;
   }
   String prefix;
@@ -9,23 +11,23 @@
     prefix="";
   }
  else {
-    prefix=nsSupport.getPrefix(uri);
+    prefix=this.nsSupport.getPrefix(uri);
   }
   if (prefix != null) {
     return prefix;
   }
-  prefix=doneDeclTable.get(uri);
-  if ((prefix != null) && (((!isElement || (defaultNS != null)) && "".equals(prefix)) || (nsSupport.getURI(prefix) != null))) {
+  prefix=this.doneDeclTable.get(uri);
+  if ((prefix != null) && (((!isElement || (defaultNS != null)) && "".equals(prefix)) || (this.nsSupport.getURI(prefix) != null))) {
     prefix=null;
   }
   if (prefix == null) {
-    prefix=prefixTable.get(uri);
-    if ((prefix != null) && (((!isElement || (defaultNS != null)) && "".equals(prefix)) || (nsSupport.getURI(prefix) != null))) {
+    prefix=this.prefixTable.get(uri);
+    if ((prefix != null) && (((!isElement || (defaultNS != null)) && "".equals(prefix)) || (this.nsSupport.getURI(prefix) != null))) {
       prefix=null;
     }
   }
   if ((prefix == null) && (qName != null) && !"".equals(qName)) {
-    int i=qName.indexOf(':');
+    final int i=qName.indexOf(':');
     if (i == -1) {
       if (isElement && (defaultNS == null)) {
         prefix="";
@@ -35,9 +37,9 @@
       prefix=qName.substring(0,i);
     }
   }
-  for (; (prefix == null) || (nsSupport.getURI(prefix) != null); prefix="__NS" + ++prefixCounter) {
+  for (; (prefix == null) || (this.nsSupport.getURI(prefix) != null); prefix="__NS" + ++this.prefixCounter) {
   }
-  nsSupport.declarePrefix(prefix,uri);
-  doneDeclTable.put(uri,prefix);
+  this.nsSupport.declarePrefix(prefix,uri);
+  this.doneDeclTable.put(uri,prefix);
   return prefix;
 }

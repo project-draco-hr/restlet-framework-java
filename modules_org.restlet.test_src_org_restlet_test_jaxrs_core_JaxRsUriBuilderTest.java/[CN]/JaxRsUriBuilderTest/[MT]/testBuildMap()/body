@@ -1,27 +1,27 @@
 {
-  Map<String,Object> vars=new HashMap<String,Object>();
+  final Map<String,Object> vars=new HashMap<String,Object>();
   try {
-    uriBuilderWithVarsEnc.build(vars);
+    this.uriBuilderWithVarsEnc.build(vars);
     fail("must fail, because missing UriTemplate variables");
   }
- catch (  IllegalArgumentException e) {
+ catch (  final IllegalArgumentException e) {
   }
   vars.put("var1","123");
   try {
-    uriBuilderWithVarsEnc.build(vars);
+    this.uriBuilderWithVarsEnc.build(vars);
     fail("must fail, because missing UriTemplate variable");
   }
- catch (  IllegalArgumentException e) {
+ catch (  final IllegalArgumentException e) {
   }
   vars.put("var2","456");
-  assertEqualsURI("http://localhost/abc/123/def/456",uriBuilderWithVarsEnc.build(vars));
+  assertEqualsURI("http://localhost/abc/123/def/456",this.uriBuilderWithVarsEnc.build(vars));
   vars.put("var3","789");
-  assertEqualsURI("http://localhost/abc/123/def/456",uriBuilderWithVarsEnc.build(vars));
+  assertEqualsURI("http://localhost/abc/123/def/456",this.uriBuilderWithVarsEnc.build(vars));
   vars.put("var2"," ");
-  assertEqualsURI("http://localhost/abc/123/def/%20",uriBuilderWithVarsEnc.build(vars));
+  assertEqualsURI("http://localhost/abc/123/def/%20",this.uriBuilderWithVarsEnc.build(vars));
   try {
-    uriBuilderWithVarsNoE.build(vars);
+    this.uriBuilderWithVarsNoE.build(vars);
   }
- catch (  IllegalArgumentException iae) {
+ catch (  final IllegalArgumentException iae) {
   }
 }

@@ -1,18 +1,26 @@
 {
-  if (this.component == null)   throw new IllegalStateException("the server is not started yet.");
-  Server server=this.component.getServers().get(0);
+  if (this.component == null) {
+    throw new IllegalStateException("the server is not started yet.");
+  }
+  final Server server=this.component.getServers().get(0);
   int port=server.getPort();
-  if (port > 0)   return port;
+  if (port > 0) {
+    return port;
+  }
   port=server.getEphemeralPort();
-  if (port > 0)   return port;
+  if (port > 0) {
+    return port;
+  }
   for (int i=0; i < 100; i++) {
     try {
       Thread.sleep(20);
     }
- catch (    InterruptedException e) {
+ catch (    final InterruptedException e) {
     }
     port=server.getEphemeralPort();
-    if (port > 0)     return port;
+    if (port > 0) {
+      return port;
+    }
   }
   throw new IllegalStateException("Sorry, the port is not available");
 }

@@ -2,14 +2,16 @@
   final List<Response> c=new ArrayList<Response>();
   new Thread(){
     @Override public void run(){
-      Response response=get(MediaType.TEXT_PLAIN);
+      final Response response=get(MediaType.TEXT_PLAIN);
       c.add(response);
     }
   }
 .start();
   Response response=get(MediaType.TEXT_HTML);
   assertEqualMediaType(MediaType.TEXT_HTML,response);
-  while (c.isEmpty())   TestUtils.sleep();
+  while (c.isEmpty()) {
+    TestUtils.sleep();
+  }
   response=c.get(0);
   assertEqualMediaType(MediaType.TEXT_PLAIN,response);
 }

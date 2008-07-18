@@ -2,111 +2,111 @@
   this.contentBuffer.delete(0,this.contentBuffer.length() + 1);
   if (uri.equalsIgnoreCase(ATOM_NAMESPACE)) {
     if (localName.equals("feed")) {
-      state=State.FEED;
+      this.state=State.FEED;
     }
  else     if (localName.equals("title")) {
       startTextElement(attrs);
-      if (state == State.FEED) {
-        state=State.FEED_TITLE;
+      if (this.state == State.FEED) {
+        this.state=State.FEED_TITLE;
       }
- else       if (state == State.FEED_ENTRY) {
-        state=State.FEED_ENTRY_TITLE;
+ else       if (this.state == State.FEED_ENTRY) {
+        this.state=State.FEED_ENTRY_TITLE;
       }
- else       if (state == State.FEED_ENTRY_SOURCE) {
-        state=State.FEED_ENTRY_SOURCE_TITLE;
+ else       if (this.state == State.FEED_ENTRY_SOURCE) {
+        this.state=State.FEED_ENTRY_SOURCE_TITLE;
       }
     }
  else     if (localName.equals("updated")) {
-      currentDate=new Date();
-      if (state == State.FEED) {
-        state=State.FEED_UPDATED;
+      this.currentDate=new Date();
+      if (this.state == State.FEED) {
+        this.state=State.FEED_UPDATED;
       }
- else       if (state == State.FEED_ENTRY) {
-        state=State.FEED_ENTRY_UPDATED;
+ else       if (this.state == State.FEED_ENTRY) {
+        this.state=State.FEED_ENTRY_UPDATED;
       }
- else       if (state == State.FEED_ENTRY_SOURCE) {
-        state=State.FEED_ENTRY_SOURCE_UPDATED;
+ else       if (this.state == State.FEED_ENTRY_SOURCE) {
+        this.state=State.FEED_ENTRY_SOURCE_UPDATED;
       }
     }
  else     if (localName.equals("author")) {
-      currentPerson=new Person();
-      if (state == State.FEED) {
-        state=State.FEED_AUTHOR;
+      this.currentPerson=new Person();
+      if (this.state == State.FEED) {
+        this.state=State.FEED_AUTHOR;
       }
- else       if (state == State.FEED_ENTRY) {
-        state=State.FEED_ENTRY_AUTHOR;
+ else       if (this.state == State.FEED_ENTRY) {
+        this.state=State.FEED_ENTRY_AUTHOR;
       }
- else       if (state == State.FEED_ENTRY_SOURCE) {
-        state=State.FEED_ENTRY_SOURCE_AUTHOR;
+ else       if (this.state == State.FEED_ENTRY_SOURCE) {
+        this.state=State.FEED_ENTRY_SOURCE_AUTHOR;
       }
     }
  else     if (localName.equals("name")) {
-      if (state == State.FEED_AUTHOR) {
-        state=State.FEED_AUTHOR_NAME;
+      if (this.state == State.FEED_AUTHOR) {
+        this.state=State.FEED_AUTHOR_NAME;
       }
- else       if (state == State.FEED_ENTRY_AUTHOR) {
-        state=State.FEED_ENTRY_AUTHOR_NAME;
+ else       if (this.state == State.FEED_ENTRY_AUTHOR) {
+        this.state=State.FEED_ENTRY_AUTHOR_NAME;
       }
- else       if (state == State.FEED_ENTRY_SOURCE_AUTHOR) {
-        state=State.FEED_ENTRY_SOURCE_AUTHOR_NAME;
+ else       if (this.state == State.FEED_ENTRY_SOURCE_AUTHOR) {
+        this.state=State.FEED_ENTRY_SOURCE_AUTHOR_NAME;
       }
     }
  else     if (localName.equals("id")) {
-      if (state == State.FEED) {
-        state=State.FEED_ID;
+      if (this.state == State.FEED) {
+        this.state=State.FEED_ID;
       }
- else       if (state == State.FEED_ENTRY) {
-        state=State.FEED_ENTRY_ID;
+ else       if (this.state == State.FEED_ENTRY) {
+        this.state=State.FEED_ENTRY_ID;
       }
- else       if (state == State.FEED_ENTRY_SOURCE) {
-        state=State.FEED_ENTRY_SOURCE_ID;
+ else       if (this.state == State.FEED_ENTRY_SOURCE) {
+        this.state=State.FEED_ENTRY_SOURCE_ID;
       }
     }
  else     if (localName.equals("link")) {
-      currentLink=new Link();
-      currentLink.setHref(new Reference(attrs.getValue("","href")));
-      currentLink.setRel(Relation.parse(attrs.getValue("","rel")));
-      currentLink.setType(new MediaType(attrs.getValue("","type")));
-      currentLink.setHrefLang(new Language(attrs.getValue("","hreflang")));
-      currentLink.setTitle(attrs.getValue("","title"));
-      String attr=attrs.getValue("","length");
-      currentLink.setLength((attr == null) ? -1L : Long.parseLong(attr));
-      if (state == State.FEED) {
-        state=State.FEED_LINK;
+      this.currentLink=new Link();
+      this.currentLink.setHref(new Reference(attrs.getValue("","href")));
+      this.currentLink.setRel(Relation.parse(attrs.getValue("","rel")));
+      this.currentLink.setType(new MediaType(attrs.getValue("","type")));
+      this.currentLink.setHrefLang(new Language(attrs.getValue("","hreflang")));
+      this.currentLink.setTitle(attrs.getValue("","title"));
+      final String attr=attrs.getValue("","length");
+      this.currentLink.setLength((attr == null) ? -1L : Long.parseLong(attr));
+      if (this.state == State.FEED) {
+        this.state=State.FEED_LINK;
       }
- else       if (state == State.FEED_ENTRY) {
-        state=State.FEED_ENTRY_LINK;
+ else       if (this.state == State.FEED_ENTRY) {
+        this.state=State.FEED_ENTRY_LINK;
       }
- else       if (state == State.FEED_ENTRY_SOURCE) {
-        state=State.FEED_ENTRY_SOURCE_LINK;
+ else       if (this.state == State.FEED_ENTRY_SOURCE) {
+        this.state=State.FEED_ENTRY_SOURCE_LINK;
       }
     }
  else     if (localName.equalsIgnoreCase("entry")) {
-      if (state == State.FEED) {
-        currentEntry=new Entry();
-        state=State.FEED_ENTRY;
+      if (this.state == State.FEED) {
+        this.currentEntry=new Entry();
+        this.state=State.FEED_ENTRY;
       }
     }
  else     if (localName.equals("category")) {
-      currentCategory=new Category();
-      currentCategory.setTerm(attrs.getValue("","term"));
-      currentCategory.setScheme(new Reference(attrs.getValue("","scheme")));
-      currentCategory.setLabel(attrs.getValue("","label"));
-      if (state == State.FEED) {
-        state=State.FEED_CATEGORY;
+      this.currentCategory=new Category();
+      this.currentCategory.setTerm(attrs.getValue("","term"));
+      this.currentCategory.setScheme(new Reference(attrs.getValue("","scheme")));
+      this.currentCategory.setLabel(attrs.getValue("","label"));
+      if (this.state == State.FEED) {
+        this.state=State.FEED_CATEGORY;
       }
- else       if (state == State.FEED_ENTRY) {
-        state=State.FEED_ENTRY_CATEGORY;
+ else       if (this.state == State.FEED_ENTRY) {
+        this.state=State.FEED_ENTRY_CATEGORY;
       }
- else       if (state == State.FEED_ENTRY_SOURCE) {
-        state=State.FEED_ENTRY_SOURCE_CATEGORY;
+ else       if (this.state == State.FEED_ENTRY_SOURCE) {
+        this.state=State.FEED_ENTRY_SOURCE_CATEGORY;
       }
     }
  else     if (localName.equalsIgnoreCase("content")) {
-      if (state == State.FEED_ENTRY) {
-        MediaType type=getMediaType(attrs.getValue("","type"));
-        String srcAttr=attrs.getValue("","src");
-        Content currentContent=new Content();
+      if (this.state == State.FEED_ENTRY) {
+        final MediaType type=getMediaType(attrs.getValue("","type"));
+        final String srcAttr=attrs.getValue("","src");
+        final Content currentContent=new Content();
         if (srcAttr == null) {
           currentContent.setInlineContent(new StringRepresentation(null,type));
         }
@@ -114,8 +114,8 @@
           currentContent.setExternalRef(new Reference(srcAttr));
           currentContent.setExternalType(type);
         }
-        currentEntry.setContent(currentContent);
-        state=State.FEED_ENTRY_CONTENT;
+        this.currentEntry.setContent(currentContent);
+        this.state=State.FEED_ENTRY_CONTENT;
       }
     }
   }

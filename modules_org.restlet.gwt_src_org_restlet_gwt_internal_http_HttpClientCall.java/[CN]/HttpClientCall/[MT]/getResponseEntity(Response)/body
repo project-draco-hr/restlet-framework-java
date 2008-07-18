@@ -1,16 +1,16 @@
 {
   Representation result=null;
   long size=Representation.UNKNOWN_SIZE;
-  Series<Parameter> responseHeaders=getResponseHeaders();
-  String transferEncoding=responseHeaders.getFirstValue(HttpConstants.HEADER_TRANSFER_ENCODING,true);
-  if (transferEncoding != null && !"identity".equalsIgnoreCase(transferEncoding)) {
+  final Series<Parameter> responseHeaders=getResponseHeaders();
+  final String transferEncoding=responseHeaders.getFirstValue(HttpConstants.HEADER_TRANSFER_ENCODING,true);
+  if ((transferEncoding != null) && !"identity".equalsIgnoreCase(transferEncoding)) {
     size=Representation.UNKNOWN_SIZE;
   }
  else {
     size=getContentLength();
   }
   if (!getMethod().equals(Method.HEAD.getName()) && !response.getStatus().isInformational() && !response.getStatus().equals(Status.REDIRECTION_NOT_MODIFIED)&& !response.getStatus().equals(Status.SUCCESS_NO_CONTENT)&& !response.getStatus().equals(Status.SUCCESS_RESET_CONTENT)&& !response.getStatus().equals(Status.SUCCESS_PARTIAL_CONTENT)) {
-    String text=getResponseEntityString(size);
+    final String text=getResponseEntityString(size);
     result=getRepresentation(text);
   }
   result=copyResponseEntityHeaders(responseHeaders,result);

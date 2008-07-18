@@ -1,13 +1,15 @@
 {
-  if (lastModified == null && entityTag == null)   return null;
+  if ((lastModified == null) && (entityTag == null)) {
+    return null;
+  }
   ResponseBuilder rb=null;
-  Method requestMethod=request.getMethod();
-  Conditions conditions=this.request.getConditions();
+  final Method requestMethod=this.request.getMethod();
+  final Conditions conditions=this.request.getConditions();
   if (lastModified != null) {
-    Date modSinceCond=conditions.getModifiedSince();
+    final Date modSinceCond=conditions.getModifiedSince();
     if (modSinceCond != null) {
       if (modSinceCond.after(lastModified)) {
-        boolean readRequest=requestMethod.equals(Method.GET) || requestMethod.equals(Method.HEAD);
+        final boolean readRequest=requestMethod.equals(Method.GET) || requestMethod.equals(Method.HEAD);
         if (readRequest) {
           rb=Response.notModified();
           rb.lastModified(lastModified);
@@ -20,7 +22,7 @@
  else {
       }
     }
-    Date unmodSinceCond=conditions.getUnmodifiedSince();
+    final Date unmodSinceCond=conditions.getUnmodifiedSince();
     if (unmodSinceCond != null) {
       if (unmodSinceCond.after(lastModified)) {
         return null;
@@ -31,19 +33,19 @@
     }
   }
   if (entityTag != null) {
-    Tag actualEntityTag=Converter.toRestletTag(entityTag);
-    List<Tag> requestMatchETags=conditions.getMatch();
+    final Tag actualEntityTag=Converter.toRestletTag(entityTag);
+    final List<Tag> requestMatchETags=conditions.getMatch();
     if (!requestMatchETags.isEmpty()) {
-      boolean match=checkIfOneMatch(requestMatchETags,actualEntityTag);
+      final boolean match=checkIfOneMatch(requestMatchETags,actualEntityTag);
       if (!match) {
         return precFailed("The entity does not match Entity Tag " + entityTag);
       }
     }
  else {
     }
-    List<Tag> requestNoneMatchETags=conditions.getNoneMatch();
+    final List<Tag> requestNoneMatchETags=conditions.getNoneMatch();
     if (!requestNoneMatchETags.isEmpty()) {
-      boolean match=checkIfOneMatch(requestNoneMatchETags,actualEntityTag);
+      final boolean match=checkIfOneMatch(requestNoneMatchETags,actualEntityTag);
       if (match) {
         return precFailed("The entity matches Entity Tag " + entityTag);
       }

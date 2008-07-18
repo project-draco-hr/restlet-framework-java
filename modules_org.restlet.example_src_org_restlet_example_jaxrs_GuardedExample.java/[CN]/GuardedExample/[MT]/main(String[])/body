@@ -1,12 +1,12 @@
 {
-  Component comp=new Component();
-  Server server=comp.getServers().add(Protocol.HTTP,80);
-  JaxRsApplication application=new JaxRsApplication(comp.getContext());
-  Guard guard=new Guard(application.getContext(),ChallengeScheme.HTTP_BASIC,"JAX-RS example");
+  final Component comp=new Component();
+  final Server server=comp.getServers().add(Protocol.HTTP,80);
+  final JaxRsApplication application=new JaxRsApplication(comp.getContext());
+  final Guard guard=new Guard(application.getContext(),ChallengeScheme.HTTP_BASIC,"JAX-RS example");
   guard.getSecrets().put("admin","adminPW".toCharArray());
   guard.getSecrets().put("alice","alicesSecret".toCharArray());
   guard.getSecrets().put("bob","bobsSecret".toCharArray());
-  ExampleRoleChecker roleChecker=new ExampleRoleChecker();
+  final ExampleRoleChecker roleChecker=new ExampleRoleChecker();
   application.setAuthentication(guard,roleChecker);
   application.add(new ExampleAppConfig());
   comp.getDefaultHost().attach(application);

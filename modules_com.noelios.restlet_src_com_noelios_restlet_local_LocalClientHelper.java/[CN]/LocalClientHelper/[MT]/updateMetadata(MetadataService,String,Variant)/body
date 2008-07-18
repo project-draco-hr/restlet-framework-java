@@ -1,6 +1,6 @@
 {
   if (variant != null) {
-    String[] tokens=entryName.split("\\.");
+    final String[] tokens=entryName.split("\\.");
     Metadata current;
     for (int j=1; j < tokens.length; j++) {
       current=metadataService.getMetadata(tokens[j]);
@@ -18,21 +18,23 @@
           variant.getLanguages().add((Language)current);
         }
       }
-      int dashIndex=tokens[j].indexOf('-');
+      final int dashIndex=tokens[j].indexOf('-');
       if (dashIndex != -1) {
-        String primaryPart=tokens[j].substring(0,dashIndex);
+        final String primaryPart=tokens[j].substring(0,dashIndex);
         current=metadataService.getMetadata(primaryPart);
-        if (current instanceof Language)         variant.getLanguages().add((Language)current);
+        if (current instanceof Language) {
+          variant.getLanguages().add((Language)current);
+        }
       }
     }
     if (variant.getLanguages().isEmpty()) {
-      Language defaultLanguage=metadataService.getDefaultLanguage();
+      final Language defaultLanguage=metadataService.getDefaultLanguage();
       if ((defaultLanguage != null) && !defaultLanguage.equals(Language.ALL)) {
         variant.getLanguages().add(defaultLanguage);
       }
     }
     if (variant.getMediaType() == null) {
-      MediaType defaultMediaType=metadataService.getDefaultMediaType();
+      final MediaType defaultMediaType=metadataService.getDefaultMediaType();
       if ((defaultMediaType != null) && !defaultMediaType.equals(MediaType.ALL)) {
         variant.setMediaType(defaultMediaType);
       }

@@ -1,15 +1,15 @@
 {
-  Method method=getTargetMethod(resolver);
-  Reference targetRef=getTargetRef(resolver);
-  Request request=new Request(method,targetRef);
-  ChallengeResponse challengeResponse=getTargetChallengeResponse(resolver);
+  final Method method=getTargetMethod(resolver);
+  final Reference targetRef=getTargetRef(resolver);
+  final Request request=new Request(method,targetRef);
+  final ChallengeResponse challengeResponse=getTargetChallengeResponse(resolver);
   if (challengeResponse != null) {
     request.setChallengeResponse(challengeResponse);
   }
   if (isTargetEntityEnabled()) {
     request.setEntity(getTargetEntity(resolver));
   }
-  Response response=getContext().getClientDispatcher().handle(request);
+  final Response response=getContext().getClientDispatcher().handle(request);
   if (!response.getStatus().isSuccess()) {
     throw new ResourceException(Status.SERVER_ERROR_INTERNAL,"Call to the target resource didn't succeed");
   }

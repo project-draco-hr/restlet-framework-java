@@ -3,27 +3,27 @@
   Selector selector=null;
   SelectionKey selectionKey=null;
   try {
-    if (bb.hasRemaining()) {
-      result=bb.get();
+    if (this.bb.hasRemaining()) {
+      result=this.bb.get();
     }
- else     if (!endReached) {
+ else     if (!this.endReached) {
       int bytesRead=readChannel();
       if (bytesRead == 0) {
         selector=SelectorFactory.getSelector();
         if (selector != null) {
-          selectionKey=selectableChannel.register(selector,SelectionKey.OP_READ);
+          selectionKey=this.selectableChannel.register(selector,SelectionKey.OP_READ);
           selector.select(10000);
         }
         bytesRead=readChannel();
       }
  else       if (bytesRead == -1) {
-        endReached=true;
+        this.endReached=true;
       }
-      if (bb.remaining() == 0) {
+      if (this.bb.remaining() == 0) {
         result=-1;
       }
  else {
-        result=bb.get();
+        result=this.bb.get();
       }
     }
  else {

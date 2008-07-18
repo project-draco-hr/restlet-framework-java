@@ -1,11 +1,11 @@
 {
-  Conditions result=super.getConditions();
+  final Conditions result=super.getConditions();
   if (!this.conditionAdded) {
-    String ifMatchHeader=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_IF_MATCH);
-    String ifNoneMatchHeader=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_IF_NONE_MATCH);
+    final String ifMatchHeader=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_IF_MATCH);
+    final String ifNoneMatchHeader=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_IF_NONE_MATCH);
     Date ifModifiedSince=null;
     Date ifUnmodifiedSince=null;
-    for (    Parameter header : getHttpCall().getRequestHeaders()) {
+    for (    final Parameter header : getHttpCall().getRequestHeaders()) {
       if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_IF_MODIFIED_SINCE)) {
         ifModifiedSince=HttpCall.parseDate(header.getValue(),false);
       }
@@ -23,7 +23,7 @@
     Tag current=null;
     if (ifMatchHeader != null) {
       try {
-        HeaderReader hr=new HeaderReader(ifMatchHeader);
+        final HeaderReader hr=new HeaderReader(ifMatchHeader);
         String value=hr.readValue();
         while (value != null) {
           current=Tag.parse(value);
@@ -35,14 +35,14 @@
           value=hr.readValue();
         }
       }
- catch (      Exception e) {
+ catch (      final Exception e) {
         this.context.getLogger().log(Level.INFO,"Unable to process the if-match header: " + ifMatchHeader);
       }
     }
     List<Tag> noneMatch=null;
     if (ifNoneMatchHeader != null) {
       try {
-        HeaderReader hr=new HeaderReader(ifNoneMatchHeader);
+        final HeaderReader hr=new HeaderReader(ifNoneMatchHeader);
         String value=hr.readValue();
         while (value != null) {
           current=Tag.parse(value);
@@ -54,7 +54,7 @@
           value=hr.readValue();
         }
       }
- catch (      Exception e) {
+ catch (      final Exception e) {
         this.context.getLogger().log(Level.INFO,"Unable to process the if-none-match header: " + ifNoneMatchHeader);
       }
     }

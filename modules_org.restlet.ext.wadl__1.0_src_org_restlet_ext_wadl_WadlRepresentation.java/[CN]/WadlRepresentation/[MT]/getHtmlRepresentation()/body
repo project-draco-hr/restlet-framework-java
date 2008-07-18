@@ -1,13 +1,13 @@
 {
   Representation representation=null;
-  URL wadlHtmlXsltUrl=Engine.getClassLoader().getResource("org/restlet/ext/wadl/htmlConvert.xsl");
+  final URL wadlHtmlXsltUrl=Engine.getClassLoader().getResource("org/restlet/ext/wadl/htmlConvert.xsl");
   if (wadlHtmlXsltUrl != null) {
     try {
-      setSaxSource(new SAXSource(new InputSource(this.getStream())));
-      InputRepresentation xslRep=new InputRepresentation(wadlHtmlXsltUrl.openStream(),MediaType.APPLICATION_W3C_XSLT);
+      setSaxSource(new SAXSource(new InputSource(getStream())));
+      final InputRepresentation xslRep=new InputRepresentation(wadlHtmlXsltUrl.openStream(),MediaType.APPLICATION_W3C_XSLT);
       representation=new TransformRepresentation(this,xslRep);
     }
- catch (    IOException e) {
+ catch (    final IOException e) {
       e.printStackTrace();
     }
   }

@@ -1,7 +1,19 @@
 {
-  if (headerName == null)   return false;
-  if (jaxRsRespHeaders != null)   if (jaxRsRespHeaders.containsKey(headerName))   return true;
-  Series<Parameter> headers=getHeaders();
-  if (headers != null)   for (  Parameter p : headers)   if (headerName.equals(p.getName()))   return true;
+  if (headerName == null) {
+    return false;
+  }
+  if (this.jaxRsRespHeaders != null) {
+    if (this.jaxRsRespHeaders.containsKey(headerName)) {
+      return true;
+    }
+  }
+  final Series<Parameter> headers=getHeaders();
+  if (headers != null) {
+    for (    final Parameter p : headers) {
+      if (headerName.equals(p.getName())) {
+        return true;
+      }
+    }
+  }
   return false;
 }

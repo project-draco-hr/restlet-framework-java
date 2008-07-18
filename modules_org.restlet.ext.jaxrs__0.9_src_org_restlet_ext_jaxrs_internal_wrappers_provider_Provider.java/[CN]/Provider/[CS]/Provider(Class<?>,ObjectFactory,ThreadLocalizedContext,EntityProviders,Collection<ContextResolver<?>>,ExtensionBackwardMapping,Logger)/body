@@ -1,10 +1,14 @@
 {
-  if (jaxRsProviderClass == null)   throw new IllegalArgumentException("The JAX-RS provider class must not be null");
+  if (jaxRsProviderClass == null) {
+    throw new IllegalArgumentException("The JAX-RS provider class must not be null");
+  }
   Util.checkClassConcrete(jaxRsProviderClass,"provider");
   Object jaxRsProvider=null;
-  if (objectFactory != null)   jaxRsProvider=objectFactory.getInstance(jaxRsProviderClass);
+  if (objectFactory != null) {
+    jaxRsProvider=objectFactory.getInstance(jaxRsProviderClass);
+  }
   if (jaxRsProvider == null) {
-    Constructor<?> providerConstructor=WrapperUtil.findJaxRsConstructor(jaxRsProviderClass,"provider");
+    final Constructor<?> providerConstructor=WrapperUtil.findJaxRsConstructor(jaxRsProviderClass,"provider");
     jaxRsProvider=createInstance(providerConstructor,jaxRsProviderClass,tlContext,mbWorkers,allResolvers,extensionBackwardMapping,logger);
   }
   this.jaxRsProvider=jaxRsProvider;
@@ -40,10 +44,14 @@
   if (!isProvider) {
     logger.config("The provider " + jaxRsProviderClass + " is neither a MessageBodyWriter nor a MessageBodyReader nor a ContextResolver nor an ExceptionMapper");
   }
-  Consumes pm=jaxRsProvider.getClass().getAnnotation(Consumes.class);
-  if (pm != null)   this.consumedMimes=WrapperUtil.convertToMediaTypes(pm.value());
- else   this.consumedMimes=Collections.singletonList(MediaType.ALL);
-  Produces cm=jaxRsProvider.getClass().getAnnotation(Produces.class);
+  final Consumes pm=jaxRsProvider.getClass().getAnnotation(Consumes.class);
+  if (pm != null) {
+    this.consumedMimes=WrapperUtil.convertToMediaTypes(pm.value());
+  }
+ else {
+    this.consumedMimes=Collections.singletonList(MediaType.ALL);
+  }
+  final Produces cm=jaxRsProvider.getClass().getAnnotation(Produces.class);
   if (cm != null) {
     this.producedMimes=WrapperUtil.convertToMediaTypes(cm.value());
   }

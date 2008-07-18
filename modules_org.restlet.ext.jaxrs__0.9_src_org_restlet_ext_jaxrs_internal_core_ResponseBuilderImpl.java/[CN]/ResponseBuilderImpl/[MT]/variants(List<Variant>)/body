@@ -1,25 +1,43 @@
 {
-  Set<String> encodings=new HashSet<String>();
-  Set<Locale> languages=new HashSet<Locale>();
-  Set<MediaType> mediaTypes=new HashSet<MediaType>();
-  Set<String> charsets=new HashSet<String>();
-  for (  Variant variant : variants) {
-    String encoding=variant.getEncoding();
-    if (encoding != null)     encodings.add(encoding);
-    Locale language=variant.getLanguage();
-    if (language != null)     languages.add(language);
-    MediaType mediaType=variant.getMediaType();
-    if (mediaType != null)     mediaTypes.add(Converter.getMediaTypeWithoutParams(mediaType));
-    String charset=Converter.getCharset(mediaType);
-    if (charset != null)     charsets.add(charset);
+  final Set<String> encodings=new HashSet<String>();
+  final Set<Locale> languages=new HashSet<Locale>();
+  final Set<MediaType> mediaTypes=new HashSet<MediaType>();
+  final Set<String> charsets=new HashSet<String>();
+  for (  final Variant variant : variants) {
+    final String encoding=variant.getEncoding();
+    if (encoding != null) {
+      encodings.add(encoding);
+    }
+    final Locale language=variant.getLanguage();
+    if (language != null) {
+      languages.add(language);
+    }
+    final MediaType mediaType=variant.getMediaType();
+    if (mediaType != null) {
+      mediaTypes.add(Converter.getMediaTypeWithoutParams(mediaType));
+    }
+    final String charset=Converter.getCharset(mediaType);
+    if (charset != null) {
+      charsets.add(charset);
+    }
   }
   Set<Dimension> dimensions;
   dimensions=org.restlet.data.Response.getCurrent().getDimensions();
-  if (encodings.size() > 1)   dimensions.add(Dimension.ENCODING);
-  if (languages.size() > 1)   dimensions.add(Dimension.LANGUAGE);
-  if (mediaTypes.size() > 1)   dimensions.add(Dimension.MEDIA_TYPE);
-  if (charsets.size() > 1)   dimensions.add(Dimension.CHARACTER_SET);
-  String vary=Util.formatDimensions(dimensions);
-  if (vary != null)   this.getMetadata().putSingle(HttpHeaders.VARY,vary);
+  if (encodings.size() > 1) {
+    dimensions.add(Dimension.ENCODING);
+  }
+  if (languages.size() > 1) {
+    dimensions.add(Dimension.LANGUAGE);
+  }
+  if (mediaTypes.size() > 1) {
+    dimensions.add(Dimension.MEDIA_TYPE);
+  }
+  if (charsets.size() > 1) {
+    dimensions.add(Dimension.CHARACTER_SET);
+  }
+  final String vary=Util.formatDimensions(dimensions);
+  if (vary != null) {
+    getMetadata().putSingle(HttpHeaders.VARY,vary);
+  }
   return this;
 }

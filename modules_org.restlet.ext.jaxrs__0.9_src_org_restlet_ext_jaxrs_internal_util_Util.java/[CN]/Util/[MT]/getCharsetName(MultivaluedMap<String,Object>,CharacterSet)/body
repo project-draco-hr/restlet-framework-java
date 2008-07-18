@@ -1,7 +1,11 @@
 {
-  MediaType mediaType=getMediaType(httpHeaders);
+  final MediaType mediaType=getMediaType(httpHeaders);
   String charset=null;
-  if (mediaType != null)   charset=mediaType.getParameters().getFirstValue(CHARSET);
-  if (charset == null || charset.length() == 0)   return defaultCs != null ? defaultCs.toString() : null;
+  if (mediaType != null) {
+    charset=mediaType.getParameters().getFirstValue(CHARSET);
+  }
+  if ((charset == null) || (charset.length() == 0)) {
+    return defaultCs != null ? defaultCs.toString() : null;
+  }
   return charset;
 }

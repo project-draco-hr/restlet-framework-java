@@ -1,14 +1,14 @@
 {
   Status result=null;
   try {
-    String hostDomain=request.getResourceRef().getHostDomain();
+    final String hostDomain=request.getResourceRef().getHostDomain();
     int hostPort=request.getResourceRef().getHostPort();
     if (hostPort == -1) {
       hostPort=request.getResourceRef().getSchemeProtocol().getDefaultPort();
     }
     this.socket=createSocket(hostDomain,hostPort);
-    this.requestStream=socket.getOutputStream();
-    this.responseStream=socket.getInputStream();
+    this.requestStream=this.socket.getOutputStream();
+    this.responseStream=this.socket.getInputStream();
     getRequestHeadStream().write(getMethod().getBytes());
     getRequestHeadStream().write(' ');
     getRequestHeadStream().write(getRequestUri().getBytes());
@@ -24,7 +24,7 @@
       host+=":" + request.getResourceRef().getHostPort();
     }
     getRequestHeaders().set(HttpConstants.HEADER_HOST,host,true);
-    for (    Parameter header : getRequestHeaders()) {
+    for (    final Parameter header : getRequestHeaders()) {
       HttpUtils.writeHeader(header,getRequestHeadStream());
     }
     HttpUtils.writeCRLF(getRequestHeadStream());
@@ -35,7 +35,7 @@
     parseResponse();
     result=new Status(getStatusCode(),null,getReasonPhrase(),null);
   }
- catch (  IOException ioe) {
+ catch (  final IOException ioe) {
     getHelper().getLogger().log(Level.WARNING,"An error occured during the communication with the remote HTTP server.",ioe);
     result=new Status(Status.CONNECTOR_ERROR_COMMUNICATION,ioe);
   }

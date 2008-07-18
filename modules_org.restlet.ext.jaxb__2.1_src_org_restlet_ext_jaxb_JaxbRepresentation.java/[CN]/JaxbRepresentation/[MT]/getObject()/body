@@ -1,11 +1,11 @@
 {
   if ((this.object == null) && (this.xmlRepresentation != null)) {
-    Unmarshaller u=new Unmarshaller(this.contextPath);
+    final Unmarshaller u=new Unmarshaller(this.contextPath);
     if (getValidationEventHandler() != null) {
       try {
         u.setEventHandler(getValidationEventHandler());
       }
- catch (      JAXBException e) {
+ catch (      final JAXBException e) {
         logger.log(Level.WARNING,"Unable to set the event handler",e);
         throw new IOException("Unable to set the event handler." + e.getMessage());
       }
@@ -13,7 +13,7 @@
     try {
       this.object=(T)u.unmarshal(this.xmlRepresentation.getStream());
     }
- catch (    JAXBException e) {
+ catch (    final JAXBException e) {
       logger.log(Level.WARNING,"Unable to unmarshal the XML representation",e);
       throw new IOException("Unable to unmarshal the XML representation." + e.getMessage());
     }

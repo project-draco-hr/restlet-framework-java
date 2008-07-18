@@ -2,13 +2,13 @@
   super(context,request,response);
   if (getCurrentUser() != null) {
     setModifiable(true);
-    String mailboxId=Reference.decode((String)request.getAttributes().get("mailboxId"));
-    mailbox=getObjectsFacade().getMailboxById(mailboxId);
-    if (mailbox != null) {
-      String contactId=(String)request.getAttributes().get("contactId");
-      contact=getObjectsFacade().getContactById(contactId);
-      if (contact != null) {
-        hostedMailboxes=getObjectsFacade().getMailboxes();
+    final String mailboxId=Reference.decode((String)request.getAttributes().get("mailboxId"));
+    this.mailbox=getObjectsFacade().getMailboxById(mailboxId);
+    if (this.mailbox != null) {
+      final String contactId=(String)request.getAttributes().get("contactId");
+      this.contact=getObjectsFacade().getContactById(contactId);
+      if (this.contact != null) {
+        this.hostedMailboxes=getObjectsFacade().getMailboxes();
         getVariants().add(new Variant(MediaType.TEXT_HTML));
       }
     }

@@ -1,12 +1,12 @@
 {
-  Restlet restlet=new Restlet(){
+  final Restlet restlet=new Restlet(){
     @Override public void handle(    Request request,    Response response){
       response.setEntity("hello, world",MediaType.TEXT_PLAIN);
     }
   }
 ;
-  File keystoreFile=new File("d:\\temp\\certificats","myServerKeystore");
-  Component component=new Component();
+  final File keystoreFile=new File("d:\\temp\\certificats","myServerKeystore");
+  final Component component=new Component();
   component.getServers().add(Protocol.HTTPS,8182);
   component.getDefaultHost().attach("/helloWorld",restlet);
   component.getContext().getParameters().add("keystorePath",keystoreFile.getAbsolutePath());
@@ -15,7 +15,7 @@
   try {
     component.start();
   }
- catch (  Exception e) {
+ catch (  final Exception e) {
     e.printStackTrace();
   }
 }

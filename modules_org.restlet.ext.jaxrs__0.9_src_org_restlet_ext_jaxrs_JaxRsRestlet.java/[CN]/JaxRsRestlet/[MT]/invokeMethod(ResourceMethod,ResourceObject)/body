@@ -3,20 +3,20 @@
   try {
     result=resourceMethod.invoke(resourceObject);
   }
- catch (  WebApplicationException e) {
+ catch (  final WebApplicationException e) {
     throw e;
   }
-catch (  InvocationTargetException ite) {
+catch (  final InvocationTargetException ite) {
     throw handleInvocationTargetExc(ite);
   }
-catch (  RuntimeException e) {
-    throw excHandler.runtimeExecption(e,resourceMethod,tlContext.get(),"Can not invoke the resource method");
+catch (  final RuntimeException e) {
+    throw this.excHandler.runtimeExecption(e,resourceMethod,this.tlContext.get(),"Can not invoke the resource method");
   }
-catch (  MethodInvokeException e) {
-    throw excHandler.methodInvokeException(e,tlContext.get(),"Can not invoke the resource method");
+catch (  final MethodInvokeException e) {
+    throw this.excHandler.methodInvokeException(e,this.tlContext.get(),"Can not invoke the resource method");
   }
-catch (  ConvertRepresentationException e) {
-    throw excHandler.convertRepresentationExc(e);
+catch (  final ConvertRepresentationException e) {
+    throw this.excHandler.convertRepresentationExc(e);
   }
   return result;
 }

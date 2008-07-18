@@ -1,8 +1,10 @@
 {
-  if (!startServer(RoleChecker.FORBID_ALL))   return;
-  Representation postEntity=new Form("abc=def").getWebRepresentation();
-  ChallengeResponse cr=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"bob","bobsSecret");
-  Response response=post(null,postEntity,cr);
+  if (!startServer(RoleChecker.FORBID_ALL)) {
+    return;
+  }
+  final Representation postEntity=new Form("abc=def").getWebRepresentation();
+  final ChallengeResponse cr=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"bob","bobsSecret");
+  final Response response=post(null,postEntity,cr);
   sysOutEntityIfNotStatus(Status.CLIENT_ERROR_FORBIDDEN,response);
   assertEquals(Status.CLIENT_ERROR_FORBIDDEN,response.getStatus());
 }

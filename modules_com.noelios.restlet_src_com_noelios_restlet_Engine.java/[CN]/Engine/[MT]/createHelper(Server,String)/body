@@ -2,23 +2,23 @@
   ServerHelper result=null;
   if (server.getProtocols().size() > 0) {
     ServerHelper connector=null;
-    for (Iterator<ServerHelper> iter=getRegisteredServers().iterator(); (result == null) && iter.hasNext(); ) {
+    for (final Iterator<ServerHelper> iter=getRegisteredServers().iterator(); (result == null) && iter.hasNext(); ) {
       connector=iter.next();
       if ((helperClass == null) || connector.getClass().getCanonicalName().equals(helperClass)) {
         if (connector.getProtocols().containsAll(server.getProtocols())) {
           try {
             result=connector.getClass().getConstructor(Server.class).newInstance(server);
           }
- catch (          Exception e) {
+ catch (          final Exception e) {
             logger.log(Level.SEVERE,"Exception while instantiation the server connector.",e);
           }
         }
       }
     }
     if (result == null) {
-      StringBuilder sb=new StringBuilder();
+      final StringBuilder sb=new StringBuilder();
       sb.append("No available server connector supports the required protocols: ");
-      for (      Protocol p : server.getProtocols()) {
+      for (      final Protocol p : server.getProtocols()) {
         sb.append("'").append(p.getName()).append("' ");
       }
       sb.append(". Please add the JAR of a matching connector to your classpath.");

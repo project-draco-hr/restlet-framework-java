@@ -1,14 +1,14 @@
 {
-  for (  Parameter header : headers) {
+  for (  final Parameter header : headers) {
     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_LOCATION)) {
       response.setLocationRef(header.getValue());
     }
  else     if ((header.getName().equalsIgnoreCase(HttpConstants.HEADER_SET_COOKIE)) || (header.getName().equalsIgnoreCase(HttpConstants.HEADER_SET_COOKIE2))) {
       try {
-        CookieReader cr=new CookieReader(header.getValue());
+        final CookieReader cr=new CookieReader(header.getValue());
         response.getCookieSettings().add(cr.readCookieSetting());
       }
- catch (      Exception e) {
+ catch (      final Exception e) {
         System.err.println("Error during cookie setting parsing. Header: " + header.getValue());
       }
     }
@@ -16,18 +16,18 @@
       response.getServerInfo().setAgent(header.getValue());
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_ALLOW)) {
-      HeaderReader hr=new HeaderReader(header.getValue());
+      final HeaderReader hr=new HeaderReader(header.getValue());
       String value=hr.readValue();
-      Set<Method> allowedMethods=response.getAllowedMethods();
+      final Set<Method> allowedMethods=response.getAllowedMethods();
       while (value != null) {
         allowedMethods.add(Method.valueOf(value));
         value=hr.readValue();
       }
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_VARY)) {
-      HeaderReader hr=new HeaderReader(header.getValue());
+      final HeaderReader hr=new HeaderReader(header.getValue());
       String value=hr.readValue();
-      Set<Dimension> dimensions=response.getDimensions();
+      final Set<Dimension> dimensions=response.getDimensions();
       while (value != null) {
         if (value.equalsIgnoreCase(HttpConstants.HEADER_ACCEPT)) {
           dimensions.add(Dimension.MEDIA_TYPE);

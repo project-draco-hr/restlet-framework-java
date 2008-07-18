@@ -1,11 +1,11 @@
 {
   float result=0F;
   if ((getRouter() != null) && (request.getResourceRef() != null) && (getTemplate() != null)) {
-    String remainingPart=request.getResourceRef().getRemainingPart(false,getMatchQuery());
+    final String remainingPart=request.getResourceRef().getRemainingPart(false,getMatchQuery());
     if (remainingPart != null) {
-      int matchedLength=getTemplate().match(remainingPart);
+      final int matchedLength=getTemplate().match(remainingPart);
       if (matchedLength != -1) {
-        float totalLength=remainingPart.length();
+        final float totalLength=remainingPart.length();
         if (totalLength > 0.0F) {
           result=getRouter().getRequiredScore() + (1.0F - getRouter().getRequiredScore()) * (matchedLength / totalLength);
         }

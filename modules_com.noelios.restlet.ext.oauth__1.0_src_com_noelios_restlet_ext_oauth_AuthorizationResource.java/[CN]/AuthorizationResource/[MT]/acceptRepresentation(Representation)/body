@@ -1,8 +1,8 @@
 {
-  OAuthMessage requestMessage=OAuthHelper.getMessage(getRequest(),getLogger());
-  OAuthAccessor accessor=provider.getAccessor(requestMessage);
+  final OAuthMessage requestMessage=OAuthHelper.getMessage(getRequest(),getLogger());
+  final OAuthAccessor accessor=this.provider.getAccessor(requestMessage);
   if (accessor == null) {
-    ChallengeRequest challengeRequest=new ChallengeRequest(OAuthGuard.SCHEME,realm);
+    final ChallengeRequest challengeRequest=new ChallengeRequest(OAuthGuard.SCHEME,this.realm);
     getResponse().setChallengeRequest(challengeRequest);
     getResponse().setStatus(Status.CLIENT_ERROR_UNAUTHORIZED,"Invalid / expired Token");
     challengeRequest.getParameters().add("oauth_problem","token_rejected");
@@ -12,9 +12,9 @@
     handleFailedAuthorization();
     return;
   }
-  String userId="user";
-  provider.markAsAuthorized(accessor,userId);
-  String callback=getRequest().getResourceRef().getQueryAsForm().getFirstValue("oauth_callback");
+  final String userId="user";
+  this.provider.markAsAuthorized(accessor,userId);
+  final String callback=getRequest().getResourceRef().getQueryAsForm().getFirstValue("oauth_callback");
   if (callback != null) {
     getResponse().setLocationRef(callback);
     getResponse().setStatus(Status.REDIRECTION_FOUND);

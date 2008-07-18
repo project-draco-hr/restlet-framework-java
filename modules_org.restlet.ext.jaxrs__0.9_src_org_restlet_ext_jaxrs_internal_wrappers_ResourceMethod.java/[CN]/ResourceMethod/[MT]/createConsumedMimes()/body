@@ -1,7 +1,13 @@
 {
   Consumes consumes;
   consumes=this.annotatedMethod.getAnnotation(Consumes.class);
-  if (consumes == null)   consumes=this.executeMethod.getDeclaringClass().getAnnotation(Consumes.class);
-  if (consumes != null)   return WrapperUtil.convertToMediaTypes(consumes.value());
- else   return Collections.singletonList(MediaType.ALL);
+  if (consumes == null) {
+    consumes=this.executeMethod.getDeclaringClass().getAnnotation(Consumes.class);
+  }
+  if (consumes != null) {
+    return WrapperUtil.convertToMediaTypes(consumes.value());
+  }
+ else {
+    return Collections.singletonList(MediaType.ALL);
+  }
 }

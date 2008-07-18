@@ -1,25 +1,25 @@
 {
-  String getterName="get" + attribute.substring(0,1).toUpperCase() + attribute.substring(1);
+  final String getterName="get" + attribute.substring(0,1).toUpperCase() + attribute.substring(1);
   Method subMethod;
   try {
     subMethod=uriInfo.getClass().getMethod(getterName);
   }
- catch (  SecurityException e) {
+ catch (  final SecurityException e) {
     throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
   }
-catch (  NoSuchMethodException e) {
+catch (  final NoSuchMethodException e) {
     throw new WebApplicationException(Status.NOT_FOUND);
   }
   try {
     return subMethod.invoke(uriInfo);
   }
- catch (  IllegalArgumentException e) {
+ catch (  final IllegalArgumentException e) {
     throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
   }
-catch (  IllegalAccessException e) {
+catch (  final IllegalAccessException e) {
     throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
   }
-catch (  InvocationTargetException e) {
+catch (  final InvocationTargetException e) {
     throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
   }
 }

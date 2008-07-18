@@ -1,39 +1,41 @@
 {
-  if (rootResourceClass == null)   throw new IllegalArgumentException("The root resource class must not be null");
+  if (rootResourceClass == null) {
+    throw new IllegalArgumentException("The root resource class must not be null");
+  }
   RootResourceClass newRrc;
   try {
-    newRrc=wrapperFactory.getRootResourceClass(rootResourceClass);
+    newRrc=this.wrapperFactory.getRootResourceClass(rootResourceClass);
   }
- catch (  IllegalPathOnClassException e) {
+ catch (  final IllegalPathOnClassException e) {
     getLogger().warning("The root resource class " + rootResourceClass.getName() + " is annotated with an illegal path: "+ e.getPath()+ ". ("+ e.getMessage()+ ")");
     return false;
   }
-catch (  IllegalArgumentException e) {
+catch (  final IllegalArgumentException e) {
     getLogger().log(Level.WARNING,"The root resource class " + rootResourceClass.getName() + " is not a valud root resource class: "+ e.getMessage(),e);
     return false;
   }
-catch (  MissingAnnotationException e) {
+catch (  final MissingAnnotationException e) {
     getLogger().log(Level.WARNING,"The root resource class " + rootResourceClass.getName() + " is not a valud root resource class: "+ e.getMessage(),e);
     return false;
   }
-catch (  MissingConstructorException e) {
+catch (  final MissingConstructorException e) {
     getLogger().warning("The root resource class " + rootResourceClass.getName() + " has no valid constructor");
     return false;
   }
-catch (  IllegalConstrParamTypeException e) {
+catch (  final IllegalConstrParamTypeException e) {
     getLogger().warning("The root resource class " + rootResourceClass.getName() + " has no valid constructor: "+ e.getMessage());
     return false;
   }
-catch (  IllegalBeanSetterTypeException e) {
+catch (  final IllegalBeanSetterTypeException e) {
     getLogger().warning("The root resource class " + rootResourceClass.getName() + " has no valid constructor: "+ e.getMessage());
     return false;
   }
-catch (  IllegalFieldTypeException e) {
+catch (  final IllegalFieldTypeException e) {
     getLogger().warning("The root resource class " + rootResourceClass.getName() + " has no valid constructor: "+ e.getMessage());
     return false;
   }
-  PathRegExp uriTempl=newRrc.getPathRegExp();
-  for (  RootResourceClass rrc : this.rootResourceClasses) {
+  final PathRegExp uriTempl=newRrc.getPathRegExp();
+  for (  final RootResourceClass rrc : this.rootResourceClasses) {
     if (rrc.getJaxRsClass().equals(rootResourceClass)) {
       return true;
     }
@@ -42,6 +44,6 @@ catch (  IllegalFieldTypeException e) {
       return false;
     }
   }
-  rootResourceClasses.add(newRrc);
+  this.rootResourceClasses.add(newRrc);
   return true;
 }

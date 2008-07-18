@@ -1,9 +1,11 @@
 {
-  if (ONLY_M2)   return;
+  if (ONLY_M2) {
+    return;
+  }
   Response response=get(MediaType.TEXT_ALL);
   sysOutEntityIfError(response);
   Representation representation=response.getEntity();
-  MediaType mediaType=representation.getMediaType();
+  final MediaType mediaType=representation.getMediaType();
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   assertTrue(mediaType.equals(MediaType.TEXT_PLAIN,true) || mediaType.equals(MediaType.TEXT_HTML,true));
   response=get(MediaType.TEXT_PLAIN);

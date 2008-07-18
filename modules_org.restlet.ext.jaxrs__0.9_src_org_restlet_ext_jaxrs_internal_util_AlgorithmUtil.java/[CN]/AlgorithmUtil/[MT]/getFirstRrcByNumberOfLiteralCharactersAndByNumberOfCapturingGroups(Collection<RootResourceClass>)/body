@@ -1,13 +1,17 @@
 {
-  if (rrcs == null || rrcs.isEmpty())   return null;
-  Iterator<RootResourceClass> rrcIter=rrcs.iterator();
+  if ((rrcs == null) || rrcs.isEmpty()) {
+    return null;
+  }
+  final Iterator<RootResourceClass> rrcIter=rrcs.iterator();
   RootResourceClass bestRrc=rrcIter.next();
-  if (rrcs.size() == 1)   return bestRrc;
+  if (rrcs.size() == 1) {
+    return bestRrc;
+  }
   int bestRrcChars=Integer.MIN_VALUE;
   int bestRrcNoCaptGroups=Integer.MIN_VALUE;
-  for (  RootResourceClass rrc : rrcs) {
-    int rrcNoLitChars=rrc.getPathRegExp().getNumberOfLiteralChars();
-    int rrcNoCaptGroups=rrc.getPathRegExp().getNumberOfCapturingGroups();
+  for (  final RootResourceClass rrc : rrcs) {
+    final int rrcNoLitChars=rrc.getPathRegExp().getNumberOfLiteralChars();
+    final int rrcNoCaptGroups=rrc.getPathRegExp().getNumberOfCapturingGroups();
     if (rrcNoLitChars > bestRrcChars) {
       bestRrc=rrc;
       bestRrcChars=rrcNoLitChars;

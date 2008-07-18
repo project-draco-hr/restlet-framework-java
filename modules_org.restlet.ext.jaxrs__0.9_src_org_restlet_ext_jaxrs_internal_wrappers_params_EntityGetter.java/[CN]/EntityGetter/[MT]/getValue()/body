@@ -1,19 +1,23 @@
 {
-  Request request=this.tlContext.get().getRequest();
-  Representation entity=request.getEntity();
-  if (entity == null)   return null;
-  MediaType mediaType=entity.getMediaType();
-  MessageBodyReader<?> mbr=mbrs.getBestReader(this.convToCl,this.convToGen,annotations,mediaType);
-  if (mbr == null)   throw new NoMessageBodyReaderException(mediaType,this.convToCl);
-  MultivaluedMap<String,String> httpHeaders=Util.getJaxRsHttpHeaders(request);
-  try {
-    javax.ws.rs.core.MediaType jaxRsMediaType=Converter.toJaxRsMediaType(mediaType,entity.getCharacterSet());
-    return mbr.readFrom((Class)this.convToCl,this.convToGen,annotations,jaxRsMediaType,httpHeaders,entity.getStream());
+  final Request request=this.tlContext.get().getRequest();
+  final Representation entity=request.getEntity();
+  if (entity == null) {
+    return null;
   }
- catch (  WebApplicationException wae) {
+  final MediaType mediaType=entity.getMediaType();
+  final MessageBodyReader<?> mbr=this.mbrs.getBestReader(this.convToCl,this.convToGen,this.annotations,mediaType);
+  if (mbr == null) {
+    throw new NoMessageBodyReaderException(mediaType,this.convToCl);
+  }
+  final MultivaluedMap<String,String> httpHeaders=Util.getJaxRsHttpHeaders(request);
+  try {
+    final javax.ws.rs.core.MediaType jaxRsMediaType=Converter.toJaxRsMediaType(mediaType,entity.getCharacterSet());
+    return mbr.readFrom((Class)this.convToCl,this.convToGen,this.annotations,jaxRsMediaType,httpHeaders,entity.getStream());
+  }
+ catch (  final WebApplicationException wae) {
     throw wae;
   }
-catch (  IOException e) {
+catch (  final IOException e) {
     throw ConvertRepresentationException.object(this.convToCl,"the message body",e);
   }
  finally {

@@ -1,13 +1,15 @@
 {
-  Reference reference=request.getResourceRef();
-  if (reference.getBaseRef() == null)   reference.setBaseRef(reference.getHostIdentifier());
+  final Reference reference=request.getResourceRef();
+  if (reference.getBaseRef() == null) {
+    reference.setBaseRef(reference.getHostIdentifier());
+  }
   request.setOriginalRef(reference.getTargetRef());
-  Restlet connector=getClientConnector();
+  final Restlet connector=getClientConnector();
   if (shouldAccessWithoutTcp()) {
-    String hostDomain=request.getResourceRef().getHostDomain();
+    final String hostDomain=request.getResourceRef().getHostDomain();
     getHttpHeaders(request).add("host",hostDomain);
   }
-  Response response=connector.handle(request);
+  final Response response=connector.handle(request);
   if (!useTcp && request.getMethod().equals(Method.HEAD)) {
     response.setEntity(new WrapperRepresentation(response.getEntity()){
       @Override public ReadableByteChannel getChannel() throws IOException {

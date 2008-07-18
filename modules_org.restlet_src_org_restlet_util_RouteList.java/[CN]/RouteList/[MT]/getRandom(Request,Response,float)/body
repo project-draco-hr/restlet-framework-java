@@ -1,19 +1,23 @@
 {
-  int length=size();
+  final int length=size();
   if (length > 0) {
     int j=new Random().nextInt(length);
     Route route=get(j);
-    if (route.score(request,response) >= requiredScore)     return route;
+    if (route.score(request,response) >= requiredScore) {
+      return route;
+    }
     boolean loopedAround=false;
     do {
-      if (j == length && loopedAround == false) {
+      if ((j == length) && (loopedAround == false)) {
         j=0;
         loopedAround=true;
       }
       route=get(j++);
-      if (route.score(request,response) >= requiredScore)       return route;
+      if (route.score(request,response) >= requiredScore) {
+        return route;
+      }
     }
- while (j < length || !loopedAround);
+ while ((j < length) || !loopedAround);
   }
   return null;
 }

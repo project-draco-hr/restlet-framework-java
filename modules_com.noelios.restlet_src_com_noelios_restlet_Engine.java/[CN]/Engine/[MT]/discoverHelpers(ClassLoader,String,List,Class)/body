@@ -1,16 +1,16 @@
 {
   try {
-    for (Enumeration<URL> configUrls=classLoader.getResources(descriptor); configUrls.hasMoreElements(); ) {
-      URL configURL=configUrls.nextElement();
+    for (final Enumeration<URL> configUrls=classLoader.getResources(descriptor); configUrls.hasMoreElements(); ) {
+      final URL configURL=configUrls.nextElement();
       BufferedReader reader=null;
       try {
         reader=new BufferedReader(new InputStreamReader(configURL.openStream(),"utf-8"));
         String line=reader.readLine();
         while (line != null) {
-          String provider=getProviderClassName(line);
+          final String provider=getProviderClassName(line);
           if ((provider != null) && (!provider.equals(""))) {
             try {
-              Class providerClass=Class.forName(provider);
+              final Class providerClass=Class.forName(provider);
               if (constructorClass == null) {
                 helpers.add(providerClass.newInstance());
               }
@@ -18,22 +18,24 @@
                 helpers.add(providerClass.getConstructor(constructorClass).newInstance(constructorClass.cast(null)));
               }
             }
- catch (            Exception e) {
+ catch (            final Exception e) {
               logger.log(Level.SEVERE,"Unable to register the connector " + provider,e);
             }
           }
           line=reader.readLine();
         }
       }
- catch (      IOException e) {
+ catch (      final IOException e) {
         logger.log(Level.SEVERE,"Unable to read the provider descriptor: " + configURL.toString());
       }
  finally {
-        if (reader != null)         reader.close();
+        if (reader != null) {
+          reader.close();
+        }
       }
     }
   }
- catch (  IOException ioe) {
+ catch (  final IOException ioe) {
     logger.log(Level.SEVERE,"Exception while detecting the client connectors.",ioe);
   }
 }

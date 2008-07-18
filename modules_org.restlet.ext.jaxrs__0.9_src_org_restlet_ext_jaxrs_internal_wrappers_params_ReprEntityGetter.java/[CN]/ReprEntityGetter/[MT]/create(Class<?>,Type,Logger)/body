@@ -1,36 +1,44 @@
 {
-  if (representationType.equals(Representation.class))   return new DirectReprEntityGetter();
+  if (representationType.equals(Representation.class)) {
+    return new DirectReprEntityGetter();
+  }
   try {
     return new ReprOnlyEntityGetter(representationType.getConstructor(Representation.class));
   }
- catch (  SecurityException e) {
+ catch (  final SecurityException e) {
     logger.warning("The constructor " + representationType + "(Representation) is not accessable.");
   }
-catch (  NoSuchMethodException e) {
+catch (  final NoSuchMethodException e) {
   }
-  if (!(convToGen instanceof ParameterizedType))   return null;
-  ParameterizedType pType=(ParameterizedType)convToGen;
-  Type[] typeArgs=pType.getActualTypeArguments();
-  if (typeArgs.length != 1)   return null;
-  Type typeArg=typeArgs[0];
-  if (!(typeArg instanceof Class))   return null;
-  Class<?> genClass=(Class<?>)typeArg;
+  if (!(convToGen instanceof ParameterizedType)) {
+    return null;
+  }
+  final ParameterizedType pType=(ParameterizedType)convToGen;
+  final Type[] typeArgs=pType.getActualTypeArguments();
+  if (typeArgs.length != 1) {
+    return null;
+  }
+  final Type typeArg=typeArgs[0];
+  if (!(typeArg instanceof Class)) {
+    return null;
+  }
+  final Class<?> genClass=(Class<?>)typeArg;
   try {
     return new ReprClassEntityGetter(representationType.getConstructor(Representation.class,Class.class),genClass);
   }
- catch (  SecurityException e) {
+ catch (  final SecurityException e) {
     logger.warning("The constructor " + representationType + "(Representation) is not accessable.");
   }
-catch (  NoSuchMethodException e) {
+catch (  final NoSuchMethodException e) {
   }
   try {
     return new ClassReprEntityGetter(genClass,representationType.getConstructor(Class.class,Representation.class));
   }
- catch (  SecurityException e) {
+ catch (  final SecurityException e) {
     logger.warning("The constructor " + representationType + "(Representation) is not accessable.");
     return null;
   }
-catch (  NoSuchMethodException e) {
+catch (  final NoSuchMethodException e) {
     return null;
   }
 }

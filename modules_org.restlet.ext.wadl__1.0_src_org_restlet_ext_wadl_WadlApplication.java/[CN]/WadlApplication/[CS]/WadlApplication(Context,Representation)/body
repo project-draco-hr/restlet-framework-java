@@ -8,17 +8,17 @@
  else {
       wadlRep=new WadlRepresentation(wadl);
     }
-    Router root=new Router(getContext());
+    final Router root=new Router(getContext());
     this.router=root;
     setRoot(root);
-    if (wadlRep.getApplication() != null && wadlRep.getApplication().getResources() != null) {
-      for (      ResourceInfo resource : wadlRep.getApplication().getResources().getResources()) {
-        attachResource(resource,null,router);
+    if ((wadlRep.getApplication() != null) && (wadlRep.getApplication().getResources() != null)) {
+      for (      final ResourceInfo resource : wadlRep.getApplication().getResources().getResources()) {
+        attachResource(resource,null,this.router);
       }
     }
     setBaseRef(wadlRep.getApplication().getResources().getBaseRef());
   }
- catch (  Exception e) {
+ catch (  final Exception e) {
     getLogger().log(Level.WARNING,"Error during the attachment of the WADL application",e);
   }
 }

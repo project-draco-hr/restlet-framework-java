@@ -1,16 +1,22 @@
 {
-  MultivaluedMap<String,Object> jaxRsRespHeaders=getJaxRsRespHeaders();
-  Series<Parameter> headers=getHeaders();
+  final MultivaluedMap<String,Object> jaxRsRespHeaders=getJaxRsRespHeaders();
+  final Series<Parameter> headers=getHeaders();
   if (headers != null) {
-    for (    Parameter p : headers) {
-      String name=p.getName();
-      String value=p.getValue();
-      List<Object> values=jaxRsRespHeaders.get(name);
+    for (    final Parameter p : headers) {
+      final String name=p.getName();
+      final String value=p.getValue();
+      final List<Object> values=jaxRsRespHeaders.get(name);
       boolean contained=false;
       if (values != null) {
-        for (        Object v : values)         if (v != null && v.toString().equals(value))         contained=true;
+        for (        final Object v : values) {
+          if ((v != null) && v.toString().equals(value)) {
+            contained=true;
+          }
+        }
       }
-      if (!contained)       jaxRsRespHeaders.add(name,value);
+      if (!contained) {
+        jaxRsRespHeaders.add(name,value);
+      }
     }
     this.headers=null;
   }

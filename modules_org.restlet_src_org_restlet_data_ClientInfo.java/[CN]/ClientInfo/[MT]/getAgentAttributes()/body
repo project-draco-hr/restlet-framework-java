@@ -1,21 +1,21 @@
 {
   if (this.agentAttributes == null) {
     this.agentAttributes=new HashMap<String,String>();
-    Map<String,Object> map=new HashMap<String,Object>();
-    URL userAgentPropertiesUrl=Engine.getClassLoader().getResource("org/restlet/data/agent.properties");
+    final Map<String,Object> map=new HashMap<String,Object>();
+    final URL userAgentPropertiesUrl=Engine.getClassLoader().getResource("org/restlet/data/agent.properties");
     if (userAgentPropertiesUrl != null) {
       BufferedReader reader;
       try {
         reader=new BufferedReader(new InputStreamReader(userAgentPropertiesUrl.openStream(),CharacterSet.UTF_8.getName()));
         Template template=null;
-        Variable agentName=new Variable(Variable.TYPE_TOKEN);
-        Variable agentVersion=new Variable(Variable.TYPE_TOKEN);
-        Variable agentComment=new Variable(Variable.TYPE_COMMENT);
-        Variable agentCommentAttribute=new Variable(Variable.TYPE_COMMENT_ATTRIBUTE);
-        Variable facultativeData=new Variable(Variable.TYPE_ALL,null,false,false);
+        final Variable agentName=new Variable(Variable.TYPE_TOKEN);
+        final Variable agentVersion=new Variable(Variable.TYPE_TOKEN);
+        final Variable agentComment=new Variable(Variable.TYPE_COMMENT);
+        final Variable agentCommentAttribute=new Variable(Variable.TYPE_COMMENT_ATTRIBUTE);
+        final Variable facultativeData=new Variable(Variable.TYPE_ALL,null,false,false);
         String line=reader.readLine();
         for (; line != null; line=reader.readLine()) {
-          if (line.trim().length() > 0 && !line.trim().startsWith("#")) {
+          if ((line.trim().length() > 0) && !line.trim().startsWith("#")) {
             template=new Template(line,Template.MODE_EQUALS);
             template.getVariables().put("agentName",agentName);
             template.getVariables().put("agentVersion",agentVersion);
@@ -24,7 +24,7 @@
             template.getVariables().put("commentAttribute",agentCommentAttribute);
             template.getVariables().put("facultativeData",facultativeData);
             if (template.parse(getAgent(),map) > -1) {
-              for (              String key : map.keySet()) {
+              for (              final String key : map.keySet()) {
                 this.agentAttributes.put(key,(String)map.get(key));
               }
               break;
@@ -33,7 +33,7 @@
         }
         reader.close();
       }
- catch (      IOException e) {
+ catch (      final IOException e) {
         return this.agentAttributes;
       }
     }

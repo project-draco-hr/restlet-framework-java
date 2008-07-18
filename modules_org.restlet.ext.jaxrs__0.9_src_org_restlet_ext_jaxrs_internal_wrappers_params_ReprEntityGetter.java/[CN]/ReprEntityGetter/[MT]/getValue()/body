@@ -1,18 +1,22 @@
 {
   try {
-    Request request=Request.getCurrent();
-    if (!request.isEntityAvailable())     return null;
-    Representation entity=request.getEntity();
-    if (entity == null)     return null;
+    final Request request=Request.getCurrent();
+    if (!request.isEntityAvailable()) {
+      return null;
+    }
+    final Representation entity=request.getEntity();
+    if (entity == null) {
+      return null;
+    }
     return createInstance(entity);
   }
- catch (  IllegalArgumentException e) {
+ catch (  final IllegalArgumentException e) {
     throw ConvertRepresentationException.object(getReprClass(),"the message body",e);
   }
-catch (  InstantiationException e) {
+catch (  final InstantiationException e) {
     throw ConvertRepresentationException.object(getReprClass(),"the message body",e);
   }
-catch (  IllegalAccessException e) {
+catch (  final IllegalAccessException e) {
     throw ConvertRepresentationException.object(getReprClass(),"the message body",e);
   }
 }

@@ -5,14 +5,14 @@
     }
  else {
       try {
-        PreferenceReader pr=new PreferenceReader(PreferenceReader.TYPE_CHARACTER_SET,acceptCharsetHeader);
+        final PreferenceReader pr=new PreferenceReader(PreferenceReader.TYPE_CHARACTER_SET,acceptCharsetHeader);
         Preference currentPref=pr.readPreference();
         while (currentPref != null) {
           client.getAcceptedCharacterSets().add(currentPref);
           currentPref=pr.readPreference();
         }
       }
- catch (      IOException ioe) {
+ catch (      final IOException ioe) {
         throw new IllegalArgumentException("An exception occurred during character set preferences parsing. Header: " + acceptCharsetHeader + ". Ignoring header.");
       }
     }

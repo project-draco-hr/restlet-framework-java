@@ -1,12 +1,12 @@
 {
-  Mailbox mailbox=mailRoot.getMailboxes().get(2);
-  User proto=new User();
+  final Mailbox mailbox=this.mailRoot.getMailboxes().get(2);
+  final User proto=new User();
   proto.setAdministrator(true);
-  ObjectSet<User> result=objectContainer.queryByExample(proto);
+  ObjectSet<User> result=this.objectContainer.queryByExample(proto);
   assertEquals(result.size(),1);
   mailbox.getOwner().setAdministrator(false);
-  objectContainer.store(mailbox.getOwner());
-  objectContainer.commit();
-  result=objectContainer.queryByExample(proto);
+  this.objectContainer.store(mailbox.getOwner());
+  this.objectContainer.commit();
+  result=this.objectContainer.queryByExample(proto);
   assertEquals(result.size(),0);
 }

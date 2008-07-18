@@ -1,20 +1,20 @@
 {
-  TunnelService tunnelService=getTunnelService();
+  final TunnelService tunnelService=getTunnelService();
   boolean extensionsModified=false;
-  Method method=request.getMethod();
+  final Method method=request.getMethod();
   if (tunnelService.isPreferencesTunnel() && (method.equals(Method.GET) || method.equals(Method.HEAD))) {
-    Reference resourceRef=request.getResourceRef();
+    final Reference resourceRef=request.getResourceRef();
     if (resourceRef.hasExtensions()) {
-      ClientInfo clientInfo=request.getClientInfo();
+      final ClientInfo clientInfo=request.getClientInfo();
       boolean encodingFound=false;
       boolean characterSetFound=false;
       boolean mediaTypeFound=false;
       boolean languageFound=false;
       String extensions=resourceRef.getExtensions();
       while (true) {
-        int lastIndexOfPoint=extensions.lastIndexOf('.');
-        String extension=extensions.substring(lastIndexOfPoint + 1);
-        Metadata metadata=getMetadata(extension);
+        final int lastIndexOfPoint=extensions.lastIndexOf('.');
+        final String extension=extensions.substring(lastIndexOfPoint + 1);
+        final Metadata metadata=getMetadata(extension);
         if (!mediaTypeFound && (metadata instanceof MediaType)) {
           updateMetadata(clientInfo,metadata);
           mediaTypeFound=true;

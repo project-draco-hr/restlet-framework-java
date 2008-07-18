@@ -1,18 +1,32 @@
 {
-  StringBuilder stb=new StringBuilder(fragment.length());
-  int length=fragment.length();
+  final StringBuilder stb=new StringBuilder(fragment.length());
+  final int length=fragment.length();
   for (int i=0; i < length; i++) {
-    char c=fragment.charAt(i);
-    if (c == '{')     i=processTemplVarname(fragment,i,stb);
- else     if (c >= 97 && c <= 122)     stb.append(c);
- else     if (c >= 63 && c <= 91)     stb.append(c);
- else     if (c >= 38 && c <= 59)     stb.append(c);
- else     if (c == '!' || c == '#' || c == '$' || c == '=' || c == ']' || c == '_' || c == '~')     stb.append(c);
- else     if (c == '}')     throw new IllegalArgumentException("'}' is only allowed as end of an template variable name");
+    final char c=fragment.charAt(i);
+    if (c == '{') {
+      i=processTemplVarname(fragment,i,stb);
+    }
+ else     if ((c >= 97) && (c <= 122)) {
+      stb.append(c);
+    }
+ else     if ((c >= 63) && (c <= 91)) {
+      stb.append(c);
+    }
+ else     if ((c >= 38) && (c <= 59)) {
+      stb.append(c);
+    }
+ else     if ((c == '!') || (c == '#') || (c == '$')|| (c == '=')|| (c == ']')|| (c == '_')|| (c == '~')) {
+      stb.append(c);
+    }
+ else     if (c == '}') {
+      throw new IllegalArgumentException("'}' is only allowed as end of an template variable name");
+    }
  else     if (c == '%') {
       i=processPercent(i,encode,fragment,stb);
     }
- else     toHexOrReject(c,stb,encode);
+ else {
+      toHexOrReject(c,stb,encode);
+    }
   }
   return stb;
 }
