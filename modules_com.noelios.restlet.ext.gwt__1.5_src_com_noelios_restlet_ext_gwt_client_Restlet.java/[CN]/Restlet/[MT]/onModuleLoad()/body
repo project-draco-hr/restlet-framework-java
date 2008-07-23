@@ -4,14 +4,17 @@
   final Label label=new Label();
   button.addClickListener(new ClickListener(){
     public void onClick(    Widget sender){
-      final Client client=new Client(Protocol.HTTP);
-      final Response response=client.get("/demo/hello.txt");
-      try {
-        label.setText(response.getEntity().getText());
+      new Client(Protocol.HTTP).get("/demo/hello.txt",new Callback(){
+        @Override public void onEvent(        Request request,        Response response){
+          try {
+            label.setText(response.getEntity().getText());
+          }
+ catch (          final Exception ioException) {
+            GWT.log("Restlet I/O failed",ioException);
+          }
+        }
       }
- catch (      final Exception ioException) {
-        GWT.log("Restlet I/O failed",ioException);
-      }
+);
     }
   }
 );
