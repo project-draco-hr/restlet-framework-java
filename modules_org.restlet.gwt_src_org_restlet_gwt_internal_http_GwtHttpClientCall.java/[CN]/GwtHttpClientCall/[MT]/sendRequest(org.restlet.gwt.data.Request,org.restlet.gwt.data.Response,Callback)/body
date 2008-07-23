@@ -7,10 +7,12 @@
     getRequestBuilder().setHeader(header.getName(),getRequestHeaders().getValues(header.getName()));
   }
   getRequestBuilder().setCallback(new RequestCallback(){
-    public void onError(    com.google.gwt.http.client.Request request,    Throwable exception){
+    public void onError(    com.google.gwt.http.client.Request gwtRequest,    Throwable exception){
+      callback.onEvent(request,response);
     }
-    public void onResponseReceived(    com.google.gwt.http.client.Request request,    Response response){
-      setResponse(response);
+    public void onResponseReceived(    com.google.gwt.http.client.Request gwtRequest,    Response gwtResponse){
+      setResponse(gwtResponse);
+      callback.onEvent(request,response);
     }
   }
 );
