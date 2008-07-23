@@ -1,3 +1,25 @@
 {
-  return null;
+  StringBuilder sb=null;
+  boolean eol=false;
+  int nextChar=getNextChar();
+  while (!eol && (nextChar != -1)) {
+    if (nextChar == 10) {
+      eol=true;
+    }
+ else     if (nextChar == 13) {
+      eol=true;
+      nextChar=getNextChar();
+      if (nextChar != 10) {
+        setSavedNextChar(nextChar);
+      }
+    }
+    if (!eol) {
+      if (sb == null) {
+        sb=new StringBuilder();
+      }
+      sb.append((char)nextChar);
+      nextChar=getNextChar();
+    }
+  }
+  return (sb == null) ? null : sb.toString();
 }
