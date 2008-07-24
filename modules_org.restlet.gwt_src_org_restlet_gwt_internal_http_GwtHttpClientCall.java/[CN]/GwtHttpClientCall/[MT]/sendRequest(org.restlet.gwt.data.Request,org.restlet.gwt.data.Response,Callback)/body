@@ -8,6 +8,8 @@
   }
   getRequestBuilder().setCallback(new RequestCallback(){
     public void onError(    com.google.gwt.http.client.Request gwtRequest,    Throwable exception){
+      setErrorStatusCode(Status.CONNECTOR_ERROR_INTERNAL.getCode());
+      setErrorReasonPhrase(exception == null ? "Unknown GWT HTTP communication error." : exception.getMessage());
       callback.onEvent(request,response);
     }
     public void onResponseReceived(    com.google.gwt.http.client.Request gwtRequest,    Response gwtResponse){
