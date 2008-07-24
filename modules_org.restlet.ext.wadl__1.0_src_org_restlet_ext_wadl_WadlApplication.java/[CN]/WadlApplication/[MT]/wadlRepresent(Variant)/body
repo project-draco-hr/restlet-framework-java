@@ -1,0 +1,16 @@
+{
+  Representation result=null;
+  if (MediaType.APPLICATION_WADL_XML.equals(variant.getMediaType())) {
+    result=new WadlRepresentation(getApplicationInfo());
+  }
+ else   if (MediaType.TEXT_HTML.equals(variant.getMediaType())) {
+    result=new WadlRepresentation(getApplicationInfo()).getHtmlRepresentation();
+  }
+  try {
+    result.write(System.out);
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
+  }
+  return result;
+}
