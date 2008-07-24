@@ -1,0 +1,14 @@
+{
+  ResourceInfo result=null;
+  if (restlet instanceof Finder) {
+    result=getResourceInfo((Finder)restlet,path);
+  }
+ else   if (restlet instanceof Router) {
+    result=new ResourceInfo();
+    result.setChildResources(getResourceInfos((Router)restlet,path));
+  }
+ else   if (restlet instanceof Filter) {
+    result=getResourceInfo((Filter)restlet,path);
+  }
+  return result;
+}

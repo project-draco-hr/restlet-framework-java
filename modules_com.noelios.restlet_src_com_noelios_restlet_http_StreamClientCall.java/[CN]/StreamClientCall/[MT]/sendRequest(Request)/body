@@ -4,7 +4,12 @@
     final String hostDomain=request.getResourceRef().getHostDomain();
     int hostPort=request.getResourceRef().getHostPort();
     if (hostPort == -1) {
-      hostPort=request.getResourceRef().getSchemeProtocol().getDefaultPort();
+      if (request.getResourceRef().getSchemeProtocol() != null) {
+        hostPort=request.getResourceRef().getSchemeProtocol().getDefaultPort();
+      }
+ else {
+        hostPort=getProtocol().getDefaultPort();
+      }
     }
     this.socket=createSocket(hostDomain,hostPort);
     this.requestStream=this.socket.getOutputStream();
