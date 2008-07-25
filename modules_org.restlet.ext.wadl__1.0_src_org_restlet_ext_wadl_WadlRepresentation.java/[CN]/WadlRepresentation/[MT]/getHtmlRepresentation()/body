@@ -3,12 +3,11 @@
   final URL wadlHtmlXsltUrl=Engine.getClassLoader().getResource("org/restlet/ext/wadl/htmlConvert.xsl");
   if (wadlHtmlXsltUrl != null) {
     try {
-      setSaxSource(new SAXSource(new InputSource(getStream())));
       final InputRepresentation xslRep=new InputRepresentation(wadlHtmlXsltUrl.openStream(),MediaType.APPLICATION_W3C_XSLT);
       representation=new TransformRepresentation(this,xslRep);
     }
  catch (    final IOException e) {
-      e.printStackTrace();
+      Context.getCurrent().getLogger().log(Level.WARNING,"Unable to generate the WADL HTML representation",e);
     }
   }
   return representation;
