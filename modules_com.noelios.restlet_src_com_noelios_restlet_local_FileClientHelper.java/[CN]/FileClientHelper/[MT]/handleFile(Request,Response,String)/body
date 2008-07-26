@@ -78,30 +78,30 @@
     }
   }
  else   if (request.getMethod().equals(Method.PUT)) {
-    if (!checkMetadataConsistency(file.getName(),metadataService,request.getEntity())) {
-      response.setStatus(new Status(Status.REDIRECTION_SEE_OTHER,"The metadata are not consistent with the URI"));
+    boolean isDirectory=false;
+    if (file.exists()) {
+      if (file.isDirectory()) {
+        isDirectory=true;
+        response.setStatus(new Status(Status.CLIENT_ERROR_FORBIDDEN,"Can't put a new representation of a directory"));
+      }
     }
  else {
-      boolean isDirectory=false;
-      if (file.exists()) {
-        if (file.isDirectory()) {
-          isDirectory=true;
-          response.setStatus(new Status(Status.CLIENT_ERROR_FORBIDDEN,"Can't put a new representation of a directory"));
+      if (path.endsWith("/")) {
+        isDirectory=true;
+        if (file.mkdirs()) {
+          response.setStatus(Status.SUCCESS_NO_CONTENT);
+        }
+ else {
+          getLogger().log(Level.WARNING,"Unable to create the new directory");
+          response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to create the new directory"));
         }
       }
- else {
-        if (path.endsWith("/")) {
-          isDirectory=true;
-          if (file.mkdirs()) {
-            response.setStatus(Status.SUCCESS_NO_CONTENT);
-          }
- else {
-            getLogger().log(Level.WARNING,"Unable to create the new directory");
-            response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to create the new directory"));
-          }
-        }
+    }
+    if (!isDirectory) {
+      if (!checkMetadataConsistency(file.getName(),metadataService,request.getEntity())) {
+        response.setStatus(new Status(Status.REDIRECTION_SEE_OTHER,"The metadata are not consistent with the URI"));
       }
-      if (!isDirectory) {
+ else {
         final String baseName=getBaseName(file,metadataService);
         final Set<String> extensions=getExtensions(file,metadataService);
         final File[] files=file.getParentFile().listFiles();
