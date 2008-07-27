@@ -1,7 +1,7 @@
 {
   final OAuthMessage requestMessage=OAuthHelper.getMessage(getRequest(),getLogger());
   final OAuthConsumer consumer=this.provider.getConsumer(requestMessage);
-  final ChallengeRequest challengeRequest=new ChallengeRequest(OAuthGuard.SCHEME,this.realm);
+  final ChallengeRequest challengeRequest=new ChallengeRequest(ChallengeScheme.HTTP_OAUTH,this.realm);
   if (consumer == null) {
     getResponse().setChallengeRequest(challengeRequest);
     getResponse().setStatus(Status.CLIENT_ERROR_UNAUTHORIZED,"Invalid Consumer Key");
@@ -26,6 +26,6 @@ catch (  final Exception e) {
     getResponse().setEntity(new StringRepresentation(OAuth.formEncode(OAuth.newList("oauth_token",accessor.requestToken,"oauth_token_secret",accessor.tokenSecret))));
   }
  catch (  final IOException e) {
-    e.printStackTrace();
+    throw new ResourceException(e);
   }
 }

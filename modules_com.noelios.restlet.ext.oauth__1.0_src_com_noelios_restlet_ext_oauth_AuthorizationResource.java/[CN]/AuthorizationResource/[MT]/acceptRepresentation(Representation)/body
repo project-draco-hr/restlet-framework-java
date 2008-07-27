@@ -2,7 +2,7 @@
   final OAuthMessage requestMessage=OAuthHelper.getMessage(getRequest(),getLogger());
   final OAuthAccessor accessor=this.provider.getAccessor(requestMessage);
   if (accessor == null) {
-    final ChallengeRequest challengeRequest=new ChallengeRequest(OAuthGuard.SCHEME,this.realm);
+    final ChallengeRequest challengeRequest=new ChallengeRequest(ChallengeScheme.HTTP_OAUTH,this.realm);
     getResponse().setChallengeRequest(challengeRequest);
     getResponse().setStatus(Status.CLIENT_ERROR_UNAUTHORIZED,"Invalid / expired Token");
     challengeRequest.getParameters().add("oauth_problem","token_rejected");
