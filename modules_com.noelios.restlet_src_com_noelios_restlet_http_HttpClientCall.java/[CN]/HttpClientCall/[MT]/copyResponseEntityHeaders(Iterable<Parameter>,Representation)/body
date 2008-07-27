@@ -1,5 +1,5 @@
 {
-  final Representation result=(representation == null) ? Representation.createEmpty() : representation;
+  Representation result=(representation == null) ? Representation.createEmpty() : representation;
   boolean entityHeaderFound=false;
   for (  final Parameter header : responseHeaders) {
     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_TYPE)) {
@@ -56,8 +56,8 @@
       entityHeaderFound=true;
     }
   }
-  if (!entityHeaderFound) {
-    return null;
+  if ((representation == null) && !entityHeaderFound) {
+    result=null;
   }
   return result;
 }
