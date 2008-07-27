@@ -1,10 +1,10 @@
 {
-  final XmlWriter writer=new XmlWriter(outputStream,"UTF-8");
   try {
     writer.forceNSDecl(APP_NAMESPACE,"");
     writer.setDataFormat(true);
     writer.setIndentStep(3);
-    writer.startDocument();
+    writer.processingInstruction("xml","version=\"1.0\" standalone=\"yes\"");
+    writer.processingInstruction("xml-stylesheet","type=\"text/xsl\" href=\"wadl_documentation.xsl\"");
     this.application.writeElement(writer);
     writer.endDocument();
   }

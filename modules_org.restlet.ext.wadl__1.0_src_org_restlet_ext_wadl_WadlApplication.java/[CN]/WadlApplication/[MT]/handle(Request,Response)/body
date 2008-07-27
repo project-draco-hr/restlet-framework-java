@@ -1,5 +1,10 @@
 {
-  if (isAutoDescribed() && Method.OPTIONS.equals(request.getMethod()) && request.getResourceRef().getIdentifier().endsWith("*")) {
+  Reference rr=request.getResourceRef();
+  String rp=rr.getRemainingPart();
+  if (isAutoDescribed() && Method.OPTIONS.equals(request.getMethod()) && (rp.equals("/*") || rp.equals("*"))) {
+    if (!rr.getBaseRef().getIdentifier().endsWith("/")) {
+      rr.setBaseRef(rr.getBaseRef() + "/");
+    }
     response.setEntity(wadlRepresent(request));
   }
  else {
