@@ -1,0 +1,13 @@
+{
+  super(PathRegExp.createForMethod(annotatedMethod));
+  this.executeMethod=executeMethod;
+  this.executeMethod.setAccessible(true);
+  this.resourceClass=resourceClass;
+  final boolean leaveEncoded=resourceClass.isLeaveEncoded() || annotatedMethod.isAnnotationPresent(Encoded.class);
+  try {
+    this.parameters=new ParameterList(executeMethod,annotatedMethod,tlContext,leaveEncoded,jaxRsProviders,extensionBackwardMapping,entityAllowed,logger);
+  }
+ catch (  final IllegalTypeException e) {
+    throw new IllegalMethodParamTypeException(e);
+  }
+}

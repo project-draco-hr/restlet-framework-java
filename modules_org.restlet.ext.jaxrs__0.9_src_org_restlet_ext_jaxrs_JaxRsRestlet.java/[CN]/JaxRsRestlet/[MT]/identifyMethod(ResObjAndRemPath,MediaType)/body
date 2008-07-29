@@ -1,52 +1,44 @@
 {
-  final CallContext callContext=this.tlContext.get();
-  final org.restlet.data.Method httpMethod=callContext.getRequest().getMethod();
-  final ResourceObject resObj=resObjAndRemPath.resourceObject;
-  final RemainingPath u=resObjAndRemPath.u;
-  final ResourceClass resourceClass=resObj.getResourceClass();
+  CallContext callContext=tlContext.get();
+  org.restlet.data.Method httpMethod=callContext.getRequest().getMethod();
+  ResourceObject resObj=resObjAndRemPath.resourceObject;
+  RemainingPath u=resObjAndRemPath.u;
+  ResourceClass resourceClass=resObj.getResourceClass();
   Collection<ResourceMethod> resourceMethods=resourceClass.getMethodsForPath(u);
-  if (resourceMethods.isEmpty()) {
-    this.excHandler.resourceMethodNotFound();
-  }
-  final boolean alsoGet=httpMethod.equals(Method.HEAD);
+  if (resourceMethods.isEmpty())   excHandler.resourceMethodNotFound();
+  boolean alsoGet=httpMethod.equals(Method.HEAD);
   removeNotSupportedHttpMethod(resourceMethods,httpMethod,alsoGet);
   if (resourceMethods.isEmpty()) {
-    final Set<Method> allowedMethods=resourceClass.getAllowedMethods(u);
+    Set<Method> allowedMethods=resourceClass.getAllowedMethods(u);
     if (httpMethod.equals(Method.OPTIONS)) {
       callContext.getResponse().getAllowedMethods().addAll(allowedMethods);
       throw new RequestHandledException();
     }
-    this.excHandler.methodNotAllowed(allowedMethods);
+    excHandler.methodNotAllowed(allowedMethods);
   }
   if (givenMediaType != null) {
-    final Collection<ResourceMethod> supporting=resourceMethods;
+    Collection<ResourceMethod> supporting=resourceMethods;
     resourceMethods=new ArrayList<ResourceMethod>();
-    for (    final ResourceMethod resourceMethod : supporting) {
-      if (resourceMethod.isGivenMediaTypeSupported(givenMediaType)) {
-        resourceMethods.add(resourceMethod);
-      }
+    for (    ResourceMethod resourceMethod : supporting) {
+      if (resourceMethod.isGivenMediaTypeSupported(givenMediaType))       resourceMethods.add(resourceMethod);
     }
-    if (resourceMethods.isEmpty()) {
-      this.excHandler.unsupportedMediaType(supporting);
-    }
+    if (resourceMethods.isEmpty())     excHandler.unsupportedMediaType(supporting);
   }
-  final SortedMetadata<MediaType> accMediaTypes=callContext.getAccMediaTypes();
-  final Collection<ResourceMethod> supporting=resourceMethods;
+  SortedMetadata<MediaType> accMediaTypes=callContext.getAccMediaTypes();
+  Collection<ResourceMethod> supporting=resourceMethods;
   resourceMethods=new ArrayList<ResourceMethod>();
-  for (  final ResourceMethod resourceMethod : supporting) {
-    if (resourceMethod.isAcceptedMediaTypeSupported(accMediaTypes)) {
-      resourceMethods.add(resourceMethod);
-    }
+  for (  ResourceMethod resourceMethod : supporting) {
+    if (resourceMethod.isAcceptedMediaTypeSupported(accMediaTypes))     resourceMethods.add(resourceMethod);
   }
   if (resourceMethods.isEmpty()) {
-    this.excHandler.noResourceMethodForAccMediaTypes(supporting);
+    excHandler.noResourceMethodForAccMediaTypes(supporting);
   }
-  final ResourceMethod bestResourceMethod=getBestMethod(resourceMethods,givenMediaType,accMediaTypes,httpMethod);
-  final MatchingResult mr=bestResourceMethod.getPathRegExp().match(u);
+  ResourceMethod bestResourceMethod=getBestMethod(resourceMethods,givenMediaType,accMediaTypes,httpMethod);
+  MatchingResult mr=bestResourceMethod.getPathRegExp().match(u);
   addPathVarsToMap(mr,callContext);
-  final String matchedUriPart=mr.getMatched();
+  String matchedUriPart=mr.getMatched();
   if (matchedUriPart.length() > 0) {
-    final Object jaxRsResObj=resObj.getJaxRsResourceObject();
+    Object jaxRsResObj=resObj.getJaxRsResourceObject();
     callContext.addForAncestor(jaxRsResObj,matchedUriPart);
   }
   return new ResObjAndMeth(resObj,bestResourceMethod);

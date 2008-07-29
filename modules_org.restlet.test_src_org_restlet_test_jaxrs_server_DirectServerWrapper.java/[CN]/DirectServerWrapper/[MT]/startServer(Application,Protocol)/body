@@ -1,3 +1,13 @@
 {
-  this.connector=application;
+  this.connector=new Restlet(){
+    @Override public void handle(    Request request,    Response response){
+      try {
+        application.handle(request,response);
+      }
+ catch (      JaxRsRuntimeException e) {
+        response.setStatus(Status.SERVER_ERROR_INTERNAL);
+      }
+    }
+  }
+;
 }

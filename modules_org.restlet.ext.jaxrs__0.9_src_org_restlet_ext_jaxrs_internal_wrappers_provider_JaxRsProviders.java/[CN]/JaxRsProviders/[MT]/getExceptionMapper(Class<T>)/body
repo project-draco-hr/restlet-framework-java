@@ -1,0 +1,10 @@
+{
+  if (causeClass == null)   throw new ImplementationException("The call of an exception mapper with null is not allowed");
+  ExceptionMapper<T> mapper=(ExceptionMapper)this.excMappers.get(causeClass);
+  if (mapper == null) {
+    Class superclass=causeClass.getSuperclass();
+    if (superclass == null || superclass.equals(Object.class))     throw new ImplementationException("Why is the superclass of " + causeClass + " "+ causeClass+ "?");
+    mapper=getExceptionMapper(superclass);
+  }
+  return mapper;
+}

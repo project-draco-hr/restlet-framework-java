@@ -1,0 +1,14 @@
+{
+  ExceptionMapper mapper=getExceptionMapper(cause.getClass());
+  if (mapper == null) {
+    String entity="No ExceptionMapper was found, but must be found";
+    return Response.serverError().entity(entity).type(javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE).build();
+  }
+  Response response=mapper.toResponse(cause);
+  if (response == null) {
+    String message="The ExceptionMapper returned null";
+    localLogger.log(Level.WARNING,message);
+    return Response.serverError().entity(message).build();
+  }
+  return response;
+}

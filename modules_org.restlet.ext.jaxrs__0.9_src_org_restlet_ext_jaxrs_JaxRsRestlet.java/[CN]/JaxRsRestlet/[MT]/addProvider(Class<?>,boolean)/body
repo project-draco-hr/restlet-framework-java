@@ -1,52 +1,43 @@
 {
-  if (jaxRsProviderClass == null) {
-    throw new IllegalArgumentException("The JAX-RS provider class must not be null");
-  }
+  if (jaxRsProviderClass == null)   throw new IllegalArgumentException("The JAX-RS provider class must not be null");
   if (!jaxRsProviderClass.isAnnotationPresent(javax.ws.rs.ext.Provider.class)) {
-    final String message="Officially a JAX-RS provider class must be annotated with @javax.ws.rs.ext.Provider";
+    String message="Officially a JAX-RS provider class must be annotated with @javax.ws.rs.ext.Provider";
     getLogger().config(message);
   }
   Provider<?> provider;
   try {
-    provider=new Provider<Object>(jaxRsProviderClass,this.objectFactory,this.tlContext,this.entityProviders,this.contextResolvers,this.extensionBackwardMapping,getLogger());
+    provider=new Provider<Object>(jaxRsProviderClass,objectFactory,tlContext,this.providers,extensionBackwardMapping,getLogger());
   }
- catch (  final InstantiateException e) {
-    final String msg="Ignore provider " + jaxRsProviderClass.getName() + "Could not instantiate the Provider, class "+ jaxRsProviderClass.getName();
+ catch (  InstantiateException e) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + "Could not instantiate the Provider, class "+ jaxRsProviderClass.getName();
     getLogger().log(Level.WARNING,msg,e);
     return false;
   }
-catch (  final MissingAnnotationException e) {
-    final String msg="Ignore provider " + jaxRsProviderClass.getName() + "Could not instantiate the Provider, class "+ jaxRsProviderClass.getName()+ ", because "+ e.getMessage();
+catch (  MissingAnnotationException e) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + "Could not instantiate the Provider, class "+ jaxRsProviderClass.getName()+ ", because "+ e.getMessage();
     getLogger().log(Level.WARNING,msg);
     return false;
   }
-catch (  final InvocationTargetException ite) {
-    final String msg="Ignore provider " + jaxRsProviderClass.getName() + ", because an exception occured while instantiating";
+catch (  InvocationTargetException ite) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + ", because an exception occured while instantiating";
     getLogger().log(Level.WARNING,msg,ite);
     return false;
   }
-catch (  final IllegalArgumentException iae) {
-    final String msg="Ignore provider " + jaxRsProviderClass.getName() + ", because it could not be instantiated";
+catch (  IllegalArgumentException iae) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + ", because it could not be instantiated";
     getLogger().log(Level.WARNING,msg,iae);
     return false;
   }
-catch (  final MissingConstructorException mce) {
-    final String msg="Ignore provider " + jaxRsProviderClass.getName() + ", because no valid constructor was found: "+ mce.getMessage();
+catch (  MissingConstructorException mce) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + ", because no valid constructor was found: "+ mce.getMessage();
     getLogger().warning(msg);
     return false;
   }
-catch (  final IllegalConstrParamTypeException e) {
-    final String msg="Ignore provider " + jaxRsProviderClass.getName() + ", because no valid constructor was found: "+ e.getMessage();
+catch (  IllegalConstrParamTypeException e) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + ", because no valid constructor was found: "+ e.getMessage();
     getLogger().warning(msg);
     return false;
   }
-  this.entityProviders.add(provider,defaultProvider);
-  if (provider.isContextResolver()) {
-    this.contextResolvers.add(provider.getContextResolver());
-  }
-  if (provider.isExceptionMapper()) {
-    this.excMappers.add(provider);
-  }
-  this.allProviders.add(provider);
+  this.providers.add(provider,defaultProvider);
   return true;
 }

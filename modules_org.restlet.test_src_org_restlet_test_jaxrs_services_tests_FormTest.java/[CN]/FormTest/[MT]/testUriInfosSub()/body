@@ -1,0 +1,11 @@
+{
+  Response response404=get("sub/uriInfo/abc");
+  assertEquals(Status.CLIENT_ERROR_NOT_FOUND,response404.getStatus());
+  Response response=get("sub/uriInfo/ancestorResourceURIs");
+  sysOutEntityIfError(response);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  String entity=response.getEntity().getText();
+  String expected="[]\n[/ancestorTest/sub, /ancestorTest]";
+  System.out.println("expected:\n" + expected + "\ngot:\n"+ entity);
+  assertEquals(expected,entity);
+}

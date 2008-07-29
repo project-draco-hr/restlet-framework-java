@@ -2,41 +2,31 @@
   ResourceObject o=rroRemPathAndMatchedPath.rootResObj;
   RemainingPath u=rroRemPathAndMatchedPath.u;
   ResourceClass resClass=o.getResourceClass();
-  final CallContext callContext=this.tlContext.get();
+  CallContext callContext=tlContext.get();
   callContext.addForAncestor(o.getJaxRsResourceObject(),rroRemPathAndMatchedPath.matchedUriPath);
   for (; ; ) {
     if (u.isEmptyOrSlash()) {
       return new ResObjAndRemPath(o,u);
     }
-    final Collection<ResourceMethodOrLocator> eWithMethod=new ArrayList<ResourceMethodOrLocator>();
-    for (    final ResourceMethodOrLocator methodOrLocator : resClass.getResourceMethodsAndLocators()) {
-      final PathRegExp pathRegExp=methodOrLocator.getPathRegExp();
-      final MatchingResult matchingResult=pathRegExp.match(u);
-      if (matchingResult == null) {
-        continue;
-      }
-      if (matchingResult.getFinalCapturingGroup().isEmptyOrSlash()) {
-        eWithMethod.add(methodOrLocator);
-      }
- else       if (methodOrLocator instanceof SubResourceLocator) {
-        eWithMethod.add(methodOrLocator);
-      }
+    Collection<ResourceMethodOrLocator> eWithMethod=new ArrayList<ResourceMethodOrLocator>();
+    for (    ResourceMethodOrLocator methodOrLocator : resClass.getResourceMethodsAndLocators()) {
+      PathRegExp pathRegExp=methodOrLocator.getPathRegExp();
+      MatchingResult matchingResult=pathRegExp.match(u);
+      if (matchingResult == null)       continue;
+      if (matchingResult.getFinalCapturingGroup().isEmptyOrSlash())       eWithMethod.add(methodOrLocator);
+ else       if (methodOrLocator instanceof SubResourceLocator)       eWithMethod.add(methodOrLocator);
     }
-    if (eWithMethod.isEmpty()) {
-      this.excHandler.resourceNotFound();
-    }
-    final ResourceMethodOrLocator firstMeth=getFirstMethOrLocByNumberOfLiteralCharactersAndByNumberOfCapturingGroups(eWithMethod);
-    final PathRegExp rMatch=firstMeth.getPathRegExp();
-    final MatchingResult matchingResult=rMatch.match(u);
+    if (eWithMethod.isEmpty())     excHandler.resourceNotFound();
+    ResourceMethodOrLocator firstMeth=getFirstMethOrLocByNumberOfLiteralCharactersAndByNumberOfCapturingGroups(eWithMethod);
+    PathRegExp rMatch=firstMeth.getPathRegExp();
+    MatchingResult matchingResult=rMatch.match(u);
     addPathVarsToMap(matchingResult,callContext);
-    if (firstMeth instanceof ResourceMethod) {
-      return new ResObjAndRemPath(o,u);
-    }
-    final String matchedUriPart=matchingResult.getMatched();
-    final Object jaxRsResObj=o.getJaxRsResourceObject();
+    if (firstMeth instanceof ResourceMethod)     return new ResObjAndRemPath(o,u);
+    String matchedUriPart=matchingResult.getMatched();
+    Object jaxRsResObj=o.getJaxRsResourceObject();
     callContext.addForAncestor(jaxRsResObj,matchedUriPart);
     u=matchingResult.getFinalCapturingGroup();
-    final SubResourceLocator subResourceLocator=(SubResourceLocator)firstMeth;
+    SubResourceLocator subResourceLocator=(SubResourceLocator)firstMeth;
     o=createSubResource(o,subResourceLocator,callContext);
     resClass=o.getResourceClass();
   }

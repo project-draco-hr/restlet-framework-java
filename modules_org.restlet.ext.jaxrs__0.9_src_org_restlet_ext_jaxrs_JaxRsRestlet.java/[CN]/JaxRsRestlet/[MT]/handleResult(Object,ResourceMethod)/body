@@ -1,22 +1,18 @@
 {
-  final Response restletResponse=this.tlContext.get().getResponse();
+  Response restletResponse=tlContext.get().getResponse();
   if (result instanceof javax.ws.rs.core.Response) {
     jaxRsRespToRestletResp((javax.ws.rs.core.Response)result,resourceMethod);
   }
  else   if (result instanceof ResponseBuilder) {
-    final String warning="the method " + resourceMethod + " returnef a ResponseBuilder. You should "+ "call responseBuilder.build() in the resource method";
+    String warning="the method " + resourceMethod + " returnef a ResponseBuilder. You should "+ "call responseBuilder.build() in the resource method";
     getLogger().warning(warning);
     jaxRsRespToRestletResp(((ResponseBuilder)result).build(),resourceMethod);
   }
  else {
-    if (result == null) {
-      restletResponse.setStatus(Status.SUCCESS_NO_CONTENT);
-    }
- else {
-      restletResponse.setStatus(Status.SUCCESS_OK);
-    }
+    if (result == null)     restletResponse.setStatus(Status.SUCCESS_NO_CONTENT);
+ else     restletResponse.setStatus(Status.SUCCESS_OK);
     SortedMetadata<MediaType> accMediaTypes;
-    accMediaTypes=this.tlContext.get().getAccMediaTypes();
+    accMediaTypes=tlContext.get().getAccMediaTypes();
     restletResponse.setEntity(convertToRepresentation(result,resourceMethod,null,null,accMediaTypes));
   }
 }

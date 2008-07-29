@@ -4,27 +4,25 @@
   try {
     CallContext callContext;
     callContext=new CallContext(request,response,this.roleChecker);
-    this.tlContext.set(callContext);
+    tlContext.set(callContext);
     try {
       ResObjAndMeth resObjAndMeth;
       resObjAndMeth=requestMatching();
       callContext.setReadOnly();
-      final ResourceMethod resourceMethod=resObjAndMeth.resourceMethod;
+      ResourceMethod resourceMethod=resObjAndMeth.resourceMethod;
       resourceObject=resObjAndMeth.resourceObject;
-      final Object result=invokeMethod(resourceMethod,resourceObject);
+      Object result=invokeMethod(resourceMethod,resourceObject);
       handleResult(result,resourceMethod);
     }
- catch (    final WebApplicationException e) {
-      jaxRsRespToRestletResp(this.excMappers.convert(e),null);
+ catch (    WebApplicationException e) {
+      jaxRsRespToRestletResp(this.providers.convert(e),null);
       return;
     }
   }
- catch (  final RequestHandledException e) {
+ catch (  RequestHandledException e) {
   }
  finally {
-    final Representation entity=request.getEntity();
-    if (entity != null) {
-      entity.release();
-    }
+    Representation entity=request.getEntity();
+    if (entity != null)     entity.release();
   }
 }

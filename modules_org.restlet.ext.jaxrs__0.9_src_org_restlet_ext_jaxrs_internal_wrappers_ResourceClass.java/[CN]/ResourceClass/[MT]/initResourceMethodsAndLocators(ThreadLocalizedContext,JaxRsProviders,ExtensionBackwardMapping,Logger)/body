@@ -1,0 +1,50 @@
+{
+  for (  final Method execMethod : jaxRsClass.getMethods()) {
+    final Method annotatedMethod=getAnnotatedJavaMethod(execMethod);
+    if (annotatedMethod == null) {
+      continue;
+    }
+    final Path path=annotatedMethod.getAnnotation(Path.class);
+    org.restlet.data.Method httpMethod;
+    httpMethod=getHttpMethod(annotatedMethod);
+    try {
+      if (httpMethod != null) {
+        if (isVolatile(execMethod)) {
+          continue;
+        }
+        ResourceMethod subResMeth;
+        try {
+          subResMeth=new ResourceMethod(execMethod,annotatedMethod,this,httpMethod,tlContext,jaxRsProviders,extensionBackwardMapping,logger);
+        }
+ catch (        final IllegalMethodParamTypeException e) {
+          Logger.getAnonymousLogger().log(Level.WARNING,"An annotated parameter of the resource method " + annotatedMethod + " is has an illegal type",e);
+          continue;
+        }
+        this.resourceMethods.add(subResMeth);
+        this.resourceMethodsAndLocators.add(subResMeth);
+        checkForPrimitiveParameters(execMethod,logger);
+      }
+ else {
+        if (path != null) {
+          if (isVolatile(execMethod)) {
+            continue;
+          }
+          SubResourceLocator subResLoc;
+          try {
+            subResLoc=new SubResourceLocator(execMethod,annotatedMethod,this,tlContext,jaxRsProviders,extensionBackwardMapping,logger);
+          }
+ catch (          final IllegalMethodParamTypeException e) {
+            Logger.getAnonymousLogger().log(Level.WARNING,"An annotated parameter of the resource method " + annotatedMethod + " is has an illegal type",e);
+            continue;
+          }
+          this.subResourceLocators.add(subResLoc);
+          this.resourceMethodsAndLocators.add(subResLoc);
+          checkForPrimitiveParameters(execMethod,logger);
+        }
+      }
+    }
+ catch (    final IllegalPathOnMethodException e) {
+      logger.warning("The method " + annotatedMethod + " is annotated with an illegal path: "+ e.getPath()+ ". Ignoring this method. ("+ e.getMessage()+ ")");
+    }
+  }
+}

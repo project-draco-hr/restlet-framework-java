@@ -1,24 +1,24 @@
 {
   try {
-    o=subResourceLocator.createSubResource(o,this.wrapperFactory,getLogger());
+    o=subResourceLocator.createSubResource(o,wrapperFactory,getLogger());
   }
- catch (  final WebApplicationException e) {
+ catch (  WebApplicationException e) {
     throw e;
   }
-catch (  final RuntimeException e) {
-    throw this.excHandler.runtimeExecption(e,subResourceLocator,callContext,"Could not create new instance of resource class");
+catch (  RuntimeException e) {
+    throw excHandler.runtimeExecption(e,subResourceLocator,callContext,"Could not create new instance of resource class");
   }
-catch (  final MissingAnnotationException e) {
-    throw this.excHandler.missingAnnotation(e,callContext,"Could not create new instance of resource class");
+catch (  MissingAnnotationException e) {
+    throw excHandler.missingAnnotation(e,callContext,"Could not create new instance of resource class");
   }
-catch (  final InstantiateException e) {
-    throw this.excHandler.instantiateExecption(e,callContext,"Could not create new instance of resource class");
+catch (  InstantiateException e) {
+    throw excHandler.instantiateExecption(e,callContext,"Could not create new instance of resource class");
   }
-catch (  final InvocationTargetException e) {
+catch (  InvocationTargetException e) {
     throw handleInvocationTargetExc(e);
   }
-catch (  final ConvertRepresentationException e) {
-    throw this.excHandler.convertRepresentationExc(e);
+catch (  ConvertRepresentationException e) {
+    throw excHandler.convertRepresentationExc(e);
   }
   return o;
 }
