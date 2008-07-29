@@ -1,0 +1,16 @@
+{
+  final List<Parameter> parameters=form.subList(paramName);
+  try {
+    if (this.collType == null) {
+      final Parameter firstFormParam=form.getFirst(paramName);
+      final String queryParamValue=WrapperUtil.getValue(firstFormParam);
+      return convertParamValue(queryParamValue);
+    }
+    ParamValueIter queryParamValueIter;
+    queryParamValueIter=new ParamValueIter(parameters);
+    return convertParamValues(queryParamValueIter);
+  }
+ catch (  final ConvertParameterException e) {
+    throw new ConvertQueryParamException(e);
+  }
+}

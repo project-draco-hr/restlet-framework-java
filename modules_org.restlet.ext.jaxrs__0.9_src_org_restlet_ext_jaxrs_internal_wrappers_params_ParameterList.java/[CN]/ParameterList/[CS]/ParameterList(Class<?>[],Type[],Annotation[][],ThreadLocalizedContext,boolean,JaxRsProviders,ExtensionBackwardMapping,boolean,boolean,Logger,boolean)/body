@@ -2,6 +2,7 @@
   this.paramCount=parameterTypes.length;
   this.parameters=new ParamGetter[this.paramCount];
   boolean entityAlreadyRead=false;
+  int entityPosition=-1;
   for (int i=0; i < this.paramCount; i++) {
     final Class<?> parameterType=parameterTypes[i];
     final Type genParamType=genParamTypes[i];
@@ -24,6 +25,7 @@
       final MatrixParam matrixParam=getAnno(paramAnnos,MatrixParam.class);
       final PathParam pathParam=getAnno(paramAnnos,PathParam.class);
       final QueryParam queryParam=getAnno(paramAnnos,QueryParam.class);
+      final FormParam formParam=getAnno(paramAnnos,FormParam.class);
       if (pathParam != null) {
         this.parameters[i]=new PathParamGetter(pathParam,defValue,parameterType,genParamType,tlContext,leaveAllEncoded || leaveThisEncoded);
         continue;
@@ -44,6 +46,10 @@
         this.parameters[i]=new QueryParamGetter(queryParam,defValue,parameterType,genParamType,tlContext,leaveAllEncoded || leaveThisEncoded);
         continue;
       }
+ else       if (formParam != null) {
+        this.parameters[i]=new FormParamGetter(formParam,defValue,parameterType,genParamType,tlContext,leaveAllEncoded || leaveThisEncoded);
+        continue;
+      }
     }
     if (!entityAllowed) {
       throw new MissingAnnotationException("All parameters requires one of the following annotations: " + VALID_ANNOTATIONS);
@@ -57,6 +63,8 @@
     if (this.parameters[i] == null) {
       this.parameters[i]=new EntityGetter(parameterType,genParamType,tlContext,jaxRsProviders,paramAnnos);
     }
+    entityPosition=i;
     entityAlreadyRead=true;
   }
+  this.entityPosition=entityPosition;
 }
