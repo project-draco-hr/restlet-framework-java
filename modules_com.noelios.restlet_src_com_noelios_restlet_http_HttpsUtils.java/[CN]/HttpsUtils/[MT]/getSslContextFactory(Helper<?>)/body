@@ -1,0 +1,28 @@
+{
+  SslContextFactory result=(SslContextFactory)helper.getAttributes().get("sslContextFactory");
+  if (result == null) {
+    String[] sslContextFactoryNames=helper.getParameters().getValuesArray("sslContextFactory");
+    if (sslContextFactoryNames != null) {
+      for (      String sslContextFactoryName : sslContextFactoryNames) {
+        try {
+          Class<? extends SslContextFactory> sslContextFactoryClass=Class.forName(sslContextFactoryName).asSubclass(SslContextFactory.class);
+          result=sslContextFactoryClass.newInstance();
+          result.init(helper.getParameters());
+        }
+ catch (        ClassNotFoundException e) {
+          helper.getLogger().log(Level.WARNING,"Unable to find SslContextFactory class: " + sslContextFactoryName,e);
+        }
+catch (        ClassCastException e) {
+          helper.getLogger().log(Level.WARNING,"Class " + sslContextFactoryName + " does not implement SslContextFactory.",e);
+        }
+catch (        InstantiationException e) {
+          helper.getLogger().log(Level.WARNING,"Could not instantiate class " + sslContextFactoryName + " with default constructor.",e);
+        }
+catch (        IllegalAccessException e) {
+          helper.getLogger().log(Level.WARNING,"Illegal access when instantiating class " + sslContextFactoryName + ".",e);
+        }
+      }
+    }
+  }
+  return result;
+}
