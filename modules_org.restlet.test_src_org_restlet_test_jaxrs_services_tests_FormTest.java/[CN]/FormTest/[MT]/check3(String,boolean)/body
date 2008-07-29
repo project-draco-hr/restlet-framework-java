@@ -1,0 +1,13 @@
+{
+  Response response;
+  Form form=new Form();
+  form.add("a","b");
+  form.add("c","d");
+  form.add("c","d2");
+  response=post(subPath,form.getWebRepresentation());
+  sysOutEntityIfError(response);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  String expectedEntity="a -> b\nc -> d\n";
+  if (cDouble)   expectedEntity+="c -> d2\n";
+  assertEquals(expectedEntity,response.getEntity().getText());
+}
