@@ -1,0 +1,44 @@
+{
+  return new AbstractExecutorService(){
+    public boolean awaitTermination(    long timeout,    TimeUnit unit) throws InterruptedException {
+      return jdkExecutorService.awaitTermination(timeout,unit);
+    }
+    public void execute(    final Runnable runnable){
+      final Application currentApplication=Application.getCurrent();
+      final Context currentContext=Context.getCurrent();
+      final Integer currentVirtualHost=VirtualHost.getCurrent();
+      final Response currentResponse=Response.getCurrent();
+      jdkExecutorService.execute(new Runnable(){
+        public void run(){
+          Response.setCurrent(currentResponse);
+          Context.setCurrent(currentContext);
+          VirtualHost.setCurrent(currentVirtualHost);
+          Application.setCurrent(currentApplication);
+          try {
+            runnable.run();
+          }
+  finally {
+            Response.setCurrent(null);
+            Context.setCurrent(null);
+            VirtualHost.setCurrent(-1);
+            Application.setCurrent(null);
+          }
+        }
+      }
+);
+    }
+    public boolean isShutdown(){
+      return jdkExecutorService.isShutdown();
+    }
+    public boolean isTerminated(){
+      return jdkExecutorService.isTerminated();
+    }
+    public void shutdown(){
+      jdkExecutorService.shutdown();
+    }
+    public List<Runnable> shutdownNow(){
+      return jdkExecutorService.shutdownNow();
+    }
+  }
+;
+}
