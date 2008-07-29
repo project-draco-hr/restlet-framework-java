@@ -34,19 +34,19 @@
  else {
     mbws=MessageBodyWriterSubSet.empty();
   }
-  MediaType respMediaType;
+  final MediaType respMediaType;
   if (jaxRsResponseMediaType != null)   respMediaType=jaxRsResponseMediaType;
  else   if (resourceMethod != null)   respMediaType=determineMediaType(resourceMethod,mbws);
  else   respMediaType=MediaType.TEXT_PLAIN;
-  Response response=tlContext.get().getResponse();
+  final Response response=tlContext.get().getResponse();
   MultivaluedMap<String,Object> httpResponseHeaders=new WrappedRequestForHttpHeaders(response,jaxRsRespHeaders,getLogger());
-  Representation repr;
+  final Representation repr;
   if (entity == null) {
     repr=Representation.createEmpty();
     repr.setMediaType(respMediaType);
   }
  else {
-    MessageBodyWriter<?> mbw;
+    final MessageBodyWriter mbw;
     mbw=mbws.getBestWriter(respMediaType,accMediaTypes);
     if (mbw == null)     throw excHandler.noMessageBodyWriter(entityClass,genericReturnType,methodAnnotations);
     repr=new JaxRsOutputRepresentation(entity,genericReturnType,respMediaType,methodAnnotations,mbw,httpResponseHeaders);

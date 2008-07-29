@@ -1,19 +1,19 @@
 {
-  for (  Provider<?> provider : new ArrayList<Provider<?>>(this.all)) {
+  for (  final Provider provider : new ArrayList<Provider>(this.all)) {
     try {
       provider.init(tlContext,this,extensionBackwardMapping);
     }
  catch (    InjectException e) {
+      localLogger.log(Level.WARNING,"The provider " + provider.getClassName() + " could not be used",e);
       this.remove(provider);
-      e.printStackTrace();
     }
 catch (    IllegalTypeException e) {
+      localLogger.log(Level.WARNING,"The provider " + provider.getClassName() + " could not be used",e);
       this.remove(provider);
-      e.printStackTrace();
     }
 catch (    InvocationTargetException e) {
+      localLogger.log(Level.WARNING,"The provider " + provider.getClassName() + " could not be used",e);
       this.remove(provider);
-      e.printStackTrace();
     }
   }
 }

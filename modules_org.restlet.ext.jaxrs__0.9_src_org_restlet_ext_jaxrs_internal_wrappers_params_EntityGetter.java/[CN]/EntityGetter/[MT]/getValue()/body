@@ -5,14 +5,13 @@
     return null;
   }
   final MediaType mediaType=entity.getMediaType();
-  final MessageBodyReader<?> mbr=this.mbrs.getBestReader(this.convToCl,this.convToGen,this.annotations,mediaType);
+  final MessageBodyReader mbr=this.mbrs.getBestReader(this.convToCl,this.convToGen,this.annotations,mediaType);
   if (mbr == null) {
     throw new NoMessageBodyReaderException(mediaType,this.convToCl);
   }
   final MultivaluedMap<String,String> httpHeaders=Util.getJaxRsHttpHeaders(request);
   try {
-    final javax.ws.rs.core.MediaType jaxRsMediaType=Converter.toJaxRsMediaType(mediaType,entity.getCharacterSet());
-    return mbr.readFrom((Class)this.convToCl,this.convToGen,this.annotations,jaxRsMediaType,httpHeaders,entity.getStream());
+    return mbr.readFrom(this.convToCl,this.convToGen,this.annotations,mediaType,entity.getCharacterSet(),httpHeaders,entity.getStream());
   }
  catch (  final WebApplicationException wae) {
     throw wae;
