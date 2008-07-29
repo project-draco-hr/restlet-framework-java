@@ -1,0 +1,27 @@
+{
+  Person person=new Person("vn","nn");
+  JaxbElementProvider jaxbElementProvider=new JaxbElementProvider();
+  jaxbElementProvider.contextResolver=new ContextResolver<JAXBContext>(){
+    public JAXBContext getContext(    Class<?> type){
+      return null;
+    }
+  }
+;
+  JAXBElement<Person> jaxbElement=new JAXBElement<Person>(new QName("xyz"),Person.class,person);
+  jaxbElementProvider.writeTo(jaxbElement,Person.class,Person.class,null,null,null,System.out);
+  String xml="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><person><firstname>vn</firstname><lastname>nn</lastname></person>";
+  Type type=new ParameterizedType(){
+    public Type[] getActualTypeArguments(){
+      return new Type[]{Person.class};
+    }
+    public Type getOwnerType(){
+      throw new UnsupportedOperationException("not implemented for this test");
+    }
+    public Type getRawType(){
+      throw new UnsupportedOperationException("not implemented for this test");
+    }
+  }
+;
+  JAXBElement je=jaxbElementProvider.readFrom((Class)JAXBElement.class,type,null,null,null,new ByteArrayInputStream(xml.getBytes()));
+  System.out.println();
+}

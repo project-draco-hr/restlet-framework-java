@@ -3,7 +3,14 @@
   if (clazz == null) {
     throw new ImplementationException("The JaxbElement provider has gotten a type it could not unmarshal. Perhaps is the JaxbElementProvider not consistent to itself.");
   }
-  final QName qName=new QName("testQName");
-  final Object value=unmarshal(clazz,entityStream);
-  return new JAXBElement(qName,clazz,value);
+  try {
+    final JAXBContext jaxbContext=getJaxbContext(clazz);
+    final Unmarshaller unmarshaller=jaxbContext.createUnmarshaller();
+    JAXBElement<?> je=unmarshaller.unmarshal(new StreamSource(entityStream),type);
+    return je;
+  }
+ catch (  final JAXBException e) {
+    final String message="Could not unmarshal to " + type.getName();
+    throw logAndIOExc(getLogger(),message,e);
+  }
 }
