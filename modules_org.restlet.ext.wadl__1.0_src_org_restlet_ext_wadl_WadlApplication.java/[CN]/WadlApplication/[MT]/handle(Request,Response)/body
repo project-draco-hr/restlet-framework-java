@@ -1,13 +1,11 @@
 {
+  super.handle(request,response);
   Reference rr=request.getResourceRef();
   String rp=rr.getRemainingPart();
-  if (isAutoDescribed() && Method.OPTIONS.equals(request.getMethod()) && (rp.equals("/*") || rp.equals("*"))) {
+  if (isAutoDescribed() && Method.OPTIONS.equals(request.getMethod()) && (Status.CLIENT_ERROR_NOT_FOUND.equals(response.getStatus()) || !response.isEntityAvailable())&& (rp.equals("/*") || rp.equals("*"))) {
     if (!rr.getBaseRef().getIdentifier().endsWith("/")) {
       rr.setBaseRef(rr.getBaseRef() + "/");
     }
     response.setEntity(wadlRepresent(request,response));
-  }
- else {
-    super.handle(request,response);
   }
 }

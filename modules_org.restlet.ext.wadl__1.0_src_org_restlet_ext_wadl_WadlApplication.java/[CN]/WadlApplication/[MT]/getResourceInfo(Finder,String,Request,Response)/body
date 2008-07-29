@@ -1,10 +1,11 @@
 {
   ResourceInfo result=null;
+  Application.setCurrent(this);
   final Handler handler=finder.createTarget(finder.getTargetClass(),request,response);
   if (handler instanceof WadlResource) {
     final WadlResource resource=(WadlResource)handler;
-    ResourceInfo resourceInfo=new ResourceInfo();
-    resource.describe(path,resourceInfo);
+    result=new ResourceInfo();
+    resource.describe(path,result);
   }
  else {
     result=new ResourceInfo();
