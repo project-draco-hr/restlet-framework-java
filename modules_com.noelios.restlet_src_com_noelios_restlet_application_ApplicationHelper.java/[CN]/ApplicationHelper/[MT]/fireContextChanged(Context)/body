@@ -1,0 +1,10 @@
+{
+  if (context instanceof ApplicationContext) {
+    ((ApplicationContext)context).setApplication(getHelped());
+    String loggerName=ApplicationContext.getLoggerName(getHelped());
+    context.setLogger(Logger.getLogger(loggerName));
+  }
+ else   if (context instanceof ComponentContext) {
+    getLogger().severe("For security reasons, don't pass the component context to your application anymore. Use the Context#createChildContext() method instead.");
+  }
+}

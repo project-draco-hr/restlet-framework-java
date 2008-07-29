@@ -1,14 +1,37 @@
 {
-  super(null);
   this.hosts=new CopyOnWriteArrayList<VirtualHost>();
   this.clients=new ClientList(null);
   this.servers=new ServerList(null,this);
   if (Engine.getInstance() != null) {
     this.helper=Engine.getInstance().createHelper(this);
     if (this.helper != null) {
-      setContext(this.helper.createContext(getClass().getCanonicalName()));
       this.defaultHost=new VirtualHost(getContext());
-      this.internalRouter=new Router(getContext());
+      this.internalRouter=new Router(getContext()){
+        @Override public Route attach(        Restlet target){
+          if (target.getContext() == null) {
+            target.setContext(getContext().createChildContext());
+          }
+          return super.attach(target);
+        }
+        @Override public Route attach(        String uriPattern,        Restlet target){
+          if (target.getContext() == null) {
+            target.setContext(getContext().createChildContext());
+          }
+          return super.attach(uriPattern,target);
+        }
+        @Override public Route attachDefault(        Restlet defaultTarget){
+          if (defaultTarget.getContext() == null) {
+            defaultTarget.setContext(getContext().createChildContext());
+          }
+          return super.attachDefault(defaultTarget);
+        }
+        @Override protected Finder createFinder(        Class<? extends Resource> targetClass){
+          Finder result=super.createFinder(targetClass);
+          result.setContext(getContext().createChildContext());
+          return result;
+        }
+      }
+;
       this.logService=new LogService(true);
       this.logService.setLoggerName(getClass().getCanonicalName() + " (" + hashCode()+ ")");
       this.statusService=new StatusService(true);
