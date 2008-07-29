@@ -3,5 +3,10 @@
   final String queryString=resourceRef.getQuery();
   final Form form=Converter.toFormEncoded(queryString,localLogger);
   final String paramName=this.queryParam.value();
-  return super.getParamValue(form,paramName);
+  try {
+    return super.getParamValue(form,paramName);
+  }
+ catch (  final ConvertParameterException e) {
+    throw new ConvertQueryParamException(e);
+  }
 }

@@ -1,9 +1,9 @@
 {
   Response response=post("jaxb",new StringRepresentation("abcdef"));
   assertEquals(Status.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE,response.getStatus());
-  if (true)   return;
   response=post("jaxb",new StringRepresentation("<person firstname=\"Angela\" lastname=\"Merkel\"/>",MediaType.APPLICATION_XML));
   sysOutEntityIfError(response);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
-  assertEquals("abcde",response.getEntity().getText());
+  String packageName=Person.class.getPackage().getName();
+  assertEquals(packageName,response.getEntity().getText());
 }

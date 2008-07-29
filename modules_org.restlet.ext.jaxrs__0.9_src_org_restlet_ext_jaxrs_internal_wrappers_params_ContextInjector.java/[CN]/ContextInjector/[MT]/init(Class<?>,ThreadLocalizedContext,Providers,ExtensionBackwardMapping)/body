@@ -5,8 +5,7 @@
         if (field.isAnnotationPresent(Context.class)) {
           final InjectionAim aim=new FieldWrapper(field);
           final Class<?> declaringClass=field.getType();
-          final Type genericType=field.getGenericType();
-          final Injector injector=getInjector(declaringClass,genericType,aim,tlContext,allProviders,extensionBackwardMapping);
+          final Injector injector=getInjector(declaringClass,aim,tlContext,allProviders,extensionBackwardMapping);
           this.injEverSameAims.add(injector);
         }
       }
@@ -22,8 +21,7 @@ catch (    final IllegalTypeException e) {
         if (isBeanSetter(method,Context.class)) {
           final BeanSetter aim=new BeanSetter(method);
           final Class<?> paramClass=method.getParameterTypes()[0];
-          final Type genericType=method.getGenericParameterTypes()[0];
-          final Injector injector=getInjector(paramClass,genericType,aim,tlContext,allProviders,extensionBackwardMapping);
+          final Injector injector=getInjector(paramClass,aim,tlContext,allProviders,extensionBackwardMapping);
           this.injEverSameAims.add(injector);
         }
       }
