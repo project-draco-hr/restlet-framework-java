@@ -3,8 +3,8 @@
   final String applicationBeanName=getInitParameter(SpringServerServlet.APPLICATION_BEAN_PARAM_NAME,null);
   application=(Application)getWebApplicationContext().getBean(applicationBeanName);
   if (application != null) {
-    final ApplicationContext applicationContext=(ApplicationContext)application.getContext();
-    application.setContext(new ApplicationContext(application,new ServletContextAdapter(this,context),applicationContext.getLogger()));
+    final ChildContext applicationContext=(ChildContext)application.getContext();
+    application.setContext(new ChildContext(application,new ServletContextAdapter(this,context),applicationContext.getLogger()));
     String initParam;
     final javax.servlet.ServletConfig servletConfig=getServletConfig();
     for (final Enumeration<String> enum1=servletConfig.getInitParameterNames(); enum1.hasMoreElements(); ) {

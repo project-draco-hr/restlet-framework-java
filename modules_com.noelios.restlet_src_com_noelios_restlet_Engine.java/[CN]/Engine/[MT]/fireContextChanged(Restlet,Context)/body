@@ -1,0 +1,15 @@
+{
+  if (context != null) {
+    if (context instanceof ChildContext) {
+      ChildContext childContext=(ChildContext)context;
+      if (childContext.getChild() == null) {
+        childContext.setChild(restlet);
+        String loggerName=ChildContext.getLoggerName(restlet);
+        context.setLogger(Logger.getLogger(loggerName));
+      }
+    }
+ else     if (!(restlet instanceof Component) && (context instanceof ComponentContext)) {
+      context.getLogger().severe("For security reasons, don't pass the component context to child Restlets anymore. Use the Context#createChildContext() method instead.");
+    }
+  }
+}

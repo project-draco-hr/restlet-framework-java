@@ -10,8 +10,8 @@
  catch (      final NoSuchMethodException e) {
         log("[Noelios Restlet Engine] - The ServerServlet couldn't invoke the constructor of the target class. Please check this class has a constructor with a single parameter of type Context. The empty constructor and the context setter will be used instead.",e);
         application=(Application)targetClass.getConstructor().newInstance();
-        final ApplicationContext applicationContext=(ApplicationContext)application.getContext();
-        application.setContext(new ApplicationContext(application,new ServletContextAdapter(this,context),applicationContext.getLogger()));
+        final ChildContext applicationContext=(ChildContext)application.getContext();
+        application.setContext(new ChildContext(application,new ServletContextAdapter(this,context),applicationContext.getLogger()));
       }
     }
  catch (    final ClassNotFoundException e) {
@@ -31,7 +31,7 @@ catch (    final InvocationTargetException e) {
     }
   }
   if (application != null) {
-    final ApplicationContext applicationContext=(ApplicationContext)application.getContext();
+    final ChildContext applicationContext=(ChildContext)application.getContext();
     String initParam;
     final javax.servlet.ServletConfig servletConfig=getServletConfig();
     for (final Enumeration<String> enum1=servletConfig.getInitParameterNames(); enum1.hasMoreElements(); ) {
