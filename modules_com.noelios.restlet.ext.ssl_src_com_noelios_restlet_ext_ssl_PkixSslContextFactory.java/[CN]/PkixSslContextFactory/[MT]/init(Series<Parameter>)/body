@@ -35,11 +35,15 @@
   }
   String keyPassword=parameters.getFirstValue("keyPassword","");
   String sslProtocol=parameters.getFirstValue("sslProtocol");
+  String serverAlias=parameters.getFirstValue("sslServerAlias");
   boolean disableRevocation=Boolean.parseBoolean(parameters.getFirstValue("disableCrl"));
   try {
     KeyStore keyStore=keyStoreLoader.loadKeyStore();
     KeyStore trustStore=trustStoreLoader.loadKeyStore();
     PKIXSSLContextFactory sslContextFactory=new PKIXSSLContextFactory(keyStore,keyPassword,trustStore,!disableRevocation);
+    if (serverAlias != null) {
+      sslContextFactory.setKeyManagerWrapper(new FixedServerAliasKeyManager.Wrapper(serverAlias));
+    }
     String[] crlArray=parameters.getValuesArray("crlUrl");
     if (crlArray != null) {
       for (      String crlUrl : crlArray) {
@@ -69,6 +73,9 @@ catch (  IOException e) {
     throw new RuntimeException(e);
   }
 catch (  SSLContextFactoryException e) {
+    throw new RuntimeException(e);
+  }
+catch (  LockedSettingsException e) {
     throw new RuntimeException(e);
   }
 }
