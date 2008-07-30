@@ -1,12 +1,17 @@
 {
-  for (  ContextResolver<?> cr : this.contextResolvers) {
+  for (  ContextResolver cr : this.contextResolvers) {
     Class<?> crClaz=cr.getClass();
     Class<?> genClass=getCtxResGenClass(crClaz);
-    if (genClass == null || !genClass.equals(contextType))     continue;
+    if (genClass == null || !genClass.equals(contextType)) {
+      continue;
+    }
+    if (!cr.supportsWrite(mediaType)) {
+      continue;
+    }
     try {
       Method getContext=crClaz.getMethod("getContext",Class.class);
       if (getContext.getReturnType().equals(contextType)) {
-        return (ContextResolver)cr;
+        return (javax.ws.rs.ext.ContextResolver<T>)cr.getContextResolver();
       }
     }
  catch (    SecurityException e) {
@@ -16,5 +21,5 @@ catch (    NoSuchMethodException e) {
       throw new RuntimeException("The ContextResolver " + crClaz + " is not valid, because it has no method getContext(Class)");
     }
   }
-  return ReturnNullContextResolver.get();
+  return null;
 }
