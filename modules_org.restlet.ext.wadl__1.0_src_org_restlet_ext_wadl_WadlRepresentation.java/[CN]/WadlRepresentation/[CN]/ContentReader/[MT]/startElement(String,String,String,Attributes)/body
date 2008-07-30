@@ -1,7 +1,4 @@
 {
-  if (getState() != State.DOCUMENTATION) {
-    this.contentBuffer.delete(0,this.contentBuffer.length() + 1);
-  }
   if (uri.equalsIgnoreCase(APP_NAMESPACE)) {
     if (localName.equals("application")) {
       this.currentApplication=new ApplicationInfo();
@@ -9,6 +6,9 @@
     }
  else     if (localName.equals("doc")) {
       this.currentDocumentation=new DocumentationInfo();
+      this.mixedContentTopNode=this.mixedContentDocument.createDocumentFragment();
+      this.currentMixedContentNode=mixedContentTopNode;
+      this.currentMixedContentCDataSection=null;
       if (attrs.getIndex("xml:lang") != -1) {
         this.currentDocumentation.setLanguage(Language.valueOf(attrs.getValue("xml:lang")));
       }
@@ -300,6 +300,25 @@
         this.currentMethod.setResponse(this.currentResponse);
       }
       pushState(State.RESPONSE);
+    }
+  }
+ else {
+    if (getState() == State.DOCUMENTATION) {
+      pushMixedContentState(MixedContentState.ELEMENT);
+      Node node=null;
+      if (("".equals(qName) || qName == null)) {
+        node=this.mixedContentDocument.createElementNS(uri,localName);
+      }
+ else {
+        node=this.mixedContentDocument.createElementNS(uri,qName);
+      }
+      for (int i=0; i < attrs.getLength(); i++) {
+        Attr attr=this.mixedContentDocument.createAttributeNS(attrs.getURI(i),attrs.getLocalName(i));
+        attr.setNodeValue(attrs.getValue(i));
+        node.getAttributes().setNamedItemNS(attr);
+      }
+      this.currentMixedContentNode.appendChild(node);
+      this.currentMixedContentNode=node;
     }
   }
 }

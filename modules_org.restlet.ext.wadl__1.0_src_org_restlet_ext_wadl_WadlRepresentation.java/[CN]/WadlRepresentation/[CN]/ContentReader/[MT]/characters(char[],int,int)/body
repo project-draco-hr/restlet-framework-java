@@ -1,3 +1,10 @@
 {
-  this.contentBuffer.append(ch,start,length);
+  if (getState() == State.DOCUMENTATION) {
+    if (getMixedContentState() == MixedContentState.CDATA) {
+      this.currentMixedContentCDataSection.appendData(new String(ch,start,length));
+    }
+ else     if (getMixedContentState() != MixedContentState.ENTITY) {
+      this.currentMixedContentNode.appendChild(this.mixedContentDocument.createTextNode(new String(ch,start,length)));
+    }
+  }
 }

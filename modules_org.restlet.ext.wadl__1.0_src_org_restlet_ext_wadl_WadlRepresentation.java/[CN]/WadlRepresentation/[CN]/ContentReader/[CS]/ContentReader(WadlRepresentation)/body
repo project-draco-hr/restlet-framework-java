@@ -1,6 +1,8 @@
 {
   this.states=new ArrayList<State>();
   this.states.add(State.NONE);
+  this.mixedContentStates=new ArrayList<MixedContentState>();
+  this.mixedContentStates.add(MixedContentState.NONE);
   this.currentApplication=null;
   this.currentDocumentation=null;
   this.currentFault=null;
@@ -16,5 +18,12 @@
   this.currentResources=null;
   this.currentResourceType=null;
   this.currentResponse=null;
+  try {
+    this.mixedContentDocument=new DomRepresentation(MediaType.TEXT_XML).getDocument();
+  }
+ catch (  IOException e) {
+  }
+  this.currentMixedContentCDataSection=null;
+  this.namespaces=new HashMap<String,String>();
   this.wadlRepresentation=wadlRepresentation;
 }

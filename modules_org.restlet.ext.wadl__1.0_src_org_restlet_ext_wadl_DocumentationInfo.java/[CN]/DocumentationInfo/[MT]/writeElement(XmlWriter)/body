@@ -6,21 +6,22 @@
   if ((getLanguage() != null) && (getLanguage().toString() != null)) {
     attributes.addAttribute("","xml:lang",null,"xs:string",getLanguage().toString());
   }
-  if (((getTextContent() == null) || getTextContent().equals("")) && (getXmlContent() == null)) {
+  if (getMixedContent() == null) {
     writer.emptyElement(APP_NAMESPACE,"doc",null,attributes);
   }
  else {
-    if (getXmlContent() != null) {
-    }
- else {
-      writer.startElement(APP_NAMESPACE,"doc",null,attributes);
-      try {
-        writer.getWriter().write(getTextContent());
+    writer.startElement(APP_NAMESPACE,"doc",null,attributes);
+    try {
+      boolean isDataFormat=writer.isDataFormat();
+      writer.setDataFormat(false);
+      for (int i=0; i < getMixedContent().getChildNodes().getLength(); i++) {
+        writeElement(writer,getMixedContent().getChildNodes().item(i));
       }
- catch (      final IOException e) {
-        logger.log(Level.SEVERE,"Error when writing the text content of the current \"doc\" tag.",e);
-      }
-      writer.endElement(APP_NAMESPACE,"doc");
+      writer.setDataFormat(isDataFormat);
     }
+ catch (    final IOException e) {
+      logger.log(Level.SEVERE,"Error when writing the text content of the current \"doc\" tag.",e);
+    }
+    writer.endElement(APP_NAMESPACE,"doc");
   }
 }

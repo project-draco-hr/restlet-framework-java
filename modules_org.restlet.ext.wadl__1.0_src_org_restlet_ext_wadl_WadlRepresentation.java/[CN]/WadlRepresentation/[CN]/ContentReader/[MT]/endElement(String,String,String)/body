@@ -1,10 +1,10 @@
 {
   if (uri.equalsIgnoreCase(APP_NAMESPACE)) {
-    if (localName.equals("currentApplication")) {
+    if (localName.equals("application")) {
       popState();
     }
  else     if (localName.equals("doc")) {
-      this.currentDocumentation.setTextContent(this.contentBuffer.toString());
+      this.currentDocumentation.setMixedContent(mixedContentTopNode);
       popState();
     }
  else     if (localName.equals("fault")) {
@@ -46,6 +46,12 @@
     }
  else     if (localName.equals("response")) {
       popState();
+    }
+  }
+ else {
+    if (getState() == State.DOCUMENTATION) {
+      popMixedContentState();
+      this.currentMixedContentNode=this.currentMixedContentNode.getParentNode();
     }
   }
 }

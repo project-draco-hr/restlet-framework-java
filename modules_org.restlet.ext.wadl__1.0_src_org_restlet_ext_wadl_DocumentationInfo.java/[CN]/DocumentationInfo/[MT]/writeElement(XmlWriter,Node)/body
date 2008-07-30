@@ -1,0 +1,54 @@
+{
+  if (node instanceof CDATASection) {
+    CDATASection section=(CDATASection)node;
+    writer.getWriter().write("<![CDATA[");
+    writer.getWriter().write(section.getData());
+    writer.getWriter().write("]]>");
+  }
+ else   if (node instanceof Text) {
+    Text text=(Text)node;
+    writer.getWriter().write(text.getNodeValue());
+  }
+ else   if (node instanceof EntityReference) {
+    EntityReference entity=(EntityReference)node;
+    writer.getWriter().write("&");
+    writer.getWriter().write(entity.getNodeName());
+    writer.getWriter().write(";");
+  }
+ else   if (node instanceof Comment) {
+    Comment comment=(Comment)node;
+    writer.getWriter().write("<!-- ");
+    writer.getWriter().write(comment.getData());
+    writer.getWriter().write(" -->");
+  }
+ else {
+    AttributesImpl attributes=null;
+    if (node.hasAttributes()) {
+      attributes=new AttributesImpl();
+      for (int i=0; i < node.getAttributes().getLength(); i++) {
+        Node attribute=node.getAttributes().item(i);
+        attributes.addAttribute(attribute.getNamespaceURI(),attribute.getLocalName(),"",null,attribute.getNodeValue());
+      }
+    }
+    if (node.getChildNodes() != null && node.getChildNodes().getLength() > 0) {
+      if (attributes == null) {
+        writer.startElement(node.getNamespaceURI(),node.getLocalName());
+      }
+ else {
+        writer.startElement(node.getNamespaceURI(),node.getLocalName(),node.getPrefix(),attributes);
+      }
+      for (int i=0; i < node.getChildNodes().getLength(); i++) {
+        writeElement(writer,node.getChildNodes().item(i));
+      }
+      writer.endElement(node.getNamespaceURI(),node.getLocalName());
+    }
+ else {
+      if (attributes == null) {
+        writer.emptyElement(node.getNamespaceURI(),node.getLocalName());
+      }
+ else {
+        writer.emptyElement(node.getNamespaceURI(),node.getLocalName(),node.getPrefix(),attributes);
+      }
+    }
+  }
+}
