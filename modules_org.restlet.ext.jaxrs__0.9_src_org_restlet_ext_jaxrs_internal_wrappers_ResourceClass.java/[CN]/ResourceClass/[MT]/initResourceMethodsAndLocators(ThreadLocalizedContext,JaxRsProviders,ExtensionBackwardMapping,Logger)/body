@@ -17,7 +17,13 @@
           subResMeth=new ResourceMethod(execMethod,annotatedMethod,this,httpMethod,tlContext,jaxRsProviders,extensionBackwardMapping,logger);
         }
  catch (        final IllegalMethodParamTypeException e) {
-          Logger.getAnonymousLogger().log(Level.WARNING,"An annotated parameter of the resource method " + annotatedMethod + " is has an illegal type",e);
+          String message="Ignore method " + execMethod + ": An annotated parameter of the resource method "+ annotatedMethod+ " is has an illegal type";
+          logger.log(Level.WARNING,message,e);
+          continue;
+        }
+catch (        final IllegalParamTypeException e) {
+          String message="Ignore method " + execMethod + ": "+ e.getMessage();
+          logger.log(Level.WARNING,message,e);
           continue;
         }
         this.resourceMethods.add(subResMeth);
@@ -34,7 +40,13 @@
             subResLoc=new SubResourceLocator(execMethod,annotatedMethod,this,tlContext,jaxRsProviders,extensionBackwardMapping,logger);
           }
  catch (          final IllegalMethodParamTypeException e) {
-            Logger.getAnonymousLogger().log(Level.WARNING,"An annotated parameter of the resource method " + annotatedMethod + " is has an illegal type",e);
+            String message="Ignore method " + execMethod + ": An annotated parameter of the resource method "+ annotatedMethod+ " is has an illegal type";
+            logger.log(Level.WARNING,message,e);
+            continue;
+          }
+catch (          final IllegalParamTypeException e) {
+            String message="Ignore method " + execMethod + ": "+ e.getMessage();
+            logger.log(Level.WARNING,message,e);
             continue;
           }
           this.subResourceLocators.add(subResLoc);

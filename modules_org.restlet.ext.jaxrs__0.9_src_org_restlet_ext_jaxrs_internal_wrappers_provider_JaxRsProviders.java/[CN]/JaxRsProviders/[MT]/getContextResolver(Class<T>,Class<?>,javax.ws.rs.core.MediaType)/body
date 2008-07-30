@@ -1,17 +1,19 @@
 {
-  for (  ContextResolver cr : this.contextResolvers) {
-    Class<?> crClaz=cr.getClass();
-    Class<?> genClass=getCtxResGenClass(crClaz);
+  for (  ContextResolver crWrapper : this.contextResolvers) {
+    final javax.ws.rs.ext.ContextResolver<?> cr;
+    cr=crWrapper.getContextResolver();
+    final Class<?> crClaz=cr.getClass();
+    final Class<?> genClass=getCtxResGenClass(crClaz);
     if (genClass == null || !genClass.equals(contextType)) {
       continue;
     }
-    if (!cr.supportsWrite(mediaType)) {
+    if (!crWrapper.supportsWrite(mediaType)) {
       continue;
     }
     try {
       Method getContext=crClaz.getMethod("getContext",Class.class);
       if (getContext.getReturnType().equals(contextType)) {
-        return (javax.ws.rs.ext.ContextResolver<T>)cr.getContextResolver();
+        return (javax.ws.rs.ext.ContextResolver<T>)cr;
       }
     }
  catch (    SecurityException e) {

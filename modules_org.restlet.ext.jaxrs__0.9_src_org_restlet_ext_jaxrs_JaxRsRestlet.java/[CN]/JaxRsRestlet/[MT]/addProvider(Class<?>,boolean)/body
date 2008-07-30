@@ -8,13 +8,18 @@
   try {
     provider=new Provider(jaxRsProviderClass,this.objectFactory,this.tlContext,this.providers,this.extensionBackwardMapping,this.getLogger());
   }
- catch (  InstantiateException e) {
-    String msg="Ignore provider " + jaxRsProviderClass.getName() + "Could not instantiate the Provider, class "+ jaxRsProviderClass.getName();
+ catch (  IllegalParamTypeException e) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + ": Could not instantiate class "+ jaxRsProviderClass.getName();
+    getLogger().log(Level.WARNING,msg,e);
+    return false;
+  }
+catch (  InstantiateException e) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + ": Could not instantiate class "+ jaxRsProviderClass.getName();
     getLogger().log(Level.WARNING,msg,e);
     return false;
   }
 catch (  MissingAnnotationException e) {
-    String msg="Ignore provider " + jaxRsProviderClass.getName() + "Could not instantiate the Provider, class "+ jaxRsProviderClass.getName()+ ", because "+ e.getMessage();
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + ": Could not instantiate class "+ jaxRsProviderClass.getName()+ ", because "+ e.getMessage();
     getLogger().log(Level.WARNING,msg);
     return false;
   }

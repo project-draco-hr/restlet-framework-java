@@ -4,7 +4,12 @@
   try {
     newRrc=wrapperFactory.getRootResourceClass(rootResourceClass);
   }
- catch (  IllegalPathOnClassException e) {
+ catch (  IllegalParamTypeException e) {
+    String msg="Ignore provider " + rootResourceClass.getName() + ": Could not instantiate class "+ rootResourceClass.getName();
+    getLogger().log(Level.WARNING,msg,e);
+    return false;
+  }
+catch (  IllegalPathOnClassException e) {
     getLogger().warning("The root resource class " + rootResourceClass.getName() + " is annotated with an illegal path: "+ e.getPath()+ ". ("+ e.getMessage()+ ")");
     return false;
   }
