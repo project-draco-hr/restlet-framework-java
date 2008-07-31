@@ -21,6 +21,12 @@
     writer.getWriter().write(comment.getData());
     writer.getWriter().write(" -->");
   }
+ else   if (node instanceof DocumentFragment) {
+    DocumentFragment documentFragment=(DocumentFragment)node;
+    for (int i=0; i < documentFragment.getChildNodes().getLength(); i++) {
+      writeElement(writer,documentFragment.getChildNodes().item(i));
+    }
+  }
  else {
     AttributesImpl attributes=null;
     if (node.hasAttributes()) {
