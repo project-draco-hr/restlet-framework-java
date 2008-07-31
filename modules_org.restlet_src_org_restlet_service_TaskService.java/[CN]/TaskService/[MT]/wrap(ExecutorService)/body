@@ -1,14 +1,14 @@
 {
   return new AbstractExecutorService(){
     public boolean awaitTermination(    long timeout,    TimeUnit unit) throws InterruptedException {
-      return jdkExecutorService.awaitTermination(timeout,unit);
+      return executorService.awaitTermination(timeout,unit);
     }
     public void execute(    final Runnable runnable){
       final Application currentApplication=Application.getCurrent();
       final Context currentContext=Context.getCurrent();
       final Integer currentVirtualHost=VirtualHost.getCurrent();
       final Response currentResponse=Response.getCurrent();
-      jdkExecutorService.execute(new Runnable(){
+      executorService.execute(new Runnable(){
         public void run(){
           Response.setCurrent(currentResponse);
           Context.setCurrent(currentContext);
@@ -28,16 +28,16 @@
 );
     }
     public boolean isShutdown(){
-      return jdkExecutorService.isShutdown();
+      return executorService.isShutdown();
     }
     public boolean isTerminated(){
-      return jdkExecutorService.isTerminated();
+      return executorService.isTerminated();
     }
     public void shutdown(){
-      jdkExecutorService.shutdown();
+      executorService.shutdown();
     }
     public List<Runnable> shutdownNow(){
-      return jdkExecutorService.shutdownNow();
+      return executorService.shutdownNow();
     }
   }
 ;
