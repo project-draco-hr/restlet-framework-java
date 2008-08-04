@@ -34,6 +34,21 @@
  else   if (isWantClientAuthentication()) {
     serverSocket.setWantClientAuth(true);
   }
+  String[] enabledCipherSuites=HttpsUtils.getEnabledCipherSuites(this);
+  String[] excludedCipherSuites=HttpsUtils.getExcludedCipherSuites(this);
+  if (excludedCipherSuites != null) {
+    if (enabledCipherSuites == null) {
+      enabledCipherSuites=serverSocket.getEnabledCipherSuites();
+    }
+    List<String> enabledCipherSuitesList=new ArrayList<String>(Arrays.asList(enabledCipherSuites));
+    for (    String excludedCipherSuite : excludedCipherSuites) {
+      enabledCipherSuitesList.remove(excludedCipherSuite);
+    }
+    enabledCipherSuites=enabledCipherSuitesList.toArray(enabledCipherSuites);
+  }
+  if (enabledCipherSuites != null) {
+    serverSocket.setEnabledCipherSuites(enabledCipherSuites);
+  }
   serverSocket.setSoTimeout(60000);
   setSocket(serverSocket);
   setConfidential(true);

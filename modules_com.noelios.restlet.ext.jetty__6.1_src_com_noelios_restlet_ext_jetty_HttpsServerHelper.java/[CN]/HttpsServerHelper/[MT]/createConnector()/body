@@ -1,6 +1,7 @@
 {
   AbstractConnector result=null;
   final SslContextFactory sslContextFactory=HttpsUtils.getSslContextFactory(this);
+  final String[] excludedCipherSuites=HttpsUtils.getExcludedCipherSuites(this);
 switch (getType()) {
 case 1:
     SslSelectChannelConnector nioResult;
@@ -30,6 +31,9 @@ if (isNeedClientAuthentication()) {
 }
  else if (isWantClientAuthentication()) {
   nioResult.setWantClientAuth(true);
+}
+if (excludedCipherSuites != null) {
+nioResult.setExcludeCipherSuites(excludedCipherSuites);
 }
 result=nioResult;
 break;
@@ -62,6 +66,9 @@ bioResult.setNeedClientAuth(true);
 }
  else if (isWantClientAuthentication()) {
 bioResult.setWantClientAuth(true);
+}
+if (excludedCipherSuites != null) {
+bioResult.setExcludeCipherSuites(excludedCipherSuites);
 }
 result=bioResult;
 break;
