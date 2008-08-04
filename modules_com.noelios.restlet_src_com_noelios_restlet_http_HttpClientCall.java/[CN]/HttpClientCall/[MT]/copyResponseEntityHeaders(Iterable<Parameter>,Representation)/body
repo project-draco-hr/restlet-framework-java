@@ -5,9 +5,8 @@
     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_TYPE)) {
       final ContentType contentType=new ContentType(header.getValue());
       result.setMediaType(contentType.getMediaType());
-      final CharacterSet characterSet=contentType.getCharacterSet();
-      if (characterSet != null) {
-        result.setCharacterSet(characterSet);
+      if ((result.getCharacterSet() == null) || (contentType.getCharacterSet() != null)) {
+        result.setCharacterSet(contentType.getCharacterSet());
       }
       entityHeaderFound=true;
     }
