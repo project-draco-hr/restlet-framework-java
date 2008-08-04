@@ -1,8 +1,8 @@
 {
-  setKeyStorePath(helperParameters.getFirstValue("keystorePath",System.getProperty("user.home") + File.separator + ".keystore"));
-  setKeyStorePassword(helperParameters.getFirstValue("keystorePassword",""));
-  setKeyStoreType(helperParameters.getFirstValue("keystoreType","JKS"));
-  setKeyStoreKeyPassword(helperParameters.getFirstValue("keyPassword",""));
+  setKeyStorePath(helperParameters.getFirstValue("keystorePath",System.getProperty("javax.net.ssl.keyStore",System.getProperty("user.home") + File.separator + ".keystore")));
+  setKeyStorePassword(helperParameters.getFirstValue("keystorePassword",System.getProperty("javax.net.ssl.keyStorePassword","")));
+  setKeyStoreType(helperParameters.getFirstValue("keystoreType",System.getProperty("javax.net.ssl.keyStoreType",KeyStore.getDefaultType())));
+  setKeyStoreKeyPassword(helperParameters.getFirstValue("keyPassword",System.getProperty("javax.net.ssl.keyPassword","")));
   setKeyManagerAlgorithm(helperParameters.getFirstValue("certAlgorithm","SunX509"));
   setSecureSocketProtocol(helperParameters.getFirstValue("sslProtocol","TLS"));
 }
