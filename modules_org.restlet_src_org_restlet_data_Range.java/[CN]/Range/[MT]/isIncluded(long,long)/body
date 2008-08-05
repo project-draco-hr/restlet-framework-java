@@ -1,3 +1,16 @@
 {
-  return false;
+  boolean result=false;
+  if (getIndex() == INDEX_LAST) {
+    result=(0 <= position) && (position < totalSize);
+    if (result) {
+      result=position >= (totalSize - getLength());
+    }
+  }
+ else {
+    result=position >= getIndex();
+    if (result && (getLength() != LENGTH_MAX)) {
+      result=position < getIndex() + getLength();
+    }
+  }
+  return result;
 }
