@@ -4,7 +4,7 @@
     final URL userAgentPropertiesUrl=Engine.getClassLoader().getResource("org/restlet/service/accept.properties");
     if (userAgentPropertiesUrl != null) {
       final Form headers=(Form)request.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
-      final String acceptOld=headers.getFirstValue(HttpConstants.HEADER_ACCEPT);
+      final String acceptOld=(headers != null) ? headers.getFirstValue(HttpConstants.HEADER_ACCEPT) : null;
       BufferedReader reader;
       try {
         reader=new BufferedReader(new InputStreamReader(userAgentPropertiesUrl.openStream(),CharacterSet.UTF_8.getName()));

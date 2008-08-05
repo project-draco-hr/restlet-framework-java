@@ -1,14 +1,16 @@
 {
   final ByteBuffer byteBuffer=((WorkerThread)Thread.currentThread()).getByteBuffer();
   byteBuffer.flip();
-  final SelectionKey key=context.getSelectionKey();
-  final GrizzlyServerCall serverCall=new GrizzlyServerCall(this.helper.getHelped(),byteBuffer,key,(this.helper instanceof HttpsServerHelper));
-  final boolean keepAlive=false;
-  this.helper.handle(serverCall);
-  if (keepAlive) {
-    context.setKeyRegistrationState(Context.KeyRegistrationState.REGISTER);
-  }
+  if (byteBuffer.hasRemaining()) {
+    final SelectionKey key=context.getSelectionKey();
+    final GrizzlyServerCall serverCall=new GrizzlyServerCall(this.helper.getHelped(),byteBuffer,key,(this.helper instanceof HttpsServerHelper));
+    final boolean keepAlive=false;
+    this.helper.handle(serverCall);
+    if (keepAlive) {
+      context.setKeyRegistrationState(Context.KeyRegistrationState.REGISTER);
+    }
  else {
+    }
   }
   byteBuffer.clear();
   return true;
