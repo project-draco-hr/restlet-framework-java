@@ -16,6 +16,10 @@
   final TCPSelectorHandler selectorHandler=new TCPSelectorHandler();
   final SSLReadFilter readFilter=new SSLReadFilter();
   readFilter.setSSLContext(sslContext);
+  final String[] enabledCipherSuites=HttpsUtils.getEnabledCipherSuites(this);
+  if (enabledCipherSuites != null) {
+    readFilter.setEnabledCipherSuites(enabledCipherSuites);
+  }
   if (isNeedClientAuthentication()) {
     readFilter.setNeedClientAuth(isNeedClientAuthentication());
   }
