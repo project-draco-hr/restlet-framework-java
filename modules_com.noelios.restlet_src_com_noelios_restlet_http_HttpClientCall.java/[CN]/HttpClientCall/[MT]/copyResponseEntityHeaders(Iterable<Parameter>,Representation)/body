@@ -54,6 +54,10 @@
       result.setDownloadName(parseContentDisposition(header.getValue()));
       entityHeaderFound=true;
     }
+ else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_RANGE)) {
+      result.setRange(parseContentRange(header.getValue()));
+      entityHeaderFound=true;
+    }
   }
   if ((representation == null) && !entityHeaderFound) {
     result=null;

@@ -1,0 +1,44 @@
+{
+  Form form=request.getResourceRef().getQueryAsForm();
+  List<Range> ranges=request.getRanges();
+  boolean match=false;
+  for (  Parameter parameter : form) {
+    long index=0;
+    long length=0;
+    String value=parameter.getValue();
+    if (value.startsWith("-")) {
+      index=Range.INDEX_LAST;
+      length=Long.parseLong(value.substring(1));
+    }
+ else     if (value.endsWith("-")) {
+      index=Long.parseLong(value.substring(0,value.length() - 2));
+      length=Range.LENGTH_MAX;
+    }
+ else {
+      String[] tab=value.split("-");
+      if (tab.length == 2) {
+        index=Long.parseLong(tab[0]);
+        length=index + Long.parseLong(tab[1]);
+      }
+    }
+    boolean found=false;
+    for (    Range range : ranges) {
+      found=(index == range.getIndex()) && (length == range.getLength());
+      if (found) {
+        break;
+      }
+    }
+    if (!found) {
+      break;
+    }
+ else {
+      match=true;
+    }
+  }
+  if (match) {
+    response.setStatus(Status.SUCCESS_OK);
+  }
+ else {
+    response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+  }
+}

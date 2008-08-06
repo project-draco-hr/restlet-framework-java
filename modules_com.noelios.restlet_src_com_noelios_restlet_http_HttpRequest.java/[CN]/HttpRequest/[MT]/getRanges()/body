@@ -1,0 +1,10 @@
+{
+  List<Range> result=super.getRanges();
+  if (!this.rangesAdded) {
+    final String ranges=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_RANGE);
+    result=RangeUtils.parseRangeHeader(ranges);
+    setRanges(result);
+    this.rangesAdded=true;
+  }
+  return result;
+}
