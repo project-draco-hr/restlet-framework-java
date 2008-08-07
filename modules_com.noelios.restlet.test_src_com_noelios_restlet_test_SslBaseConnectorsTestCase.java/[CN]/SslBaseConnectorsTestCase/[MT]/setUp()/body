@@ -1,2 +1,16 @@
 {
+  try {
+    if (!testKeystoreFile.exists()) {
+      this.testDir.delete();
+      this.testDir.mkdir();
+      Response response=new Client(Protocol.CLAP).get("clap://class/dummy.jks");
+      OutputStream outputStream=new FileOutputStream(testKeystoreFile);
+      response.getEntity().write(outputStream);
+      outputStream.flush();
+      outputStream.close();
+    }
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
 }
