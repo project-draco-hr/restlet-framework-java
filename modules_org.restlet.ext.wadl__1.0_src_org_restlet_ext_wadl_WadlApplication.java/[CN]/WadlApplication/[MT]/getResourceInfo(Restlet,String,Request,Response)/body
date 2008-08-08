@@ -1,6 +1,10 @@
 {
   ResourceInfo result=null;
-  if (restlet instanceof Finder) {
+  if (restlet instanceof WadlDescribable) {
+    result=((WadlDescribable)restlet).getResourceInfo();
+    result.setPath(path);
+  }
+ else   if (restlet instanceof Finder) {
     result=getResourceInfo((Finder)restlet,path,request,response);
   }
  else   if (restlet instanceof Router) {
