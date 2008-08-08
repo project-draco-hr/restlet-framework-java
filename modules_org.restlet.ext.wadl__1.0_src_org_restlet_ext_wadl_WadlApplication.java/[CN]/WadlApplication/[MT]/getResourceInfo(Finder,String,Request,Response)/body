@@ -14,6 +14,16 @@
     if (handler != null) {
       methods.addAll(handler.getAllowedMethods());
     }
+ else {
+      if (finder instanceof Directory) {
+        Directory directory=(Directory)finder;
+        methods.add(Method.GET);
+        if (directory.isModifiable()) {
+          methods.add(Method.DELETE);
+          methods.add(Method.PUT);
+        }
+      }
+    }
     Collections.sort(methods,new Comparator<Method>(){
       public int compare(      Method m1,      Method m2){
         return m1.getName().compareTo(m2.getName());
