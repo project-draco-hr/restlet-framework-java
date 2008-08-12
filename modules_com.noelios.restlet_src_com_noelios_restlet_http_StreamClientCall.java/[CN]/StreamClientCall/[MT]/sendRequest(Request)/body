@@ -12,8 +12,8 @@
       }
     }
     this.socket=createSocket(hostDomain,hostPort);
-    this.requestStream=this.socket.getOutputStream();
-    this.responseStream=this.socket.getInputStream();
+    this.requestStream=new BufferedOutputStream(this.socket.getOutputStream());
+    this.responseStream=new BufferedInputStream(this.socket.getInputStream());
     getRequestHeadStream().write(getMethod().getBytes());
     getRequestHeadStream().write(' ');
     getRequestHeadStream().write(getRequestUri().getBytes());
@@ -33,6 +33,7 @@
       HttpUtils.writeHeader(header,getRequestHeadStream());
     }
     HttpUtils.writeCRLF(getRequestHeadStream());
+    getRequestHeadStream().flush();
     result=super.sendRequest(request);
     if (result.equals(Status.CONNECTOR_ERROR_COMMUNICATION)) {
       return result;
