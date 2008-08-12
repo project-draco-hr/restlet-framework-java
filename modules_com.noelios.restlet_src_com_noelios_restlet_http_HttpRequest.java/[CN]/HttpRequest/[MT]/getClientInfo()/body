@@ -32,13 +32,15 @@
     result.setAgent(getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_USER_AGENT));
     result.setAddress(getHttpCall().getClientAddress());
     result.setPort(getHttpCall().getClientPort());
-    final boolean useForwardedForHeader=Boolean.parseBoolean(this.context.getParameters().getFirstValue("useForwardedForHeader",false));
-    if (useForwardedForHeader) {
-      final String header=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_X_FORWARDED_FOR);
-      if (header != null) {
-        final String[] addresses=header.split(",");
-        for (int i=addresses.length - 1; i >= 0; i--) {
-          result.getAddresses().add(addresses[i].trim());
+    if (this.context != null) {
+      final boolean useForwardedForHeader=Boolean.parseBoolean(this.context.getParameters().getFirstValue("useForwardedForHeader",false));
+      if (useForwardedForHeader) {
+        final String header=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_X_FORWARDED_FOR);
+        if (header != null) {
+          final String[] addresses=header.split(",");
+          for (int i=addresses.length - 1; i >= 0; i--) {
+            result.getAddresses().add(addresses[i].trim());
+          }
         }
       }
     }
