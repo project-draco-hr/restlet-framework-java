@@ -7,7 +7,7 @@ synchronized (ServerServlet.class) {
           final String applicationAttributeName=getInitParameter(NAME_APPLICATION_ATTRIBUTE,NAME_APPLICATION_ATTRIBUTE_DEFAULT);
           result=(Application)getServletContext().getAttribute(applicationAttributeName);
           if (result == null) {
-            result=createApplication(getComponent().getContext());
+            result=createApplication(getComponent().getContext().createChildContext());
             getServletContext().setAttribute(applicationAttributeName,result);
           }
           this.application=result;
