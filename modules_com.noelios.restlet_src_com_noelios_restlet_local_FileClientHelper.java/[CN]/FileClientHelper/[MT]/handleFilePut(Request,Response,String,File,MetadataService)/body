@@ -1,0 +1,263 @@
+{
+  boolean isDirectory=false;
+  if (file.exists()) {
+    if (file.isDirectory()) {
+      isDirectory=true;
+      response.setStatus(new Status(Status.CLIENT_ERROR_FORBIDDEN,"Can't put a new representation of a directory"));
+    }
+  }
+ else {
+    if (path.endsWith("/")) {
+      isDirectory=true;
+      if (file.mkdirs()) {
+        response.setStatus(Status.SUCCESS_NO_CONTENT);
+      }
+ else {
+        getLogger().log(Level.WARNING,"Unable to create the new directory");
+        response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to create the new directory"));
+      }
+    }
+  }
+  if (!isDirectory) {
+    boolean partialPut=!request.getRanges().isEmpty();
+    if (!checkMetadataConsistency(file.getName(),metadataService,request.getEntity())) {
+      response.setStatus(new Status(Status.REDIRECTION_SEE_OTHER,"The metadata are not consistent with the URI"));
+    }
+ else {
+      final String baseName=getBaseName(file,metadataService);
+      final Set<String> extensions=getExtensions(file,metadataService);
+      final File[] files=file.getParentFile().listFiles();
+      File uniqueVariant=null;
+      final List<File> variantsList=new ArrayList<File>();
+      File tmpRangeFile=null;
+      if (files != null) {
+        for (        final File entry : files) {
+          if (baseName.equals(getBaseName(entry,metadataService))) {
+            final Set<String> entryExtensions=getExtensions(entry,metadataService);
+            if (entryExtensions.containsAll(extensions)) {
+              if (partialPut && entry.getName().endsWith("tmp")) {
+                tmpRangeFile=entry;
+              }
+ else {
+                variantsList.add(entry);
+                if (extensions.containsAll(entryExtensions)) {
+                  uniqueVariant=entry;
+                }
+              }
+            }
+          }
+        }
+      }
+      if (uniqueVariant != null) {
+        file=uniqueVariant;
+      }
+ else {
+        if (!variantsList.isEmpty()) {
+          response.setStatus(new Status(Status.CLIENT_ERROR_NOT_ACCEPTABLE,"Unable to process properly the request. Several variants exist but none of them suits precisely."));
+        }
+ else {
+          updateMetadata(metadataService,file.getName(),request.getEntity());
+          if (request.getEntity().getLanguages().isEmpty()) {
+            if (metadataService.getDefaultLanguage() != null) {
+              request.getEntity().getLanguages().add(metadataService.getDefaultLanguage());
+            }
+          }
+          if (request.getEntity().getMediaType() == null) {
+            request.getEntity().setMediaType(metadataService.getDefaultMediaType());
+          }
+          if (request.getEntity().getEncodings().isEmpty()) {
+            if ((metadataService.getDefaultEncoding() != null) && !metadataService.getDefaultEncoding().equals(Encoding.IDENTITY)) {
+              request.getEntity().getEncodings().add(metadataService.getDefaultEncoding());
+            }
+          }
+          final StringBuilder fileName=new StringBuilder(baseName);
+          if (metadataService.getExtension(request.getEntity().getMediaType()) != null) {
+            fileName.append("." + metadataService.getExtension(request.getEntity().getMediaType()));
+          }
+          for (          final Language language : request.getEntity().getLanguages()) {
+            if (metadataService.getExtension(language) != null) {
+              fileName.append("." + metadataService.getExtension(language));
+            }
+          }
+          for (          final Encoding encoding : request.getEntity().getEncodings()) {
+            if (metadataService.getExtension(encoding) != null) {
+              fileName.append("." + metadataService.getExtension(encoding));
+            }
+          }
+          file=new File(file.getParentFile(),fileName.toString());
+        }
+      }
+      if (!checkExtensionsConsistency(file,metadataService)) {
+        response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to process properly the URI. At least one extension is not known by the server."));
+      }
+ else {
+        File tmp=null;
+        if (file.exists()) {
+          FileOutputStream fos=null;
+          RandomAccessFile raf=null;
+          try {
+            if (partialPut) {
+              Range range=request.getRanges().get(0);
+              if (tmpRangeFile == null) {
+                tmpRangeFile=new File(file.getCanonicalPath().concat(".tmp"));
+                if (tmpRangeFile.createNewFile()) {
+                  raf=new RandomAccessFile(tmpRangeFile,"rwd");
+                  ByteUtils.write(new FileInputStream(file),raf);
+                  raf.close();
+                }
+ else {
+                }
+              }
+              tmp=tmpRangeFile;
+              raf=new RandomAccessFile(tmpRangeFile,"rwd");
+              if (range.getIndex() == Range.INDEX_LAST) {
+                if (raf.length() <= range.getSize()) {
+                  raf.seek(range.getSize());
+                }
+ else {
+                  raf.seek(raf.length() - range.getSize());
+                }
+              }
+ else {
+                raf.seek(range.getIndex());
+              }
+              if (request.isEntityAvailable()) {
+                ByteUtils.write(request.getEntity().getStream(),raf);
+              }
+            }
+ else {
+              tmp=File.createTempFile("restlet-upload","bin");
+              if (request.isEntityAvailable()) {
+                fos=new FileOutputStream(tmp);
+                ByteUtils.write(request.getEntity().getStream(),fos);
+              }
+            }
+          }
+ catch (          final IOException ioe) {
+            getLogger().log(Level.WARNING,"Unable to create the temporary file",ioe);
+            response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to create a temporary file"));
+          }
+ finally {
+            try {
+              if (fos != null) {
+                fos.close();
+              }
+              if (raf != null) {
+                raf.close();
+              }
+            }
+ catch (            final IOException ioe) {
+              getLogger().log(Level.WARNING,"Unable to close the temporary file",ioe);
+              response.setStatus(Status.SERVER_ERROR_INTERNAL,ioe);
+            }
+          }
+          if (file.delete()) {
+            boolean renameSuccessfull=false;
+            if ((tmp != null) && tmp.renameTo(file)) {
+              if (request.getEntity() == null) {
+                response.setStatus(Status.SUCCESS_NO_CONTENT);
+              }
+ else {
+                response.setStatus(Status.SUCCESS_OK);
+              }
+              renameSuccessfull=true;
+            }
+ else {
+              if ((tmp != null) && tmp.exists()) {
+                try {
+                  final BufferedReader br=new BufferedReader(new FileReader(tmp));
+                  final BufferedWriter wr=new BufferedWriter(new FileWriter(file));
+                  String s;
+                  while ((s=br.readLine()) != null) {
+                    wr.append(s);
+                  }
+                  br.close();
+                  wr.flush();
+                  wr.close();
+                  renameSuccessfull=true;
+                  tmp.delete();
+                }
+ catch (                final Exception e) {
+                  renameSuccessfull=false;
+                }
+              }
+              if (!renameSuccessfull) {
+                getLogger().log(Level.WARNING,"Unable to move the temporary file to replace the existing file");
+                response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to move the temporary file to replace the existing file"));
+              }
+            }
+          }
+ else {
+            getLogger().log(Level.WARNING,"Unable to delete the existing file");
+            response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to delete the existing file"));
+          }
+        }
+ else {
+          final File parent=file.getParentFile();
+          if ((parent != null) && !parent.exists()) {
+            if (!parent.mkdirs()) {
+              getLogger().log(Level.WARNING,"Unable to create the parent directory");
+              response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to create the parent directory"));
+            }
+          }
+          FileOutputStream fos=null;
+          try {
+            if (partialPut) {
+              RandomAccessFile raf=new RandomAccessFile(file,"rwd");
+              Range range=request.getRanges().get(0);
+              if (range.getIndex() == Range.INDEX_LAST) {
+                if (raf.length() <= range.getSize()) {
+                  raf.seek(range.getSize());
+                }
+ else {
+                  raf.seek(raf.length() - range.getSize());
+                }
+              }
+ else {
+                raf.seek(range.getIndex());
+              }
+              if (request.isEntityAvailable()) {
+                ByteUtils.write(request.getEntity().getStream(),raf);
+              }
+            }
+ else {
+              if (file.createNewFile()) {
+                if (request.getEntity() == null) {
+                  response.setStatus(Status.SUCCESS_NO_CONTENT);
+                }
+ else {
+                  fos=new FileOutputStream(file);
+                  ByteUtils.write(request.getEntity().getStream(),fos);
+                  response.setStatus(Status.SUCCESS_CREATED);
+                }
+              }
+ else {
+                getLogger().log(Level.WARNING,"Unable to create the new file");
+                response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to create the new file"));
+              }
+            }
+          }
+ catch (          final FileNotFoundException fnfe) {
+            getLogger().log(Level.WARNING,"Unable to create the new file",fnfe);
+            response.setStatus(Status.SERVER_ERROR_INTERNAL,fnfe);
+          }
+catch (          final IOException ioe) {
+            getLogger().log(Level.WARNING,"Unable to create the new file",ioe);
+            response.setStatus(Status.SERVER_ERROR_INTERNAL,ioe);
+          }
+ finally {
+            try {
+              if (fos != null) {
+                fos.close();
+              }
+            }
+ catch (            final IOException ioe) {
+              getLogger().log(Level.WARNING,"Unable to close the temporary file",ioe);
+              response.setStatus(Status.SERVER_ERROR_INTERNAL,ioe);
+            }
+          }
+        }
+      }
+    }
+  }
+}

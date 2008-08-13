@@ -4,15 +4,20 @@
   while ((skipped >= 0) && !(position >= startIndex) && !this.range.isIncluded(position+=skipped,totalSize)) {
     skipped=skip(startIndex - position);
   }
-  long finalIndex=startIndex + range.getSize();
-  if (position >= finalIndex) {
-    return -1;
+  if (range.getSize() != Range.SIZE_MAX) {
+    long finalIndex=startIndex + range.getSize();
+    if (position >= finalIndex) {
+      return -1;
+    }
+ else {
+      int n=super.read(b,off,((position + len) > finalIndex) ? (int)(finalIndex - position) : len);
+      if (n > 0) {
+        position+=n;
+      }
+      return n;
+    }
   }
  else {
-    int n=super.read(b,off,((position + len) > finalIndex) ? (int)(finalIndex - position) : len);
-    if (n > 0) {
-      position+=n;
-    }
-    return n;
+    return super.read(b,off,len);
   }
 }

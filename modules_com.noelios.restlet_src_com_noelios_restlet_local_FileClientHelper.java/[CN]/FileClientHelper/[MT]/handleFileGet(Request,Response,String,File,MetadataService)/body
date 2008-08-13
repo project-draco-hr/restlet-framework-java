@@ -1,0 +1,75 @@
+{
+  Representation output=null;
+  boolean found=false;
+  final Iterator<Preference<MediaType>> iterator=request.getClientInfo().getAcceptedMediaTypes().iterator();
+  while (iterator.hasNext() && !found) {
+    final Preference<MediaType> pref=iterator.next();
+    found=pref.getMetadata().equals(MediaType.TEXT_URI_LIST);
+  }
+  if (found) {
+    final String baseName=getBaseName(file,metadataService);
+    if (file.getParentFile() != null) {
+      final File[] files=file.getParentFile().listFiles();
+      if (files != null) {
+        final ReferenceList rl=new ReferenceList(files.length);
+        final String encodedParentDirectoryURI=path.substring(0,path.lastIndexOf("/"));
+        final String encodedFileName=path.substring(path.lastIndexOf("/") + 1);
+        for (        final File entry : files) {
+          if (baseName.equals(getBaseName(entry,metadataService))) {
+            rl.add(LocalReference.createFileReference(encodedParentDirectoryURI + "/" + getReencodedVariantFileName(encodedFileName,entry.getName())));
+          }
+        }
+        output=rl.getTextRepresentation();
+      }
+    }
+  }
+ else {
+    if (file.exists()) {
+      if (file.isDirectory()) {
+        final File[] files=file.listFiles();
+        final ReferenceList rl=new ReferenceList(files.length);
+        String directoryUri=request.getResourceRef().toString();
+        if (!directoryUri.endsWith("/")) {
+          directoryUri+="/";
+        }
+        for (        final File entry : files) {
+          rl.add(directoryUri + Reference.encode(entry.getName()));
+        }
+        output=rl.getTextRepresentation();
+      }
+ else {
+        output=new FileRepresentation(file,metadataService.getDefaultMediaType(),getTimeToLive());
+        updateMetadata(metadataService,file.getName(),output);
+      }
+    }
+ else {
+      final String baseName=getBaseName(file,metadataService);
+      final Set<String> extensions=getExtensions(file,metadataService);
+      final File[] files=file.getParentFile().listFiles();
+      File uniqueVariant=null;
+      if (files != null) {
+        for (        final File entry : files) {
+          if (baseName.equals(getBaseName(entry,metadataService))) {
+            final Set<String> entryExtensions=getExtensions(entry,metadataService);
+            if (entryExtensions.containsAll(extensions) && extensions.containsAll(entryExtensions)) {
+              uniqueVariant=entry;
+              break;
+            }
+          }
+        }
+      }
+      if (uniqueVariant != null) {
+        output=new FileRepresentation(uniqueVariant,metadataService.getDefaultMediaType(),getTimeToLive());
+        updateMetadata(metadataService,file.getName(),output);
+      }
+    }
+  }
+  if (output == null) {
+    response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+  }
+ else {
+    output.setIdentifier(request.getResourceRef());
+    response.setEntity(output);
+    response.setStatus(Status.SUCCESS_OK);
+  }
+}

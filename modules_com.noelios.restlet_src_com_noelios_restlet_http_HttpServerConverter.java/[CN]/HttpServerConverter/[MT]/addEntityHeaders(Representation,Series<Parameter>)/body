@@ -56,5 +56,8 @@
     if (entity.getRange() != null) {
       responseHeaders.add(HttpConstants.HEADER_CONTENT_RANGE,RangeUtils.formatContentRange(entity.getRange(),entity.getSize()));
     }
+    if (entity.getDigest() != null && Digest.ALGORITHM_MD5.equals(entity.getDigest().getAlgorithm())) {
+      responseHeaders.add(HttpConstants.HEADER_CONTENT_MD5,entity.getDigest().getValue());
+    }
   }
 }

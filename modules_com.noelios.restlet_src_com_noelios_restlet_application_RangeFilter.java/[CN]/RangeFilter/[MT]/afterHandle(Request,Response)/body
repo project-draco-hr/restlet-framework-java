@@ -1,18 +1,14 @@
 {
   if (getRangeService().isEnabled() && response.isEntityAvailable()) {
-    if (response.getEntity().getRange() != null) {
-      if (!request.getRanges().isEmpty()) {
-        if (!response.getEntity().getRange().equals(request.getRanges().get(0))) {
-        }
-      }
- else {
-        response.setEntity(new RangeRepresentation(response.getEntity()));
+    if (request.getRanges().size() == 1) {
+      Range requestedRange=request.getRanges().get(0);
+      if (!requestedRange.equals(response.getEntity().getRange())) {
+        response.setEntity(new RangeRepresentation(response.getEntity(),requestedRange));
       }
     }
- else {
-      if (!request.getRanges().isEmpty()) {
-        response.setEntity(new RangeRepresentation(response.getEntity(),request.getRanges().get(0)));
-      }
+ else     if (request.getRanges().size() > 1) {
+      response.setStatus(Status.CLIENT_ERROR_REQUESTED_RANGE_NOT_SATISFIABLE);
+      response.setEntity(null);
     }
   }
 }

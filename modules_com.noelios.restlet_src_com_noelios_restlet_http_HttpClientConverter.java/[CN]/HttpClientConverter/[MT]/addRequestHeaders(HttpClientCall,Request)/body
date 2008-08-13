@@ -125,6 +125,9 @@
       if (request.getEntity().getRange() != null) {
         requestHeaders.add(HttpConstants.HEADER_CONTENT_RANGE,RangeUtils.formatContentRange(request.getEntity().getRange(),request.getEntity().getSize()));
       }
+      if (request.getEntity().getDigest() != null && Digest.ALGORITHM_MD5.equals(request.getEntity().getDigest().getAlgorithm())) {
+        requestHeaders.add(HttpConstants.HEADER_CONTENT_MD5,request.getEntity().getDigest().getValue());
+      }
     }
     final Series<Parameter> additionalHeaders=(Series<Parameter>)request.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
     addAdditionalHeaders(requestHeaders,additionalHeaders);
