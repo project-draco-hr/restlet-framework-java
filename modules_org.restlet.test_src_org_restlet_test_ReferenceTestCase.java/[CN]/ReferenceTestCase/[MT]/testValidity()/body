@@ -1,10 +1,8 @@
 {
-  final String uri="http ://domain.tld/whatever/";
-  try {
-    new Reference(uri);
-  }
- catch (  final IllegalArgumentException iae) {
-    return;
-  }
-  fail("An exception should have been thrown");
+  String uri="http ://domain.tld/whatever/";
+  Reference ref=new Reference(uri);
+  assertEquals("http+://domain.tld/whatever/",ref.toString());
+  uri="file:///C|/wherever\\whatever.swf";
+  ref=new Reference(uri);
+  assertEquals("file:///C%7C/wherever%5Cwhatever.swf",ref.toString());
 }
