@@ -24,7 +24,7 @@
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   request.setMethod(Method.GET);
   response=client.handle(request);
-  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  assertEquals(Status.SUCCESS_PARTIAL_CONTENT,response.getStatus());
   assertEquals("0000000000",response.getEntity().getText());
   request=new Request(Method.PUT,"http://localhost:8182/testPut/essai.txt");
   request.setEntity(new StringRepresentation("22"));
@@ -49,7 +49,7 @@
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   request.setMethod(Method.GET);
   response=client.handle(request);
-  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  assertEquals(Status.SUCCESS_PARTIAL_CONTENT,response.getStatus());
   assertEquals("888",response.getEntity().getText());
   request=new Request(Method.PUT,"http://localhost:8182/testPut/essai.txt");
   request.setEntity(new StringRepresentation("99"));
@@ -62,7 +62,7 @@
   request=new Request(Method.GET,"http://localhost:8182/testPut/essai.txt");
   request.setRanges(Arrays.asList(new Range(3,Range.SIZE_MAX)));
   response=client.handle(request);
-  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  assertEquals(Status.SUCCESS_PARTIAL_CONTENT,response.getStatus());
   assertEquals("20000998",response.getEntity().getText());
   deleteDir(testDir);
 }
