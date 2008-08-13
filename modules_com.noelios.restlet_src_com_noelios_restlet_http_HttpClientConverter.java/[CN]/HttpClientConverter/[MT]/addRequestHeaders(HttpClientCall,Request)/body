@@ -123,7 +123,12 @@
         requestHeaders.add(HttpConstants.HEADER_CONTENT_LENGTH,String.valueOf(request.getEntity().getSize()));
       }
       if (request.getEntity().getRange() != null) {
-        requestHeaders.add(HttpConstants.HEADER_CONTENT_RANGE,RangeUtils.formatContentRange(request.getEntity().getRange(),request.getEntity().getSize()));
+        try {
+          requestHeaders.add(HttpConstants.HEADER_CONTENT_RANGE,RangeUtils.formatContentRange(request.getEntity().getRange(),request.getEntity().getSize()));
+        }
+ catch (        Exception e) {
+          getLogger().log(Level.WARNING,"Unable to format the HTTP Content-Range header",e);
+        }
       }
       if (request.getEntity().getDigest() != null && Digest.ALGORITHM_MD5.equals(request.getEntity().getDigest().getAlgorithm())) {
         requestHeaders.add(HttpConstants.HEADER_CONTENT_MD5,request.getEntity().getDigest().getValue());
