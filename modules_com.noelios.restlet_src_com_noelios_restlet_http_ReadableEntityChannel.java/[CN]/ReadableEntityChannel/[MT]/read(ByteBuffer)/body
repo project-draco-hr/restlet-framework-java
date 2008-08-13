@@ -1,17 +1,17 @@
 {
   int result=-1;
-  if ((this.remainingBuffer != null) && (this.remainingBuffer.hasRemaining())) {
-    result=this.remainingBuffer.remaining();
-    final byte[] src=new byte[result];
-    this.remainingBuffer.get(src);
-    dst.put(src);
-  }
+  if (this.availableSize > 0) {
+    if ((this.remainingBuffer != null) && (this.remainingBuffer.hasRemaining())) {
+      result=this.remainingBuffer.remaining();
+      final byte[] src=new byte[result];
+      this.remainingBuffer.get(src);
+      dst.put(src);
+    }
  else {
-    if (this.availableSize > 0) {
       result=((ReadableByteChannel)getSource()).read(dst);
-      if (result > 0) {
-        this.availableSize-=result;
-      }
+    }
+    if (result > 0) {
+      this.availableSize-=result;
     }
   }
   return result;

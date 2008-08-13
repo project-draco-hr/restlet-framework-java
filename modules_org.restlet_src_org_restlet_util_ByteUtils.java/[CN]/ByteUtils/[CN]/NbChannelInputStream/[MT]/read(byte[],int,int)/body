@@ -1,11 +1,13 @@
 {
   int result=-1;
-  if (!this.bb.hasRemaining()) {
-    refill();
-  }
   if (!this.endReached) {
-    result=Math.min(len,this.bb.remaining());
-    this.bb.get(b,off,result);
+    if (!this.bb.hasRemaining()) {
+      refill();
+    }
+    if (!this.endReached) {
+      result=Math.min(len,this.bb.remaining());
+      this.bb.get(b,off,result);
+    }
   }
   return result;
 }
