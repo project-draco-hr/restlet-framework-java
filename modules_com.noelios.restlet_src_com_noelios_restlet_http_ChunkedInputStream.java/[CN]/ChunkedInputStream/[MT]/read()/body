@@ -1,14 +1,13 @@
 {
   int result=-1;
   initialize();
-  if (!this.done) {
-    if (chunkAvailable()) {
+  if (!this.endReached) {
+    if (!chunkAvailable()) {
+      initializeChunk();
+    }
+    if (!this.endReached) {
       result=this.source.read();
       this.position++;
-    }
- else {
-      initializeChunk();
-      return read();
     }
   }
   return result;
