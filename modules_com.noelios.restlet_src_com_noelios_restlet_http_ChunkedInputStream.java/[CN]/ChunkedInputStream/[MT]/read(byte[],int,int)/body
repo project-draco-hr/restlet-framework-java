@@ -1,0 +1,11 @@
+{
+  int result=-1;
+  if (canRead()) {
+    result=this.source.read(b,off,Math.min(len,(int)(this.chunkSize - this.position)));
+    this.position+=result;
+    if (len - result > 0) {
+      result+=read(b,off + result,len - result);
+    }
+  }
+  return result;
+}
