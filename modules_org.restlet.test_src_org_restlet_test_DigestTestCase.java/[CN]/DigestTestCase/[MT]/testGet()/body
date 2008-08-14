@@ -1,0 +1,9 @@
+{
+  Client client=new Client(Protocol.HTTP);
+  Request request=new Request(Method.PUT,"http://localhost:8182/");
+  StringRepresentation rep=new StringRepresentation("0123456789");
+  rep.setDigest(rep.computeDigest(Digest.ALGORITHM_MD5));
+  request.setEntity(rep);
+  Response response=client.handle(request);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+}
