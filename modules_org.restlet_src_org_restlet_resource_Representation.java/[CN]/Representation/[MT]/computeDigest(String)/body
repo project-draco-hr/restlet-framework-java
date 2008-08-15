@@ -1,11 +1,18 @@
 {
+  Digest result=null;
   if (isAvailable()) {
-    MessageDigest md=MessageDigest.getInstance(algorithm);
-    DigestInputStream dis=new DigestInputStream(getStream(),md);
-    ByteUtils.exhaust(dis);
-    return new Digest(algorithm,Engine.getInstance().toBase64(md.digest()));
+    try {
+      MessageDigest md=MessageDigest.getInstance(algorithm);
+      DigestInputStream dis=new DigestInputStream(getStream(),md);
+      ByteUtils.exhaust(dis);
+      result=new Digest(algorithm,Engine.getInstance().toBase64(md.digest()));
+    }
+ catch (    NoSuchAlgorithmException e) {
+      Context.getCurrentLogger().log(Level.WARNING,"Unable to check the digest of the representation.",e);
+    }
+catch (    IOException e) {
+      Context.getCurrentLogger().log(Level.WARNING,"Unable to check the digest of the representation.",e);
+    }
   }
- else {
-    return null;
-  }
+  return result;
 }
