@@ -1,3 +1,9 @@
 {
-  return this.reader.readFrom((Class)type,genericType,annotations,Converter.toJaxRsMediaType(mediaType),httpHeaders,entityStream);
+  try {
+    return this.reader.readFrom((Class)type,genericType,annotations,Converter.toJaxRsMediaType(mediaType),httpHeaders,entityStream);
+  }
+ catch (  Throwable t) {
+    if (t instanceof WebApplicationException)     throw (WebApplicationException)t;
+ else     throw new InvocationTargetException(t);
+  }
 }
