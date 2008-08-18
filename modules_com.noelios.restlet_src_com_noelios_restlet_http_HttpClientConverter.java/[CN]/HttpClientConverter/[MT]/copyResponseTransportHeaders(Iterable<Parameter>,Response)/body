@@ -5,11 +5,11 @@
     }
  else     if ((header.getName().equalsIgnoreCase(HttpConstants.HEADER_SET_COOKIE)) || (header.getName().equalsIgnoreCase(HttpConstants.HEADER_SET_COOKIE2))) {
       try {
-        final CookieReader cr=new CookieReader(logger,header.getValue());
+        final CookieReader cr=new CookieReader(header.getValue());
         response.getCookieSettings().add(cr.readCookieSetting());
       }
  catch (      final Exception e) {
-        logger.log(Level.WARNING,"Error during cookie setting parsing. Header: " + header.getValue(),e);
+        Context.getCurrentLogger().log(Level.WARNING,"Error during cookie setting parsing. Header: " + header.getValue(),e);
       }
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_WWW_AUTHENTICATE)) {
