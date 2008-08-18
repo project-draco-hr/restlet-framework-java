@@ -1,0 +1,17 @@
+{
+  long startTime=System.currentTimeMillis();
+  Client client=new Client(Protocol.HTTP);
+  Response response=client.get("http://localhost:8554/");
+  System.out.println("Status: " + response.getStatus());
+  if (response.getStatus().isSuccess()) {
+    long expectedSize=response.getEntity().getSize();
+    long receivedSize=response.getEntity().exhaust();
+    System.out.println("Size expected: " + expectedSize);
+    System.out.println("Size consumed: " + receivedSize);
+    if ((expectedSize != -1) && (expectedSize != receivedSize)) {
+      System.out.println("ERROR: SOME BYTES WERE LOST!");
+    }
+  }
+  long endTime=System.currentTimeMillis();
+  System.out.println("Duration: " + (endTime - startTime) + " ms");
+}
