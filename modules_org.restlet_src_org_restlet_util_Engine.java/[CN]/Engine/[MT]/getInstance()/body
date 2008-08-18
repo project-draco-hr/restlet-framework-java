@@ -22,7 +22,7 @@
         }
       }
  catch (      final IOException e) {
-        logger.log(Level.SEVERE,"Unable to register the Restlet API implementation. Please check that the JAR file is in your classpath.");
+        Context.getCurrentLogger().log(Level.SEVERE,"Unable to register the Restlet API implementation. Please check that the JAR file is in your classpath.");
       }
  finally {
         if (reader != null) {
@@ -30,7 +30,7 @@
             reader.close();
           }
  catch (          final IOException e) {
-            logger.warning("IOException encountered while closing an open BufferedReader" + e.getMessage());
+            Context.getCurrentLogger().warning("IOException encountered while closing an open BufferedReader" + e.getMessage());
           }
         }
       }
@@ -39,12 +39,12 @@
         result=instance;
       }
  catch (      final Exception e) {
-        logger.log(Level.SEVERE,"Unable to register the Restlet API implementation",e);
+        Context.getCurrentLogger().log(Level.SEVERE,"Unable to register the Restlet API implementation",e);
         throw new RuntimeException("Unable to register the Restlet API implementation");
       }
     }
     if (configURL == null) {
-      logger.log(Level.SEVERE,"Unable to find an implementation of the Restlet API. Please check your classpath.");
+      Context.getCurrentLogger().log(Level.SEVERE,"Unable to find an implementation of the Restlet API. Please check your classpath.");
     }
   }
   return result;
