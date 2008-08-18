@@ -6,7 +6,8 @@
   response.setEntity(rewrite(response.getEntity()));
   response.getAttributes().remove("org.restlet.http.headers");
   if (response.getLocationRef() != null) {
-    final Template rt=new Template(getLogger(),this.targetTemplate);
+    final Template rt=new Template(this.targetTemplate);
+    rt.setLogger(getLogger());
     final int matched=rt.parse(response.getLocationRef().toString(),request);
     if (matched > 0) {
       final String remainingPart=(String)request.getAttributes().get("rr");
