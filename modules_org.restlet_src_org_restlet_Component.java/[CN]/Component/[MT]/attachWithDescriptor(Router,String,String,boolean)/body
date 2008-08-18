@@ -7,7 +7,7 @@
     final Response response=getContext().getClientDispatcher().get(targetDescriptor);
     if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
       final Representation representation=response.getEntity();
-      final Application target=(Application)targetClass.getConstructor(Context.class,Representation.class).newInstance(getContext(),representation);
+      final Application target=(Application)targetClass.getConstructor(Context.class,Representation.class).newInstance(getContext().createChildContext(),representation);
       if (target != null) {
         if ((uriPattern != null) && !defaultRoute) {
           route=router.attach(uriPattern,target);
