@@ -4,6 +4,7 @@
     if (file.isDirectory()) {
       isDirectory=true;
       response.setStatus(new Status(Status.CLIENT_ERROR_FORBIDDEN,"Can't put a new representation of a directory"));
+      return;
     }
   }
  else {
@@ -16,12 +17,14 @@
         getLogger().log(Level.WARNING,"Unable to create the new directory");
         response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to create the new directory"));
       }
+      return;
     }
   }
   if (!isDirectory) {
     boolean partialPut=!request.getRanges().isEmpty();
     if (!checkMetadataConsistency(file.getName(),metadataService,request.getEntity())) {
       response.setStatus(new Status(Status.REDIRECTION_SEE_OTHER,"The metadata are not consistent with the URI"));
+      return;
     }
  else {
       final String baseName=getBaseName(file,metadataService);
@@ -48,6 +51,7 @@
  else {
         if (!variantsList.isEmpty()) {
           response.setStatus(new Status(Status.CLIENT_ERROR_NOT_ACCEPTABLE,"Unable to process properly the request. Several variants exist but none of them suits precisely."));
+          return;
         }
  else {
           updateMetadata(metadataService,file.getName(),request.getEntity());
@@ -83,15 +87,20 @@
       }
       if (!checkExtensionsConsistency(file,metadataService)) {
         response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to process properly the URI. At least one extension is not known by the server."));
+        return;
       }
  else {
         File tmp=null;
+        boolean error=false;
         if (file.exists()) {
           if (partialPut) {
             RandomAccessFile raf=null;
             try {
               tmp=new File(file.getCanonicalPath() + "." + getTemporaryExtension());
               Range range=request.getRanges().get(0);
+              if (tmp.exists() && !isResumeUpload()) {
+                tmp.delete();
+              }
               if (!tmp.exists()) {
                 final BufferedReader br=new BufferedReader(new FileReader(file));
                 final BufferedWriter wr=new BufferedWriter(new FileWriter(tmp));
@@ -122,6 +131,7 @@
  catch (            final IOException ioe) {
               getLogger().log(Level.WARNING,"Unable to create the temporary file",ioe);
               response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to create a temporary file"));
+              error=true;
             }
  finally {
               try {
@@ -132,6 +142,7 @@
  catch (              final IOException ioe) {
                 getLogger().log(Level.WARNING,"Unable to close the temporary file",ioe);
                 response.setStatus(Status.SERVER_ERROR_INTERNAL,ioe);
+                error=true;
               }
             }
           }
@@ -147,6 +158,7 @@
  catch (            final IOException ioe) {
               getLogger().log(Level.WARNING,"Unable to create the temporary file",ioe);
               response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to create a temporary file"));
+              error=true;
             }
  finally {
               try {
@@ -157,10 +169,17 @@
  catch (              final IOException ioe) {
                 getLogger().log(Level.WARNING,"Unable to close the temporary file",ioe);
                 response.setStatus(Status.SERVER_ERROR_INTERNAL,ioe);
+                error=true;
               }
             }
           }
-          if (file.delete()) {
+          if (error) {
+            if (tmp.exists() && !isResumeUpload()) {
+              tmp.delete();
+            }
+            return;
+          }
+          if (tmp.exists() && file.delete()) {
             boolean renameSuccessfull=false;
             if ((tmp != null) && tmp.renameTo(file)) {
               if (request.getEntity() == null) {
@@ -199,6 +218,9 @@
  else {
             getLogger().log(Level.WARNING,"Unable to delete the existing file");
             response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to delete the existing file"));
+            if (tmp.exists() && !isResumeUpload()) {
+              tmp.delete();
+            }
           }
         }
  else {
