@@ -1,3 +1,10 @@
 {
-  return classloader;
+  ClassLoader result=getUserClassLoader();
+  if (result == null) {
+    result=Thread.currentThread().getContextClassLoader();
+  }
+  if (result == null) {
+    result=Class.class.getClassLoader();
+  }
+  return result;
 }

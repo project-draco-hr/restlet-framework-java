@@ -5,30 +5,30 @@
     final String sch=className.substring(0,doubleDotPos);
     final String cName=className.substring(doubleDotPos + 1);
     try {
-      final Class<?> loaderClass=Engine.classForName("oracle.aurora.rdbms.DbmsJava");
+      final Class<?> loaderClass=Engine.loadClass("oracle.aurora.rdbms.DbmsJava");
       final Method meth=loaderClass.getMethod("classForNameAndSchema",new Class[]{String.class,String.class});
       log("[Noelios Restlet Engine] - Schema: " + sch + " class: "+ className+ " loader: "+ loaderClass);
       targetClass=(Class<?>)meth.invoke(null,new Object[]{cName,sch});
     }
  catch (    final NoSuchMethodException nse) {
       log("[Noelios Restlet Engine] - Could not instantiate a class using SCHEMA: " + sch + " and class: "+ cName,nse);
-      targetClass=Engine.classForName(className);
+      targetClass=Engine.loadClass(className);
     }
 catch (    final IllegalAccessException iae) {
       log("[Noelios Restlet Engine] - Could not instantiate a class using SCHEMA: " + sch + " and class: "+ cName,iae);
-      targetClass=Engine.classForName(className);
+      targetClass=Engine.loadClass(className);
     }
 catch (    final InvocationTargetException ite) {
       log("[Noelios Restlet Engine] - Could not instantiate a class using SCHEMA: " + sch + " and class: "+ cName,ite);
-      targetClass=Engine.classForName(className);
+      targetClass=Engine.loadClass(className);
     }
 catch (    final AccessControlException ace) {
       log("[Noelios Restlet Engine] - Could not instantiate a class using oracle.aurora.rdbms.DbmsJava " + sch + " and class: "+ cName,ace);
-      targetClass=Engine.classForName(className);
+      targetClass=Engine.loadClass(className);
     }
   }
  else {
-    targetClass=Engine.classForName(className);
+    targetClass=Engine.loadClass(className);
   }
   return targetClass;
 }
