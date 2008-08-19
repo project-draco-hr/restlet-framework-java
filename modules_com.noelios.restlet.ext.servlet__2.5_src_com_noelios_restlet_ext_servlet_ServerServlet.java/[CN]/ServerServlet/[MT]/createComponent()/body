@@ -1,11 +1,20 @@
 {
   Component component=null;
-  final String configPath=getServletContext().getRealPath("/WEB-INF/restlet.xml");
-  final File configFile=new File(configPath);
-  if ((configPath != null) && configFile.exists()) {
-    component=new Component(LocalReference.createFileReference(configPath));
+  ServletWarClient client=new ServletWarClient(new Context(),getServletContext());
+  Response response=client.get("war:///WEB-INF/restlet.xml");
+  if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
+    component=new Component(response.getEntity());
   }
- else {
+  if (component == null) {
+    final String configPath=getServletContext().getRealPath("/WEB-INF/restlet.xml");
+    if (configPath != null) {
+      final File configFile=new File(configPath);
+      if (configFile.exists()) {
+        component=new Component(LocalReference.createFileReference(configPath));
+      }
+    }
+  }
+  if (component == null) {
     final String componentClassName=getInitParameter(COMPONENT_KEY,null);
     if (componentClassName != null) {
       try {
@@ -22,15 +31,15 @@ catch (      final IllegalAccessException e) {
         log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check that you have to proper access rights to " + componentClassName,e);
       }
     }
-    if (component == null) {
-      component=new Component();
-      component.getStatusService().setEnabled(false);
-      final String clientProtocolsString=getInitParameter(CLIENTS_KEY,null);
-      if (clientProtocolsString != null) {
-        final String[] clientProtocols=clientProtocolsString.split(" ");
-        for (        final String clientProtocol : clientProtocols) {
-          component.getClients().add(Protocol.valueOf(clientProtocol));
-        }
+  }
+  if (component == null) {
+    component=new Component();
+    component.getStatusService().setEnabled(false);
+    final String clientProtocolsString=getInitParameter(CLIENTS_KEY,null);
+    if (clientProtocolsString != null) {
+      final String[] clientProtocols=clientProtocolsString.split(" ");
+      for (      final String clientProtocol : clientProtocols) {
+        component.getClients().add(Protocol.valueOf(clientProtocol));
       }
     }
   }
