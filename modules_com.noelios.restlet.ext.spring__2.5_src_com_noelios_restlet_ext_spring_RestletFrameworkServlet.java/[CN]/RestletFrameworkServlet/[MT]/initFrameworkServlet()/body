@@ -1,5 +1,16 @@
 {
   super.initFrameworkServlet();
   this.converter=new ServletConverter(getServletContext());
-  this.converter.setTarget(getTargetRestlet());
+  org.restlet.Application application;
+  if (getTargetRestlet() instanceof Application) {
+    application=(Application)getTargetRestlet();
+  }
+ else {
+    application=new Application();
+    application.setRoot(getTargetRestlet());
+  }
+  if (application.getContext() == null) {
+    application.setContext(createContext());
+  }
+  this.converter.setTarget(application);
 }
