@@ -5,7 +5,7 @@
   if (Engine.getInstance() != null) {
     this.helper=Engine.getInstance().createHelper(this);
     if (this.helper != null) {
-      this.defaultHost=new VirtualHost(getContext().createChildContext());
+      this.defaultHost=new VirtualHost(getContext());
       this.internalRouter=new Router(getContext().createChildContext()){
         @Override public Route attach(        Restlet target){
           if (target.getContext() == null) {
@@ -33,7 +33,6 @@
       }
 ;
       this.logService=new LogService(true);
-      this.logService.setLoggerName(getClass().getCanonicalName() + " (" + hashCode()+ ")");
       this.statusService=new StatusService(true);
       this.clients.setContext(getContext());
       this.servers.setContext(getContext());
