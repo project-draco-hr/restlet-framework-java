@@ -1,10 +1,12 @@
 {
-  final long startTime=(Long)request.getAttributes().get("org.restlet.startTime");
-  final int duration=(int)(System.currentTimeMillis() - startTime);
   if (this.logTemplate != null) {
     this.logLogger.log(Level.INFO,format(request,response));
   }
  else {
-    this.logLogger.log(Level.INFO,formatDefault(request,response,duration));
+    if (this.logLogger.isLoggable(Level.INFO)) {
+      final long startTime=(Long)request.getAttributes().get("org.restlet.startTime");
+      final int duration=(int)(System.currentTimeMillis() - startTime);
+      this.logLogger.log(Level.INFO,formatDefault(request,response,duration));
+    }
   }
 }
