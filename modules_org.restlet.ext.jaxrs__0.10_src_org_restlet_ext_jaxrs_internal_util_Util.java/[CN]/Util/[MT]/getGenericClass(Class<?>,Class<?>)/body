@@ -1,0 +1,20 @@
+{
+  for (  Type genericType : clazz.getGenericInterfaces()) {
+    if (!(genericType instanceof ParameterizedType)) {
+      continue;
+    }
+    final ParameterizedType pt=(ParameterizedType)genericType;
+    if (!pt.getRawType().equals(implInterface))     continue;
+    final Type atp=pt.getActualTypeArguments()[0];
+    if (atp instanceof Class) {
+      return (Class<?>)atp;
+    }
+    if (atp instanceof ParameterizedType) {
+      final Type rawType=((ParameterizedType)atp).getRawType();
+      if (rawType instanceof Class) {
+        return (Class<?>)rawType;
+      }
+    }
+  }
+  return null;
+}

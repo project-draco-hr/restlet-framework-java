@@ -29,7 +29,7 @@
   MessageBodyWriterSubSet mbws;
   if (entity != null) {
     mbws=providers.writerSubSet(entityClass,genericReturnType,methodAnnotations);
-    if (mbws.isEmpty())     throw excHandler.noMessageBodyWriter(entityClass,genericReturnType,methodAnnotations);
+    if (mbws.isEmpty())     throw excHandler.noMessageBodyWriter(entityClass,genericReturnType,methodAnnotations,null,null);
   }
  else {
     mbws=MessageBodyWriterSubSet.empty();
@@ -48,7 +48,7 @@
  else {
     final MessageBodyWriter mbw;
     mbw=mbws.getBestWriter(respMediaType,accMediaTypes);
-    if (mbw == null)     throw excHandler.noMessageBodyWriter(entityClass,genericReturnType,methodAnnotations);
+    if (mbw == null)     throw excHandler.noMessageBodyWriter(entityClass,genericReturnType,methodAnnotations,respMediaType,accMediaTypes);
     repr=new JaxRsOutputRepresentation(entity,genericReturnType,respMediaType,methodAnnotations,mbw,httpResponseHeaders);
   }
   repr.setCharacterSet(getSupportedCharSet(httpResponseHeaders));

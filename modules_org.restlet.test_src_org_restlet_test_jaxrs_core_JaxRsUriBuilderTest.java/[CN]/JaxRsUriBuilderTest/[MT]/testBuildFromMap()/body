@@ -1,0 +1,22 @@
+{
+  final Map<String,Object> vars=new HashMap<String,Object>();
+  try {
+    this.uriBuilderWithVars.buildFromMap(vars,true);
+    fail("must fail, because missing UriTemplate variables");
+  }
+ catch (  final IllegalArgumentException e) {
+  }
+  vars.put("var1","123");
+  try {
+    this.uriBuilderWithVars.buildFromMap(vars,true);
+    fail("must fail, because missing UriTemplate variable");
+  }
+ catch (  final IllegalArgumentException e) {
+  }
+  vars.put("var2","456");
+  assertEqualsURI("http://localhost/abc/123/def/456",this.uriBuilderWithVars.buildFromMap(vars,true));
+  vars.put("var3","789");
+  assertEqualsURI("http://localhost/abc/123/def/456",this.uriBuilderWithVars.buildFromMap(vars,true));
+  vars.put("var2"," ");
+  assertEqualsURI("http://localhost/abc/123/def/%20",this.uriBuilderWithVars.buildFromMap(vars,true));
+}

@@ -1,0 +1,13 @@
+{
+  ProviderWrapper provider;
+  try {
+    provider=new SingletonProvider(jaxRsProviderObject,this.logger);
+  }
+ catch (  IllegalArgumentException iae) {
+    String msg="Ignore provider " + jaxRsProviderObject.getClass().getName() + ", because it could not be instantiated";
+    logger.log(Level.WARNING,msg,iae);
+    return false;
+  }
+  this.add(provider,defaultProvider);
+  return true;
+}

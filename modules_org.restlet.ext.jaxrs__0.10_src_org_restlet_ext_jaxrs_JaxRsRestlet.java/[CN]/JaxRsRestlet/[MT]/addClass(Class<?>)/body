@@ -1,0 +1,15 @@
+{
+  if (jaxRsClass == null)   throw new IllegalArgumentException("The JAX-RS class to add must not be null");
+  boolean used=false;
+  if (Util.isRootResourceClass(jaxRsClass)) {
+    used=resourceClasses.addRootClass(jaxRsClass);
+  }
+ else   if (Util.isProvider(jaxRsClass)) {
+    if (providers.addClass(jaxRsClass))     used=true;
+  }
+  if (!used) {
+    final String warning=("The class " + jaxRsClass + " is neither a povider nor a root resource class");
+    getLogger().warning(warning);
+  }
+  return used;
+}

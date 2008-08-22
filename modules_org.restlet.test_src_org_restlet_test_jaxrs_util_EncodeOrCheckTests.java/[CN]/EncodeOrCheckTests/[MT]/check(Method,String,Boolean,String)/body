@@ -17,10 +17,12 @@
  else {
       throw new AssertionFailedError(("The method " + method + " has to much parameters"));
     }
-    if (out == null) {
-      fail("must throw an IllegalArgumentException for \"" + in + "\" and encode = "+ encode);
+    if (paramCount > 1) {
+      if (out == null) {
+        fail("must throw an IllegalArgumentException for \"" + in + "\" and encode = "+ encode);
+      }
+      assertEquals(out,result != null ? result.toString() : null);
     }
-    assertEquals(out,result != null ? result.toString() : null);
   }
  catch (  final InvocationTargetException e) {
     if (!(e.getCause() instanceof IllegalArgumentException)) {

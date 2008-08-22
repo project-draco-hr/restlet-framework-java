@@ -1,0 +1,24 @@
+{
+  if (appConfig == null) {
+    throw new IllegalArgumentException("The ApplicationConfig must not be null");
+  }
+  if (clearMetadataIfFirst && !this.appConfigAttached) {
+    getMetadataService().clearExtensions();
+  }
+  final JaxRsRestlet jaxRsRestlet=this.jaxRsRestlet;
+  final Set<Class<?>> classes=appConfig.getClasses();
+  final Set<Object> singletons=appConfig.getSingletons();
+  boolean everythingFine=true;
+  if (classes != null) {
+    for (    final Class<?> clazz : classes) {
+      everythingFine&=jaxRsRestlet.addClass(clazz);
+    }
+  }
+  if (singletons != null) {
+    for (    final Object singleton : singletons) {
+      everythingFine&=jaxRsRestlet.addSingleton(singleton);
+    }
+  }
+  this.appConfigAttached=true;
+  return everythingFine;
+}

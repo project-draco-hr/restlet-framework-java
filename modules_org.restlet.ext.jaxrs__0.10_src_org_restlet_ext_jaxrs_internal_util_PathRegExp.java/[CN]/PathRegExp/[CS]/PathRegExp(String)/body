@@ -1,0 +1,32 @@
+{
+  this.pathPattern=pathPattern;
+  this.isEmptyOrSlash=Util.isEmptyOrSlash(pathPattern);
+  final StringBuilder patternStb=new StringBuilder(pathPattern);
+  if (!pathPattern.endsWith("/")) {
+    patternStb.append('/');
+  }
+  patternStb.append('{');
+  patternStb.append(VARNAME_FUER_REST);
+  patternStb.append('}');
+  this.template=new Template(patternStb.toString(),org.restlet.util.Template.MODE_EQUALS);
+  this.template.getDefaultVariable().setType(Variable.TYPE_URI_PATH);
+  final Map<String,Variable> variables=this.template.getVariables();
+  final List<String> varNames=this.template.getVariableNames();
+  if (varNames.size() > 1) {
+    final String lastVarName=varNames.get(varNames.size() - 2);
+    Variable lastVariable;
+    if (pathPattern.endsWith("{" + lastVarName + "}")) {
+      lastVariable=new Variable(Variable.TYPE_URI_SEGMENT);
+    }
+ else {
+      lastVariable=new Variable(Variable.TYPE_URI_PATH);
+    }
+    variables.put(lastVarName,lastVariable);
+  }
+  Variable restVar=variables.get(VARNAME_FUER_REST);
+  if (restVar == null) {
+    restVar=new Variable(Variable.TYPE_ALL);
+    variables.put(VARNAME_FUER_REST,restVar);
+  }
+  restVar.setRequired(false);
+}

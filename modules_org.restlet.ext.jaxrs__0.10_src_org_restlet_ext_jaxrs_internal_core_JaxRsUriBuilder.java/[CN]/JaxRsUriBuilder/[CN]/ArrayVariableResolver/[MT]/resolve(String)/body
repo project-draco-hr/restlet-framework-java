@@ -1,0 +1,17 @@
+{
+  String varValue=this.retrievedValues.get(variableName);
+  if (varValue == null) {
+    if (this.i >= this.values.length) {
+      throw new IllegalArgumentException("The value given array contains not enough elements (contains " + this.values.length + ", but need at least "+ (this.i + 1)+ ")");
+    }
+    final Object value=this.values[this.i];
+    if (value == null) {
+      throw new IllegalArgumentException("The given array contains null value at position (" + this.i + ")");
+    }
+    varValue=value.toString();
+    varValue=EncodeOrCheck.all(varValue,this.encode);
+    this.i++;
+    this.retrievedValues.put(variableName,varValue);
+  }
+  return varValue;
+}

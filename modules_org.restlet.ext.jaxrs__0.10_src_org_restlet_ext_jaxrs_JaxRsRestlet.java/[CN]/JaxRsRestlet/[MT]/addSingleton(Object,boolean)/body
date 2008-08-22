@@ -1,0 +1,16 @@
+{
+  if (jaxRsObject == null)   throw new IllegalArgumentException("The JAX-RS object to add must not be null");
+  if (jaxRsObject instanceof Class)   throw new IllegalArgumentException("The JAX-RS object to add must not be a java.lang.Class");
+  boolean used=false;
+  if (defaultProvider || Util.isProvider(jaxRsObject.getClass())) {
+    used=providers.addSingleton(jaxRsObject,defaultProvider);
+  }
+  if (Util.isRootResourceClass(jaxRsObject.getClass())) {
+    throw new NotYetImplementedException("only providers are allowed as singletons for now");
+  }
+  if (!used) {
+    final String warning=("The class " + jaxRsObject.getClass() + " is neither a povider nor a root resource class");
+    getLogger().warning(warning);
+  }
+  return used;
+}

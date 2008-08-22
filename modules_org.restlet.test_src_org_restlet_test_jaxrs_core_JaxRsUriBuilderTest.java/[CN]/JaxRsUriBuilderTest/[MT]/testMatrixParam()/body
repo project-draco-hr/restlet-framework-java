@@ -1,0 +1,21 @@
+{
+  this.uriBuilder.matrixParam("mp1","mv1");
+  assertEqualsURI(URI_1 + ";mp1=mv1",this.uriBuilder,true);
+  this.uriBuilder.matrixParam("mp1","mv2");
+  assertEqualsURI(URI_1 + ";mp1=mv1;mp1=mv2",this.uriBuilder,true);
+  this.uriBuilder.matrixParam("mp3","mv3");
+  try {
+    assertEqualsURI(URI_1 + ";mp1=mv1;mp1=mv2;mp3=mv3",this.uriBuilder,true);
+  }
+ catch (  final AssertionFailedError afe) {
+    assertEqualsURI(URI_1 + ";mp3=mv3;mp1=mv1;mp1=mv2",this.uriBuilder,true);
+  }
+  this.uriBuilder.replaceMatrix("mp4=mv4");
+  assertEqualsURI(URI_1 + ";mp4=mv4",this.uriBuilder,true);
+  this.uriBuilder.replaceMatrix("");
+  assertEquals(new URI(URI_1 + ";"),this.uriBuilder.build());
+  this.uriBuilder.replaceMatrix(null);
+  assertEquals(URI_1,this.uriBuilder.build());
+  this.uriBuilder.matrixParam("jkj$sdf","ij a%20");
+  assertEqualsURI(URI_1 + ";jkj%24sdf=ij%20a%2520",this.uriBuilder,true);
+}

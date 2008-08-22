@@ -1,0 +1,17 @@
+{
+  this.uriBuilder.schemeSpecificPart("//shkf");
+  this.uriBuilder.replacePath("");
+  assertEqualUriBuilder("http",null,"shkf",null,"",null,this.uriBuilder,true);
+  this.uriBuilder.schemeSpecificPart("//shkf-host/akfshdf");
+  assertEqualUriBuilder("http",null,"shkf-host",null,"/akfshdf",null,this.uriBuilder,true);
+  this.uriBuilder.schemeSpecificPart("//user@shkf/akfshdf/akjhf");
+  assertEqualUriBuilder("http","user","shkf",null,"/akfshdf/akjhf",null,this.uriBuilder,true);
+  this.uriBuilder.schemeSpecificPart("//shkf:4711/akjhf?a=b");
+  assertEqualUriBuilder("http",null,"shkf","4711","/akjhf","a=b",this.uriBuilder,true);
+  this.uriBuilder.schemeSpecificPart("//www.domain.org/akjhf;1=2?a=b");
+  assertEqualUriBuilder("http",null,"www.domain.org",null,"/akjhf;1=2","a=b",this.uriBuilder,true);
+  this.uriBuilder.schemeSpecificPart("//www.domain.org/akjhf;1=2;3=4?a=b");
+  assertEqualUriBuilder("http",null,"www.domain.org",null,"/akjhf;1=2;3=4","a=b",this.uriBuilder,true);
+  this.uriBuilder.schemeSpecificPart("//www.domain.org/ ");
+  assertEquals("http://www.domain.org/%20",this.uriBuilder.build().toString());
+}

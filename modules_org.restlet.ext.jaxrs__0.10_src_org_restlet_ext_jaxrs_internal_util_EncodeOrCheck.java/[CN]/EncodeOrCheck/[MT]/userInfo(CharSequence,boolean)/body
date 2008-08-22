@@ -6,6 +6,9 @@
     if (c == '{') {
       i=processTemplVarname(userInfo,i,stb);
     }
+ else     if (c == '%') {
+      processPercent(i,encode,userInfo,stb);
+    }
  else     if (Reference.isUnreserved(c) || Reference.isSubDelimiter(c)) {
       stb.append(c);
     }
@@ -14,9 +17,6 @@
     }
  else     if (c == ':') {
       stb.append(c);
-    }
- else     if (c == '%') {
-      i=processPercent(i,encode,userInfo,stb);
     }
  else {
       toHexOrReject(c,stb,encode);

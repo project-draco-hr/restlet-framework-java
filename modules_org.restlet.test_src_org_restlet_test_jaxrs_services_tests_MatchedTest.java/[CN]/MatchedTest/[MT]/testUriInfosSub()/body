@@ -1,0 +1,11 @@
+{
+  final Response response404=get("sub/uriInfo/abc");
+  assertEquals(Status.CLIENT_ERROR_NOT_FOUND,response404.getStatus());
+  final Response response=get("sub/uriInfo/matchedURIs");
+  sysOutEntityIfError(response);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  final String entity=response.getEntity().getText();
+  final String expected="[]\n[/matchedTest/sub/uriInfo/matchedURIs, /matchedTest/sub, /matchedTest]";
+  System.out.println("expected:\n" + expected + "\ngot:\n"+ entity);
+  assertEquals(expected,entity);
+}

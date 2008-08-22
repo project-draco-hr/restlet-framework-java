@@ -1,0 +1,21 @@
+{
+  Object subResObj;
+  try {
+    subResObj=internalInvoke(resourceObject);
+  }
+ catch (  final IllegalArgumentException e) {
+    throw new InstantiateException(this.executeMethod,e);
+  }
+catch (  final IllegalAccessException e) {
+    throw new InstantiateException(this.executeMethod,e);
+  }
+  if (subResObj == null) {
+    logger.warning("The sub resource object is null. That is not allowed");
+    final ResponseBuilder rb=javax.ws.rs.core.Response.serverError();
+    rb.entity("The sub resource object is null. That is not allowed");
+    throw new WebApplicationException(rb.build());
+  }
+  ResourceClass resourceClass;
+  resourceClass=resourceClasses.getResourceClass(subResObj.getClass());
+  return new ResourceObject(subResObj,resourceClass);
+}

@@ -1,20 +1,10 @@
 {
   String pathTemplate=path.value();
-  if (path.encode()) {
-    try {
-      pathTemplate=EncodeOrCheck.pathWithoutMatrix(pathTemplate).toString();
-    }
- catch (    final IllegalArgumentException e) {
-      throw new IllegalPathException(path,e);
-    }
+  try {
+    pathTemplate=EncodeOrCheck.pathWithoutMatrix(pathTemplate).toString();
   }
- else {
-    try {
-      EncodeOrCheck.checkForInvalidUriChars(pathTemplate,-1,"path template");
-    }
- catch (    final IllegalArgumentException iae) {
-      throw new IllegalPathException(path,iae);
-    }
+ catch (  final IllegalArgumentException e) {
+    throw new IllegalPathException(path,e);
   }
   return pathTemplate;
 }

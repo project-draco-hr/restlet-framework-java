@@ -1,37 +1,18 @@
 {
-  boolean startsValidPercentEnc=true;
-  char c1='X';
-  char c2='X';
-  if (uriPart.length() <= i + 2) {
-    if (!encode) {
-      final CharSequence hexDigits=uriPart.subSequence(i,uriPart.length());
-      throw new IllegalArgumentException("A percent encoding must have two charachters, so " + hexDigits + " is not allowed");
-    }
-    startsValidPercentEnc=false;
-  }
- else {
-    c1=uriPart.charAt(i + 1);
-    c2=uriPart.charAt(i + 2);
-    if (!(((c1 >= '0') && (c1 <= '9')) || ((c1 >= 'A') && (c1 <= 'F')) || ((c1 >= 'a') && (c1 <= 'f'))) || !(((c2 >= '0') && (c2 <= '9')) || ((c2 >= 'A') && (c2 <= 'F')) || ((c2 >= 'a') && (c2 <= 'f')))) {
-      if (!encode) {
-        throw new IllegalArgumentException("The percent encoded char %" + c1 + c2+ " is not valid");
-      }
-      startsValidPercentEnc=false;
-    }
-  }
   if (encode) {
-    if (startsValidPercentEnc) {
-      stb.append('%');
-    }
- else {
-      toHex('%',stb);
-    }
-    return i;
+    toHex('%',stb);
+    return;
+  }
+  if (uriPart.length() <= i + 2) {
+    final CharSequence hexDigits=uriPart.subSequence(i,uriPart.length());
+    throw new IllegalArgumentException("A percent encoding must have two charachters, so " + hexDigits + " is not allowed");
   }
  else {
-    stb.append('%');
-    stb.append(c1);
-    stb.append(c2);
-    return i + 2;
+    char c1=uriPart.charAt(i + 1);
+    char c2=uriPart.charAt(i + 2);
+    if (!(((c1 >= '0') && (c1 <= '9')) || ((c1 >= 'A') && (c1 <= 'F')) || ((c1 >= 'a') && (c1 <= 'f'))) || !(((c2 >= '0') && (c2 <= '9')) || ((c2 >= 'A') && (c2 <= 'F')) || ((c2 >= 'a') && (c2 <= 'f')))) {
+      throw new IllegalArgumentException("The percent encoded char %" + c1 + c2+ " is not valid");
+    }
   }
+  stb.append('%');
 }

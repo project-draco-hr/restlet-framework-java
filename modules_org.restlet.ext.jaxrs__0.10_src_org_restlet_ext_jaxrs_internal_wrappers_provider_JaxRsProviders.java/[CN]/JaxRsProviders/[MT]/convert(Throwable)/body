@@ -1,6 +1,8 @@
 {
   ExceptionMapper mapper=getExceptionMapper(cause.getClass());
   if (mapper == null) {
+    if (cause instanceof RuntimeException)     throw (RuntimeException)cause;
+    if (cause instanceof Error)     throw (Error)cause;
     String entity="No ExceptionMapper was found, but must be found";
     return Response.serverError().entity(entity).type(javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE).build();
   }

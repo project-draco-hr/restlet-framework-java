@@ -1,0 +1,13 @@
+{
+  this.all.remove(provider);
+  this.contextResolvers.remove(provider);
+  this.messageBodyReaderWrappers.remove(provider);
+  this.messageBodyWriterWrappers.remove(provider);
+  Iterator<Map.Entry<Class<? extends Throwable>,ProviderWrapper>> excMapperEntryIter=this.excMappers.entrySet().iterator();
+  while (excMapperEntryIter.hasNext()) {
+    final Map.Entry<Class<? extends Throwable>,ProviderWrapper> excMapperEntry;
+    excMapperEntry=excMapperEntryIter.next();
+    ProviderWrapper providerWrapper=excMapperEntry.getValue();
+    if (providerWrapper.equals(provider))     excMapperEntryIter.remove();
+  }
+}

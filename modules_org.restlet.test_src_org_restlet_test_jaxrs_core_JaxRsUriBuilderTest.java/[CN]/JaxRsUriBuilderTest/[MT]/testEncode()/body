@@ -1,16 +1,8 @@
 {
   final UriBuilder uriBuilder=RuntimeDelegate.getInstance().createUriBuilder();
-  uriBuilder.encode(false);
   uriBuilder.host("www.xyz.de");
   uriBuilder.scheme("http");
-  uriBuilder.path("path1","path2");
-  try {
-    uriBuilder.path("hh ho");
-    fail("must fail, because of invalid character");
-  }
- catch (  final IllegalArgumentException e) {
-  }
-  uriBuilder.encode(true);
+  uriBuilder.segment("path1","path2");
   uriBuilder.path("hh ho");
-  assertEqualsURI("http://www.xyz.de/path1/path2/hh%20ho",uriBuilder);
+  assertEqualsURI("http://www.xyz.de/path1/path2/hh%20ho",uriBuilder,true);
 }

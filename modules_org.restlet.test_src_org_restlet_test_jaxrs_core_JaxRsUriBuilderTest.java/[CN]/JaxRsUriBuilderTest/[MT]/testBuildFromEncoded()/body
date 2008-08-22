@@ -1,0 +1,14 @@
+{
+  assertEquals(URI_1,this.uriBuilder.buildFromEncoded("a","b"));
+  assertEquals(URI_1,this.uriBuilder.buildFromEncoded(" ","b"));
+  URI uri=this.uriBuilderWithVars.buildFromEncoded("a","b");
+  assertEqualsURI("http://localhost/abc/a/def/b",uri);
+  uri=this.uriBuilderWithVars.buildFromEncoded("%20","b");
+  assertEqualsURI("http://localhost/abc/%20/def/b",uri);
+  try {
+    uri=this.uriBuilderWithVars.buildFromEncoded(" ","b");
+    fail("must fail");
+  }
+ catch (  IllegalArgumentException e) {
+  }
+}

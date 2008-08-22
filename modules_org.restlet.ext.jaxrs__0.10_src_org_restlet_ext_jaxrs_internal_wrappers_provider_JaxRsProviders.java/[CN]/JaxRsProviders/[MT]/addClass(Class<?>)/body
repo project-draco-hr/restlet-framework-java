@@ -1,0 +1,43 @@
+{
+  ProviderWrapper provider;
+  try {
+    provider=new PerRequestProviderWrapper(jaxRsProviderClass,objectFactory,tlContext,this,extensionBackwardMapping,this.logger);
+  }
+ catch (  IllegalParamTypeException e) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + ": Could not instantiate class "+ jaxRsProviderClass.getName();
+    logger.log(Level.WARNING,msg,e);
+    return false;
+  }
+catch (  InstantiateException e) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + ": Could not instantiate class "+ jaxRsProviderClass.getName();
+    logger.log(Level.WARNING,msg,e);
+    return false;
+  }
+catch (  MissingAnnotationException e) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + ": Could not instantiate class "+ jaxRsProviderClass.getName()+ ", because "+ e.getMessage();
+    logger.log(Level.WARNING,msg);
+    return false;
+  }
+catch (  InvocationTargetException ite) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + ", because an exception occured while instantiating";
+    logger.log(Level.WARNING,msg,ite);
+    return false;
+  }
+catch (  IllegalArgumentException iae) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + ", because it could not be instantiated";
+    logger.log(Level.WARNING,msg,iae);
+    return false;
+  }
+catch (  MissingConstructorException mce) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + ", because no valid constructor was found: "+ mce.getMessage();
+    logger.warning(msg);
+    return false;
+  }
+catch (  IllegalConstrParamTypeException e) {
+    String msg="Ignore provider " + jaxRsProviderClass.getName() + ", because no valid constructor was found: "+ e.getMessage();
+    logger.warning(msg);
+    return false;
+  }
+  this.add(provider,false);
+  return true;
+}
