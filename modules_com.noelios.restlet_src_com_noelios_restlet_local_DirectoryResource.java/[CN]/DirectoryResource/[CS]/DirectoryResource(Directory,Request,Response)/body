@@ -119,6 +119,13 @@
   if ((variants == null) || (variants.isEmpty())) {
     setAvailable(false);
   }
+  if (isAvailable() && !this.directory.isDeeplyAccessible()) {
+    int index=this.relativePart.indexOf("/");
+    if (index != -1) {
+      index=this.relativePart.indexOf("/",index);
+      setAvailable((index == -1));
+    }
+  }
   getLogger().info("Converted target URI: " + this.targetUri);
   getLogger().fine("Converted base name : " + this.baseName);
 }
