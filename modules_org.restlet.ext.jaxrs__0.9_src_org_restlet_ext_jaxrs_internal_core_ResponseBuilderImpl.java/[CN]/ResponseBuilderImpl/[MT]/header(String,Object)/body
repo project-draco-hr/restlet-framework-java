@@ -3,17 +3,17 @@
     throw new IllegalArgumentException("You must give a name of the header");
   }
   if (name.equals(HttpHeaders.SET_COOKIE)) {
-    if (value instanceof NewCookie) {
+    if (value == null) {
+      this.newCookies.clear();
+    }
+ else     if (value instanceof NewCookie) {
       cookie((NewCookie)value);
     }
  else     if (value instanceof Cookie) {
       cookie(new NewCookie((Cookie)value));
     }
- else     if (value instanceof CharSequence) {
-      cookie(NewCookie.valueOf(value.toString()));
-    }
  else {
-      throw new IllegalArgumentException("A Cookie must be of type NewCookie or String");
+      cookie(NewCookie.valueOf(value.toString()));
     }
   }
  else {
