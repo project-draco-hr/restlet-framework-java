@@ -9,14 +9,16 @@
   final Set<Class<?>> classes=appConfig.getClasses();
   final Set<Object> singletons=appConfig.getSingletons();
   boolean everythingFine=true;
+  if (singletons != null) {
+    for (    final Object singleton : singletons) {
+      if (singleton != null && !classes.contains(singleton.getClass())) {
+        everythingFine&=jaxRsRestlet.addSingleton(singleton);
+      }
+    }
+  }
   if (classes != null) {
     for (    final Class<?> clazz : classes) {
       everythingFine&=jaxRsRestlet.addClass(clazz);
-    }
-  }
-  if (singletons != null) {
-    for (    final Object singleton : singletons) {
-      everythingFine&=jaxRsRestlet.addSingleton(singleton);
     }
   }
   this.appConfigAttached=true;
