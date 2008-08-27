@@ -1,0 +1,57 @@
+{
+  if (pathTemplate == null) {
+    throw new IllegalArgumentException("The path template must not be null");
+  }
+  final int l=pathTemplate.length();
+  final StringBuilder pathPattern=new StringBuilder();
+  int forStart=0;
+  if (l > 0 && pathTemplate.charAt(0) == '/')   forStart=1;
+  int noLitChars=0;
+  int numberOfCapturingGroups=0;
+  for (int i=forStart; i < l; i++) {
+    final char c=pathTemplate.charAt(i);
+    if (c == '{') {
+      i=processTemplVarname(pathTemplate,i,pathPattern,pathForExcMess);
+      numberOfCapturingGroups++;
+    }
+ else     if (c == '%') {
+      try {
+        EncodeOrCheck.processPercent(i,true,pathTemplate,pathPattern);
+      }
+ catch (      final IllegalArgumentException e) {
+        throw new IllegalPathException(pathForExcMess,e);
+      }
+    }
+ else     if (c == '}') {
+      throw new IllegalPathException(pathForExcMess,"'}' is only allowed as " + "end of a variable name in \"" + pathTemplate + "\"");
+    }
+ else     if (c == ';') {
+      throw new IllegalPathException(pathForExcMess,"marix parameters are not allowed in a @Path");
+    }
+ else     if (!false && (c == '/')) {
+      pathPattern.append(c);
+      noLitChars++;
+    }
+ else {
+      noLitChars+=EncodeOrCheck.encode(c,pathPattern);
+    }
+  }
+  this.noLitChars=noLitChars;
+  this.noOfCapturingGroups=numberOfCapturingGroups;
+  if (pathPattern.length() > 0 && pathPattern.charAt(pathPattern.length() - 1) != '/') {
+    pathPattern.append('/');
+  }
+  pathPattern.append("(.*)");
+  this.pattern=Pattern.compile(pathPattern.toString());
+  this.isEmptyOrSlash=Util.isEmptyOrSlash(pathTemplate);
+  if (l > 0) {
+    if (pathTemplate.charAt(0) != '/') {
+      pathTemplate='/' + pathTemplate;
+    }
+    if (l > 1 && pathTemplate.endsWith("/")) {
+      pathTemplate=pathTemplate.substring(0,pathTemplate.length() - 2);
+    }
+  }
+  this.pathTemplateEnc=pathTemplate;
+  this.pathTemplateDec=pathTemplate;
+}

@@ -1,5 +1,7 @@
 {
-  final StringBuilder stb=new StringBuilder(remainingPart);
+  final StringBuilder stb;
+  if (remainingPart.startsWith("/"))   stb=new StringBuilder(remainingPart.substring(1));
+ else   stb=new StringBuilder(remainingPart);
   int mpEndPos=Integer.MAX_VALUE;
   for (int i=stb.length() - 1; i >= 0; i--) {
     final char character=stb.charAt(i);
@@ -14,5 +16,6 @@
       mpEndPos=i;
     }
   }
+  if (stb.length() == 0 || stb.charAt(stb.length() - 1) != '/')   stb.append('/');
   return stb.toString();
 }

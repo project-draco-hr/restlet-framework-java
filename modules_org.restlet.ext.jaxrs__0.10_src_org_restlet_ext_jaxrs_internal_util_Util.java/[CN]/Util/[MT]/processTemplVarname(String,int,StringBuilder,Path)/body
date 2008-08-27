@@ -1,0 +1,47 @@
+{
+  final int l=pathTemplate.length();
+  stb.append('{');
+  int state=NAME_READ_START;
+  for (int i=braceIndex + 1; i < l; i++) {
+    final char c=pathTemplate.charAt(i);
+    if (c == '{') {
+      throw new IllegalPathException(pathForExcMess,"A variable must not " + "contain an extra '{' in \"" + pathTemplate + "\"");
+    }
+ else     if (c == ' ' || c == '\t') {
+      if (state == NAME_READ)       state=NAME_READ_READY;
+      continue;
+    }
+ else     if (c == ':') {
+      if (state == NAME_READ_START) {
+        throw new IllegalPathException(pathForExcMess,"The variable name at position must not be null at " + braceIndex + " of \""+ pathTemplate+ "\"");
+      }
+      if (state == NAME_READ || state == NAME_READ_READY) {
+        for (int j=i; j < l; j++) {
+          if (pathTemplate.charAt(j) == '}') {
+            stb.append('}');
+            return j;
+          }
+        }
+        throw new IllegalPathException(pathForExcMess,"No '}' found after '{' at position " + braceIndex + " of \""+ pathTemplate+ "\"");
+      }
+    }
+ else     if (c == '}') {
+      if (state == NAME_READ_START) {
+        throw new IllegalPathException(pathForExcMess,"The template variable name '{}' is not allowed in " + "\"" + pathTemplate + "\"");
+      }
+      stb.append('}');
+      return i;
+    }
+    if (state == NAME_READ_START) {
+      state=NAME_READ;
+      stb.append(c);
+    }
+ else     if (state == NAME_READ) {
+      stb.append(c);
+    }
+ else {
+      throw new IllegalPathException(pathForExcMess,"Invalid character found at position " + i + " of \""+ pathTemplate+ "\"");
+    }
+  }
+  throw new IllegalPathException(pathForExcMess,"No '}' found after '{' " + "at position " + braceIndex + " of \""+ pathTemplate+ "\"");
+}

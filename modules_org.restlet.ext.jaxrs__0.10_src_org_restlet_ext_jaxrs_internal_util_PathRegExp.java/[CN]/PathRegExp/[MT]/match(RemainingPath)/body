@@ -1,28 +1,18 @@
 {
   String givenPath=remainingPath.getWithoutParams();
-  final Map<String,String> templateVars=new HashMap<String,String>();
-  final boolean pathSuppl=!givenPath.endsWith("/");
-  if (pathSuppl) {
-    givenPath+='/';
-  }
-  boolean matches=template.parse(givenPath,(Map)templateVars) >= 0;
-  if (!matches) {
+  Matcher matcher=pattern.matcher(givenPath);
+  if (!matcher.matches()) {
     return null;
   }
-  String finalCapturingGroup=templateVars.remove(VARNAME_FUER_REST);
-  if (finalCapturingGroup.length() > 0) {
-    if (pathSuppl && finalCapturingGroup.endsWith("/")) {
-      finalCapturingGroup=finalCapturingGroup.substring(0,finalCapturingGroup.length() - 1);
-    }
-    if (!finalCapturingGroup.startsWith("/")) {
-      finalCapturingGroup="/" + finalCapturingGroup;
-    }
+  final Map<String,String> templateVars=new HashMap<String,String>();
+  for (int i=1; i < matcher.groupCount(); i++) {
+    templateVars.put(this.varNames.get(i - 1),matcher.group(i));
   }
-  String matched;
+  String finalCapturingGroup=matcher.group(matcher.groupCount());
   int matchedChars=givenPath.length() - finalCapturingGroup.length();
   if ((matchedChars > 0) && (givenPath.charAt(matchedChars - 1) == '/')) {
     matchedChars--;
   }
-  matched=givenPath.substring(0,matchedChars);
-  return new MatchingResult(matched,templateVars,finalCapturingGroup);
+  final String matchedPart=givenPath.substring(0,matchedChars);
+  return new MatchingResult(matchedPart,templateVars,finalCapturingGroup);
 }

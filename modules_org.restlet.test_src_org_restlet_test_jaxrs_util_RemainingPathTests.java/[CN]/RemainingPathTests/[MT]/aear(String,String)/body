@@ -1,3 +1,11 @@
 {
-  assertEquals(expected,RemainingPath.removeMatrixParams(actual));
+  try {
+    Method removeMatrixParams=RemainingPath.class.getDeclaredMethod("removeMatrixParams",String.class);
+    removeMatrixParams.setAccessible(true);
+    String removed=(String)removeMatrixParams.invoke(null,actual);
+    assertEquals(expected,removed);
+  }
+ catch (  Exception e) {
+    throw new RuntimeException(e);
+  }
 }

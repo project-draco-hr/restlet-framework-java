@@ -1,0 +1,31 @@
+{
+  final StringBuilder stb=new StringBuilder();
+  final int l=pathTemplate.length();
+  for (int i=0; i < l; i++) {
+    final char c=pathTemplate.charAt(i);
+    if (c == '{') {
+      i=processTemplVarname(pathTemplate,i,stb,pathForExcMess);
+    }
+ else     if (c == '%') {
+      try {
+        EncodeOrCheck.processPercent(i,true,pathTemplate,stb);
+      }
+ catch (      final IllegalArgumentException e) {
+        throw new IllegalPathException(pathForExcMess,e);
+      }
+    }
+ else     if (c == '}') {
+      throw new IllegalPathException(pathForExcMess,"'}' is only allowed as " + "end of a variable name in \"" + pathTemplate + "\"");
+    }
+ else     if (c == ';') {
+      throw new IllegalPathException(pathForExcMess,"A semicolon is not allowed in a path");
+    }
+ else     if (c == '/') {
+      stb.append(c);
+    }
+ else {
+      EncodeOrCheck.encode(c,stb);
+    }
+  }
+  return stb.toString();
+}

@@ -1,0 +1,54 @@
+{
+  if ((rrcOrRmls == null) || rrcOrRmls.isEmpty()) {
+    return null;
+  }
+  final Iterator<R> srmlIter=rrcOrRmls.iterator();
+  R bestSrml=srmlIter.next();
+  if (rrcOrRmls.size() == 1) {
+    return bestSrml;
+  }
+  int bestSrmlChars=Integer.MIN_VALUE;
+  int bestSrmlNoCaptGroups=Integer.MIN_VALUE;
+  int bestSrmlNoNonDefCaptGroups=Integer.MIN_VALUE;
+  for (  final R srml : rrcOrRmls) {
+    final PathRegExp srmlRegExp=srml.getPathRegExp();
+    final int srmlNoLitChars=srmlRegExp.getNoOfLiteralChars();
+    final int srmlNoCaptGroups=srmlRegExp.getNoOfCapturingGroups();
+    final int srmlNoNonDefCaptGroups=srmlRegExp.getNoNonDefCaprGroups();
+    if (srmlNoLitChars > bestSrmlChars) {
+      bestSrml=srml;
+      bestSrmlChars=srmlNoLitChars;
+      bestSrmlNoCaptGroups=srmlNoCaptGroups;
+      bestSrmlNoNonDefCaptGroups=srmlNoNonDefCaptGroups;
+      continue;
+    }
+    if (srmlNoLitChars == bestSrmlChars) {
+      if (srmlNoCaptGroups > bestSrmlNoCaptGroups) {
+        bestSrml=srml;
+        bestSrmlChars=srmlNoLitChars;
+        bestSrmlNoCaptGroups=srmlNoCaptGroups;
+        bestSrmlNoNonDefCaptGroups=srmlNoNonDefCaptGroups;
+        continue;
+      }
+      if (srmlNoCaptGroups == bestSrmlNoCaptGroups) {
+        if (srmlNoNonDefCaptGroups > bestSrmlNoNonDefCaptGroups) {
+          bestSrml=srml;
+          bestSrmlChars=srmlNoLitChars;
+          bestSrmlNoCaptGroups=srmlNoCaptGroups;
+          bestSrmlNoNonDefCaptGroups=srmlNoNonDefCaptGroups;
+          continue;
+        }
+        if (srmlNoCaptGroups == bestSrmlNoCaptGroups) {
+          if ((srml instanceof ResourceMethod) && (bestSrml instanceof SubResourceLocator)) {
+            bestSrml=srml;
+            bestSrmlChars=srmlNoLitChars;
+            bestSrmlNoCaptGroups=srmlNoCaptGroups;
+            bestSrmlNoNonDefCaptGroups=srmlNoNonDefCaptGroups;
+            continue;
+          }
+        }
+      }
+    }
+  }
+  return bestSrml;
+}
