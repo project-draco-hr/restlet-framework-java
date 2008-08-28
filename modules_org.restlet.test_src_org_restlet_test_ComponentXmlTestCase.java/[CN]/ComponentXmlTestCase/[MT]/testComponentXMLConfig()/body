@@ -1,23 +1,17 @@
 {
-  final File testDir=new File(System.getProperty("java.io.tmpdir"),this.getClass().getName());
-  deleteDir(testDir);
-  testDir.mkdir();
-  final File file=new File(testDir,"component.xml");
-  final BufferedWriter writer=new BufferedWriter(new FileWriter(file));
-  writer.append("<?xml version=\"1.0\"?>");
-  writer.append("<component>");
-  writer.append("<server protocol=\"HTTP\" port=\"" + this.port + "\" />");
-  writer.append("<server protocol=\"HTTP\" port=\"" + this.port2 + "\" />");
-  writer.append("<defaultHost hostPort=\"" + this.port2 + "\">");
-  writer.append("<attach uriPattern=\"/abcd\" targetClass=\"org.restlet.test.HelloWorldApplication\" /> ");
-  writer.append("</defaultHost>");
-  writer.append("<host hostPort=\"" + this.port + "\">");
-  writer.append("<attach uriPattern=\"/efgh\" targetClass=\"org.restlet.test.HelloWorldApplication\" /> ");
-  writer.append("</host>");
-  writer.append("</component>");
-  writer.flush();
-  writer.close();
-  final Component component=new Component(LocalReference.createFileReference(file.getCanonicalPath()));
+  final StringBuilder builder=new StringBuilder();
+  builder.append("<?xml version=\"1.0\"?>");
+  builder.append("<component>");
+  builder.append("<server protocol=\"HTTP\" port=\"" + this.port + "\" />");
+  builder.append("<server protocol=\"HTTP\" port=\"" + this.port2 + "\" />");
+  builder.append("<defaultHost hostPort=\"" + this.port2 + "\">");
+  builder.append("<attach uriPattern=\"/abcd\" targetClass=\"org.restlet.test.HelloWorldApplication\" /> ");
+  builder.append("</defaultHost>");
+  builder.append("<host hostPort=\"" + this.port + "\">");
+  builder.append("<attach uriPattern=\"/efgh\" targetClass=\"org.restlet.test.HelloWorldApplication\" /> ");
+  builder.append("</host>");
+  builder.append("</component>");
+  final Component component=new Component(new StringRepresentation(builder.toString()));
   component.start();
   final Client client=new Client(Protocol.HTTP);
   Response response=client.get("http://localhost:" + this.port + "/efgh");
@@ -31,5 +25,4 @@
   response=client.get("http://localhost:" + this.port2 + "/efgh");
   assertTrue(response.getStatus().isClientError());
   component.stop();
-  deleteDir(testDir);
 }
