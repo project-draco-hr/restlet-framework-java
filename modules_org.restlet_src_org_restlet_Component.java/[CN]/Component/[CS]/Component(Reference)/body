@@ -1,3 +1,22 @@
 {
-  this(new FileRepresentation(new LocalReference(xmlConfigReference).getFile(),MediaType.TEXT_XML));
+  this();
+  Representation xmlConfigRepresentation=null;
+  if (xmlConfigReference != null) {
+    Protocol protocol=xmlConfigReference.getSchemeProtocol();
+    if (Protocol.FILE.equals(protocol)) {
+      xmlConfigRepresentation=new FileRepresentation(new LocalReference(xmlConfigReference).getFile(),MediaType.TEXT_XML);
+    }
+ else {
+      Response response=new Client(protocol).get(xmlConfigReference);
+      if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
+        xmlConfigRepresentation=response.getEntity();
+      }
+    }
+  }
+  if (xmlConfigRepresentation != null) {
+    parseXmlConfiguration(xmlConfigRepresentation);
+  }
+ else {
+    getLogger().log(Level.WARNING,"Unable to get the Component XML configuration located at this URI: " + xmlConfigReference);
+  }
 }
