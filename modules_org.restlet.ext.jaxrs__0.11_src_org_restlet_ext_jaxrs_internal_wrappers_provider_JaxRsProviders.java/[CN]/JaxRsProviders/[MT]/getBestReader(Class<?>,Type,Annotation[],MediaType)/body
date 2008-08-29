@@ -1,0 +1,9 @@
+{
+  for (  ProviderWrapper mbrw : this.messageBodyReaderWrappers) {
+    if (mbrw.supportsRead(mediaType)) {
+      MessageBodyReader mbr=mbrw.getInitializedReader();
+      if (mbr.isReadable(paramType,genericType,annotations,Converter.toJaxRsMediaType(mediaType)))       return mbr;
+    }
+  }
+  return null;
+}

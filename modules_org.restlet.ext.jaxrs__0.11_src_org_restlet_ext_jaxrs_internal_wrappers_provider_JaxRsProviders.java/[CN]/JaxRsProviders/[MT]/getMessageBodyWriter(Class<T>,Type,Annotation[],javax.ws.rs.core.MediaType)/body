@@ -1,0 +1,10 @@
+{
+  MediaType restletMediaType=Converter.toRestletMediaType(mediaType);
+  for (  ProviderWrapper mbww : this.messageBodyWriterWrappers) {
+    if (mbww.supportsWrite(restletMediaType)) {
+      MessageBodyWriter mbw=mbww.getInitializedWriter();
+      if (mbw.isWriteable(type,genericType,annotations,mediaType))       return (javax.ws.rs.ext.MessageBodyWriter<T>)mbw.getJaxRsWriter();
+    }
+  }
+  return null;
+}
