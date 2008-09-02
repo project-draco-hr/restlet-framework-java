@@ -16,15 +16,27 @@
       if (AUTO_WIRE_KEY_DEFAULT.equalsIgnoreCase(autoWire)) {
         for (        final Route route : component.getDefaultHost().getRoutes()) {
           if ((route.getTemplate().getPattern() == null) || !route.getTemplate().getPattern().startsWith(uriPattern)) {
-            log("[Noelios Restlet Engine] - Attaching restlet: " + route.getNext() + " to URI: "+ uriPattern+ route.getTemplate().getPattern());
-            route.getTemplate().setPattern(uriPattern + route.getTemplate().getPattern());
+            if (!route.getTemplate().getPattern().startsWith(request.getServletPath())) {
+              log("[Noelios Restlet Engine] - Attaching restlet: " + route.getNext() + " to URI: "+ uriPattern+ route.getTemplate().getPattern());
+              route.getTemplate().setPattern(uriPattern + route.getTemplate().getPattern());
+            }
+ else {
+              log("[Noelios Restlet Engine] - Attaching restlet: " + route.getNext() + " to URI: "+ request.getContextPath()+ route.getTemplate().getPattern());
+              route.getTemplate().setPattern(request.getContextPath() + route.getTemplate().getPattern());
+            }
           }
         }
         for (        final VirtualHost virtualHost : component.getHosts()) {
           for (          final Route route : virtualHost.getRoutes()) {
             if ((route.getTemplate().getPattern() == null) || !route.getTemplate().getPattern().startsWith(uriPattern)) {
-              log("[Noelios Restlet Engine] - Attaching restlet: " + route.getNext() + " to URI: "+ uriPattern+ route.getTemplate().getPattern());
-              route.getTemplate().setPattern(uriPattern + route.getTemplate().getPattern());
+              if (!route.getTemplate().getPattern().startsWith(request.getServletPath())) {
+                log("[Noelios Restlet Engine] - Attaching restlet: " + route.getNext() + " to URI: "+ uriPattern+ route.getTemplate().getPattern());
+                route.getTemplate().setPattern(uriPattern + route.getTemplate().getPattern());
+              }
+ else {
+                log("[Noelios Restlet Engine] - Attaching restlet: " + route.getNext() + " to URI: "+ request.getContextPath()+ route.getTemplate().getPattern());
+                route.getTemplate().setPattern(request.getContextPath() + route.getTemplate().getPattern());
+              }
             }
           }
         }
