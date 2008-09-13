@@ -1,0 +1,58 @@
+{
+  if (clazz.equals(JaxbElementProvider.class)) {
+    clazz.toString();
+  }
+ else   if (clazz.equals(MultivaluedMap.class)) {
+    clazz.toString();
+  }
+  for (  Type ifGenericType : clazz.getGenericInterfaces()) {
+    if (!(ifGenericType instanceof ParameterizedType)) {
+      continue;
+    }
+    final ParameterizedType pt=(ParameterizedType)ifGenericType;
+    if (!pt.getRawType().equals(implInterface))     continue;
+    final Type[] atps=pt.getActualTypeArguments();
+    final Type atp=atps[0];
+    if (atp instanceof Class) {
+      return (Class<?>)atp;
+    }
+    if (atp instanceof ParameterizedType) {
+      final Type rawType=((ParameterizedType)atp).getRawType();
+      if (rawType instanceof Class) {
+        return (Class<?>)rawType;
+      }
+    }
+    if (atp instanceof TypeVariable<?>) {
+      TypeVariable<?> tv=(TypeVariable<?>)atp;
+      String name=tv.getName();
+      for (int i=0; i < atps.length; i++) {
+        TypeVariable<?> tv2=(TypeVariable<?>)atps[i];
+        if (tv2.getName().equals(name)) {
+          Type gsatpn=gsatp[i];
+          if (gsatpn instanceof Class) {
+            return (Class<?>)gsatpn;
+          }
+          if (gsatpn instanceof ParameterizedType) {
+            final Type rawType=((ParameterizedType)gsatpn).getRawType();
+            if (rawType instanceof Class)             return (Class<?>)rawType;
+            throw new ImplementationException("Sorry, don't know how to return the class here");
+          }
+          if (gsatpn instanceof GenericArrayType) {
+            Type genCompType=((GenericArrayType)gsatpn).getGenericComponentType();
+            return getArrayClass(genCompType,gsatpn);
+          }
+        }
+      }
+    }
+  }
+  Class<?> superClass=clazz.getSuperclass();
+  Type genericSuperClass=clazz.getGenericSuperclass();
+  if (genericSuperClass instanceof Class) {
+    return null;
+  }
+  if (gsatp == null) {
+    gsatp=((ParameterizedType)genericSuperClass).getActualTypeArguments();
+  }
+  if (superClass != null)   return getGenericClass(superClass,implInterface,gsatp);
+  return null;
+}

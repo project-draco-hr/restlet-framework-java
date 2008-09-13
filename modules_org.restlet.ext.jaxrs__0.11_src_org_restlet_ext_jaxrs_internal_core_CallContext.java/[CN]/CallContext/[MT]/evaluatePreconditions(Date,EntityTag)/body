@@ -1,57 +1,9 @@
 {
-  if ((lastModified == null) && (entityTag == null)) {
-    return null;
+  if (lastModified == null) {
+    throw new IllegalArgumentException("The last modification date must not be null");
   }
-  ResponseBuilder rb=null;
-  final Method requestMethod=this.request.getMethod();
-  final Conditions conditions=this.request.getConditions();
-  if (lastModified != null) {
-    final Date modSinceCond=conditions.getModifiedSince();
-    if (modSinceCond != null) {
-      if (modSinceCond.after(lastModified)) {
-        final boolean readRequest=requestMethod.equals(Method.GET) || requestMethod.equals(Method.HEAD);
-        if (readRequest) {
-          rb=Response.notModified();
-          rb.lastModified(lastModified);
-          rb.tag(entityTag);
-        }
- else {
-          return precFailed("The entity was not modified since " + Util.formatDate(modSinceCond,false));
-        }
-      }
- else {
-      }
-    }
-    final Date unmodSinceCond=conditions.getUnmodifiedSince();
-    if (unmodSinceCond != null) {
-      if (unmodSinceCond.after(lastModified)) {
-        return null;
-      }
- else {
-        return precFailed("The entity was modified since " + Util.formatDate(unmodSinceCond,false));
-      }
-    }
+  if (entityTag == null) {
+    throw new IllegalArgumentException("The entity tag must not be null");
   }
-  if (entityTag != null) {
-    final Tag actualEntityTag=Converter.toRestletTag(entityTag);
-    final List<Tag> requestMatchETags=conditions.getMatch();
-    if (!requestMatchETags.isEmpty()) {
-      final boolean match=checkIfOneMatch(requestMatchETags,actualEntityTag);
-      if (!match) {
-        return precFailed("The entity does not match Entity Tag " + entityTag);
-      }
-    }
- else {
-    }
-    final List<Tag> requestNoneMatchETags=conditions.getNoneMatch();
-    if (!requestNoneMatchETags.isEmpty()) {
-      final boolean match=checkIfOneMatch(requestNoneMatchETags,actualEntityTag);
-      if (match) {
-        return precFailed("The entity matches Entity Tag " + entityTag);
-      }
-    }
- else {
-    }
-  }
-  return rb;
+  return evaluatePreconditionsInternal(lastModified,entityTag);
 }

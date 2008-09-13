@@ -13,7 +13,7 @@
   if (resourceMethod != null)   methodAnnotations=resourceMethod.getAnnotations();
  else   methodAnnotations=EMPTY_ANNOTATION_ARRAY;
   if (entity instanceof GenericEntity) {
-    GenericEntity<?> genericEntity=(GenericEntity)entity;
+    GenericEntity<?> genericEntity=(GenericEntity<?>)entity;
     genericReturnType=genericEntity.getType();
     entityClass=genericEntity.getRawType();
     entity=genericEntity.getEntity();
@@ -22,34 +22,24 @@
     entityClass=(entity != null) ? entity.getClass() : null;
     if (resourceMethod != null)     genericReturnType=resourceMethod.getGenericReturnType();
  else     genericReturnType=null;
-    if (genericReturnType instanceof Class && ((Class)genericReturnType).isAssignableFrom(javax.ws.rs.core.Response.class)) {
+    if (genericReturnType instanceof Class && ((Class<?>)genericReturnType).isAssignableFrom(javax.ws.rs.core.Response.class)) {
       genericReturnType=entityClass;
     }
   }
-  MessageBodyWriterSubSet mbws;
+  final MultivaluedMap<String,Object> httpResponseHeaders=new WrappedRequestForHttpHeaders(tlContext.get().getResponse(),jaxRsRespHeaders);
+  final Representation repr;
   if (entity != null) {
+    final MediaType respMediaType=determineMediaType(jaxRsResponseMediaType,resourceMethod,entityClass,genericReturnType);
+    final MessageBodyWriterSubSet mbws;
     mbws=providers.writerSubSet(entityClass,genericReturnType);
     if (mbws.isEmpty())     throw excHandler.noMessageBodyWriter(entityClass,genericReturnType,methodAnnotations,null,null);
-  }
- else {
-    mbws=MessageBodyWriterSubSet.empty();
-  }
-  final MediaType respMediaType;
-  if (jaxRsResponseMediaType != null)   respMediaType=jaxRsResponseMediaType;
- else   if (resourceMethod != null)   respMediaType=determineMediaType(resourceMethod,mbws);
- else   respMediaType=MediaType.TEXT_PLAIN;
-  final Response response=tlContext.get().getResponse();
-  MultivaluedMap<String,Object> httpResponseHeaders=new WrappedRequestForHttpHeaders(response,jaxRsRespHeaders);
-  final Representation repr;
-  if (entity == null) {
-    repr=Representation.createEmpty();
-    repr.setMediaType(respMediaType);
-  }
- else {
-    final MessageBodyWriter mbw;
-    mbw=mbws.getBestWriter(respMediaType,accMediaTypes);
+    final MessageBodyWriter mbw=mbws.getBestWriter(respMediaType,methodAnnotations,accMediaTypes);
     if (mbw == null)     throw excHandler.noMessageBodyWriter(entityClass,genericReturnType,methodAnnotations,respMediaType,accMediaTypes);
     repr=new JaxRsOutputRepresentation(entity,genericReturnType,respMediaType,methodAnnotations,mbw,httpResponseHeaders);
+  }
+ else {
+    repr=Representation.createEmpty();
+    repr.setMediaType(determineMediaType(jaxRsResponseMediaType,resourceMethod,entityClass,genericReturnType));
   }
   repr.setCharacterSet(getSupportedCharSet(httpResponseHeaders));
   return repr;

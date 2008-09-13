@@ -1,8 +1,10 @@
 {
+  if (jaxRsResponseMediaType != null)   return jaxRsResponseMediaType;
+  if (resourceMethod == null)   return MediaType.TEXT_PLAIN;
   CallContext callContext=tlContext.get();
   Collection<MediaType> p=resourceMethod.getProducedMimes();
   if (p.isEmpty()) {
-    p=mbws.getAllProducibleMediaTypes();
+    p=providers.writerSubSet(entityClass,genericReturnType).getAllProducibleMediaTypes();
     if (p.isEmpty())     return MediaType.APPLICATION_OCTET_STREAM;
   }
   SortedMetadata<MediaType> a=callContext.getAccMediaTypes();

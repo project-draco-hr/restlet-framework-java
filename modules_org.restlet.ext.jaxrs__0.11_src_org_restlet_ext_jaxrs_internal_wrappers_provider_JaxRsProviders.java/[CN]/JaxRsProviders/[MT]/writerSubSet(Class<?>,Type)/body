@@ -2,7 +2,9 @@
   final List<MessageBodyWriter> mbws=new ArrayList<MessageBodyWriter>();
   for (  ProviderWrapper mbww : this.messageBodyWriterWrappers) {
     MessageBodyWriter mbw=mbww.getInitializedWriter();
-    if (mbw.supportsWrite(entityClass,genericType))     mbws.add(mbw);
+    if (mbw.supportsWrite(entityClass,genericType)) {
+      mbws.add(mbw);
+    }
   }
-  return new MessageBodyWriterSubSet(mbws);
+  return new MessageBodyWriterSubSet(mbws,entityClass,genericType);
 }
