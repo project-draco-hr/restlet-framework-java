@@ -9,6 +9,10 @@
       parseParameters(rest,result.getParameters());
       result.setRealm(result.getParameters().getFirstValue("realm"));
     }
+ else {
+      final String scheme=header.substring(0);
+      result=new ChallengeRequest(new ChallengeScheme("HTTP_" + scheme,scheme),null);
+    }
   }
   final AuthenticationHelper helper=Engine.getInstance().findHelper(result.getScheme(),true,false);
   if (helper != null) {
