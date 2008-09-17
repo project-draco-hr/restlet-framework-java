@@ -8,6 +8,12 @@
     result=loadClass(Class.class.getClassLoader(),className);
   }
   if (result == null) {
+    result=Class.forName(className);
+  }
+  if (result == null) {
+    result=loadClass(ClassLoader.getSystemClassLoader(),className);
+  }
+  if (result == null) {
     throw new ClassNotFoundException(className);
   }
   return result;
