@@ -12,6 +12,10 @@
         System.err.println("Error during cookie setting parsing. Header: " + header.getValue());
       }
     }
+ else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_WWW_AUTHENTICATE)) {
+      final ChallengeRequest request=AuthenticationUtils.parseAuthenticateHeader(header.getValue());
+      response.setChallengeRequest(request);
+    }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_SERVER)) {
       response.getServerInfo().setAgent(header.getValue());
     }

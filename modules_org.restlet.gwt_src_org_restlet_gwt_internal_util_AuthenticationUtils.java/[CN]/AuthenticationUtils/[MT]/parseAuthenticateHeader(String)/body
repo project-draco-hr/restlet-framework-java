@@ -1,0 +1,15 @@
+{
+  ChallengeRequest result=null;
+  if (header != null) {
+    final int space=header.indexOf(' ');
+    if (space != -1) {
+      final String scheme=header.substring(0,space);
+      result=new ChallengeRequest(new ChallengeScheme("HTTP_" + scheme,scheme),null);
+    }
+ else {
+      final String scheme=header.substring(0);
+      result=new ChallengeRequest(new ChallengeScheme("HTTP_" + scheme,scheme),null);
+    }
+  }
+  return result;
+}
