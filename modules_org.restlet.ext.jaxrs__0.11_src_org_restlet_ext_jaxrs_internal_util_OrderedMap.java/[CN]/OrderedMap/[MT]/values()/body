@@ -1,0 +1,47 @@
+{
+  return new Collection<V>(){
+    public boolean add(    V o){
+      throw new UnsupportedOperationException("the addition of values only to a map is not possible");
+    }
+    public boolean addAll(    Collection<? extends V> c){
+      throw new UnsupportedOperationException("the addition of values only to a map is not possible");
+    }
+    public void clear(){
+      elements.clear();
+    }
+    public boolean contains(    Object value){
+      return OrderedMap.this.containsValue(value);
+    }
+    public boolean containsAll(    Collection<?> c){
+      for (      Object v : c)       if (!OrderedMap.this.containsValue(v))       return false;
+      return true;
+    }
+    public boolean isEmpty(){
+      return elements.isEmpty();
+    }
+    @SuppressWarnings("unchecked") public Iterator<V> iterator(){
+      return new ValueSetIterator<K,V>((Iterator)elements.iterator());
+    }
+    public boolean remove(    Object o){
+      throw new NotYetImplementedException();
+    }
+    public boolean removeAll(    Collection<?> c){
+      boolean removed=false;
+      for (      Object o : c)       removed|=this.remove(o);
+      return removed;
+    }
+    public boolean retainAll(    Collection<?> c){
+      throw new NotYetImplementedException();
+    }
+    public int size(){
+      return elements.size();
+    }
+    public Object[] toArray(){
+      throw new NotYetImplementedException();
+    }
+    public <T>T[] toArray(    T[] a){
+      throw new NotYetImplementedException();
+    }
+  }
+;
+}
