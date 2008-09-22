@@ -1,0 +1,17 @@
+{
+  if (selectableChannel != null) {
+    Selector selector=null;
+    SelectionKey selectionKey=null;
+    int selected=0;
+    try {
+      selector=SelectorFactory.getSelector();
+      while (selected == 0) {
+        selectionKey=selectableChannel.register(selector,operations);
+        selected=selector.select(NIO_TIMEOUT);
+      }
+    }
+  finally {
+      release(selector,selectionKey);
+    }
+  }
+}
