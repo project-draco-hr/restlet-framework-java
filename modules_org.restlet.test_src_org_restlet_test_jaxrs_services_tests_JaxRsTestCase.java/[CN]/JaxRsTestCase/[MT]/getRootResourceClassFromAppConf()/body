@@ -1,0 +1,12 @@
+{
+  Set<Class<?>> classes=getAppConfig().getClasses();
+  for (  Class<?> clazz : classes) {
+    if (clazz.isAnnotationPresent(Path.class))     return clazz;
+  }
+  Set<Object> singletons=getAppConfig().getSingletons();
+  for (  Object singleton : singletons) {
+    final Class<? extends Object> clazz=singleton.getClass();
+    if (clazz.isAnnotationPresent(Path.class))     return clazz;
+  }
+  throw new IllegalStateException("Sorry, no root resource class found");
+}
