@@ -1,6 +1,11 @@
 {
   this.channel=channel;
-  this.selectableChannel=(SelectableChannel)channel;
+  if (channel instanceof SelectableChannel) {
+    this.selectableChannel=(SelectableChannel)channel;
+  }
+ else {
+    this.selectableChannel=null;
+  }
   this.bb=ByteBuffer.allocate(8192);
   this.bb.flip();
   this.endReached=false;
