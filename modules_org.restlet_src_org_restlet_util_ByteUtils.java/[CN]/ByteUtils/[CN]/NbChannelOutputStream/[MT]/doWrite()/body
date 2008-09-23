@@ -2,15 +2,31 @@
   if ((this.channel != null) && (this.bb != null)) {
     try {
       int bytesWritten;
+      int attempts=0;
       while (this.bb.hasRemaining()) {
         bytesWritten=this.channel.write(this.bb);
+        attempts++;
         if (bytesWritten < 0) {
-          throw new IOException("Unexpected negative number of bytes written.");
+          throw new EOFException("Unexpected negative number of bytes written. End of file detected.");
         }
  else         if (bytesWritten == 0) {
-          if (SelectorFactory.getSelector().select(NIO_TIMEOUT) == 0) {
-            throw new IOException("Unable to select the channel to write to it. Selection timed out.");
+          if (this.selectableChannel != null) {
+            if (this.selector == null) {
+              this.selector=SelectorFactory.getSelector();
+            }
+            this.selectionKey=this.selectableChannel.register(this.selector,SelectionKey.OP_WRITE);
+            if (this.selector.select(NIO_TIMEOUT) == 0) {
+              if (attempts > 2) {
+                throw new IOException("Unable to select the channel to write to it. Selection timed out.");
+              }
+            }
+ else {
+              attempts--;
+            }
           }
+        }
+ else {
+          attempts=0;
         }
       }
     }
