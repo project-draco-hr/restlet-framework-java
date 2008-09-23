@@ -2,8 +2,7 @@
   super.start();
   if (this.controller == null) {
     this.controller=new Controller();
-    TCPSelectorHandler selectorHandler=new TCPSelectorHandler();
-    this.controller.getSelectorHandlers().add(selectorHandler);
+    this.controller.setSelectorHandler(getSelectorHandler());
     configure(this.controller);
   }
   getLogger().info("Starting the Grizzly " + getProtocols() + " server");
@@ -18,8 +17,7 @@
           }
           public void onReady(){
             if (getHelped().getPort() == 0) {
-              final TCPSelectorHandler tsh=(TCPSelectorHandler)controller.getSelectorHandler(Controller.Protocol.TCP);
-              setEphemeralPort(tsh.getPortLowLevel());
+              setEphemeralPort(getSelectorHandler().getPortLowLevel());
             }
             latch.countDown();
           }
