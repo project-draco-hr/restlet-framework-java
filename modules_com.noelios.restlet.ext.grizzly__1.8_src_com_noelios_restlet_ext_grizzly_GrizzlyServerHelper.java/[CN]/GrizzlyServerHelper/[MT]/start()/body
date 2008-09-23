@@ -8,6 +8,7 @@
   getLogger().info("Starting the Grizzly " + getProtocols() + " server");
   final CountDownLatch latch=new CountDownLatch(1);
   final Controller controller=this.controller;
+  final TCPSelectorHandler selectorHandler=getSelectorHandler();
   new Thread(){
     @Override public void run(){
       try {
@@ -17,7 +18,7 @@
           }
           public void onReady(){
             if (getHelped().getPort() == 0) {
-              setEphemeralPort(getSelectorHandler().getPortLowLevel());
+              setEphemeralPort(selectorHandler.getPortLowLevel());
             }
             latch.countDown();
           }

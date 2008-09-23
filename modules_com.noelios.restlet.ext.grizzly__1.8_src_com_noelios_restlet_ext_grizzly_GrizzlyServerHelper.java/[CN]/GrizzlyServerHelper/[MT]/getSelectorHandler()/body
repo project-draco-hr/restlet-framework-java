@@ -1,6 +1,12 @@
 {
-  if (this.selectorHandler == null) {
-    this.selectorHandler=new TCPSelectorHandler();
+  TCPSelectorHandler s=this.selectorHandler;
+  if (s == null) {
+synchronized (this) {
+      s=this.selectorHandler;
+      if (s == null) {
+        this.selectorHandler=s=new TCPSelectorHandler();
+      }
+    }
   }
-  return this.selectorHandler;
+  return s;
 }
