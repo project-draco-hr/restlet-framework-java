@@ -16,35 +16,45 @@
       if (AUTO_WIRE_KEY_DEFAULT.equalsIgnoreCase(autoWire)) {
         boolean addContextPath=false;
         boolean addFullServletPath=false;
-        for (        final Route route : component.getDefaultHost().getRoutes()) {
-          if (route.getTemplate().getPattern() == null) {
-            addFullServletPath=true;
-            continue;
-          }
-          if (!route.getTemplate().getPattern().startsWith(uriPattern)) {
-            if (!route.getTemplate().getPattern().startsWith(request.getServletPath())) {
-              addFullServletPath=true;
-            }
+        if (component.getDefaultHost().getRoutes().isEmpty()) {
+          addFullServletPath=component.getDefaultHost().getDefaultRoute() != null;
+        }
  else {
-              addContextPath=true;
-              break;
+          for (          final Route route : component.getDefaultHost().getRoutes()) {
+            if (route.getTemplate().getPattern() == null) {
+              addFullServletPath=true;
+              continue;
+            }
+            if (!route.getTemplate().getPattern().startsWith(uriPattern)) {
+              if (!route.getTemplate().getPattern().startsWith(request.getServletPath())) {
+                addFullServletPath=true;
+              }
+ else {
+                addContextPath=true;
+                break;
+              }
             }
           }
         }
         if (!addContextPath) {
           for (          final VirtualHost virtualHost : component.getHosts()) {
-            for (            final Route route : virtualHost.getRoutes()) {
-              if (route.getTemplate().getPattern() == null) {
-                addFullServletPath=true;
-                continue;
-              }
-              if (!route.getTemplate().getPattern().startsWith(uriPattern)) {
-                if (!route.getTemplate().getPattern().startsWith(request.getServletPath())) {
-                  addFullServletPath=true;
-                }
+            if (virtualHost.getRoutes().isEmpty()) {
+              addFullServletPath=virtualHost.getDefaultRoute() != null;
+            }
  else {
-                  addContextPath=true;
-                  break;
+              for (              final Route route : virtualHost.getRoutes()) {
+                if (route.getTemplate().getPattern() == null) {
+                  addFullServletPath=true;
+                  continue;
+                }
+                if (!route.getTemplate().getPattern().startsWith(uriPattern)) {
+                  if (!route.getTemplate().getPattern().startsWith(request.getServletPath())) {
+                    addFullServletPath=true;
+                  }
+ else {
+                    addContextPath=true;
+                    break;
+                  }
                 }
               }
             }
@@ -61,11 +71,21 @@
  else {
             offsetPath=uriPattern;
           }
+          Route defaultRoute=component.getDefaultHost().getDefaultRoute();
+          if (defaultRoute != null) {
+            defaultRoute.getTemplate().setPattern(offsetPath + defaultRoute.getTemplate().getPattern());
+            log("[Noelios Restlet Engine] - Attaching restlet: " + defaultRoute.getNext() + " to URI: "+ offsetPath+ defaultRoute.getTemplate().getPattern());
+          }
           for (          final Route route : component.getDefaultHost().getRoutes()) {
             log("[Noelios Restlet Engine] - Attaching restlet: " + route.getNext() + " to URI: "+ offsetPath+ route.getTemplate().getPattern());
             route.getTemplate().setPattern(offsetPath + route.getTemplate().getPattern());
           }
           for (          final VirtualHost virtualHost : component.getHosts()) {
+            defaultRoute=virtualHost.getDefaultRoute();
+            if (defaultRoute != null) {
+              defaultRoute.getTemplate().setPattern(offsetPath + defaultRoute.getTemplate().getPattern());
+              log("[Noelios Restlet Engine] - Attaching restlet: " + defaultRoute.getNext() + " to URI: "+ offsetPath+ defaultRoute.getTemplate().getPattern());
+            }
             for (            final Route route : virtualHost.getRoutes()) {
               log("[Noelios Restlet Engine] - Attaching restlet: " + route.getNext() + " to URI: "+ offsetPath+ route.getTemplate().getPattern());
               route.getTemplate().setPattern(offsetPath + route.getTemplate().getPattern());
