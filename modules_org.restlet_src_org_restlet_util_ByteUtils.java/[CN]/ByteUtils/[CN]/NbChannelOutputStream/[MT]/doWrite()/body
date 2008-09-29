@@ -14,14 +14,21 @@
             if (this.selector == null) {
               this.selector=SelectorFactory.getSelector();
             }
-            this.selectionKey=this.selectableChannel.register(this.selector,SelectionKey.OP_WRITE);
-            if (this.selector.select(NIO_TIMEOUT) == 0) {
+            if (this.selector == null) {
               if (attempts > 2) {
-                throw new IOException("Unable to select the channel to write to it. Selection timed out.");
+                throw new IOException("Unable to obtain a selector. Selector factory returned null.");
               }
             }
  else {
-              attempts--;
+              this.selectionKey=this.selectableChannel.register(this.selector,SelectionKey.OP_WRITE);
+              if (this.selector.select(NIO_TIMEOUT) == 0) {
+                if (attempts > 2) {
+                  throw new IOException("Unable to select the channel to write to it. Selection timed out.");
+                }
+              }
+ else {
+                attempts--;
+              }
             }
           }
         }
