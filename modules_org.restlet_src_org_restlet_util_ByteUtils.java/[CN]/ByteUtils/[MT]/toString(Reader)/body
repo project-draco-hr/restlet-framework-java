@@ -3,11 +3,12 @@
   if (reader != null) {
     try {
       final StringBuilder sb=new StringBuilder();
-      final BufferedReader br=new BufferedReader(reader);
-      int nextChar=br.read();
-      while (nextChar != -1) {
-        sb.append((char)nextChar);
-        nextChar=br.read();
+      final BufferedReader br=(reader instanceof BufferedReader) ? (BufferedReader)reader : new BufferedReader(reader);
+      char[] buffer=new char[8192];
+      int charsRead=br.read(buffer);
+      while (charsRead != -1) {
+        sb.append(buffer,0,charsRead);
+        charsRead=br.read(buffer);
       }
       br.close();
       result=sb.toString();
