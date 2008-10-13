@@ -1,11 +1,23 @@
 {
   Representation result=null;
   if (variant != null) {
+    ApplicationInfo applicationInfo=getApplicationInfo(request,response);
+    if (getTitle() != null && !"".equals(getTitle())) {
+      DocumentationInfo doc=null;
+      if (applicationInfo.getDocumentations().isEmpty()) {
+        doc=new DocumentationInfo();
+        applicationInfo.getDocumentations().add(doc);
+      }
+ else {
+        doc=applicationInfo.getDocumentations().get(0);
+      }
+      doc.setTitle(getTitle());
+    }
     if (MediaType.APPLICATION_WADL_XML.equals(variant.getMediaType())) {
-      result=new WadlRepresentation(getApplicationInfo(request,response));
+      result=new WadlRepresentation(applicationInfo);
     }
  else     if (MediaType.TEXT_HTML.equals(variant.getMediaType())) {
-      result=new WadlRepresentation(getApplicationInfo(request,response)).getHtmlRepresentation();
+      result=new WadlRepresentation(applicationInfo).getHtmlRepresentation();
     }
   }
   return result;
