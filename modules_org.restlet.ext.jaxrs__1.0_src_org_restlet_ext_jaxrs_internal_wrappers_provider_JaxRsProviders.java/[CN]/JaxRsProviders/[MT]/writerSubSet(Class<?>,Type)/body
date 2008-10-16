@@ -1,7 +1,13 @@
 {
   final List<MessageBodyWriter> mbws=new ArrayList<MessageBodyWriter>();
   for (  ProviderWrapper mbww : this.messageBodyWriterWrappers) {
-    MessageBodyWriter mbw=mbww.getInitializedWriter();
+    MessageBodyWriter mbw;
+    try {
+      mbw=mbww.getInitializedWriter();
+    }
+ catch (    ProviderNotInitializableException e) {
+      continue;
+    }
     if (mbw.supportsWrite(entityClass,genericType)) {
       mbws.add(mbw);
     }

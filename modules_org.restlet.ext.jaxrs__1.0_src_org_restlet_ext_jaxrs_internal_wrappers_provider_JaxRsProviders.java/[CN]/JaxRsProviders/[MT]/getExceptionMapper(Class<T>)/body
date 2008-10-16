@@ -1,12 +1,21 @@
 {
   if (causeClass == null)   throw new ImplementationException("The call of an exception mapper with null is not allowed");
   ProviderWrapper mapperWrapper;
-  do {
+  for (; ; ) {
     mapperWrapper=this.excMappers.get(causeClass);
+    if (mapperWrapper != null) {
+      try {
+        return (ExceptionMapper<T>)mapperWrapper.getInitializedExcMapper();
+      }
+ catch (      ProviderNotInitializableException e) {
+        localLogger.info("The exception mapper for " + causeClass + " could not be initialized, so it can#t be used. Will look for the next exception mapper in hierarchy.");
+      }
+catch (      WebApplicationException e) {
+        localLogger.log(Level.INFO,"The exception mapper for " + causeClass + " could not be initialized, so it can#t be used. Will look for the next exception mapper in hierarchy.",e);
+      }
+    }
     Class superclass=causeClass.getSuperclass();
     if (superclass == null || superclass.equals(Object.class))     return null;
     causeClass=superclass;
   }
- while (mapperWrapper == null);
-  return (ExceptionMapper<T>)mapperWrapper.getInitializedExcMapper();
 }

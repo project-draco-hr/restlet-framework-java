@@ -1,7 +1,16 @@
 {
   for (  ProviderWrapper mbrw : this.messageBodyReaderWrappers) {
     if (mbrw.supportsRead(mediaType)) {
-      MessageBodyReader mbr=mbrw.getInitializedReader();
+      MessageBodyReader mbr;
+      try {
+        mbr=mbrw.getInitializedReader();
+      }
+ catch (      ProviderNotInitializableException e) {
+        continue;
+      }
+catch (      WebApplicationException e) {
+        continue;
+      }
       if (mbr.isReadable(paramType,genericType,annotations,Converter.toJaxRsMediaType(mediaType)))       return mbr;
     }
   }

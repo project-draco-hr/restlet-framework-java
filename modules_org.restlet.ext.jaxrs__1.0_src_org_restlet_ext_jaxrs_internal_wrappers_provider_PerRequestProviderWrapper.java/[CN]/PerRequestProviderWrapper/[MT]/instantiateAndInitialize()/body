@@ -1,0 +1,50 @@
+{
+  Object jaxRsProvider;
+  try {
+    jaxRsProvider=createInstance();
+  }
+ catch (  IllegalConstrParamTypeException e) {
+    throw new ImplementationException("The provider could not be instantiated, but this could not be here",e);
+  }
+catch (  IllegalPathParamTypeException e) {
+    throw new ImplementationException("The provider could not be instantiated, but this could not be here",e);
+  }
+catch (  IllegalArgumentException e) {
+    throw new ImplementationException("The provider could not be instantiated, but this could not be here",e);
+  }
+catch (  WebApplicationException e) {
+    throw new ImplementationException("The provider could not be instantiated, but this could not be here",e);
+  }
+catch (  MissingAnnotationException e) {
+    throw new ImplementationException("The provider could not be instantiated, but this could not be here",e);
+  }
+catch (  MissingConstructorException e) {
+    throw new ImplementationException("The provider could not be instantiated, but this could not be here",e);
+  }
+catch (  InvocationTargetException e) {
+    throw new ImplementationException("The provider could not be instantiated, but this could not be here",e);
+  }
+catch (  InstantiateException e) {
+    throw new ImplementationException("The provider could not be instantiated, but this could not be here",e);
+  }
+  try {
+    initProvider(jaxRsProvider,tlContext,allProviders,extensionBackwardMapping);
+  }
+ catch (  IllegalFieldTypeException e) {
+    logger.log(Level.WARNING,"The provider " + this.getClassName() + " could not be initialized and so it could not be used",e);
+    throw new ProviderNotInitializableException();
+  }
+catch (  IllegalBeanSetterTypeException e) {
+    logger.log(Level.WARNING,"The provider " + this.getClassName() + " could not be initialized and so it could not be used",e);
+    throw new ProviderNotInitializableException();
+  }
+catch (  InjectException e) {
+    logger.log(Level.WARNING,"The provider " + this.getClassName() + " could not be initialized and so it could not be used",e);
+    throw new ProviderNotInitializableException();
+  }
+catch (  InvocationTargetException e) {
+    logger.log(Level.WARNING,"The provider " + this.getClassName() + " could not be initialized and so it could not be used",e);
+    throw new ProviderNotInitializableException();
+  }
+  return jaxRsProvider;
+}

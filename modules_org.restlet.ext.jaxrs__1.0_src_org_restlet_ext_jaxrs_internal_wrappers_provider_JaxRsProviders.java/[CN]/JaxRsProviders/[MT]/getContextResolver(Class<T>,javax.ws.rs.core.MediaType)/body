@@ -1,7 +1,15 @@
 {
   for (  ProviderWrapper crWrapper : this.contextResolvers) {
     final javax.ws.rs.ext.ContextResolver<?> cr;
-    cr=crWrapper.getInitializedCtxResolver().getContextResolver();
+    try {
+      cr=crWrapper.getInitializedCtxResolver().getContextResolver();
+    }
+ catch (    ProviderNotInitializableException e1) {
+      continue;
+    }
+catch (    WebApplicationException e1) {
+      continue;
+    }
     final Class<?> crClaz=cr.getClass();
     final Class<?> genClass=JaxRsProviders.getCtxResGenClass(crClaz);
     if (genClass == null || !genClass.equals(contextType)) {
