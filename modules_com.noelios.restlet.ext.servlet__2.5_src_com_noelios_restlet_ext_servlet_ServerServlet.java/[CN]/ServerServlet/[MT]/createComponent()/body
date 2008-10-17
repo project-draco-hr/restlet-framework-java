@@ -46,5 +46,10 @@ catch (      IllegalAccessException e) {
     initParam=enum1.nextElement();
     componentContext.getParameters().add(initParam,getServletContext().getInitParameter(initParam));
   }
+  String attributeName;
+  for (final Enumeration<String> namesEnum=getServletContext().getAttributeNames(); namesEnum.hasMoreElements(); ) {
+    attributeName=namesEnum.nextElement();
+    componentContext.getAttributes().put(attributeName,getServletContext().getAttribute(attributeName));
+  }
   return component;
 }
