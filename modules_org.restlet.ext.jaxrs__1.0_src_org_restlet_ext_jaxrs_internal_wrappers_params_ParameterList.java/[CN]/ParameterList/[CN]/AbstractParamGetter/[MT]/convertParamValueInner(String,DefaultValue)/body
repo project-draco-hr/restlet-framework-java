@@ -4,37 +4,37 @@
     final Constructor<?> constr=this.convertTo.getConstructor(String.class);
     return constr.newInstance(paramValue);
   }
- catch (  final WebApplicationException wae) {
+ catch (  WebApplicationException wae) {
     constructorWae=wae;
   }
-catch (  final Exception e) {
+catch (  Exception e) {
   }
   Method valueOf;
   try {
     valueOf=this.convertTo.getMethod("valueOf",String.class);
   }
- catch (  final SecurityException e) {
+ catch (  SecurityException e) {
     throw ConvertParameterException.object(this.convertTo,paramValue,e);
   }
-catch (  final NoSuchMethodException e) {
+catch (  NoSuchMethodException e) {
     throw ConvertParameterException.object(this.convertTo,paramValue,e);
   }
   try {
     return valueOf.invoke(null,paramValue);
   }
- catch (  final IllegalArgumentException e) {
+ catch (  IllegalArgumentException e) {
     if (constructorWae != null) {
       throw constructorWae;
     }
     throw ConvertParameterException.object(this.convertTo,paramValue,e);
   }
-catch (  final IllegalAccessException e) {
+catch (  IllegalAccessException e) {
     if (constructorWae != null) {
       throw constructorWae;
     }
     throw ConvertParameterException.object(this.convertTo,paramValue,e);
   }
-catch (  final InvocationTargetException ite) {
+catch (  InvocationTargetException ite) {
     if (constructorWae != null) {
       throw constructorWae;
     }

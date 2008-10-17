@@ -12,20 +12,20 @@
   try {
     requestMessage.validateSignature(accessor);
   }
- catch (  final OAuthProblemException oape) {
+ catch (  OAuthProblemException oape) {
     getResponse().setChallengeRequest(challengeRequest);
     getResponse().setStatus(Status.CLIENT_ERROR_UNAUTHORIZED,oape);
     challengeRequest.getParameters().add("oauth_problem","signature_invalid");
     return;
   }
-catch (  final Exception e) {
+catch (  Exception e) {
     throw new RuntimeException(e);
   }
   this.provider.generateRequestToken(accessor);
   try {
     getResponse().setEntity(new StringRepresentation(OAuth.formEncode(OAuth.newList("oauth_token",accessor.requestToken,"oauth_token_secret",accessor.tokenSecret))));
   }
- catch (  final IOException e) {
+ catch (  IOException e) {
     throw new ResourceException(e);
   }
 }
