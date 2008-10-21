@@ -1,0 +1,14 @@
+{
+  Reference reference=new Reference(propertiesUri);
+  Response response=new Client(reference.getSchemeProtocol()).get(reference);
+  if (!(response.getStatus().isSuccess() && response.isEntityAvailable())) {
+    StringBuilder stringBuilder=new StringBuilder();
+    stringBuilder.append("Cannot access to the configuration file: \"");
+    stringBuilder.append(propertiesUri);
+    stringBuilder.append("\"");
+    throw new IllegalArgumentException(stringBuilder.toString());
+  }
+  Properties properties=new Properties();
+  properties.load(response.getEntity().getStream());
+  return properties;
+}
