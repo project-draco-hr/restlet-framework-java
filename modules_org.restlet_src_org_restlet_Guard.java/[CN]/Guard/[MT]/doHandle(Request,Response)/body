@@ -2,21 +2,37 @@
   final boolean loggable=getLogger().isLoggable(Level.FINE);
 switch (authenticate(request)) {
 case AUTHENTICATION_VALID:
-    if (loggable) {
-      getLogger().fine("Authentication suceeded. Valid credentials provided for identifier: " + request.getChallengeResponse().getIdentifier() + ".");
+    ChallengeResponse challengeResponse=request.getChallengeResponse();
+  if (loggable) {
+    if (challengeResponse != null) {
+      getLogger().fine("Authentication succeeded. Valid credentials provided for identifier: " + request.getChallengeResponse().getIdentifier() + ".");
     }
-  if (authorize(request)) {
-    if (loggable) {
+ else {
+      getLogger().fine("Authentication succeeded. Valid credentials provided.");
+    }
+  }
+if (authorize(request)) {
+  if (loggable) {
+    if (challengeResponse != null) {
       getLogger().fine("Request authorized for identifier: " + request.getChallengeResponse().getIdentifier() + ".");
     }
-    accept(request,response);
-  }
  else {
-    if (loggable) {
+      getLogger().fine("Request authorized.");
+    }
+  }
+  accept(request,response);
+}
+ else {
+  if (loggable) {
+    if (challengeResponse != null) {
       getLogger().fine("Request not authorized for identifier: " + request.getChallengeResponse().getIdentifier() + ".");
     }
-    forbid(response);
+ else {
+      getLogger().fine("Request not authorized.");
+    }
   }
+  forbid(response);
+}
 break;
 case AUTHENTICATION_MISSING:
 if (loggable) {
