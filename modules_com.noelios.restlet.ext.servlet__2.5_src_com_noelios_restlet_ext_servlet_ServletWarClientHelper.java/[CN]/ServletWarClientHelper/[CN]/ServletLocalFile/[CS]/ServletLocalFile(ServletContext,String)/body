@@ -1,0 +1,14 @@
+{
+  super();
+  this.servletContext=servletContext;
+  this.path=path;
+  if (path.endsWith("/")) {
+    this.isDirectory=true;
+    fullName=path.substring(0,path.length() - 1);
+  }
+ else {
+    setFiles(servletContext.getResourcePaths(path + "/"));
+    this.isDirectory=this.files != null;
+    fullName=path;
+  }
+}
