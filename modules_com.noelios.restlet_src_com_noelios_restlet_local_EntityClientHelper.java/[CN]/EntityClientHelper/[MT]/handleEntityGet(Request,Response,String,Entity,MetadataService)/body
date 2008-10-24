@@ -1,0 +1,79 @@
+{
+  Representation output=null;
+  boolean found=false;
+  final Iterator<Preference<MediaType>> iterator=request.getClientInfo().getAcceptedMediaTypes().iterator();
+  while (iterator.hasNext() && !found) {
+    final Preference<MediaType> pref=iterator.next();
+    found=pref.getMetadata().equals(MediaType.TEXT_URI_LIST);
+  }
+  if (found) {
+    final String baseName=entity.getBaseName(metadataService);
+    Entity parent=entity.getParent();
+    if (parent != null) {
+      final Collection<Entity> entities=parent.getChildren();
+      if (entities != null) {
+        final ReferenceList rl=new ReferenceList(entities.size());
+        final String scheme=request.getResourceRef().getScheme();
+        final String encodedParentDirectoryURI=path.substring(0,path.lastIndexOf("/"));
+        final String encodedEntityName=path.substring(path.lastIndexOf("/") + 1);
+        for (        final Entity entry : entities) {
+          if (baseName.equals(entry.getBaseName(metadataService))) {
+            rl.add(createReference(scheme,encodedParentDirectoryURI,encodedEntityName,entry.getName()));
+          }
+        }
+        output=rl.getTextRepresentation();
+      }
+    }
+  }
+ else {
+    if (entity.exists()) {
+      if (entity.isDirectory()) {
+        final Collection<Entity> children=entity.getChildren();
+        final ReferenceList rl=new ReferenceList(children.size());
+        String directoryUri=request.getResourceRef().toString();
+        if (!directoryUri.endsWith("/")) {
+          directoryUri+="/";
+        }
+        for (        final Entity entry : children) {
+          rl.add(directoryUri + Reference.encode(entry.getName()));
+        }
+        output=rl.getTextRepresentation();
+      }
+ else {
+        output=entity.getRepresentation(metadataService.getDefaultMediaType(),getTimeToLive());
+        output.setIdentifier(request.getResourceRef());
+        updateMetadata(metadataService,entity.getName(),output);
+      }
+    }
+ else {
+      final String baseName=entity.getBaseName(metadataService);
+      final Collection<String> extensions=entity.getExtensions(metadataService);
+      final Collection<Entity> files=entity.getChildren();
+      Entity uniqueVariant=null;
+      if (files != null) {
+        for (        final Entity entry : files) {
+          if (baseName.equals(entry.getBaseName(metadataService))) {
+            final Collection<String> entryExtensions=entry.getExtensions(metadataService);
+            if (entryExtensions.containsAll(extensions) && extensions.containsAll(entryExtensions)) {
+              uniqueVariant=entry;
+              break;
+            }
+          }
+        }
+      }
+      if (uniqueVariant != null) {
+        output=uniqueVariant.getRepresentation(metadataService.getDefaultMediaType(),getTimeToLive());
+        output.setIdentifier(request.getResourceRef());
+        updateMetadata(metadataService,entity.getName(),output);
+      }
+    }
+  }
+  if (output == null) {
+    response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+  }
+ else {
+    output.setIdentifier(request.getResourceRef());
+    response.setEntity(output);
+    response.setStatus(Status.SUCCESS_OK);
+  }
+}
