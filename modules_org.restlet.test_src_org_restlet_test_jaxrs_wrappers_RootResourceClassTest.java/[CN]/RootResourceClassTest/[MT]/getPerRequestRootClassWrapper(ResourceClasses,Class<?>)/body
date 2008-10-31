@@ -1,0 +1,13 @@
+{
+  Method method=ResourceClasses.class.getDeclaredMethod("getPerRequestRootClassWrapper",Class.class);
+  method.setAccessible(true);
+  try {
+    return (RootResourceClass)method.invoke(resourceClasses,jaxRsRootResourceClass);
+  }
+ catch (  InvocationTargetException e) {
+    final Throwable cause=e.getCause();
+    if (cause instanceof Exception)     throw (Exception)cause;
+    if (cause instanceof Error)     throw (Error)cause;
+ else     throw new RuntimeException(cause);
+  }
+}

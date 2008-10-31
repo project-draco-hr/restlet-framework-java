@@ -1,12 +1,12 @@
 {
   final ResourceClasses resourceClasses=new ResourceClasses(new ThreadLocalizedContext(),null,null,Logger.getAnonymousLogger());
   try {
-    resourceClasses.getRootClassWrapper(IllegalPathService1.class);
+    getPerRequestRootClassWrapper(resourceClasses,IllegalPathService1.class);
     fail("must not pass");
   }
  catch (  AssertionFailedError e) {
   }
-  final RootResourceClass rrc=resourceClasses.getRootClassWrapper(IllegalPathService2.class);
+  final RootResourceClass rrc=getPerRequestRootClassWrapper(resourceClasses,IllegalPathService2.class);
   PathRegExp rrcRegExp=rrc.getPathRegExp();
   assertEquals("/afsdf:use",rrcRegExp.getPathTemplateDec());
 }
