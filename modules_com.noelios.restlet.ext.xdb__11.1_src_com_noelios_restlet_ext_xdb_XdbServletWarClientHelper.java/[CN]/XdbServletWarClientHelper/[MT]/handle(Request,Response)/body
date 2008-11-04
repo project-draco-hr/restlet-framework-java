@@ -31,6 +31,8 @@
  finally {
         XdbServerServlet.closeDbResources(stmt,rset);
       }
+      response.setEntity(output);
+      response.setStatus(Status.SUCCESS_OK);
     }
  else {
       try {
@@ -53,17 +55,22 @@
             output.setMediaType(new MediaType(mediaType));
           }
         }
+        response.setEntity(output);
+        response.setStatus(Status.SUCCESS_OK);
       }
  catch (      SQLException sqe) {
-        getLogger().throwing("XdbServletWarClientHelper","handleWar",sqe);
-        throw new RuntimeException("Exception querying xdburitype(?).getBlob() - xdbResPath: " + xdbResPath,sqe);
+        if (sqe.getErrorCode() == 31001) {
+          response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+        }
+ else {
+          getLogger().throwing("XdbServletWarClientHelper","handleWar: ",sqe);
+          throw new RuntimeException("Exception querying xdburitype(?).getBlob() - xdbResPath: " + xdbResPath,sqe);
+        }
       }
  finally {
         XdbServerServlet.closeDbResources(stmt,rset);
       }
     }
-    response.setEntity(output);
-    response.setStatus(Status.SUCCESS_OK);
   }
  else {
     response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
