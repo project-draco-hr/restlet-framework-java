@@ -38,9 +38,12 @@
     closeDbResources(preparedstatement,null);
   }
   try {
-    if ((getApplication() != null) && (getApplication().isStopped())) {
+    String bootstrapClassName="RESTLET:com.noelios.restlet.ext.xdb.XdbServerServlet";
+    Engine.setUserClassLoader(this.loadClass(bootstrapClassName).getClassLoader());
+    Application app=getApplication();
+    if ((app != null) && (app.isStopped())) {
       try {
-        getApplication().start();
+        app.start();
       }
  catch (      Exception e) {
         log("Error during the starting of the Restlet Application",e);
@@ -50,5 +53,9 @@
  catch (  AccessControlException ace) {
     log("Error loading Restlet Application",ace);
     throw new ServletException("Error loading Restlet application",ace);
+  }
+catch (  final ClassNotFoundException cne) {
+    log("Error loading Restlet Application",cne);
+    throw new ServletException("Error loading Restlet application",cne);
   }
 }

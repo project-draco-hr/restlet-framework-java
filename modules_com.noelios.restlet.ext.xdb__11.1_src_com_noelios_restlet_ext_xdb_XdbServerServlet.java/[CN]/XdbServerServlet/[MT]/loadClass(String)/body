@@ -2,12 +2,12 @@
   final int doubleDotPos=className.indexOf(':');
   Class<?> targetClass;
   if (doubleDotPos > 0) {
-    final String sch=className.substring(0,doubleDotPos);
+    final String sch=className.substring(0,doubleDotPos).toUpperCase();
     final String cName=className.substring(doubleDotPos + 1);
     try {
       final Class<?> loaderClass=Engine.loadClass("oracle.aurora.rdbms.DbmsJava");
       final Method meth=loaderClass.getMethod("classForNameAndSchema",new Class[]{String.class,String.class});
-      log("[Noelios Restlet Engine] - Schema: " + sch + " class: "+ className+ " loader: "+ loaderClass);
+      log("[Noelios Restlet Engine] - Schema: " + sch + " class: "+ cName+ " loader: "+ loaderClass);
       targetClass=(Class<?>)meth.invoke(null,new Object[]{cName,sch});
     }
  catch (    NoSuchMethodException nse) {
