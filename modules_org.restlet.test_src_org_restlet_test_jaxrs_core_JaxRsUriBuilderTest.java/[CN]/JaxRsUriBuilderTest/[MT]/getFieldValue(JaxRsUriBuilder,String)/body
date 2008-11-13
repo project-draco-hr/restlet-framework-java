@@ -1,5 +1,11 @@
 {
-  final Field queryField=jaxRsUriBuilder.getClass().getDeclaredField(fieldName);
+  Field queryField;
+  try {
+    queryField=jaxRsUriBuilder.getClass().getDeclaredField(fieldName);
+  }
+ catch (  NoSuchFieldException e) {
+    queryField=jaxRsUriBuilder.getClass().getSuperclass().getDeclaredField(fieldName);
+  }
   queryField.setAccessible(true);
   final Object value=queryField.get(jaxRsUriBuilder);
   if (value == null) {
