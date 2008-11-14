@@ -1,3 +1,9 @@
 {
-  throw new WebApplicationException(Status.NOT_FOUND);
+  if (this.noResourceClHandler != null) {
+    this.noResourceClHandler.handle(Request.getCurrent(),org.restlet.data.Response.getCurrent());
+    throw new RequestHandledException();
+  }
+ else {
+    throw new WebApplicationException(Status.NOT_FOUND);
+  }
 }
