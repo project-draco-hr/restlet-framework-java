@@ -1,0 +1,16 @@
+{
+  final Series<Parameter> result=super.getRequestHeaders();
+  if (!this.requestHeadersAdded) {
+    String headerName;
+    String headerValue;
+    for (final Enumeration<String> names=getConnection().getRequestFields().getFieldNames(); names.hasMoreElements(); ) {
+      headerName=names.nextElement();
+      for (final Enumeration<String> values=getConnection().getRequestFields().getValues(headerName); values.hasMoreElements(); ) {
+        headerValue=values.nextElement();
+        result.add(new Parameter(headerName,headerValue));
+      }
+    }
+    this.requestHeadersAdded=true;
+  }
+  return result;
+}
