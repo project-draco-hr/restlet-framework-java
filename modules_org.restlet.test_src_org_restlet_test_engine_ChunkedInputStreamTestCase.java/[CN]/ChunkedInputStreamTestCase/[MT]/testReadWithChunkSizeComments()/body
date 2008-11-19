@@ -1,0 +1,11 @@
+{
+  InputStream input=new ByteArrayInputStream("9; comment\r\ntest data\r\n0\r\n\r\n".getBytes());
+  InputStream chunked=new ChunkedInputStream(input);
+  assertEquals("test data",read(chunked));
+  input=new ByteArrayInputStream("9 ; comment\r\ntest data\r\n0\r\n\r\n".getBytes());
+  chunked=new ChunkedInputStream(input);
+  assertEquals("test data",read(chunked));
+  input=new ByteArrayInputStream("4; comment\r\ntest\r\n5; another comment\r\n data\r\n0\r\n\r\n".getBytes());
+  chunked=new ChunkedInputStream(input);
+  assertEquals("test data",read(chunked));
+}

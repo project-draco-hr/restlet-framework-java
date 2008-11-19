@@ -1,0 +1,16 @@
+{
+  final Application application=new Application(){
+    @Override public Restlet createRoot(){
+      final Restlet trace=new Restlet(getContext()){
+        @Override public void handle(        Request request,        Response response){
+          final Form inputForm=request.getEntityAsForm();
+          response.setEntity(inputForm.getWebRepresentation());
+        }
+      }
+;
+      return trace;
+    }
+  }
+;
+  return application;
+}

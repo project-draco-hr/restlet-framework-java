@@ -1,0 +1,17 @@
+{
+  final Client client=new Client(Protocol.POPS);
+  client.getContext().getParameters().add("debug",DEBUG);
+  final String baseUri=NOELIOS_POPS;
+  final Request request=new Request(Method.GET,baseUri);
+  request.setChallengeResponse(new ChallengeResponse(ChallengeScheme.POP_BASIC,NOELIOS_LOGIN,NOELIOS_PASSWORD));
+  final Response response=client.handle(request);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  response.getEntity().write(System.out);
+  System.out.println();
+  final DomRepresentation dom=response.getEntityAsDom();
+  for (  final Node node : dom.getNodes("/emails/email")) {
+    final NamedNodeMap attrs=node.getAttributes();
+    final String href=attrs.getNamedItem("href").getNodeValue();
+    printMail(client,baseUri,href);
+  }
+}

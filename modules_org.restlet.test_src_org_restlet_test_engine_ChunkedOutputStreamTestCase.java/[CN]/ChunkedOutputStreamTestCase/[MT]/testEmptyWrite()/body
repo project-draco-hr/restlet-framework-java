@@ -1,0 +1,9 @@
+{
+  final String data="";
+  final ByteArrayOutputStream out=new ByteArrayOutputStream();
+  final OutputStream chunked=new ChunkedOutputStream(out);
+  chunked.write(data.getBytes());
+  chunked.close();
+  final String result=new String(out.toByteArray());
+  assertEquals("0\r\n\r\n",result);
+}
