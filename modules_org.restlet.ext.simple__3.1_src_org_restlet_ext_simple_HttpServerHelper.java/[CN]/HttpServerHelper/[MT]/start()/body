@@ -1,0 +1,15 @@
+{
+  final String addr=getHelped().getAddress();
+  if (addr != null) {
+    final InetAddress iaddr=InetAddress.getByName(addr);
+    setSocket(new ServerSocket(getHelped().getPort(),50,iaddr));
+  }
+ else {
+    setSocket(new ServerSocket(getHelped().getPort()));
+  }
+  setConfidential(false);
+  setHandler(PipelineHandlerFactory.getInstance(new SimpleProtocolHandler(this),getDefaultThreads(),getMaxWaitTimeMs()));
+  setConnection(ConnectionFactory.getConnection(getHandler(),new SimplePipelineFactory()));
+  getConnection().connect(getSocket());
+  super.start();
+}
