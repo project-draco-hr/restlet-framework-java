@@ -1,0 +1,70 @@
+{
+  Representation result=(representation == null) ? Representation.createEmpty() : representation;
+  boolean entityHeaderFound=false;
+  for (  final Parameter header : responseHeaders) {
+    if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_TYPE)) {
+      final ContentType contentType=new ContentType(header.getValue());
+      result.setMediaType(contentType.getMediaType());
+      if ((result.getCharacterSet() == null) || (contentType.getCharacterSet() != null)) {
+        result.setCharacterSet(contentType.getCharacterSet());
+      }
+      entityHeaderFound=true;
+    }
+ else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LENGTH)) {
+      entityHeaderFound=true;
+    }
+ else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_EXPIRES)) {
+      result.setExpirationDate(parseDate(header.getValue(),false));
+      entityHeaderFound=true;
+    }
+ else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_ENCODING)) {
+      final HeaderReader hr=new HeaderReader(header.getValue());
+      String value=hr.readValue();
+      while (value != null) {
+        final Encoding encoding=new Encoding(value);
+        if (!encoding.equals(Encoding.IDENTITY)) {
+          result.getEncodings().add(encoding);
+        }
+        value=hr.readValue();
+      }
+      entityHeaderFound=true;
+    }
+ else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LANGUAGE)) {
+      final HeaderReader hr=new HeaderReader(header.getValue());
+      String value=hr.readValue();
+      while (value != null) {
+        result.getLanguages().add(new Language(value));
+        value=hr.readValue();
+      }
+      entityHeaderFound=true;
+    }
+ else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_LAST_MODIFIED)) {
+      result.setModificationDate(parseDate(header.getValue(),false));
+      entityHeaderFound=true;
+    }
+ else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_ETAG)) {
+      result.setTag(Tag.parse(header.getValue()));
+      entityHeaderFound=true;
+    }
+ else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LOCATION)) {
+      result.setIdentifier(header.getValue());
+      entityHeaderFound=true;
+    }
+ else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_DISPOSITION)) {
+      result.setDownloadName(parseContentDisposition(header.getValue()));
+      entityHeaderFound=true;
+    }
+ else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_RANGE)) {
+      RangeUtils.parseContentRange(header.getValue(),result);
+      entityHeaderFound=true;
+    }
+ else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_MD5)) {
+      result.setDigest(new Digest(Digest.ALGORITHM_MD5,Base64.decode(header.getValue())));
+      entityHeaderFound=true;
+    }
+  }
+  if ((representation == null) && !entityHeaderFound) {
+    result=null;
+  }
+  return result;
+}

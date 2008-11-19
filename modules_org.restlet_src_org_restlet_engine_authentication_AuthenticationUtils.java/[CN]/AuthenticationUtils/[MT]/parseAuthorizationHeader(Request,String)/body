@@ -1,0 +1,19 @@
+{
+  ChallengeResponse result=null;
+  if (header != null) {
+    final int space=header.indexOf(' ');
+    if (space != -1) {
+      final String scheme=header.substring(0,space);
+      final String credentials=header.substring(space + 1);
+      result=new ChallengeResponse(new ChallengeScheme("HTTP_" + scheme,scheme),credentials);
+      final AuthenticationHelper helper=Engine.getInstance().findHelper(result.getScheme(),true,false);
+      if (helper != null) {
+        helper.parseResponse(result,request);
+      }
+ else {
+        Context.getCurrentLogger().warning("Challenge scheme " + result.getScheme() + " not supported by the Restlet engine.");
+      }
+    }
+  }
+  return result;
+}

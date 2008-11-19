@@ -1,0 +1,17 @@
+{
+  boolean result=true;
+  if (representation != null) {
+    final Variant var=new Variant();
+    updateMetadata(metadataService,fileName,var);
+    if (!var.getLanguages().isEmpty() && !representation.getLanguages().isEmpty() && !var.getLanguages().containsAll(representation.getLanguages())) {
+      result=false;
+    }
+    if ((var.getMediaType() != null) && (representation.getMediaType() != null) && !(var.getMediaType().includes(representation.getMediaType()))) {
+      result=false;
+    }
+    if (!var.getEncodings().isEmpty() && !representation.getEncodings().isEmpty() && !var.getEncodings().containsAll(representation.getEncodings())) {
+      result=false;
+    }
+  }
+  return result;
+}

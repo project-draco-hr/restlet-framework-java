@@ -1,0 +1,41 @@
+{
+  final Series<Parameter> credentials=cr.getParameters();
+  final String username=credentials.getFirstValue("username");
+  final String nonce=credentials.getFirstValue("nonce");
+  final String response=credentials.getFirstValue("response");
+  final String uri=credentials.getFirstValue("uri");
+  final String qop=credentials.getFirstValue("qop");
+  final String nc=credentials.getFirstValue("nc");
+  final String cnonce=credentials.getFirstValue("cnonce");
+  try {
+    if (!isNonceValid(nonce,guard.getServerKey(),guard.getNonceLifespan())) {
+      return Guard.AUTHENTICATION_STALE;
+    }
+  }
+ catch (  CredentialException ce) {
+    return Guard.AUTHENTICATION_INVALID;
+  }
+  if (!AuthenticationUtils.anyNull(username,nonce,response,uri)) {
+    final Reference resourceRef=request.getResourceRef();
+    String requestUri=resourceRef.getPath();
+    if ((resourceRef.getQuery() != null) && (uri.indexOf('?') > -1)) {
+      requestUri+="?" + resourceRef.getQuery();
+    }
+    if (uri.equals(requestUri)) {
+      final String a1=getHashedSecret(username,guard);
+      if (a1 != null) {
+        final String a2=Engine.getInstance().toMd5(request.getMethod() + ":" + requestUri);
+        final StringBuffer expectedResponse=new StringBuffer(a1).append(':').append(nonce);
+        if (!AuthenticationUtils.anyNull(qop,cnonce,nc)) {
+          expectedResponse.append(':').append(nc).append(':').append(cnonce).append(':').append(qop);
+        }
+        expectedResponse.append(':').append(a2);
+        if (response.equals(Engine.getInstance().toMd5(expectedResponse.toString()))) {
+          return Guard.AUTHENTICATION_VALID;
+        }
+      }
+    }
+    return Guard.AUTHENTICATION_INVALID;
+  }
+  return Guard.AUTHENTICATION_MISSING;
+}

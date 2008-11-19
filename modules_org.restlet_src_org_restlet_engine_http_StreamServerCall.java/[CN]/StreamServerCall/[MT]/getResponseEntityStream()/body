@@ -1,0 +1,12 @@
+{
+  if (this.responseEntityStream == null) {
+    this.responseEntityStream=getResponseStream();
+    if (isKeepAlive()) {
+      this.responseEntityStream=new KeepAliveOutputStream(this.responseEntityStream);
+    }
+    if (isResponseChunked()) {
+      this.responseEntityStream=new ChunkedOutputStream(this.responseEntityStream);
+    }
+  }
+  return this.responseEntityStream;
+}

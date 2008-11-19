@@ -1,0 +1,15 @@
+{
+  final Set<String> result=new TreeSet<String>();
+  final String[] tokens=name.split("\\.");
+  boolean extensionFound=false;
+  int i;
+  for (i=1; (i < tokens.length) && !extensionFound; i++) {
+    extensionFound=metadataService.getMetadata(tokens[i]) != null;
+  }
+  if (extensionFound) {
+    for (--i; (i < tokens.length); i++) {
+      result.add(tokens[i]);
+    }
+  }
+  return result;
+}

@@ -1,0 +1,66 @@
+{
+  final String name=cookieSetting.getName();
+  final String value=cookieSetting.getValue();
+  final int version=cookieSetting.getVersion();
+  if ((name == null) || (name.length() == 0)) {
+    throw new IllegalArgumentException("Can't write cookie. Invalid name detected");
+  }
+ else {
+    destination.append(name).append('=');
+    if ((value != null) && (value.length() > 0)) {
+      appendValue(value,version,destination);
+    }
+    if (version > 0) {
+      destination.append("; Version=");
+      appendValue(Integer.toString(version),version,destination);
+    }
+    final String path=cookieSetting.getPath();
+    if ((path != null) && (path.length() > 0)) {
+      destination.append("; Path=");
+      if (version == 0) {
+        destination.append(path);
+      }
+ else {
+        HttpUtils.appendQuote(path,destination);
+      }
+    }
+    final int maxAge=cookieSetting.getMaxAge();
+    if (maxAge >= 0) {
+      if (version == 0) {
+        final long currentTime=System.currentTimeMillis();
+        final long maxTime=(maxAge * 1000L);
+        final long expiresTime=currentTime + maxTime;
+        final Date expires=new Date(expiresTime);
+        destination.append("; Expires=");
+        appendValue(DateUtils.format(expires,DateUtils.FORMAT_RFC_1036.get(0)),version,destination);
+      }
+ else {
+        destination.append("; Max-Age=");
+        appendValue(Integer.toString(cookieSetting.getMaxAge()),version,destination);
+      }
+    }
+ else     if ((maxAge == -1) && (version > 0)) {
+      destination.append("; Discard");
+    }
+ else {
+    }
+    final String domain=cookieSetting.getDomain();
+    if ((domain != null) && (domain.length() > 0)) {
+      destination.append("; Domain=");
+      appendValue(domain.toLowerCase(),version,destination);
+    }
+    if (cookieSetting.isSecure()) {
+      destination.append("; Secure");
+    }
+    if (cookieSetting.isAccessRestricted()) {
+      destination.append("; HttpOnly");
+    }
+    if (version > 0) {
+      final String comment=cookieSetting.getComment();
+      if ((comment != null) && (comment.length() > 0)) {
+        destination.append("; Comment=");
+        appendValue(comment,version,destination);
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  String result=null;
+  if (request != null) {
+    final AuthenticationHelper helper=Engine.getInstance().findHelper(request.getScheme(),false,true);
+    if (helper != null) {
+      result=helper.format(request);
+    }
+ else {
+      result="?";
+      Context.getCurrentLogger().warning("Challenge scheme " + request.getScheme() + " not supported by the Restlet engine.");
+    }
+  }
+  return result;
+}

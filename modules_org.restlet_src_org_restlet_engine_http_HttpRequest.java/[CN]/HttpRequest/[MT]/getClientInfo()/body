@@ -1,0 +1,50 @@
+{
+  final ClientInfo result=super.getClientInfo();
+  if (!this.clientAdded) {
+    final String acceptCharset=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_ACCEPT_CHARSET);
+    final String acceptEncoding=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_ACCEPT_ENCODING);
+    final String acceptLanguage=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_ACCEPT_LANGUAGE);
+    final String acceptMediaType=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_ACCEPT);
+    try {
+      PreferenceUtils.parseCharacterSets(acceptCharset,result);
+    }
+ catch (    Exception e) {
+      this.context.getLogger().log(Level.INFO,e.getMessage());
+    }
+    try {
+      PreferenceUtils.parseEncodings(acceptEncoding,result);
+    }
+ catch (    Exception e) {
+      this.context.getLogger().log(Level.INFO,e.getMessage());
+    }
+    try {
+      PreferenceUtils.parseLanguages(acceptLanguage,result);
+    }
+ catch (    Exception e) {
+      this.context.getLogger().log(Level.INFO,e.getMessage());
+    }
+    try {
+      PreferenceUtils.parseMediaTypes(acceptMediaType,result);
+    }
+ catch (    Exception e) {
+      this.context.getLogger().log(Level.INFO,e.getMessage());
+    }
+    result.setAgent(getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_USER_AGENT));
+    result.setAddress(getHttpCall().getClientAddress());
+    result.setPort(getHttpCall().getClientPort());
+    if (this.context != null) {
+      final boolean useForwardedForHeader=Boolean.parseBoolean(this.context.getParameters().getFirstValue("useForwardedForHeader",false));
+      if (useForwardedForHeader) {
+        final String header=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_X_FORWARDED_FOR);
+        if (header != null) {
+          final String[] addresses=header.split(",");
+          for (int i=addresses.length - 1; i >= 0; i--) {
+            result.getAddresses().add(addresses[i].trim());
+          }
+        }
+      }
+    }
+    this.clientAdded=true;
+  }
+  return result;
+}

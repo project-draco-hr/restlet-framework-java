@@ -1,0 +1,17 @@
+{
+  if (post.isAvailable()) {
+    FormReader fr=null;
+    try {
+      fr=new FormReader(post);
+    }
+ catch (    IOException ioe) {
+      Context.getCurrentLogger().log(Level.WARNING,"Unable to create a form reader. Parsing aborted.",ioe);
+    }
+    if (fr != null) {
+      fr.addParameters(form);
+    }
+  }
+ else {
+    throw new IllegalStateException("The Web form cannot be parsed as no fresh content is available. If this entity has been already read once, caching of the entity is required");
+  }
+}

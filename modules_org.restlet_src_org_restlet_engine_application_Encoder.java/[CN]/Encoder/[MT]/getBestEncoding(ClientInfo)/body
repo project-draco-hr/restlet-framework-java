@@ -1,0 +1,19 @@
+{
+  Encoding bestEncoding=null;
+  Encoding currentEncoding=null;
+  Preference<Encoding> currentPref=null;
+  float bestScore=0F;
+  for (final Iterator<Encoding> iter=EncodeRepresentation.getSupportedEncodings().iterator(); iter.hasNext(); ) {
+    currentEncoding=iter.next();
+    for (final Iterator<Preference<Encoding>> iter2=client.getAcceptedEncodings().iterator(); iter2.hasNext(); ) {
+      currentPref=iter2.next();
+      if (currentPref.getMetadata().equals(Encoding.ALL) || currentPref.getMetadata().equals(currentEncoding)) {
+        if (currentPref.getQuality() > bestScore) {
+          bestScore=currentPref.getQuality();
+          bestEncoding=currentEncoding;
+        }
+      }
+    }
+  }
+  return bestEncoding;
+}

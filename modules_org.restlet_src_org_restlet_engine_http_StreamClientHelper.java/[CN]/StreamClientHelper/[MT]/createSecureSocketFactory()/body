@@ -1,0 +1,31 @@
+{
+  String keystorePath=getKeystorePath();
+  String keystorePassword=getKeystorePassword();
+  String keyPassword=getKeyPassword();
+  String truststorePath=getTruststorePath();
+  String truststorePassword=getTruststorePassword();
+  String secureRandomAlgorithm=getSecureRandomAlgorithm();
+  String securityProvider=getSecurityProvider();
+  InputStream keystoreInputStream=null;
+  if (keystorePath != null) {
+    keystoreInputStream=new FileInputStream(keystorePath);
+  }
+  KeyStore keyStore=KeyStore.getInstance(getKeystoreType());
+  keyStore.load(keystoreInputStream,keystorePassword == null ? null : keystorePassword.toCharArray());
+  KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(getCertAlgorithm());
+  keyManagerFactory.init(keyStore,keyPassword == null ? null : keyPassword.toCharArray());
+  KeyManager[] keyManagers=keyManagerFactory.getKeyManagers();
+  InputStream truststoreInputStream=null;
+  if (truststorePath != null) {
+    truststoreInputStream=new FileInputStream(truststorePath);
+  }
+  KeyStore trustStore=KeyStore.getInstance(getTruststoreType());
+  trustStore.load(truststoreInputStream,truststorePassword == null ? null : truststorePassword.toCharArray());
+  TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance(getCertAlgorithm());
+  trustManagerFactory.init(trustStore);
+  TrustManager[] trustManagers=trustManagerFactory.getTrustManagers();
+  SecureRandom secureRandom=secureRandomAlgorithm == null ? null : SecureRandom.getInstance(secureRandomAlgorithm);
+  SSLContext context=securityProvider == null ? SSLContext.getInstance(getSslProtocol()) : SSLContext.getInstance(getSslProtocol(),securityProvider);
+  context.init(keyManagers,trustManagers,secureRandom);
+  return context.getSocketFactory();
+}

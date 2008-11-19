@@ -1,0 +1,25 @@
+{
+  int result=Guard.AUTHENTICATION_MISSING;
+  if (guard.getScheme() != null) {
+    final ChallengeResponse cr=request.getChallengeResponse();
+    if (cr != null) {
+      if (guard.getScheme().equals(cr.getScheme())) {
+        final AuthenticationHelper helper=Engine.getInstance().findHelper(cr.getScheme(),false,true);
+        if (helper != null) {
+          result=helper.authenticate(cr,request,guard);
+        }
+ else {
+          throw new IllegalArgumentException("Challenge scheme " + guard.getScheme() + " not supported by the Restlet engine.");
+        }
+      }
+ else {
+      }
+    }
+ else {
+    }
+  }
+  if (request.getChallengeResponse() != null) {
+    request.getChallengeResponse().setAuthenticated(result == Guard.AUTHENTICATION_VALID);
+  }
+  return result;
+}

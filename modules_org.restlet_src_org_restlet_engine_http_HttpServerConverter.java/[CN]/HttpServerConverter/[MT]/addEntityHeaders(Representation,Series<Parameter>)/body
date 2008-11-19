@@ -1,0 +1,69 @@
+{
+  if (entity == null) {
+    responseHeaders.add(HttpConstants.HEADER_CONTENT_LENGTH,"0");
+  }
+ else {
+    if (entity.getExpirationDate() != null) {
+      responseHeaders.add(HttpConstants.HEADER_EXPIRES,HttpCall.formatDate(entity.getExpirationDate(),false));
+    }
+    if (!entity.getEncodings().isEmpty()) {
+      final StringBuilder value=new StringBuilder();
+      for (      final Encoding encoding : entity.getEncodings()) {
+        if (!encoding.equals(Encoding.IDENTITY)) {
+          if (value.length() > 0) {
+            value.append(", ");
+          }
+          value.append(encoding.getName());
+        }
+        responseHeaders.add(HttpConstants.HEADER_CONTENT_ENCODING,value.toString());
+      }
+    }
+    if (!entity.getLanguages().isEmpty()) {
+      final StringBuilder value=new StringBuilder();
+      for (int i=0; i < entity.getLanguages().size(); i++) {
+        if (i > 0) {
+          value.append(", ");
+        }
+        value.append(entity.getLanguages().get(i).getName());
+      }
+      responseHeaders.add(HttpConstants.HEADER_CONTENT_LANGUAGE,value.toString());
+    }
+    if (entity.getMediaType() != null) {
+      final StringBuilder contentType=new StringBuilder(entity.getMediaType().getName());
+      if (entity.getCharacterSet() != null) {
+        contentType.append("; charset=").append(entity.getCharacterSet().getName());
+      }
+      for (      Parameter parameter : entity.getMediaType().getParameters()) {
+        contentType.append("; ").append(parameter.getName()).append("=").append(parameter.getValue());
+      }
+      responseHeaders.add(HttpConstants.HEADER_CONTENT_TYPE,contentType.toString());
+    }
+    if (entity.getModificationDate() != null) {
+      responseHeaders.add(HttpConstants.HEADER_LAST_MODIFIED,HttpCall.formatDate(entity.getModificationDate(),false));
+    }
+    if (entity.getTag() != null) {
+      responseHeaders.add(HttpConstants.HEADER_ETAG,entity.getTag().format());
+    }
+    long size=entity.getAvailableSize();
+    if (size != Representation.UNKNOWN_SIZE) {
+      responseHeaders.add(HttpConstants.HEADER_CONTENT_LENGTH,Long.toString(size));
+    }
+    if (entity.getIdentifier() != null) {
+      responseHeaders.add(HttpConstants.HEADER_CONTENT_LOCATION,entity.getIdentifier().toString());
+    }
+    if (entity.isDownloadable() && (entity.getDownloadName() != null)) {
+      responseHeaders.add(HttpConstants.HEADER_CONTENT_DISPOSITION,HttpServerCall.formatContentDisposition(entity.getDownloadName()));
+    }
+    if (entity.getRange() != null) {
+      try {
+        responseHeaders.add(HttpConstants.HEADER_CONTENT_RANGE,RangeUtils.formatContentRange(entity.getRange(),entity.getSize()));
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().log(Level.WARNING,"Unable to format the HTTP Content-Range header",e);
+      }
+    }
+    if (entity.getDigest() != null && Digest.ALGORITHM_MD5.equals(entity.getDigest().getAlgorithm())) {
+      responseHeaders.add(HttpConstants.HEADER_CONTENT_MD5,new String(Base64.encode(entity.getDigest().getValue(),false)));
+    }
+  }
+}
