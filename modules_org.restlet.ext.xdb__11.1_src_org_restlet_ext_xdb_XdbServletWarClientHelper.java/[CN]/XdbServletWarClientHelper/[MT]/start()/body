@@ -1,0 +1,23 @@
+{
+  super.start();
+  PreparedStatement stmt=null;
+  ResultSet rset=null;
+  try {
+    stmt=this.conn.prepareStatement("select USER from dual");
+    rset=stmt.executeQuery();
+    if (rset.next()) {
+      this.connectedUser=rset.getString(1);
+    }
+ else {
+      this.connectedUser="PUBLIC";
+    }
+    getLogger().info("efective user is: " + this.connectedUser);
+  }
+ catch (  SQLException sqe) {
+    getLogger().throwing("XdbServletWarClientHelper","start",sqe);
+    throw new RuntimeException("Exception querying USER from dual ",sqe);
+  }
+ finally {
+    XdbServerServlet.closeDbResources(stmt,rset);
+  }
+}

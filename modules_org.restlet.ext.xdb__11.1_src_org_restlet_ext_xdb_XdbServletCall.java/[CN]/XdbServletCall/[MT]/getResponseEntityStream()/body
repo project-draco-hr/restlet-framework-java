@@ -1,0 +1,16 @@
+{
+  if (this.responseEntityStream == null) {
+    try {
+      if (isResponseChunked()) {
+        this.responseEntityStream=new ChunkedOutputStream(getResponse().getOutputStream());
+      }
+ else {
+        this.responseEntityStream=new KeepAliveOutputStream(getResponse().getOutputStream());
+      }
+    }
+ catch (    IOException e) {
+      e.printStackTrace();
+    }
+  }
+  return this.responseEntityStream;
+}
