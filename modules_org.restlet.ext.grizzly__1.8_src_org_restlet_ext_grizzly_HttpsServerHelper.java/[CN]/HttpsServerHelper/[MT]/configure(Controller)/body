@@ -1,0 +1,46 @@
+{
+  final SslContextFactory sslContextFactory=HttpsUtils.getSslContextFactory(this);
+  SSLContext sslContext;
+  if (sslContextFactory == null) {
+    final KeyStore keyStore=KeyStore.getInstance(getKeystoreType());
+    final FileInputStream fis=new FileInputStream(getKeystorePath());
+    keyStore.load(fis,getKeystorePassword().toCharArray());
+    final KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(getCertAlgorithm());
+    keyManagerFactory.init(keyStore,getKeyPassword().toCharArray());
+    sslContext=SSLContext.getInstance(getSslProtocol());
+    sslContext.init(keyManagerFactory.getKeyManagers(),null,null);
+  }
+ else {
+    sslContext=sslContextFactory.createSslContext();
+  }
+  final TCPSelectorHandler selectorHandler=getSelectorHandler();
+  selectorHandler.setPort(getHelped().getPort());
+  if (getHelped().getAddress() != null) {
+    selectorHandler.setInet(InetAddress.getByName(getHelped().getAddress()));
+  }
+  final SSLReadFilter readFilter=new SSLReadFilter();
+  readFilter.setSSLContext(sslContext);
+  final String[] enabledCipherSuites=HttpsUtils.getEnabledCipherSuites(this);
+  if (enabledCipherSuites != null) {
+    readFilter.setEnabledCipherSuites(enabledCipherSuites);
+  }
+  if (isNeedClientAuthentication()) {
+    readFilter.setNeedClientAuth(isNeedClientAuthentication());
+  }
+ else   if (isWantClientAuthentication()) {
+    readFilter.setWantClientAuth(isWantClientAuthentication());
+  }
+  final HttpParserFilter httpParserFilter=new HttpParserFilter(this);
+  controller.setProtocolChainInstanceHandler(new DefaultProtocolChainInstanceHandler(){
+    @Override public ProtocolChain poll(){
+      ProtocolChain protocolChain=this.protocolChains.poll();
+      if (protocolChain == null) {
+        protocolChain=new DefaultProtocolChain();
+        protocolChain.addFilter(readFilter);
+        protocolChain.addFilter(httpParserFilter);
+      }
+      return protocolChain;
+    }
+  }
+);
+}

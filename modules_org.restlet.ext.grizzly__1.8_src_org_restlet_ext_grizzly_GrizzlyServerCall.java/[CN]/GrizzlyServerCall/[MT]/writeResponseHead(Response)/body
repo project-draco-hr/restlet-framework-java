@@ -1,0 +1,12 @@
+{
+  final ByteArrayOutputStream headStream=new ByteArrayOutputStream(8192);
+  writeResponseHead(response,headStream);
+  final ByteBuffer buffer=ByteBuffer.wrap(headStream.toByteArray());
+  if (isConfidential()) {
+    SSLOutputWriter.flushChannel(getSocketChannel(),buffer);
+  }
+ else {
+    OutputWriter.flushChannel(getSocketChannel(),buffer);
+  }
+  buffer.clear();
+}
