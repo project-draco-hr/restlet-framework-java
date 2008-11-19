@@ -1,0 +1,75 @@
+{
+  final String popHost=request.getResourceRef().getHostDomain();
+  int popPort=request.getResourceRef().getHostPort();
+  final String path=request.getResourceRef().getPath();
+  if (popPort == -1) {
+    popPort=request.getProtocol().getDefaultPort();
+  }
+  if ((popHost == null) || (popHost.equals(""))) {
+    throw new IllegalArgumentException("Invalid POP host specified");
+  }
+  final boolean authenticate=((getLogin(request) != null) && (getPassword(request) != null));
+  final boolean apop=authenticate && (POP_DIGEST.equals(request.getChallengeResponse().getScheme()));
+  String transport=null;
+  if (POP.equals(request.getProtocol())) {
+    transport="pop3";
+  }
+ else   if (POPS.equals(request.getProtocol())) {
+    transport="pop3s";
+  }
+  final Properties props=System.getProperties();
+  props.put("mail." + transport + ".host",popHost);
+  props.put("mail." + transport + ".port",Integer.toString(popPort));
+  props.put("mail." + transport + ".apop.enable",Boolean.toString(apop));
+  boolean updateFolder=false;
+  final Session session=Session.getDefaultInstance(props);
+  session.setDebug(isDebug());
+  final Store store=session.getStore(transport);
+  store.connect(getLogin(request),getPassword(request));
+  final POP3Folder inbox=(POP3Folder)store.getFolder("INBOX");
+  inbox.open(Folder.READ_WRITE);
+  final FetchProfile profile=new FetchProfile();
+  profile.add(UIDFolder.FetchProfileItem.UID);
+  final Message[] messages=inbox.getMessages();
+  inbox.fetch(messages,profile);
+  if ((path == null) || path.equals("") || path.equals("/")) {
+    if (Method.GET.equals(request.getMethod()) || Method.HEAD.equals(request.getMethod())) {
+      response.setEntity(createRepresentation(messages,inbox));
+    }
+ else {
+      response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+      response.getAllowedMethods().add(Method.GET);
+      response.getAllowedMethods().add(Method.HEAD);
+    }
+  }
+ else   if (path.startsWith("/")) {
+    final String mailUid=path.substring(1);
+    Message message=null;
+    for (int i=0; (message == null) && (i < messages.length); i++) {
+      final String uid=inbox.getUID(messages[i]);
+      if (mailUid.equals(uid)) {
+        message=messages[i];
+      }
+    }
+    if (message == null) {
+      response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,"No message matches the given UID: " + mailUid);
+    }
+ else {
+      if (Method.GET.equals(request.getMethod()) || Method.HEAD.equals(request.getMethod())) {
+        response.setEntity(createRepresentation(message));
+      }
+ else       if (Method.DELETE.equals(request.getMethod())) {
+        message.setFlag(Flags.Flag.DELETED,true);
+        updateFolder=true;
+      }
+ else {
+        response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+        response.getAllowedMethods().add(Method.GET);
+        response.getAllowedMethods().add(Method.HEAD);
+        response.getAllowedMethods().add(Method.DELETE);
+      }
+    }
+  }
+  inbox.close(updateFolder);
+  store.close();
+}

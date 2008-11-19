@@ -1,0 +1,9 @@
+{
+  final Template mailTemplate=new Template(getMailUriTemplate());
+  Reference result=new Reference(mailTemplate.format(new MailResolver(identifier)));
+  if (result.isRelative()) {
+    result.setBaseRef(getMailboxUri());
+    result=result.getTargetRef();
+  }
+  return result;
+}

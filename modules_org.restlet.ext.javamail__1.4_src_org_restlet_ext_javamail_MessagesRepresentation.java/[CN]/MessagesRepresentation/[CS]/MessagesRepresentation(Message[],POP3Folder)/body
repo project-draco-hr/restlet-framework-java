@@ -1,0 +1,13 @@
+{
+  super(MediaType.APPLICATION_XML);
+  final Document dom=getDocument();
+  final Element emails=dom.createElement("emails");
+  dom.appendChild(emails);
+  Element email;
+  for (  final Message message : messages) {
+    final String uid=inbox.getUID(message);
+    email=dom.createElement("email");
+    email.setAttribute("href","/" + uid);
+    emails.appendChild(email);
+  }
+}
