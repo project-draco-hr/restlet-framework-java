@@ -1,0 +1,60 @@
+{
+  Connection connection=null;
+  if (request.getMethod().equals(Method.POST)) {
+    try {
+      final String connectionURI=request.getResourceRef().toString();
+      final DocumentBuilder docBuilder=DocumentBuilderFactory.newInstance().newDocumentBuilder();
+      final Document requestDoc=docBuilder.parse(request.getEntity().getStream());
+      final Element rootElt=(Element)requestDoc.getElementsByTagName("request").item(0);
+      final Element headerElt=(Element)rootElt.getElementsByTagName("header").item(0);
+      final Element connectionElt=(Element)headerElt.getElementsByTagName("connection").item(0);
+      final Node usePoolingNode=connectionElt.getElementsByTagName("usePooling").item(0);
+      final boolean usePooling=usePoolingNode.getTextContent().equals("true") ? true : false;
+      final NodeList propertyNodes=connectionElt.getElementsByTagName("property");
+      Node propertyNode=null;
+      Properties properties=null;
+      String name=null;
+      String value=null;
+      for (int i=0; i < propertyNodes.getLength(); i++) {
+        propertyNode=propertyNodes.item(i);
+        if (properties == null) {
+          properties=new Properties();
+        }
+        name=propertyNode.getAttributes().getNamedItem("name").getTextContent();
+        value=propertyNode.getTextContent();
+        properties.setProperty(name,value);
+      }
+      final Node returnGeneratedKeysNode=headerElt.getElementsByTagName("returnGeneratedKeys").item(0);
+      final boolean returnGeneratedKeys=returnGeneratedKeysNode.getTextContent().equals("true") ? true : false;
+      final Element bodyElt=(Element)rootElt.getElementsByTagName("body").item(0);
+      final NodeList statementNodes=bodyElt.getElementsByTagName("statement");
+      final List<String> sqlRequests=new ArrayList<String>();
+      for (int i=0; i < statementNodes.getLength(); i++) {
+        final String sqlRequest=statementNodes.item(i).getTextContent();
+        sqlRequests.add(sqlRequest);
+      }
+      connection=getConnection(connectionURI,properties,usePooling);
+      final JdbcResult result=handleSqlRequests(connection,returnGeneratedKeys,sqlRequests);
+      response.setEntity(new RowSetRepresentation(result));
+    }
+ catch (    SQLException se) {
+      getLogger().log(Level.WARNING,"Error while processing the SQL request",se);
+      response.setStatus(Status.SERVER_ERROR_INTERNAL,se);
+    }
+catch (    ParserConfigurationException pce) {
+      getLogger().log(Level.WARNING,"Error with XML parser configuration",pce);
+      response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,pce);
+    }
+catch (    SAXException se) {
+      getLogger().log(Level.WARNING,"Error while parsing the XML document",se);
+      response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,se);
+    }
+catch (    IOException ioe) {
+      getLogger().log(Level.WARNING,"Input/Output exception",ioe);
+      response.setStatus(Status.SERVER_ERROR_INTERNAL,ioe);
+    }
+  }
+ else {
+    throw new IllegalArgumentException("Only the POST method is supported");
+  }
+}

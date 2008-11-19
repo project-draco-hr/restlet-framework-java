@@ -1,0 +1,30 @@
+{
+  Connection result=null;
+  if (usePooling) {
+    for (    final ConnectionSource c : this.connectionSources) {
+      if ((result == null) && c.getUri().equalsIgnoreCase(uri) && (properties.size() == c.getProperties().size())) {
+        boolean equal=true;
+        for (        final Object key : c.getProperties().keySet()) {
+          if (equal && properties.containsKey(key)) {
+            equal=equal && (properties.get(key).equals(c.getProperties().get(key)));
+          }
+ else {
+            equal=false;
+          }
+        }
+        if (equal) {
+          result=c.getConnection();
+        }
+      }
+    }
+    if (result == null) {
+      final ConnectionSource cs=new ConnectionSource(uri,properties);
+      this.connectionSources.add(cs);
+      result=cs.getConnection();
+    }
+  }
+ else {
+    result=DriverManager.getConnection(uri,properties);
+  }
+  return result;
+}
