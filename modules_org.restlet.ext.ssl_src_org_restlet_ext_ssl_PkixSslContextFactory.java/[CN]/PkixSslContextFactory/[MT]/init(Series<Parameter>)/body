@@ -1,0 +1,81 @@
+{
+  KeyStoreLoader keyStoreLoader=KeyStoreLoader.getKeyStoreDefaultLoader();
+  String keyStorePath=parameters.getFirstValue("keystorePath");
+  if (keyStorePath != null) {
+    keyStoreLoader.setKeyStorePath(keyStorePath);
+  }
+  String keyStorePassword=parameters.getFirstValue("keystorePassword");
+  if (keyStorePassword != null) {
+    keyStoreLoader.setKeyStorePassword(keyStorePassword);
+  }
+  String keyStoreType=parameters.getFirstValue("keystoreType");
+  if (keyStoreType != null) {
+    keyStoreLoader.setKeyStoreType(keyStoreType);
+  }
+  String keyStoreProvider=parameters.getFirstValue("keystoreProvider");
+  if (keyStoreProvider != null) {
+    keyStoreLoader.setKeyStoreProvider(keyStoreProvider);
+  }
+  KeyStoreLoader trustStoreLoader=KeyStoreLoader.getKeyStoreDefaultLoader();
+  String trustStorePath=parameters.getFirstValue("truststorePath");
+  if (trustStorePath != null) {
+    trustStoreLoader.setKeyStorePath(trustStorePath);
+  }
+  String trustStorePassword=parameters.getFirstValue("truststorePassword");
+  if (trustStorePassword != null) {
+    trustStoreLoader.setKeyStorePassword(trustStorePassword);
+  }
+  String trustStoreType=parameters.getFirstValue("truststoreType");
+  if (trustStoreType != null) {
+    trustStoreLoader.setKeyStoreType(trustStoreType);
+  }
+  String trustStoreProvider=parameters.getFirstValue("truststoreProvider");
+  if (trustStoreProvider != null) {
+    trustStoreLoader.setKeyStoreProvider(trustStoreProvider);
+  }
+  String keyPassword=parameters.getFirstValue("keyPassword","");
+  String sslProtocol=parameters.getFirstValue("sslProtocol");
+  String serverAlias=parameters.getFirstValue("sslServerAlias");
+  boolean disableRevocation=Boolean.parseBoolean(parameters.getFirstValue("disableCrl"));
+  try {
+    KeyStore keyStore=keyStoreLoader.loadKeyStore();
+    KeyStore trustStore=trustStoreLoader.loadKeyStore();
+    PKIXSSLContextFactory sslContextFactory=new PKIXSSLContextFactory(keyStore,keyPassword,trustStore,!disableRevocation);
+    if (serverAlias != null) {
+      sslContextFactory.setKeyManagerWrapper(new FixedServerAliasKeyManager.Wrapper(serverAlias));
+    }
+    String[] crlArray=parameters.getValuesArray("crlUrl");
+    if (crlArray != null) {
+      for (      String crlUrl : crlArray) {
+        sslContextFactory.addCrl(crlUrl);
+      }
+    }
+synchronized (this) {
+      this.sslContextFactory=sslContextFactory;
+      if (sslProtocol != null) {
+        this.sslProtocol=sslProtocol;
+      }
+    }
+  }
+ catch (  KeyStoreException e) {
+    throw new RuntimeException(e);
+  }
+catch (  NoSuchProviderException e) {
+    throw new RuntimeException(e);
+  }
+catch (  NoSuchAlgorithmException e) {
+    throw new RuntimeException(e);
+  }
+catch (  CertificateException e) {
+    throw new RuntimeException(e);
+  }
+catch (  IOException e) {
+    throw new RuntimeException(e);
+  }
+catch (  SSLContextFactoryException e) {
+    throw new RuntimeException(e);
+  }
+catch (  LockedSettingsException e) {
+    throw new RuntimeException(e);
+  }
+}
