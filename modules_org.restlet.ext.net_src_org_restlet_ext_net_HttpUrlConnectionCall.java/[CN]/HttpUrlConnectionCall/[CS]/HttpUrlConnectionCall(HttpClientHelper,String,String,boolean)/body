@@ -1,0 +1,29 @@
+{
+  super(helper,method,requestUri);
+  if (requestUri.startsWith("http")) {
+    final URL url=new URL(requestUri);
+    this.connection=(HttpURLConnection)url.openConnection();
+    final int majorVersionNumber=Engine.getJavaMajorVersion();
+    final int minorVersionNumber=Engine.getJavaMinorVersion();
+    if ((majorVersionNumber > 1) || ((majorVersionNumber == 1) && (minorVersionNumber >= 5))) {
+      this.connection.setConnectTimeout(getHelper().getConnectTimeout());
+      this.connection.setReadTimeout(getHelper().getReadTimeout());
+    }
+    this.connection.setAllowUserInteraction(getHelper().isAllowUserInteraction());
+    this.connection.setDoOutput(hasEntity);
+    this.connection.setInstanceFollowRedirects(getHelper().isFollowRedirects());
+    this.connection.setUseCaches(getHelper().isUseCaches());
+    this.responseHeadersAdded=false;
+    if (this.connection instanceof HttpsURLConnection) {
+      setConfidential(true);
+      final HostnameVerifier verifier=helper.getHostnameVerifier();
+      if (verifier != null) {
+        final HttpsURLConnection https=(HttpsURLConnection)this.connection;
+        https.setHostnameVerifier(verifier);
+      }
+    }
+  }
+ else {
+    throw new IllegalArgumentException("Only HTTP or HTTPS resource URIs are allowed here");
+  }
+}

@@ -1,0 +1,16 @@
+{
+  final Series<Parameter> result=super.getResponseHeaders();
+  if (!this.responseHeadersAdded) {
+    int i=1;
+    String headerName=getConnection().getHeaderFieldKey(i);
+    String headerValue=getConnection().getHeaderField(i);
+    while (headerName != null) {
+      result.add(headerName,headerValue);
+      i++;
+      headerName=getConnection().getHeaderFieldKey(i);
+      headerValue=getConnection().getHeaderField(i);
+    }
+    this.responseHeadersAdded=true;
+  }
+  return result;
+}
