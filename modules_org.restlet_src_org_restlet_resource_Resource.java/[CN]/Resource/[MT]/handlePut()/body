@@ -35,7 +35,12 @@
   }
   if (canPut) {
     if (getRequest().isEntityAvailable()) {
-      put(getRequest().getEntity());
+      try {
+        storeRepresentation(getRequest().getEntity());
+      }
+ catch (      ResourceException re) {
+        getResponse().setStatus(re.getStatus(),re);
+      }
       updateAllowedMethods();
     }
  else {

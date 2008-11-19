@@ -24,6 +24,11 @@
     }
   }
   if (canDelete) {
-    delete();
+    try {
+      removeRepresentations();
+    }
+ catch (    ResourceException re) {
+      getResponse().setStatus(re.getStatus(),re);
+    }
   }
 }

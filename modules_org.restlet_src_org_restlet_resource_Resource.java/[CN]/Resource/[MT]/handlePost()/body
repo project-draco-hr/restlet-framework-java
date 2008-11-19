@@ -2,5 +2,10 @@
   if (!getRequest().isEntityAvailable()) {
     getLogger().fine("POST request received without any entity. Continuing processing.");
   }
-  post(getRequest().getEntity());
+  try {
+    acceptRepresentation(getRequest().getEntity());
+  }
+ catch (  ResourceException re) {
+    getResponse().setStatus(re.getStatus(),re);
+  }
 }
