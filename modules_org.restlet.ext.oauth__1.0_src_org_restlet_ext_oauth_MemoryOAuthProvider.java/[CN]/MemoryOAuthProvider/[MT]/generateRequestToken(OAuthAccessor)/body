@@ -1,0 +1,12 @@
+{
+  final String consumer_key=(String)accessor.consumer.getProperty("name");
+  final String token_data=consumer_key + System.nanoTime();
+  final String token=DigestUtils.md5Hex(token_data);
+  final String secret_data=consumer_key + System.nanoTime() + token;
+  final String secret=DigestUtils.md5Hex(secret_data);
+  accessor.requestToken=token;
+  accessor.tokenSecret=secret;
+  accessor.accessToken=null;
+  Context.getCurrentLogger().fine("Adding request token " + accessor);
+  this.tokens.add(accessor);
+}
