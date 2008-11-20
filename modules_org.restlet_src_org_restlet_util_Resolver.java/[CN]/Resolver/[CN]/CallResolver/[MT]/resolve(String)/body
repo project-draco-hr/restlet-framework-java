@@ -21,11 +21,15 @@
         result=this.request.getClientInfo().getAgent();
       }
  else       if (variableName.equals("cri")) {
-        result=this.request.getChallengeResponse().getIdentifier();
+        ChallengeResponse cr=this.request.getChallengeResponse();
+        if (cr != null) {
+          result=cr.getIdentifier();
+        }
       }
  else       if (variableName.equals("crs")) {
-        if (this.request.getChallengeResponse().getScheme() != null) {
-          result=this.request.getChallengeResponse().getScheme().getTechnicalName();
+        ChallengeResponse cr=this.request.getChallengeResponse();
+        if (cr != null && cr.getScheme() != null) {
+          result=cr.getScheme().getTechnicalName();
         }
       }
  else       if (variableName.equals("d")) {
