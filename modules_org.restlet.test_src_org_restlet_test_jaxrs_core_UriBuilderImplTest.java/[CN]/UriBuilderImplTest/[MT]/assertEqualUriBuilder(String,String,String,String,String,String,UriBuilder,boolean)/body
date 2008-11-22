@@ -1,0 +1,58 @@
+{
+  if (actualUriBuilder.getClass().getPackage().getName().startsWith("org.restlet.ext.jaxrs")) {
+    assertEquals(expectedScheme,getScheme(actualUriBuilder));
+    assertEquals(expectedUserInfo,getUserInfo(actualUriBuilder));
+    assertEquals(expectedHost,getHost(actualUriBuilder));
+    assertEquals(expectedPort,getPort(actualUriBuilder));
+    final String actPath=getPath(actualUriBuilder);
+    try {
+      assertEquals(expectedPath,actPath);
+    }
+ catch (    junit.framework.ComparisonFailure cf) {
+      if (expectedPath == null)       assertEquals("",actPath);
+    }
+    CharSequence actualQuery=getQuery(actualUriBuilder);
+    if (actualQuery != null) {
+      actualQuery=actualQuery.toString();
+    }
+    assertEquals(expectedQuery,actualQuery);
+  }
+  if (compareResult) {
+    UriBuilder expectedUriBuilder=RuntimeDelegate.getInstance().createUriBuilder();
+    if (expectedScheme != null) {
+      expectedUriBuilder.scheme(expectedScheme);
+    }
+    if (expectedUserInfo != null) {
+      expectedUriBuilder.userInfo(expectedUserInfo);
+    }
+    if (expectedHost != null) {
+      expectedUriBuilder.host(expectedHost);
+    }
+    if (expectedUriBuilder instanceof UriBuilderImpl) {
+      ((UriBuilderImpl)expectedUriBuilder).port(expectedPort);
+    }
+ else     if (expectedUriBuilder instanceof ExtendedUriBuilder) {
+      ((ExtendedUriBuilder)expectedUriBuilder).port(expectedPort);
+    }
+ else {
+      if (expectedPort == null || expectedPort.equals("")) {
+        expectedUriBuilder.port(-1);
+      }
+ else {
+        try {
+          int portInt=Integer.valueOf(expectedPort);
+        }
+ catch (        NumberFormatException e) {
+          System.out.println("Sorry, could not do this test with an expected port \"" + expectedPort + "\" and an UriBuilder of type "+ expectedUriBuilder.getClass());
+        }
+      }
+    }
+    expectedUriBuilder.path(expectedPath);
+    if (expectedQuery != null) {
+      expectedUriBuilder.replaceQuery(expectedQuery);
+    }
+    String expectedURI=expectedUriBuilder.build().toString();
+    String atualURI=actualUriBuilder.build().toString();
+    assertEquals(expectedURI,atualURI);
+  }
+}

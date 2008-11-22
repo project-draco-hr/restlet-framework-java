@@ -1,0 +1,34 @@
+{
+  uriBuilder.equals(null);
+  String mediaTypeExt=null;
+  String languageExt=null;
+  String encodingExt=null;
+  if (variant.getMediaType() != null) {
+    mediaTypeExt=this.extBackwMapping.getByMediaType(variant.getMediaType());
+    if (mediaTypeExt == null) {
+      return false;
+    }
+  }
+  if (variant.getLanguage() != null) {
+    languageExt=this.extBackwMapping.getByLanguage(variant.getLanguage());
+    if (languageExt == null) {
+      languageExt=Converter.toLanguageString(variant.getLanguage());
+    }
+  }
+  if (variant.getEncoding() != null) {
+    encodingExt=this.extBackwMapping.getByEncoding(variant.getEncoding());
+    if (encodingExt == null) {
+      encodingExt=variant.getEncoding();
+    }
+  }
+  if (languageExt != null) {
+    uriBuilder.extensionLanguage(languageExt);
+  }
+  if (mediaTypeExt != null) {
+    uriBuilder.extensionMedia(mediaTypeExt);
+  }
+  if (encodingExt != null) {
+    uriBuilder.queryParam(Application.getCurrent().getTunnelService().getEncodingParameter(),encodingExt);
+  }
+  return true;
+}

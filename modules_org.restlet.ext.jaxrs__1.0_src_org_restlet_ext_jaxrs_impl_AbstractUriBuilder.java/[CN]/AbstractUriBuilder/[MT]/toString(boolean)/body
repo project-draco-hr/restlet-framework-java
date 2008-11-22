@@ -1,0 +1,56 @@
+{
+  try {
+    final StringBuilder stb=new StringBuilder();
+    if (this.scheme != null) {
+      append(stb,this.scheme,convertBraces);
+      stb.append("://");
+    }
+    if (this.userInfo != null) {
+      append(stb,this.userInfo,convertBraces);
+      stb.append('@');
+    }
+    if (this.host != null) {
+      append(stb,this.host,convertBraces);
+    }
+    if (this.port != null) {
+      stb.append(':');
+      stb.append(this.port);
+    }
+    String extension=getExtension();
+    CharSequence thisPath=this.path;
+    if (thisPath != null || extension != null) {
+      if (stb.length() > 0) {
+        if (notStartsWith(thisPath,'/') || ((thisPath == null) && (extension != null))) {
+          stb.append('/');
+        }
+      }
+      if (extension == null) {
+        append(stb,thisPath,convertBraces);
+      }
+ else {
+        int begLastMatrix=indexBeginMatrixOfLastSegment(thisPath);
+        if (begLastMatrix >= 0) {
+          append(stb,thisPath,convertBraces,0,begLastMatrix);
+          append(stb,extension,convertBraces);
+          append(stb,thisPath,convertBraces,begLastMatrix);
+        }
+ else {
+          append(stb,thisPath,convertBraces);
+          append(stb,extension,convertBraces);
+        }
+      }
+    }
+    if (this.query != null) {
+      stb.append('?');
+      append(stb,this.query,convertBraces);
+    }
+    if (this.fragment != null) {
+      stb.append('#');
+      append(stb,this.fragment,convertBraces);
+    }
+    return stb.toString();
+  }
+ catch (  IOException e) {
+    throw new RuntimeException("Could not write the UriBuilder to a String; but this Exception could not occur normally",e);
+  }
+}

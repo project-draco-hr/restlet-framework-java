@@ -1,0 +1,15 @@
+{
+  Field queryField;
+  try {
+    queryField=uriBuilder.getClass().getDeclaredField(fieldName);
+  }
+ catch (  NoSuchFieldException e) {
+    queryField=uriBuilder.getClass().getSuperclass().getDeclaredField(fieldName);
+  }
+  queryField.setAccessible(true);
+  final Object value=queryField.get(uriBuilder);
+  if (value == null) {
+    return null;
+  }
+  return value.toString();
+}

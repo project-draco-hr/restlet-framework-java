@@ -1,0 +1,17 @@
+{
+  if (method == null) {
+    return this;
+  }
+  String validSegment;
+  try {
+    validSegment=getPathTemplateWithoutRegExps(method);
+  }
+ catch (  MissingAnnotationException e) {
+    throw new IllegalArgumentException(e);
+  }
+catch (  IllegalPathException e) {
+    throw e.getCause();
+  }
+  addValidPathSegment(validSegment);
+  return this;
+}

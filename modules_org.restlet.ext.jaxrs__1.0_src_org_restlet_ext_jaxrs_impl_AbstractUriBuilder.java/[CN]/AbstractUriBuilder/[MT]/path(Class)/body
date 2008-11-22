@@ -1,0 +1,17 @@
+{
+  if (rootResource == null) {
+    throw new IllegalArgumentException("The root resource class must not be null");
+  }
+  String newPathSegment;
+  try {
+    newPathSegment=getPathTemplateWithoutRegExps(rootResource);
+  }
+ catch (  IllegalPathOnClassException e) {
+    throw e.getCause();
+  }
+catch (  MissingAnnotationException e) {
+    throw new IllegalArgumentException("The class " + rootResource.getName() + " is not a valid root resource class. "+ "A root resource class must be annotated with @Path");
+  }
+  addValidPathSegment(newPathSegment);
+  return this;
+}
