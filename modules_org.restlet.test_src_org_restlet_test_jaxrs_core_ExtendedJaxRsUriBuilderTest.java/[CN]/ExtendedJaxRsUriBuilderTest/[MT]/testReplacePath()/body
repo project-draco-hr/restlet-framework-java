@@ -1,0 +1,17 @@
+{
+  this.uriBuilder.replacePath("newPath");
+  assertEqualsURI("http://localhost/newPath",this.uriBuilder);
+  this.uriBuilder.replacePath("");
+  assertEqualUriBuilder("http",null,"localhost",null,"",null,null,this.uriBuilder,true);
+  assertEqualsUriSlashAllowed("http://localhost",this.uriBuilder);
+  this.uriBuilder.replacePath("gh").path("r t");
+  assertEqualsURI("http://localhost/gh/r%20t",this.uriBuilder);
+  this.uriBuilder.replacePath("gh").path("r;t");
+  assertEqualsURI("http://localhost/gh/r;t",this.uriBuilder);
+  this.uriBuilder.replacePath("gh").path("r;t=6");
+  assertEqualsURI("http://localhost/gh/r;t=6",this.uriBuilder);
+  this.uriBuilder.replacePath("gh").path("r;t=");
+  assertEqualsURI("http://localhost/gh/r;t=",this.uriBuilder);
+  this.uriBuilder.replacePath("gh").path("r;t=6;g");
+  assertEqualsURI("http://localhost/gh/r;t=6;g",this.uriBuilder);
+}

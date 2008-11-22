@@ -1,0 +1,22 @@
+{
+  if (newPath == null) {
+    super.replacePath(newPath);
+    this.extension(null);
+    return this;
+  }
+  int beginLastSegment=newPath.lastIndexOf('/');
+  int beginLastMatrix=newPath.indexOf(';',beginLastSegment);
+  int endExt=beginLastMatrix > 0 ? beginLastMatrix : newPath.length();
+  int beginExtensions=Util.indexOfBetween(newPath,'.',beginLastSegment,endExt);
+  if (beginExtensions < 0) {
+    super.replacePath(newPath);
+    return this;
+  }
+  String extensions=newPath.substring(beginExtensions,endExt);
+  StringBuilder pathStb=new StringBuilder();
+  pathStb.append(newPath,0,beginExtensions);
+  pathStb.append(newPath,endExt,newPath.length());
+  this.extension(extensions);
+  super.replacePath(pathStb);
+  return this;
+}

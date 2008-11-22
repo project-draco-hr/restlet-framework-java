@@ -1,0 +1,26 @@
+{
+  if (extensions == null) {
+    this.extensionLanguage=null;
+    this.extensionMedia=null;
+    this.extensionOthers=null;
+    return this;
+  }
+  MetadataService metadataService;
+  metadataService=Application.getCurrent().getMetadataService();
+  StringTokenizer stt=new StringTokenizer(extensions,".");
+  while (stt.hasMoreTokens()) {
+    String extension=stt.nextToken();
+    Metadata metadata=metadataService.getMetadata(extension);
+    if (metadata instanceof Language) {
+      this.extensionLanguage=extension;
+    }
+ else     if (metadata instanceof MediaType) {
+      this.extensionMedia=extension;
+    }
+ else {
+      if (extensionOthers == null)       this.extensionOthers=extension;
+ else       this.extensionOthers+="." + extension;
+    }
+  }
+  return this;
+}

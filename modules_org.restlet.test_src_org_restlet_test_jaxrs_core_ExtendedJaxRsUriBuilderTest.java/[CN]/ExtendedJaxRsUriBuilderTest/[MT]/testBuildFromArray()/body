@@ -1,0 +1,24 @@
+{
+  try {
+    this.uriBuilderWithVars.build("123");
+    fail("must fail, because there are not enough arguments");
+  }
+ catch (  IllegalArgumentException e) {
+  }
+  URI uri=this.uriBuilderWithVars.build("123","456","");
+  assertEqualsURI("http://localhost/abc/123/def/456.",uri);
+  ExtendedUriBuilder uriBuilder2=this.uriBuilderWithVars.clone();
+  assertEqualsURI("http://localhost/abc/123/def/456.html",uriBuilder2.build("123","456","html"));
+  assertEquals(this.uriBuilderWithVars.toString(),uriBuilder2.toString());
+  uriBuilder2.path("{var3}");
+  uri=this.uriBuilderWithVars.build("123","456","pdf");
+  assertEqualsURI("http://localhost/abc/123/def/456.pdf",uri);
+  try {
+    uriBuilder2.build("123","456");
+    fail("must fail, because there are not enough arguments");
+  }
+ catch (  IllegalArgumentException e) {
+  }
+  final URI uri2=uriBuilder2.build("123","456","789","");
+  assertEqualsURI("http://localhost/abc/123/def/456/789.",uri2);
+}

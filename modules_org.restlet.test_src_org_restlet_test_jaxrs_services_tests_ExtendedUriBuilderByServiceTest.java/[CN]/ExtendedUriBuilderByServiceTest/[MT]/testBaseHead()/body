@@ -1,0 +1,10 @@
+{
+  Response response=head("base",TEXT_HTML);
+  assertBaseUriAndMediaType(TEXT_HTML,response,false,null);
+  response=head("base.txt",TEXT_HTML);
+  assertBaseUriAndMediaType(TEXT_PLAIN,response,false,"txt");
+  response=head("base.html",IMAGE_GIF);
+  assertBaseUriAndMediaType(TEXT_HTML,response,false,"html");
+  response=head("base.xml",TEXT_HTML);
+  assertEquals(Status.CLIENT_ERROR_NOT_ACCEPTABLE,response.getStatus());
+}

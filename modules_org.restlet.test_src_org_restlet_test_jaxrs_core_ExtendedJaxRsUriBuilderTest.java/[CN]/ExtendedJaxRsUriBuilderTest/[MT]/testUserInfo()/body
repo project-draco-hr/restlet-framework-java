@@ -1,0 +1,12 @@
+{
+  this.uriBuilder.userInfo("username");
+  assertEqualsURI("http://username@localhost/path1/path2",this.uriBuilder);
+  this.uriBuilder.replacePath((String)null);
+  this.uriBuilder.host("abc");
+  this.uriBuilder.userInfo("username:pw");
+  assertEqualsUriSlashAllowed("http://username:pw@abc",this.uriBuilder);
+  this.uriBuilder.userInfo("rkj;s78:&=+$,");
+  assertEqualsUriSlashAllowed("http://rkj;s78:&=+$,@abc",this.uriBuilder);
+  this.uriBuilder.userInfo(" ");
+  assertEqualsUriSlashAllowed("http://%20@abc",this.uriBuilder);
+}

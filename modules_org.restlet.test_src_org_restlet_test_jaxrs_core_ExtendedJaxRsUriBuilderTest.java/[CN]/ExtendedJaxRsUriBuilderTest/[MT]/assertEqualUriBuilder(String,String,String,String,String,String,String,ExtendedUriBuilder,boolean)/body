@@ -1,0 +1,40 @@
+{
+  assertEquals(expectedScheme,getScheme(actualUriBuilder));
+  assertEquals(expectedUserInfo,getUserInfo(actualUriBuilder));
+  assertEquals(expectedHost,getHost(actualUriBuilder));
+  assertEquals(expectedPort,getPort(actualUriBuilder));
+  final String actPath=getPath(actualUriBuilder);
+  try {
+    assertEquals(expectedPath,actPath);
+  }
+ catch (  junit.framework.ComparisonFailure cf) {
+    if (expectedPath == null)     assertEquals("",actPath);
+  }
+  assertEquals(expectedExtension,actualUriBuilder.getExtension());
+  CharSequence actualQuery=getQuery(actualUriBuilder);
+  if (actualQuery != null) {
+    actualQuery=actualQuery.toString();
+  }
+  assertEquals(expectedQuery,actualQuery);
+  if (compareResult) {
+    ExtendedUriBuilder expectedUriBuilder=ExtendedUriBuilder.newInstance();
+    if (expectedScheme != null) {
+      expectedUriBuilder.scheme(expectedScheme);
+    }
+    if (expectedUserInfo != null) {
+      expectedUriBuilder.userInfo(expectedUserInfo);
+    }
+    if (expectedHost != null) {
+      expectedUriBuilder.host(expectedHost);
+    }
+    expectedUriBuilder.port(expectedPort);
+    expectedUriBuilder.path(expectedPath);
+    expectedUriBuilder.extension(expectedExtension);
+    if (expectedQuery != null) {
+      expectedUriBuilder.replaceQuery(expectedQuery);
+    }
+    String expectedURI=expectedUriBuilder.build().toString();
+    String atualURI=actualUriBuilder.build().toString();
+    assertEquals(expectedURI,atualURI);
+  }
+}
