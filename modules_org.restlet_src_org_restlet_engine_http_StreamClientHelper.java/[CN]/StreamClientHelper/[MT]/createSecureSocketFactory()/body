@@ -1,4 +1,5 @@
 {
+  String certAlgorithm=getCertAlgorithm();
   String keystorePath=getKeystorePath();
   String keystorePassword=getKeystorePassword();
   String keyPassword=getKeyPassword();
@@ -12,7 +13,7 @@
   }
   KeyStore keyStore=KeyStore.getInstance(getKeystoreType());
   keyStore.load(keystoreInputStream,keystorePassword == null ? null : keystorePassword.toCharArray());
-  KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(getCertAlgorithm());
+  KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(certAlgorithm);
   keyManagerFactory.init(keyStore,keyPassword == null ? null : keyPassword.toCharArray());
   KeyManager[] keyManagers=keyManagerFactory.getKeyManagers();
   InputStream truststoreInputStream=null;
@@ -21,7 +22,7 @@
   }
   KeyStore trustStore=KeyStore.getInstance(getTruststoreType());
   trustStore.load(truststoreInputStream,truststorePassword == null ? null : truststorePassword.toCharArray());
-  TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance(getCertAlgorithm());
+  TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance(certAlgorithm);
   trustManagerFactory.init(trustStore);
   TrustManager[] trustManagers=trustManagerFactory.getTrustManagers();
   SecureRandom secureRandom=secureRandomAlgorithm == null ? null : SecureRandom.getInstance(secureRandomAlgorithm);
