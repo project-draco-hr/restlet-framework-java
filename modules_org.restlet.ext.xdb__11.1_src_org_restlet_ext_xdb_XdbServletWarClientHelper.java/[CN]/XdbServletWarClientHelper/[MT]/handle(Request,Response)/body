@@ -3,10 +3,16 @@
   ResultSet rset=null;
   if (request.getMethod().equals(Method.GET) || request.getMethod().equals(Method.HEAD)) {
     final String basePath=request.getResourceRef().getPath();
+    final String xdbResPath;
+    if (request.getProtocol().equals(Protocol.FILE)) {
+      xdbResPath=(basePath.startsWith(HOME_DIR)) ? USER_DIR + this.connectedUser + basePath.substring(HOME_DIR.length()) : basePath;
+    }
+ else {
+      xdbResPath=USER_DIR + this.connectedUser + DEPLOY_DIR+ this.config.getServletName()+ basePath;
+    }
     final int lastSlashIndex=basePath.lastIndexOf('/');
     String entry=(lastSlashIndex == -1) ? basePath : basePath.substring(lastSlashIndex + 1);
     Representation output=null;
-    final String xdbResPath=BASE_DIR + this.connectedUser + DEPLOY_DIR+ this.config.getServletName()+ basePath;
     if (basePath.endsWith("/")) {
       try {
         stmt=this.conn.prepareStatement("SELECT path(1),extractValue(res,'/Resource/@Container') " + "FROM resource_view WHERE under_path(res,1,?,1 ) = 1");
