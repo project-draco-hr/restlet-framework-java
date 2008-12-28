@@ -1,11 +1,12 @@
 {
   Status result=null;
   try {
-    final String hostDomain=request.getResourceRef().getHostDomain();
-    int hostPort=request.getResourceRef().getHostPort();
+    Reference resourceRef=request.getResourceRef().isRelative() ? request.getResourceRef().getTargetRef() : request.getResourceRef();
+    final String hostDomain=resourceRef.getHostDomain();
+    int hostPort=resourceRef.getHostPort();
     if (hostPort == -1) {
-      if (request.getResourceRef().getSchemeProtocol() != null) {
-        hostPort=request.getResourceRef().getSchemeProtocol().getDefaultPort();
+      if (resourceRef.getSchemeProtocol() != null) {
+        hostPort=resourceRef.getSchemeProtocol().getDefaultPort();
       }
  else {
         hostPort=getProtocol().getDefaultPort();
@@ -26,8 +27,8 @@
     }
     getRequestHeaders().set(HttpConstants.HEADER_CONNECTION,"close",isClientKeepAlive());
     String host=hostDomain;
-    if (request.getResourceRef().getHostPort() != -1) {
-      host+=":" + request.getResourceRef().getHostPort();
+    if (resourceRef.getHostPort() != -1) {
+      host+=":" + resourceRef.getHostPort();
     }
     getRequestHeaders().set(HttpConstants.HEADER_HOST,host,true);
     for (    final Parameter header : getRequestHeaders()) {
