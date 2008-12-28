@@ -2,9 +2,13 @@
   try {
     if (!this.socket.isClosed()) {
       ByteUtils.exhaust(getRequestEntityStream(getContentLength()));
-      this.socket.shutdownInput();
+      if (!(this.socket instanceof SSLSocket)) {
+        this.socket.shutdownInput();
+      }
       this.socket.getOutputStream().flush();
-      this.socket.shutdownOutput();
+      if (!(this.socket instanceof SSLSocket)) {
+        this.socket.shutdownOutput();
+      }
       this.socket.close();
     }
   }

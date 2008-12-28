@@ -1,7 +1,9 @@
 {
   try {
     if (!this.socket.isClosed()) {
-      this.socket.shutdownOutput();
+      if (!(this.socket instanceof SSLSocket)) {
+        this.socket.shutdownOutput();
+      }
       this.socket.close();
     }
   }
