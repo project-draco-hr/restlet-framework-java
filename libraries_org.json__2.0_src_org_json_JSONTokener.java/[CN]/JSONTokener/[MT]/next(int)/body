@@ -1,9 +1,27 @@
 {
-  int i=this.myIndex;
-  int j=i + n;
-  if (j >= this.mySource.length()) {
+  if (n == 0) {
+    return "";
+  }
+  char[] buffer=new char[n];
+  int pos=0;
+  if (this.useLastChar) {
+    this.useLastChar=false;
+    buffer[0]=this.lastChar;
+    pos=1;
+  }
+  try {
+    int len;
+    while ((pos < n) && ((len=reader.read(buffer,pos,n - pos)) != -1)) {
+      pos+=len;
+    }
+  }
+ catch (  IOException exc) {
+    throw new JSONException(exc);
+  }
+  this.index+=pos;
+  if (pos < n) {
     throw syntaxError("Substring bounds error");
   }
-  this.myIndex+=n;
-  return this.mySource.substring(i,j);
+  this.lastChar=buffer[n - 1];
+  return new String(buffer);
 }

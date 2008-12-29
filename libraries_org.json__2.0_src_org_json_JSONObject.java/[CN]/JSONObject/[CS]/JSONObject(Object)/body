@@ -1,29 +1,4 @@
 {
   this();
-  Class klass=bean.getClass();
-  Method[] methods=klass.getMethods();
-  for (int i=0; i < methods.length; i+=1) {
-    try {
-      Method method=methods[i];
-      String name=method.getName();
-      String key="";
-      if (name.startsWith("get")) {
-        key=name.substring(3);
-      }
- else       if (name.startsWith("is")) {
-        key=name.substring(2);
-      }
-      if (key.length() > 0 && Character.isUpperCase(key.charAt(0)) && method.getParameterTypes().length == 0) {
-        if (key.length() == 1) {
-          key=key.toLowerCase();
-        }
- else         if (!Character.isUpperCase(key.charAt(1))) {
-          key=key.substring(0,1).toLowerCase() + key.substring(1);
-        }
-        this.put(key,method.invoke(bean,null));
-      }
-    }
- catch (    Exception e) {
-    }
-  }
+  populateInternalMap(bean,false);
 }

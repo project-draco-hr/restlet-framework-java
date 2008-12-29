@@ -9,11 +9,11 @@ case '{':
   back();
 return new JSONObject(this);
 case '[':
+case '(':
 back();
 return new JSONArray(this);
 }
 StringBuffer sb=new StringBuffer();
-char b=c;
 while (c >= ' ' && ",:]}/\\\"[{;=#".indexOf(c) < 0) {
 sb.append(c);
 c=next();
@@ -23,48 +23,5 @@ s=sb.toString().trim();
 if (s.equals("")) {
 throw syntaxError("Missing value");
 }
-if (s.equalsIgnoreCase("true")) {
-return Boolean.TRUE;
-}
-if (s.equalsIgnoreCase("false")) {
-return Boolean.FALSE;
-}
-if (s.equalsIgnoreCase("null")) {
-return JSONObject.NULL;
-}
-if ((b >= '0' && b <= '9') || b == '.' || b == '-' || b == '+') {
-if (b == '0') {
-if (s.length() > 2 && (s.charAt(1) == 'x' || s.charAt(1) == 'X')) {
-try {
-return new Integer(Integer.parseInt(s.substring(2),16));
-}
- catch (Exception e) {
-}
-}
- else {
-try {
-return new Integer(Integer.parseInt(s,8));
-}
- catch (Exception e) {
-}
-}
-}
-try {
-return new Integer(s);
-}
- catch (Exception e) {
-try {
-return new Long(s);
-}
- catch (Exception f) {
-try {
-return new Double(s);
-}
- catch (Exception g) {
-return s;
-}
-}
-}
-}
-return s;
+return JSONObject.stringToValue(s);
 }

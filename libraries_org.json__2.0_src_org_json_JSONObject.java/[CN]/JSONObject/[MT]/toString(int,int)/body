@@ -1,10 +1,10 @@
 {
-  int i;
+  int j;
   int n=length();
   if (n == 0) {
     return "{}";
   }
-  Iterator keys=keys();
+  Iterator keys=sortedKeys();
   StringBuffer sb=new StringBuffer("{");
   int newindent=indent + indentFactor;
   Object o;
@@ -12,7 +12,7 @@
     o=keys.next();
     sb.append(quote(o.toString()));
     sb.append(": ");
-    sb.append(valueToString(this.myHashMap.get(o),indentFactor,indent));
+    sb.append(valueToString(this.map.get(o),indentFactor,indent));
   }
  else {
     while (keys.hasNext()) {
@@ -23,16 +23,16 @@
  else {
         sb.append('\n');
       }
-      for (i=0; i < newindent; i+=1) {
+      for (j=0; j < newindent; j+=1) {
         sb.append(' ');
       }
       sb.append(quote(o.toString()));
       sb.append(": ");
-      sb.append(valueToString(this.myHashMap.get(o),indentFactor,newindent));
+      sb.append(valueToString(this.map.get(o),indentFactor,newindent));
     }
     if (sb.length() > 1) {
       sb.append('\n');
-      for (i=0; i < indent; i+=1) {
+      for (j=0; j < indent; j+=1) {
         sb.append(' ');
       }
     }
