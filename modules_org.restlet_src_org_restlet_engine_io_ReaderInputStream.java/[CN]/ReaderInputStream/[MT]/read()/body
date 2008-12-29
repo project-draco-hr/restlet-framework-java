@@ -1,13 +1,18 @@
 {
   int result=-1;
-  if (this.buffer == null) {
-    refill();
-  }
-  if (this.buffer != null) {
-    result=this.buffer[this.index++];
-    if (this.index == this.buffer.length) {
-      this.buffer=null;
+  if (this.pipedInputStream.available() == 0) {
+    if (this.reader.ready()) {
+      int character=this.reader.read();
+      if (character != -1) {
+        this.outputStreamWriter.write(character);
+        this.outputStreamWriter.flush();
+        this.pipedOutputStream.flush();
+        result=this.pipedInputStream.read();
+      }
     }
+  }
+ else {
+    result=this.pipedInputStream.read();
   }
   return result;
 }
