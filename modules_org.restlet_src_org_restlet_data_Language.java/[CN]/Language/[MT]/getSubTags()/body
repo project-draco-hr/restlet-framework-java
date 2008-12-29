@@ -4,15 +4,16 @@
 synchronized (this) {
       v=this.subTags;
       if (v == null) {
-        this.subTags=v=new CopyOnWriteArrayList<String>();
+        List<String> tokens=new CopyOnWriteArrayList<String>();
         if (getName() != null) {
           final String[] tags=getName().split("-");
           if (tags.length > 0) {
             for (int i=1; i < tags.length; i++) {
-              this.subTags.add(tags[i]);
+              tokens.add(tags[i]);
             }
           }
         }
+        this.subTags=v=Collections.unmodifiableList(tokens);
       }
     }
   }
