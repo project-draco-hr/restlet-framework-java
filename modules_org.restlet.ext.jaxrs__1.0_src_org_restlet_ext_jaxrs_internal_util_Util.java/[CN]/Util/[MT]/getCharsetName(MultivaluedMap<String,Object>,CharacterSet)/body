@@ -1,10 +1,16 @@
 {
   String result=null;
+  CharacterSet charSet=null;
   final Object contentType=httpHeaders.getFirst(CONTENT_TYPE);
   if (contentType == null) {
-    return null;
+    charSet=defaultCs;
   }
-  CharacterSet charSet=ContentType.parseCharacterSet(contentType.toString());
+ else {
+    charSet=ContentType.parseCharacterSet(contentType.toString());
+    if (charSet == null) {
+      charSet=defaultCs;
+    }
+  }
   if (charSet != null) {
     result=charSet.getName();
   }
