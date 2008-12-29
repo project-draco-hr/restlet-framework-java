@@ -1,11 +1,12 @@
 {
-  final MediaType mediaType=getMediaType(httpHeaders);
-  String charset=null;
-  if (mediaType != null) {
-    charset=mediaType.getParameters().getFirstValue(CHARSET);
+  String result=null;
+  final Object contentType=httpHeaders.getFirst(CONTENT_TYPE);
+  if (contentType == null) {
+    return null;
   }
-  if ((charset == null) || (charset.length() == 0)) {
-    return defaultCs != null ? defaultCs.toString() : null;
+  CharacterSet charSet=ContentType.parseCharacterSet(contentType.toString());
+  if (charSet != null) {
+    result=charSet.getName();
   }
-  return charset;
+  return result;
 }
