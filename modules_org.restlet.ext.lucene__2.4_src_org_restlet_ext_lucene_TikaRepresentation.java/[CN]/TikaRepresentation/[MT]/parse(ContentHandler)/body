@@ -1,0 +1,28 @@
+{
+  if (this.representation != null) {
+    try {
+      if (this.representation.getDownloadName() != null) {
+        getMetadata().set(TikaMetadataKeys.RESOURCE_NAME_KEY,this.representation.getDownloadName());
+        getMetadata().set(HttpHeaders.CONTENT_DISPOSITION,this.representation.getDownloadName());
+      }
+      getMetadata().set(HttpHeaders.CONTENT_TYPE,this.representation.getMediaType().toString());
+      if (this.representation.getSize() != UNKNOWN_SIZE) {
+        getMetadata().set(HttpHeaders.CONTENT_LENGTH,Long.toString(this.representation.getSize()));
+      }
+      if (this.representation.getModificationDate() != null) {
+        getMetadata().set(HttpHeaders.LAST_MODIFIED,DateUtils.format(this.representation.getModificationDate()));
+      }
+      Parser parser=(getTikeParser() != null) ? getTikeParser() : (getTikaConfig() != null) ? new AutoDetectParser(getTikaConfig()) : new AutoDetectParser();
+      parser.parse(this.representation.getStream(),contentHandler,getMetadata());
+    }
+ catch (    SAXException e) {
+      throw new IOException("SAX exception: " + e.getLocalizedMessage());
+    }
+catch (    TikaException e) {
+      throw new IOException("Tika exception: " + e.getLocalizedMessage());
+    }
+  }
+ else {
+    throw new IOException("No wrapped representation to parse.");
+  }
+}
