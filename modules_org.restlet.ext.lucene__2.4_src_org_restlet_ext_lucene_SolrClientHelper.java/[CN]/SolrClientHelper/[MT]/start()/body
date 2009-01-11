@@ -1,0 +1,22 @@
+{
+  try {
+    coreContainer=(CoreContainer)getHelped().getContext().getAttributes().get("CoreContainer");
+    if (coreContainer == null) {
+      String directory=getHelped().getContext().getParameters().getFirstValue("directory");
+      String configFile=getHelped().getContext().getParameters().getFirstValue("configFile");
+      if (directory != null && configFile != null) {
+        File config=new File(configFile);
+        if (!config.exists()) {
+          config=new File(new URI(configFile));
+        }
+        coreContainer=new CoreContainer(directory,config);
+      }
+    }
+    if (coreContainer == null) {
+      throw new RuntimeException("Could not initialize core container");
+    }
+  }
+ catch (  Exception e) {
+    throw new RuntimeException("Could not initialize core container",e);
+  }
+}

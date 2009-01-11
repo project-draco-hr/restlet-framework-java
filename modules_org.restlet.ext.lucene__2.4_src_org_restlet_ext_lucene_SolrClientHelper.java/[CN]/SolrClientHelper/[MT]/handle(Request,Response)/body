@@ -1,0 +1,55 @@
+{
+  super.handle(request,response);
+  Reference resRef=request.getResourceRef();
+  String path=resRef.getPath();
+  if (path != null) {
+    path=resRef.getPath(true);
+  }
+  String coreName=request.getResourceRef().getHostDomain();
+  if (coreName == null || "".equals(coreName)) {
+    coreName=getContext().getParameters().getFirstValue("DefaultCore");
+  }
+  SolrCore core=coreContainer.getCore(coreName);
+  if (core == null) {
+    response.setStatus(Status.SERVER_ERROR_INTERNAL,"No such core: " + coreName);
+    return;
+  }
+  SolrRequestHandler handler=core.getRequestHandler(path);
+  if (handler == null) {
+    if ("/select".equals(path) || "/select/".equalsIgnoreCase(path)) {
+      String qt=request.getResourceRef().getQueryAsForm().getFirstValue(CommonParams.QT);
+      handler=core.getRequestHandler(qt);
+      if (handler == null) {
+        response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,"unknown handler: " + qt);
+        return;
+      }
+    }
+    if (handler == null && coreContainer != null && path.equals(coreContainer.getAdminPath())) {
+      handler=coreContainer.getMultiCoreHandler();
+    }
+  }
+  if (handler == null) {
+    core.close();
+    response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,"unknown handler: " + path);
+    return;
+  }
+  try {
+    SolrQueryRequest solrReq=new RestletSolrQueryRequest(request,core);
+    SolrQueryResponse solrResp=new SolrQueryResponse();
+    core.execute(handler,solrReq,solrResp);
+    if (solrResp.getException() != null) {
+      response.setStatus(Status.SERVER_ERROR_INTERNAL,solrResp.getException());
+    }
+ else {
+      response.setEntity(new SolrRepresentation(MediaType.APPLICATION_XML,solrReq,solrResp));
+      response.setStatus(Status.SUCCESS_OK);
+    }
+  }
+ catch (  Exception e) {
+    getLogger().log(Level.WARNING,"Unable to evaluate " + resRef.toString(),e);
+    response.setStatus(Status.SERVER_ERROR_INTERNAL,e);
+  }
+ finally {
+    core.close();
+  }
+}

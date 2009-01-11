@@ -1,0 +1,18 @@
+{
+  QueryResponseWriter writer;
+  if (MediaType.APPLICATION_JSON.isCompatible(getMediaType()) || MediaType.APPLICATION_JAVASCRIPT.isCompatible(getMediaType())) {
+    writer=new JSONResponseWriter();
+  }
+ else {
+    writer=new XMLResponseWriter();
+  }
+  OutputStreamWriter out;
+  if (getCharacterSet() != null) {
+    out=new OutputStreamWriter(outputStream,getCharacterSet().getName());
+  }
+ else {
+    out=new OutputStreamWriter(outputStream,"UTF-8");
+  }
+  writer.write(out,solrQueryRequest,solrQueryResponse);
+  out.close();
+}
