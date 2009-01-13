@@ -1,9 +1,10 @@
 {
   String[] names=isFindInAncestors() ? BeanFactoryUtils.beanNamesForTypeIncludingAncestors(factory,Resource.class,true,true) : factory.getBeanNamesForType(Resource.class,true,true);
+  BeanFactory bf=this.applicationContext == null ? factory : this.applicationContext;
   for (  final String name : names) {
     final String uri=resolveUri(name,factory);
     if (uri != null) {
-      attach(uri,createFinder(factory,name));
+      attach(uri,createFinder(bf,name));
     }
   }
 }
