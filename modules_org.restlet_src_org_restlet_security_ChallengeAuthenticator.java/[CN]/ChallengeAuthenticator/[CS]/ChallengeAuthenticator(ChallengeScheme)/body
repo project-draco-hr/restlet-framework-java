@@ -1,0 +1,16 @@
+{
+  this.scheme=challengeScheme;
+  this.secrets=new ConcurrentHashMap<String,char[]>();
+  this.secretResolver=new Resolver<char[]>(){
+    @Override public char[] resolve(    String identifier){
+      return getSecrets().get(identifier);
+    }
+  }
+;
+  if (this.scheme != null) {
+    this.helper=Engine.getInstance().findHelper(challengeScheme,false,true);
+  }
+ else {
+    this.helper=null;
+  }
+}
