@@ -1,0 +1,42 @@
+{
+  Representation result=null;
+  List<Object> args=null;
+  for (  Class<?> parameter : method.getParameterTypes()) {
+    if (Variant.class.isAssignableFrom(parameter)) {
+      if (args == null) {
+        args=new ArrayList<Object>();
+      }
+      args.add(variant);
+    }
+ else     if (MediaType.class.isAssignableFrom(parameter)) {
+      if (args == null) {
+        args=new ArrayList<Object>();
+      }
+      args.add(variant.getMediaType());
+    }
+ else     if (CharacterSet.class.isAssignableFrom(parameter)) {
+      if (args == null) {
+        args=new ArrayList<Object>();
+      }
+      args.add(variant.getCharacterSet());
+    }
+  }
+  try {
+    if (args != null) {
+      result=(Representation)method.invoke(this,args);
+    }
+ else {
+      result=(Representation)method.invoke(this);
+    }
+  }
+ catch (  IllegalArgumentException e) {
+    e.printStackTrace();
+  }
+catch (  IllegalAccessException e) {
+    e.printStackTrace();
+  }
+catch (  InvocationTargetException e) {
+    e.printStackTrace();
+  }
+  return result;
+}

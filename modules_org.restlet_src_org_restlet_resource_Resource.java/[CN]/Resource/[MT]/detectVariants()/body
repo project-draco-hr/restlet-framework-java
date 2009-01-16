@@ -1,0 +1,132 @@
+{
+  for (  java.lang.reflect.Method method : getClass().getMethods()) {
+    boolean compatibleParameters=Representation.class.isAssignableFrom(method.getReturnType());
+    if (compatibleParameters) {
+      for (      Class<?> parameter : method.getParameterTypes()) {
+        compatibleParameters=compatibleParameters && (Variant.class.isAssignableFrom(parameter) || MediaType.class.isAssignableFrom(parameter) || CharacterSet.class.isAssignableFrom(parameter));
+      }
+    }
+    if (compatibleParameters) {
+      if (method.getName().startsWith("represent")) {
+        String extensionPart=method.getName().substring(9);
+        List<String> extensions=null;
+        StringBuilder sb=null;
+        for (int i=0; i < extensionPart.length(); i++) {
+          if (Character.isUpperCase(extensionPart.charAt(i))) {
+            if (sb != null) {
+              if (extensions == null) {
+                extensions=new ArrayList<String>();
+              }
+              extensions.add(sb.toString().toLowerCase());
+              sb=null;
+            }
+            sb=new StringBuilder();
+            sb.append(extensionPart.charAt(i));
+          }
+ else           if (sb != null) {
+            sb.append(extensionPart.charAt(i));
+          }
+ else {
+            continue;
+          }
+        }
+        if (sb != null) {
+          if (extensions == null) {
+            extensions=new ArrayList<String>();
+          }
+          extensions.add(sb.toString().toLowerCase());
+          sb=null;
+        }
+        if (extensions != null) {
+          MetadataService ms=getApplication().getMetadataService();
+          List<CharacterSet> characterSets=null;
+          List<Encoding> encodings=null;
+          List<Language> languages=null;
+          List<MediaType> mediaTypes=null;
+          for (          String extension : extensions) {
+            List<Metadata> extensionMetadata=ms.getAllMetadata(extension);
+            for (            Metadata metadata : extensionMetadata) {
+              if (metadata instanceof CharacterSet) {
+                if (characterSets == null) {
+                  characterSets=new ArrayList<CharacterSet>();
+                }
+                characterSets.add((CharacterSet)metadata);
+              }
+ else               if (metadata instanceof Encoding) {
+                if (encodings == null) {
+                  encodings=new ArrayList<Encoding>();
+                }
+                encodings.add((Encoding)metadata);
+              }
+ else               if (metadata instanceof Language) {
+                if (languages == null) {
+                  languages=new ArrayList<Language>();
+                }
+                languages.add((Language)metadata);
+              }
+ else               if (metadata instanceof MediaType) {
+                if (mediaTypes == null) {
+                  mediaTypes=new ArrayList<MediaType>();
+                }
+                mediaTypes.add((MediaType)metadata);
+              }
+            }
+          }
+          List<Variant> variants=new ArrayList<Variant>();
+          Variant variant;
+          if (mediaTypes != null) {
+            for (            MediaType mediaType : mediaTypes) {
+              if (characterSets != null) {
+                for (                CharacterSet characterSet : characterSets) {
+                  variant=new Variant();
+                  variant.setMediaType(mediaType);
+                  variant.setCharacterSet(characterSet);
+                  variant.setEncodings(encodings);
+                  variant.setLanguages(languages);
+                  getVariants().add(variant);
+                  variants.add(variant);
+                }
+              }
+ else {
+                variant=new Variant();
+                variant.setMediaType(mediaType);
+                variant.setEncodings(encodings);
+                variant.setLanguages(languages);
+                getVariants().add(variant);
+                variants.add(variant);
+              }
+            }
+          }
+ else {
+            MediaType mediaType=ms.getDefaultMediaType();
+            if (characterSets != null) {
+              for (              CharacterSet characterSet : characterSets) {
+                variant=new Variant();
+                variant.setMediaType(mediaType);
+                variant.setCharacterSet(characterSet);
+                variant.setEncodings(encodings);
+                variant.setLanguages(languages);
+                getVariants().add(variant);
+                variants.add(variant);
+              }
+            }
+ else {
+              variant=new Variant();
+              variant.setMediaType(mediaType);
+              variant.setEncodings(encodings);
+              variant.setLanguages(languages);
+              getVariants().add(variant);
+              variants.add(variant);
+            }
+          }
+          if (variants.size() > 0) {
+            if (this.representMethods == null) {
+              this.representMethods=new ArrayList<MethodInfo>();
+            }
+            this.representMethods.add(new MethodInfo(method,variants));
+          }
+        }
+      }
+    }
+  }
+}
