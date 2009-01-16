@@ -3,7 +3,8 @@
   Request request=new Request(Method.GET,"http://www.test.com/root");
   request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.TEXT_XML));
   Response response=new Response(request);
-  Resource target=new AutoDetectResource(new Context(),request,response);
+  Resource target=new AutoDetectResource();
+  target.init(new Context(),request,response);
   target.handleGet();
   Representation rep=response.getEntity();
   assertNotNull(rep);
