@@ -1,33 +1,40 @@
 {
-  response.setStatus(new Status(httpCall.getStatusCode(),null,httpCall.getReasonPhrase(),null));
-  response.getServerInfo().setAddress(httpCall.getServerAddress());
-  response.getServerInfo().setPort(httpCall.getServerPort());
-  readResponseHeaders(httpCall,response);
-  response.setEntity(httpCall.getResponseEntity(response));
-  if (response.getEntity() != null) {
-    if (response.getEntity().getSize() == 0) {
-      response.getEntity().release();
+  try {
+    response.setStatus(new Status(httpCall.getStatusCode(),null,httpCall.getReasonPhrase(),null));
+    response.getServerInfo().setAddress(httpCall.getServerAddress());
+    response.getServerInfo().setPort(httpCall.getServerPort());
+    readResponseHeaders(httpCall,response);
+    response.setEntity(httpCall.getResponseEntity(response));
+    if (response.getEntity() != null) {
+      if (response.getEntity().getSize() == 0) {
+        response.getEntity().release();
+      }
+ else       if (response.getRequest().getMethod().equals(Method.HEAD)) {
+        response.getEntity().release();
+      }
+ else       if (response.getStatus().equals(Status.SUCCESS_NO_CONTENT)) {
+        response.getEntity().release();
+      }
+ else       if (response.getStatus().equals(Status.SUCCESS_RESET_CONTENT)) {
+        response.getEntity().release();
+        response.setEntity(null);
+      }
+ else       if (response.getStatus().equals(Status.SUCCESS_PARTIAL_CONTENT)) {
+        response.getEntity().release();
+        response.setEntity(null);
+      }
+ else       if (response.getStatus().equals(Status.REDIRECTION_NOT_MODIFIED)) {
+        response.getEntity().release();
+      }
+ else       if (response.getStatus().isInformational()) {
+        response.getEntity().release();
+        response.setEntity(null);
+      }
     }
- else     if (response.getRequest().getMethod().equals(Method.HEAD)) {
-      response.getEntity().release();
-    }
- else     if (response.getStatus().equals(Status.SUCCESS_NO_CONTENT)) {
-      response.getEntity().release();
-    }
- else     if (response.getStatus().equals(Status.SUCCESS_RESET_CONTENT)) {
-      response.getEntity().release();
-      response.setEntity(null);
-    }
- else     if (response.getStatus().equals(Status.SUCCESS_PARTIAL_CONTENT)) {
-      response.getEntity().release();
-      response.setEntity(null);
-    }
- else     if (response.getStatus().equals(Status.REDIRECTION_NOT_MODIFIED)) {
-      response.getEntity().release();
-    }
- else     if (response.getStatus().isInformational()) {
-      response.getEntity().release();
-      response.setEntity(null);
+  }
+ catch (  Exception e) {
+    if ((response.getStatus() == null) || !response.getStatus().isError()) {
+      response.setStatus(Status.CONNECTOR_ERROR_INTERNAL,e);
     }
   }
 }
