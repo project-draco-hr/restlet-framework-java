@@ -1,0 +1,15 @@
+{
+  System.out.println("-- testValidateMethod");
+  InputStream is=getClass().getResourceAsStream("/org/restlet/Component.xsd");
+  assertNotNull("Component.xsd stream MUST NOT be null",is);
+  Representation schemaRepresentation=new InputRepresentation(is,MediaType.APPLICATION_W3C_SCHEMA);
+  DomRepresentation configRepresentation=new DomRepresentation(new StringRepresentation(XML_WITH_XMLNS));
+  try {
+    configRepresentation.validate(schemaRepresentation);
+    assertTrue(true);
+  }
+ catch (  Exception x) {
+    x.printStackTrace(System.err);
+    fail(x.getLocalizedMessage());
+  }
+}

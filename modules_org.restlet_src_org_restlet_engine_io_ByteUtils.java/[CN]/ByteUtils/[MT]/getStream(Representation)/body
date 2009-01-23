@@ -4,7 +4,8 @@
   }
   final PipeStream pipe=new PipeStream();
   final Application application=Application.getCurrent();
-  application.getTaskService().execute(new Runnable(){
+  TaskService taskService=(application == null) ? new TaskService() : application.getTaskService();
+  taskService.execute(new Runnable(){
     public void run(){
       try {
         final OutputStream os=pipe.getOutputStream();

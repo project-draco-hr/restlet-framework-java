@@ -1,0 +1,14 @@
+{
+  System.out.println("-- testValidatorBadXML");
+  try {
+    validator.validate(getAsSource(BAD_XML));
+    fail("MUST NOT be able to validate bad restlet.xml");
+  }
+ catch (  SAXException x) {
+    assertTrue("MUST detect schema violation",x.getLocalizedMessage().startsWith("cvc-complex-type.2.4.a"));
+    assertTrue("MUST detect schema violation related to 'bad-element'",x.getLocalizedMessage().indexOf("bad-element") > 0);
+  }
+catch (  IOException x) {
+    fail("MUST throw a SAXException only");
+  }
+}

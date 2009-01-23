@@ -1,0 +1,26 @@
+{
+  System.out.println("-- testHostParams()");
+  final List<VirtualHost> hosts=c.getHosts();
+  assertNotNull("Host List MUST NOT be null",hosts);
+  assertEquals("Server list MUST contain 1 item",1,hosts.size());
+  VirtualHost host=hosts.get(0);
+  assertNotNull("The single Host MUST NOT be null",host);
+  final String msg="[" + HOST + ":"+ host.getHostPort()+ "] ";
+  final Context ctx=host.getContext();
+  checkNegativeParam(msg,ctx,CON_NAME + "1");
+  checkNegativeParam(msg,ctx,CON_NAME + "2");
+  checkNegativeParam(msg,ctx,CON_NAME + "3");
+  checkNegativeParam(msg,ctx,CON_NAME + "4");
+  checkNegativeParam(msg,ctx,C_NAME + "1");
+  checkNegativeParam(msg,ctx,C_NAME + "2");
+  checkNegativeParam(msg,ctx,R_NAME + "1");
+  checkNegativeParam(msg,ctx,R_NAME + "2");
+  checkPositiveParam(msg,ctx,R_NAME + "3",R_VALUE + "3");
+  checkPositiveParam(msg,ctx,R_NAME + "4",R_VALUE + "4");
+  checkNegativeParam(msg,ctx,A_NAME + "1");
+  checkNegativeParam(msg,ctx,A_NAME + "2");
+  checkNegativeParam(msg,ctx,A_NAME + "3");
+  checkNegativeParam(msg,ctx,A_NAME + "4");
+  checkNegativeParam(msg,ctx,A_NAME + "5");
+  checkNegativeParam(msg,ctx,A_NAME + "6");
+}

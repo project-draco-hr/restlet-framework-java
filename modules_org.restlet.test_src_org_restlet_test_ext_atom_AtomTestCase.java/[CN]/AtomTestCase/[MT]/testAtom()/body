@@ -1,0 +1,20 @@
+{
+  final File testDir=new File(System.getProperty("java.io.tmpdir"),"AtomTestCase");
+  deleteDir(testDir);
+  testDir.mkdir();
+  try {
+    final Service atomService=new Service("clap://class/org/restlet/test/ext/atom/service.xml");
+    final Feed atomFeed=atomService.getWorkspaces().get(0).getCollections().get(0).getFeed();
+    final File feedFile=new File(testDir,"feed.xml");
+    atomFeed.write(new BufferedOutputStream(new FileOutputStream(feedFile)));
+    final FileRepresentation fileRepresentation=new FileRepresentation(feedFile,MediaType.TEXT_XML);
+    final Feed atomFeed2=new Feed(fileRepresentation);
+    assertEquals(atomFeed2.getAuthors().get(0).getName(),atomFeed.getAuthors().get(0).getName());
+    assertEquals(atomFeed2.getEntries().get(0).getContent().getInlineContent().getText(),atomFeed2.getEntries().get(0).getContent().getInlineContent().getText());
+    assertEquals(atomFeed2.getEntries().get(0).getTitle().getContent(),atomFeed2.getEntries().get(0).getTitle().getContent());
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+  deleteDir(testDir);
+}
