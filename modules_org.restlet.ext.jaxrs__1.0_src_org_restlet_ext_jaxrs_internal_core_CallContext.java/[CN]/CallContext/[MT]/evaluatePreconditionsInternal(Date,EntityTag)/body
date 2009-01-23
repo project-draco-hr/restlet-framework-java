@@ -1,31 +1,5 @@
 {
-  Status status=this.request.getConditions().getStatus(this.request.getMethod(),new Representation(){
-    @Override public Tag getTag(){
-      return Converter.toRestletTag(entityTag);
-    }
-    @Override public Date getModificationDate(){
-      return lastModified;
-    }
-    @Override public ReadableByteChannel getChannel() throws IOException {
-      throw new UnsupportedOperationException();
-    }
-    @Override public Reader getReader() throws IOException {
-      throw new UnsupportedOperationException();
-    }
-    @Override public InputStream getStream() throws IOException {
-      throw new UnsupportedOperationException();
-    }
-    @Override public void write(    OutputStream outputStream){
-      throw new UnsupportedOperationException();
-    }
-    @Override public void write(    WritableByteChannel writableChannel){
-      throw new UnsupportedOperationException();
-    }
-    @Override public void write(    Writer writer) throws IOException {
-      throw new UnsupportedOperationException();
-    }
-  }
-);
+  Status status=this.request.getConditions().getStatus(this.request.getMethod(),true,Converter.toRestletTag(entityTag),lastModified);
   if (status == null)   return null;
   if (status.equals(Status.REDIRECTION_NOT_MODIFIED)) {
     final ResponseBuilder rb=Response.notModified();
