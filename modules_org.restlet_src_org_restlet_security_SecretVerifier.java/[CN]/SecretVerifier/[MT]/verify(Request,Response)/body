@@ -1,0 +1,13 @@
+{
+  int result=RESULT_VALID;
+  if (request.getChallengeResponse() == null) {
+    result=RESULT_MISSING;
+  }
+ else   if (verify(request.getChallengeResponse().getIdentifier(),request.getChallengeResponse().getSecret())) {
+    request.getClientInfo().getSubject().getPrincipals().add(new Principal(request.getChallengeResponse().getIdentifier()));
+  }
+ else {
+    result=RESULT_INVALID;
+  }
+  return result;
+}

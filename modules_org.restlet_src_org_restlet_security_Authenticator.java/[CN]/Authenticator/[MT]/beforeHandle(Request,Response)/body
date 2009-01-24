@@ -1,0 +1,18 @@
+{
+  int result=CONTINUE;
+  boolean success=authenticate(request,response);
+switch (getMode()) {
+case MODE_OPTIONAL:
+    break;
+case MODE_REQUIRED:
+  if (!success)   result=SKIP;
+break;
+case MODE_SUFFICIENT:
+if (success) result=SKIP;
+break;
+default :
+result=SKIP;
+break;
+}
+return result;
+}
