@@ -1,0 +1,40 @@
+{
+  final SslContextFactory sslContextFactory=HttpsUtils.getSslContextFactory(this);
+  SSLContext sslContext;
+  if (sslContextFactory == null) {
+    final KeyStore keyStore=KeyStore.getInstance(getKeystoreType());
+    final FileInputStream fis=getKeystorePath() == null ? null : new FileInputStream(getKeystorePath());
+    final char[] password=getKeystorePassword() == null ? null : getKeystorePassword().toCharArray();
+    keyStore.load(fis,password);
+    if (fis != null) {
+      fis.close();
+    }
+    final KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(getCertAlgorithm());
+    keyManagerFactory.init(keyStore,getKeyPassword().toCharArray());
+    final TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance(getCertAlgorithm());
+    trustManagerFactory.init(keyStore);
+    sslContext=SSLContext.getInstance(getSslProtocol());
+    sslContext.init(keyManagerFactory.getKeyManagers(),trustManagerFactory.getTrustManagers(),null);
+  }
+ else {
+    sslContext=sslContextFactory.createSslContext();
+  }
+  final String addr=getHelped().getAddress();
+  if (addr != null) {
+    final InetAddress iaddr=InetAddress.getByName(addr);
+    setAddress(new InetSocketAddress(iaddr,getHelped().getPort()));
+  }
+ else {
+    setAddress(new InetSocketAddress(getHelped().getPort()));
+  }
+  final Container container=new SimpleContainer(this);
+  final ContainerServer server=new ContainerServer(container,getDefaultThreads());
+  final SimpleServer filter=new SimpleServer(server);
+  final Connection connection=new SocketConnection(filter);
+  setSslContext(sslContext);
+  setConfidential(true);
+  setContainer(server);
+  setConnection(connection);
+  getConnection().connect(getAddress(),getSslContext());
+  super.start();
+}
