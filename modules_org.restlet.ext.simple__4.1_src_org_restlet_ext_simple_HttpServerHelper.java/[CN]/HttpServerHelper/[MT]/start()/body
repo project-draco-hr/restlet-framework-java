@@ -5,7 +5,10 @@
     setAddress(new InetSocketAddress(iaddr,getHelped().getPort()));
   }
  else {
-    setAddress(new InetSocketAddress(getHelped().getPort()));
+    int port=getHelped().getPort();
+    if (port > 0) {
+      setAddress(new InetSocketAddress(getHelped().getPort()));
+    }
   }
   final Container container=new SimpleContainer(this);
   final ContainerServer server=new ContainerServer(container,getDefaultThreads());
@@ -13,6 +16,7 @@
   setConfidential(false);
   setContainer(server);
   setConnection(connection);
-  getConnection().connect(getAddress());
+  InetSocketAddress address=(InetSocketAddress)getConnection().connect(getAddress());
+  setEphemeralPort(address.getPort());
   super.start();
 }
