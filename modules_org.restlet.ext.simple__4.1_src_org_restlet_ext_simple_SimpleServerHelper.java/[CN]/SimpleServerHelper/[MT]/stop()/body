@@ -1,5 +1,10 @@
 {
   getLogger().info("Stopping the Simple server");
-  getConnection().close();
+  try {
+    getConnection().close();
+  }
+ catch (  Exception e) {
+    getLogger().log(Level.FINE,"Exception while closing the server socket. Can probably be safely ignored.",e);
+  }
   getContainer().stop();
 }
