@@ -2,22 +2,6 @@
   Representation result=null;
   try {
     result=represent(variant);
-    if ((result == null) && isDetectVariants() && (this.representMethods != null)) {
-      for (      Resource.MethodInfo rm : this.representMethods) {
-        if (result == null) {
-          for (          Variant rmVariant : rm.getMethodVariants()) {
-            if (rmVariant.equals(variant)) {
-              result=getRepresentation(rm.getMethod(),rmVariant);
-              continue;
-            }
-          }
-        }
-      }
-    }
-    if ((result == null) && (variant instanceof Representation)) {
-      result=(Representation)variant;
-    }
-    return result;
   }
  catch (  ResourceException re) {
     getResponse().setStatus(re.getStatus(),re);
