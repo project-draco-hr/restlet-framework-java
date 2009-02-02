@@ -1,7 +1,7 @@
 {
   KeyManagerFactory kmf=null;
   if ((this.keyStorePath != null) || (this.keyStoreProvider != null) || (this.keyStoreType != null)) {
-    final KeyStore keyStore=(this.keyStoreProvider != null) ? KeyStore.getInstance(this.keyStoreType,this.keyStoreProvider) : KeyStore.getInstance(this.keyStoreType);
+    final KeyStore keyStore=(this.keyStoreProvider != null) ? KeyStore.getInstance((this.keyStoreType != null) ? this.keyStoreType : KeyStore.getDefaultType(),this.keyStoreProvider) : KeyStore.getInstance((this.keyStoreType != null) ? this.keyStoreType : KeyStore.getDefaultType());
     FileInputStream keyStoreInputStream=null;
     try {
       keyStoreInputStream=((this.keyStorePath != null) && (!"NONE".equals(this.keyStorePath))) ? new FileInputStream(this.keyStorePath) : null;
@@ -17,7 +17,7 @@
   }
   TrustManagerFactory tmf=null;
   if ((this.trustStorePath != null) || (this.trustStoreProvider != null) || (this.trustStoreType != null)) {
-    final KeyStore trustStore=(this.trustStoreProvider != null) ? KeyStore.getInstance(this.trustStoreType,this.trustStoreProvider) : KeyStore.getInstance(this.trustStoreType);
+    final KeyStore trustStore=(this.trustStoreProvider != null) ? KeyStore.getInstance((this.trustStoreType != null) ? this.trustStoreType : KeyStore.getDefaultType(),this.trustStoreProvider) : KeyStore.getInstance((this.trustStoreType != null) ? this.trustStoreType : KeyStore.getDefaultType());
     FileInputStream trustStoreInputStream=null;
     try {
       trustStoreInputStream=((this.trustStorePath != null) && (!"NONE".equals(this.trustStorePath))) ? new FileInputStream(this.trustStorePath) : null;
