@@ -5,6 +5,10 @@
     Client client=new Client(Protocol.HTTP);
     Response response=client.get(uri);
     assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED,response.getStatus());
+    Request request=new Request(Method.GET,uri);
+    request.setChallengeResponse(new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"stiger","pwd"));
+    response=client.handle(request);
+    assertEquals(Status.SUCCESS_OK,response.getStatus());
     stopServer();
   }
  catch (  Exception e) {

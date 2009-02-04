@@ -1,26 +1,27 @@
 {
   boolean result=false;
   final boolean loggable=getLogger().isLoggable(Level.FINE);
-switch (authenticate(request.getChallengeResponse())) {
-case AUTHENTICATION_VALID:
-    ChallengeResponse challengeResponse=request.getChallengeResponse();
-  result=true;
-if (loggable) {
-  if (challengeResponse != null) {
-    getLogger().fine("Authentication succeeded. Valid credentials provided for identifier: " + request.getChallengeResponse().getIdentifier() + ".");
-  }
+  ChallengeResponse challengeResponse=request.getChallengeResponse();
+  if (getVerifier() != null) {
+switch (getVerifier().verify(request,response)) {
+case Verifier.RESULT_VALID:
+      result=true;
+    if (loggable) {
+      if (challengeResponse != null) {
+        getLogger().fine("Authentication succeeded. Valid credentials provided for identifier: " + request.getChallengeResponse().getIdentifier() + ".");
+      }
  else {
-    getLogger().fine("Authentication succeeded. Valid credentials provided.");
-  }
-}
-break;
-case AUTHENTICATION_MISSING:
+        getLogger().fine("Authentication succeeded. Valid credentials provided.");
+      }
+    }
+  break;
+case Verifier.RESULT_MISSING:
 if (loggable) {
-getLogger().fine("Authentication failed. No credentials provided.");
+  getLogger().fine("Authentication failed. No credentials provided.");
 }
 challenge(response,false);
 break;
-case AUTHENTICATION_INVALID:
+case Verifier.RESULT_INVALID:
 if (loggable) {
 getLogger().fine("Authentication failed. Invalid credentials provided.");
 }
@@ -31,12 +32,19 @@ challenge(response,false);
 forbid(response);
 }
 break;
-case AUTHENTICATION_STALE:
+case Verifier.RESULT_STALE:
 if (loggable) {
 getLogger().fine("Authentication failed. Stale credentials provided.");
 }
 challenge(response,true);
 break;
+}
+}
+ else {
+getLogger().warning("Authentication failed. No verifier provided.");
+}
+if (challengeResponse != null) {
+challengeResponse.setAuthenticated(result);
 }
 return result;
 }
