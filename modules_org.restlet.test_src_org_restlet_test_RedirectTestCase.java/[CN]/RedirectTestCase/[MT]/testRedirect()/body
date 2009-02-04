@@ -4,7 +4,7 @@
   final Component originComponent=new Component();
   clientComponent.getClients().add(Protocol.HTTP);
   proxyComponent.getClients().add(Protocol.HTTP);
-  final String target="http://localhost:" + (getTestPort() + 1) + "{rr}";
+  final String target="http://localhost:" + (TEST_PORT + 1) + "{rr}";
   final Redirector proxy=new Redirector(proxyComponent.getContext().createChildContext(),target,Redirector.MODE_DISPATCHER);
   final Restlet trace=new Restlet(originComponent.getContext().createChildContext()){
     @Override public void handle(    Request request,    Response response){
@@ -15,19 +15,19 @@
 ;
   proxyComponent.getDefaultHost().attach("",proxy);
   originComponent.getDefaultHost().attach("",trace);
-  proxyComponent.getServers().add(Protocol.HTTP,getTestPort());
-  originComponent.getServers().add(Protocol.HTTP,getTestPort() + 1);
+  proxyComponent.getServers().add(Protocol.HTTP,TEST_PORT);
+  originComponent.getServers().add(Protocol.HTTP,TEST_PORT + 1);
   originComponent.start();
   proxyComponent.start();
   clientComponent.start();
   final Context context=clientComponent.getContext();
-  String uri="http://localhost:" + getTestPort() + "/?foo=bar";
+  String uri="http://localhost:" + TEST_PORT + "/?foo=bar";
   testCall(context,Method.GET,uri);
   testCall(context,Method.DELETE,uri);
-  uri="http://localhost:" + getTestPort() + "/abcd/efgh/ijkl?foo=bar&foo=beer";
+  uri="http://localhost:" + TEST_PORT + "/abcd/efgh/ijkl?foo=bar&foo=beer";
   testCall(context,Method.GET,uri);
   testCall(context,Method.DELETE,uri);
-  uri="http://localhost:" + getTestPort() + "/v1/client/kwse/CnJlNUQV9%252BNNqbUf7Lhs2BYEK2Y%253D"+ "/user/johnm/uVGYTDK4kK4zsu96VHGeTCzfwso%253D/";
+  uri="http://localhost:" + TEST_PORT + "/v1/client/kwse/CnJlNUQV9%252BNNqbUf7Lhs2BYEK2Y%253D"+ "/user/johnm/uVGYTDK4kK4zsu96VHGeTCzfwso%253D/";
   testCall(context,Method.GET,uri);
   clientComponent.stop();
   originComponent.stop();

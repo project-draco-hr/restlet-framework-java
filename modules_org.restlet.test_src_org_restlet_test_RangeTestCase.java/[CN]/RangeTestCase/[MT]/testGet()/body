@@ -1,11 +1,11 @@
 {
   Client client=new Client(Protocol.HTTP);
-  Request request=new Request(Method.GET,"http://localhost:" + getTestPort() + "/testGet");
+  Request request=new Request(Method.GET,"http://localhost:" + TEST_PORT + "/testGet");
   Response response=client.handle(request);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   assertEquals("1234567890",response.getEntity().getText());
   assertEquals(10,response.getEntity().getSize());
-  request=new Request(Method.GET,"http://localhost:" + getTestPort() + "/testGet");
+  request=new Request(Method.GET,"http://localhost:" + TEST_PORT + "/testGet");
   request.setRanges(Arrays.asList(new Range(0,10)));
   response=client.handle(request);
   assertEquals(Status.SUCCESS_PARTIAL_CONTENT,response.getStatus());
