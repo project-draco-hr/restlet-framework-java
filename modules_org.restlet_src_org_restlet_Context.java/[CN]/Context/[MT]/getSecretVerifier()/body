@@ -1,3 +1,33 @@
 {
-  return null;
+  return new LocalVerifier(){
+    @Override protected char[] getSecret(    String identifier){
+      char[] result=null;
+      int at=identifier.indexOf('@');
+      String domainName=(at == -1) ? null : identifier.substring(at + 1);
+      String userIdentifier=(at == -1) ? identifier : identifier.substring(0,at);
+      Organization orga=null;
+      if (domainName == null) {
+        if (getOrganizations().size() == 1) {
+          orga=getOrganizations().entrySet().iterator().next().getValue();
+        }
+ else {
+          getLogger().info("Unable to identify an unqualified user. Multiple organizations were bounded.");
+        }
+      }
+ else {
+        orga=getOrganizations().get(domainName);
+      }
+      if (orga != null) {
+        User user;
+        for (int i=0; (result == null) && (i < orga.getUsers().size()); i++) {
+          user=orga.getUsers().get(i);
+          if (user.getIdentifier().equals(userIdentifier)) {
+            result=user.getSecret();
+          }
+        }
+      }
+      return result;
+    }
+  }
+;
 }
