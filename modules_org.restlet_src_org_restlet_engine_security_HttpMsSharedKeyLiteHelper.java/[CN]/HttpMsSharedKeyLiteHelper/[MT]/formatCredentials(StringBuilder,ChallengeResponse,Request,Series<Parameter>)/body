@@ -1,5 +1,4 @@
 {
-  final String methodName=request.getMethod().getName();
   String date="";
   if (httpHeaders.getFirstValue("x-ms-date",true) == null) {
     date=httpHeaders.getFirstValue(HttpConstants.HEADER_DATE,true);
@@ -8,8 +7,11 @@
       httpHeaders.add(HttpConstants.HEADER_DATE,date);
     }
   }
+ else {
+    date=httpHeaders.getFirstValue("x-ms-date",true);
+  }
   final String canonicalizedResource=getCanonicalizedResourceName(request.getResourceRef());
   final StringBuilder rest=new StringBuilder();
-  rest.append(methodName).append(date).append('\n').append(canonicalizedResource);
+  rest.append(date).append('\n').append('/').append(challenge.getIdentifier()).append(canonicalizedResource);
   sb.append(challenge.getIdentifier()).append(':').append(Base64.encode(DigestUtils.toHMac256(rest.toString(),Base64.decode(new String(challenge.getSecret()))),true));
 }
