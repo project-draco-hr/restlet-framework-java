@@ -1,14 +1,24 @@
 {
   try {
     startComponent();
-    String uri="http://localhost:" + TEST_PORT;
+    String uri="http://localhost:" + TEST_PORT + "/test1";
     Client client=new Client(Protocol.HTTP);
     Response response=client.get(uri);
+    response.release();
     assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED,response.getStatus());
     Request request=new Request(Method.GET,uri);
     request.setChallengeResponse(new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"stiger","pwd"));
     response=client.handle(request);
+    response.release();
     assertEquals(Status.SUCCESS_OK,response.getStatus());
+    uri="http://localhost:" + TEST_PORT + "/test2";
+    response=client.get(uri);
+    response.release();
+    assertEquals(Status.SUCCESS_OK,response.getStatus());
+    uri="http://localhost:" + TEST_PORT + "/test3";
+    response=client.get(uri);
+    response.release();
+    assertEquals(Status.CLIENT_ERROR_FORBIDDEN,response.getStatus());
     stopServer();
   }
  catch (  Exception e) {
