@@ -5,13 +5,14 @@ switch (getMode()) {
 case MODE_OPTIONAL:
     break;
 case MODE_REQUIRED:
-  if (!success)   result=SKIP;
+  if (!success)   result=STOP;
+request.getClientInfo().setAuthenticated(success);
 break;
 case MODE_SUFFICIENT:
-if (success) result=SKIP;
+if (success) result=STOP;
 break;
 default :
-result=SKIP;
+result=STOP;
 break;
 }
 return result;
