@@ -1,19 +1,9 @@
 {
   int result=CONTINUE;
   boolean success=authenticate(request,response);
-switch (getMode()) {
-case MODE_OPTIONAL:
-    break;
-case MODE_REQUIRED:
-  if (!success)   result=STOP;
-request.getClientInfo().setAuthenticated(success);
-break;
-case MODE_SUFFICIENT:
-if (success) result=STOP;
-break;
-default :
-result=STOP;
-break;
-}
-return result;
+  if (!isOptional()) {
+    if (!success)     result=STOP;
+    request.getClientInfo().setAuthenticated(success);
+  }
+  return result;
 }
