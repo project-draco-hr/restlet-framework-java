@@ -9,5 +9,13 @@
   authorizer=Authorizer.NEVER;
   authorizer.setNext(new HelloWorldRestlet());
   root.attach("/test3",authorizer);
+  RoleAuthorizer roleAuthorizer=new RoleAuthorizer();
+  roleAuthorizer.getAuthorizedRoles().add(findRole("admin"));
+  authorizer.setNext(new HelloWorldRestlet());
+  root.attach("/test4",roleAuthorizer);
+  roleAuthorizer=new RoleAuthorizer();
+  roleAuthorizer.getForbiddenRoles().add(findRole("user"));
+  authorizer.setNext(new HelloWorldRestlet());
+  root.attach("/test5",roleAuthorizer);
   return root;
 }
