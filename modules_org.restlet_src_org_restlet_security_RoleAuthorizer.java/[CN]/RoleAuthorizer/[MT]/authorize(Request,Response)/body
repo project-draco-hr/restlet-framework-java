@@ -1,0 +1,11 @@
+{
+  boolean authorized=false;
+  boolean forbidden=false;
+  for (  Role authorizedRole : getAuthorizedRoles()) {
+    authorized=authorized || request.getClientInfo().isInRole(authorizedRole);
+  }
+  for (  Role forbiddenRole : getForbiddenRoles()) {
+    forbidden=forbidden || request.getClientInfo().isInRole(forbiddenRole);
+  }
+  return authorized && !forbidden;
+}
