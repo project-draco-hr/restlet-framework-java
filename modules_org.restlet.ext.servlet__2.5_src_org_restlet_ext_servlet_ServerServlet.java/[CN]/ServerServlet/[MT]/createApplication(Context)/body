@@ -6,11 +6,11 @@
       final Class<?> targetClass=loadClass(applicationClassName);
       try {
         application=(Application)targetClass.getConstructor().newInstance();
-        application.setContext(new ServletContextAdapter(this,parentContext));
+        application.setContext(parentContext.createChildContext());
       }
  catch (      NoSuchMethodException e) {
         log("[Noelios Restlet Engine] - The ServerServlet couldn't invoke the constructor of the target class. Please check this class has a constructor without parameter. The constructor with a parameter of type Context will be used instead.");
-        application=(Application)targetClass.getConstructor(Context.class).newInstance(new ServletContextAdapter(this,parentContext));
+        application=(Application)targetClass.getConstructor(Context.class).newInstance(parentContext.createChildContext());
       }
     }
  catch (    ClassNotFoundException e) {
