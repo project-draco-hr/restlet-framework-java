@@ -1,3 +1,18 @@
 {
   this.authenticator=authenticator;
+  Filter next=authenticator;
+  while (next != null) {
+    if (next.getNext() == null) {
+      next.setNext(new Restlet(){
+      }
+);
+      next=null;
+    }
+ else     if (next.getNext() instanceof Filter) {
+      next=(Filter)next.getNext();
+    }
+ else {
+      next=null;
+    }
+  }
 }
