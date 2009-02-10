@@ -1,11 +1,10 @@
 {
-  Organization customer1=createOrganization1();
+  Context context=getContext().createChildContext();
+  Organization customer1=createOrganization1(context);
   getOrganizations().add(customer1);
-  Organization customer2=createOrganization2();
+  Organization customer2=createOrganization2(context);
   getOrganizations().add(customer2);
-  Context context1=getContext().createChildContext();
-  context1.bind(customer1);
-  SaasApplication app1=new SaasApplication(context1);
-  getDefaultHost().attach(app1);
+  SaasApplication app=new SaasApplication(context);
+  getDefaultHost().attach(app);
   getServers().add(Protocol.HTTP,RestletTestCase.TEST_PORT);
 }

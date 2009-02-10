@@ -1,16 +1,9 @@
 {
-  int result=CONTINUE;
-  if (response.getStatus().isError()) {
-    result=STOP;
-  }
- else   if (getAuthenticator() != null) {
+  if (response.getStatus().isSuccess() && (getAuthenticator() != null)) {
     getAuthenticator().handle(request,response);
   }
-  if (response.getStatus().isError()) {
-    result=STOP;
-  }
- else   if (getAuthorizer() != null) {
+  if (response.getStatus().isSuccess() && (getAuthorizer() != null)) {
     getAuthorizer().handle(request,response);
   }
-  return result;
+  return response.getStatus().isError() ? STOP : CONTINUE;
 }
