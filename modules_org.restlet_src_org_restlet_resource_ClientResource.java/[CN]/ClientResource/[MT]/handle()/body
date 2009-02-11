@@ -1,0 +1,14 @@
+{
+  Representation result=null;
+  if (hasNext()) {
+    getNext().handle(getRequest(),getResponse());
+    result=getResponse().getEntity();
+    if (!getResponse().getStatus().isSuccess()) {
+      throw new ResourceException(getStatus());
+    }
+  }
+ else {
+    getLogger().warning("Unable to process the call for a client resource. No next Restlet has been provided.");
+  }
+  return result;
+}
