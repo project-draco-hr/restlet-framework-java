@@ -1,5 +1,11 @@
 {
   Representation result=null;
+  if (!hasNext()) {
+    Protocol protocol=(getReference() == null) ? null : getReference().getSchemeProtocol();
+    if (protocol != null) {
+      setNext(new Client(protocol));
+    }
+  }
   if (hasNext()) {
     getNext().handle(getRequest(),getResponse());
     result=getResponse().getEntity();
