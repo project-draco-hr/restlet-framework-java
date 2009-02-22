@@ -15,7 +15,7 @@
  catch (  CredentialException ce) {
     return Guard.AUTHENTICATION_INVALID;
   }
-  if (!AuthenticationUtils.anyNull(username,nonce,response,uri)) {
+  if (!AuthenticatorUtils.anyNull(username,nonce,response,uri)) {
     final Reference resourceRef=request.getResourceRef();
     String requestUri=resourceRef.getPath();
     if ((resourceRef.getQuery() != null) && (uri.indexOf('?') > -1)) {
@@ -26,7 +26,7 @@
       if (a1 != null) {
         final String a2=DigestUtils.toMd5(request.getMethod() + ":" + requestUri);
         final StringBuffer expectedResponse=new StringBuffer(a1).append(':').append(nonce);
-        if (!AuthenticationUtils.anyNull(qop,cnonce,nc)) {
+        if (!AuthenticatorUtils.anyNull(qop,cnonce,nc)) {
           expectedResponse.append(':').append(nc).append(':').append(cnonce).append(':').append(qop);
         }
         expectedResponse.append(':').append(a2);
