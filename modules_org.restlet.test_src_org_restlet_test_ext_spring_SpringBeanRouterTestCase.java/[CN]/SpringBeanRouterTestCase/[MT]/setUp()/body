@@ -1,15 +1,9 @@
 {
   super.setUp();
   this.factory=new DefaultListableBeanFactory();
-  BeanDefinition bd=new RootBeanDefinition(Resource.class);
-  bd.setScope(BeanDefinition.SCOPE_PROTOTYPE);
-  this.factory.registerBeanDefinition("ore",bd);
-  this.factory.registerAlias("ore",ORE_URI);
-  bd=new RootBeanDefinition(Resource.class);
-  bd.setScope(BeanDefinition.SCOPE_PROTOTYPE);
-  this.factory.registerBeanDefinition("fish",bd);
-  this.factory.registerAlias("fish",FISH_URI);
-  bd=new RootBeanDefinition(String.class);
+  registerResourceBeanDefinition("ore",ORE_URI);
+  registerResourceBeanDefinition("fish",FISH_URI);
+  BeanDefinition bd=new RootBeanDefinition(String.class);
   bd.setScope(BeanDefinition.SCOPE_SINGLETON);
   this.factory.registerBeanDefinition("someOtherBean",bd);
   this.router=new SpringBeanRouter();
