@@ -4,7 +4,9 @@
   component=new Component();
   component.getServers().add(Protocol.HTTP,TEST_PORT);
   component.start();
-  file=new File(getClass().getName());
+  this.testDir=new File(System.getProperty("java.io.tmpdir"),"FileRepresentationTestCase");
+  this.testDir.mkdirs();
+  this.file=new File(this.testDir,getClass().getName());
   FileOutputStream os=new FileOutputStream(file);
   os.write("abc".getBytes());
   os.close();
