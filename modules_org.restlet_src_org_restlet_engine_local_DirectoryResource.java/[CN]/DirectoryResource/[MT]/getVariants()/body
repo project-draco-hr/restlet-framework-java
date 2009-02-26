@@ -22,7 +22,12 @@
         if (contextResponse.getStatus().isSuccess() && (contextResponse.getEntity() != null)) {
           filePath=ref.toString(false,false).substring(rootLength);
           final Representation rep=contextResponse.getEntity();
-          rep.setIdentifier(baseRef + filePath);
+          if (filePath.startsWith("/")) {
+            rep.setIdentifier(baseRef + filePath);
+          }
+ else {
+            rep.setIdentifier(baseRef + "/" + filePath);
+          }
           resultSet.add(rep);
         }
       }
