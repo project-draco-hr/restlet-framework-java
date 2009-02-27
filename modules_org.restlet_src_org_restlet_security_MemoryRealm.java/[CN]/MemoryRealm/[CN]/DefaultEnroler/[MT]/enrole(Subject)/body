@@ -1,0 +1,14 @@
+{
+  Set<UserPrincipal> userPrincipals=subject.getPrincipals(UserPrincipal.class);
+  for (  UserPrincipal userPrincipal : userPrincipals) {
+    Organization orga=findUserOrganization(userPrincipal.getName());
+    User user=findUser(orga,userPrincipal.getName());
+    if (user != null) {
+      Set<Group> userGroups=orga.findGroups(user);
+      Set<Role> userRoles=findRoles(orga,userGroups,user);
+      for (      Role role : userRoles) {
+        subject.getPrincipals().add(new RolePrincipal(role));
+      }
+    }
+  }
+}

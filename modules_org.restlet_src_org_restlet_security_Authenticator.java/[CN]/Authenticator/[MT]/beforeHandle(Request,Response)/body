@@ -1,6 +1,9 @@
 {
   int result=CONTINUE;
   boolean success=authenticate(request,response);
+  if (success && (getEnroler() != null)) {
+    getEnroler().enrole(request.getClientInfo().getSubject());
+  }
   if (!isOptional()) {
     if (!success)     result=STOP;
     request.getClientInfo().setAuthenticated(success);
