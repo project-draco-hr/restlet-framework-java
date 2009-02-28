@@ -1,4 +1,9 @@
 {
-  final Principal principal=(this.request.getChallengeResponse() == null) ? null : this.request.getChallengeResponse().getPrincipal();
-  return this.roleChecker.isInRole(principal,role);
+  if (roleChecker != null) {
+    return roleChecker.isInRole(getUserPrincipal(),roleName);
+  }
+ else {
+    Role role=Application.getCurrent().findRole(roleName);
+    return role != null && this.request.getClientInfo().isInRole(role);
+  }
 }

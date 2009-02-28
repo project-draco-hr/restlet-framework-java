@@ -2,10 +2,14 @@
   final Component comp=new Component();
   final Server server=comp.getServers().add(Protocol.HTTP,80);
   final JaxRsApplication application=new JaxRsApplication(comp.getContext().createChildContext());
-  final Guard guard=new Guard(application.getContext(),ChallengeScheme.HTTP_BASIC,"JAX-RS example");
-  guard.getSecrets().put("admin","adminPW".toCharArray());
-  guard.getSecrets().put("alice","alicesSecret".toCharArray());
-  guard.getSecrets().put("bob","bobsSecret".toCharArray());
+  final ChallengeGuard guard=new ChallengeGuard(application.getContext(),ChallengeScheme.HTTP_BASIC,"JAX-RS example");
+  MemoryRealm realm=new MemoryRealm();
+  application.getContext().setRealm(realm);
+  Organization organization=new Organization();
+  realm.getOrganizations().add(organization);
+  organization.getUsers().add(new User("admin","adminPW".toCharArray()));
+  organization.getUsers().add(new User("alice","alicesSecret".toCharArray()));
+  organization.getUsers().add(new User("bob","bobsSecret".toCharArray()));
   final ExampleRoleChecker roleChecker=new ExampleRoleChecker();
   application.setAuthentication(guard,roleChecker);
   application.add(new ExampleApplication());
