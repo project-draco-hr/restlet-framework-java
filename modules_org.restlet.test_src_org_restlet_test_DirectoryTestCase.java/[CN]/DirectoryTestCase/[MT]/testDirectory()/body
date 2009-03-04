@@ -1,6 +1,6 @@
 {
   try {
-    this.testDir=new File(System.getProperty("java.io.tmpdir"),"DirectoryTestCase");
+    this.testDir=new File(System.getProperty("java.io.tmpdir"),"DirectoryTestCase/tests1" + new Date().getTime());
     final Component clientComponent=new Component();
     clientComponent.getClients().add(Protocol.FILE);
     final MyApplication application=new MyApplication(this.testDir);
@@ -8,20 +8,30 @@
     clientComponent.start();
     application.getTunnelService().setExtensionsTunnel(true);
     deleteDir(this.testDir);
-    this.testDir.mkdir();
+    this.testDir=new File(System.getProperty("java.io.tmpdir"),"DirectoryTestCase/tests2" + new Date().getTime());
+    this.testDir.mkdirs();
+    application.setTestDirectory(testDir);
     testDirectory(application,application.getDirectory(),"index");
     deleteDir(this.testDir);
-    this.testDir.mkdir();
+    this.testDir=new File(System.getProperty("java.io.tmpdir"),"DirectoryTestCase/tests3" + new Date().getTime());
+    this.testDir.mkdirs();
+    application.setTestDirectory(testDir);
     testDirectory(application,application.getDirectory(),"");
     application.getTunnelService().setExtensionsTunnel(false);
     deleteDir(this.testDir);
-    this.testDir.mkdir();
+    this.testDir=new File(System.getProperty("java.io.tmpdir"),"DirectoryTestCase/tests4" + new Date().getTime());
+    this.testDir.mkdirs();
+    application.setTestDirectory(testDir);
     testDirectory(application,application.getDirectory(),"index");
     deleteDir(this.testDir);
-    this.testDir.mkdir();
+    this.testDir=new File(System.getProperty("java.io.tmpdir"),"DirectoryTestCase/tests5" + new Date().getTime());
+    this.testDir.mkdirs();
+    application.setTestDirectory(testDir);
     testDirectory(application,application.getDirectory(),"");
     deleteDir(this.testDir);
-    this.testDir.mkdir();
+    this.testDir=new File(System.getProperty("java.io.tmpdir"),"DirectoryTestCase/tests6" + new Date().getTime());
+    this.testDir.mkdirs();
+    application.setTestDirectory(testDir);
     testDirectoryDeeplyAccessible(application,application.getDirectory());
     clientComponent.stop();
   }
