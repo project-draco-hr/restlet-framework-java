@@ -22,7 +22,7 @@
     getLogger().warning("No client dispatcher is available on the context. Can't get the target URI: " + this.targetUri);
   }
  else {
-    Response contextResponse=getClientDispatcher().get(this.targetUri);
+    Response contextResponse=getRepresentation(this.targetUri);
     if (contextResponse.getEntity() != null) {
       if (MediaType.TEXT_URI_LIST.equals(contextResponse.getEntity().getMediaType())) {
         this.directoryTarget=true;
@@ -59,7 +59,7 @@
         if ((getDirectory().getIndexName() != null) && (getDirectory().getIndexName().length() > 0)) {
           this.directoryUri=this.targetUri;
           this.directoryTarget=true;
-          contextResponse=getClientDispatcher().get(this.directoryUri + getDirectory().getIndexName());
+          contextResponse=getRepresentation(this.directoryUri + getDirectory().getIndexName());
           if (contextResponse.getEntity() != null) {
             this.baseName=getDirectory().getIndexName();
             this.targetUri=this.directoryUri + this.baseName;
@@ -71,7 +71,7 @@
       }
  else {
         if ((getDirectory().getIndexName() != null) && (getDirectory().getIndexName().length() > 0)) {
-          contextResponse=getClientDispatcher().get(this.targetUri + "/" + getDirectory().getIndexName());
+          contextResponse=getRepresentation(this.targetUri + "/" + getDirectory().getIndexName());
           if (contextResponse.getEntity() != null) {
             this.directoryUri=this.targetUri + "/";
             this.baseName=getDirectory().getIndexName();
@@ -102,7 +102,7 @@
         this.directoryUri=this.targetUri.substring(0,lastSlashIndex + 1);
         this.baseName=this.targetUri.substring(lastSlashIndex + 1);
       }
-      contextResponse=getClientDispatcher().get(this.directoryUri);
+      contextResponse=getRepresentation(this.directoryUri);
       if ((contextResponse.getEntity() != null) && MediaType.TEXT_URI_LIST.equals(contextResponse.getEntity().getMediaType())) {
         this.directoryContent=new ReferenceList(contextResponse.getEntity());
       }
