@@ -1,12 +1,12 @@
 {
   Status result=null;
   final Representation entity=request.isEntityAvailable() ? request.getEntity() : null;
+  final ConnectorService connectorService=getConnectorService(request);
+  if (connectorService != null) {
+    connectorService.beforeSend(entity);
+  }
   try {
     if (entity != null) {
-      final ConnectorService connectorService=getConnectorService(request);
-      if (connectorService != null) {
-        connectorService.beforeSend(entity);
-      }
       final OutputStream rs=getRequestEntityStream();
       final WritableByteChannel wbc=getRequestEntityChannel();
       if (wbc != null) {
@@ -15,9 +15,6 @@
  else       if (rs != null) {
         entity.write(rs);
         rs.flush();
-      }
-      if (connectorService != null) {
-        connectorService.afterSend(entity);
       }
       if (rs != null) {
         rs.close();
@@ -35,6 +32,9 @@
  finally {
     if (entity != null) {
       entity.release();
+    }
+    if (connectorService != null) {
+      connectorService.afterSend(entity);
     }
   }
   return result;
