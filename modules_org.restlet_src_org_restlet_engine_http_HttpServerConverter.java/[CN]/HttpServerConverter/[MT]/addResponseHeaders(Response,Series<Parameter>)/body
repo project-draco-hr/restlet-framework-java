@@ -26,6 +26,11 @@
       responseHeaders.add(HttpConstants.HEADER_WWW_AUTHENTICATE,AuthenticatorUtils.format(challengeRequest));
     }
   }
+  if (response.getProxyChallengeRequests() != null) {
+    for (    final ChallengeRequest challengeRequest : response.getProxyChallengeRequests()) {
+      responseHeaders.add(HttpConstants.HEADER_PROXY_AUTHENTICATE,AuthenticatorUtils.format(challengeRequest));
+    }
+  }
   if (!((response.getRequest().getClientInfo().getAgent() != null) && response.getRequest().getClientInfo().getAgent().contains("MSIE"))) {
     final Set<Dimension> dimensions=response.getDimensions();
     final String vary=HttpUtils.createVaryHeader(dimensions);

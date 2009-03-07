@@ -1,0 +1,10 @@
+{
+  ChallengeResponse result=super.getProxyChallengeResponse();
+  if (!this.proxySecurityAdded) {
+    final String authorization=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_PROXY_AUTHORIZATION);
+    result=AuthenticatorUtils.parseAuthorizationHeader(this,authorization);
+    setProxyChallengeResponse(result);
+    this.proxySecurityAdded=true;
+  }
+  return result;
+}
