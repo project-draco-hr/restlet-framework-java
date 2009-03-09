@@ -12,12 +12,9 @@
     uriPattern="/" + uriPattern;
     currentResource.setPath(uriPattern);
   }
-  if (currentResource.getIdentifier() != null) {
-    final Class targetClass=Engine.loadClass(currentResource.getIdentifier());
-    router.attach(uriPattern,targetClass);
-  }
- else {
-    getLogger().fine("Unable to find the 'id' attribute of the resource element with this path attribute \"" + uriPattern + "\"");
+  Finder finder=createFinder(router,uriPattern,currentResource);
+  if (finder != null) {
+    router.attach(uriPattern,finder);
   }
   for (  final ResourceInfo childResource : currentResource.getChildResources()) {
     attachResource(childResource,currentResource,router);
