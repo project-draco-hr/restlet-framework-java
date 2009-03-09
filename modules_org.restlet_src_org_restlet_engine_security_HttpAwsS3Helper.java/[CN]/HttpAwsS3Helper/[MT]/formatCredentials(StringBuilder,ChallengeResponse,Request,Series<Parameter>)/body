@@ -39,5 +39,5 @@
   final String canonicalizedResource=getCanonicalizedResourceName(request.getResourceRef());
   final StringBuilder rest=new StringBuilder();
   rest.append(methodName).append('\n').append(contentMd5).append('\n').append(contentType).append('\n').append(date).append('\n').append(canonicalizedAmzHeaders).append(canonicalizedResource);
-  sb.append(challenge.getIdentifier()).append(':').append(Base64.encode(DigestUtils.toHMac(rest.toString(),new String(challenge.getSecret())),false));
+  sb.append(challenge.getIdentifier()).append(':').append(Base64.encode(DigestUtils.toHMac(rest.toString(),ByteUtils.toByteArray(challenge.getSecret())),false));
 }

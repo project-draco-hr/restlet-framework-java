@@ -1,9 +1,16 @@
 {
   try {
-    final String credentials="^@" + challenge.getIdentifier() + "^@"+ new String(challenge.getSecret());
-    sb.append(Base64.encode(credentials.getBytes("US-ASCII"),false));
+    final CharArrayWriter credentials=new CharArrayWriter();
+    credentials.write("^@");
+    credentials.write(challenge.getIdentifier());
+    credentials.write("^@");
+    credentials.write(challenge.getSecret());
+    sb.append(Base64.encode(credentials.toCharArray(),"US-ASCII",false));
   }
  catch (  UnsupportedEncodingException e) {
     throw new RuntimeException("Unsupported encoding, unable to encode credentials");
+  }
+catch (  IOException e) {
+    throw new RuntimeException("Unexpected exception, unable to encode credentials",e);
   }
 }
