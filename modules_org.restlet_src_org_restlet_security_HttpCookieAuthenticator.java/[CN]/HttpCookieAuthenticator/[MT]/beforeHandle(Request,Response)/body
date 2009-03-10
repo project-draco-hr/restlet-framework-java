@@ -1,0 +1,24 @@
+{
+  String rp=request.getResourceRef().getRemainingPart();
+  if (handleLogin && loginPath.equals(rp) && Method.POST.equals(request.getMethod())) {
+    Form f=request.getEntityAsForm();
+    Parameter login=f.getFirst(loginInputName);
+    Parameter password=f.getFirst(passwordInputName);
+    ChallengeResponse cr=new ChallengeResponse(getScheme(),login != null ? login.getValue() : null,password != null ? password.getValue() : null);
+    request.setChallengeResponse(cr);
+  }
+ else   if (handleLogout && logoutPath.equals(rp)) {
+    if (request.getChallengeResponse() != null && getScheme().equals(request.getChallengeResponse().getScheme())) {
+      request.setChallengeResponse(null);
+    }
+    removeCookie(response);
+  }
+ else {
+    Cookie cookieVal=request.getCookies().getFirst(cookieName);
+    if (cookieVal != null) {
+      ChallengeResponse cr=new ChallengeResponse(getScheme(),cookieVal.getValue());
+      request.setChallengeResponse(cr);
+    }
+  }
+  return super.beforeHandle(request,response);
+}

@@ -1,0 +1,9 @@
+{
+  super.afterHandle(request,response);
+  ChallengeResponse cr=request.getChallengeResponse();
+  if (cr != null && getScheme().equals(cr.getScheme()) && request.getClientInfo().isAuthenticated()) {
+    CookieSetting authCookie=getOrInitAuthCookieSetting(response);
+    authCookie.setValue(formatCredentials(cr));
+    authCookie.setMaxAge(60 * getTimeout());
+  }
+}
