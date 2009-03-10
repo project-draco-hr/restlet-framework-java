@@ -1,16 +1,39 @@
 {
-  if (jaxRsObject == null)   throw new IllegalArgumentException("The JAX-RS object to add must not be null");
-  if (jaxRsObject instanceof Class)   throw new IllegalArgumentException("The JAX-RS object to add must not be a java.lang.Class");
+  if (jaxRsProvider instanceof String) {
+    try {
+      jaxRsProvider=Engine.loadClass((String)jaxRsProvider).newInstance();
+    }
+ catch (    ClassNotFoundException e) {
+      getLogger().fine("Unable to load provider class : " + jaxRsProvider);
+      jaxRsProvider=null;
+    }
+catch (    InstantiationException e) {
+      getLogger().fine("Unable to instantiate provider : " + jaxRsProvider);
+      jaxRsProvider=null;
+    }
+catch (    IllegalAccessException e) {
+      getLogger().fine("Unable to access to provider : " + jaxRsProvider);
+      jaxRsProvider=null;
+    }
+catch (    NoClassDefFoundError e) {
+      getLogger().fine("Unable to load provider class : " + jaxRsProvider);
+      jaxRsProvider=null;
+    }
+  }
+ else   if (jaxRsProvider == null)   throw new IllegalArgumentException("The JAX-RS object to add must not be null");
+ else   if (jaxRsProvider instanceof Class)   throw new IllegalArgumentException("The JAX-RS object to add must not be a java.lang.Class");
   boolean used=false;
-  if (defaultProvider || Util.isProvider(jaxRsObject.getClass())) {
-    used=providers.addSingleton(jaxRsObject,defaultProvider);
-  }
-  if (Util.isRootResourceClass(jaxRsObject.getClass())) {
-    throw new NotYetImplementedException("only providers are allowed as singletons for now");
-  }
-  if (!used) {
-    final String warning=("The class " + jaxRsObject.getClass() + " is neither a povider nor a root resource class");
-    getLogger().warning(warning);
+  if (jaxRsProvider != null) {
+    if (defaultProvider || Util.isProvider(jaxRsProvider.getClass())) {
+      used=providers.addSingleton(jaxRsProvider,defaultProvider);
+    }
+    if (Util.isRootResourceClass(jaxRsProvider.getClass())) {
+      throw new NotYetImplementedException("only providers are allowed as singletons for now");
+    }
+    if (!used) {
+      final String warning=("The class " + jaxRsProvider.getClass() + " is neither a provider nor a root resource class");
+      getLogger().warning(warning);
+    }
   }
   return used;
 }
