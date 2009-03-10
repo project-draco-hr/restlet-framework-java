@@ -1,0 +1,43 @@
+{
+  if (file.exists()) {
+    ZipFile zipFile;
+    try {
+      zipFile=new ZipFile(file);
+    }
+ catch (    Exception e) {
+      response.setStatus(Status.SERVER_ERROR_INTERNAL,e);
+      return;
+    }
+    Entity entity=new ZipEntryEntity(zipFile,entryName);
+    if (entity.exists()) {
+      final Representation output;
+      if (entity.isDirectory()) {
+        final Collection<Entity> children=entity.getChildren();
+        final ReferenceList rl=new ReferenceList(children.size());
+        String fileUri=LocalReference.createFileReference(file).toString();
+        String baseUri="zip:" + fileUri + "!/";
+        for (        final Entity entry : children) {
+          rl.add(baseUri + entry.getName());
+        }
+        output=rl.getTextRepresentation();
+        try {
+          zipFile.close();
+        }
+ catch (        IOException e) {
+        }
+      }
+ else {
+        output=entity.getRepresentation(metadataService.getDefaultMediaType(),getTimeToLive());
+        output.setIdentifier(request.getResourceRef());
+        updateMetadata(metadataService,entity.getName(),output);
+      }
+      response.setStatus(Status.SUCCESS_OK);
+      response.setEntity(output);
+      return;
+    }
+ else {
+      response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+    }
+  }
+  response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+}

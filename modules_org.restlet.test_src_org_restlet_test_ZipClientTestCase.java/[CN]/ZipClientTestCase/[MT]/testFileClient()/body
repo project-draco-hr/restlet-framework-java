@@ -1,0 +1,35 @@
+{
+  File zipFile=File.createTempFile("Restlet",".zip");
+  zipFile.delete();
+  final String text="Test content\r\nLine 2\r\nLine2";
+  final String text2="Test content\nLine 2";
+  final Client fc=new Client(Protocol.ZIP);
+  final LocalReference fr=LocalReference.createFileReference(zipFile);
+  final Reference zr=new Reference("zip:" + fr.toString());
+  final String fzr=zr + "!/test.txt";
+  final String fzd=zr + "!/dir/";
+  final String fzr2=fzd + "test2.txt";
+  Response response=fc.put(fzr,new StringRepresentation(text));
+  assertTrue(response.getStatus().equals(Status.SUCCESS_CREATED));
+  response=fc.get(fzr);
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  assertEquals(response.getEntityAsText(),text);
+  response.getEntity().release();
+  response=fc.put(fzr2,new StringRepresentation(text2));
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  response=fc.get(fzr);
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  assertEquals(response.getEntityAsText(),text);
+  response.getEntity().release();
+  response=fc.put(fzd,Representation.createEmpty());
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  response=fc.get(fzd);
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  response=fc.get(fzr2);
+  assertTrue("Could not get " + fzr2,response.getStatus().equals(Status.SUCCESS_OK));
+  assertEquals(response.getEntityAsText(),text2);
+  response=fc.get(zr + "!test2");
+  assertFalse(response.getStatus().equals(Status.SUCCESS_OK));
+  response=fc.put(fzr2 + "/",Representation.createEmpty());
+  assertFalse(response.getStatus().equals(Status.SUCCESS_OK));
+}
