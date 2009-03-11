@@ -1,0 +1,22 @@
+{
+  int[] tab=new int[3];
+  int cpt=0;
+  int c=getContentHandler().step();
+  getContentHandler().discard();
+  while (c != RdfN3ContentHandler.EOF) {
+    if (c == '"') {
+      tab[++cpt - 1]=c;
+    }
+ else {
+      cpt=0;
+    }
+    if (cpt == 3) {
+      getContentHandler().stepBack(2);
+      setValue(getContentHandler().getCurrentToken());
+      getContentHandler().step();
+      getContentHandler().step();
+      break;
+    }
+    c=getContentHandler().step();
+  }
+}

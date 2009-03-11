@@ -1,0 +1,70 @@
+{
+  int c=getContentHandler().step();
+  while (c != RdfN3ContentHandler.EOF) {
+    if (c == '(') {
+      LexicalUnit unit=new ListToken(getContentHandler());
+      unit.parse();
+      lexicalUnits.add(unit);
+    }
+ else     if (c == '<') {
+      getContentHandler().stepBack();
+      LexicalUnit uriToken=new UriToken(getContentHandler());
+      uriToken.parse();
+      lexicalUnits.add(uriToken);
+    }
+ else     if (c == '[') {
+      LexicalUnit unit=new BlankNodeToken(getContentHandler());
+      unit.parse();
+      lexicalUnits.add(unit);
+    }
+ else     if (c == '{') {
+      LexicalUnit unit=new FormulaToken(getContentHandler());
+      unit.parse();
+      lexicalUnits.add(unit);
+    }
+ else     if (c == '_') {
+      getContentHandler().step();
+      getContentHandler().discard();
+      BlankNodeToken unit=new BlankNodeToken(getContentHandler());
+      unit.setValue(getContentHandler().parseToken());
+      System.out.println("BlankNode" + unit.getValue());
+      lexicalUnits.add(unit);
+    }
+ else     if (RdfN3ContentHandler.isAlphaNum(c)) {
+      Token unit=new Token(getContentHandler());
+      unit.parse();
+      System.out.println("unit.getToken()=" + unit.getValue());
+      lexicalUnits.add(unit);
+    }
+ else     if (RdfN3ContentHandler.isWhiteSpace(c)) {
+      getContentHandler().discard();
+    }
+ else     if (c == '!') {
+      Token unit=new Token(getContentHandler());
+      unit.setValue("!");
+      System.out.println("unit.getToken()=" + unit.getValue());
+      lexicalUnits.add(unit);
+    }
+ else     if (c == '^') {
+      Token unit=new Token(getContentHandler());
+      unit.setValue("^");
+      System.out.println("unit.getToken()=" + unit.getValue());
+      lexicalUnits.add(unit);
+    }
+ else     if (c == ';') {
+      getContentHandler().discard();
+    }
+ else     if (c == ',') {
+      getContentHandler().discard();
+    }
+ else     if (c == '.') {
+      getContentHandler().discard();
+    }
+    c=getContentHandler().step();
+  }
+  for (  LexicalUnit lexicalUnit : lexicalUnits) {
+    System.out.print("lexicalUnit " + lexicalUnit.getClass());
+    System.out.println(" => value " + lexicalUnit.getValue());
+  }
+  setParsed(c != RdfN3ContentHandler.EOF);
+}

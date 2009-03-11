@@ -1,0 +1,57 @@
+{
+  int cpt=0;
+  int c=getContentHandler().step();
+  while (c != RdfN3ContentHandler.EOF && c != ']') {
+    LexicalUnit unit=null;
+    if (c == '(') {
+      unit=new ListToken(getContentHandler());
+      unit.parse();
+    }
+ else     if (c == '<') {
+      getContentHandler().stepBack();
+      LexicalUnit uriToken=new UriToken(getContentHandler());
+      uriToken.parse();
+    }
+ else     if (c == '[') {
+      unit=new BlankNodeToken(getContentHandler());
+      unit.parse();
+    }
+ else     if (c == '{') {
+      unit=new FormulaToken(getContentHandler());
+      unit.parse();
+    }
+ else     if (c == '_') {
+      getContentHandler().step();
+      getContentHandler().discard();
+      unit=new BlankNodeToken(getContentHandler());
+      unit.setValue(getContentHandler().parseToken());
+    }
+ else     if (RdfN3ContentHandler.isAlphaNum(c)) {
+      unit=new Token(getContentHandler());
+      unit.parse();
+    }
+ else     if (RdfN3ContentHandler.isWhiteSpace(c)) {
+      getContentHandler().discard();
+    }
+ else     if (c == '!') {
+      unit=new Token(getContentHandler());
+      unit.setValue("!");
+    }
+ else     if (c == '^') {
+      unit=new Token(getContentHandler());
+      unit.setValue("^");
+    }
+ else     if (c == ';') {
+      getContentHandler().discard();
+    }
+ else     if (c == ',') {
+      getContentHandler().discard();
+    }
+ else     if (c == '.') {
+      getContentHandler().discard();
+    }
+    c=getContentHandler().step();
+  }
+  setValue(getContentHandler().getCurrentToken());
+  setParsed(c != RdfN3ContentHandler.EOF);
+}

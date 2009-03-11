@@ -1,0 +1,11 @@
+{
+  int c=getContentHandler().step();
+  while (c != RdfN3ContentHandler.EOF && c != '}' && c != '.' && !RdfN3ContentHandler.isWhiteSpace(c)) {
+    if (c == '!' || c == '^') {
+      getContentHandler().stepBack();
+      break;
+    }
+    c=getContentHandler().step();
+  }
+  setValue(getContentHandler().getCurrentToken());
+}
