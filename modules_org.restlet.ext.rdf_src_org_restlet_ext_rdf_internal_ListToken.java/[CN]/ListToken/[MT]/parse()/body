@@ -29,7 +29,7 @@ break;
 case '{':
 lexicalUnits.add(new FormulaToken(getContentHandler(),getContext()));
 break;
-case '.':
+case ')':
 break;
 case RdfN3ContentHandler.EOF:
 break;
@@ -38,9 +38,12 @@ lexicalUnits.add(new Token(getContentHandler().parseToken()));
 break;
 }
 }
- while (getContentHandler().getChar() != RdfN3ContentHandler.EOF && getContentHandler().getChar() != '.');
+ while (getContentHandler().getChar() != RdfN3ContentHandler.EOF && getContentHandler().getChar() != ')');
+if (getContentHandler().getChar() == ')') {
+getContentHandler().step();
+}
 for (LexicalUnit lexicalUnit : lexicalUnits) {
-System.out.print("lexicalUnit " + lexicalUnit.getClass());
+System.out.print("List tokens lexicalUnit " + lexicalUnit.getClass());
 System.out.println(" => value " + lexicalUnit.getValue());
 }
 }
