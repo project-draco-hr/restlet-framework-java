@@ -1,11 +1,41 @@
 {
-  int c=getContentHandler().step();
-  getContentHandler().discard();
-  while (c != RdfN3ContentHandler.EOF) {
-    if (c == '"') {
-      setValue(getContentHandler().getCurrentToken());
-      break;
+  int c1=getContentHandler().step();
+  int c2=getContentHandler().step();
+  if ((c1 == c2) && (c1 == '"')) {
+    multiLines=true;
+    getContentHandler().step();
+    getContentHandler().discard();
+    int[] tab=new int[3];
+    int cpt=0;
+    int c=getContentHandler().getChar();
+    while (c != RdfN3ContentHandler.EOF) {
+      if (c == '"') {
+        tab[++cpt - 1]=c;
+      }
+ else {
+        cpt=0;
+      }
+      if (cpt == 3) {
+        getContentHandler().stepBack(2);
+        setValue(getContentHandler().getCurrentToken());
+        getContentHandler().step(3);
+        getContentHandler().discard();
+        break;
+      }
+      c=getContentHandler().step();
     }
-    c=getContentHandler().step();
   }
+ else {
+    multiLines=false;
+    getContentHandler().stepBack(1);
+    getContentHandler().discard();
+    int c=getContentHandler().getChar();
+    while (c != RdfN3ContentHandler.EOF && (c != '"')) {
+      c=getContentHandler().step();
+    }
+    setValue(getContentHandler().getCurrentToken());
+    getContentHandler().step();
+    getContentHandler().discard();
+  }
+  System.out.println("String =" + getValue() + "=");
 }

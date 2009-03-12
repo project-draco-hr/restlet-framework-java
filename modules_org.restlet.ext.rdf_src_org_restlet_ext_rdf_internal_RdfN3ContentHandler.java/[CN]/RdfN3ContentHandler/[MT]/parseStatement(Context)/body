@@ -1,8 +1,78 @@
 {
-  List<LexicalUnit> result=new ArrayList<LexicalUnit>();
-  int c=getChar();
-  while (c != RdfN3ContentHandler.EOF && !isDelimiter(c)) {
-    c=step();
+  List<LexicalUnit> lexicalUnits=new ArrayList<LexicalUnit>();
+  do {
+    consumeWhiteSpaces();
+switch (getChar()) {
+case '(':
+      lexicalUnits.add(new ListToken(this,context));
+    break;
+case '<':
+  if (step() == '=') {
+    lexicalUnits.add(new Token("<="));
+    step();
+    discard();
   }
-  return result;
+ else {
+    stepBack();
+    lexicalUnits.add(new UriToken(this,context));
+  }
+break;
+case '_':
+lexicalUnits.add(new BlankNodeToken(parseToken()));
+break;
+case '"':
+lexicalUnits.add(new StringToken(this,context));
+break;
+case '[':
+lexicalUnits.add(new BlankNodeToken(this,context));
+break;
+case '!':
+lexicalUnits.add(new Token("!"));
+step();
+discard();
+break;
+case '^':
+lexicalUnits.add(new Token("^"));
+step();
+discard();
+break;
+case '=':
+if (step() == '>') {
+lexicalUnits.add(new Token("=>"));
+step();
+discard();
+}
+ else {
+lexicalUnits.add(new Token("="));
+discard();
+}
+break;
+case '@':
+step();
+discard();
+lexicalUnits.add(new Token(parseToken()));
+discard();
+break;
+case ';':
+break;
+case ',':
+break;
+case '{':
+lexicalUnits.add(new FormulaToken(this,context));
+break;
+case '.':
+break;
+case RdfN3ContentHandler.EOF:
+break;
+default :
+lexicalUnits.add(new Token(parseToken()));
+break;
+}
+}
+ while (getChar() != RdfN3ContentHandler.EOF && getChar() != '.');
+for (LexicalUnit lexicalUnit : lexicalUnits) {
+System.out.print("lexicalUnit " + lexicalUnit.getClass());
+System.out.println(" => value " + lexicalUnit.getValue());
+}
+return lexicalUnits;
 }

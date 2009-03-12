@@ -4,41 +4,41 @@
   while (c != RdfN3ContentHandler.EOF && c != ']') {
     LexicalUnit unit=null;
     if (c == '(') {
-      unit=new ListToken(getContentHandler());
+      unit=new ListToken(getContentHandler(),getContext());
       unit.parse();
     }
  else     if (c == '<') {
       getContentHandler().stepBack();
-      LexicalUnit uriToken=new UriToken(getContentHandler());
+      LexicalUnit uriToken=new UriToken(getContentHandler(),getContext());
       uriToken.parse();
     }
  else     if (c == '[') {
-      unit=new BlankNodeToken(getContentHandler());
+      unit=new BlankNodeToken(getContentHandler(),getContext());
       unit.parse();
     }
  else     if (c == '{') {
-      unit=new FormulaToken(getContentHandler());
+      unit=new FormulaToken(getContentHandler(),getContext());
       unit.parse();
     }
  else     if (c == '_') {
       getContentHandler().step();
       getContentHandler().discard();
-      unit=new BlankNodeToken(getContentHandler());
+      unit=new BlankNodeToken(getContentHandler(),getContext());
       unit.setValue(getContentHandler().parseToken());
     }
  else     if (RdfN3ContentHandler.isAlphaNum(c)) {
-      unit=new Token(getContentHandler());
+      unit=new Token(getContentHandler(),getContext());
       unit.parse();
     }
  else     if (RdfN3ContentHandler.isWhiteSpace(c)) {
       getContentHandler().discard();
     }
  else     if (c == '!') {
-      unit=new Token(getContentHandler());
+      unit=new Token(getContentHandler(),getContext());
       unit.setValue("!");
     }
  else     if (c == '^') {
-      unit=new Token(getContentHandler());
+      unit=new Token(getContentHandler(),getContext());
       unit.setValue("^");
     }
  else     if (c == ';') {
