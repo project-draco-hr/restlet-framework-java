@@ -1,0 +1,74 @@
+{
+  ScriptSource.ScriptDescriptor<EmbeddedScript> scriptDescriptor=scriptSource.getScriptDescriptor(name);
+  EmbeddedScript script=scriptDescriptor.getScript();
+  if (script == null) {
+    String text=scriptDescriptor.getText();
+    if (scriptEngineName != null) {
+      text=EmbeddedScript.delimiter1Start + scriptEngineName + " "+ text+ EmbeddedScript.delimiter1End;
+    }
+    script=new EmbeddedScript(text,scriptEngineManager,defaultEngineName,allowCompilation);
+    scriptDescriptor.setScript(script);
+  }
+  String trivial=script.getTrivial();
+  if (trivial != null) {
+    if (this.writer != null) {
+      this.writer.write(trivial);
+    }
+    return new StringRepresentation(trivial,this.mediaType,this.language,this.characterSet);
+  }
+  int startPosition=0;
+  if (!this.isStreaming) {
+    if (this.writer == null) {
+      StringWriter stringWriter=new StringWriter();
+      this.buffer=stringWriter.getBuffer();
+      this.writer=new BufferedWriter(stringWriter);
+    }
+ else {
+      this.writer.flush();
+      startPosition=this.buffer.length();
+    }
+  }
+  try {
+    if (script.run(this.writer,this.errorWriter,this.scriptEngines,this.controller,!this.isStreaming)) {
+      if (this.startStreaming) {
+        this.startStreaming=false;
+        return new StreamingRepresentation(script);
+      }
+      if (this.isStreaming) {
+        return null;
+      }
+ else {
+        this.writer.flush();
+        RepresentableString string=new RepresentableString(this.buffer.substring(startPosition),this.mediaType,this.language,this.characterSet);
+        cache.put(name,string);
+        if (startPosition == 0) {
+          return string.represent();
+        }
+ else {
+          return new StringRepresentation(this.buffer.toString(),this.mediaType,this.language,this.characterSet);
+        }
+      }
+    }
+ else {
+      RepresentableString string=cache.get(name);
+      if (string != null) {
+        if (this.writer != null) {
+          this.writer.write(string.string);
+        }
+        return string.represent();
+      }
+ else {
+        return null;
+      }
+    }
+  }
+ catch (  ScriptException x) {
+    if (this.startStreaming) {
+      this.startStreaming=false;
+      return new StreamingRepresentation(script);
+    }
+ else {
+      throw x;
+    }
+  }
+}

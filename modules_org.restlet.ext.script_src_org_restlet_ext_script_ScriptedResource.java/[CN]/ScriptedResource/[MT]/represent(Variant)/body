@@ -1,0 +1,25 @@
+{
+  Container container=new Container(this,variant);
+  Request request=getRequest();
+  if (sourceViewable && TRUE.equals(request.getResourceRef().getQueryAsForm().getFirstValue(SOURCE))) {
+    String name=ScriptUtils.getRelativePart(request,defaultName);
+    try {
+      return new StringRepresentation(scriptSource.getScriptDescriptor(name).getText());
+    }
+ catch (    IOException x) {
+      throw new ResourceException(Status.CLIENT_ERROR_NOT_FOUND,x);
+    }
+  }
+ else {
+    Object r=container.invoke(representEntryPointName);
+    if (r == null) {
+      return null;
+    }
+    if (r instanceof Representation) {
+      return (Representation)r;
+    }
+ else {
+      return new StringRepresentation(r.toString(),container.mediaType,container.language,container.characterSet);
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  ScriptSource.ScriptDescriptor<EmbeddedScript> scriptDescriptor=scriptSource.getScriptDescriptor(name);
+  EmbeddedScript script=scriptDescriptor.getScript();
+  if (script == null) {
+    String text=scriptDescriptor.getText();
+    if (scriptEngineName != null) {
+      text=EmbeddedScript.delimiter1Start + scriptEngineName + " "+ text+ EmbeddedScript.delimiter1End;
+    }
+    script=new EmbeddedScript(text,scriptEngineManager,defaultEngineName,allowCompilation);
+    scriptDescriptor.setScript(script);
+  }
+  script.run(this.writer,this.errorWriter,this.scriptEngines,this.controller,false);
+}

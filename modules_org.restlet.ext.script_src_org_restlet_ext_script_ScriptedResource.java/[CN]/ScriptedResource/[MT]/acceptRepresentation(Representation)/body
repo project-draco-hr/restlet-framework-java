@@ -1,0 +1,12 @@
+{
+  Container container=new Container(this,entity);
+  Object r=container.invoke(acceptRepresentationEntryPointName);
+  if (r != null) {
+    if (r instanceof Representation) {
+      getResponse().setEntity((Representation)r);
+    }
+ else {
+      getResponse().setEntity(new StringRepresentation(r.toString(),container.mediaType,container.language,container.characterSet));
+    }
+  }
+}

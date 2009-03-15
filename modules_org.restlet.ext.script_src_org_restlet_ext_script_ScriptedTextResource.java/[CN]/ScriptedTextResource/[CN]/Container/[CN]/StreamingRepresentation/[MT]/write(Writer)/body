@@ -1,0 +1,16 @@
+{
+  Container.this.isStreaming=true;
+  Container.this.writer=writer;
+  try {
+    this.script.run(writer,Container.this.errorWriter,Container.this.scriptEngines,Container.this.controller,false);
+  }
+ catch (  ScriptException x) {
+    IOException xx=new IOException("Script exception");
+    xx.initCause(x);
+    throw xx;
+  }
+ finally {
+    this.script.setCacheDuration(0);
+    writer.close();
+  }
+}
