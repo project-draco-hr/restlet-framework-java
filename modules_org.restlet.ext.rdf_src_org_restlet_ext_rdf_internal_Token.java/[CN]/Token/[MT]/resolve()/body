@@ -1,0 +1,23 @@
+{
+  Object result=null;
+  setResolved(true);
+  int index=getValue().indexOf(":");
+  if (index != -1) {
+    String prefix=getValue().substring(0,index + 1);
+    String base=null;
+    if (getContext() != null) {
+      base=getContext().getPrefixes().get(prefix);
+    }
+    if (base != null) {
+      result=new Reference(base + getValue().substring(index));
+    }
+ else {
+      result=null;
+    }
+  }
+ else {
+    result=new Reference(getValue());
+  }
+  setResolved(!(result == null));
+  return result;
+}

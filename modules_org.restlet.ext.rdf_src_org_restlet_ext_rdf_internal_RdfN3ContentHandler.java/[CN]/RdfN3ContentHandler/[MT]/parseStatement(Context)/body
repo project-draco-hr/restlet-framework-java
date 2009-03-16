@@ -1,8 +1,8 @@
 {
+  Graph result=new Graph();
   List<LexicalUnit> lexicalUnits=new ArrayList<LexicalUnit>();
   do {
     consumeWhiteSpaces();
-    System.out.println("av " + getChar());
 switch (getChar()) {
 case '(':
       lexicalUnits.add(new ListToken(this,context));
@@ -55,8 +55,14 @@ lexicalUnits.add(new Token(parseToken()));
 discard();
 break;
 case ';':
+step();
+discard();
+lexicalUnits.add(new Token(";"));
 break;
 case ',':
+step();
+discard();
+lexicalUnits.add(new Token(","));
 break;
 case '{':
 lexicalUnits.add(new FormulaToken(this,context));
@@ -66,14 +72,78 @@ break;
 case RdfN3ContentHandler.EOF:
 break;
 default :
-lexicalUnits.add(new Token(parseToken()));
+lexicalUnits.add(new Token(this,context));
 break;
 }
 }
- while (getChar() != RdfN3ContentHandler.EOF && getChar() != '.');
+ while (getChar() != RdfN3ContentHandler.EOF && getChar() != '.' && getChar() != '}');
+LexicalUnit currentSubject=null;
+Reference currentPredicate=null;
+LexicalUnit currentObject=null;
+int nbTokens=0;
+boolean swapSubjectObject=false;
 for (LexicalUnit lexicalUnit : lexicalUnits) {
-System.out.print("lexicalUnit " + lexicalUnit.getClass());
-System.out.println(" => value " + lexicalUnit.getValue());
+nbTokens++;
+switch (nbTokens) {
+case 1:
+if (",".equals(lexicalUnit.getValue())) {
+nbTokens++;
 }
-return lexicalUnits;
+ else if (!";".equals(lexicalUnit.getValue())) {
+currentSubject=lexicalUnit;
+}
+break;
+case 2:
+if ("is".equalsIgnoreCase(lexicalUnit.getValue())) {
+nbTokens--;
+swapSubjectObject=true;
+}
+ else if ("has".equalsIgnoreCase(lexicalUnit.getValue())) {
+nbTokens--;
+}
+ else if ("=".equalsIgnoreCase(lexicalUnit.getValue())) {
+currentPredicate=RdfN3Representation.PREDICATE_SAME;
+}
+ else if ("=>".equalsIgnoreCase(lexicalUnit.getValue())) {
+currentPredicate=RdfN3Representation.PREDICATE_IMPLIES;
+}
+ else if ("<=".equalsIgnoreCase(lexicalUnit.getValue())) {
+swapSubjectObject=true;
+currentPredicate=RdfN3Representation.PREDICATE_IMPLIES;
+}
+ else if ("a".equalsIgnoreCase(lexicalUnit.getValue())) {
+currentPredicate=RdfN3Representation.PREDICATE_TYPE;
+}
+ else {
+Object p=lexicalUnit.resolve();
+if (p instanceof Reference) {
+currentPredicate=(Reference)p;
+}
+ else if (p instanceof String) {
+currentPredicate=new Reference((String)p);
+}
+}
+break;
+case 3:
+if ("of".equalsIgnoreCase(lexicalUnit.getValue())) {
+nbTokens--;
+}
+ else {
+if (swapSubjectObject) {
+currentObject=currentSubject;
+currentSubject=lexicalUnit;
+}
+ else {
+currentObject=lexicalUnit;
+}
+this.link(currentSubject.resolve(),currentPredicate,currentObject.resolve());
+nbTokens=0;
+swapSubjectObject=false;
+}
+break;
+default :
+break;
+}
+}
+return result;
 }
