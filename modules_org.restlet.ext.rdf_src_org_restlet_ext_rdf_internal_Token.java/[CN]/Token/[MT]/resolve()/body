@@ -16,7 +16,18 @@
     }
   }
  else {
-    result=new Reference(getValue());
+    if (getContext().getKeywords().contains(getValue())) {
+      String base=null;
+      if (getContext() != null) {
+        base=getContext().getPrefixes().get(":");
+        result=new Reference(base + getValue());
+      }
+ else {
+      }
+    }
+ else {
+      result=new Reference(getContext().getBase().toString() + getValue());
+    }
   }
   setResolved(!(result == null));
   return result;

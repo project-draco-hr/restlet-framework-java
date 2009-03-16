@@ -1,5 +1,4 @@
 {
-  Graph result=new Graph();
   List<LexicalUnit> lexicalUnits=new ArrayList<LexicalUnit>();
   do {
     consumeWhiteSpaces();
@@ -51,7 +50,7 @@ break;
 case '@':
 step();
 discard();
-lexicalUnits.add(new Token(parseToken()));
+lexicalUnits.add(new Token(this,context));
 discard();
 break;
 case ';':
@@ -77,73 +76,5 @@ break;
 }
 }
  while (getChar() != RdfN3ContentHandler.EOF && getChar() != '.' && getChar() != '}');
-LexicalUnit currentSubject=null;
-Reference currentPredicate=null;
-LexicalUnit currentObject=null;
-int nbTokens=0;
-boolean swapSubjectObject=false;
-for (LexicalUnit lexicalUnit : lexicalUnits) {
-nbTokens++;
-switch (nbTokens) {
-case 1:
-if (",".equals(lexicalUnit.getValue())) {
-nbTokens++;
-}
- else if (!";".equals(lexicalUnit.getValue())) {
-currentSubject=lexicalUnit;
-}
-break;
-case 2:
-if ("is".equalsIgnoreCase(lexicalUnit.getValue())) {
-nbTokens--;
-swapSubjectObject=true;
-}
- else if ("has".equalsIgnoreCase(lexicalUnit.getValue())) {
-nbTokens--;
-}
- else if ("=".equalsIgnoreCase(lexicalUnit.getValue())) {
-currentPredicate=RdfN3Representation.PREDICATE_SAME;
-}
- else if ("=>".equalsIgnoreCase(lexicalUnit.getValue())) {
-currentPredicate=RdfN3Representation.PREDICATE_IMPLIES;
-}
- else if ("<=".equalsIgnoreCase(lexicalUnit.getValue())) {
-swapSubjectObject=true;
-currentPredicate=RdfN3Representation.PREDICATE_IMPLIES;
-}
- else if ("a".equalsIgnoreCase(lexicalUnit.getValue())) {
-currentPredicate=RdfN3Representation.PREDICATE_TYPE;
-}
- else {
-Object p=lexicalUnit.resolve();
-if (p instanceof Reference) {
-currentPredicate=(Reference)p;
-}
- else if (p instanceof String) {
-currentPredicate=new Reference((String)p);
-}
-}
-break;
-case 3:
-if ("of".equalsIgnoreCase(lexicalUnit.getValue())) {
-nbTokens--;
-}
- else {
-if (swapSubjectObject) {
-currentObject=currentSubject;
-currentSubject=lexicalUnit;
-}
- else {
-currentObject=lexicalUnit;
-}
-this.link(currentSubject.resolve(),currentPredicate,currentObject.resolve());
-nbTokens=0;
-swapSubjectObject=false;
-}
-break;
-default :
-break;
-}
-}
-return result;
+generateLinks(lexicalUnits);
 }
