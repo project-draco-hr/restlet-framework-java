@@ -1,0 +1,74 @@
+{
+  ScriptSource.ScriptDescriptor<EmbeddedScript> scriptDescriptor=ScriptedTextResource.scriptSource.getScriptDescriptor(name);
+  EmbeddedScript script=scriptDescriptor.getScript();
+  if (script == null) {
+    String text=scriptDescriptor.getText();
+    if (scriptEngineName != null) {
+      text=EmbeddedScript.delimiter1Start + scriptEngineName + " "+ text+ EmbeddedScript.delimiter1End;
+    }
+    script=new EmbeddedScript(text,ScriptedTextResource.scriptEngineManager,ScriptedTextResource.defaultEngineName,ScriptedTextResource.allowCompilation);
+    scriptDescriptor.setScript(script);
+  }
+  String trivial=script.getTrivial();
+  if (trivial != null) {
+    if (getWriter() != null) {
+      getWriter().write(trivial);
+    }
+    return new StringRepresentation(trivial,this.mediaType,this.language,this.characterSet);
+  }
+  int startPosition=0;
+  if (!this.isStreaming) {
+    if (getWriter() == null) {
+      StringWriter stringWriter=new StringWriter();
+      this.buffer=stringWriter.getBuffer();
+      setWriter(new BufferedWriter(stringWriter));
+    }
+ else {
+      getWriter().flush();
+      startPosition=this.buffer.length();
+    }
+  }
+  try {
+    if (script.run(getWriter(),this.errorWriter,this.scriptEngines,this.scriptContextController,!this.isStreaming)) {
+      if (this.startStreaming) {
+        this.startStreaming=false;
+        return new ScriptedTextStreamingRepresentation(this,script);
+      }
+      if (this.isStreaming) {
+        return null;
+      }
+ else {
+        getWriter().flush();
+        RepresentableString string=new RepresentableString(this.buffer.substring(startPosition),this.mediaType,this.language,this.characterSet);
+        this.cache.put(name,string);
+        if (startPosition == 0) {
+          return string.represent();
+        }
+ else {
+          return new StringRepresentation(this.buffer.toString(),this.mediaType,this.language,this.characterSet);
+        }
+      }
+    }
+ else {
+      RepresentableString string=this.cache.get(name);
+      if (string != null) {
+        if (getWriter() != null) {
+          getWriter().write(string.getString());
+        }
+        return string.represent();
+      }
+ else {
+        return null;
+      }
+    }
+  }
+ catch (  ScriptException x) {
+    if (this.startStreaming) {
+      this.startStreaming=false;
+      return new ScriptedTextStreamingRepresentation(this,script);
+    }
+ else {
+      throw x;
+    }
+  }
+}
