@@ -1,0 +1,12 @@
+from re import compile, sub, search, DOTALL
+from token import ENDMARKER, NAME, NUMBER, STRING, OP, ERRORTOKEN
+from tokenize import tokenize, TokenError, NL
+emergencyEncoding = 'utf-8'
+slashstarcomment = compile('/\\*.*?\\*/', DOTALL)
+doubleslashcomment = compile('//.*\\n')
+unichrRE = compile('\\\\u[0-9a-fA-F]{4,4}')
+escapeStrs = (('\n', '\\n'), ('\x08', '\\b'), ('\x0c', '\\f'), ('\t', '\\t'), ('\r', '\\r'), ('"', '\\"'))
+read = safeRead
+import re, codecs
+from cStringIO import StringIO
+re_strmangle = re.compile('"|\x08|\x0c|\n|\r|\t|\\\\')

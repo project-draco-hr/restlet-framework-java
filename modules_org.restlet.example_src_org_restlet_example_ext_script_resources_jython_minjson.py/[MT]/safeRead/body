@@ -1,0 +1,26 @@
+def safeRead(aString, encoding=None):
+    "read the js, first sanitizing a bit and removing any c-style comments\n    If the input is a unicode string, great.  That's preferred.  If the input \n    is a byte string, strings in the object will be produced as unicode anyway.\n    "
+    CHR0 = chr(0)
+    while aString.endswith(CHR0):
+        aString = aString[:(-1)]
+    aString = aString.strip()
+    aString = slashstarcomment.sub('', aString)
+    aString = doubleslashcomment.sub('', aString)
+    unicodechars = unichrRE.search(aString)
+    if unicodechars:
+        aString = unichrRE.sub(unichrReplace, aString)
+    if isinstance(aString, unicode):
+        s = aString
+    elif encoding:
+        s = unicode(aString, encoding)
+    else:
+        try:
+            s = unicode(aString)
+        except UnicodeDecodeError:
+            enc = emergencyEncoding
+            s = unicode(aString, enc)
+    try:
+        data = JSONReader(s).output()
+    except SyntaxError:
+        raise ReadException, ('Unacceptable JSON expression: %s' % aString)
+    return data

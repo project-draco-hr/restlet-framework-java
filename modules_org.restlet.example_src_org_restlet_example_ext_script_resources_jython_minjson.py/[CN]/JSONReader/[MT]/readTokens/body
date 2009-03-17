@@ -1,0 +1,50 @@
+def readTokens(self, type, token, (srow, scol), (erow, ecol), line):
+    if (type == OP):
+        if (token not in '[{}],:-'):
+            raise SyntaxError
+        else:
+            self.lastOp = token
+        if (token == '['):
+            self.objects.append(ListToken())
+        elif (token == '{'):
+            self.objects.append(DictToken())
+        elif (token == ']'):
+            self.resolveList()
+        elif (token == '}'):
+            self.resolveDict()
+        elif (token == ':'):
+            self.objects.append(ColonToken())
+        elif (token == ','):
+            self.objects.append(CommaToken())
+    elif (type == STRING):
+        tok = token[1:(-1)]
+        parts = tok.split('\\\\')
+        for k in escapeStrs:
+            if (k[1] in tok):
+                parts = [part.replace(k[1], k[0]) for part in parts]
+        self.objects.append('\\'.join(parts))
+    elif (type == NUMBER):
+        if (self.lastOp == '-'):
+            factor = (-1)
+        else:
+            factor = 1
+        try:
+            self.objects.append((factor * int(token)))
+        except ValueError:
+            self.objects.append((factor * float(token)))
+    elif (type == NAME):
+        try:
+            self.objects.append({'true': True, 'false': False, 'null': None, }[token])
+        except KeyError:
+            raise SyntaxError
+    elif (type == ENDMARKER):
+        pass
+    elif (type == NL):
+        pass
+    elif (type == ERRORTOKEN):
+        if (ecol == len(line)):
+            pass
+        else:
+            raise SyntaxError
+    else:
+        raise SyntaxError

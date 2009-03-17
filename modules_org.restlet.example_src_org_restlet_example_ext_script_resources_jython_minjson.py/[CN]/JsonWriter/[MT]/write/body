@@ -1,0 +1,47 @@
+def write(self, obj):
+    if isinstance(obj, (list, tuple)):
+        self.stream.write('[')
+        first = True
+        for elem in obj:
+            if first:
+                first = False
+            else:
+                self.stream.write(',')
+            self.write(elem)
+        (self.stream.write(']'),)
+    elif isinstance(obj, dict):
+        self.stream.write('{')
+        first = True
+        for (key, value) in obj.iteritems():
+            if first:
+                first = False
+            else:
+                self.stream.write(',')
+            self.write(key)
+            self.stream.write(':')
+            self.write(value)
+        self.stream.write('}')
+    elif (obj is True):
+        self.stream.write('true')
+    elif (obj is False):
+        self.stream.write('false')
+    elif (obj is None):
+        self.stream.write('null')
+    elif (not isinstance(obj, basestring)):
+        try:
+            obj = str(obj)
+        except Exception as exc:
+            raise WriteException, ('Cannot write object (%s: %s)' % (exc.__class__, exc))
+        self.stream.write(obj)
+    else:
+        if (not isinstance(obj, unicode)):
+            try:
+                obj = unicode(obj, self.input_encoding)
+            except (UnicodeDecodeError, UnicodeTranslateError):
+                obj = unicode(obj, 'utf-8', 'replace')
+        obj = strmangle(obj)
+        if (self.output_encoding is not None):
+            obj = obj.encode(self.output_encoding, 'jsonreplace')
+        self.stream.write('"')
+        self.stream.write(obj)
+        self.stream.write('"')
