@@ -1,0 +1,11 @@
+def test_listdir(self):
+    entries = dircache.listdir(self.tempdir)
+    self.assertEquals(entries, [])
+    self.assert_((dircache.listdir(self.tempdir) is entries))
+    if (sys.platform[:3] not in ('win', 'os2')):
+        time.sleep(1)
+        self.writeTemp('test1')
+        entries = dircache.listdir(self.tempdir)
+        self.assertEquals(entries, ['test1'])
+        self.assert_((dircache.listdir(self.tempdir) is entries))
+    self.assertEquals(dircache.listdir((self.tempdir + '_nonexistent')), [])

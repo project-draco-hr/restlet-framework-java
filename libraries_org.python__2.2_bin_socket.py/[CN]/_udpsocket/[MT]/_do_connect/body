@@ -1,0 +1,11 @@
+def _do_connect(self, addr):
+    try:
+        (host, port) = _unpack_address_tuple(addr)
+        assert (not self.addr)
+        self.addr = addr
+        if (not self.sock_impl):
+            self.sock_impl = _datagram_socket_impl()
+            self._config()
+            self.sock_impl.connect(host, port)
+    except java.lang.Exception as jlx:
+        raise _map_exception(jlx)

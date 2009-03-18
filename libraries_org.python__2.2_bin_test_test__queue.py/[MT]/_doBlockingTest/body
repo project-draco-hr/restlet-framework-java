@@ -1,0 +1,11 @@
+def _doBlockingTest(block_func, block_args, trigger_func, trigger_args):
+    t = _TriggerThread(trigger_func, trigger_args)
+    t.start()
+    try:
+        return block_func(*block_args)
+    finally:
+        if (not t.startedEvent.isSet()):
+            raise TestFailed(("blocking function '%r' appeared not to block" % (block_func,)))
+        t.join(1)
+        if t.isAlive():
+            raise TestFailed(("trigger function '%r' appeared to not return" % (trigger_func,)))

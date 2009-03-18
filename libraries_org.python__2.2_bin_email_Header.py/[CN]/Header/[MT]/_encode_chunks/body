@@ -1,0 +1,16 @@
+def _encode_chunks(self, newchunks, maxlinelen):
+    chunks = []
+    for (header, charset) in newchunks:
+        if (not header):
+            continue
+        if ((charset is None) or (charset.header_encoding is None)):
+            s = header
+        else:
+            s = charset.header_encode(header)
+        if (chunks and chunks[(-1)].endswith(' ')):
+            extra = ''
+        else:
+            extra = ' '
+        _max_append(chunks, s, maxlinelen, extra)
+    joiner = (NL + self._continuation_ws)
+    return joiner.join(chunks)

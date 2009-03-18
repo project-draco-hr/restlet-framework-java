@@ -1,0 +1,10 @@
+def toprettyxml(self, indent='\t', newl='\n', encoding=None):
+    writer = _get_StringIO()
+    if (encoding is not None):
+        import codecs
+        writer = codecs.lookup(encoding)[3](writer)
+    if (self.nodeType == Node.DOCUMENT_NODE):
+        self.writexml(writer, '', indent, newl, encoding)
+    else:
+        self.writexml(writer, '', indent, newl)
+    return writer.getvalue()

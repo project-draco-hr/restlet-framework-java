@@ -1,0 +1,6 @@
+def testTimestamp(self):
+    'testing creation of Timestamp'
+    c = self.calendar()
+    o = zxJDBC.TimestampFromTicks((c.getTime().getTime() / 1000L))
+    v = zxJDBC.Timestamp(c.get(Calendar.YEAR), (c.get(Calendar.MONTH) + 1), c.get(Calendar.DATE), c.get(Calendar.HOUR), c.get(Calendar.MINUTE), c.get(Calendar.SECOND))
+    assert o.equals(v), ('incorrect date conversion using java, got [%ld], expected [%ld]' % (v.getTime(), o.getTime()))

@@ -1,0 +1,9 @@
+def newtask():
+    global next_ident, running
+    mutex.acquire()
+    next_ident = (next_ident + 1)
+    if verbose:
+        print 'creating task', next_ident
+    thread.start_new_thread(task, (next_ident,))
+    running = (running + 1)
+    mutex.release()

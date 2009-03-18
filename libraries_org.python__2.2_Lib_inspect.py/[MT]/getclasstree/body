@@ -1,0 +1,18 @@
+def getclasstree(classes, unique=0):
+    "Arrange the given list of classes into a hierarchy of nested lists.\n\n    Where a nested list appears, it contains classes derived from the class\n    whose entry immediately precedes the list.  Each entry is a 2-tuple\n    containing a class and a tuple of its base classes.  If the 'unique'\n    argument is true, exactly one entry appears in the returned structure\n    for each class in the given list.  Otherwise, classes using multiple\n    inheritance and their descendants will appear multiple times."
+    children = {}
+    roots = []
+    for c in classes:
+        if c.__bases__:
+            for parent in c.__bases__:
+                if (not children.has_key(parent)):
+                    children[parent] = []
+                children[parent].append(c)
+                if (unique and (parent in classes)):
+                    break
+        elif (c not in roots):
+            roots.append(c)
+    for parent in children.keys():
+        if (parent not in classes):
+            roots.append(parent)
+    return walktree(roots, children, None)

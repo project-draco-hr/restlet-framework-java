@@ -1,0 +1,21 @@
+def interact(self):
+    'Interaction function, emulates a very dumb telnet client.'
+    if (sys.platform == 'win32'):
+        self.mt_interact()
+        return
+    while 1:
+        (rfd, wfd, xfd) = select([self, sys.stdin], [], [])
+        if (self in rfd):
+            try:
+                text = self.read_eager()
+            except EOFError:
+                print '*** Connection closed by remote host ***'
+                break
+            if text:
+                sys.stdout.write(text)
+                sys.stdout.flush()
+        if (sys.stdin in rfd):
+            line = sys.stdin.readline()
+            if (not line):
+                break
+            self.write(line)

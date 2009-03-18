@@ -1,0 +1,38 @@
+def getcomments(object):
+    "Get lines of comments immediately preceding an object's source code."
+    try:
+        (lines, lnum) = findsource(object)
+    except IOError:
+        return None
+    if ismodule(object):
+        start = 0
+        if (lines and (lines[0][:2] == '#!')):
+            start = 1
+        while ((start < len(lines)) and (string.strip(lines[start]) in ['', '#'])):
+            start = (start + 1)
+        if ((start < len(lines)) and (lines[start][:1] == '#')):
+            comments = []
+            end = start
+            while ((end < len(lines)) and (lines[end][:1] == '#')):
+                comments.append(string.expandtabs(lines[end]))
+                end = (end + 1)
+            return string.join(comments, '')
+    elif (lnum > 0):
+        indent = indentsize(lines[lnum])
+        end = (lnum - 1)
+        if ((end >= 0) and (string.lstrip(lines[end])[:1] == '#') and (indentsize(lines[end]) == indent)):
+            comments = [string.lstrip(string.expandtabs(lines[end]))]
+            if (end > 0):
+                end = (end - 1)
+                comment = string.lstrip(string.expandtabs(lines[end]))
+                while ((comment[:1] == '#') and (indentsize(lines[end]) == indent)):
+                    comments[:0] = [comment]
+                    end = (end - 1)
+                    if (end < 0):
+                        break
+                    comment = string.lstrip(string.expandtabs(lines[end]))
+            while (comments and (string.strip(comments[0]) == '#')):
+                comments[:1] = []
+            while (comments and (string.strip(comments[(-1)]) == '#')):
+                comments[(-1):] = []
+            return string.join(comments, '')

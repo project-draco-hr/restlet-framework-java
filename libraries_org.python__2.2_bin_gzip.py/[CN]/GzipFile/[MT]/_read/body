@@ -1,0 +1,26 @@
+def _read(self, size=1024):
+    if (self.fileobj is None):
+        raise EOFError, 'Reached EOF'
+    if self._new_member:
+        pos = self.fileobj.tell()
+        self.fileobj.seek(0, 2)
+        if (pos == self.fileobj.tell()):
+            raise EOFError, 'Reached EOF'
+        else:
+            self.fileobj.seek(pos)
+        self._init_read()
+        self._read_gzip_header()
+        self.decompress = zlib.decompressobj((- zlib.MAX_WBITS))
+        self._new_member = 0
+    buf = self.fileobj.read(size)
+    if (buf == ''):
+        uncompress = self.decompress.flush()
+        self._read_eof()
+        self._add_read_data(uncompress)
+        raise EOFError, 'Reached EOF'
+    uncompress = self.decompress.decompress(buf)
+    self._add_read_data(uncompress)
+    if (self.decompress.unused_data != ''):
+        self.fileobj.seek(((- len(self.decompress.unused_data)) + 8), 1)
+        self._read_eof()
+        self._new_member = 1

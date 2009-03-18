@@ -1,0 +1,103 @@
+'\nAn XML-RPC client interface for Python.\n\nThe marshalling and response parser code can also be used to\nimplement XML-RPC servers.\n\nExported exceptions:\n\n  Error          Base class for client errors\n  ProtocolError  Indicates an HTTP protocol error\n  ResponseError  Indicates a broken response package\n  Fault          Indicates an XML-RPC fault package\n\nExported classes:\n\n  ServerProxy    Represents a logical connection to an XML-RPC server\n\n  Boolean        boolean wrapper to generate a "boolean" XML-RPC value\n  DateTime       dateTime wrapper for an ISO 8601 string or time tuple or\n                 localtime integer value to generate a "dateTime.iso8601"\n                 XML-RPC value\n  Binary         binary data wrapper\n\n  SlowParser     Slow but safe standard parser (based on xmllib)\n  Marshaller     Generate an XML-RPC params chunk from a Python data structure\n  Unmarshaller   Unmarshal an XML-RPC response from incoming XML event message\n  Transport      Handles an HTTP transaction to an XML-RPC server\n  SafeTransport  Handles an HTTPS transaction to an XML-RPC server\n\nExported constants:\n\n  True\n  False\n\nExported functions:\n\n  boolean        Convert any Python value to an XML-RPC boolean\n  getparser      Create instance of the fastest available parser & attach\n                 to an unmarshalling object\n  dumps          Convert an argument tuple or a Fault instance to an XML-RPC\n                 request (or response, if the methodresponse option is used).\n  loads          Convert an XML-RPC packet to unmarshalled data plus a method\n                 name (None if not present).\n'
+import re, string, time, operator
+from types import *
+try:
+    unicode
+except NameError:
+    unicode = None
+MAXINT = ((2L ** 31) - 1)
+MININT = (- (2L ** 31))
+if unicode:
+
+    def _stringify(string):
+        try:
+            return str(string)
+        except UnicodeError:
+            return string
+else:
+
+    def _stringify(string):
+        return string
+__version__ = '1.0.0'
+(True, False) = (Boolean(1), Boolean(0))
+WRAPPERS = (DateTime, Binary, Boolean)
+try:
+    import _xmlrpclib
+    FastParser = _xmlrpclib.Parser
+    FastUnmarshaller = _xmlrpclib.Unmarshaller
+except (AttributeError, ImportError):
+    FastParser = FastUnmarshaller = None
+try:
+    import sgmlop
+    if (not hasattr(sgmlop, 'XMLParser')):
+        raise ImportError
+except ImportError:
+    SgmlopParser = None
+else:
+
+
+    class SgmlopParser:
+
+        def __init__(self, target):
+            self.finish_starttag = target.start
+            self.finish_endtag = target.end
+            self.handle_data = target.data
+            self.handle_xml = target.xml
+            self.parser = sgmlop.XMLParser()
+            self.parser.register(self)
+            self.feed = self.parser.feed
+            self.entity = {'amp': '&', 'gt': '>', 'lt': '<', 'apos': "'", 'quot': '"', }
+
+        def close(self):
+            try:
+                self.parser.close()
+            finally:
+                self.parser = self.feed = None
+
+        def handle_proc(self, tag, attr):
+            import re
+            m = re.search('encoding\\s*=\\s*[\'"]([^"\']+)["\']', attr)
+            if m:
+                self.handle_xml(m.group(1), 1)
+
+        def handle_entityref(self, entity):
+            try:
+                self.handle_data(self.entity[entity])
+            except KeyError:
+                self.handle_data(('&%s;' % entity))
+try:
+    from xml.parsers import expat
+    if (not hasattr(expat, 'ParserCreate')):
+        raise ImportError, 'ParserCreate'
+except ImportError:
+    ExpatParser = None
+else:
+
+
+    class ExpatParser:
+
+        def __init__(self, target):
+            self._parser = parser = expat.ParserCreate(None, None)
+            self._target = target
+            parser.StartElementHandler = target.start
+            parser.EndElementHandler = target.end
+            parser.CharacterDataHandler = target.data
+            encoding = None
+            if (not parser.returns_unicode):
+                encoding = 'utf-8'
+            target.xml(encoding, None)
+
+        def feed(self, data):
+            self._parser.Parse(data, 0)
+
+        def close(self):
+            self._parser.Parse('', 1)
+            del self._target, self._parser
+Server = ServerProxy
+if (__name__ == '__main__'):
+    server = ServerProxy('http://betty.userland.com')
+    print server
+    try:
+        print server.examples.getStateName(41)
+    except Error as v:
+        print 'ERROR', v

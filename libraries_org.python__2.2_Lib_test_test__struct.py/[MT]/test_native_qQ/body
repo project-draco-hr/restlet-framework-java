@@ -1,0 +1,8 @@
+def test_native_qQ():
+    bytes = struct.calcsize('q')
+    for (format, input, expected) in (('q', (-1), ('\xff' * bytes)), ('q', 0, ('\x00' * bytes)), ('Q', 0, ('\x00' * bytes)), ('q', 1L, (('\x00' * (bytes - 1)) + '\x01')), ('Q', ((1L << (8 * bytes)) - 1), ('\xff' * bytes)), ('q', ((1L << ((8 * bytes) - 1)) - 1), ('\x7f' + ('\xff' * (bytes - 1))))):
+        got = struct.pack(format, input)
+        native_expected = bigendian_to_native(expected)
+        verify((got == native_expected), ('%r-pack of %r gave %r, not %r' % (format, input, got, native_expected)))
+        retrieved = struct.unpack(format, got)[0]
+        verify((retrieved == input), ('%r-unpack of %r gave %r, not %r' % (format, got, retrieved, input)))

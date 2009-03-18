@@ -1,0 +1,11 @@
+def _testSendAfterRemoteClose(self):
+    for x in range(5):
+        try:
+            self.serv_conn.send('spam')
+        except socket.error as se:
+            self.failUnlessEqual(se[0], errno.ECONNRESET)
+            return
+        except Exception as x:
+            self.fail(('Sending on remotely closed socket raised wrong exception: %s' % x))
+        time.sleep(0.5)
+    self.fail('Sending on remotely closed socket should have raised exception')

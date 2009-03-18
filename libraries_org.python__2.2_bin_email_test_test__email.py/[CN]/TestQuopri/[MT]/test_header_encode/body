@@ -1,0 +1,10 @@
+def test_header_encode(self):
+    eq = self.assertEqual
+    he = quopriMIME.header_encode
+    eq(he('hello'), '=?iso-8859-1?q?hello?=')
+    eq(he('hello\nworld'), '=?iso-8859-1?q?hello=0D=0Aworld?=')
+    eq(he('hello', charset='iso-8859-2'), '=?iso-8859-2?q?hello?=')
+    eq(he('hello\nworld', keep_eols=True), '=?iso-8859-1?q?hello=0Aworld?=')
+    eq(he('hello\xc7there'), '=?iso-8859-1?q?hello=C7there?=')
+    eq(he(('xxxx ' * 20), maxlinelen=40), '=?iso-8859-1?q?xxxx_xxxx_xxxx_xxxx_xx?=\n =?iso-8859-1?q?xx_xxxx_xxxx_xxxx_xxxx?=\n =?iso-8859-1?q?_xxxx_xxxx_xxxx_xxxx_x?=\n =?iso-8859-1?q?xxx_xxxx_xxxx_xxxx_xxx?=\n =?iso-8859-1?q?x_xxxx_xxxx_?=')
+    eq(he(('xxxx ' * 20), maxlinelen=40, eol='\r\n'), '=?iso-8859-1?q?xxxx_xxxx_xxxx_xxxx_xx?=\r\n =?iso-8859-1?q?xx_xxxx_xxxx_xxxx_xxxx?=\r\n =?iso-8859-1?q?_xxxx_xxxx_xxxx_xxxx_x?=\r\n =?iso-8859-1?q?xxx_xxxx_xxxx_xxxx_xxx?=\r\n =?iso-8859-1?q?x_xxxx_xxxx_?=')

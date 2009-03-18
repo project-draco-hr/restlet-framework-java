@@ -1,0 +1,8 @@
+def processingInstruction(self, target, data):
+    if self.document:
+        node = self.document.createProcessingInstruction(target, data)
+        self.lastEvent[1] = [(PROCESSING_INSTRUCTION, node), None]
+        self.lastEvent = self.lastEvent[1]
+    else:
+        event = [(PROCESSING_INSTRUCTION, target, data), None]
+        self.pending_events.append(event)

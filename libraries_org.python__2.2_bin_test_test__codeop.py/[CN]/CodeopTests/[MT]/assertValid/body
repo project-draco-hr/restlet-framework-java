@@ -1,0 +1,22 @@
+def assertValid(self, str, symbol='single'):
+    'succeed iff str is a valid piece of code'
+    if is_jython:
+        code = compile_command(str, '<input>', symbol)
+        self.assert_(code)
+        if (symbol == 'single'):
+            (d, r) = ({}, {})
+            saved_stdout = sys.stdout
+            sys.stdout = cStringIO.StringIO()
+            try:
+                exec code in d
+                exec compile(str, '<input>', 'single') in r
+            finally:
+                sys.stdout = saved_stdout
+        elif (symbol == 'eval'):
+            ctx = {'a': 2, }
+            d = {'value': eval(code, ctx), }
+            r = {'value': eval(str, ctx), }
+        self.assertEquals(unify_callables(r), unify_callables(d))
+    else:
+        expected = compile(str, '<input>', symbol)
+        self.assertEquals(compile_command(str, '<input>', symbol), expected)

@@ -1,0 +1,37 @@
+def parse_http_list(s):
+    'Parse lists as described by RFC 2068 Section 2.\n\n    In particular, parse comman-separated lists where the elements of\n    the list may include quoted-strings.  A quoted-string could\n    contain a comma.\n    '
+    list = []
+    end = len(s)
+    i = 0
+    inquote = 0
+    start = 0
+    while (i < end):
+        cur = s[i:]
+        c = cur.find(',')
+        q = cur.find('"')
+        if (c == (-1)):
+            list.append(s[start:])
+            break
+        if (q == (-1)):
+            if inquote:
+                raise ValueError, 'unbalanced quotes'
+            else:
+                list.append(s[start:(i + c)])
+                i = ((i + c) + 1)
+                continue
+        if inquote:
+            if (q < c):
+                list.append(s[start:(i + c)])
+                i = ((i + c) + 1)
+                start = i
+                inquote = 0
+            else:
+                i = (i + q)
+        elif (c < q):
+            list.append(s[start:(i + c)])
+            i = ((i + c) + 1)
+            start = i
+        else:
+            inquote = 1
+            i = ((i + q) + 1)
+    return map((lambda x: x.strip()), list)

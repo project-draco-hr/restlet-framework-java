@@ -1,0 +1,20 @@
+def print_tb(tb, limit=None, file=None):
+    "Print up to 'limit' stack trace entries from the traceback 'tb'.\n\n    If 'limit' is omitted or None, all entries are printed.  If 'file'\n    is omitted or None, the output goes to sys.stderr; otherwise\n    'file' should be an open file or file-like object with a write()\n    method.\n    "
+    if (not file):
+        file = sys.stderr
+    if (limit is None):
+        if hasattr(sys, 'tracebacklimit'):
+            limit = sys.tracebacklimit
+    n = 0
+    while ((tb is not None) and ((limit is None) or (n < limit))):
+        f = tb.tb_frame
+        lineno = tb_lineno(tb)
+        co = f.f_code
+        filename = co.co_filename
+        name = co.co_name
+        _print(file, ('  File "%s", line %d, in %s' % (filename, lineno, name)))
+        line = linecache.getline(filename, lineno)
+        if line:
+            _print(file, ('    ' + line.strip()))
+        tb = tb.tb_next
+        n = (n + 1)

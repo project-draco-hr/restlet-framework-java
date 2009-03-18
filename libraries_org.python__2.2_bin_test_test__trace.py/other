@@ -1,0 +1,17 @@
+import test_support
+import unittest
+import sys
+import difflib
+if (not __debug__):
+    raise test_support.TestSkipped, 'tracing not supported under -O'
+basic.events = [(0, 'call'), (0, 'line'), (1, 'line'), (1, 'return')]
+arigo_example.events = [(0, 'call'), (0, 'line'), (1, 'line'), (2, 'line'), (3, 'line'), (3, 'line'), (5, 'line'), (5, 'return')]
+one_instr_line.events = [(0, 'call'), (0, 'line'), (1, 'line'), (2, 'line'), (3, 'line'), (3, 'return')]
+no_pop_tops.events = [(0, 'call'), (0, 'line'), (1, 'line'), (2, 'line'), (2, 'line'), (3, 'line'), (6, 'line'), (2, 'line'), (3, 'line'), (4, 'line'), (2, 'line'), (2, 'return')]
+no_pop_blocks.events = [(0, 'call'), (0, 'line'), (1, 'line'), (1, 'line'), (3, 'line'), (3, 'return')]
+call.events = [(0, 'call'), (0, 'line'), (1, 'line'), ((-3), 'call'), ((-3), 'line'), ((-2), 'line'), ((-2), 'return'), (1, 'return')]
+test_raise.events = [(0, 'call'), (0, 'line'), (1, 'line'), (2, 'line'), ((-3), 'call'), ((-3), 'line'), ((-2), 'line'), ((-2), 'exception'), (2, 'exception'), (3, 'line'), (4, 'line'), (4, 'return')]
+settrace_and_return.events = [(1, 'return')]
+settrace_and_raise.events = [(2, 'exception'), (3, 'line'), (4, 'line'), (4, 'return')]
+if (__name__ == '__main__'):
+    test_main()

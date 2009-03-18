@@ -1,0 +1,26 @@
+from test_support import *
+import whrandom
+import thread
+import time
+print_test('thread (test_thread.py)', 1)
+mutex = thread.allocate_lock()
+whmutex = thread.allocate_lock()
+running = 0
+done = thread.allocate_lock()
+done.acquire()
+verbose = 0
+numtasks = 5
+next_ident = 0
+print_test('concurrent threads', 2)
+for i in range(numtasks):
+    newtask()
+done.acquire()
+numtrips = 3
+print_test('locks', 2)
+if done.acquire(0):
+    raise ValueError, "'done' should have remained acquired"
+bar = barrier(numtasks)
+running = numtasks
+for i in range(numtasks):
+    thread.start_new_thread(task2, (i,))
+done.acquire()

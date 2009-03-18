@@ -1,0 +1,31 @@
+def readline(self):
+    if (self.level > 0):
+        return ''
+    line = self.fp.readline()
+    if (not line):
+        self.level = len(self.stack)
+        self.last = (self.level > 0)
+        if self.last:
+            raise Error, 'sudden EOF in MultiFile.readline()'
+        return ''
+    assert (self.level == 0)
+    if self.is_data(line):
+        return line
+    else:
+        marker = line.rstrip()
+    for i in range(len(self.stack)):
+        sep = self.stack[i]
+        if (marker == self.section_divider(sep)):
+            self.last = 0
+            break
+        elif (marker == self.end_marker(sep)):
+            self.last = 1
+            break
+    else:
+        return line
+    if self.seekable:
+        self.lastpos = (self.tell() - len(line))
+    self.level = (i + 1)
+    if (self.level > 1):
+        raise Error, 'Missing endmarker in MultiFile.readline()'
+    return ''

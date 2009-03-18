@@ -1,0 +1,37 @@
+def extend_tests():
+    test = array('c', 'testextend')
+    verify((extend_test('test: String extend', 'test', 'extend', 'c') == test), 'String extend failed')
+    test = array('i', [1, 2, 3, 4, 51, 52, 53, 54])
+    verify((extend_test('test: List extend', [1, 2, 3, 4], [51, 52, 53, 54], 'i') == test), 'List extend failed')
+    test = array('i', (1, 2, 3, 4, 51, 52, 53, 54))
+    verify((extend_test('test: Tuple extend', (1, 2, 3, 4), (51, 52, 53, 54), 'i') == test), 'Tuple extend failed')
+    try:
+        extend_test('test: "broken" list extend', [1, 2, 3, 4], [51, 52, 53, 'fred'], 'i')
+        raise TestFailed, 'test: "broken" list extend'
+    except TypeError:
+        pass
+    a = array('d', [123.45, 567.89])
+    test = array('i', [1, 2, 3, 4])
+    try:
+        assert (extend_test('test: Array type mismatch', [1, 2, 3, 4], a, 'i') == test), 'Array mismatch test failed'
+        raise TestFailed, 'test: Array type mismatch'
+    except TypeError:
+        pass
+    del a
+    f = open(TESTFN, 'r')
+    try:
+        extend_test('test: incorrect type extend (file)', [1, 2, 3, 4], f, 'i')
+        raise TestFailed, 'test: incorrect type extend (file)'
+    except TypeError:
+        pass
+    f.close()
+    try:
+        extend_test('test: incorrect type extend (module)', (1, 2, 3, 4), sys, 'i')
+        raise TestFailed, 'test: incorrect type extend (module)'
+    except TypeError:
+        pass
+    try:
+        extend_test('test: incorrect type extend (integer)', [], 456, 'i')
+        raise TestFailed, 'test: incorrect type extend (integer)'
+    except TypeError:
+        pass

@@ -1,0 +1,9 @@
+def read_all(self):
+    'Read all data until EOF; block until connection closed.'
+    self.process_rawq()
+    while (not self.eof):
+        self.fill_rawq()
+        self.process_rawq()
+    buf = self.cookedq
+    self.cookedq = ''
+    return buf

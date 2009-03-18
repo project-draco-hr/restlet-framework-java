@@ -1,0 +1,11 @@
+def _run_examples(examples, globs, verbose, name, compileflags):
+    import sys
+    saveout = sys.stdout
+    globs = globs.copy()
+    try:
+        sys.stdout = fakeout = _SpoofOut()
+        x = _run_examples_inner(saveout.write, fakeout, examples, globs, verbose, name, compileflags)
+    finally:
+        sys.stdout = saveout
+        globs.clear()
+    return x

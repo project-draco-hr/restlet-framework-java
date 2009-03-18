@@ -1,0 +1,53 @@
+def testBulkcopy(self):
+    'testing bcp'
+    self._insertInto('two', 3)
+    bcp = self.db.bulkcopy('dbexts_test', 'two', include=['a'])
+    assert (len(bcp.columns) == 1), ('one column should be specified, [%d] found' % len(bcp.columns))
+    bcp = self.db.bulkcopy('dbexts_test', 'two', include=['a', 'b', 'c'], exclude=['a'])
+    assert (len(bcp.columns) == 2), ('expected two columns, found [%d]' % len(bcp.columns))
+    a = filter((lambda x, c=bcp.columns: (x in c)), ['b', 'c'])
+    assert a, ("expecting ['b', 'c'], found %s" % str(a))
+
+
+    class _executor:
+
+        def __init__(self, table, cols):
+            self.cols = cols
+            if cols:
+                self.sql = ('insert into %s (%s) values (%s)' % (table, ','.join(self.cols), ','.join((('?',) * len(self.cols)))))
+            else:
+                self.sql = ('insert into %s values (%%s)' % table)
+
+        def execute(self, db, rows, bindings):
+            assert (len(rows) > 0), 'must have at least one row'
+            if self.cols:
+                sql = self.sql
+            else:
+                sql = (self.sql % ','.join((('?',) * len(rows[0]))))
+    bcp = self.db.bulkcopy('dbexts_test', 'two', include=['a'], executor=_executor)
+    done = bcp.transfer(self.db)
+    assert (done == 3), ('expecting three rows to be handled but not inserted, found [%d]' % done)
+    bcp = self.db.bulkcopy('dbexts_test', 'two', include=['a'])
+    done = bcp.transfer(self.db)
+    assert (done == 3), ('expecting three rows to be inserted, found [%d]' % done)
+    bcp = self.db.bulkcopy('dbexts_test', 'two', include=['a'])
+    bcp.rowxfer([200])
+    bcp.rowxfer([201])
+    bcp.rowxfer([202])
+    bcp.rowxfer([203])
+    done = bcp.batch()
+    assert (done == 4), ('expecting four rows to be inserted, found [%d]' % done)
+    bcp.rowxfer([300])
+    bcp.rowxfer([401])
+    bcp.rowxfer([502])
+    bcp.rowxfer([603])
+    done = bcp.batch()
+    assert (done == 4), ('expecting four rows to be inserted, found [%d]' % done)
+    bcp.rowxfer([205])
+    bcp.rowxfer([210])
+    done = bcp.done()
+    assert (done == 2), ('expecting two rows to be inserted, found [%d]' % done)
+    assert (bcp.total == 10), ('expecting 10 rows to be inserted, found [%d]' % bcp.total)
+    bcp = self.db.bulkcopy('dbexts_test', 'two', include=['a'])
+    done = bcp.transfer(self.db)
+    assert (done == 16), ('expecting sixteen rows to be inserted, found [%d]' % done)

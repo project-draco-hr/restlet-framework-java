@@ -1,0 +1,24 @@
+def add(self, *arg_list):
+    if (not arg_list):
+        return self
+    if (len(arg_list) > 1):
+        apply(self.add, arg_list[1:])
+    other = arg_list[0]
+    if ((type(self) != type(other)) or (self.__class__ != other.__class__)):
+        other = Stats(other)
+    self.files += other.files
+    self.total_calls += other.total_calls
+    self.prim_calls += other.prim_calls
+    self.total_tt += other.total_tt
+    for func in other.top_level.keys():
+        self.top_level[func] = None
+    if (self.max_name_len < other.max_name_len):
+        self.max_name_len = other.max_name_len
+    self.fcn_list = None
+    for func in other.stats.keys():
+        if self.stats.has_key(func):
+            old_func_stat = self.stats[func]
+        else:
+            old_func_stat = (0, 0, 0, 0, {})
+        self.stats[func] = add_func_stats(old_func_stat, other.stats[func])
+    return self

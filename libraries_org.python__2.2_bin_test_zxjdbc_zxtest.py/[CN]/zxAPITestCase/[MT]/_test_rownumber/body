@@ -1,0 +1,24 @@
+def _test_rownumber(self, dynamic=0):
+    if self.vendor.scroll:
+        c = self.cursor(dynamic, rstype=getattr(zxJDBC, self.vendor.scroll), rsconcur=zxJDBC.CONCUR_READ_ONLY)
+    else:
+        c = self.cursor(dynamic)
+    try:
+        if (not dynamic):
+            c.execute('select * from zxtesting where 1=0')
+            self.assertEquals(0, c.rownumber)
+        c.execute('select * from zxtesting')
+        self.assertEquals(0, c.rownumber)
+        c.next()
+        self.assertEquals(1, c.rownumber)
+        c.next()
+        self.assertEquals(2, c.rownumber)
+        c.scroll((-1))
+        self.assertEquals(1, c.rownumber)
+        c.scroll(2, 'absolute')
+        self.assertEquals(2, c.rownumber)
+        c.scroll(6, 'absolute')
+        self.assertEquals(6, c.rownumber)
+    finally:
+        c.close()
+    self.assertEquals(None, c.rownumber)

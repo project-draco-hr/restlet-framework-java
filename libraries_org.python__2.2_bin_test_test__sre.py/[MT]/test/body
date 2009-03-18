@@ -1,0 +1,27 @@
+def test(expression, result, exception=None):
+    try:
+        r = eval(expression)
+    except:
+        if exception:
+            if (not isinstance(sys.exc_value, exception)):
+                print expression, 'FAILED'
+                if (exception is sre.error):
+                    print 'expected', 'sre.error'
+                else:
+                    print 'expected', exception.__name__
+                print 'got', sys.exc_type.__name__, str(sys.exc_value)
+        else:
+            print expression, 'FAILED'
+            traceback.print_exc(file=sys.stdout)
+    else:
+        if exception:
+            print expression, 'FAILED'
+            if (exception is sre.error):
+                print 'expected', 'sre.error'
+            else:
+                print 'expected', exception.__name__
+            print 'got result', repr(r)
+        elif (r != result):
+            print expression, 'FAILED'
+            print 'expected', repr(result)
+            print 'got result', repr(r)

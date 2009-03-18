@@ -1,0 +1,9 @@
+"File-like objects that read from or write to a string buffer.\n\nThis implements (nearly) all stdio methods.\n\nf = StringIO()      # ready for writing\nf = StringIO(buf)   # ready for reading\nf.close()           # explicitly release resources held\nflag = f.isatty()   # always false\npos = f.tell()      # get current position\nf.seek(pos)         # set current position\nf.seek(pos, mode)   # mode 0: absolute; 1: relative; 2: relative to EOF\nbuf = f.read()      # read until EOF\nbuf = f.read(n)     # read up to n bytes\nbuf = f.readline()  # read until end of line ('\n') or EOF\nlist = f.readlines()# list of f.readline() results until EOF\nf.truncate([size])  # truncate file at to at most size (default: current pos)\nf.write(buf)        # write at current position\nf.writelines(list)  # for line in list: f.write(line)\nf.getvalue()        # return whole file's contents as a string\n\nNotes:\n- Using a real file is often faster (but less convenient).\n- There's also a much faster implementation in C, called cStringIO, but\n  it's not subclassable.\n- fileno() is left unimplemented so that code which uses it triggers\n  an exception early.\n- Seeking far beyond EOF and then writing will insert real null\n  bytes that occupy space in the buffer.\n- There's a simple test set (see end of this file).\n"
+import types
+try:
+    from errno import EINVAL
+except ImportError:
+    EINVAL = 22
+__all__ = ['StringIO']
+if (__name__ == '__main__'):
+    test()

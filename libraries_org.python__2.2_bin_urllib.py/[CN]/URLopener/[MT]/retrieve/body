@@ -1,0 +1,50 @@
+def retrieve(self, url, filename=None, reporthook=None, data=None):
+    'retrieve(url) returns (filename, headers) for a local object\n        or (tempfilename, headers) for a remote object.'
+    url = unwrap(toBytes(url))
+    if (self.tempcache and self.tempcache.has_key(url)):
+        return self.tempcache[url]
+    (type, url1) = splittype(url)
+    if ((not filename) and ((not type) or (type == 'file'))):
+        try:
+            fp = self.open_local_file(url1)
+            hdrs = fp.info()
+            del fp
+            return (url2pathname(splithost(url1)[1]), hdrs)
+        except IOError as msg:
+            pass
+    fp = self.open(url, data)
+    headers = fp.info()
+    if (not filename):
+        import tempfile
+        (garbage, path) = splittype(url)
+        (garbage, path) = splithost((path or ''))
+        (path, garbage) = splitquery((path or ''))
+        (path, garbage) = splitattr((path or ''))
+        suffix = os.path.splitext(path)[1]
+        filename = tempfile.mktemp(suffix)
+        self.__tempfiles.append(filename)
+    result = (filename, headers)
+    if (self.tempcache is not None):
+        self.tempcache[url] = result
+    tfp = open(filename, 'wb')
+    bs = (1024 * 8)
+    size = (-1)
+    blocknum = 1
+    if reporthook:
+        if headers.has_key('content-length'):
+            size = int(headers['Content-Length'])
+        reporthook(0, bs, size)
+    block = fp.read(bs)
+    if reporthook:
+        reporthook(1, bs, size)
+    while block:
+        tfp.write(block)
+        block = fp.read(bs)
+        blocknum = (blocknum + 1)
+        if reporthook:
+            reporthook(blocknum, bs, size)
+    fp.close()
+    tfp.close()
+    del fp
+    del tfp
+    return result

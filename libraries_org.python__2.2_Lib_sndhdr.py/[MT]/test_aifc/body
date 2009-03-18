@@ -1,0 +1,16 @@
+def test_aifc(h, f):
+    import aifc
+    if (h[:4] != 'FORM'):
+        return None
+    if (h[8:12] == 'AIFC'):
+        fmt = 'aifc'
+    elif (h[8:12] == 'AIFF'):
+        fmt = 'aiff'
+    else:
+        return None
+    f.seek(0)
+    try:
+        a = aifc.openfp(f, 'r')
+    except (EOFError, aifc.Error):
+        return None
+    return (fmt, a.getframerate(), a.getnchannels(), a.getnframes(), (8 * a.getsampwidth()))

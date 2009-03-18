@@ -1,0 +1,31 @@
+def join(a, *p):
+    'Join two or more pathname components, inserting "\\" as needed'
+    path = a
+    for b in p:
+        b_wins = 0
+        if (path == ''):
+            b_wins = 1
+        elif isabs(b):
+            if ((path[1:2] != ':') or (b[1:2] == ':')):
+                b_wins = 1
+            elif ((len(path) > 3) or ((len(path) == 3) and (path[(-1)] not in '/\\'))):
+                b_wins = 1
+        if b_wins:
+            path = b
+        else:
+            assert (len(path) > 0)
+            if (path[(-1)] in '/\\'):
+                if (b and (b[0] in '/\\')):
+                    path += b[1:]
+                else:
+                    path += b
+            elif (path[(-1)] == ':'):
+                path += b
+            elif b:
+                if (b[0] in '/\\'):
+                    path += b
+                else:
+                    path += ('\\' + b)
+            else:
+                path += '\\'
+    return path

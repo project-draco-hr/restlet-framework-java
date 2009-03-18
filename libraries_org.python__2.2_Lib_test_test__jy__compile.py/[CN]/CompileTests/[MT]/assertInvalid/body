@@ -1,0 +1,9 @@
+def assertInvalid(self, str, symbol='single', is_syntax=1):
+    'succeed iff str is the start of an invalid piece of code'
+    try:
+        compile_(str, symbol=symbol)
+        self.fail('No exception thrown for invalid code')
+    except SyntaxError:
+        self.assert_(is_syntax)
+    except OverflowError:
+        self.assert_((not is_syntax))

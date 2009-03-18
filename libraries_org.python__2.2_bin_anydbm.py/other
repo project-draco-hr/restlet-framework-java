@@ -1,0 +1,22 @@
+"Generic interface to all dbm clones.\n\nInstead of\n\n        import dbm\n        d = dbm.open(file, 'w', 0666)\n\nuse\n\n        import anydbm\n        d = anydbm.open(file, 'w')\n\nThe returned object is a dbhash, gdbm, dbm or dumbdbm object,\ndependent on the type of database being opened (determined by whichdb\nmodule) in the case of an existing dbm. If the dbm does not exist and\nthe create or new flag ('c' or 'n') was specified, the dbm type will\nbe determined by the availability of the modules (tested in the above\norder).\n\nIt has the following interface (key and data are strings):\n\n        d[key] = data   # store data at key (may override data at\n                        # existing key)\n        data = d[key]   # retrieve data at key (raise KeyError if no\n                        # such key)\n        del d[key]      # delete data stored at key (raises KeyError\n                        # if no such key)\n        flag = d.has_key(key)   # true if the key exists\n        list = d.keys() # return a list of all existing keys (slow!)\n\nFuture versions may change the order in which implementations are\ntested for existence, add interfaces to other dbm-like\nimplementations.\n\nThe open function has an optional second argument.  This can be 'r',\nfor read-only access, 'w', for read-write access of an existing\ndatabase, 'c' for read-write access to a new or existing database, and\n'n' for read-write access to a new database.  The default is 'r'.\n\nNote: 'r' and 'w' fail if the database doesn't exist; 'c' creates it\nonly if it doesn't exist; and 'n' always creates a new database.\n\n"
+try:
+
+
+    class error(Exception):
+        pass
+except (NameError, TypeError):
+    error = 'anydbm.error'
+_names = ['dbhash', 'gdbm', 'dbm', 'dumbdbm']
+_errors = [error]
+_defaultmod = None
+for _name in _names:
+    try:
+        _mod = __import__(_name)
+    except ImportError:
+        continue
+    if (not _defaultmod):
+        _defaultmod = _mod
+    _errors.append(_mod.error)
+if (not _defaultmod):
+    raise ImportError, ('no dbm clone found; tried %s' % _names)
+error = tuple(_errors)

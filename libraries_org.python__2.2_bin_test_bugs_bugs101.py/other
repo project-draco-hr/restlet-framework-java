@@ -1,0 +1,21 @@
+import sys
+import os
+dir = os.path.dirname(sys.argv[0])
+scriptsdir = os.path.normpath(os.path.join(dir, os.pardir, 'scripts'))
+sys.path.append(scriptsdir)
+from test_support import *
+code32 = 'def foo():\n    try:\n\t2+2\n    finally:\n\treturn 4\n'
+print_test('Bug Fixes', 0)
+print_test('From 1.0.1 to 1.0.2', 1)
+items = locals().items()
+items.sort()
+errors = 0
+for (name, value) in items:
+    if (name[:4] == 'test'):
+        print_test(((value.__doc__ + ' #') + name[4:]), 2)
+        try:
+            value()
+        except:
+            print 'Error!', sys.exc_type, sys.exc_value
+            errors = (errors + 1)
+print errors, 'errors'

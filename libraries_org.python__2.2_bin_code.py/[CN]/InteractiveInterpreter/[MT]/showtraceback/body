@@ -1,0 +1,16 @@
+def showtraceback(self):
+    'Display the exception that just occurred.\n\n        We remove the first stack item because it is our own code.\n\n        The output is written by self.write(), below.\n\n        '
+    try:
+        (type, value, tb) = sys.exc_info()
+        sys.last_type = type
+        sys.last_value = value
+        sys.last_traceback = tb
+        tblist = traceback.extract_tb(tb)
+        del tblist[:1]
+        list = traceback.format_list(tblist)
+        if list:
+            list.insert(0, 'Traceback (most recent call last):\n')
+        list[len(list):] = traceback.format_exception_only(type, value)
+    finally:
+        tblist = tb = None
+    map(self.write, list)

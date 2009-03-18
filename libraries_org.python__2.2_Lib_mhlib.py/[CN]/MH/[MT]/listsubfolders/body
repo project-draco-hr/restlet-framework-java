@@ -1,0 +1,19 @@
+def listsubfolders(self, name):
+    'Return the names of the subfolders in a given folder\n        (prefixed with the given folder name).'
+    fullname = os.path.join(self.path, name)
+    st = os.stat(fullname)
+    nlinks = st[ST_NLINK]
+    if (nlinks <= 2):
+        return []
+    subfolders = []
+    subnames = os.listdir(fullname)
+    for subname in subnames:
+        fullsubname = os.path.join(fullname, subname)
+        if os.path.isdir(fullsubname):
+            name_subname = os.path.join(name, subname)
+            subfolders.append(name_subname)
+            nlinks = (nlinks - 1)
+            if (nlinks <= 2):
+                break
+    subfolders.sort()
+    return subfolders

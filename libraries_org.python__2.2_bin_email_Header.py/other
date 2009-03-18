@@ -1,0 +1,34 @@
+'Header encoding and decoding functionality.'
+import re
+import binascii
+from types import StringType, UnicodeType
+import email.quopriMIME
+import email.base64MIME
+from email.Errors import HeaderParseError
+from email.Charset import Charset
+try:
+    from email._compat22 import _floordiv
+except SyntaxError:
+    from email._compat21 import _floordiv
+try:
+    (True, False)
+except NameError:
+    True = 1
+    False = 0
+CRLFSPACE = '\r\n '
+CRLF = '\r\n'
+NL = '\n'
+SPACE = ' '
+USPACE = u' '
+SPACE8 = (' ' * 8)
+EMPTYSTRING = ''
+UEMPTYSTRING = u''
+MAXLINELEN = 76
+ENCODE = 1
+DECODE = 2
+USASCII = Charset('us-ascii')
+UTF8 = Charset('utf-8')
+ecre = re.compile('\n  =\\?                   # literal =?\n  (?P<charset>[^?]*?)   # non-greedy up to the next ? is the charset\n  \\?                    # literal ?\n  (?P<encoding>[qb])    # either a "q" or a "b", case insensitive\n  \\?                    # literal ?\n  (?P<encoded>.*?)      # non-greedy up to the next ?= is the encoded string\n  \\?=                   # literal ?=\n  ', (re.VERBOSE | re.IGNORECASE))
+pcre = re.compile('([,;])')
+fcre = re.compile('[\\041-\\176]+:$')
+_max_append = email.quopriMIME._max_append

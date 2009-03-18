@@ -1,0 +1,6 @@
+def testBigDecimalConvertedToDouble(self):
+    'testing value of BigDecimal when converted to double'
+    assert self.has_table('floattable'), 'missing attribute floattable'
+    from java.math import BigDecimal
+    values = [BigDecimal(x).setScale(2, BigDecimal.ROUND_UP) for x in [4.22, 123.44, 292.09, 33.2, 102.0, 445]]
+    self._test_precision(self.table('floattable'), (lambda x, y: (x - y.doubleValue())), values, 'doubleValue')

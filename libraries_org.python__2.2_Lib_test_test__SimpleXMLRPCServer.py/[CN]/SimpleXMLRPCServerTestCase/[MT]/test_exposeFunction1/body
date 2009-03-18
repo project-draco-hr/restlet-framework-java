@@ -1,0 +1,7 @@
+def test_exposeFunction1(self):
+    'Expose a function via XML-RPC.'
+    server = SimpleXMLRPCServer((HOST, (PORT + 1)))
+    server.register_function(multiply)
+    ServerThread(server).start()
+    client = xmlrpclib.ServerProxy(('http://%s:%d' % (HOST, (PORT + 1))))
+    self.assertEqual(client.multiply(5, 10), 50)

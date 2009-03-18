@@ -1,0 +1,12 @@
+def create_java_parser(jdriver=None):
+    try:
+        if jdriver:
+            return XMLReaderFactory.createXMLReader(jdriver)
+        elif jaxp:
+            return factory.newSAXParser().getXMLReader()
+        else:
+            return XMLReaderFactory.createXMLReader()
+    except ParserConfigurationException as e:
+        raise _exceptions.SAXReaderNotAvailable(e.getMessage())
+    except javasax.SAXException as e:
+        raise _exceptions.SAXReaderNotAvailable(e.getMessage())

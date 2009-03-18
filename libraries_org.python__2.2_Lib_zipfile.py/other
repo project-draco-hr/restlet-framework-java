@@ -1,0 +1,52 @@
+'Read and write ZIP files.'
+import struct, os, time
+import binascii
+try:
+    import zlib
+except ImportError:
+    zlib = None
+__all__ = ['BadZipfile', 'error', 'ZIP_STORED', 'ZIP_DEFLATED', 'is_zipfile', 'ZipInfo', 'ZipFile', 'PyZipFile']
+error = BadZipfile
+ZIP_STORED = 0
+ZIP_DEFLATED = 8
+structEndArchive = '<4s4H2lH'
+stringEndArchive = 'PK\x05\x06'
+structCentralDir = '<4s4B4H3l5H2l'
+stringCentralDir = 'PK\x01\x02'
+structFileHeader = '<4s2B4H3l2H'
+stringFileHeader = 'PK\x03\x04'
+_CD_SIGNATURE = 0
+_CD_CREATE_VERSION = 1
+_CD_CREATE_SYSTEM = 2
+_CD_EXTRACT_VERSION = 3
+_CD_EXTRACT_SYSTEM = 4
+_CD_FLAG_BITS = 5
+_CD_COMPRESS_TYPE = 6
+_CD_TIME = 7
+_CD_DATE = 8
+_CD_CRC = 9
+_CD_COMPRESSED_SIZE = 10
+_CD_UNCOMPRESSED_SIZE = 11
+_CD_FILENAME_LENGTH = 12
+_CD_EXTRA_FIELD_LENGTH = 13
+_CD_COMMENT_LENGTH = 14
+_CD_DISK_NUMBER_START = 15
+_CD_INTERNAL_FILE_ATTRIBUTES = 16
+_CD_EXTERNAL_FILE_ATTRIBUTES = 17
+_CD_LOCAL_HEADER_OFFSET = 18
+_FH_SIGNATURE = 0
+_FH_EXTRACT_VERSION = 1
+_FH_EXTRACT_SYSTEM = 2
+_FH_GENERAL_PURPOSE_FLAG_BITS = 3
+_FH_COMPRESSION_METHOD = 4
+_FH_LAST_MOD_TIME = 5
+_FH_LAST_MOD_DATE = 6
+_FH_CRC = 7
+_FH_COMPRESSED_SIZE = 8
+_FH_UNCOMPRESSED_SIZE = 9
+_FH_FILENAME_LENGTH = 10
+_FH_EXTRA_FIELD_LENGTH = 11
+import types
+_STRING_TYPES = (types.StringType,)
+if hasattr(types, 'UnicodeType'):
+    _STRING_TYPES = (_STRING_TYPES + (types.UnicodeType,))

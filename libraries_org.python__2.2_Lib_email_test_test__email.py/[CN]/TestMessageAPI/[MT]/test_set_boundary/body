@@ -1,0 +1,14 @@
+def test_set_boundary(self):
+    eq = self.assertEqual
+    msg = self._msgobj('msg_01.txt')
+    msg.set_boundary('BOUNDARY')
+    (header, value) = msg.items()[4]
+    eq(header.lower(), 'content-type')
+    eq(value, 'text/plain; charset="us-ascii"; boundary="BOUNDARY"')
+    msg = self._msgobj('msg_04.txt')
+    msg.set_boundary('BOUNDARY')
+    (header, value) = msg.items()[4]
+    eq(header.lower(), 'content-type')
+    eq(value, 'multipart/mixed; boundary="BOUNDARY"')
+    msg = self._msgobj('msg_03.txt')
+    self.assertRaises(Errors.HeaderParseError, msg.set_boundary, 'BOUNDARY')

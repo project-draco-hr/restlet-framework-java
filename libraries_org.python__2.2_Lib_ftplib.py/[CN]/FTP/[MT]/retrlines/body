@@ -1,0 +1,21 @@
+def retrlines(self, cmd, callback=None):
+    'Retrieve data in line mode.\n        The argument is a RETR or LIST command.\n        The callback function (2nd argument) is called for each line,\n        with trailing CRLF stripped.  This creates a new port for you.\n        print_line() is the default callback.'
+    if (not callback):
+        callback = print_line
+    resp = self.sendcmd('TYPE A')
+    conn = self.transfercmd(cmd)
+    fp = conn.makefile('rb')
+    while 1:
+        line = fp.readline()
+        if (self.debugging > 2):
+            print '*retr*', `line`
+        if (not line):
+            break
+        if (line[(-2):] == CRLF):
+            line = line[:(-2)]
+        elif (line[(-1):] == '\n'):
+            line = line[:(-1)]
+        callback(line)
+    fp.close()
+    conn.close()
+    return self.voidresp()

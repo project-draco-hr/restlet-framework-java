@@ -1,0 +1,16 @@
+def testSystem(self):
+    'test system and environment functionality'
+    os.environ = LazyDict(populate=os._getEnvironment)
+    assert (not os.environ._populated), 'before population, os.environ._populated should be false'
+    org = os.environ
+    self._testCmds(javashell._shellEnv, testCmds, 'default')
+    os.environ[key] = value
+    assert os.environ._populated, 'after population, os.environ._populated should be true'
+    assert (org.get(key, None) == value), ('expected stub to have %s set' % key)
+    assert (os.environ.get(key, None) == value), ('expected real os.environment to have %s set' % key)
+    try:
+        del os.environ['ARGS']
+    except KeyError:
+        pass
+    self._testCmds(javashell._shellEnv, testCmds, 'initialized')
+    assert os.environ.has_key('PATH'), 'expected environment to have PATH attribute (this may not apply to all platforms!)'

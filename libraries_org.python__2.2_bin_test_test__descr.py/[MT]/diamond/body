@@ -1,0 +1,61 @@
+def diamond():
+    if verbose:
+        print 'Testing multiple inheritance special cases...'
+
+
+    class A(object):
+
+        def spam(self):
+            return 'A'
+    vereq(A().spam(), 'A')
+
+
+    class B(A):
+
+        def boo(self):
+            return 'B'
+
+        def spam(self):
+            return 'B'
+    vereq(B().spam(), 'B')
+    vereq(B().boo(), 'B')
+
+
+    class C(A):
+
+        def boo(self):
+            return 'C'
+    vereq(C().spam(), 'A')
+    vereq(C().boo(), 'C')
+
+
+    class D(B, C):
+        pass
+    vereq(D().spam(), 'B')
+    vereq(D().boo(), 'B')
+    vereq(D.__mro__, (D, B, C, A, object))
+
+
+    class E(C, B):
+        pass
+    vereq(E().spam(), 'B')
+    vereq(E().boo(), 'C')
+    vereq(E.__mro__, (E, C, B, A, object))
+    try:
+
+
+        class F(D, E):
+            pass
+    except TypeError:
+        pass
+    else:
+        raise TestFailed, 'expected MRO order disagreement (F)'
+    try:
+
+
+        class G(E, D):
+            pass
+    except TypeError:
+        pass
+    else:
+        raise TestFailed, 'expected MRO order disagreement (G)'

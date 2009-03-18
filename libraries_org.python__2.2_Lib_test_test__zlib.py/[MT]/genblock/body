@@ -1,0 +1,11 @@
+def genblock(seed, length, step=1024, generator=random):
+    'length-byte stream of random data from a seed (in step-byte blocks).'
+    if (seed is not None):
+        generator.seed(seed)
+    randint = generator.randint
+    if ((length < step) or (step < 2)):
+        step = length
+    blocks = []
+    for i in range(0, length, step):
+        blocks.append(''.join([chr(randint(0, 255)) for x in range(step)]))
+    return ''.join(blocks)[:length]

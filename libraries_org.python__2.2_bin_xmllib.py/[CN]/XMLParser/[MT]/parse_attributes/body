@@ -1,0 +1,33 @@
+def parse_attributes(self, tag, i, j):
+    rawdata = self.rawdata
+    attrdict = {}
+    namespace = {}
+    while (i < j):
+        res = attrfind.match(rawdata, i)
+        if (res is None):
+            break
+        (attrname, attrvalue) = res.group('name', 'value')
+        if self.__map_case:
+            attrname = attrname.lower()
+        i = res.end(0)
+        if (attrvalue is None):
+            self.syntax_error(("no value specified for attribute `%s'" % attrname))
+            attrvalue = attrname
+        elif ((attrvalue[:1] == "'" == attrvalue[(-1):]) or (attrvalue[:1] == '"' == attrvalue[(-1):])):
+            attrvalue = attrvalue[1:(-1)]
+        elif (not self.__accept_unquoted_attributes):
+            self.syntax_error(("attribute `%s' value not quoted" % attrname))
+        res = xmlns.match(attrname)
+        if (res is not None):
+            ncname = res.group('ncname')
+            namespace[(ncname or '')] = (attrvalue or None)
+            if (not self.__use_namespaces):
+                self.__use_namespaces = (len(self.stack) + 1)
+            continue
+        if ('<' in attrvalue):
+            self.syntax_error("`<' illegal in attribute value")
+        if attrdict.has_key(attrname):
+            self.syntax_error(("attribute `%s' specified twice" % attrname))
+        attrvalue = attrvalue.translate(attrtrans)
+        attrdict[attrname] = self.translate_references(attrvalue)
+    return (attrdict, namespace, i)

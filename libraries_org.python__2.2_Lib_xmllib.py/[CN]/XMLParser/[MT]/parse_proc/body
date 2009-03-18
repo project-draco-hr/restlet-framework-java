@@ -1,0 +1,40 @@
+def parse_proc(self, i):
+    rawdata = self.rawdata
+    end = procclose.search(rawdata, i)
+    if (end is None):
+        return (-1)
+    j = end.start(0)
+    if ((not self.__accept_utf8) and illegal.search(rawdata, (i + 2), j)):
+        self.syntax_error('illegal character in processing instruction')
+    res = tagfind.match(rawdata, (i + 2))
+    if (res is None):
+        raise Error('unexpected call to parse_proc')
+    k = res.end(0)
+    name = res.group(0)
+    if self.__map_case:
+        name = name.lower()
+    if (name == 'xml:namespace'):
+        self.syntax_error('old-fashioned namespace declaration')
+        self.__use_namespaces = (-1)
+        if (self.__seen_doctype or self.__seen_starttag):
+            self.syntax_error('xml:namespace declaration too late in document')
+        (attrdict, namespace, k) = self.parse_attributes(name, k, j)
+        if namespace:
+            self.syntax_error('namespace declaration inside namespace declaration')
+        for attrname in attrdict.keys():
+            if (not self.__xml_namespace_attributes.has_key(attrname)):
+                self.syntax_error(("unknown attribute `%s' in xml:namespace tag" % attrname))
+        if ((not attrdict.has_key('ns')) or (not attrdict.has_key('prefix'))):
+            self.syntax_error('xml:namespace without required attributes')
+        prefix = attrdict.get('prefix')
+        if (ncname.match(prefix) is None):
+            self.syntax_error('xml:namespace illegal prefix value')
+            return end.end(0)
+        if self.__namespaces.has_key(prefix):
+            self.syntax_error('xml:namespace prefix not unique')
+        self.__namespaces[prefix] = attrdict['ns']
+    else:
+        if (name.lower() == 'xml'):
+            self.syntax_error('illegal processing instruction target name')
+        self.handle_proc(name, rawdata[k:j])
+    return end.end(0)

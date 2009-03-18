@@ -1,0 +1,14 @@
+def testAutocommit(self):
+    'testing the autocommit functionality'
+    for u in (0, 1):
+        self.db.autocommit = u
+        try:
+            self.db.isql('select * from one')
+        except Exception as e:
+            fail(('failed autocommit query with u=[%d], v=[%d]' % (u, v)))
+        for v in (0, 1):
+            self.db.db.autocommit = v
+            try:
+                self.db.isql('select * from one')
+            except Exception as e:
+                self.fail(('failed autocommit query with u=[%d], v=[%d]' % (u, v)))

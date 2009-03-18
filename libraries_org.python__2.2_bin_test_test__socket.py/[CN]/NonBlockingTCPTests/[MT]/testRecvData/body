@@ -1,0 +1,9 @@
+def testRecvData(self):
+    (conn, addr) = self.serv.accept()
+    conn.setblocking(0)
+    (rfds, wfds, xfds) = select.select([conn], [], [])
+    if (conn in rfds):
+        msg = conn.recv(len(MSG))
+        self.assertEqual(msg, MSG)
+    else:
+        self.fail('Non-blocking socket with data should been in read list.')

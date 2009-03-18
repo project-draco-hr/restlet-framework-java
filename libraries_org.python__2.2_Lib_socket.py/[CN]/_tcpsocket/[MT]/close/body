@@ -1,0 +1,19 @@
+def close(self):
+    try:
+        if (not self.sock_impl):
+            return
+        sock_impl = self.sock_impl
+        istream = self.istream
+        ostream = self.ostream
+        self.sock_impl = None
+        self.istream = None
+        self.ostream = None
+        if (self.file_count == 0):
+            if istream:
+                istream.close()
+            if ostream:
+                ostream.close()
+            if sock_impl:
+                sock_impl.close()
+    except java.lang.Exception as jlx:
+        raise _map_exception(jlx)

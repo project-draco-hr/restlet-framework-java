@@ -1,0 +1,46 @@
+def parse_starttag(self, i):
+    self.__starttag_text = None
+    start_pos = i
+    rawdata = self.rawdata
+    if shorttagopen.match(rawdata, i):
+        match = shorttag.match(rawdata, i)
+        if (not match):
+            return (-1)
+        (tag, data) = match.group(1, 2)
+        self.__starttag_text = ('<%s/' % tag)
+        tag = tag.lower()
+        k = match.end(0)
+        self.finish_shorttag(tag, data)
+        self.__starttag_text = rawdata[start_pos:(match.end(1) + 1)]
+        return k
+    match = endbracket.search(rawdata, (i + 1))
+    if (not match):
+        return (-1)
+    j = match.start(0)
+    attrs = []
+    if (rawdata[i:(i + 2)] == '<>'):
+        k = j
+        tag = self.lasttag
+    else:
+        match = tagfind.match(rawdata, (i + 1))
+        if (not match):
+            self.error('unexpected call to parse_starttag')
+        k = match.end(0)
+        tag = rawdata[(i + 1):k].lower()
+        self.lasttag = tag
+    while (k < j):
+        match = attrfind.match(rawdata, k)
+        if (not match):
+            break
+        (attrname, rest, attrvalue) = match.group(1, 2, 3)
+        if (not rest):
+            attrvalue = attrname
+        elif ((attrvalue[:1] == "'" == attrvalue[(-1):]) or (attrvalue[:1] == '"' == attrvalue[(-1):])):
+            attrvalue = attrvalue[1:(-1)]
+        attrs.append((attrname.lower(), attrvalue))
+        k = match.end(0)
+    if (rawdata[j] == '>'):
+        j = (j + 1)
+    self.__starttag_text = rawdata[start_pos:j]
+    self.finish_starttag(tag, attrs)
+    return j

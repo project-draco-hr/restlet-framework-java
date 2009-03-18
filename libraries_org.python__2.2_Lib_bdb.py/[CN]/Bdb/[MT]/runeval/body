@@ -1,0 +1,18 @@
+def runeval(self, expr, globals=None, locals=None):
+    if (globals is None):
+        import __main__
+        globals = __main__.__dict__
+    if (locals is None):
+        locals = globals
+    self.reset()
+    sys.settrace(self.trace_dispatch)
+    if (not isinstance(expr, types.CodeType)):
+        expr = (expr + '\n')
+    try:
+        try:
+            return eval(expr, globals, locals)
+        except BdbQuit:
+            pass
+    finally:
+        self.quitting = 1
+        sys.settrace(None)

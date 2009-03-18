@@ -1,0 +1,15 @@
+def test_read(self):
+    mh = getMH()
+    eq = self.assertEquals
+    f = mh.openfolder('inbox')
+    msg = f.openmessage(1)
+    eq(msg.getheader('From'), 'Mrs. Premise')
+    eq(msg.getheader('To'), 'Mrs. Conclusion')
+    lines = sortLines(msg.getheadertext())
+    eq(lines, ['Date: 18 July 2001', 'From: Mrs. Premise', 'To: Mrs. Conclusion'])
+    lines = sortLines(msg.getheadertext((lambda h: (len(h) == 4))))
+    eq(lines, ['Date: 18 July 2001', 'From: Mrs. Premise'])
+    eq(msg.getbodytext(), 'Hullo, Mrs. Conclusion!\n\n')
+    eq(msg.getbodytext(0), 'Hullo, Mrs. Conclusion!\n\n')
+    msg.fp.close()
+    del msg

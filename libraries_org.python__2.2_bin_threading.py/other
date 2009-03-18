@@ -1,0 +1,54 @@
+"Proposed new threading module, emulating a subset of Java's threading model."
+import sys
+import time
+import thread
+import traceback
+import StringIO
+_sys = sys
+del sys
+_time = time.time
+_sleep = time.sleep
+del time
+_start_new_thread = thread.start_new_thread
+_allocate_lock = thread.allocate_lock
+_get_ident = thread.get_ident
+ThreadError = thread.error
+del thread
+_print_exc = traceback.print_exc
+del traceback
+_StringIO = StringIO.StringIO
+del StringIO
+_VERBOSE = 0
+if __debug__:
+
+
+    class _Verbose:
+
+        def __init__(self, verbose=None):
+            if (verbose is None):
+                verbose = _VERBOSE
+            self.__verbose = verbose
+
+        def _note(self, format, *args):
+            if self.__verbose:
+                format = (format % args)
+                format = ('%s: %s\n' % (currentThread().getName(), format))
+                _sys.stderr.write(format)
+else:
+
+
+    class _Verbose:
+
+        def __init__(self, verbose=None):
+            pass
+
+        def _note(self, *args):
+            pass
+Lock = _allocate_lock
+_counter = 0
+_active_limbo_lock = _allocate_lock()
+_active = {}
+_limbo = {}
+_MainThread()
+if (__name__ == '__main__'):
+    _test()

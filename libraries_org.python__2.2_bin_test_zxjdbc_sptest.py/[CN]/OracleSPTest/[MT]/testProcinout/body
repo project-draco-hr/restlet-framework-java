@@ -1,0 +1,13 @@
+def testProcinout(self):
+    c = self.cursor()
+    try:
+        params = [None, 'testing']
+        c.callproc('procinout', params)
+        data = c.fetchone()
+        assert (data is None), 'data was not None'
+        c.execute('select * from sptest')
+        data = c.fetchone()
+        self.assertEquals('testing', data[0])
+        self.assertEquals('tested', params[0])
+    finally:
+        c.close()

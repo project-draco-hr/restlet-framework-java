@@ -1,0 +1,12 @@
+def __execute__(self, sql, params=None, bindings=None, maxrows=None):
+    ' the primary execution method '
+    cur = self.begin()
+    try:
+        if bindings:
+            cur.execute(sql, params, bindings, maxrows=maxrows)
+        elif params:
+            cur.execute(sql, params, maxrows=maxrows)
+        else:
+            cur.execute(sql, maxrows=maxrows)
+    finally:
+        self.commit(cur, close=isinstance(sql, StringType))

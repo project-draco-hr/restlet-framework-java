@@ -1,0 +1,13 @@
+def parse_cdata(self, i):
+    rawdata = self.rawdata
+    if (rawdata[i:(i + 9)] != '<![CDATA['):
+        raise Error('unexpected call to parse_cdata')
+    res = cdataclose.search(rawdata, (i + 9))
+    if (res is None):
+        return (-1)
+    if ((not self.__accept_utf8) and illegal.search(rawdata, (i + 9), res.start(0))):
+        self.syntax_error('illegal character in CDATA')
+    if (not self.stack):
+        self.syntax_error('CDATA not in content')
+    self.handle_cdata(rawdata[(i + 9):res.start(0)])
+    return res.end(0)

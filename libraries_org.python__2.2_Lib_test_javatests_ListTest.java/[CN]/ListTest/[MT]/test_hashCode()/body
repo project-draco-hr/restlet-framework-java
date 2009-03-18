@@ -1,0 +1,11 @@
+{
+  List a=defaultList();
+  TestSupport.assertThat(a.hashCode() == defaultList().hashCode(),"Instances with same internal state have different hashcode");
+  TestSupport.assertThat(a.hashCode() != newInstance(null).hashCode(),"Instances with different internal state have the same hashcode");
+  if (isReadOnly() == false) {
+    List b=newInstance(null);
+    b.addAll(a);
+    b.remove(0);
+    TestSupport.assertThat(a.hashCode() != b.hashCode(),"Instances with different internal state have the same hashcode");
+  }
+}

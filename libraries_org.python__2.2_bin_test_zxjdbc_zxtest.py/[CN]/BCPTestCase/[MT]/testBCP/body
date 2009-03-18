@@ -1,0 +1,55 @@
+def testBCP(self):
+    'testing bcp parameters and functionality'
+    from com.ziclix.python.sql.util import BCP
+    import dbexts
+    try:
+        src = self.connect()
+        dst = self.connect()
+        c = self.cursor()
+        c.execute('create table zxtestingbcp (id int not null, name varchar(20), state varchar(2), primary key (id))')
+        self.db.commit()
+        c.execute('select count(*) from zxtesting')
+        one = c.fetchone()[0]
+        c.close()
+        b = BCP(src, dst)
+        if hasattr(self, 'datahandler'):
+            b.sourceDataHandler = self.datahandler
+            b.destinationDataHandler = self.datahandler
+        cnt = b.bcp('zxtesting', toTable='zxtestingbcp')
+        c = self.cursor()
+        c.execute('select count(*) from zxtestingbcp')
+        two = c.fetchone()[0]
+        c.execute('delete from zxtestingbcp')
+        self.db.commit()
+        c.close()
+        assert (one == two), ('expected [%d] rows in destination, got [%d] (sql)' % (one, two))
+        assert (one == cnt), ('expected [%d] rows in destination, got [%d] (bcp)' % (one, cnt))
+        self.assertRaises(zxJDBC.Error, b.bcp, 'zxtesting', toTable='zxtestingbcp', include=['id'], exclude=['id'])
+        params = [(4,)]
+        cnt = b.bcp('zxtesting', 'id > ?', params, toTable='zxtestingbcp')
+        c = self.cursor()
+        c.execute('select count(*) from zxtesting where id > ?', params)
+        one = c.fetchone()[0]
+        c.execute('select count(*) from zxtestingbcp')
+        two = c.fetchone()[0]
+        c.close()
+        assert (one == two), ('expected [%d] rows in destination, got [%d] (sql)' % (one, two))
+        assert (one == cnt), ('expected [%d] rows in destination, got [%d] (bcp)' % (one, cnt))
+    finally:
+        try:
+            c = self.cursor()
+            try:
+                c.execute('drop table zxtestingbcp')
+                self.db.commit()
+            except:
+                self.db.rollback()
+        finally:
+            c.close()
+        try:
+            src.close()
+        except:
+            src = None
+        try:
+            dst.close()
+        except:
+            dst = None

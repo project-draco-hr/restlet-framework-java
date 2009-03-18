@@ -1,0 +1,14 @@
+def encode(s, binary=True, maxlinelen=76, eol=NL):
+    'Encode a string with base64.\n\n    Each line will be wrapped at, at most, maxlinelen characters (defaults to\n    76 characters).\n\n    If binary is False, end-of-line characters will be converted to the\n    canonical email end-of-line sequence \\r\\n.  Otherwise they will be left\n    verbatim (this is the default).\n\n    Each line of encoded text will end with eol, which defaults to "\\n".  Set\n    this to "\r\n" if you will be using the result of this function directly\n    in an email.\n    '
+    if (not s):
+        return s
+    if (not binary):
+        s = fix_eols(s)
+    encvec = []
+    max_unencoded = _floordiv((maxlinelen * 3), 4)
+    for i in range(0, len(s), max_unencoded):
+        enc = b2a_base64(s[i:(i + max_unencoded)])
+        if (enc.endswith(NL) and (eol != NL)):
+            enc = (enc[:(-1)] + eol)
+        encvec.append(enc)
+    return EMPTYSTRING.join(encvec)

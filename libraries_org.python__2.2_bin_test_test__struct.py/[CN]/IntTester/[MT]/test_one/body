@@ -1,0 +1,60 @@
+def test_one(self, x, pack=struct.pack, unpack=struct.unpack, unhexlify=binascii.unhexlify):
+    if verbose:
+        print 'trying std', self.formatpair, 'on', x, '==', hex(x)
+    code = self.signed_code
+    if (self.signed_min <= x <= self.signed_max):
+        expected = long(x)
+        if (x < 0):
+            expected += (1L << self.bitsize)
+            assert (expected > 0)
+        expected = hex(expected)[2:(-1)]
+        if (len(expected) & 1):
+            expected = ('0' + expected)
+        expected = unhexlify(expected)
+        expected = (('\x00' * (self.bytesize - len(expected))) + expected)
+        format = ('>' + code)
+        got = pack(format, x)
+        verify((got == expected), ("'%s'-pack of %r gave %r, not %r" % (format, x, got, expected)))
+        retrieved = unpack(format, got)[0]
+        verify((x == retrieved), ("'%s'-unpack of %r gave %r, not %r" % (format, got, retrieved, x)))
+        any_err(unpack, format, ('\x01' + got))
+        format = ('<' + code)
+        expected = string_reverse(expected)
+        got = pack(format, x)
+        verify((got == expected), ("'%s'-pack of %r gave %r, not %r" % (format, x, got, expected)))
+        retrieved = unpack(format, got)[0]
+        verify((x == retrieved), ("'%s'-unpack of %r gave %r, not %r" % (format, got, retrieved, x)))
+        any_err(unpack, format, ('\x01' + got))
+    elif (code in self.BUGGY_RANGE_CHECK):
+        if verbose:
+            print 'Skipping buggy range check for code', code
+    else:
+        any_err(pack, ('>' + code), x)
+        any_err(pack, ('<' + code), x)
+    code = self.unsigned_code
+    if (self.unsigned_min <= x <= self.unsigned_max):
+        format = ('>' + code)
+        expected = long(x)
+        expected = hex(expected)[2:(-1)]
+        if (len(expected) & 1):
+            expected = ('0' + expected)
+        expected = unhexlify(expected)
+        expected = (('\x00' * (self.bytesize - len(expected))) + expected)
+        got = pack(format, x)
+        verify((got == expected), ("'%s'-pack of %r gave %r, not %r" % (format, x, got, expected)))
+        retrieved = unpack(format, got)[0]
+        verify((x == retrieved), ("'%s'-unpack of %r gave %r, not %r" % (format, got, retrieved, x)))
+        any_err(unpack, format, ('\x01' + got))
+        format = ('<' + code)
+        expected = string_reverse(expected)
+        got = pack(format, x)
+        verify((got == expected), ("'%s'-pack of %r gave %r, not %r" % (format, x, got, expected)))
+        retrieved = unpack(format, got)[0]
+        verify((x == retrieved), ("'%s'-unpack of %r gave %r, not %r" % (format, got, retrieved, x)))
+        any_err(unpack, format, ('\x01' + got))
+    elif (code in self.BUGGY_RANGE_CHECK):
+        if verbose:
+            print 'Skipping buggy range check for code', code
+    else:
+        any_err(pack, ('>' + code), x)
+        any_err(pack, ('<' + code), x)

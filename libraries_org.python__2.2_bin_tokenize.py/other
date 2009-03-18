@@ -1,0 +1,52 @@
+'Tokenization help for Python programs.\n\ngenerate_tokens(readline) is a generator that breaks a stream of\ntext into Python tokens.  It accepts a readline-like method which is called\nrepeatedly to get the next line of input (or "" for EOF).  It generates\n5-tuples with these members:\n\n    the token type (see token.py)\n    the token (a string)\n    the starting (row, column) indices of the token (a 2-tuple of ints)\n    the ending (row, column) indices of the token (a 2-tuple of ints)\n    the original line (string)\n\nIt is designed to match the working of the Python tokenizer exactly, except\nthat it produces COMMENT tokens for comments and gives type OP for all\noperators\n\nOlder entry points\n    tokenize_loop(readline, tokeneater)\n    tokenize(readline, tokeneater=printtoken)\nare the same, except instead of generating tokens, tokeneater is a callback\nfunction to which the 5 fields described above are passed as 5 arguments,\neach time a new token is found.'
+from __future__ import generators
+__author__ = 'Ka-Ping Yee <ping@lfw.org>'
+__credits__ = 'GvR, ESR, Tim Peters, Thomas Wouters, Fred Drake, Skip Montanaro'
+import string, re
+from token import *
+import token
+__all__ = ([x for x in dir(token) if (x[0] != '_')] + ['COMMENT', 'tokenize', 'generate_tokens', 'NL'])
+del token
+COMMENT = N_TOKENS
+tok_name[COMMENT] = 'COMMENT'
+NL = (N_TOKENS + 1)
+tok_name[NL] = 'NL'
+N_TOKENS += 2
+Whitespace = '[ \\f\\t]*'
+Comment = '#[^\\r\\n]*'
+Ignore = ((Whitespace + any(('\\\\\\r?\\n' + Whitespace))) + maybe(Comment))
+Name = '[a-zA-Z_]\\w*'
+Hexnumber = '0[xX][\\da-fA-F]*[lL]?'
+Octnumber = '0[0-7]*[lL]?'
+Decnumber = '[1-9]\\d*[lL]?'
+Intnumber = group(Hexnumber, Octnumber, Decnumber)
+Exponent = '[eE][-+]?\\d+'
+Pointfloat = (group('\\d+\\.\\d*', '\\.\\d+') + maybe(Exponent))
+Expfloat = ('\\d+' + Exponent)
+Floatnumber = group(Pointfloat, Expfloat)
+Imagnumber = group('\\d+[jJ]', (Floatnumber + '[jJ]'))
+Number = group(Imagnumber, Floatnumber, Intnumber)
+Single = "[^'\\\\]*(?:\\\\.[^'\\\\]*)*'"
+Double = '[^"\\\\]*(?:\\\\.[^"\\\\]*)*"'
+Single3 = "[^'\\\\]*(?:(?:\\\\.|'(?!''))[^'\\\\]*)*'''"
+Double3 = '[^"\\\\]*(?:(?:\\\\.|"(?!""))[^"\\\\]*)*"""'
+Triple = group("[uU]?[rR]?'''", '[uU]?[rR]?"""')
+String = group("[uU]?[rR]?'[^\\n'\\\\]*(?:\\\\.[^\\n'\\\\]*)*'", '[uU]?[rR]?"[^\\n"\\\\]*(?:\\\\.[^\\n"\\\\]*)*"')
+Operator = group('\\*\\*=?', '>>=?', '<<=?', '<>', '!=', '//=?', '[+\\-*/%&|^=<>]=?', '~')
+Bracket = '[][(){}]'
+Special = group('\\r?\\n', '[:;.,`]')
+Funny = group(Operator, Bracket, Special)
+PlainToken = group(Number, Funny, String, Name)
+Token = (Ignore + PlainToken)
+ContStr = group(("[uU]?[rR]?'[^\\n'\\\\]*(?:\\\\.[^\\n'\\\\]*)*" + group("'", '\\\\\\r?\\n')), ('[uU]?[rR]?"[^\\n"\\\\]*(?:\\\\.[^\\n"\\\\]*)*' + group('"', '\\\\\\r?\\n')))
+PseudoExtras = group('\\\\\\r?\\n', Comment, Triple)
+PseudoToken = (Whitespace + group(PseudoExtras, Number, Funny, ContStr, Name))
+(tokenprog, pseudoprog, single3prog, double3prog) = map(re.compile, (Token, PseudoToken, Single3, Double3))
+endprogs = {"'": re.compile(Single), '"': re.compile(Double), "'''": single3prog, '"""': double3prog, "r'''": single3prog, 'r"""': double3prog, "u'''": single3prog, 'u"""': double3prog, "ur'''": single3prog, 'ur"""': double3prog, "R'''": single3prog, 'R"""': double3prog, "U'''": single3prog, 'U"""': double3prog, "uR'''": single3prog, 'uR"""': double3prog, "Ur'''": single3prog, 'Ur"""': double3prog, "UR'''": single3prog, 'UR"""': double3prog, 'r': None, 'R': None, 'u': None, 'U': None, }
+tabsize = 8
+if (__name__ == '__main__'):
+    import sys
+    if (len(sys.argv) > 1):
+        tokenize(open(sys.argv[1]).readline)
+    else:
+        tokenize(sys.stdin.readline)

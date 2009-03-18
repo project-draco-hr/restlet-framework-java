@@ -1,0 +1,9 @@
+def connect_ftp(self, user, passwd, host, port, dirs):
+    key = (user, passwd, host, port)
+    if self.cache.has_key(key):
+        self.timeout[key] = (time.time() + self.delay)
+    else:
+        self.cache[key] = ftpwrapper(user, passwd, host, port, dirs)
+        self.timeout[key] = (time.time() + self.delay)
+    self.check_cache()
+    return self.cache[key]

@@ -1,0 +1,13 @@
+def setAttribute(self, attname, value):
+    attr = self.getAttributeNode(attname)
+    if (attr is None):
+        attr = Attr(attname)
+        d = attr.__dict__
+        d['value'] = d['nodeValue'] = value
+        d['ownerDocument'] = self.ownerDocument
+        self.setAttributeNode(attr)
+    elif (value != attr.value):
+        d = attr.__dict__
+        d['value'] = d['nodeValue'] = value
+        if attr.isId:
+            _clear_id_cache(self)

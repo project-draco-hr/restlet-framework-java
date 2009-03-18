@@ -1,0 +1,12 @@
+def __exitfunc(self):
+    self._Thread__stop()
+    t = _pickSomeNonDaemonThread()
+    if t:
+        if __debug__:
+            self._note('%s: waiting for other threads', self)
+    while t:
+        t.join()
+        t = _pickSomeNonDaemonThread()
+    if __debug__:
+        self._note('%s: exiting', self)
+    self._Thread__delete()

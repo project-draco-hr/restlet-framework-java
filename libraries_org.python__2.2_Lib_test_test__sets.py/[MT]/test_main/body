@@ -1,0 +1,14 @@
+def test_main(verbose=False):
+    test_suite = unittest.TestSuite()
+    test_loader = unittest.TestLoader()
+
+    def suite_add(case):
+        test_suite.addTest(test_loader.loadTestsFromTestCase(case))
+    for t in [TestSetOfSets, TestExceptionPropagation, TestBasicOpsEmpty, TestBasicOpsSingleton, TestBasicOpsTuple, TestBasicOpsTriple, TestBinaryOps, TestUpdateOps, TestMutate, TestSubsetEqualEmpty, TestSubsetEqualNonEmpty, TestSubsetEmptyNonEmpty, TestSubsetPartial, TestSubsetNonOverlap, TestOnlySetsNumeric, TestOnlySetsDict, TestOnlySetsOperator, TestOnlySetsTuple, TestOnlySetsString, TestOnlySetsGenerator, TestCopyingEmpty, TestCopyingSingleton, TestCopyingTriple, TestCopyingTuple, TestCopyingNested, TestIdentities]:
+        suite_add(t)
+    _verbose = test_support.verbose
+    try:
+        test_support.verbose = False
+        test_support.run_suite(test_suite)
+    finally:
+        test_support.verbose = _verbose

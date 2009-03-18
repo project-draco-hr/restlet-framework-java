@@ -1,0 +1,30 @@
+def console(rows, headers=()):
+    'Format the results into a list\tof strings (one for each row):\n\n\t<header>\n\t<headersep>\n\t<row1>\n\t<row2>\n\t...\n\n\theaders may be given as list of strings.\n\n\tColumns are separated by colsep; the header is separated from\n\tthe result set by a line of headersep characters.\n\n\tThe function calls stringify to format the value data into a string.\n\tIt defaults to calling str() and striping leading and trailing whitespace.\n\n\t- copied and modified from mxODBC\n\t'
+    output = []
+    headers = map((lambda header: header.upper()), list(map((lambda x: (x or '')), headers)))
+    collen = map(len, headers)
+    output.append(headers)
+    if (rows and (len(rows) > 0)):
+        for row in rows:
+            row = map((lambda x: str(x)), row)
+            for i in range(len(row)):
+                entry = row[i]
+                if (collen[i] < len(entry)):
+                    collen[i] = len(entry)
+            output.append(row)
+    if (len(output) == 1):
+        affected = '0 rows affected'
+    elif (len(output) == 2):
+        affected = '1 row affected'
+    else:
+        affected = ('%d rows affected' % (len(output) - 1))
+    for i in range(len(output)):
+        row = output[i]
+        l = []
+        for j in range(len(row)):
+            l.append(('%-*s' % (collen[j], row[j])))
+        output[i] = ' | '.join(l)
+    totallen = len(output[0])
+    output[1:1] = [('-' * (totallen / len('-')))]
+    output.append(('\n' + affected))
+    return output

@@ -1,0 +1,13 @@
+def trace_dispatch(self, frame, event, arg):
+    if self.quitting:
+        return
+    if (event == 'line'):
+        return self.dispatch_line(frame)
+    if (event == 'call'):
+        return self.dispatch_call(frame, arg)
+    if (event == 'return'):
+        return self.dispatch_return(frame, arg)
+    if (event == 'exception'):
+        return self.dispatch_exception(frame, arg)
+    print 'bdb.Bdb.dispatch: unknown debugging event:', `event`
+    return self.trace_dispatch

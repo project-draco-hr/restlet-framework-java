@@ -1,0 +1,16 @@
+"Simple API for XML (SAX) implementation for Python.\n\nThis module provides an implementation of the SAX 2 interface;\ninformation about the Java version of the interface can be found at\nhttp://www.megginson.com/SAX/.  The Python version of the interface is\ndocumented at <...>.\n\nThis package contains the following modules:\n\nhandler -- Base classes and constants which define the SAX 2 API for\n           the 'client-side' of SAX for Python.\n\nsaxutils -- Implementation of the convenience classes commonly used to\n            work with SAX.\n\nxmlreader -- Base classes and constants which define the SAX 2 API for\n             the parsers used with SAX for Python.\n\ndrivers2 -- Contains the driver for that wraps a Java sax implementation in python\n            objects.\n"
+from xmlreader import InputSource
+from handler import ContentHandler, ErrorHandler
+from _exceptions import SAXException, SAXNotRecognizedException, SAXParseException, SAXNotSupportedException, SAXReaderNotAvailable
+default_parser_list = ['xml.sax.drivers2.drv_javasax']
+_false = 0
+if _false:
+    import xml.sax.drivers2.drv_javasax
+import os, sys
+if os.environ.has_key('PY_SAX_PARSER'):
+    default_parser_list = os.environ['PY_SAX_PARSER'].split(',')
+del os
+_key = 'python.xml.sax.parser'
+if ((sys.platform[:4] == 'java') and sys.registry.containsKey(_key)):
+    default_parser_list = sys.registry.getProperty(_key).split(',')
+del sys

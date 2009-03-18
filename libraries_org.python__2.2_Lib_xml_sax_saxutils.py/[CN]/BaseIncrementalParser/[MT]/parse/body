@@ -1,0 +1,12 @@
+def parse(self, source):
+    source = prepare_input_source(source)
+    self.prepareParser(source)
+    self._cont_handler.startDocument()
+    inf = source.getByteStream()
+    buffer = inf.read(16384)
+    while (buffer != ''):
+        self.feed(buffer)
+        buffer = inf.read(16384)
+    self.close()
+    self.reset()
+    self._cont_handler.endDocument()

@@ -1,0 +1,8 @@
+"\nThis script provides platform independence by wrapping Python\nDatabase API 2.0 compatible drivers to allow seamless database\nusage across implementations.\n\nIn order to use the C version, you need mxODBC and mxDateTime.\nIn order to use the Java version, you need zxJDBC.\n\n>>> import dbexts\n>>> d = dbexts.dbexts() # use the default db\n>>> d.isql('select count(*) count from player')\n\ncount\n-------\n13569.0\n\n1 row affected\n\n>>> r = d.raw('select count(*) count from player')\n>>> r\n([('count', 3, 17, None, 15, 0, 1)], [(13569.0,)])\n>>>\n\nThe configuration file follows the following format in a file name dbexts.ini:\n\n[default]\nname=mysql\n\n[jdbc]\nname=mysql\nurl=jdbc:mysql://localhost/ziclix\nuser=\npwd=\ndriver=org.gjt.mm.mysql.Driver\ndatahandler=com.ziclix.python.sql.handler.MySQLDataHandler\n\n[jdbc]\nname=pg\nurl=jdbc:postgresql://localhost:5432/ziclix\nuser=bzimmer\npwd=\ndriver=org.postgresql.Driver\ndatahandler=com.ziclix.python.sql.handler.PostgresqlDataHandler\n"
+import os, re
+from types import StringType
+__author__ = 'brian zimmer (bzimmer@ziclix.com)'
+__version__ = '$Revision: 2347 $'[11:(-2)]
+__OS__ = os.name
+choose = (lambda bool, a, b: ((bool and [a]) or [b])[0])
+comments = (lambda x: re.compile('{.*?}', re.S).sub('', x, 0))

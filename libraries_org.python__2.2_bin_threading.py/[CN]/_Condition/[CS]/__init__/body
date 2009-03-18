@@ -1,0 +1,20 @@
+def __init__(self, lock=None, verbose=None):
+    _Verbose.__init__(self, verbose)
+    if (lock is None):
+        lock = RLock()
+    self.__lock = lock
+    self.acquire = lock.acquire
+    self.release = lock.release
+    try:
+        self._release_save = lock._release_save
+    except AttributeError:
+        pass
+    try:
+        self._acquire_restore = lock._acquire_restore
+    except AttributeError:
+        pass
+    try:
+        self._is_owned = lock._is_owned
+    except AttributeError:
+        pass
+    self.__waiters = []

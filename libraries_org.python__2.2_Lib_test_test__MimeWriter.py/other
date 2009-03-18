@@ -1,0 +1,9 @@
+"Test program for MimeWriter module.\n\nThe test program was too big to comfortably fit in the MimeWriter\nclass, so it's here in its own file.\n\nThis should generate Barry's example, modulo some quotes and newlines.\n\n"
+from MimeWriter import MimeWriter
+SELLER = 'INTERFACE Seller-1;\n\nTYPE Seller = OBJECT\n    DOCUMENTATION "A simple Seller interface to test ILU"\n    METHODS\n            price():INTEGER,\n    END;\n'
+BUYER = 'class Buyer:\n    def __setup__(self, maxprice):\n        self._maxprice = maxprice\n\n    def __main__(self, kos):\n        """Entry point upon arrival at a new KOS."""\n        broker = kos.broker()\n        # B4 == Barry\'s Big Bass Business :-)\n        seller = broker.lookup(\'Seller_1.Seller\', \'B4\')\n        if seller:\n            price = seller.price()\n            print \'Seller wants $\', price, \'... \'\n            if price > self._maxprice:\n                print \'too much!\'\n            else:\n                print "I\'ll take it!"\n        else:\n            print \'no seller found here\'\n'
+STATE = '# instantiate a buyer instance and put it in a magic place for the KOS\n# to find.\n__kp__ = Buyer()\n__kp__.__setup__(500)\n'
+SIMPLE_METADATA = [('Interpreter', 'python'), ('Interpreter-Version', '1.3'), ('Owner-Name', 'Barry Warsaw'), ('Owner-Rendezvous', 'bwarsaw@cnri.reston.va.us'), ('Home-KSS', 'kss.cnri.reston.va.us'), ('Identifier', 'hdl://cnri.kss/my_first_knowbot'), ('Launch-Date', 'Mon Feb 12 16:39:03 EST 1996')]
+COMPLEX_METADATA = [('Metadata-Type', 'complex'), ('Metadata-Key', 'connection'), ('Access', 'read-only'), ('Connection-Description', "Barry's Big Bass Business"), ('Connection-Id', 'B4'), ('Connection-Direction', 'client')]
+EXTERNAL_METADATA = [('Metadata-Type', 'complex'), ('Metadata-Key', 'generic-interface'), ('Access', 'read-only'), ('Connection-Description', 'Generic Interface for All Knowbots'), ('Connection-Id', 'generic-kp'), ('Connection-Direction', 'client')]
+main()

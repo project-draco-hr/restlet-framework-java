@@ -1,0 +1,47 @@
+def _wrap_strftime(object, format, timetuple):
+    year = timetuple[0]
+    if (year < 1900):
+        raise ValueError(('year=%d is before 1900; the datetime strftime() methods require year >= 1900' % year))
+    zreplace = None
+    Zreplace = None
+    newformat = []
+    push = newformat.append
+    (i, n) = (0, len(format))
+    while (i < n):
+        ch = format[i]
+        i += 1
+        if (ch == '%'):
+            if (i < n):
+                ch = format[i]
+                i += 1
+                if (ch == 'z'):
+                    if (zreplace is None):
+                        zreplace = ''
+                        if hasattr(object, '_utcoffset'):
+                            offset = object._utcoffset()
+                            if (offset is not None):
+                                sign = '+'
+                                if (offset < 0):
+                                    offset = (- offset)
+                                    sign = '-'
+                                (h, m) = divmod(offset, 60)
+                                zreplace = ('%c%02d%02d' % (sign, h, m))
+                    assert ('%' not in zreplace)
+                    newformat.append(zreplace)
+                elif (ch == 'Z'):
+                    if (Zreplace is None):
+                        Zreplace = ''
+                        if hasattr(object, 'tzname'):
+                            s = object.tzname()
+                            if (s is not None):
+                                Zreplace = s.replace('%', '%%')
+                    newformat.append(Zreplace)
+                else:
+                    push('%')
+                    push(ch)
+            else:
+                push('%')
+        else:
+            push(ch)
+    newformat = ''.join(newformat)
+    return _time.strftime(newformat, timetuple)

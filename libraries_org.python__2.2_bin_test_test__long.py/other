@@ -1,0 +1,25 @@
+from test.test_support import verify, verbose, TestFailed, fcmp
+from string import join
+from random import random, randint
+SHIFT = 15
+BASE = (2 ** SHIFT)
+MASK = (BASE - 1)
+KARATSUBA_CUTOFF = 35
+MAXDIGITS = 15
+special = map(long, [0, 1, 2, BASE, (BASE >> 1)])
+special.append(6148914691236517205L)
+special.append(12297829382473034410L)
+p2 = 4L
+for i in range((2 * SHIFT)):
+    special.append((p2 - 1))
+    p2 = (p2 << 1)
+del p2
+special = ((special + map((lambda x: (~ x)), special)) + map((lambda x: (- x)), special))
+test_division()
+test_karatsuba()
+test_bitop_identities()
+test_format()
+test_misc()
+test_auto_overflow()
+test_float_overflow()
+test_logs()

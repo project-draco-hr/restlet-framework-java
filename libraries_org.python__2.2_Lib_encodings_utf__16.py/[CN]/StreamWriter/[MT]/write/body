@@ -1,0 +1,9 @@
+def write(self, data):
+    result = codecs.StreamWriter.write(self, data)
+    if (not self.bom_written):
+        self.bom_written = 1
+        if (sys.byteorder == 'little'):
+            self.encode = codecs.utf_16_le_encode
+        else:
+            self.encode = codecs.utf_16_be_encode
+    return result

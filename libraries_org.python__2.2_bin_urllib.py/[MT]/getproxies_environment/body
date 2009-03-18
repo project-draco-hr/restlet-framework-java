@@ -1,0 +1,8 @@
+def getproxies_environment():
+    'Return a dictionary of scheme -> proxy server URL mappings.\n\n    Scan the environment for variables named <scheme>_proxy;\n    this seems to be the standard convention.  If you need a\n    different way, you can pass a proxies dictionary to the\n    [Fancy]URLopener constructor.\n\n    '
+    proxies = {}
+    for (name, value) in os.environ.items():
+        name = name.lower()
+        if (value and (name[(-6):] == '_proxy')):
+            proxies[name[:(-6)]] = value
+    return proxies

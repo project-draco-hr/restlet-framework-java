@@ -1,0 +1,27 @@
+def _compile_charset(charset, flags, code, fixup=None):
+    emit = code.append
+    if (not fixup):
+        fixup = (lambda x: x)
+    for (op, av) in _optimize_charset(charset, fixup):
+        emit(OPCODES[op])
+        if (op is NEGATE):
+            pass
+        elif (op is LITERAL):
+            emit(fixup(av))
+        elif (op is RANGE):
+            emit(fixup(av[0]))
+            emit(fixup(av[1]))
+        elif (op is CHARSET):
+            code.extend(av)
+        elif (op is BIGCHARSET):
+            code.extend(av)
+        elif (op is CATEGORY):
+            if (flags & SRE_FLAG_LOCALE):
+                emit(CHCODES[CH_LOCALE[av]])
+            elif (flags & SRE_FLAG_UNICODE):
+                emit(CHCODES[CH_UNICODE[av]])
+            else:
+                emit(CHCODES[av])
+        else:
+            raise error, 'internal: unsupported set operator'
+    emit(OPCODES[FAILURE])

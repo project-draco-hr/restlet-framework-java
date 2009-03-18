@@ -1,0 +1,18 @@
+def _dispatch(self, method, params):
+    "Dispatches the XML-RPC method.\n\n        XML-RPC calls are forwarded to a registered function that\n        matches the called XML-RPC method name. If no such function\n        exists then the call is forwarded to the registered instance,\n        if available.\n\n        If the registered instance has a _dispatch method then that\n        method will be called with the name of the XML-RPC method and\n        it's parameters as a tuple\n        e.g. instance._dispatch('add',(2,3))\n\n        If the registered instance does not have a _dispatch method\n        then the instance will be searched to find a matching method\n        and, if found, will be called.\n\n        Methods beginning with an '_' are considered private and will\n        not be called by SimpleXMLRPCServer.\n        "
+    func = None
+    try:
+        func = self.server.funcs[method]
+    except KeyError:
+        if (self.server.instance is not None):
+            if hasattr(self.server.instance, '_dispatch'):
+                return self.server.instance._dispatch(method, params)
+            else:
+                try:
+                    func = _resolve_dotted_attribute(self.server.instance, method, self.allow_dotted_names)
+                except AttributeError:
+                    pass
+    if (func is not None):
+        return apply(func, params)
+    else:
+        raise Exception(('method "%s" is not supported' % method))

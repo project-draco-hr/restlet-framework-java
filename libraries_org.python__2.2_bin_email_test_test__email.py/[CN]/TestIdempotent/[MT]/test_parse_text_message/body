@@ -1,0 +1,11 @@
+def test_parse_text_message(self):
+    eq = self.assertEquals
+    (msg, text) = self._msgobj('msg_01.txt')
+    eq(msg.get_type(), 'text/plain')
+    eq(msg.get_main_type(), 'text')
+    eq(msg.get_subtype(), 'plain')
+    eq(msg.get_params()[1], ('charset', 'us-ascii'))
+    eq(msg.get_param('charset'), 'us-ascii')
+    eq(msg.preamble, None)
+    eq(msg.epilogue, None)
+    self._idempotent(msg, text)

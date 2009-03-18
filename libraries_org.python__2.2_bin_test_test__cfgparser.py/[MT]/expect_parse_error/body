@@ -1,0 +1,9 @@
+def expect_parse_error(exctype, src):
+    cf = ConfigParser.ConfigParser()
+    sio = StringIO.StringIO(src)
+    try:
+        cf.readfp(sio)
+    except exctype as e:
+        pass
+    else:
+        raise TestFailed(('Failed to catch expected ' + exctype.__name__))

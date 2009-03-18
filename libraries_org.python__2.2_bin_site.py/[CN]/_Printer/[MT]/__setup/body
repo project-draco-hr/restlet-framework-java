@@ -1,0 +1,20 @@
+def __setup(self):
+    if self.__lines:
+        return
+    data = None
+    for dir in self.__dirs:
+        for file in self.__files:
+            file = os.path.join(dir, file)
+            try:
+                fp = open(file)
+                data = fp.read()
+                fp.close()
+                break
+            except IOError:
+                pass
+        if data:
+            break
+    if (not data):
+        data = self.__data
+    self.__lines = data.split('\n')
+    self.__linecnt = len(self.__lines)

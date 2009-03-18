@@ -1,0 +1,10 @@
+def test_encode_header(self):
+    eq = self.assertEqual
+    s = 'this is some text'
+    eq(Utils.encode(s), '=?iso-8859-1?q?this=20is=20some=20text?=')
+    s = 'Keld_J\xf8rn_Simonsen'
+    eq(Utils.encode(s), '=?iso-8859-1?q?Keld_J=F8rn_Simonsen?=')
+    s1 = 'If you can read this yo'
+    s2 = 'u understand the example.'
+    eq(Utils.encode(s1, encoding='b'), '=?iso-8859-1?b?SWYgeW91IGNhbiByZWFkIHRoaXMgeW8=?=')
+    eq(Utils.encode(s2, charset='iso-8859-2', encoding='b'), '=?iso-8859-2?b?dSB1bmRlcnN0YW5kIHRoZSBleGFtcGxlLg==?=')

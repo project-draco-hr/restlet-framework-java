@@ -1,0 +1,95 @@
+'IMAP4 client.\n\nBased on RFC 2060.\n\nPublic class:           IMAP4\nPublic variable:        Debug\nPublic functions:       Internaldate2tuple\n                        Int2AP\n                        ParseFlags\n                        Time2Internaldate\n'
+__version__ = '2.49'
+import binascii, re, socket, time, random, sys
+__all__ = ['IMAP4', 'Internaldate2tuple', 'Int2AP', 'ParseFlags', 'Time2Internaldate']
+CRLF = '\r\n'
+Debug = 0
+IMAP4_PORT = 143
+AllowedVersions = ('IMAP4REV1', 'IMAP4')
+Commands = {'APPEND': ('AUTH', 'SELECTED'), 'AUTHENTICATE': ('NONAUTH',), 'CAPABILITY': ('NONAUTH', 'AUTH', 'SELECTED', 'LOGOUT'), 'CHECK': ('SELECTED',), 'CLOSE': ('SELECTED',), 'COPY': ('SELECTED',), 'CREATE': ('AUTH', 'SELECTED'), 'DELETE': ('AUTH', 'SELECTED'), 'EXAMINE': ('AUTH', 'SELECTED'), 'EXPUNGE': ('SELECTED',), 'FETCH': ('SELECTED',), 'GETACL': ('AUTH', 'SELECTED'), 'LIST': ('AUTH', 'SELECTED'), 'LOGIN': ('NONAUTH',), 'LOGOUT': ('NONAUTH', 'AUTH', 'SELECTED', 'LOGOUT'), 'LSUB': ('AUTH', 'SELECTED'), 'NAMESPACE': ('AUTH', 'SELECTED'), 'NOOP': ('NONAUTH', 'AUTH', 'SELECTED', 'LOGOUT'), 'PARTIAL': ('SELECTED',), 'RENAME': ('AUTH', 'SELECTED'), 'SEARCH': ('SELECTED',), 'SELECT': ('AUTH', 'SELECTED'), 'SETACL': ('AUTH', 'SELECTED'), 'SORT': ('SELECTED',), 'STATUS': ('AUTH', 'SELECTED'), 'STORE': ('SELECTED',), 'SUBSCRIBE': ('AUTH', 'SELECTED'), 'UID': ('SELECTED',), 'UNSUBSCRIBE': ('AUTH', 'SELECTED'), }
+Continuation = re.compile('\\+( (?P<data>.*))?')
+Flags = re.compile('.*FLAGS \\((?P<flags>[^\\)]*)\\)')
+InternalDate = re.compile('.*INTERNALDATE "(?P<day>[ 123][0-9])-(?P<mon>[A-Z][a-z][a-z])-(?P<year>[0-9][0-9][0-9][0-9]) (?P<hour>[0-9][0-9]):(?P<min>[0-9][0-9]):(?P<sec>[0-9][0-9]) (?P<zonen>[-+])(?P<zoneh>[0-9][0-9])(?P<zonem>[0-9][0-9])"')
+Literal = re.compile('.*{(?P<size>\\d+)}$')
+Response_code = re.compile('\\[(?P<type>[A-Z-]+)( (?P<data>[^\\]]*))?\\]')
+Untagged_response = re.compile('\\* (?P<type>[A-Z-]+)( (?P<data>.*))?')
+Untagged_status = re.compile('\\* (?P<data>\\d+) (?P<type>[A-Z-]+)( (?P<data2>.*))?')
+Mon2num = {'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6, 'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12, }
+if __debug__:
+
+    def _mesg(s, secs=None):
+        if (secs is None):
+            secs = time.time()
+        tm = time.strftime('%M:%S', time.localtime(secs))
+        sys.stderr.write(('  %s.%02d %s\n' % (tm, ((secs * 100) % 100), s)))
+        sys.stderr.flush()
+
+    def _dump_ur(dict):
+        l = dict.items()
+        if (not l):
+            return
+        t = '\n\t\t'
+        l = map((lambda x: ('%s: "%s"' % (x[0], ((x[1][0] and '" "'.join(x[1])) or '')))), l)
+        _mesg(('untagged responses dump:%s%s' % (t, t.join(l))))
+    _cmd_log = []
+    _cmd_log_len = 10
+
+    def _log(line):
+        if (len(_cmd_log) == _cmd_log_len):
+            del _cmd_log[0]
+        _cmd_log.append((time.time(), line))
+
+    def print_log():
+        _mesg(('last %d IMAP4 interactions:' % len(_cmd_log)))
+        for (secs, line) in _cmd_log:
+            _mesg(line, secs)
+if (__name__ == '__main__'):
+    import getopt, getpass
+    try:
+        (optlist, args) = getopt.getopt(sys.argv[1:], 'd:')
+    except getopt.error as val:
+        pass
+    for (opt, val) in optlist:
+        if (opt == '-d'):
+            Debug = int(val)
+    if (not args):
+        args = ('',)
+    host = args[0]
+    USER = getpass.getuser()
+    PASSWD = getpass.getpass(('IMAP password for %s on %s: ' % (USER, (host or 'localhost'))))
+    test_mesg = ('From: %(user)s@localhost%(lf)sSubject: IMAP4 test%(lf)s%(lf)sdata...%(lf)s' % {'user': USER, 'lf': CRLF, })
+    test_seq1 = (('login', (USER, PASSWD)), ('create', ('/tmp/xxx 1',)), ('rename', ('/tmp/xxx 1', '/tmp/yyy')), ('CREATE', ('/tmp/yyz 2',)), ('append', ('/tmp/yyz 2', None, None, test_mesg)), ('list', ('/tmp', 'yy*')), ('select', ('/tmp/yyz 2',)), ('search', (None, 'SUBJECT', 'test')), ('partial', ('1', 'RFC822', 1, 1024)), ('store', ('1', 'FLAGS', '(\\Deleted)')), ('namespace', ()), ('expunge', ()), ('recent', ()), ('close', ()))
+    test_seq2 = (('select', ()), ('response', ('UIDVALIDITY',)), ('uid', ('SEARCH', 'ALL')), ('response', ('EXISTS',)), ('append', (None, None, None, test_mesg)), ('recent', ()), ('logout', ()))
+
+    def run(cmd, args):
+        _mesg(('%s %s' % (cmd, args)))
+        (typ, dat) = apply(getattr(M, cmd), args)
+        _mesg(('%s => %s %s' % (cmd, typ, dat)))
+        return dat
+    try:
+        M = IMAP4(host)
+        _mesg(('PROTOCOL_VERSION = %s' % M.PROTOCOL_VERSION))
+        _mesg(('CAPABILITIES = %s' % `M.capabilities`))
+        for (cmd, args) in test_seq1:
+            run(cmd, args)
+        for ml in run('list', ('/tmp/', 'yy%')):
+            mo = re.match('.*"([^"]+)"$', ml)
+            if mo:
+                path = mo.group(1)
+            else:
+                path = ml.split()[(-1)]
+            run('delete', (path,))
+        for (cmd, args) in test_seq2:
+            dat = run(cmd, args)
+            if ((cmd, args) != ('uid', ('SEARCH', 'ALL'))):
+                continue
+            uid = dat[(-1)].split()
+            if (not uid):
+                continue
+            run('uid', ('FETCH', ('%s' % uid[(-1)]), '(FLAGS INTERNALDATE RFC822.SIZE RFC822.HEADER RFC822.TEXT)'))
+        print '\nAll tests OK.'
+    except:
+        print '\nTests failed.'
+        if (not Debug):
+            print ('\nIf you would like to see debugging output,\ntry: %s -d5\n' % sys.argv[0])
+        raise

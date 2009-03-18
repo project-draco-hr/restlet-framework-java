@@ -1,0 +1,13 @@
+def encode(self, splitchars=';, '):
+    "Encode a message header into an RFC-compliant format.\n\n        There are many issues involved in converting a given string for use in\n        an email header.  Only certain character sets are readable in most\n        email clients, and as header strings can only contain a subset of\n        7-bit ASCII, care must be taken to properly convert and encode (with\n        Base64 or quoted-printable) header strings.  In addition, there is a\n        75-character length limit on any given encoded header field, so\n        line-wrapping must be performed, even with double-byte character sets.\n\n        This method will do its best to convert the string to the correct\n        character set used in email, and encode and line wrap it safely with\n        the appropriate scheme for that character set.\n\n        If the given charset is not known or an error occurs during\n        conversion, this function will return the header untouched.\n\n        Optional splitchars is a string containing characters to split long\n        ASCII lines on, in rough support of RFC 2822's `highest level\n        syntactic breaks'.  This doesn't affect RFC 2047 encoded lines.\n        "
+    newchunks = []
+    maxlinelen = self._firstlinelen
+    lastlen = 0
+    for (s, charset) in self._chunks:
+        targetlen = ((maxlinelen - lastlen) - 1)
+        if (targetlen < charset.encoded_header_len('')):
+            targetlen = maxlinelen
+        newchunks += self._split(s, charset, targetlen, splitchars)
+        (lastchunk, lastcharset) = newchunks[(-1)]
+        lastlen = lastcharset.encoded_header_len(lastchunk)
+    return self._encode_chunks(newchunks, maxlinelen)

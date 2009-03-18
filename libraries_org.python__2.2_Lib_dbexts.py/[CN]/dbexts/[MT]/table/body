@@ -1,0 +1,9 @@
+def table(self, table=None, types=('TABLE',), owner=None, schema=None):
+    'If no table argument, displays a list of all tables.  If a table argument,\n\t\tdisplays the columns of the given table.'
+    cur = self.begin()
+    if table:
+        cur.columns(schema, owner, table, None)
+    else:
+        cur.tables(schema, owner, None, types)
+    self.commit(cur)
+    self.display()

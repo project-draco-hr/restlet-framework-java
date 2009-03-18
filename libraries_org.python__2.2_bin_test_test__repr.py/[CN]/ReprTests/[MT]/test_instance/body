@@ -1,0 +1,13 @@
+def test_instance(self):
+    eq = self.assertEquals
+    i1 = ClassWithRepr('a')
+    eq(r(i1), repr(i1))
+    i2 = ClassWithRepr(('x' * 1000))
+    expected = ((`i2`[:13] + '...') + `i2`[(-14):])
+    eq(r(i2), expected)
+    i3 = ClassWithFailingRepr()
+    eq(r(i3), ('<ClassWithFailingRepr instance at %x>' % id(i3)))
+    s = r(ClassWithFailingRepr)
+    self.failUnless(s.startswith('<class '))
+    self.failUnless(s.endswith('>'))
+    self.failUnless((s.find('...') == 8))

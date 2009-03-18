@@ -1,0 +1,19 @@
+def setUp(self):
+    deltree(_mhroot)
+    mkdirs(_mhpath)
+    writeProfile({'Path': os.path.abspath(_mhpath), 'Editor': 'emacs', 'ignored-attribute': 'camping holiday', })
+    writeMessage('inbox', 1, {'From': 'Mrs. Premise', 'To': 'Mrs. Conclusion', 'Date': '18 July 2001', }, 'Hullo, Mrs. Conclusion!\n')
+    writeMessage('inbox', 2, {'From': 'Mrs. Conclusion', 'To': 'Mrs. Premise', 'Date': '29 July 2001', }, 'Hullo, Mrs. Premise!\n')
+    for i in (range(5, 101) + range(101, 201, 2)):
+        writeMessage('wide', i, {'From': 'nowhere', 'Subject': ('message #%s' % i), }, ('This is message number %s\n' % i))
+
+    def deep(folder, n):
+        writeMessage(folder, n, {'Subject': ('Message %s/%s' % (folder, n)), }, ('This is message number %s in %s\n' % (n, folder)))
+    deep('deep/f1', 1)
+    deep('deep/f1', 2)
+    deep('deep/f1', 3)
+    deep('deep/f2', 4)
+    deep('deep/f2', 6)
+    deep('deep', 3)
+    deep('deep/f2/f3', 1)
+    deep('deep/f2/f3', 2)

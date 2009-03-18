@@ -1,0 +1,15 @@
+def set_type(self, type, header='Content-Type', requote=True):
+    'Set the main type and subtype for the Content-Type header.\n\n        type must be a string in the form "maintype/subtype", otherwise a\n        ValueError is raised.\n\n        This method replaces the Content-Type header, keeping all the\n        parameters in place.  If requote is False, this leaves the existing\n        header\'s quoting as is.  Otherwise, the parameters will be quoted (the\n        default).\n\n        An alternative header can be specified in the header argument.  When\n        the Content-Type header is set, we\'ll always also add a MIME-Version\n        header.\n        '
+    if (not (type.count('/') == 1)):
+        raise ValueError
+    if (header.lower() == 'content-type'):
+        del self['mime-version']
+        self['MIME-Version'] = '1.0'
+    if (not self.has_key(header)):
+        self[header] = type
+        return
+    params = self.get_params(header, unquote=requote)
+    del self[header]
+    self[header] = type
+    for (p, v) in params[1:]:
+        self.set_param(p, v, header, requote)

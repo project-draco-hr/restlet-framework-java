@@ -1,0 +1,51 @@
+def compile_dir(dir, maxlevels=10, ddir=None, force=0, rx=None):
+    'Byte-compile all modules in the given directory tree.\n\n    Arguments (only dir is required):\n\n    dir:       the directory to byte-compile\n    maxlevels: maximum recursion level (default 10)\n    ddir:      if given, purported directory name (this is the\n               directory name that will show up in error messages)\n    force:     if 1, force compilation, even if timestamps are up-to-date\n\n    '
+    print 'Listing', dir, '...'
+    try:
+        names = os.listdir(dir)
+    except os.error:
+        print "Can't list", dir
+        names = []
+    names.sort()
+    success = 1
+    for name in names:
+        fullname = os.path.join(dir, name)
+        if ddir:
+            dfile = os.path.join(ddir, name)
+        else:
+            dfile = None
+        if rx:
+            mo = rx.search(fullname)
+            if mo:
+                continue
+        if os.path.isfile(fullname):
+            (head, tail) = (name[:(-3)], name[(-3):])
+            if (tail == '.py'):
+                cfile = (fullname + ((__debug__ and 'c') or 'o'))
+                ftime = os.stat(fullname)[stat.ST_MTIME]
+                try:
+                    ctime = os.stat(cfile)[stat.ST_MTIME]
+                except os.error:
+                    ctime = 0
+                if ((ctime > ftime) and (not force)):
+                    continue
+                print 'Compiling', fullname, '...'
+                try:
+                    ok = py_compile.compile(fullname, None, dfile)
+                except KeyboardInterrupt:
+                    raise KeyboardInterrupt
+                except:
+                    if (type(sys.exc_type) == type('')):
+                        exc_type_name = sys.exc_type
+                    else:
+                        exc_type_name = sys.exc_type.__name__
+                    print 'Sorry:', (exc_type_name + ':'),
+                    print sys.exc_value
+                    success = 0
+                else:
+                    if (ok == 0):
+                        success = 0
+        elif ((maxlevels > 0) and (name != os.curdir) and (name != os.pardir) and os.path.isdir(fullname) and (not os.path.islink(fullname))):
+            if (not compile_dir(fullname, (maxlevels - 1), dfile, force, rx)):
+                success = 0
+    return success

@@ -1,0 +1,8 @@
+def testInvalidTimeoutTypes(self):
+    for invalid_timeout in ['not a number']:
+        try:
+            (rfd, wfd, xfd) = select.select([], [], [], invalid_timeout)
+        except TypeError:
+            pass
+        else:
+            self.fail(("Invalid timeout value '%s' should have raised TypeError" % invalid_timeout))

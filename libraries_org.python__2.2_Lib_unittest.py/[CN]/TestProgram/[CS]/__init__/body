@@ -1,0 +1,16 @@
+def __init__(self, module='__main__', defaultTest=None, argv=None, testRunner=None, testLoader=defaultTestLoader):
+    if (type(module) == type('')):
+        self.module = __import__(module)
+        for part in string.split(module, '.')[1:]:
+            self.module = getattr(self.module, part)
+    else:
+        self.module = module
+    if (argv is None):
+        argv = sys.argv
+    self.verbosity = 1
+    self.defaultTest = defaultTest
+    self.testRunner = testRunner
+    self.testLoader = testLoader
+    self.progName = os.path.basename(argv[0])
+    self.parseArgs(argv)
+    self.runTests()

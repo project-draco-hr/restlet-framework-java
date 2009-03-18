@@ -1,0 +1,15 @@
+def _interpolate(self, section, option, rawval, vars):
+    value = rawval
+    depth = MAX_INTERPOLATION_DEPTH
+    while depth:
+        depth -= 1
+        if (value.find('%(') != (-1)):
+            try:
+                value = (value % vars)
+            except KeyError as key:
+                raise InterpolationError(key, option, section, rawval)
+        else:
+            break
+    if (value.find('%(') != (-1)):
+        raise InterpolationDepthError(option, section, rawval)
+    return value

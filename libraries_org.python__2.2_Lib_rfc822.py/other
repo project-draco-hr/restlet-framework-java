@@ -1,0 +1,46 @@
+"RFC 2822 message manipulation.\n\nNote: This is only a very rough sketch of a full RFC-822 parser; in particular\nthe tokenizing of addresses does not adhere to all the quoting rules.\n\nNote: RFC 2822 is a long awaited update to RFC 822.  This module should\nconform to RFC 2822, and is thus mis-named (it's not worth renaming it).  Some\neffort at RFC 2822 updates have been made, but a thorough audit has not been\nperformed.  Consider any RFC 2822 non-conformance to be a bug.\n\n    RFC 2822: http://www.faqs.org/rfcs/rfc2822.html\n    RFC 822 : http://www.faqs.org/rfcs/rfc822.html (obsolete)\n\nDirections for use:\n\nTo create a Message object: first open a file, e.g.:\n\n  fp = open(file, 'r')\n\nYou can use any other legal way of getting an open file object, e.g. use\nsys.stdin or call os.popen().  Then pass the open file object to the Message()\nconstructor:\n\n  m = Message(fp)\n\nThis class can work with any input object that supports a readline method.  If\nthe input object has seek and tell capability, the rewindbody method will\nwork; also illegal lines will be pushed back onto the input stream.  If the\ninput object lacks seek but has an `unread' method that can push back a line\nof input, Message will use that to push back illegal lines.  Thus this class\ncan be used to parse messages coming from a buffered stream.\n\nThe optional `seekable' argument is provided as a workaround for certain stdio\nlibraries in which tell() discards buffered data before discovering that the\nlseek() system call doesn't work.  For maximum portability, you should set the\nseekable argument to zero to prevent that initial \\code{tell} when passing in\nan unseekable object such as a a file object created from a socket object.  If\nit is 1 on entry -- which it is by default -- the tell() method of the open\nfile object is called once; if this raises an exception, seekable is reset to\n0.  For other nonzero values of seekable, this test is not made.\n\nTo get the text of a particular header there are several methods:\n\n  str = m.getheader(name)\n  str = m.getrawheader(name)\n\nwhere name is the name of the header, e.g. 'Subject'.  The difference is that\ngetheader() strips the leading and trailing whitespace, while getrawheader()\ndoesn't.  Both functions retain embedded whitespace (including newlines)\nexactly as they are specified in the header, and leave the case of the text\nunchanged.\n\nFor addresses and address lists there are functions\n\n  realname, mailaddress = m.getaddr(name)\n  list = m.getaddrlist(name)\n\nwhere the latter returns a list of (realname, mailaddr) tuples.\n\nThere is also a method\n\n  time = m.getdate(name)\n\nwhich parses a Date-like field and returns a time-compatible tuple,\ni.e. a tuple such as returned by time.localtime() or accepted by\ntime.mktime().\n\nSee the class definition for lower level access methods.\n\nThere are also some utility functions here.\n"
+import time
+__all__ = ['Message', 'AddressList', 'parsedate', 'parsedate_tz', 'mktime_tz']
+_blanklines = ('\r\n', '\n')
+_monthnames = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
+_daynames = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+_timezones = {'UT': 0, 'UTC': 0, 'GMT': 0, 'Z': 0, 'AST': (-400), 'ADT': (-300), 'EST': (-500), 'EDT': (-400), 'CST': (-600), 'CDT': (-500), 'MST': (-700), 'MDT': (-600), 'PST': (-800), 'PDT': (-700), }
+if (__name__ == '__main__'):
+    import sys, os
+    file = os.path.join(os.environ['HOME'], 'Mail/inbox/1')
+    if sys.argv[1:]:
+        file = sys.argv[1]
+    f = open(file, 'r')
+    m = Message(f)
+    print 'From:', m.getaddr('from')
+    print 'To:', m.getaddrlist('to')
+    print 'Subject:', m.getheader('subject')
+    print 'Date:', m.getheader('date')
+    date = m.getdate_tz('date')
+    tz = date[(-1)]
+    date = time.localtime(mktime_tz(date))
+    if date:
+        print 'ParsedDate:', time.asctime(date),
+        hhmmss = tz
+        (hhmm, ss) = divmod(hhmmss, 60)
+        (hh, mm) = divmod(hhmm, 60)
+        print ('%+03d%02d' % (hh, mm)),
+        if ss:
+            print ('.%02d' % ss),
+        print 
+    else:
+        print 'ParsedDate:', None
+    m.rewindbody()
+    n = 0
+    while f.readline():
+        n = (n + 1)
+    print 'Lines:', n
+    print ('-' * 70)
+    print 'len =', len(m)
+    if m.has_key('Date'):
+        print 'Date =', m['Date']
+    if m.has_key('X-Nonsense'):
+        pass
+    print 'keys =', m.keys()
+    print 'values =', m.values()
+    print 'items =', m.items()

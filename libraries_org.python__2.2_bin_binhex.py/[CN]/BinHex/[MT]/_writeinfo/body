@@ -1,0 +1,12 @@
+def _writeinfo(self, name, finfo):
+    name = name
+    nl = len(name)
+    if (nl > 63):
+        raise Error, 'Filename too long'
+    d = ((chr(nl) + name) + '\x00')
+    d2 = (finfo.Type + finfo.Creator)
+    d3 = struct.pack('>h', finfo.Flags)
+    d4 = struct.pack('>ii', self.dlen, self.rlen)
+    info = (((d + d2) + d3) + d4)
+    self._write(info)
+    self._writecrc()

@@ -1,0 +1,15 @@
+def test_no_worse_than_doubleValue(self):
+    e = self.e
+    v = self.v8
+    sdv = self.sdv
+    for d in range(8):
+        assert (float((v + d)) == sdv((v + d), e))
+        assert (e[0] == 0)
+    for d in range(8):
+        for y in [0, 255]:
+            assert (float((((v + d) * 256) + y)) == sdv((((v + d) * 256) + y), e))
+            assert (e[0] == 0)
+    for d in range(8):
+        for y in [0, 255]:
+            assert (float((((v + d) * 256) + y)) == sdv(((((v + d) * 256) + y) * 256), e))
+            assert (e[0] == 1)

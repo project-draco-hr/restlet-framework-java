@@ -1,0 +1,8 @@
+def add(self, widget, **kw):
+    constraints = awt.GridBagConstraints()
+    for (key, value) in (self.defaults.items() + kw.items()):
+        if isinstance(value, type('')):
+            value = getattr(awt.GridBagConstraints, value)
+        setattr(constraints, key, value)
+    self.gridbag.setConstraints(widget, constraints)
+    self.frame.add(widget)

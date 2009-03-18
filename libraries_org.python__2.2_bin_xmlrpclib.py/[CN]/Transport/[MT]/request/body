@@ -1,0 +1,13 @@
+def request(self, host, handler, request_body, verbose=0):
+    h = self.make_connection(host)
+    if verbose:
+        h.set_debuglevel(1)
+    self.send_request(h, handler, request_body)
+    self.send_host(h, host)
+    self.send_user_agent(h)
+    self.send_content(h, request_body)
+    (errcode, errmsg, headers) = h.getreply()
+    if (errcode != 200):
+        raise ProtocolError((host + handler), errcode, errmsg, headers)
+    self.verbose = verbose
+    return self.parse_response(h.getfile())

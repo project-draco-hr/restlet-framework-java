@@ -1,0 +1,13 @@
+def astimezone(self, tz):
+    if (not isinstance(tz, tzinfo)):
+        raise TypeError('tz argument must be an instance of tzinfo')
+    mytz = self.tzinfo
+    if (mytz is None):
+        raise ValueError('astimezone() requires an aware datetime')
+    if (tz is mytz):
+        return self
+    myoffset = self.utcoffset()
+    if (myoffset is None):
+        raise ValuError('astimezone() requires an aware datetime')
+    utc = (self - myoffset).replace(tzinfo=tz)
+    return tz.fromutc(utc)

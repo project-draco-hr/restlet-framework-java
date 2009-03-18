@@ -1,0 +1,24 @@
+def getlongresp(self, file=None):
+    'Internal: get a response plus following text from the server.\n        Raise various errors if the response indicates an error.'
+    openedFile = None
+    try:
+        if isinstance(file, types.StringType):
+            openedFile = file = open(file, 'w')
+        resp = self.getresp()
+        if (resp[:3] not in LONGRESP):
+            raise NNTPReplyError(resp)
+        list = []
+        while 1:
+            line = self.getline()
+            if (line == '.'):
+                break
+            if (line[:2] == '..'):
+                line = line[1:]
+            if file:
+                file.write((line + '\n'))
+            else:
+                list.append(line)
+    finally:
+        if openedFile:
+            openedFile.close()
+    return (resp, list)

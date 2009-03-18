@@ -1,0 +1,14 @@
+def test_main():
+    global N, done
+    import imp
+    if imp.lock_held():
+        raise TestSkipped("can't run when import lock is held")
+    done.acquire()
+    for N in ((20, 50) * 3):
+        if verbose:
+            print 'Trying', N, 'threads ...',
+        for i in range(N):
+            thread.start_new_thread(task, ())
+        done.acquire()
+        if verbose:
+            print 'OK.'

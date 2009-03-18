@@ -1,0 +1,8 @@
+def search(self, charset, *criteria):
+    "Search mailbox for matching messages.\n\n        (typ, [data]) = <instance>.search(charset, criterium, ...)\n\n        'data' is space separated list of matching message numbers.\n        "
+    name = 'SEARCH'
+    if charset:
+        (typ, dat) = apply(self._simple_command, ((name, 'CHARSET', charset) + criteria))
+    else:
+        (typ, dat) = apply(self._simple_command, ((name,) + criteria))
+    return self._untagged_response(typ, dat, name)

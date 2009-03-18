@@ -1,0 +1,7 @@
+def file_open(self, req):
+    url = req.get_selector()
+    if ((url[:2] == '//') and (url[2:3] != '/')):
+        req.type = 'ftp'
+        return self.parent.open(req)
+    else:
+        return self.open_local_file(req)

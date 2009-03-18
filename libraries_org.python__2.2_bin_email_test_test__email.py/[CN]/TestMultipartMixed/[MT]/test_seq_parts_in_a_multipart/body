@@ -1,0 +1,12 @@
+def test_seq_parts_in_a_multipart(self):
+    eq = self.ndiffAssertEqual
+    outer = MIMEBase('multipart', 'mixed')
+    outer['Subject'] = 'A subject'
+    outer['To'] = 'aperson@dom.ain'
+    outer['From'] = 'bperson@dom.ain'
+    outer.preamble = ''
+    outer.epilogue = ''
+    msg = MIMEText('hello world')
+    outer.attach(msg)
+    outer.set_boundary('BOUNDARY')
+    eq(outer.as_string(), 'Content-Type: multipart/mixed; boundary="BOUNDARY"\nMIME-Version: 1.0\nSubject: A subject\nTo: aperson@dom.ain\nFrom: bperson@dom.ain\n\n--BOUNDARY\nContent-Type: text/plain; charset="us-ascii"\nMIME-Version: 1.0\nContent-Transfer-Encoding: 7bit\n\nhello world\n--BOUNDARY--\n')

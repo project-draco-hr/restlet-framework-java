@@ -1,0 +1,13 @@
+def isoformat(self, sep='T'):
+    "Return the time formatted according to ISO.\n\n        This is 'YYYY-MM-DD HH:MM:SS.mmmmmm', or 'YYYY-MM-DD HH:MM:SS' if\n        self.microsecond == 0.\n\n        If self.tzinfo is not None, the UTC offset is also attached, giving\n        'YYYY-MM-DD HH:MM:SS.mmmmmm+HH:MM' or 'YYYY-MM-DD HH:MM:SS+HH:MM'.\n\n        Optional argument sep specifies the separator between date and\n        time, default 'T'.\n        "
+    s = (('%04d-%02d-%02d%c' % (self.__year, self.__month, self.__day, sep)) + _format_time(self.__hour, self.__minute, self.__second, self.__microsecond))
+    off = self._utcoffset()
+    if (off is not None):
+        if (off < 0):
+            sign = '-'
+            off = (- off)
+        else:
+            sign = '+'
+        (hh, mm) = divmod(off, 60)
+        s += ('%s%02d:%02d' % (sign, hh, mm))
+    return s

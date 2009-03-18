@@ -1,0 +1,14 @@
+def testChangeAttr():
+    dom = parseString('<abc/>')
+    el = dom.documentElement
+    el.setAttribute('spam', 'jam')
+    confirm((len(el.attributes) == 1))
+    el.setAttribute('spam', 'bam')
+    confirm((len(el.attributes) == 1))
+    el.attributes['spam'] = 'ham'
+    confirm((len(el.attributes) == 1))
+    el.setAttribute('spam2', 'bam')
+    confirm((len(el.attributes) == 2))
+    el.attributes['spam2'] = 'bam2'
+    confirm((len(el.attributes) == 2))
+    dom.unlink()

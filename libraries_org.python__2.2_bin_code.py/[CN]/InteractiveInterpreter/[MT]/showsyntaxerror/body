@@ -1,0 +1,18 @@
+def showsyntaxerror(self, filename=None):
+    'Display the syntax error that just occurred.\n\n        This doesn\'t display a stack trace because there isn\'t one.\n\n        If a filename is given, it is stuffed in the exception instead\n        of what was there before (because Python\'s parser always uses\n        "<string>" when reading from a string).\n\n        The output is written by self.write(), below.\n\n        '
+    (type, value, sys.last_traceback) = sys.exc_info()
+    sys.last_type = type
+    sys.last_value = value
+    if (filename and (type is SyntaxError)):
+        try:
+            (msg, (dummy_filename, lineno, offset, line)) = value
+        except:
+            pass
+        else:
+            try:
+                value = SyntaxError(msg, (filename, lineno, offset, line))
+            except:
+                value = (msg, (filename, lineno, offset, line))
+            sys.last_value = value
+    list = traceback.format_exception_only(type, value)
+    map(self.write, list)

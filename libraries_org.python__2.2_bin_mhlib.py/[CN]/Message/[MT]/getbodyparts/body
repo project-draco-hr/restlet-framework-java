@@ -1,0 +1,17 @@
+def getbodyparts(self):
+    "Only for multipart messages: return the message's body as a\n        list of SubMessage objects.  Each submessage object behaves\n        (almost) as a Message object."
+    if (self.getmaintype() != 'multipart'):
+        raise Error, 'Content-Type is not multipart/*'
+    bdry = self.getparam('boundary')
+    if (not bdry):
+        raise Error, 'multipart/* without boundary param'
+    self.fp.seek(self.startofbody)
+    mf = multifile.MultiFile(self.fp)
+    mf.push(bdry)
+    parts = []
+    while mf.next():
+        n = ((str(self.number) + '.') + `(1 + len(parts))`)
+        part = SubMessage(self.folder, n, mf)
+        parts.append(part)
+    mf.pop()
+    return parts

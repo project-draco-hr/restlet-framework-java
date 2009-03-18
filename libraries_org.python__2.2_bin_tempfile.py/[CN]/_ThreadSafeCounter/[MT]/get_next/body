@@ -1,0 +1,10 @@
+def get_next(self):
+    self.mutex.acquire()
+    result = self.i
+    try:
+        newi = (result + 1)
+    except OverflowError:
+        newi = (long(result) + 1)
+    self.i = newi
+    self.mutex.release()
+    return result

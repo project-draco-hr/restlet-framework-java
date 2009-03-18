@@ -1,0 +1,7 @@
+def __imp__(module, attr=None):
+    if attr:
+        j = __import__(module, globals(), locals())
+        return getattr(j, attr)
+    else:
+        last = module.split('.')[(-1)]
+        return __import__(module, globals(), locals(), last)

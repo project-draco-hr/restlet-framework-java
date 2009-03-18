@@ -1,0 +1,11 @@
+def start(self):
+    assert self.__initialized, 'Thread.__init__() not called'
+    assert (not self.__started), 'thread already started'
+    if __debug__:
+        self._note('%s.start(): starting thread', self)
+    _active_limbo_lock.acquire()
+    _limbo[self] = self
+    _active_limbo_lock.release()
+    _start_new_thread(self.__bootstrap, ())
+    self.__started = 1
+    _sleep(1e-06)

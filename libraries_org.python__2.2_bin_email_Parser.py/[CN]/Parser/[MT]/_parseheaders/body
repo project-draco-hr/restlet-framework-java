@@ -1,0 +1,42 @@
+def _parseheaders(self, container, fp):
+    lastheader = ''
+    lastvalue = []
+    lineno = 0
+    firstbodyline = None
+    while True:
+        line = fp.readline()
+        if (not line):
+            break
+        line = line.splitlines()[0]
+        if (not line):
+            break
+        lineno += 1
+        if line.startswith('From '):
+            if (lineno == 1):
+                container.set_unixfrom(line)
+                continue
+            elif self._strict:
+                raise Errors.HeaderParseError('Unix-from in headers after first rfc822 header')
+            else:
+                continue
+        if (line[0] in ' \t'):
+            if (not lastheader):
+                raise Errors.HeaderParseError('Continuation line seen before first header')
+            lastvalue.append(line)
+            continue
+        i = line.find(':')
+        if (i < 0):
+            if self._strict:
+                raise Errors.HeaderParseError(("Not a header, not a continuation: ``%s''" % line))
+            elif ((lineno == 1) and line.startswith('--')):
+                continue
+            else:
+                firstbodyline = line
+                break
+        if lastheader:
+            container[lastheader] = NL.join(lastvalue)
+        lastheader = line[:i]
+        lastvalue = [line[(i + 1):].lstrip()]
+    if lastheader:
+        container[lastheader] = NL.join(lastvalue)
+    return firstbodyline

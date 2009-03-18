@@ -1,0 +1,18 @@
+def header_encode(self, s, convert=False):
+    'Header-encode a string, optionally converting it to output_charset.\n\n        If convert is True, the string will be converted from the input\n        charset to the output charset automatically.  This is not useful for\n        multibyte character sets, which have line length issues (multibyte\n        characters must be split on a character, not a byte boundary); use the\n        high-level Header class to deal with these issues.  convert defaults\n        to False.\n\n        The type of encoding (base64 or quoted-printable) will be based on\n        self.header_encoding.\n        '
+    cset = self.get_output_charset()
+    if convert:
+        s = self.convert(s)
+    if (self.header_encoding == BASE64):
+        return email.base64MIME.header_encode(s, cset)
+    elif (self.header_encoding == QP):
+        return email.quopriMIME.header_encode(s, cset, maxlinelen=None)
+    elif (self.header_encoding == SHORTEST):
+        lenb64 = email.base64MIME.base64_len(s)
+        lenqp = email.quopriMIME.header_quopri_len(s)
+        if (lenb64 < lenqp):
+            return email.base64MIME.header_encode(s, cset)
+        else:
+            return email.quopriMIME.header_encode(s, cset, maxlinelen=None)
+    else:
+        return s

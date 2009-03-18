@@ -1,0 +1,9 @@
+def helo(self, name=''):
+    "SMTP 'helo' command.\n        Hostname to send for this command defaults to the FQDN of the local\n        host.\n        "
+    if name:
+        self.putcmd('helo', name)
+    else:
+        self.putcmd('helo', socket.getfqdn())
+    (code, msg) = self.getreply()
+    self.helo_resp = msg
+    return (code, msg)

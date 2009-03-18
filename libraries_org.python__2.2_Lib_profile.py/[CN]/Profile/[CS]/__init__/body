@@ -1,0 +1,42 @@
+def __init__(self, timer=None, bias=None):
+    self.timings = {}
+    self.cur = None
+    self.cmd = ''
+    if (bias is None):
+        bias = self.bias
+    self.bias = bias
+    if (not timer):
+        if (os.name == 'mac'):
+            self.timer = MacOS.GetTicks
+            self.dispatcher = self.trace_dispatch_mac
+            self.get_time = _get_time_mac
+        elif hasattr(time, 'clock'):
+            self.timer = self.get_time = time.clock
+            self.dispatcher = self.trace_dispatch_i
+        elif hasattr(os, 'times'):
+            self.timer = os.times
+            self.dispatcher = self.trace_dispatch
+            self.get_time = _get_time_times
+        else:
+            self.timer = self.get_time = time.time
+            self.dispatcher = self.trace_dispatch_i
+    else:
+        self.timer = timer
+        t = self.timer()
+        try:
+            length = len(t)
+        except TypeError:
+            self.get_time = timer
+            self.dispatcher = self.trace_dispatch_i
+        else:
+            if (length == 2):
+                self.dispatcher = self.trace_dispatch
+            else:
+                self.dispatcher = self.trace_dispatch_l
+            import operator
+
+            def get_time_timer(timer=timer, reduce=reduce, reducer=operator.add):
+                return reduce(reducer, timer(), 0)
+            self.get_time = get_time_timer
+    self.t = self.get_time()
+    self.simulate_call('profiler')

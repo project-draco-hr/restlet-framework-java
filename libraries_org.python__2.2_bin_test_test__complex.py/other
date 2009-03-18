@@ -1,0 +1,21 @@
+from test_support import TestFailed
+from random import random
+nerrors = 0
+simple_real = [float(i) for i in range((-5), 6)]
+simple_complex = [complex(x, y) for x in simple_real for y in simple_real]
+for x in simple_complex:
+    for y in simple_complex:
+        test_div(x, y)
+test_div(complex(1e+200, 1e+200), (1 + 0j))
+test_div(complex(1e-200, 1e-200), (1 + 0j))
+for i in range(100):
+    test_div(complex(random(), random()), complex(random(), random()))
+try:
+    z = (1.0 / (0 + 0j))
+except ZeroDivisionError:
+    pass
+else:
+    nerrors += 1
+    raise TestFailed("Division by complex 0 didn't raise ZeroDivisionError")
+if nerrors:
+    raise TestFailed(('%d tests failed' % nerrors))

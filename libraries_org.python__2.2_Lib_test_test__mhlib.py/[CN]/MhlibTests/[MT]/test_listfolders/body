@@ -1,0 +1,21 @@
+def test_listfolders(self):
+    mh = getMH()
+    eq = self.assertEquals
+    folders = mh.listfolders()
+    folders.sort()
+    eq(folders, ['deep', 'inbox', 'wide'])
+    if (not sys.platform.startswith('java')):
+        folders = mh.listallfolders()
+        folders.sort()
+        tfolders = map(normF, ['deep', 'deep/f1', 'deep/f2', 'deep/f2/f3', 'inbox', 'wide'])
+        tfolders.sort()
+        eq(folders, tfolders)
+        folders = mh.listsubfolders('deep')
+        folders.sort()
+        eq(folders, map(normF, ['deep/f1', 'deep/f2']))
+        folders = mh.listallsubfolders('deep')
+        folders.sort()
+        eq(folders, map(normF, ['deep/f1', 'deep/f2', 'deep/f2/f3']))
+        eq(mh.listsubfolders(normF('deep/f2')), [normF('deep/f2/f3')])
+        eq(mh.listsubfolders('inbox'), [])
+        eq(mh.listallsubfolders('inbox'), [])

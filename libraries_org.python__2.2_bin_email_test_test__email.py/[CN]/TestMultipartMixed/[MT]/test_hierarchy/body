@@ -1,0 +1,16 @@
+def test_hierarchy(self):
+    eq = self.assertEqual
+    unless = self.failUnless
+    raises = self.assertRaises
+    m = self._msg
+    unless(m.is_multipart())
+    eq(m.get_type(), 'multipart/mixed')
+    eq(len(m.get_payload()), 2)
+    raises(IndexError, m.get_payload, 2)
+    m0 = m.get_payload(0)
+    m1 = m.get_payload(1)
+    unless((m0 is self._txt))
+    unless((m1 is self._im))
+    eq(m.get_payload(), [m0, m1])
+    unless((not m0.is_multipart()))
+    unless((not m1.is_multipart()))

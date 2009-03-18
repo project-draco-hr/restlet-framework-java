@@ -1,0 +1,10 @@
+def test_custom_encoder(self):
+    eq = self.assertEqual
+
+    def encoder(msg):
+        orig = msg.get_payload()
+        msg.set_payload(0)
+        msg['Content-Transfer-Encoding'] = 'broken64'
+    im = MIMEImage(self._imgdata, _encoder=encoder)
+    eq(im.get_payload(), 0)
+    eq(im['content-transfer-encoding'], 'broken64')

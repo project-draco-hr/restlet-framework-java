@@ -1,0 +1,26 @@
+def testCSVPipe(self):
+    'testing the CSV pipe'
+    from java.io import PrintWriter, FileWriter
+    from com.ziclix.python.sql.pipe import Pipe
+    from com.ziclix.python.sql.pipe.db import DBSource
+    from com.ziclix.python.sql.pipe.csv import CSVSink
+    try:
+        src = self.connect()
+        fn = tempfile.mktemp(suffix='csv')
+        writer = PrintWriter(FileWriter(fn))
+        csvSink = CSVSink(writer)
+        c = self.cursor()
+        try:
+            c.execute('insert into zxtesting (id, name, state) values (?, ?, ?)', [(1000, 'this,has,a,comma', 'and a " quote')])
+            c.execute('insert into zxtesting (id, name, state) values (?, ?, ?)', [(1001, 'this,has,a,comma and a "', 'and a " quote')])
+            c.execute('insert into zxtesting (id, name, state) values (?, ?, ?)', [(1010, '"this,has,a,comma"', None)], {2: zxJDBC.VARCHAR, })
+            self.db.commit()
+        finally:
+            self.db.rollback()
+            c.close()
+        dbSource = DBSource(src, c.datahandler.__class__, 'zxtesting', None, None, None)
+        cnt = (Pipe().pipe(dbSource, csvSink) - 1)
+    finally:
+        writer.close()
+        src.close()
+        os.remove(fn)

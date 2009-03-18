@@ -1,0 +1,9 @@
+def parse(self, input):
+    options = copy.copy(self._options)
+    options.filter = self.filter
+    options.errorHandler = self.errorHandler
+    fp = input.byteStream
+    if ((fp is None) and options.systemId):
+        import urllib2
+        fp = urllib2.urlopen(input.systemId)
+    return self._parse_bytestream(fp, options)

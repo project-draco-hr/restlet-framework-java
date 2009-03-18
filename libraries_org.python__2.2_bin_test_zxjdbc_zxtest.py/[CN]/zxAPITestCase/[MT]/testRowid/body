@@ -1,0 +1,32 @@
+def testRowid(self):
+    'testing the autoincrement facilities of the different handlers'
+    assert self.has_table('autoincrementtable'), 'no autoincrement table'
+    c = self.cursor()
+    assert (c.lastrowid == None), 'expected initial lastrowid to be None'
+    try:
+        (tabname, sql) = self.table('autoincrementtable')
+        c.execute(sql)
+        c.execute(('insert into %s (b) values (?)' % tabname), [(0,)])
+        assert (c.lastrowid is not None), 'lastrowid is None'
+        try:
+            for idx in range((c.lastrowid + 1), (c.lastrowid + 25)):
+                c.execute(('insert into %s (b) values (?)' % tabname), [(idx,)])
+                assert (c.lastrowid is not None), 'lastrowid is None'
+                self.assertEquals(idx, c.lastrowid)
+        except:
+            self.db.rollback()
+    finally:
+        if self.has_table('post_autoincrementtable'):
+            try:
+                (sequence, sql) = self.table('post_autoincrementtable')
+                c.execute(sql)
+                self.db.commit()
+            except:
+                self.db.rollback()
+        try:
+            c.execute(('drop table %s' % tabname))
+            self.db.commit()
+        except:
+            self.db.rollback()
+        self.db.commit()
+        c.close()

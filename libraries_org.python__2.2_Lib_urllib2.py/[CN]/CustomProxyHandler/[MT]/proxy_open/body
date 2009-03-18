@@ -1,0 +1,11 @@
+def proxy_open(self, req):
+    proto = req.get_type()
+    try:
+        proxies = self.proxies[proto]
+    except KeyError:
+        return None
+    for p in proxies:
+        if p.handle(req):
+            req.set_proxy(p.get_proxy())
+            return self.parent.open(req)
+    return None

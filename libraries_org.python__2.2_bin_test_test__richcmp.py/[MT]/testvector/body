@@ -1,0 +1,23 @@
+def testvector():
+    a = Vector(range(2))
+    b = Vector(range(3))
+    for op in operators:
+        try:
+            opmap[op](a, b)
+        except ValueError:
+            pass
+        else:
+            raise TestFailed, ('a %s b for different length should fail' % op)
+    a = Vector(range(5))
+    b = Vector((5 * [2]))
+    for op in operators:
+        print ('%23s %-2s %-23s -> %s' % (a, op, b, opmap[op](a, b)))
+        print ('%23s %-2s %-23s -> %s' % (a, op, b.data, opmap[op](a, b.data)))
+        print ('%23s %-2s %-23s -> %s' % (a.data, op, b, opmap[op](a.data, b)))
+        try:
+            if opmap[op](a, b):
+                raise TestFailed, ("a %s b shouldn't be true" % op)
+            else:
+                raise TestFailed, ("a %s b shouldn't be false" % op)
+        except TypeError:
+            pass

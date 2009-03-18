@@ -1,0 +1,11 @@
+def quoteattr(data, entities={}):
+    'Escape and quote an attribute value.\n\n    Escape &, <, and > in a string of data, then quote it for use as\n    an attribute value.  The " character will be escaped as well, if\n    necessary.\n\n    You can escape other strings of data by passing a dictionary as\n    the optional entities parameter.  The keys and values must all be\n    strings; each key will be replaced with its corresponding value.\n    '
+    data = escape(data, entities)
+    if ('"' in data):
+        if ("'" in data):
+            data = ('"%s"' % data.replace('"', '&quot;'))
+        else:
+            data = ("'%s'" % data)
+    else:
+        data = ('"%s"' % data)
+    return data

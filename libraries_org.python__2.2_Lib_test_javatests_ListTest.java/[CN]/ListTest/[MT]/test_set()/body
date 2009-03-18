@@ -1,0 +1,17 @@
+{
+  try {
+    newInstance(null).set(-1,"spam");
+    TestSupport.assertThat(false,"get(<negative index>) did not throw IndexOutOfBoundsException");
+  }
+ catch (  IndexOutOfBoundsException e) {
+  }
+  try {
+    newInstance(null).set(0,"spam");
+    TestSupport.assertThat(false,"set(<index too big>) did not throw IndexOutOfBoundsException");
+  }
+ catch (  IndexOutOfBoundsException e) {
+  }
+  List a=defaultList();
+  a.set(a.size() - 1,"spam");
+  TestSupport.assertThat(a.get(a.size() - 1).equals("spam"),"set() object was not retrieved via get()");
+}

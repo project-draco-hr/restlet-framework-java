@@ -1,0 +1,12 @@
+def __fixdict(self, dict):
+    for key in dict.keys():
+        if (key[:6] == 'start_'):
+            tag = key[6:]
+            (start, end) = self.elements.get(tag, (None, None))
+            if (start is None):
+                self.elements[tag] = (getattr(self, key), end)
+        elif (key[:4] == 'end_'):
+            tag = key[4:]
+            (start, end) = self.elements.get(tag, (None, None))
+            if (end is None):
+                self.elements[tag] = (start, getattr(self, key))

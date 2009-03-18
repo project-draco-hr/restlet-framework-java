@@ -1,0 +1,13 @@
+def testSqlFailureWithBeginCommit(self):
+    'testing failure with begin/commit'
+    failed = 0
+    c = self.db.begin()
+    try:
+        try:
+            c.execute('select * from __garbage__')
+        except:
+            failed = 1
+    finally:
+        self.db.commit(c)
+    if (not failed):
+        self.fail('expected SQL exception')

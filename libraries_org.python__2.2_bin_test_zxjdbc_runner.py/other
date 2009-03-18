@@ -1,0 +1,21 @@
+'\nTo run the tests, simply invoke this script from the commandline:\n\n jython runner.py <xml config file> [vendor, ...]\n\nIf no vendors are given, then all vendors will be tested.  If a\nvendor is given, then only that vendor will be tested.\n'
+import unittest, os
+import xmllib, __builtin__, re
+if (__name__ == '__main__'):
+    import sys, getopt
+    try:
+        (opts, args) = getopt.getopt(sys.argv[1:], 't:', [])
+    except getopt.error as msg:
+        print '%s -t [testmask] <vendor>[,<vendor>]'
+        sys.exit(0)
+    mask = None
+    for a in opts:
+        (opt, arg) = a
+        if (opt == '-t'):
+            mask = arg
+    configParser = ConfigParser()
+    fp = open(args[0], 'r')
+    configParser.feed(fp.read())
+    fp.close()
+    test(configParser.vendors, args[1:], mask=mask)
+    sys.exit(0)

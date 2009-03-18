@@ -1,0 +1,37 @@
+def urlencode(query, doseq=0):
+    'Encode a sequence of two-element tuples or dictionary into a URL query string.\n\n    If any values in the query arg are sequences and doseq is true, each\n    sequence element is converted to a separate parameter.\n\n    If the query arg is a sequence of two-element tuples, the order of the\n    parameters in the output will match the order of parameters in the\n    input.\n    '
+    if hasattr(query, 'items'):
+        query = query.items()
+    else:
+        try:
+            x = len(query)
+            if (len(query) and (type(query[0]) != types.TupleType)):
+                raise TypeError
+        except TypeError:
+            (ty, va, tb) = sys.exc_info()
+            raise TypeError, 'not a valid non-string sequence or mapping object', tb
+    l = []
+    if (not doseq):
+        for (k, v) in query:
+            k = quote_plus(str(k))
+            v = quote_plus(str(v))
+            l.append(((k + '=') + v))
+    else:
+        for (k, v) in query:
+            k = quote_plus(str(k))
+            if (type(v) == types.StringType):
+                v = quote_plus(v)
+                l.append(((k + '=') + v))
+            elif (type(v) == types.UnicodeType):
+                v = quote_plus(v.encode('ASCII', 'replace'))
+                l.append(((k + '=') + v))
+            else:
+                try:
+                    x = len(v)
+                except TypeError:
+                    v = quote_plus(str(v))
+                    l.append(((k + '=') + v))
+                else:
+                    for elt in v:
+                        l.append(((k + '=') + quote_plus(str(elt))))
+    return '&'.join(l)

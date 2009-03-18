@@ -1,0 +1,27 @@
+def verify_empty_attrs(attrs):
+    try:
+        attrs.getValue('attr')
+        gvk = 0
+    except KeyError:
+        gvk = 1
+    try:
+        attrs.getValueByQName('attr')
+        gvqk = 0
+    except KeyError:
+        gvqk = 1
+    try:
+        attrs.getNameByQName('attr')
+        gnqk = 0
+    except KeyError:
+        gnqk = 1
+    try:
+        attrs.getQNameByName('attr')
+        gqnk = 0
+    except KeyError:
+        gqnk = 1
+    try:
+        attrs['attr']
+        gik = 0
+    except KeyError:
+        gik = 1
+    return ((attrs.getLength() == 0) and (attrs.getNames() == []) and (attrs.getQNames() == []) and (len(attrs) == 0) and (not attrs.has_key('attr')) and (attrs.keys() == []) and (attrs.get('attrs') is None) and (attrs.get('attrs', 25) == 25) and (attrs.items() == []) and (attrs.values() == []) and gvk and gvqk and gnqk and gik and gqnk)

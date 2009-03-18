@@ -1,0 +1,160 @@
+def run_cgi(self):
+    'Execute a CGI script.'
+    (dir, rest) = self.cgi_info
+    i = rest.rfind('?')
+    if (i >= 0):
+        (rest, query) = (rest[:i], rest[(i + 1):])
+    else:
+        query = ''
+    i = rest.find('/')
+    if (i >= 0):
+        (script, rest) = (rest[:i], rest[i:])
+    else:
+        (script, rest) = (rest, '')
+    scriptname = ((dir + '/') + script)
+    scriptfile = self.translate_path(scriptname)
+    if (not os.path.exists(scriptfile)):
+        self.send_error(404, ('No such CGI script (%s)' % `scriptname`))
+        return
+    if (not os.path.isfile(scriptfile)):
+        self.send_error(403, ('CGI script is not a plain file (%s)' % `scriptname`))
+        return
+    ispy = self.is_python(scriptname)
+    if (not ispy):
+        if (not (self.have_fork or self.have_popen2 or self.have_popen3)):
+            self.send_error(403, ('CGI script is not a Python script (%s)' % `scriptname`))
+            return
+        if (not self.is_executable(scriptfile)):
+            self.send_error(403, ('CGI script is not executable (%s)' % `scriptname`))
+            return
+    env = {}
+    env['SERVER_SOFTWARE'] = self.version_string()
+    env['SERVER_NAME'] = self.server.server_name
+    env['GATEWAY_INTERFACE'] = 'CGI/1.1'
+    env['SERVER_PROTOCOL'] = self.protocol_version
+    env['SERVER_PORT'] = str(self.server.server_port)
+    env['REQUEST_METHOD'] = self.command
+    uqrest = urllib.unquote(rest)
+    env['PATH_INFO'] = uqrest
+    env['PATH_TRANSLATED'] = self.translate_path(uqrest)
+    env['SCRIPT_NAME'] = scriptname
+    if query:
+        env['QUERY_STRING'] = query
+    host = self.address_string()
+    if (host != self.client_address[0]):
+        env['REMOTE_HOST'] = host
+    env['REMOTE_ADDR'] = self.client_address[0]
+    if (self.headers.typeheader is None):
+        env['CONTENT_TYPE'] = self.headers.type
+    else:
+        env['CONTENT_TYPE'] = self.headers.typeheader
+    length = self.headers.getheader('content-length')
+    if length:
+        env['CONTENT_LENGTH'] = length
+    accept = []
+    for line in self.headers.getallmatchingheaders('accept'):
+        if (line[:1] in '\t\n\r '):
+            accept.append(line.strip())
+        else:
+            accept = (accept + line[7:].split(','))
+    env['HTTP_ACCEPT'] = ','.join(accept)
+    ua = self.headers.getheader('user-agent')
+    if ua:
+        env['HTTP_USER_AGENT'] = ua
+    co = filter(None, self.headers.getheaders('cookie'))
+    if co:
+        env['HTTP_COOKIE'] = ', '.join(co)
+    if (not self.have_fork):
+        for k in ('QUERY_STRING', 'REMOTE_HOST', 'CONTENT_LENGTH', 'HTTP_USER_AGENT', 'HTTP_COOKIE'):
+            env.setdefault(k, '')
+    os.environ.update(env)
+    self.send_response(200, 'Script output follows')
+    decoded_query = query.replace('+', ' ')
+    if self.have_fork:
+        args = [script]
+        if ('=' not in decoded_query):
+            args.append(decoded_query)
+        nobody = nobody_uid()
+        self.wfile.flush()
+        pid = os.fork()
+        if (pid != 0):
+            (pid, sts) = os.waitpid(pid, 0)
+            while select.select([self.rfile], [], [], 0)[0]:
+                waste = self.rfile.read(1)
+            if sts:
+                self.log_error('CGI script exit status %#x', sts)
+            return
+        try:
+            try:
+                os.setuid(nobody)
+            except os.error:
+                pass
+            os.dup2(self.rfile.fileno(), 0)
+            os.dup2(self.wfile.fileno(), 1)
+            os.execve(scriptfile, args, env)
+        except:
+            self.server.handle_error(self.request, self.client_address)
+            os._exit(127)
+    elif (self.have_popen2 or self.have_popen3):
+        import shutil
+        if self.have_popen3:
+            popenx = os.popen3
+        else:
+            popenx = os.popen2
+        cmdline = scriptfile
+        if self.is_python(scriptfile):
+            interp = sys.executable
+            if interp.lower().endswith('w.exe'):
+                interp = (interp[:(-5)] + interp[(-4):])
+            cmdline = ('%s -u %s' % (interp, cmdline))
+        if (('=' not in query) and ('"' not in query)):
+            cmdline = ('%s "%s"' % (cmdline, query))
+        self.log_message('command: %s', cmdline)
+        try:
+            nbytes = int(length)
+        except:
+            nbytes = 0
+        files = popenx(cmdline, 'b')
+        fi = files[0]
+        fo = files[1]
+        if self.have_popen3:
+            fe = files[2]
+        if ((self.command.lower() == 'post') and (nbytes > 0)):
+            data = self.rfile.read(nbytes)
+            fi.write(data)
+        while select.select([self.rfile._sock], [], [], 0)[0]:
+            waste = self.rfile._sock.recv(1)
+        fi.close()
+        shutil.copyfileobj(fo, self.wfile)
+        if self.have_popen3:
+            errors = fe.read()
+            fe.close()
+            if errors:
+                self.log_error('%s', errors)
+        sts = fo.close()
+        if sts:
+            self.log_error('CGI script exit status %#x', sts)
+        else:
+            self.log_message('CGI script exited OK')
+    else:
+        save_argv = sys.argv
+        save_stdin = sys.stdin
+        save_stdout = sys.stdout
+        save_stderr = sys.stderr
+        try:
+            try:
+                sys.argv = [scriptfile]
+                if ('=' not in decoded_query):
+                    sys.argv.append(decoded_query)
+                sys.stdout = self.wfile
+                sys.stdin = self.rfile
+                execfile(scriptfile, {'__name__': '__main__', })
+            finally:
+                sys.argv = save_argv
+                sys.stdin = save_stdin
+                sys.stdout = save_stdout
+                sys.stderr = save_stderr
+        except SystemExit as sts:
+            self.log_error('CGI script exit status %s', str(sts))
+        else:
+            self.log_message('CGI script exited OK')

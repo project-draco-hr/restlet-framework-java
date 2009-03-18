@@ -1,0 +1,6 @@
+def http_error_auth_reqed(self, authreq, host, req, headers):
+    authreq = headers.get(self.auth_header, None)
+    if authreq:
+        kind = authreq.split()[0]
+        if (kind == 'Digest'):
+            return self.retry_http_digest_auth(req, authreq)

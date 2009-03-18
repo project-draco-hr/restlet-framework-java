@@ -1,0 +1,15 @@
+def __init__(self, file, line, temporary=0, cond=None):
+    self.file = file
+    self.line = line
+    self.temporary = temporary
+    self.cond = cond
+    self.enabled = 1
+    self.ignore = 0
+    self.hits = 0
+    self.number = Breakpoint.next
+    Breakpoint.next = (Breakpoint.next + 1)
+    self.bpbynumber.append(self)
+    if self.bplist.has_key((file, line)):
+        self.bplist[(file, line)].append(self)
+    else:
+        self.bplist[(file, line)] = [self]

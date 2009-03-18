@@ -1,0 +1,19 @@
+import dbexts, cmd, sys, os
+'\nIsql works in conjunction with dbexts to provide an interactive environment\nfor database work.\n'
+__version__ = '$Revision: 3244 $'[11:(-2)]
+if (__name__ == '__main__'):
+    import getopt
+    try:
+        (opts, args) = getopt.getopt(sys.argv[1:], 'b:', [])
+    except getopt.error as msg:
+        print 
+        print msg
+        print ('Try `%s --help` for more information.' % sys.argv[0])
+        sys.exit(0)
+    dbname = None
+    for (opt, arg) in opts:
+        if (opt == '-b'):
+            dbname = arg
+    intro = ('\nisql - interactive sql (%s)\n' % __version__)
+    isql = IsqlCmd(dbname)
+    isql.cmdloop()

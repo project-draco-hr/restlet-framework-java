@@ -1,0 +1,11 @@
+def splittype(url):
+    "splittype('type:opaquestring') --> 'type', 'opaquestring'."
+    global _typeprog
+    if (_typeprog is None):
+        import re
+        _typeprog = re.compile('^([^/:]+):')
+    match = _typeprog.match(url)
+    if match:
+        scheme = match.group(1)
+        return (scheme.lower(), url[(len(scheme) + 1):])
+    return (None, url)

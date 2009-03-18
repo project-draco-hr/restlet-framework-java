@@ -1,0 +1,22 @@
+def test():
+    from time import asctime, gmtime
+    import time, sys
+    now = time.time()
+    x = localtime(now)
+    tm = (x[:(-1)] + (0,))
+    print 'now =', now, '=', asctime(tm), x[(-1)]
+    now = (now - (now % (24 * 3600)))
+    if sys.argv[1:]:
+        now = (now + eval(sys.argv[1]))
+    x = gmtime(now)
+    tm = (x[:(-1)] + (0,))
+    print 'gmtime =', now, '=', asctime(tm), 'yday =', x[(-2)]
+    jan1 = (now - ((x[(-2)] * 24) * 3600))
+    x = localtime(jan1)
+    tm = (x[:(-1)] + (0,))
+    print 'jan1 =', jan1, '=', asctime(tm), x[(-1)]
+    for d in (range(85, 95) + range(265, 275)):
+        t = (jan1 + ((d * 24) * 3600))
+        x = localtime(t)
+        tm = (x[:(-1)] + (0,))
+        print 'd =', d, 't =', t, '=', asctime(tm), x[(-1)]

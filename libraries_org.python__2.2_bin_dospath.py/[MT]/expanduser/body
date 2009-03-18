@@ -1,0 +1,14 @@
+def expanduser(path):
+    "Expand paths beginning with '~' or '~user'.\n    '~' means $HOME; '~user' means that user's home directory.\n    If the path doesn't begin with '~', or if the user or $HOME is unknown,\n    the path is returned unchanged (leaving error reporting to whatever\n    function is called with the expanded path as argument).\n    See also module 'glob' for expansion of *, ? and [...] in pathnames.\n    (A function should also be defined to do full *sh-style environment\n    variable expansion.)"
+    if (path[:1] != '~'):
+        return path
+    (i, n) = (1, len(path))
+    while ((i < n) and (path[i] not in '/\\')):
+        i = (i + 1)
+    if (i == 1):
+        if (not os.environ.has_key('HOME')):
+            return path
+        userhome = os.environ['HOME']
+    else:
+        return path
+    return (userhome + path[i:])

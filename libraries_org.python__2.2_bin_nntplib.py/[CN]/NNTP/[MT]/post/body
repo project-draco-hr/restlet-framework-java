@@ -1,0 +1,16 @@
+def post(self, f):
+    'Process a POST command.  Arguments:\n        - f: file containing the article\n        Returns:\n        - resp: server response if successful'
+    resp = self.shortcmd('POST')
+    if (resp[0] != '3'):
+        raise NNTPReplyError(resp)
+    while 1:
+        line = f.readline()
+        if (not line):
+            break
+        if (line[(-1)] == '\n'):
+            line = line[:(-1)]
+        if (line[:1] == '.'):
+            line = ('.' + line)
+        self.putline(line)
+    self.putline('.')
+    return self.getresp()

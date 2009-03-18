@@ -1,0 +1,33 @@
+def _init_compression(self):
+    if (self._comptype == 'G722'):
+        import audioop
+        self._convert = self._lin2adpcm
+        return
+    try:
+        import cl
+    except ImportError:
+        if (self._comptype == 'ULAW'):
+            try:
+                import audioop
+                self._convert = self._lin2ulaw
+                return
+            except ImportError:
+                pass
+        raise Error, 'cannot write compressed AIFF-C files'
+    if (self._comptype == 'ULAW'):
+        scheme = cl.G711_ULAW
+    elif (self._comptype == 'ALAW'):
+        scheme = cl.G711_ALAW
+    else:
+        raise Error, 'unsupported compression type'
+    self._comp = cl.OpenCompressor(scheme)
+    params = [cl.ORIGINAL_FORMAT, 0, cl.BITS_PER_COMPONENT, (self._sampwidth * 8), cl.FRAME_RATE, self._framerate, cl.FRAME_BUFFER_SIZE, 100, cl.COMPRESSED_BUFFER_SIZE, 100]
+    if (self._nchannels == 1):
+        params[1] = cl.MONO
+    elif (self._nchannels == 2):
+        params[1] = cl.STEREO_INTERLEAVED
+    else:
+        raise Error, 'cannot compress more than 2 channels'
+    self._comp.SetParams(params)
+    dummy = self._comp.Compress(0, '')
+    self._convert = self._comp_data

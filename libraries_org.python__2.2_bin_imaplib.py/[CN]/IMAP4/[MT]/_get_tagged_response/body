@@ -1,0 +1,13 @@
+def _get_tagged_response(self, tag):
+    while 1:
+        result = self.tagged_commands[tag]
+        if (result is not None):
+            del self.tagged_commands[tag]
+            return result
+        try:
+            self._get_response()
+        except self.abort as val:
+            if __debug__:
+                if (self.debug >= 1):
+                    print_log()
+            raise

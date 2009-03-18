@@ -1,0 +1,8 @@
+def __init__(self, stream, encode, decode, Reader, Writer, errors='strict'):
+    ' Creates a StreamRecoder instance which implements a two-way\n            conversion: encode and decode work on the frontend (the\n            input to .read() and output of .write()) while\n            Reader and Writer work on the backend (reading and\n            writing to the stream).\n\n            You can use these objects to do transparent direct\n            recodings from e.g. latin-1 to utf-8 and back.\n\n            stream must be a file-like object.\n\n            encode, decode must adhere to the Codec interface, Reader,\n            Writer must be factory functions or classes providing the\n            StreamReader, StreamWriter interface resp.\n\n            encode and decode are needed for the frontend translation,\n            Reader and Writer for the backend translation. Unicode is\n            used as intermediate encoding.\n\n            Error handling is done in the same way as defined for the\n            StreamWriter/Readers.\n\n        '
+    self.stream = stream
+    self.encode = encode
+    self.decode = decode
+    self.reader = Reader(stream, errors)
+    self.writer = Writer(stream, errors)
+    self.errors = errors

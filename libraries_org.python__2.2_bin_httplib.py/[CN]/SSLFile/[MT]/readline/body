@@ -1,0 +1,19 @@
+def readline(self):
+    L = [self._buf]
+    self._buf = ''
+    while 1:
+        i = L[(-1)].find('\n')
+        if (i >= 0):
+            break
+        s = self._read()
+        if (s == ''):
+            break
+        L.append(s)
+    if (i == (-1)):
+        return ''.join(L)
+    else:
+        all = ''.join(L)
+        i = (all.find('\n') + 1)
+        line = all[:i]
+        self._buf = all[i:]
+        return line

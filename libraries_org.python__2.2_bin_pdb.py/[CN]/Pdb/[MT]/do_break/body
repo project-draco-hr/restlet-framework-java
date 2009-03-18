@@ -1,0 +1,64 @@
+def do_break(self, arg, temporary=0):
+    if (not arg):
+        if self.breaks:
+            print 'Num Type         Disp Enb   Where'
+            for bp in bdb.Breakpoint.bpbynumber:
+                if bp:
+                    bp.bpprint()
+        return
+    filename = None
+    lineno = None
+    cond = None
+    comma = arg.find(',')
+    if (comma > 0):
+        cond = arg[(comma + 1):].lstrip()
+        arg = arg[:comma].rstrip()
+    colon = arg.rfind(':')
+    if (colon >= 0):
+        filename = arg[:colon].rstrip()
+        f = self.lookupmodule(filename)
+        if (not f):
+            print '*** ', `filename`,
+            print 'not found from sys.path'
+            return
+        else:
+            filename = f
+        arg = arg[(colon + 1):].lstrip()
+        try:
+            lineno = int(arg)
+        except ValueError as msg:
+            print '*** Bad lineno:', arg
+            return
+    else:
+        try:
+            lineno = int(arg)
+        except ValueError:
+            try:
+                func = eval(arg, self.curframe.f_globals, self.curframe.f_locals)
+            except:
+                func = arg
+            try:
+                if hasattr(func, 'im_func'):
+                    func = func.im_func
+                code = func.func_code
+                lineno = code.co_firstlineno
+                filename = code.co_filename
+            except:
+                (ok, filename, ln) = self.lineinfo(arg)
+                if (not ok):
+                    print '*** The specified object',
+                    print `arg`,
+                    print 'is not a function'
+                    print 'or was not found along sys.path.'
+                    return
+                lineno = int(ln)
+    if (not filename):
+        filename = self.defaultFile()
+    line = self.checkline(filename, lineno)
+    if line:
+        err = self.set_break(filename, line, temporary, cond)
+        if err:
+            print '***', err
+        else:
+            bp = self.get_breaks(filename, line)[(-1)]
+            print ('Breakpoint %d at %s:%d' % (bp.number, bp.file, bp.line))

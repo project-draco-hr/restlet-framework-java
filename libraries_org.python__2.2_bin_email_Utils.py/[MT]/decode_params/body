@@ -1,0 +1,26 @@
+def decode_params(params):
+    'Decode parameters list according to RFC 2231.\n\n    params is a sequence of 2-tuples containing (content type, string value).\n    '
+    new_params = []
+    rfc2231_params = {}
+    (name, value) = params[0]
+    new_params.append((name, value))
+    for (name, value) in params[1:]:
+        value = unquote(value)
+        mo = rfc2231_continuation.match(name)
+        if mo:
+            (name, num) = mo.group('name', 'num')
+            if (num is not None):
+                num = int(num)
+            rfc2231_param1 = rfc2231_params.setdefault(name, [])
+            rfc2231_param1.append((num, value))
+        else:
+            new_params.append((name, ('"%s"' % quote(value))))
+    if rfc2231_params:
+        for (name, continuations) in rfc2231_params.items():
+            value = []
+            continuations.sort()
+            for (num, continuation) in continuations:
+                value.append(continuation)
+            (charset, language, value) = decode_rfc2231(EMPTYSTRING.join(value))
+            new_params.append((name, (charset, language, ('"%s"' % quote(value)))))
+    return new_params

@@ -1,0 +1,15 @@
+def save_int(self, object):
+    if self.bin:
+        high_bits = (object >> 31)
+        if ((high_bits == 0) or (high_bits == (-1))):
+            i = mdumps(object)[1:]
+            assert (len(i) == 4)
+            if (i[(-2):] == '\x00\x00'):
+                if (i[(-3)] == '\x00'):
+                    self.write((BININT1 + i[0]))
+                else:
+                    self.write((BININT2 + i[:2]))
+            else:
+                self.write((BININT + i))
+            return
+    self.write(((INT + `object`) + '\n'))

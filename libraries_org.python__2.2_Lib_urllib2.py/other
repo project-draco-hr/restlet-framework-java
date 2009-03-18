@@ -1,0 +1,68 @@
+'An extensible library for opening URLs using a variety of protocols\n\nThe simplest way to use this module is to call the urlopen function,\nwhich accepts a string containing a URL or a Request object (described\nbelow).  It opens the URL and returns the results as file-like\nobject; the returned object has some extra methods described below.\n\nThe OpenerDirectory manages a collection of Handler objects that do\nall the actual work.  Each Handler implements a particular protocol or\noption.  The OpenerDirector is a composite object that invokes the\nHandlers needed to open the requested URL.  For example, the\nHTTPHandler performs HTTP GET and POST requests and deals with\nnon-error returns.  The HTTPRedirectHandler automatically deals with\nHTTP 301, 302, 303 and 307 redirect errors, and the HTTPDigestAuthHandler\ndeals with digest authentication.\n\nurlopen(url, data=None) -- basic usage is that same as original\nurllib.  pass the url and optionally data to post to an HTTP URL, and\nget a file-like object back.  One difference is that you can also pass\na Request instance instead of URL.  Raises a URLError (subclass of\nIOError); for HTTP errors, raises an HTTPError, which can also be\ntreated as a valid response.\n\nbuild_opener -- function that creates a new OpenerDirector instance.\nwill install the default handlers.  accepts one or more Handlers as\narguments, either instances or Handler classes that it will\ninstantiate.  if one of the argument is a subclass of the default\nhandler, the argument will be installed instead of the default.\n\ninstall_opener -- installs a new opener as the default opener.\n\nobjects of interest:\nOpenerDirector --\n\nRequest -- an object that encapsulates the state of a request.  the\nstate can be a simple as the URL.  it can also include extra HTTP\nheaders, e.g. a User-Agent.\n\nBaseHandler --\n\nexceptions:\nURLError-- a subclass of IOError, individual protocols have their own\nspecific subclass\n\nHTTPError-- also a valid HTTP response, so you can treat an HTTP error\nas an exceptional event or valid response\n\ninternals:\nBaseHandler and parent\n_call_chain conventions\n\nExample usage:\n\nimport urllib2\n\n# set up authentication info\nauthinfo = urllib2.HTTPBasicAuthHandler()\nauthinfo.add_password(\'realm\', \'host\', \'username\', \'password\')\n\nproxy_support = urllib2.ProxyHandler({"http" : "http://ahad-haam:3128"})\n\n# build a new opener that adds authentication and caching FTP handlers\nopener = urllib2.build_opener(proxy_support, authinfo, urllib2.CacheFTPHandler)\n\n# install it\nurllib2.install_opener(opener)\n\nf = urllib2.urlopen(\'http://www.python.org/\')\n\n\n'
+import socket
+import httplib
+import inspect
+import re
+import base64
+import types
+import urlparse
+import md5
+import mimetypes
+import mimetools
+import rfc822
+import ftplib
+import sys
+import time
+import os
+import stat
+import gopherlib
+import posixpath
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
+try:
+    import sha
+except ImportError:
+    sha = None
+from urllib import unwrap, unquote, splittype, splithost, addinfourl, splitport, splitgophertype, splitquery, splitattr, ftpwrapper, noheaders
+from urllib import getproxies
+from urllib import localhost, url2pathname
+__version__ = '2.0a1'
+_opener = None
+if hasattr(httplib, 'HTTPS'):
+
+
+    class HTTPSHandler(AbstractHTTPHandler):
+
+        def https_open(self, req):
+            return self.do_open(httplib.HTTPS, req)
+if (__name__ == '__main__'):
+    if (socket.gethostname() == 'bitdiddle'):
+        localhost = 'bitdiddle.cnri.reston.va.us'
+    elif (socket.gethostname() == 'bitdiddle.concentric.net'):
+        localhost = 'localhost'
+    else:
+        localhost = None
+    urls = ['gopher://gopher.lib.ncsu.edu/11/library/stacks/Alex', 'gopher://gopher.vt.edu:10010/10/33', 'file:/etc/passwd', 'file://nonsensename/etc/passwd', 'ftp://www.python.org/pub/python/misc/sousa.au', 'ftp://www.python.org/pub/tmp/blat', 'http://www.espn.com/', 'http://www.python.org/Spanish/Inquistion/', ('http://www.python.org/cgi-bin/faqw.py', 'query=pythonistas&querytype=simple&casefold=yes&req=search'), 'http://www.python.org/', 'ftp://gatekeeper.research.compaq.com/pub/DEC/SRC/research-reports/00README-Legal-Rules-Regs']
+    cfh = CacheFTPHandler()
+    cfh.setTimeout(1)
+    install_opener(build_opener(cfh, GopherHandler))
+    for url in urls:
+        if isinstance(url, types.TupleType):
+            (url, req) = url
+        else:
+            req = None
+        print url
+        try:
+            f = urlopen(url, req)
+        except IOError as err:
+            print 'IOError:', err
+        except socket.error as err:
+            print 'socket.error:', err
+        else:
+            buf = f.read()
+            f.close()
+            print ('read %d bytes' % len(buf))
+        print 
+        time.sleep(0.1)

@@ -1,0 +1,12 @@
+def test_parse_message_rfc822(self):
+    eq = self.assertEqual
+    unless = self.failUnless
+    msg = self._msgobj('msg_11.txt')
+    eq(msg.get_type(), 'message/rfc822')
+    payload = msg.get_payload()
+    unless(isinstance(payload, ListType))
+    eq(len(payload), 1)
+    submsg = payload[0]
+    self.failUnless(isinstance(submsg, Message))
+    eq(submsg['subject'], 'An enclosed message')
+    eq(submsg.get_payload(), 'Here is the body of the message.\n')

@@ -1,0 +1,24 @@
+def cloneNode(self, deep):
+    if (self.ownerDocument is None):
+        clone = DocumentType(None)
+        clone.name = self.name
+        clone.nodeName = self.name
+        operation = xml.dom.UserDataHandler.NODE_CLONED
+        if deep:
+            clone.entities._seq = []
+            clone.notations._seq = []
+            for n in self.notations._seq:
+                notation = Notation(n.nodeName, n.publicId, n.systemId)
+                clone.notations._seq.append(notation)
+                n._call_user_data_handler(operation, n, notation)
+            for e in self.entities._seq:
+                entity = Entity(e.nodeName, e.publicId, e.systemId, e.notationName)
+                entity.actualEncoding = e.actualEncoding
+                entity.encoding = e.encoding
+                entity.version = e.version
+                clone.entities._seq.append(entity)
+                e._call_user_data_handler(operation, n, entity)
+        self._call_user_data_handler(operation, self, clone)
+        return clone
+    else:
+        return None

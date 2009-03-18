@@ -1,0 +1,13 @@
+def mime_decode_header(line):
+    'Decode a header line to 8bit.'
+    newline = ''
+    pos = 0
+    while 1:
+        res = mime_head.search(line, pos)
+        if (res is None):
+            break
+        match = res.group(1)
+        match = ' '.join(match.split('_'))
+        newline = ((newline + line[pos:res.start(0)]) + mime_decode(match))
+        pos = res.end(0)
+    return (newline + line[pos:])

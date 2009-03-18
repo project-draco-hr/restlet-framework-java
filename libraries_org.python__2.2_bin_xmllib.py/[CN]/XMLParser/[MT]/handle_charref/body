@@ -1,0 +1,13 @@
+def handle_charref(self, name):
+    try:
+        if (name[0] == 'x'):
+            n = int(name[1:], 16)
+        else:
+            n = int(name)
+    except ValueError:
+        self.unknown_charref(name)
+        return
+    if (not (0 <= n <= 255)):
+        self.unknown_charref(name)
+        return
+    self.handle_data(chr(n))

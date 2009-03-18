@@ -1,0 +1,15 @@
+def __init__(self, n):
+    self.n = n
+    rangen = range(n)
+    self.rowgenerators = []
+    for i in rangen:
+        rowuses = [(((1L << j) | (1L << ((((n + i) - j) + n) - 1))) | (1L << ((((n + (2 * n)) - 1) + i) + j))) for j in rangen]
+
+        def rowgen(rowuses=rowuses):
+            for j in rangen:
+                uses = rowuses[j]
+                if ((uses & self.used) == 0):
+                    self.used |= uses
+                    yield j
+                    self.used &= (~ uses)
+        self.rowgenerators.append(rowgen)

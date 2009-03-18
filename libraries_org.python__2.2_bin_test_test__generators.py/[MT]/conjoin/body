@@ -1,0 +1,12 @@
+def conjoin(gs):
+    values = ([None] * len(gs))
+
+    def gen(i, values=values):
+        if (i >= len(gs)):
+            yield values
+        else:
+            for values[i] in gs[i]():
+                for x in gen((i + 1)):
+                    yield x
+    for x in gen(0):
+        yield x

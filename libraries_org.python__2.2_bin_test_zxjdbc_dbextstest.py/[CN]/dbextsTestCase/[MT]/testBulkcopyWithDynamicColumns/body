@@ -1,0 +1,10 @@
+def testBulkcopyWithDynamicColumns(self):
+    'testing bcp with dynamic column names'
+    self.testBulkcopy()
+    bcp = self.db.bulkcopy('dbexts_test', 'two', exclude=['a'])
+    assert (len(bcp.columns) == 2), ('expected two columns, found [%d]' % len(bcp.columns))
+    a = filter((lambda x, c=bcp.columns: (x in c)), ['b', 'c'])
+    assert (a == ['b', 'c']), ("expecting ['b', 'c'], found %s" % str(a))
+    bcp = self.db.bulkcopy('dbexts_test', 'two')
+    done = bcp.transfer(self.db)
+    assert (done == 32), ('expecting thirty two rows to be inserted, found [%d]' % done)

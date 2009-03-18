@@ -1,0 +1,25 @@
+def test_default_type_non_parsed(self):
+    eq = self.assertEqual
+    neq = self.ndiffAssertEqual
+    container = MIMEMultipart('digest', 'BOUNDARY')
+    container.epilogue = '\n'
+    subpart1a = MIMEText('message 1\n')
+    subpart2a = MIMEText('message 2\n')
+    subpart1 = MIMEMessage(subpart1a)
+    subpart2 = MIMEMessage(subpart2a)
+    container.attach(subpart1)
+    container.attach(subpart2)
+    eq(subpart1.get_type(), 'message/rfc822')
+    eq(subpart1.get_default_type(), 'message/rfc822')
+    eq(subpart2.get_type(), 'message/rfc822')
+    eq(subpart2.get_default_type(), 'message/rfc822')
+    neq(container.as_string(0), 'Content-Type: multipart/digest; boundary="BOUNDARY"\nMIME-Version: 1.0\n\n--BOUNDARY\nContent-Type: message/rfc822\nMIME-Version: 1.0\n\nContent-Type: text/plain; charset="us-ascii"\nMIME-Version: 1.0\nContent-Transfer-Encoding: 7bit\n\nmessage 1\n\n--BOUNDARY\nContent-Type: message/rfc822\nMIME-Version: 1.0\n\nContent-Type: text/plain; charset="us-ascii"\nMIME-Version: 1.0\nContent-Transfer-Encoding: 7bit\n\nmessage 2\n\n--BOUNDARY--\n')
+    del subpart1['content-type']
+    del subpart1['mime-version']
+    del subpart2['content-type']
+    del subpart2['mime-version']
+    eq(subpart1.get_type(), None)
+    eq(subpart1.get_default_type(), 'message/rfc822')
+    eq(subpart2.get_type(), None)
+    eq(subpart2.get_default_type(), 'message/rfc822')
+    neq(container.as_string(0), 'Content-Type: multipart/digest; boundary="BOUNDARY"\nMIME-Version: 1.0\n\n--BOUNDARY\n\nContent-Type: text/plain; charset="us-ascii"\nMIME-Version: 1.0\nContent-Transfer-Encoding: 7bit\n\nmessage 1\n\n--BOUNDARY\n\nContent-Type: text/plain; charset="us-ascii"\nMIME-Version: 1.0\nContent-Transfer-Encoding: 7bit\n\nmessage 2\n\n--BOUNDARY--\n')

@@ -1,0 +1,13 @@
+def compile_and_check(text, should_fail=1):
+    try:
+        compile(text, '<test code>', 'exec')
+    except SyntaxError as msg:
+        if should_fail:
+            print 'got SyntaxError as expected'
+        else:
+            print 'raised unexpected SyntaxError:', text
+    else:
+        if should_fail:
+            print 'should have raised SyntaxError:', text
+        else:
+            print 'as expected, no SyntaxError'

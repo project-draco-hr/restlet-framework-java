@@ -1,0 +1,23 @@
+def copymessage(self, n, tofolder, ton):
+    'Copy one message over a specific destination message,\n        which may or may not already exist.'
+    path = self.getmessagefilename(n)
+    f = open(path)
+    f.close()
+    del f
+    topath = tofolder.getmessagefilename(ton)
+    backuptopath = tofolder.getmessagefilename((',%d' % ton))
+    try:
+        os.rename(topath, backuptopath)
+    except os.error:
+        pass
+    ok = 0
+    try:
+        tofolder.setlast(None)
+        shutil.copy2(path, topath)
+        ok = 1
+    finally:
+        if (not ok):
+            try:
+                os.unlink(topath)
+            except os.error:
+                pass

@@ -1,0 +1,10 @@
+def quoted(self, ch):
+    if (ch == '"'):
+        if (not (self.s[(self.pos - 1)] == '\\')):
+            arg = self.s[(self.pos - self.chunk):self.pos]
+            arg = arg.replace('\\"', '"').replace('\\\\', '\\')
+            self.args.append(arg)
+            self.chunk = 0
+            self.state = self.space
+            return
+    self.chunk += 1

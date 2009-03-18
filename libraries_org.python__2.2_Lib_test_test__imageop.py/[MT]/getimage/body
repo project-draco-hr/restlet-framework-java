@@ -1,0 +1,12 @@
+def getimage(name):
+    "return a tuple consisting of\n       image (in 'imgfile' format) width and height\n    "
+    import imgfile
+    try:
+        sizes = imgfile.getsizes(name)
+    except imgfile.error:
+        name = get_qualified_path(name)
+        sizes = imgfile.getsizes(name)
+    if verbose:
+        print ('imgfile opening test image: %s, sizes: %s' % (name, str(sizes)))
+    image = imgfile.read(name)
+    return (image, sizes[0], sizes[1])

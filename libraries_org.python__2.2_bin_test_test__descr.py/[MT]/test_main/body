@@ -1,0 +1,23 @@
+def test_main():
+    testfuncs = [weakref_segfault, do_this_first, class_docstrings, lists, dicts, dict_constructor, test_dir, ints, longs, floats, complexes, pydicts, pylists, metaclass, pymods, multi, mro_disagreement, diamond, ex5, monotonicity, consistency_with_epg, objects, slots, slotspecials, dynamics, errors, classmethods, staticmethods, classic, compattr, newslot, altmro, overloading, methods, specials, weakrefs, properties, supers, inherits, keywords, restricted, str_subclass_as_dict_key, classic_comparisons, rich_comparisons, coercions, descrdoc, setclass, setdict, pickles, copies, binopoverride, subclasspropagation, buffer_inherit, str_of_str_subclass, kwdargs, delhook, hashinherit, strops, deepcopyrecursive, modules, dictproxyiterkeys, dictproxyitervalues, dictproxyiteritems, pickleslots, funnynew, imulbug, docdescriptor, string_exceptions, copy_setstate, slices, subtype_resurrection, slottrash, slotmultipleinheritance, testrmul, testipow, test_mutable_bases, test_mutable_bases_with_failing_mro, test_mutable_bases_catch_mro_conflict, mutable_names, subclass_right_op, subclass_cmp_right_op, dict_type_with_metaclass, meth_class_get, isinst_isclass, proxysuper, carloverre, filefault, subclass_binop]
+    if (__name__ == '__main__'):
+        import sys
+        if (len(sys.argv) > 1):
+            testfuncs = [globals()[arg] for arg in sys.argv[1:]]
+    n = len(testfuncs)
+    success = 0
+    for testfunc in testfuncs:
+        try:
+            print ('*' * 40)
+            testfunc()
+        except Exception as e:
+            if (isinstance(e, KeyboardInterrupt) or (n == 1)):
+                raise
+            print '-->', testfunc.__name__, ('FAILURE(%d/%d)' % (success, n)), str(e)
+        else:
+            success += 1
+            print '-->', testfunc.__name__, ('OK(%d/%d)' % (success, n))
+    if (n != success):
+        raise TestFailed, ('%d/%d' % (success, n))
+    elif verbose:
+        print 'All OK'

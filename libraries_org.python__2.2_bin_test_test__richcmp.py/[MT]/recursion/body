@@ -1,0 +1,36 @@
+def recursion():
+    from UserList import UserList
+    a = UserList()
+    a.append(a)
+    b = UserList()
+    b.append(b)
+
+    def check(s, a=a, b=b):
+        if verbose:
+            print 'check', s
+        try:
+            if (not eval(s)):
+                raise TestFailed, (s + ' was false but expected to be true')
+        except RuntimeError as msg:
+            raise TestFailed, str(msg)
+    if verbose:
+        print ('recursion tests: a=%s, b=%s' % (a, b))
+    check('a==b')
+    check('not a!=b')
+    a.append(1)
+    if verbose:
+        print ('recursion tests: a=%s, b=%s' % (a, b))
+    check('a!=b')
+    check('not a==b')
+    b.append(0)
+    if verbose:
+        print ('recursion tests: a=%s, b=%s' % (a, b))
+    check('a!=b')
+    check('not a==b')
+    a[1] = (-1)
+    if verbose:
+        print ('recursion tests: a=%s, b=%s' % (a, b))
+    check('a!=b')
+    check('not a==b')
+    if verbose:
+        print 'recursion tests ok'

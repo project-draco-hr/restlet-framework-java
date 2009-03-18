@@ -1,0 +1,16 @@
+def do_set(self, arg):
+    "\nSet a parameter. Some examples:\n set owner = 'informix'\n set types = ['VIEW', 'TABLE']\nThe right hand side is evaluated using `eval()`\n"
+    if (len(arg.strip()) == 0):
+        items = self.kw.items()
+        if len(items):
+            print 
+            for a in dbexts.console(items, ('key', 'value'))[:(-1)]:
+                print a
+            print 
+        return False
+    d = filter((lambda x: (len(x) > 0)), map((lambda x: x.strip()), arg.split('=')))
+    if (len(d) == 1):
+        if self.kw.has_key(d[0]):
+            del self.kw[d[0]]
+    else:
+        self.kw[d[0]] = eval(d[1])

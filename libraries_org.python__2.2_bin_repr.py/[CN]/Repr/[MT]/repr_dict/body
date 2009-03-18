@@ -1,0 +1,18 @@
+def repr_dict(self, x, level):
+    n = len(x)
+    if (n == 0):
+        return '{}'
+    if (level <= 0):
+        return '{...}'
+    s = ''
+    keys = x.keys()
+    keys.sort()
+    for i in range(min(n, self.maxdict)):
+        if s:
+            s = (s + ', ')
+        key = keys[i]
+        s = (s + self.repr1(key, (level - 1)))
+        s = ((s + ': ') + self.repr1(x[key], (level - 1)))
+    if (n > self.maxdict):
+        s = (s + ', ...')
+    return (('{' + s) + '}')

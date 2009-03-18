@@ -1,0 +1,6 @@
+def encode_quopri(msg):
+    "Encode the message's payload in quoted-printable.\n\n    Also, add an appropriate Content-Transfer-Encoding header.\n    "
+    orig = msg.get_payload()
+    encdata = _qencode(orig)
+    msg.set_payload(encdata)
+    msg['Content-Transfer-Encoding'] = 'quoted-printable'

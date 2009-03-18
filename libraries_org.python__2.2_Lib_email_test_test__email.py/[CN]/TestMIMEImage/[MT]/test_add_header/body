@@ -1,0 +1,12 @@
+def test_add_header(self):
+    eq = self.assertEqual
+    unless = self.failUnless
+    self._im.add_header('Content-Disposition', 'attachment', filename='dingusfish.gif')
+    eq(self._im['content-disposition'], 'attachment; filename="dingusfish.gif"')
+    eq(self._im.get_params(header='content-disposition'), [('attachment', ''), ('filename', 'dingusfish.gif')])
+    eq(self._im.get_param('filename', header='content-disposition'), 'dingusfish.gif')
+    missing = []
+    eq(self._im.get_param('attachment', header='content-disposition'), '')
+    unless((self._im.get_param('foo', failobj=missing, header='content-disposition') is missing))
+    unless((self._im.get_param('foobar', missing) is missing))
+    unless((self._im.get_param('attachment', missing, header='foobar') is missing))

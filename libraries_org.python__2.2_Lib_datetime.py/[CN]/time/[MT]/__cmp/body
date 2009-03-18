@@ -1,0 +1,18 @@
+def __cmp(self, other):
+    assert isinstance(other, time)
+    mytz = self._tzinfo
+    ottz = other._tzinfo
+    myoff = otoff = None
+    if (mytz is ottz):
+        base_compare = True
+    else:
+        myoff = self._utcoffset()
+        otoff = other._utcoffset()
+        base_compare = (myoff == otoff)
+    if base_compare:
+        return cmp((self.__hour, self.__minute, self.__second, self.__microsecond), (other.__hour, other.__minute, other.__second, other.__microsecond))
+    if ((myoff is None) or (otoff is None)):
+        raise TypeError('cannot compare naive and aware times')
+    myhhmm = (((self.__hour * 60) + self.__minute) - myoff)
+    othhmm = (((other.__hour * 60) + other.__minute) - otoff)
+    return cmp((myhhmm, self.__second, self.__microsecond), (othhmm, other.__second, other.__microsecond))

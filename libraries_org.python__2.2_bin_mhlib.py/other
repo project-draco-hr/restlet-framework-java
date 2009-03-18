@@ -1,0 +1,17 @@
+"MH interface -- purely object-oriented (well, almost)\n\nExecutive summary:\n\nimport mhlib\n\nmh = mhlib.MH()         # use default mailbox directory and profile\nmh = mhlib.MH(mailbox)  # override mailbox location (default from profile)\nmh = mhlib.MH(mailbox, profile) # override mailbox and profile\n\nmh.error(format, ...)   # print error message -- can be overridden\ns = mh.getprofile(key)  # profile entry (None if not set)\npath = mh.getpath()     # mailbox pathname\nname = mh.getcontext()  # name of current folder\nmh.setcontext(name)     # set name of current folder\n\nlist = mh.listfolders() # names of top-level folders\nlist = mh.listallfolders() # names of all folders, including subfolders\nlist = mh.listsubfolders(name) # direct subfolders of given folder\nlist = mh.listallsubfolders(name) # all subfolders of given folder\n\nmh.makefolder(name)     # create new folder\nmh.deletefolder(name)   # delete folder -- must have no subfolders\n\nf = mh.openfolder(name) # new open folder object\n\nf.error(format, ...)    # same as mh.error(format, ...)\npath = f.getfullname()  # folder's full pathname\npath = f.getsequencesfilename() # full pathname of folder's sequences file\npath = f.getmessagefilename(n)  # full pathname of message n in folder\n\nlist = f.listmessages() # list of messages in folder (as numbers)\nn = f.getcurrent()      # get current message\nf.setcurrent(n)         # set current message\nlist = f.parsesequence(seq)     # parse msgs syntax into list of messages\nn = f.getlast()         # get last message (0 if no messagse)\nf.setlast(n)            # set last message (internal use only)\n\ndict = f.getsequences() # dictionary of sequences in folder {name: list}\nf.putsequences(dict)    # write sequences back to folder\n\nf.createmessage(n, fp)  # add message from file f as number n\nf.removemessages(list)  # remove messages in list from folder\nf.refilemessages(list, tofolder) # move messages in list to other folder\nf.movemessage(n, tofolder, ton)  # move one message to a given destination\nf.copymessage(n, tofolder, ton)  # copy one message to a given destination\n\nm = f.openmessage(n)    # new open message object (costs a file descriptor)\nm is a derived class of mimetools.Message(rfc822.Message), with:\ns = m.getheadertext()   # text of message's headers\ns = m.getheadertext(pred) # text of message's headers, filtered by pred\ns = m.getbodytext()     # text of message's body, decoded\ns = m.getbodytext(0)    # text of message's body, not decoded\n"
+MH_PROFILE = '~/.mh_profile'
+PATH = '~/Mail'
+MH_SEQUENCES = '.mh_sequences'
+FOLDER_PROTECT = 448
+import os
+import sys
+from stat import ST_NLINK
+import re
+import mimetools
+import multifile
+import shutil
+from bisect import bisect
+__all__ = ['MH', 'Error', 'Folder', 'Message']
+numericprog = re.compile('^[1-9][0-9]*$')
+if (__name__ == '__main__'):
+    test()

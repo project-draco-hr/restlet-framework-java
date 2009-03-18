@@ -1,0 +1,9 @@
+def __init__(self, host, port, backlog, reuse_addr):
+    self.jchannel = java.nio.channels.ServerSocketChannel.open()
+    self.jsocket = self.jchannel.socket()
+    if host:
+        bindaddr = java.net.InetSocketAddress(host, port)
+    else:
+        bindaddr = java.net.InetSocketAddress(port)
+    self._setreuseaddress(reuse_addr)
+    self.jsocket.bind(bindaddr, backlog)

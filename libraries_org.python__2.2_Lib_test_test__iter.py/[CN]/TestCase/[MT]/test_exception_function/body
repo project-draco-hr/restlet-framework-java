@@ -1,0 +1,16 @@
+def test_exception_function(self):
+
+    def spam(state=[0]):
+        i = state[0]
+        state[0] = (i + 1)
+        if (i == 10):
+            raise RuntimeError
+        return i
+    res = []
+    try:
+        for x in iter(spam, 20):
+            res.append(x)
+    except RuntimeError:
+        self.assertEqual(res, range(10))
+    else:
+        self.fail('should have raised RuntimeError')

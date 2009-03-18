@@ -1,0 +1,15 @@
+def run_docstring_examples(f, globs, verbose=0, name='NoName', compileflags=None):
+    'f, globs, verbose=0, name="NoName" -> run examples from f.__doc__.\n\n    Use (a shallow copy of) dict globs as the globals for execution.\n    Return (#failures, #tries).\n\n    If optional arg verbose is true, print stuff even if there are no\n    failures.\n    Use string name in failure msgs.\n    '
+    try:
+        doc = f.__doc__
+        if (not doc):
+            return (0, 0)
+        doc = str(doc)
+    except:
+        return (0, 0)
+    e = _extract_examples(doc)
+    if (not e):
+        return (0, 0)
+    if (compileflags is None):
+        compileflags = _extract_future_flags(globs)
+    return _run_examples(e, globs, verbose, name, compileflags)

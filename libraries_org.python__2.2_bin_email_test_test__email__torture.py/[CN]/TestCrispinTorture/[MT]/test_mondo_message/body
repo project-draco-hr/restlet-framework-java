@@ -1,0 +1,12 @@
+def test_mondo_message(self):
+    eq = self.assertEqual
+    neq = self.ndiffAssertEqual
+    msg = self._msgobj('crispin-torture.txt')
+    payload = msg.get_payload()
+    eq(type(payload), ListType)
+    eq(len(payload), 12)
+    eq(msg.preamble, None)
+    eq(msg.epilogue, '\n\n')
+    fp = StringIO()
+    _structure(msg, fp=fp)
+    neq(fp.getvalue(), 'multipart/mixed\n    text/plain\n    message/rfc822\n        multipart/alternative\n            text/plain\n            multipart/mixed\n                text/richtext\n            application/andrew-inset\n    message/rfc822\n        audio/basic\n    audio/basic\n    image/pbm\n    message/rfc822\n        multipart/mixed\n            multipart/mixed\n                text/plain\n                audio/x-sun\n            multipart/mixed\n                image/gif\n                image/gif\n                application/x-be2\n                application/atomicmail\n            audio/x-sun\n    message/rfc822\n        multipart/mixed\n            text/plain\n            image/pgm\n            text/plain\n    message/rfc822\n        multipart/mixed\n            text/plain\n            image/pbm\n    message/rfc822\n        application/postscript\n    image/gif\n    message/rfc822\n        multipart/mixed\n            audio/basic\n            audio/basic\n    message/rfc822\n        multipart/mixed\n            application/postscript\n            text/plain\n            message/rfc822\n                multipart/mixed\n                    text/plain\n                    multipart/parallel\n                        image/gif\n                        audio/basic\n                    application/atomicmail\n                    message/rfc822\n                        audio/x-sun\n')

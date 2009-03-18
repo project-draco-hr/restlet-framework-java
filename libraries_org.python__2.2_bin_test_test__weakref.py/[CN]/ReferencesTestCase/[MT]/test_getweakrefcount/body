@@ -1,0 +1,8 @@
+def test_getweakrefcount(self):
+    o = C()
+    ref1 = weakref.ref(o)
+    ref2 = weakref.ref(o, self.callback)
+    self.assert_((weakref.getweakrefcount(o) == 2), 'got wrong number of weak reference objects')
+    proxy1 = weakref.proxy(o)
+    proxy2 = weakref.proxy(o, self.callback)
+    self.assert_((weakref.getweakrefcount(o) == 4), 'got wrong number of weak reference objects')

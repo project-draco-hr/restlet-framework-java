@@ -1,0 +1,37 @@
+'Supporting definitions for the Python regression test.'
+import sys
+verbose = 1
+use_resources = None
+_original_stdout = None
+FUZZ = 1e-06
+try:
+    unicode
+    have_unicode = 1
+except NameError:
+    have_unicode = 0
+is_jython = sys.platform.startswith('java')
+underlying_system = sys.platform
+if is_jython:
+    import java.lang.System
+    underlying_system = java.lang.System.getProperty('os.name').lower()
+import os
+if (os.name == 'java'):
+    TESTFN = '__test'
+elif (os.name != 'riscos'):
+    TESTFN = '@test'
+    if have_unicode:
+        TESTFN_UNICODE = unicode('@test-\xe0\xf2', 'latin-1')
+        if (os.name == 'nt'):
+            TESTFN_ENCODING = 'mbcs'
+else:
+    TESTFN = 'test'
+del os
+from os import unlink
+import unittest
+import string
+roman = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi', 'xii']
+symbols = [map(string.upper, roman), string.uppercase, range(1, 50), string.lowercase, roman]
+levels = ([0] * 20)
+currentLevel = 0
+oldStdout = None
+from StringIO import StringIO

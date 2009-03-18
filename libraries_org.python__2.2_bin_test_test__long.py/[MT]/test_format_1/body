@@ -1,0 +1,10 @@
+def test_format_1(x):
+    from string import atol
+    for (base, mapper) in ((8, oct), (10, repr), (16, hex)):
+        got = mapper(x)
+        expected = slow_format(x, base)
+        check((got == expected), mapper.__name__, 'returned', got, 'but expected', expected, 'for', x)
+        check((atol(got, 0) == x), ('atol("%s", 0) !=' % got), x)
+    got = str(x)
+    expected = slow_format(x, 10)[:(-1)]
+    check((got == expected), mapper.__name__, 'returned', got, 'but expected', expected, 'for', x)

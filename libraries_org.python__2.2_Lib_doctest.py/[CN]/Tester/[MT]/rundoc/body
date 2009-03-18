@@ -1,0 +1,38 @@
+def rundoc(self, object, name=None):
+    '\n        object, name=None -> search object.__doc__ for examples to run.\n\n        Use optional string name as the key for logging the outcome;\n        by default use object.__name__.\n        Return (#failures, #examples).\n        If object is a class object, search recursively for method\n        docstrings too.\n        object.__doc__ is examined regardless of name, but if object is\n        a class, whether private names reached from object are searched\n        depends on the constructor\'s "isprivate" argument.\n\n        >>> t = Tester(globs={}, verbose=0)\n        >>> def _f():\n        ...     \'\'\'Trivial docstring example.\n        ...     >>> assert 2 == 2\n        ...     \'\'\'\n        ...     return 32\n        ...\n        >>> t.rundoc(_f)  # expect 0 failures in 1 example\n        (0, 1)\n        '
+    if (name is None):
+        try:
+            name = object.__name__
+        except AttributeError:
+            raise ValueError(("Tester.rundoc: name must be given when object.__name__ doesn't exist; " + `object`))
+    if self.verbose:
+        print 'Running', (name + '.__doc__')
+    (f, t) = run_docstring_examples(object, self.globs, self.verbose, name, self.compileflags)
+    if self.verbose:
+        print f, 'of', t, 'examples failed in', (name + '.__doc__')
+    self.__record_outcome(name, f, t)
+    if _isclass(object):
+        d = {}
+        for (tag, kind, homecls, value) in _classify_class_attrs(object):
+            if (homecls is not object):
+                continue
+            elif self.isprivate(name, tag):
+                continue
+            elif (kind == 'method'):
+                d[tag] = value
+            elif (kind == 'static method'):
+                d[tag] = getattr(object, tag)
+            elif (kind == 'class method'):
+                d[tag] = getattr(object, tag).im_func
+            elif (kind == 'property'):
+                if (value.__doc__ is not None):
+                    d[tag] = str(value.__doc__)
+            elif (kind == 'data'):
+                if _isclass(value):
+                    d[tag] = value
+            else:
+                raise ValueError(('teach doctest about %r' % kind))
+        (f2, t2) = self.run__test__(d, name)
+        f += f2
+        t += t2
+    return (f, t)

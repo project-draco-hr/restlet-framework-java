@@ -1,0 +1,11 @@
+def testDate(self):
+    'testing creation of Date'
+    c = self.calendar()
+    o = zxJDBC.DateFromTicks((c.getTime().getTime() / 1000L))
+    v = zxJDBC.Date(c.get(Calendar.YEAR), (c.get(Calendar.MONTH) + 1), c.get(Calendar.DATE))
+    assert o.equals(v), ('incorrect date conversion using java, got [%ld], expected [%ld]' % (v.getTime(), o.getTime()))
+    t = time.time()
+    l = time.localtime(t)
+    o = zxJDBC.DateFromTicks(t)
+    v = zxJDBC.Date(l[0], l[1], l[2])
+    assert o.equals(v), ('incorrect date conversion, got [%ld], expected [%ld]' % (v.getTime(), o.getTime()))

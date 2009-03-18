@@ -1,0 +1,20 @@
+def __sub__(self, other):
+    'Subtract two datetimes, or a datetime and a timedelta.'
+    if (not isinstance(other, datetime)):
+        if isinstance(other, timedelta):
+            return (self + (- other))
+        return NotImplemented
+    days1 = self.toordinal()
+    days2 = other.toordinal()
+    secs1 = ((self.__second + (self.__minute * 60)) + (self.__hour * 3600))
+    secs2 = ((other.__second + (other.__minute * 60)) + (other.__hour * 3600))
+    base = timedelta((days1 - days2), (secs1 - secs2), (self.__microsecond - other.__microsecond))
+    if (self._tzinfo is other._tzinfo):
+        return base
+    myoff = self._utcoffset()
+    otoff = other._utcoffset()
+    if (myoff == otoff):
+        return base
+    if ((myoff is None) or (otoff is None)):
+        raise TypeError, 'cannot mix naive and timezone-aware time'
+    return (base + timedelta(minutes=(otoff - myoff)))

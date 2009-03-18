@@ -1,0 +1,15 @@
+def prepend(self, cmd, kind):
+    't.prepend(cmd, kind) adds a new step at the front.'
+    if (type(cmd) is not type('')):
+        raise TypeError, 'Template.prepend: cmd must be a string'
+    if (kind not in stepkinds):
+        raise ValueError, ('Template.prepend: bad kind ' + `kind`)
+    if (kind == SINK):
+        raise ValueError, 'Template.prepend: SINK can only be appended'
+    if (self.steps and (self.steps[0][1] == SOURCE)):
+        raise ValueError, 'Template.prepend: already begins with SOURCE'
+    if ((kind[0] == 'f') and (not re.search('\\$IN\\b', cmd))):
+        raise ValueError, 'Template.prepend: missing $IN in cmd'
+    if ((kind[1] == 'f') and (not re.search('\\$OUT\\b', cmd))):
+        raise ValueError, 'Template.prepend: missing $OUT in cmd'
+    self.steps.insert(0, (cmd, kind))

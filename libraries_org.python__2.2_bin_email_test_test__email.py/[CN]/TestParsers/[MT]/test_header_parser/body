@@ -1,0 +1,12 @@
+def test_header_parser(self):
+    eq = self.assertEqual
+    fp = openfile('msg_02.txt')
+    try:
+        msg = HeaderParser().parse(fp)
+    finally:
+        fp.close()
+    eq(msg['from'], 'ppp-request@zzz.org')
+    eq(msg['to'], 'ppp@zzz.org')
+    eq(msg.get_type(), 'multipart/mixed')
+    eq(msg.is_multipart(), 0)
+    self.failUnless(isinstance(msg.get_payload(), StringType))

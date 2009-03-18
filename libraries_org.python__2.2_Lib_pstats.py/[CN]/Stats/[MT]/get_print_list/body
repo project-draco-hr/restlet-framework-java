@@ -1,0 +1,20 @@
+def get_print_list(self, sel_list):
+    width = self.max_name_len
+    if self.fcn_list:
+        list = self.fcn_list[:]
+        msg = (('   Ordered by: ' + self.sort_type) + '\n')
+    else:
+        list = self.stats.keys()
+        msg = '   Random listing order was used\n'
+    for selection in sel_list:
+        (list, msg) = self.eval_print_amount(selection, list, msg)
+    count = len(list)
+    if (not list):
+        return (0, list)
+    print msg
+    if (count < len(self.stats)):
+        width = 0
+        for func in list:
+            if (len(func_std_string(func)) > width):
+                width = len(func_std_string(func))
+    return ((width + 2), list)

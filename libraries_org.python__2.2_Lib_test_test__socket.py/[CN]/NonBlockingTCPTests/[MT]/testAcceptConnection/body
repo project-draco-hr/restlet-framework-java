@@ -1,0 +1,7 @@
+def testAcceptConnection(self):
+    self.serv.setblocking(0)
+    (read, write, err) = select.select([self.serv], [], [])
+    if (self.serv in read):
+        (conn, addr) = self.serv.accept()
+    else:
+        self.fail("Error trying to do accept after select: server socket was not in 'read'able list")

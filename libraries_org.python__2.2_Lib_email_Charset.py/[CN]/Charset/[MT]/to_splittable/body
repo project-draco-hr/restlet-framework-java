@@ -1,0 +1,8 @@
+def to_splittable(self, s):
+    "Convert a possibly multibyte string to a safely splittable format.\n\n        Uses the input_codec to try and convert the string to Unicode, so it\n        can be safely split on character boundaries (even for multibyte\n        characters).\n\n        Returns the string as-is if it isn't known how to convert it to\n        Unicode with the input_charset.\n\n        Characters that could not be converted to Unicode will be replaced\n        with the Unicode replacement character U+FFFD.\n        "
+    if (_isunicode(s) or (self.input_codec is None)):
+        return s
+    try:
+        return unicode(s, self.input_codec, 'replace')
+    except LookupError:
+        return s

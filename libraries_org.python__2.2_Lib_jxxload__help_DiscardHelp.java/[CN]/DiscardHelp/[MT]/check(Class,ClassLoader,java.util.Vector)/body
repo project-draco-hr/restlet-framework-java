@@ -1,0 +1,17 @@
+{
+  try {
+    Class s=c;
+    do {
+      if (s.getClassLoader() == loader)       return true;
+      s=s.getSuperclass();
+    }
+ while (s != null);
+    for (java.util.Enumeration enumm=interfaces.elements(); enumm.hasMoreElements(); ) {
+      Class intf=(Class)enumm.nextElement();
+      if (intf.isAssignableFrom(c))       return true;
+    }
+  }
+ catch (  SecurityException e) {
+  }
+  return false;
+}

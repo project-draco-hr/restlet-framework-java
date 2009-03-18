@@ -1,0 +1,129 @@
+def _compile(code, pattern, flags):
+    emit = code.append
+    for (op, av) in pattern:
+        if (op in (LITERAL, NOT_LITERAL)):
+            if (flags & SRE_FLAG_IGNORECASE):
+                emit(OPCODES[OP_IGNORE[op]])
+                emit(_sre.getlower(av, flags))
+            else:
+                emit(OPCODES[op])
+                emit(av)
+        elif (op is IN):
+            if (flags & SRE_FLAG_IGNORECASE):
+                emit(OPCODES[OP_IGNORE[op]])
+
+                def fixup(literal, flags=flags):
+                    return _sre.getlower(literal, flags)
+            else:
+                emit(OPCODES[op])
+                fixup = (lambda x: x)
+            skip = len(code)
+            emit(0)
+            _compile_charset(av, flags, code, fixup)
+            code[skip] = (len(code) - skip)
+        elif (op is ANY):
+            if (flags & SRE_FLAG_DOTALL):
+                emit(OPCODES[ANY_ALL])
+            else:
+                emit(OPCODES[ANY])
+        elif (op in (REPEAT, MIN_REPEAT, MAX_REPEAT)):
+            if (flags & SRE_FLAG_TEMPLATE):
+                raise error, 'internal: unsupported template operator'
+                emit(OPCODES[REPEAT])
+                skip = len(code)
+                emit(0)
+                emit(av[0])
+                emit(av[1])
+                _compile(code, av[2], flags)
+                emit(OPCODES[SUCCESS])
+                code[skip] = (len(code) - skip)
+            elif (_simple(av) and (op == MAX_REPEAT)):
+                emit(OPCODES[REPEAT_ONE])
+                skip = len(code)
+                emit(0)
+                emit(av[0])
+                emit(av[1])
+                _compile(code, av[2], flags)
+                emit(OPCODES[SUCCESS])
+                code[skip] = (len(code) - skip)
+            else:
+                emit(OPCODES[REPEAT])
+                skip = len(code)
+                emit(0)
+                emit(av[0])
+                emit(av[1])
+                _compile(code, av[2], flags)
+                code[skip] = (len(code) - skip)
+                if (op == MAX_REPEAT):
+                    emit(OPCODES[MAX_UNTIL])
+                else:
+                    emit(OPCODES[MIN_UNTIL])
+        elif (op is SUBPATTERN):
+            if av[0]:
+                emit(OPCODES[MARK])
+                emit(((av[0] - 1) * 2))
+            _compile(code, av[1], flags)
+            if av[0]:
+                emit(OPCODES[MARK])
+                emit((((av[0] - 1) * 2) + 1))
+        elif (op in (SUCCESS, FAILURE)):
+            emit(OPCODES[op])
+        elif (op in (ASSERT, ASSERT_NOT)):
+            emit(OPCODES[op])
+            skip = len(code)
+            emit(0)
+            if (av[0] >= 0):
+                emit(0)
+            else:
+                (lo, hi) = av[1].getwidth()
+                if (lo != hi):
+                    raise error, 'look-behind requires fixed-width pattern'
+                emit(lo)
+            _compile(code, av[1], flags)
+            emit(OPCODES[SUCCESS])
+            code[skip] = (len(code) - skip)
+        elif (op is CALL):
+            emit(OPCODES[op])
+            skip = len(code)
+            emit(0)
+            _compile(code, av, flags)
+            emit(OPCODES[SUCCESS])
+            code[skip] = (len(code) - skip)
+        elif (op is AT):
+            emit(OPCODES[op])
+            if (flags & SRE_FLAG_MULTILINE):
+                av = AT_MULTILINE.get(av, av)
+            if (flags & SRE_FLAG_LOCALE):
+                av = AT_LOCALE.get(av, av)
+            elif (flags & SRE_FLAG_UNICODE):
+                av = AT_UNICODE.get(av, av)
+            emit(ATCODES[av])
+        elif (op is BRANCH):
+            emit(OPCODES[op])
+            tail = []
+            for av in av[1]:
+                skip = len(code)
+                emit(0)
+                _compile(code, av, flags)
+                emit(OPCODES[JUMP])
+                tail.append(len(code))
+                emit(0)
+                code[skip] = (len(code) - skip)
+            emit(0)
+            for tail in tail:
+                code[tail] = (len(code) - tail)
+        elif (op is CATEGORY):
+            emit(OPCODES[op])
+            if (flags & SRE_FLAG_LOCALE):
+                av = CH_LOCALE[av]
+            elif (flags & SRE_FLAG_UNICODE):
+                av = CH_UNICODE[av]
+            emit(CHCODES[av])
+        elif (op is GROUPREF):
+            if (flags & SRE_FLAG_IGNORECASE):
+                emit(OPCODES[OP_IGNORE[op]])
+            else:
+                emit(OPCODES[op])
+            emit((av - 1))
+        else:
+            raise ValueError, ('unsupported operand type', op)

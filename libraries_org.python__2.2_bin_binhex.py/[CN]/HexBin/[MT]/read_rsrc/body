@@ -1,0 +1,12 @@
+def read_rsrc(self, *n):
+    if (self.state == _DID_HEADER):
+        self.close_data()
+    if (self.state != _DID_DATA):
+        raise Error, 'Read resource data at wrong time'
+    if n:
+        n = n[0]
+        n = min(n, self.rlen)
+    else:
+        n = self.rlen
+    self.rlen = (self.rlen - n)
+    return self._read(n)

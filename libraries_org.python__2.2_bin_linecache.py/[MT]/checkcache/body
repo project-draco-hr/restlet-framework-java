@@ -1,0 +1,11 @@
+def checkcache():
+    'Discard cache entries that are out of date.\n    (This is not checked upon each call!)'
+    for filename in cache.keys():
+        (size, mtime, lines, fullname) = cache[filename]
+        try:
+            stat = os.stat(fullname)
+        except os.error:
+            del cache[filename]
+            continue
+        if ((size != stat[ST_SIZE]) or (mtime != stat[ST_MTIME])):
+            del cache[filename]

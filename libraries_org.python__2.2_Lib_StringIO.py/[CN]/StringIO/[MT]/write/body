@@ -1,0 +1,23 @@
+def write(self, s):
+    if self.closed:
+        raise ValueError, 'I/O operation on closed file'
+    if (not s):
+        return
+    if (type(s) not in types.StringTypes):
+        s = str(s)
+    if (self.pos > self.len):
+        self.buflist.append(('\x00' * (self.pos - self.len)))
+        self.len = self.pos
+    newpos = (self.pos + len(s))
+    if (self.pos < self.len):
+        if self.buflist:
+            self.buf += ''.join(self.buflist)
+            self.buflist = []
+        self.buflist = [self.buf[:self.pos], s, self.buf[newpos:]]
+        self.buf = ''
+        if (newpos > self.len):
+            self.len = newpos
+    else:
+        self.buflist.append(s)
+        self.len = newpos
+    self.pos = newpos

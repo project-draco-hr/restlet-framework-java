@@ -1,0 +1,32 @@
+import java.io.File
+'Temporary files and filenames.'
+import os
+__all__ = ['mktemp', 'TemporaryFile', 'tempdir', 'gettempprefix']
+tempdir = None
+template = None
+if (os.name == 'posix'):
+    template = None
+elif (os.name == 'nt'):
+    template = (('~' + `os.getpid()`) + '-')
+elif (os.name in ('mac', 'riscos')):
+    template = 'Python-Tmp-'
+else:
+    template = 'tmp'
+try:
+    import thread
+except ImportError:
+
+
+    class _DummyMutex:
+
+        def acquire(self):
+            pass
+        release = acquire
+    _counter = _ThreadSafeCounter(_DummyMutex())
+    _tempdir_lock = _DummyMutex()
+    del _DummyMutex
+else:
+    _counter = _ThreadSafeCounter(thread.allocate_lock())
+    _tempdir_lock = thread.allocate_lock()
+    del thread
+del _ThreadSafeCounter

@@ -1,0 +1,9 @@
+def system(cmd):
+    "Imitate the standard library 'system' call.\n    Execute 'cmd' in a shell, and send output to stdout & stderr.\n\n    This is in popen2 only because its Jython implementation is similar to\n    that of the popen functions.\n    "
+    bufsize = 4096
+    p = Popen3(cmd, 1, bufsize)
+    p.tochild.close()
+    errReader = _makeReaderThread(p._childerr, System.err.write, bufsize, 'stderr')
+    _readStream(p._fromchild, System.out.write, bufsize)
+    status = p.wait()
+    return status

@@ -1,0 +1,13 @@
+def getresp(self):
+    'Internal: get a response from the server.\n        Raise various errors if the response indicates an error.'
+    resp = self.getline()
+    if self.debugging:
+        print '*resp*', `resp`
+    c = resp[:1]
+    if (c == '4'):
+        raise NNTPTemporaryError(resp)
+    if (c == '5'):
+        raise NNTPPermanentError(resp)
+    if (c not in '123'):
+        raise NNTPProtocolError(resp)
+    return resp

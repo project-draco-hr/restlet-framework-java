@@ -1,0 +1,6 @@
+def __init__(self, outfp, mangle_from_=True, maxheaderlen=78, fmt=None):
+    "Like Generator.__init__() except that an additional optional\n        argument is allowed.\n\n        Walks through all subparts of a message.  If the subpart is of main\n        type `text', then it prints the decoded payload of the subpart.\n\n        Otherwise, fmt is a format string that is used instead of the message\n        payload.  fmt is expanded with the following keywords (in\n        %(keyword)s format):\n\n        type       : Full MIME type of the non-text part\n        maintype   : Main MIME type of the non-text part\n        subtype    : Sub-MIME type of the non-text part\n        filename   : Filename of the non-text part\n        description: Description associated with the non-text part\n        encoding   : Content transfer encoding of the non-text part\n\n        The default value for fmt is None, meaning\n\n        [Non-text (%(type)s) part of message omitted, filename %(filename)s]\n        "
+    Generator.__init__(self, outfp, mangle_from_, maxheaderlen)
+    if (fmt is None):
+        fmt = '[Non-text (%(type)s) part of message omitted, filename %(filename)s]'
+    self._fmt = fmt

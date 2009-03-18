@@ -1,0 +1,43 @@
+'A parser for XML, using the derived class as static DTD.'
+import re
+import string
+version = '0.3'
+_S = '[ \t\r\n]+'
+_opS = '[ \t\r\n]*'
+_Name = '[a-zA-Z_:][-a-zA-Z0-9._:]*'
+_QStr = '(?:\'[^\']*\'|"[^"]*")'
+illegal = re.compile('[^\t\r\n -~\xa0-\xff]')
+interesting = re.compile('[]&<]')
+amp = re.compile('&')
+ref = re.compile((('&(' + _Name) + '|#[0-9]+|#x[0-9a-fA-F]+)[^-a-zA-Z0-9._:]'))
+entityref = re.compile((('&(?P<name>' + _Name) + ')[^-a-zA-Z0-9._:]'))
+charref = re.compile('&#(?P<char>[0-9]+[^0-9]|x[0-9a-fA-F]+[^0-9a-fA-F])')
+space = re.compile((_S + '$'))
+newline = re.compile('\n')
+attrfind = re.compile((((((((((_S + '(?P<name>') + _Name) + ')(') + _opS) + '=') + _opS) + '(?P<value>') + _QStr) + '|[-a-zA-Z0-9.:+*%?!\\(\\)_#=~]+))?'))
+starttagopen = re.compile(('<' + _Name))
+starttagend = re.compile((_opS + '(?P<slash>/?)>'))
+starttagmatch = re.compile(((((('<(?P<tagname>' + _Name) + ')(?P<attrs>(?:') + attrfind.pattern) + ')*)') + starttagend.pattern))
+endtagopen = re.compile('</')
+endbracket = re.compile((_opS + '>'))
+endbracketfind = re.compile((('(?:[^>\'"]|' + _QStr) + ')*>'))
+tagfind = re.compile(_Name)
+cdataopen = re.compile('<!\\[CDATA\\[')
+cdataclose = re.compile('\\]\\]>')
+_SystemLiteral = (('(?P<%s>' + _QStr) + ')')
+_PublicLiteral = '(?P<%s>"[-\'\\(\\)+,./:=?;!*#@$_%% \n\ra-zA-Z0-9]*"|\'[-\\(\\)+,./:=?;!*#@$_%% \n\ra-zA-Z0-9]*\')'
+_ExternalId = ((((('(?:SYSTEM|PUBLIC' + _S) + (_PublicLiteral % 'pubid')) + ')') + _S) + (_SystemLiteral % 'syslit'))
+doctype = re.compile((((((((('<!DOCTYPE' + _S) + '(?P<name>') + _Name) + ')(?:') + _S) + _ExternalId) + ')?') + _opS))
+xmldecl = re.compile(((((((((((((((((((((((('<\\?xml' + _S) + 'version') + _opS) + '=') + _opS) + '(?P<version>') + _QStr) + ')') + '(?:') + _S) + 'encoding') + _opS) + '=') + _opS) + '(?P<encoding>\'[A-Za-z][-A-Za-z0-9._]*\'|"[A-Za-z][-A-Za-z0-9._]*"))?(?:') + _S) + 'standalone') + _opS) + '=') + _opS) + '(?P<standalone>\'(?:yes|no)\'|"(?:yes|no)"))?') + _opS) + '\\?>'))
+procopen = re.compile(((('<\\?(?P<proc>' + _Name) + ')') + _opS))
+procclose = re.compile((_opS + '\\?>'))
+commentopen = re.compile('<!--')
+commentclose = re.compile('-->')
+doubledash = re.compile('--')
+attrtrans = string.maketrans(' \r\n\t', '    ')
+_NCName = '[a-zA-Z_][-a-zA-Z0-9._]*'
+ncname = re.compile((_NCName + '$'))
+qname = re.compile((((('(?:(?P<prefix>' + _NCName) + '):)?(?P<local>') + _NCName) + ')$'))
+xmlns = re.compile((('xmlns(?::(?P<ncname>' + _NCName) + '))?$'))
+if (__name__ == '__main__'):
+    test()

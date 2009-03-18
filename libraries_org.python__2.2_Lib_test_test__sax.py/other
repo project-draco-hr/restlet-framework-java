@@ -1,0 +1,28 @@
+from xml.sax import handler, make_parser, ContentHandler, SAXException, SAXReaderNotAvailable, SAXParseException
+try:
+    make_parser()
+except SAXReaderNotAvailable:
+    raise ImportError('no XML parsers available')
+from xml.sax.saxutils import XMLGenerator, escape, unescape, quoteattr, XMLFilterBase, Location
+from xml.sax.xmlreader import InputSource, AttributesImpl, AttributesNSImpl
+from cStringIO import StringIO
+from test.test_support import verbose, TestFailed, findfile
+tests = 0
+failures = []
+start = '<?xml version="1.0" encoding="iso-8859-1"?>\n'
+ns_uri = 'http://www.python.org/xml-ns/saxtest/'
+xml_test_out = open(findfile('test.xml.out')).read()
+import sys
+java_14 = sys.platform.startswith('java1.4')
+del sys
+items = locals().items()
+items.sort()
+for (name, value) in items:
+    if (name.startswith('test_expat') and java_14):
+        continue
+    if (name[:5] == 'test_'):
+        confirm(value(), name)
+if verbose:
+    print ('%d tests, %d failures' % (tests, len(failures)))
+if failures:
+    raise TestFailed(('%d of %d tests failed: %s' % (len(failures), tests, ', '.join(failures))))

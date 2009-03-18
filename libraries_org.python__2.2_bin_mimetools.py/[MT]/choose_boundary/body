@@ -1,0 +1,21 @@
+def choose_boundary():
+    "Return a random string usable as a multipart boundary.\n    The method used is so that it is *very* unlikely that the same\n    string of characters will every occur again in the Universe,\n    so the caller needn't check the data it is packing for the\n    occurrence of the boundary.\n\n    The boundary contains dots so you have to quote it in the header."
+    global _prefix
+    import time
+    import random
+    if (_prefix is None):
+        import socket
+        import os
+        hostid = socket.gethostbyname(socket.gethostname())
+        try:
+            uid = `os.getuid()`
+        except:
+            uid = '1'
+        try:
+            pid = `os.getpid()`
+        except:
+            pid = '1'
+        _prefix = ((((hostid + '.') + uid) + '.') + pid)
+    timestamp = ('%.3f' % time.time())
+    seed = `random.randint(0, 32767)`
+    return ((((_prefix + '.') + timestamp) + '.') + seed)

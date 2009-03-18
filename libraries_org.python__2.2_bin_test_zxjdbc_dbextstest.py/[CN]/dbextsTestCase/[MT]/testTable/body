@@ -1,0 +1,11 @@
+def testTable(self):
+    'testing dbexts.table(tabname)'
+    self.db.table('one')
+    assert (self.db.results is not None), 'results were None'
+    self.assertEquals(3, len(self.db.results))
+    self.db.table()
+    found = 0
+    for a in self.db.results:
+        if (a[2].lower() in ('one', 'two')):
+            found += 1
+    self.assertEquals(2, found)

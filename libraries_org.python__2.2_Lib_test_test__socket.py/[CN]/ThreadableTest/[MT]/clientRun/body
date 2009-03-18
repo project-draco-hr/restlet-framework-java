@@ -1,0 +1,11 @@
+def clientRun(self, test_func):
+    self.server_ready.wait()
+    self.client_ready.set()
+    self.clientSetUp()
+    if (not callable(test_func)):
+        raise TypeError, 'test_func must be a callable function'
+    try:
+        test_func()
+    except Exception as strerror:
+        self.queue.put(strerror)
+    self.clientTearDown()

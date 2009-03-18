@@ -1,0 +1,20 @@
+"\nCreate and delete FILES_PER_THREAD temp files (via tempfile.TemporaryFile)\nin each of NUM_THREADS threads, recording the number of successes and\nfailures.  A failure is a bug in tempfile, and may be due to:\n\n+ Trying to create more than one tempfile with the same name.\n+ Trying to delete a tempfile that doesn't still exist.\n+ Something we've never seen before.\n\nBy default, NUM_THREADS == 20 and FILES_PER_THREAD == 50.  This is enough to\ncreate about 150 failures per run under Win98SE in 2.0, and runs pretty\nquickly. Guido reports needing to boost FILES_PER_THREAD to 500 before\nprovoking a 2.0 failure under Linux.  Run the test alone to boost either\nvia cmdline switches:\n\n-f  FILES_PER_THREAD (int)\n-t  NUM_THREADS (int)\n"
+NUM_THREADS = 20
+FILES_PER_THREAD = 50
+import thread
+import threading
+from test_support import TestFailed
+import StringIO
+from traceback import print_exc
+startEvent = threading.Event()
+import tempfile
+tempfile.gettempdir()
+if (__name__ == '__main__'):
+    import sys, getopt
+    (opts, args) = getopt.getopt(sys.argv[1:], 't:f:')
+    for (o, v) in opts:
+        if (o == '-f'):
+            FILES_PER_THREAD = int(v)
+        elif (o == '-t'):
+            NUM_THREADS = int(v)
+_test()

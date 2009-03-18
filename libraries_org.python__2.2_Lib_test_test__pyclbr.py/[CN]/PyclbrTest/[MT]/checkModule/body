@@ -1,0 +1,34 @@
+def checkModule(self, moduleName, module=None, ignore=()):
+    ' succeed iff pyclbr.readmodule_ex(modulename) corresponds\n            to the actual module object, module.  Any identifiers in\n            ignore are ignored.   If no module is provided, the appropriate\n            module is loaded with __import__.'
+    if (module == None):
+        module = __import__(moduleName, globals(), {}, [])
+    dict = pyclbr.readmodule_ex(moduleName)
+    for (name, value) in dict.items():
+        if (name in ignore):
+            continue
+        self.assertHasattr(module, name, ignore)
+        py_item = getattr(module, name)
+        if isinstance(value, pyclbr.Function):
+            self.assertEquals(type(py_item), FunctionType)
+        else:
+            self.assertEquals(type(py_item), ClassType)
+            real_bases = [base.__name__ for base in py_item.__bases__]
+            pyclbr_bases = [getattr(base, 'name', base) for base in value.super]
+            self.assertListEq(real_bases, pyclbr_bases, ignore)
+            actualMethods = []
+            for m in py_item.__dict__.keys():
+                if (type(getattr(py_item, m)) == MethodType):
+                    actualMethods.append(m)
+            foundMethods = []
+            for m in value.methods.keys():
+                if ((m[:2] == '__') and (m[(-2):] != '__')):
+                    foundMethods.append((('_' + name) + m))
+                else:
+                    foundMethods.append(m)
+            self.assertListEq(foundMethods, actualMethods, ignore)
+            self.assertEquals(py_item.__module__, value.module)
+            self.assertEquals(py_item.__name__, value.name, ignore)
+    for name in dir(module):
+        item = getattr(module, name)
+        if (type(item) in (ClassType, FunctionType)):
+            self.assertHaskey(dict, name, ignore)

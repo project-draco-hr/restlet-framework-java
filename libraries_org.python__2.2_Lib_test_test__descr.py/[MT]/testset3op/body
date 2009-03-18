@@ -1,0 +1,18 @@
+def testset3op(a, b, c, d, res, stmt='a[b:c]=d', meth='__setslice__'):
+    if verbose:
+        print 'checking', stmt
+    dict = {'a': deepcopy(a), 'b': b, 'c': c, 'd': d, }
+    exec stmt in dict
+    vereq(dict['a'], res)
+    t = type(a)
+    while (meth not in t.__dict__):
+        t = t.__bases__[0]
+    m = getattr(t, meth)
+    vereq(m, t.__dict__[meth])
+    dict['a'] = deepcopy(a)
+    m(dict['a'], b, c, d)
+    vereq(dict['a'], res)
+    dict['a'] = deepcopy(a)
+    bm = getattr(dict['a'], meth)
+    bm(b, c, d)
+    vereq(dict['a'], res)

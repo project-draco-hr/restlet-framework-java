@@ -1,0 +1,14 @@
+def __setattr__(self, name, value):
+    d = self.__dict__
+    if (name in ('value', 'nodeValue')):
+        d['value'] = d['nodeValue'] = value
+        d2 = self.childNodes[0].__dict__
+        d2['data'] = d2['nodeValue'] = value
+        if (self.ownerElement is not None):
+            _clear_id_cache(self.ownerElement)
+    elif (name in ('name', 'nodeName')):
+        d['name'] = d['nodeName'] = value
+        if (self.ownerElement is not None):
+            _clear_id_cache(self.ownerElement)
+    else:
+        d[name] = value

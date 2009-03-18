@@ -1,0 +1,14 @@
+def tokeneater(self, type, token, (srow, scol), (erow, ecol), line):
+    if (not self.started):
+        if (type == tokenize.NAME):
+            self.started = 1
+    elif (type == tokenize.NEWLINE):
+        self.last = srow
+    elif (type == tokenize.INDENT):
+        self.indent = (self.indent + 1)
+    elif (type == tokenize.DEDENT):
+        self.indent = (self.indent - 1)
+        if (self.indent == 0):
+            raise EndOfBlock, self.last
+    elif ((type == tokenize.NAME) and (scol == 0)):
+        raise EndOfBlock, self.last

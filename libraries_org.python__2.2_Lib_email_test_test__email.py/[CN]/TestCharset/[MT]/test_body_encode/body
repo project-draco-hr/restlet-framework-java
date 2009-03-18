@@ -1,0 +1,18 @@
+def test_body_encode(self):
+    eq = self.assertEqual
+    c = Charset('iso-8859-1')
+    eq('hello w=F6rld', c.body_encode('hello w\xf6rld'))
+    c = Charset('utf-8')
+    eq('aGVsbG8gd29ybGQ=\n', c.body_encode('hello world'))
+    c = Charset('us-ascii')
+    eq('hello world', c.body_encode('hello world'))
+    c = Charset('euc-jp')
+    try:
+        eq('\x1b$B5FCO;~IW\x1b(B', c.body_encode('\xb5\xc6\xc3\xcf\xbb\xfe\xc9\xd7'))
+        eq('\xb5\xc6\xc3\xcf\xbb\xfe\xc9\xd7', c.body_encode('\xb5\xc6\xc3\xcf\xbb\xfe\xc9\xd7', False))
+    except LookupError:
+        pass
+    from email import Charset as CharsetModule
+    CharsetModule.add_charset('fake', CharsetModule.QP, None)
+    c = Charset('fake')
+    eq('hello w\xf6rld', c.body_encode('hello w\xf6rld'))

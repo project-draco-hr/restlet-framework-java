@@ -1,0 +1,8 @@
+def test_encode_7bit(self):
+    eq = self.assertEqual
+    msg = MIMEText('hello world', _encoder=Encoders.encode_7or8bit)
+    eq(msg.get_payload(), 'hello world')
+    eq(msg['content-transfer-encoding'], '7bit')
+    msg = MIMEText('hello \x7f world', _encoder=Encoders.encode_7or8bit)
+    eq(msg.get_payload(), 'hello \x7f world')
+    eq(msg['content-transfer-encoding'], '7bit')

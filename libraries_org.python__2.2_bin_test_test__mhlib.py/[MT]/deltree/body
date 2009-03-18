@@ -1,0 +1,16 @@
+def deltree(fname):
+    if (not os.path.exists(fname)):
+        return
+    for f in os.listdir(fname):
+        fullname = os.path.join(fname, f)
+        if os.path.isdir(fullname):
+            deltree(fullname)
+        else:
+            try:
+                os.unlink(fullname)
+            except:
+                pass
+    try:
+        os.rmdir(fname)
+    except:
+        pass

@@ -1,0 +1,59 @@
+def properties():
+    if verbose:
+        print 'Testing property...'
+
+
+    class C(object):
+
+        def getx(self):
+            return self.__x
+
+        def setx(self, value):
+            self.__x = value
+
+        def delx(self):
+            del self.__x
+        x = property(getx, setx, delx, doc="I'm the x property.")
+    a = C()
+    verify((not hasattr(a, 'x')))
+    a.x = 42
+    vereq(a._C__x, 42)
+    vereq(a.x, 42)
+    del a.x
+    verify((not hasattr(a, 'x')))
+    verify((not hasattr(a, '_C__x')))
+    C.x.__set__(a, 100)
+    vereq(C.x.__get__(a), 100)
+    C.x.__delete__(a)
+    verify((not hasattr(a, 'x')))
+    raw = C.__dict__['x']
+    verify(isinstance(raw, property))
+    attrs = dir(raw)
+    verify(('__doc__' in attrs))
+    verify(('fget' in attrs))
+    verify(('fset' in attrs))
+    verify(('fdel' in attrs))
+    vereq(raw.__doc__, "I'm the x property.")
+    verify((raw.fget is C.__dict__['getx']))
+    verify((raw.fset is C.__dict__['setx']))
+    verify((raw.fdel is C.__dict__['delx']))
+    for attr in ('__doc__', 'fget', 'fset', 'fdel'):
+        try:
+            setattr(raw, attr, 42)
+        except TypeError as msg:
+            if (str(msg).find('readonly') < 0):
+                raise TestFailed(('when setting readonly attr %r on a property, got unexpected TypeError msg %r' % (attr, str(msg))))
+        else:
+            raise TestFailed(('expected TypeError from trying to set readonly %r attr on a property' % attr))
+
+
+    class D(object):
+        __getitem__ = property((lambda s: (1 / 0)))
+    d = D()
+    try:
+        for i in d:
+            str(i)
+    except ZeroDivisionError:
+        pass
+    else:
+        raise TestFailed, 'expected ZeroDivisionError from bad property'

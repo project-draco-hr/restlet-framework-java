@@ -1,0 +1,10 @@
+def truncate(self, size=None):
+    if self.closed:
+        raise ValueError, 'I/O operation on closed file'
+    if (size is None):
+        size = self.pos
+    elif (size < 0):
+        raise IOError(EINVAL, 'Negative size not allowed')
+    elif (size < self.pos):
+        self.pos = size
+    self.buf = self.getvalue()[:size]

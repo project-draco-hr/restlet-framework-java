@@ -1,0 +1,21 @@
+def string_exceptions():
+    if verbose:
+        print 'Testing string exceptions ...'
+    astring = 'An exception string.'
+    try:
+        raise astring
+    except astring:
+        pass
+    else:
+        raise TestFailed, 'builtin string not usable as exception'
+
+
+    class MyStr(str):
+        pass
+    newstring = MyStr("oops -- shouldn't work")
+    try:
+        raise newstring
+    except TypeError:
+        pass
+    except:
+        raise TestFailed, 'string subclass allowed as exception'

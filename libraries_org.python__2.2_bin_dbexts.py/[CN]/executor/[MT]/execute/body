@@ -1,0 +1,7 @@
+def execute(self, db, rows, bindings):
+    assert (rows and (len(rows) > 0)), 'must have at least one row'
+    if self.cols:
+        sql = self.sql
+    else:
+        sql = (self.sql % ','.join((('?',) * len(rows[0]))))
+    db.raw(sql, rows, bindings)

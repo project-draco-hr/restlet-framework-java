@@ -1,0 +1,19 @@
+def read(self, amt=None):
+    assert ((not self._line_consumed) and self._line_left)
+    if ((amt is None) or (amt > self._line_left)):
+        s = self._line[self._line_offset:]
+        self._done()
+        if (amt is None):
+            return (s + self._file.read())
+        else:
+            return (s + self._file.read((amt - len(s))))
+    else:
+        assert (amt <= self._line_left)
+        i = self._line_offset
+        j = (i + amt)
+        s = self._line[i:j]
+        self._line_offset = j
+        self._line_left -= amt
+        if (self._line_left == 0):
+            self._done()
+        return s

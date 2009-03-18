@@ -1,0 +1,19 @@
+def pathname2url(p):
+    'Convert a DOS path name to a file url.\n\n            C:\\foo\\bar\\spam.foo\n\n                    becomes\n\n            ///C|/foo/bar/spam.foo\n    '
+    import urllib
+    if (not (':' in p)):
+        if (p[:2] == '\\\\'):
+            p = ('\\\\' + p)
+        components = p.split('\\')
+        return urllib.quote('/'.join(components))
+    comp = p.split(':')
+    if ((len(comp) != 2) or (len(comp[0]) > 1)):
+        error = ('Bad path: ' + p)
+        raise IOError, error
+    drive = urllib.quote(comp[0].upper())
+    components = comp[1].split('\\')
+    path = (('///' + drive) + '|')
+    for comp in components:
+        if comp:
+            path = ((path + '/') + urllib.quote(comp))
+    return path

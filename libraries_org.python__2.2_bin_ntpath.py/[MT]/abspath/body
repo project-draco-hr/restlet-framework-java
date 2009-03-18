@@ -1,0 +1,21 @@
+def abspath(path):
+    'Return the absolute version of a path'
+    try:
+        from nt import _getfullpathname
+    except ImportError:
+        global abspath
+
+        def _abspath(path):
+            if (not isabs(path)):
+                path = join(os.getcwd(), path)
+            return normpath(path)
+        abspath = _abspath
+        return _abspath(path)
+    if path:
+        try:
+            path = _getfullpathname(path)
+        except WindowsError:
+            pass
+    else:
+        path = os.getcwd()
+    return normpath(path)

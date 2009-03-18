@@ -1,0 +1,8 @@
+def test_basic(self):
+    self.check('Date:    Wed, 13 Jan 1999 23:57:35 -0500\nFrom:    Guido van Rossum <guido@CNRI.Reston.VA.US>\nTo:      "Guido van\n\t : Rossum" <guido@python.org>\nSubject: test2\n\ntest2\n', [('Guido van\n\t : Rossum', 'guido@python.org')])
+    self.check('From: Barry <bwarsaw@python.org\nTo: guido@python.org (Guido: the Barbarian)\nSubject: nonsense\nDate: Wednesday, January 13 1999 23:57:35 -0500\n\ntest', [('Guido: the Barbarian', 'guido@python.org')])
+    self.check('From: Barry <bwarsaw@python.org\nTo: guido@python.org (Guido: the Barbarian)\nCc: "Guido: the Madman" <guido@python.org>\nDate:  13-Jan-1999 23:57:35 EST\n\ntest', [('Guido: the Barbarian', 'guido@python.org'), ('Guido: the Madman', 'guido@python.org')])
+    self.check('To: "The monster with\n     the very long name: Guido" <guido@python.org>\nDate:    Wed, 13 Jan 1999 23:57:35 -0500\n\ntest', [('The monster with\n     the very long name: Guido', 'guido@python.org')])
+    self.check('To: "Amit J. Patel" <amitp@Theory.Stanford.EDU>\nCC: Mike Fletcher <mfletch@vrtelecom.com>,\n        "\'string-sig@python.org\'" <string-sig@python.org>\nCc: fooz@bat.com, bart@toof.com\nCc: goit@lip.com\nDate:    Wed, 13 Jan 1999 23:57:35 -0500\n\ntest', [('Amit J. Patel', 'amitp@Theory.Stanford.EDU'), ('Mike Fletcher', 'mfletch@vrtelecom.com'), ("'string-sig@python.org'", 'string-sig@python.org'), ('', 'fooz@bat.com'), ('', 'bart@toof.com'), ('', 'goit@lip.com')])
+    self.check('To: Some One <someone@dom.ain>\nFrom: Anudder Persin <subuddy.else@dom.ain>\nDate:\n\ntest', [('Some One', 'someone@dom.ain')])
+    self.check('To: person@dom.ain (User J. Person)\n\n', [('User J. Person', 'person@dom.ain')])

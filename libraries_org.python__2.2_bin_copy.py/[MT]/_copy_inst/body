@@ -1,0 +1,21 @@
+def _copy_inst(x):
+    if hasattr(x, '__copy__'):
+        return x.__copy__()
+    if hasattr(x, '__getinitargs__'):
+        args = x.__getinitargs__()
+        y = apply(x.__class__, args)
+    else:
+        if hasattr(x.__class__, '__del__'):
+            y = _EmptyClassDel()
+        else:
+            y = _EmptyClass()
+        y.__class__ = x.__class__
+    if hasattr(x, '__getstate__'):
+        state = x.__getstate__()
+    else:
+        state = x.__dict__
+    if hasattr(y, '__setstate__'):
+        y.__setstate__(state)
+    else:
+        y.__dict__.update(state)
+    return y

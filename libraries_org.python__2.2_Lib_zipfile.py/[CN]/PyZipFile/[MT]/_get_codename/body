@@ -1,0 +1,19 @@
+def _get_codename(self, pathname, basename):
+    'Return (filename, archivename) for the path.\n\n        Given a module name path, return the correct file path and\n        archive name, compiling if necessary.  For example, given\n        /python/lib/string, return (/python/lib/string.pyc, string).\n        '
+    file_py = (pathname + '.py')
+    file_pyc = (pathname + '.pyc')
+    file_pyo = (pathname + '.pyo')
+    if (os.path.isfile(file_pyo) and (os.stat(file_pyo)[8] >= os.stat(file_py)[8])):
+        fname = file_pyo
+    elif ((not os.path.isfile(file_pyc)) or (os.stat(file_pyc)[8] < os.stat(file_py)[8])):
+        import py_compile
+        if self.debug:
+            print 'Compiling', file_py
+        py_compile.compile(file_py, file_pyc)
+        fname = file_pyc
+    else:
+        fname = file_pyc
+    archivename = os.path.split(fname)[1]
+    if basename:
+        archivename = ('%s/%s' % (basename, archivename))
+    return (fname, archivename)

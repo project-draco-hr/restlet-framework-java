@@ -1,0 +1,10 @@
+'Manage shelves of pickled objects.\n\nA "shelf" is a persistent, dictionary-like object.  The difference\nwith dbm databases is that the values (not the keys!) in a shelf can\nbe essentially arbitrary Python objects -- anything that the "pickle"\nmodule can handle.  This includes most class instances, recursive data\ntypes, and objects containing lots of shared sub-objects.  The keys\nare ordinary strings.\n\nTo summarize the interface (key is a string, data is an arbitrary\nobject):\n\n        import shelve\n        d = shelve.open(filename) # open, with (g)dbm filename -- no suffix\n\n        d[key] = data   # store data at key (overwrites old data if\n                        # using an existing key)\n        data = d[key]   # retrieve data at key (raise KeyError if no\n                        # such key)\n        del d[key]      # delete data stored at key (raises KeyError\n                        # if no such key)\n        flag = d.has_key(key)   # true if the key exists\n        list = d.keys() # a list of all existing keys (slow!)\n\n        d.close()       # close it\n\nDependent on the implementation, closing a persistent dictionary may\nor may not be necessary to flush changes to disk.\n'
+try:
+    from cPickle import Pickler, Unpickler
+except ImportError:
+    from pickle import Pickler, Unpickler
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
+__all__ = ['Shelf', 'BsdDbShelf', 'DbfilenameShelf', 'open']

@@ -1,0 +1,20 @@
+def _split(self, s, charset, maxlinelen, splitchars):
+    splittable = charset.to_splittable(s)
+    encoded = charset.from_splittable(splittable, True)
+    elen = charset.encoded_header_len(encoded)
+    if (elen <= maxlinelen):
+        return [(encoded, charset)]
+    if (charset == '8bit'):
+        return [(s, charset)]
+    elif (charset == 'us-ascii'):
+        return self._split_ascii(s, charset, maxlinelen, splitchars)
+    elif (elen == len(s)):
+        splitpnt = maxlinelen
+        first = charset.from_splittable(splittable[:splitpnt], False)
+        last = charset.from_splittable(splittable[splitpnt:], False)
+    else:
+        (first, last) = _binsplit(splittable, charset, maxlinelen)
+    fsplittable = charset.to_splittable(first)
+    fencoded = charset.from_splittable(fsplittable, True)
+    chunk = [(fencoded, charset)]
+    return (chunk + self._split(last, charset, self._maxlinelen, splitchars))

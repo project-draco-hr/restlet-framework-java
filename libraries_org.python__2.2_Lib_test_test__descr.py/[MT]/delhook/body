@@ -1,0 +1,25 @@
+def delhook():
+    if verbose:
+        print 'Testing __del__ hook...'
+    log = []
+
+
+    class C(object):
+
+        def __del__(self):
+            log.append(1)
+    c = C()
+    vereq(log, [])
+    del c
+    vereq(log, [1])
+
+
+    class D(object):
+        pass
+    d = D()
+    try:
+        del d[0]
+    except TypeError:
+        pass
+    else:
+        raise TestFailed, "invalid del() didn't raise TypeError"

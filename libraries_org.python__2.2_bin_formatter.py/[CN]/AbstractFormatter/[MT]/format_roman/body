@@ -1,0 +1,22 @@
+def format_roman(self, case, counter):
+    ones = ['i', 'x', 'c', 'm']
+    fives = ['v', 'l', 'd']
+    (label, index) = ('', 0)
+    while (counter > 0):
+        (counter, x) = divmod(counter, 10)
+        if (x == 9):
+            label = ((ones[index] + ones[(index + 1)]) + label)
+        elif (x == 4):
+            label = ((ones[index] + fives[index]) + label)
+        else:
+            if (x >= 5):
+                s = fives[index]
+                x = (x - 5)
+            else:
+                s = ''
+            s = (s + (ones[index] * x))
+            label = (s + label)
+        index = (index + 1)
+    if (case == 'I'):
+        return label.upper()
+    return label

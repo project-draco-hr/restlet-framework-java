@@ -1,0 +1,11 @@
+{
+  List a=defaultList();
+  List b=newInstance(null);
+  TestSupport.assertThat(b.addAll(0,a) == true,"mutating addAll(index, Collection) did not return true");
+  TestSupport.assertEquals(a,b,"addAll(index, Collection) instances failed equals test");
+  TestSupport.assertThat(a.addAll(0,newInstance(null)) == false,"idempotent addAll(index, Collection) did not return false");
+  TestSupport.assertThat(b.addAll(0,b) == true,"mutating addAll(index, Collection) did not return true");
+  b=newInstance(null);
+  b.addAll(new ArrayList(defaultList()));
+  TestSupport.assertEquals(defaultList(),b,"addAll(index, <ArrayList>) failed equals test");
+}

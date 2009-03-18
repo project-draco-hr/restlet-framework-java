@@ -1,0 +1,12 @@
+def testJavaUtilList(self):
+    'testing parameterized values in a java.util.List'
+    c = self.cursor()
+    try:
+        from java.util import LinkedList
+        a = LinkedList()
+        a.add((3,))
+        c.execute('select * from zxtesting where id = ?', a)
+        f = c.fetchall()
+        assert (len(f) == 1), ('expected [1], got [%d]' % len(f))
+    finally:
+        c.close()

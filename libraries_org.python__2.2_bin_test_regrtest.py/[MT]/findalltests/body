@@ -1,0 +1,12 @@
+def findalltests(testdir=None, stdtests=[], nottests=[], all=ALL):
+    if (testdir or (not all)):
+        return findtests(testdir, stdtests, nottests)
+    else:
+        tests = {}
+        testdirs = findtestdirs(all)
+        for dir in testdirs:
+            for test in findtests(dir, stdtests, nottests):
+                tests[test] = 1
+        tests = tests.keys()
+        tests.sort()
+        return tests

@@ -1,0 +1,29 @@
+def methods():
+    if verbose:
+        print 'Testing methods...'
+
+
+    class C(object):
+
+        def __init__(self, x):
+            self.x = x
+
+        def foo(self):
+            return self.x
+    c1 = C(1)
+    vereq(c1.foo(), 1)
+
+
+    class D(C):
+        boo = C.foo
+        goo = c1.foo
+    d2 = D(2)
+    vereq(d2.foo(), 2)
+    vereq(d2.boo(), 2)
+    vereq(d2.goo(), 1)
+
+
+    class E(object):
+        foo = C.foo
+    vereq(E().foo, C.foo)
+    verify(repr(C.foo.__get__(C(1))).startswith('<bound method '))

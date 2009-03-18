@@ -1,0 +1,10 @@
+def test_header_quopri_len(self):
+    eq = self.assertEqual
+    hql = quopriMIME.header_quopri_len
+    enc = quopriMIME.header_encode
+    for s in ('hello', 'h@e@l@l@o@'):
+        eq(hql(s), (len(enc(s, charset='', eol='')) - 7))
+    for c in self.hlit:
+        eq(hql(c), 1)
+    for c in self.hnon:
+        eq(hql(c), 3)

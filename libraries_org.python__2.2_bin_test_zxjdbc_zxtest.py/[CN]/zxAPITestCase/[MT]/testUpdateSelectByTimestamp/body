@@ -1,0 +1,10 @@
+def testUpdateSelectByTimestamp(self):
+    'testing insert, update, query and delete by java.sql.Timestamp'
+    assert self.has_table('timestamptable'), 'missing attribute timestamptable'
+
+    def _cmp_(x, y):
+        xt = (x.getYear(), x.getMonth(), x.getDay(), x.getHours(), x.getMinutes(), x.getSeconds())
+        yt = (y.getYear(), y.getMonth(), y.getDay(), y.getHours(), y.getMinutes(), y.getSeconds())
+        return (not (xt == yt))
+    values = [(1996, 6, 22, 10, 11, 12), (2000, 11, 12, 3, 1, 12), (2001, 1, 12, 4, 9, 24)]
+    self._test_time(self.table('timestamptable'), zxJDBC.Timestamp, values, zxJDBC.TIMESTAMP, _cmp_)

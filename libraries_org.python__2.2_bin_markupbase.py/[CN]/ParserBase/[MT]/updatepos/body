@@ -1,0 +1,12 @@
+def updatepos(self, i, j):
+    if (i >= j):
+        return j
+    rawdata = self.rawdata
+    nlines = string.count(rawdata, '\n', i, j)
+    if nlines:
+        self.lineno = (self.lineno + nlines)
+        pos = string.rindex(rawdata, '\n', i, j)
+        self.offset = (j - (pos + 1))
+    else:
+        self.offset = ((self.offset + j) - i)
+    return j

@@ -1,0 +1,24 @@
+def ntransfercmd(self, cmd, rest=None):
+    "Initiate a transfer over the data connection.\n\n        If the transfer is active, send a port command and the\n        transfer command, and accept the connection.  If the server is\n        passive, send a pasv command, connect to it, and start the\n        transfer command.  Either way, return the socket for the\n        connection and the expected size of the transfer.  The\n        expected size may be None if it could not be determined.\n\n        Optional `rest' argument can be a string that is sent as the\n        argument to a RESTART command.  This is essentially a server\n        marker used to tell the server to skip over any data up to the\n        given marker.\n        "
+    size = None
+    if self.passiveserver:
+        (host, port) = self.makepasv()
+        (af, socktype, proto, canon, sa) = socket.getaddrinfo(host, port, 0, socket.SOCK_STREAM)[0]
+        conn = socket.socket(af, socktype, proto)
+        conn.connect(sa)
+        if (rest is not None):
+            self.sendcmd(('REST %s' % rest))
+        resp = self.sendcmd(cmd)
+        if (resp[0] != '1'):
+            raise error_reply, resp
+    else:
+        sock = self.makeport()
+        if (rest is not None):
+            self.sendcmd(('REST %s' % rest))
+        resp = self.sendcmd(cmd)
+        if (resp[0] != '1'):
+            raise error_reply, resp
+        (conn, sockaddr) = sock.accept()
+    if (resp[:3] == '150'):
+        size = parse150(resp)
+    return (conn, size)

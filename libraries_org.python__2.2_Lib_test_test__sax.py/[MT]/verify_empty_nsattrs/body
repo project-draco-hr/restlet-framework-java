@@ -1,0 +1,27 @@
+def verify_empty_nsattrs(attrs):
+    try:
+        attrs.getValue((ns_uri, 'attr'))
+        gvk = 0
+    except KeyError:
+        gvk = 1
+    try:
+        attrs.getValueByQName('ns:attr')
+        gvqk = 0
+    except KeyError:
+        gvqk = 1
+    try:
+        attrs.getNameByQName('ns:attr')
+        gnqk = 0
+    except KeyError:
+        gnqk = 1
+    try:
+        attrs.getQNameByName((ns_uri, 'attr'))
+        gqnk = 0
+    except KeyError:
+        gqnk = 1
+    try:
+        attrs[(ns_uri, 'attr')]
+        gik = 0
+    except KeyError:
+        gik = 1
+    return ((attrs.getLength() == 0) and (attrs.getNames() == []) and (attrs.getQNames() == []) and (len(attrs) == 0) and (not attrs.has_key((ns_uri, 'attr'))) and (attrs.keys() == []) and (attrs.get((ns_uri, 'attr')) is None) and (attrs.get((ns_uri, 'attr'), 25) == 25) and (attrs.items() == []) and (attrs.values() == []) and gvk and gvqk and gnqk and gik and gqnk)

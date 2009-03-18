@@ -1,0 +1,16 @@
+def getparser():
+    'getparser() -> parser, unmarshaller\n\n    Create an instance of the fastest available parser, and attach it\n    to an unmarshalling object.  Return both objects.\n    '
+    if (FastParser and FastUnmarshaller):
+        target = FastUnmarshaller(True, False, binary, datetime)
+        parser = FastParser(target)
+    else:
+        target = Unmarshaller()
+        if FastParser:
+            parser = FastParser(target)
+        elif SgmlopParser:
+            parser = SgmlopParser(target)
+        elif ExpatParser:
+            parser = ExpatParser(target)
+        else:
+            parser = SlowParser(target)
+    return (parser, target)

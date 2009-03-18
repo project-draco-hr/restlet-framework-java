@@ -1,0 +1,19 @@
+def getsequences(self):
+    'Return the set of sequences for the folder.'
+    sequences = {}
+    fullname = self.getsequencesfilename()
+    try:
+        f = open(fullname, 'r')
+    except IOError:
+        return sequences
+    while 1:
+        line = f.readline()
+        if (not line):
+            break
+        fields = line.split(':')
+        if (len(fields) != 2):
+            self.error(('bad sequence in %s: %s' % (fullname, line.strip())))
+        key = fields[0].strip()
+        value = IntSet(fields[1].strip(), ' ').tolist()
+        sequences[key] = value
+    return sequences

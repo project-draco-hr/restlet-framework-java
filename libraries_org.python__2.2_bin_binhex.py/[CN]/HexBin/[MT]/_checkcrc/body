@@ -1,0 +1,6 @@
+def _checkcrc(self):
+    filecrc = (struct.unpack('>h', self.ifp.read(2))[0] & 65535)
+    self.crc = (self.crc & 65535)
+    if (filecrc != self.crc):
+        raise Error, ('CRC error, computed %x, read %x' % (self.crc, filecrc))
+    self.crc = 0

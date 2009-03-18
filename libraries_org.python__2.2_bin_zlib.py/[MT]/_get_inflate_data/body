@@ -1,0 +1,16 @@
+def _get_inflate_data(inflater, max_length=0):
+    buf = jarray.zeros(1024, 'b')
+    sb = StringBuffer()
+    total = 0
+    while (not inflater.finished()):
+        if max_length:
+            l = inflater.inflate(buf, 0, min(1024, (max_length - total)))
+        else:
+            l = inflater.inflate(buf)
+        if (l == 0):
+            break
+        total += l
+        sb.append(String(buf, 0, 0, l))
+        if (max_length and (total == max_length)):
+            break
+    return sb.toString()

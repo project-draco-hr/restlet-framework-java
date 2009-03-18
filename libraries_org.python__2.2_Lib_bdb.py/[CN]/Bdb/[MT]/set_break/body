@@ -1,0 +1,12 @@
+def set_break(self, filename, lineno, temporary=0, cond=None):
+    filename = self.canonic(filename)
+    import linecache
+    line = linecache.getline(filename, lineno)
+    if (not line):
+        return ('Line %s:%d does not exist' % (filename, lineno))
+    if (not self.breaks.has_key(filename)):
+        self.breaks[filename] = []
+    list = self.breaks[filename]
+    if (not (lineno in list)):
+        list.append(lineno)
+    bp = Breakpoint(filename, lineno, temporary, cond)

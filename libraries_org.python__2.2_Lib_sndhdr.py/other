@@ -1,0 +1,13 @@
+'Routines to help recognizing sound files.\n\nFunction whathdr() recognizes various types of sound file headers.\nIt understands almost all headers that SOX can decode.\n\nThe return tuple contains the following items, in this order:\n- file type (as SOX understands it)\n- sampling rate (0 if unknown or hard to decode)\n- number of channels (0 if unknown or hard to decode)\n- number of frames in the file (-1 if unknown or hard to decode)\n- number of bits/sample, or \'U\' for U-LAW, or \'A\' for A-LAW\n\nIf the file doesn\'t have a recognizable type, it returns None.\nIf the file can\'t be opened, IOError is raised.\n\nTo compute the total time, divide the number of frames by the\nsampling rate (a frame contains a sample for each channel).\n\nFunction what() calls whathdr().  (It used to also use some\nheuristics for raw data, but this doesn\'t work very well.)\n\nFinally, the function test() is a simple main program that calls\nwhat() for all files mentioned on the argument list.  For directory\narguments it calls what() for all files in that directory.  Default\nargument is "." (testing all files in the current directory).  The\noption -r tells it to recurse down directories found inside\nexplicitly given directories.\n'
+__all__ = ['what', 'whathdr']
+tests = []
+tests.append(test_aifc)
+tests.append(test_au)
+tests.append(test_hcom)
+tests.append(test_voc)
+tests.append(test_wav)
+tests.append(test_8svx)
+tests.append(test_sndt)
+tests.append(test_sndr)
+if (__name__ == '__main__'):
+    test()

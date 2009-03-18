@@ -1,0 +1,23 @@
+def sort_stats(self, *field):
+    if (not field):
+        self.fcn_list = 0
+        return self
+    if ((len(field) == 1) and (type(field[0]) == type(1))):
+        field = [{(-1): 'stdname', 0: 'calls', 1: 'time', 2: 'cumulative', }[field[0]]]
+    sort_arg_defs = self.get_sort_arg_defs()
+    sort_tuple = ()
+    self.sort_type = ''
+    connector = ''
+    for word in field:
+        sort_tuple = (sort_tuple + sort_arg_defs[word][0])
+        self.sort_type += (connector + sort_arg_defs[word][1])
+        connector = ', '
+    stats_list = []
+    for func in self.stats.keys():
+        (cc, nc, tt, ct, callers) = self.stats[func]
+        stats_list.append((((cc, nc, tt, ct) + func) + (func_std_string(func), func)))
+    stats_list.sort(TupleComp(sort_tuple).compare)
+    self.fcn_list = fcn_list = []
+    for tuple in stats_list:
+        fcn_list.append(tuple[(-1)])
+    return self

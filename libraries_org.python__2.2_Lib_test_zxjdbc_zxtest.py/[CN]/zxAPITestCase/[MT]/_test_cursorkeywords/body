@@ -1,0 +1,8 @@
+def _test_cursorkeywords(self, *args, **kws):
+    c = self.cursor(*args, **kws)
+    try:
+        c.execute('select * from zxtesting')
+        data = c.fetchmany(1)
+        assert (len(data) == 1), 'expecting one row'
+    finally:
+        c.close()

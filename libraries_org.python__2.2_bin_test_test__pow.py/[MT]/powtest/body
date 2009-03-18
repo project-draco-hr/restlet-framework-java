@@ -1,0 +1,44 @@
+def powtest(type):
+    if (type != float):
+        print_test('simple identities', 4)
+        for i in range((-1000), 1000):
+            assert ((type(i) ** 0) == 1)
+            assert ((type(i) ** 1) == type(i))
+            if (i > 0):
+                assert ((type(0) ** i) == type(0))
+                assert ((type(1) ** i) == type(1))
+        print_test('cubes')
+        for i in range((-100), 100):
+            assert ((type(i) ** 3) == ((i * i) * i))
+        print_test('powers of two')
+        pow2 = 1
+        for i in range(0, 31):
+            assert ((2 ** i) == pow2)
+            if (i != 30):
+                pow2 = (pow2 * 2)
+    if (sys.platform.startswith('java1.1') and (type == long)):
+        print_test('modpow... skipping due to JVM bugs', 4)
+        return
+    print_test('modpow', 4)
+    (il, ih) = ((-20), 20)
+    (jl, jh) = ((-5), 5)
+    (kl, kh) = ((-10), 10)
+    compare = cmp
+    if (type == float):
+        il = 1
+        compare = fcmp
+    elif (type == int):
+        jl = 0
+    elif (type == long):
+        (jl, jh) = (0, 15)
+    for i in range(il, (ih + 1)):
+        for j in range(jl, (jh + 1)):
+            for k in range(kl, (kh + 1)):
+                if (k != 0):
+                    try:
+                        assert (compare(pow(type(i), j, k), ((type(i) ** j) % type(k))) == 0), ('%s, %s, %s' % (i, j, k))
+                    except TypeError:
+                        if (type == float):
+                            pass
+                        else:
+                            raise

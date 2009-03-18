@@ -1,0 +1,8 @@
+def test_glob_one_directory(self):
+    eq = self.assertSequencesEqual_noorder
+    np = (lambda *f: norm(self.tempdir, *f))
+    eq(self.glob('a*'), map(self.norm, ['a', 'aab', 'aaa']))
+    eq(self.glob('*a'), map(self.norm, ['a', 'aaa']))
+    eq(self.glob('aa?'), map(self.norm, ['aaa', 'aab']))
+    eq(self.glob('aa[ab]'), map(self.norm, ['aaa', 'aab']))
+    eq(self.glob('*q'), [])

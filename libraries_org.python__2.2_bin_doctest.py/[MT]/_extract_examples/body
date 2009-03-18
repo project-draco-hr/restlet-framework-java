@@ -1,0 +1,53 @@
+def _extract_examples(s):
+    (isPS1, isPS2) = (_isPS1, _isPS2)
+    (isEmpty, isComment) = (_isEmpty, _isComment)
+    examples = []
+    lines = s.split('\n')
+    (i, n) = (0, len(lines))
+    while (i < n):
+        line = lines[i]
+        i = (i + 1)
+        m = isPS1(line)
+        if (m is None):
+            continue
+        j = m.end(0)
+        if (isEmpty(line, j) or isComment(line, j)):
+            continue
+        lineno = (i - 1)
+        if (line[j] != ' '):
+            raise ValueError(((((('line ' + `lineno`) + ' of docstring lacks blank after ') + PS1) + ': ') + line))
+        j = (j + 1)
+        blanks = m.group(1)
+        nblanks = len(blanks)
+        source = []
+        while 1:
+            source.append(line[j:])
+            line = lines[i]
+            m = isPS2(line)
+            if m:
+                if (m.group(1) != blanks):
+                    raise ValueError(((('inconsistent leading whitespace in line ' + `i`) + ' of docstring: ') + line))
+                i = (i + 1)
+            else:
+                break
+        if (len(source) == 1):
+            source = source[0]
+        else:
+            if (source[(-1)] == ''):
+                del source[(-1)]
+            source = ('\n'.join(source) + '\n')
+        if (isPS1(line) or isEmpty(line)):
+            expect = ''
+        else:
+            expect = []
+            while 1:
+                if (line[:nblanks] != blanks):
+                    raise ValueError(((('inconsistent leading whitespace in line ' + `i`) + ' of docstring: ') + line))
+                expect.append(line[nblanks:])
+                i = (i + 1)
+                line = lines[i]
+                if (isPS1(line) or isEmpty(line)):
+                    break
+            expect = ('\n'.join(expect) + '\n')
+        examples.append((source, expect, lineno))
+    return examples

@@ -1,0 +1,12 @@
+def seed(self, a=None):
+    'Initialize internal state from hashable object.\n\n        None or no argument seeds from current time.\n\n        If a is not None or an int or long, hash(a) is used instead.\n\n        If a is an int or long, a is used directly.  Distinct values between\n        0 and 27814431486575L inclusive are guaranteed to yield distinct\n        internal states (this guarantee is specific to the default\n        Wichmann-Hill generator).\n        '
+    if (a is None):
+        import time
+        a = long((time.time() * 256))
+    if (type(a) not in (type(3), type(3L))):
+        a = hash(a)
+    (a, x) = divmod(a, 30268)
+    (a, y) = divmod(a, 30306)
+    (a, z) = divmod(a, 30322)
+    self._seed = ((int(x) + 1), (int(y) + 1), (int(z) + 1))
+    self.gauss_next = None

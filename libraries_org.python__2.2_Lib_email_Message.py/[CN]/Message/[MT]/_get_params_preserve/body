@@ -1,0 +1,17 @@
+def _get_params_preserve(self, failobj, header):
+    missing = []
+    value = self.get(header, missing)
+    if (value is missing):
+        return failobj
+    params = []
+    for p in _parseparam((';' + value)):
+        try:
+            (name, val) = p.split('=', 1)
+            name = name.strip()
+            val = val.strip()
+        except ValueError:
+            name = p.strip()
+            val = ''
+        params.append((name, val))
+    params = Utils.decode_params(params)
+    return params

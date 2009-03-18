@@ -1,0 +1,10 @@
+def splitvalue(attr):
+    "splitvalue('attr=value') --> 'attr', 'value'."
+    global _valueprog
+    if (_valueprog is None):
+        import re
+        _valueprog = re.compile('^([^=]*)=(.*)$')
+    match = _valueprog.match(attr)
+    if match:
+        return match.group(1, 2)
+    return (attr, None)

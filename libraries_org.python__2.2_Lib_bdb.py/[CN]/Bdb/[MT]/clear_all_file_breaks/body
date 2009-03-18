@@ -1,0 +1,9 @@
+def clear_all_file_breaks(self, filename):
+    filename = self.canonic(filename)
+    if (not self.breaks.has_key(filename)):
+        return ('There are no breakpoints in %s' % filename)
+    for line in self.breaks[filename]:
+        blist = Breakpoint.bplist[(filename, line)]
+        for bp in blist:
+            bp.deleteMe()
+    del self.breaks[filename]

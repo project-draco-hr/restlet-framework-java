@@ -1,0 +1,8 @@
+def testClosingCursor(self):
+    'testing that a closed cursor throws an exception'
+    c = self.cursor()
+    try:
+        c.execute('select * from zxtesting')
+    finally:
+        c.close()
+    self.assertRaises(zxJDBC.ProgrammingError, c.execute, ('select * from zxtesting',))

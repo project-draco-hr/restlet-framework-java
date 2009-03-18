@@ -1,0 +1,25 @@
+def makeport(self):
+    'Create a new socket and send a PORT command for it.'
+    msg = 'getaddrinfo returns an empty list'
+    sock = None
+    for res in socket.getaddrinfo(None, 0, self.af, socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
+        (af, socktype, proto, canonname, sa) = res
+        try:
+            sock = socket.socket(af, socktype, proto)
+            sock.bind(sa)
+        except socket.error as msg:
+            if sock:
+                sock.close()
+            sock = None
+            continue
+        break
+    if (not sock):
+        raise socket.error, msg
+    sock.listen(1)
+    port = sock.getsockname()[1]
+    host = self.sock.getsockname()[0]
+    if (self.af == socket.AF_INET):
+        resp = self.sendport(host, port)
+    else:
+        resp = self.sendeprt(host, port)
+    return sock

@@ -1,0 +1,39 @@
+def _test_blob(self, obj=0):
+    assert self.has_table('blobtable'), 'no blob table'
+    (tabname, sql) = self.table('blobtable')
+    fn = tempfile.mktemp()
+    fp = None
+    c = self.cursor()
+    try:
+        hello = (('hello',) * 1024)
+        c.execute(sql)
+        self.db.commit()
+        from java.io import FileOutputStream, FileInputStream, ObjectOutputStream, ObjectInputStream, ByteArrayInputStream
+        fp = FileOutputStream(fn)
+        oos = ObjectOutputStream(fp)
+        oos.writeObject(hello)
+        fp.close()
+        fp = FileInputStream(fn)
+        blob = ObjectInputStream(fp)
+        value = blob.readObject()
+        fp.close()
+        assert (hello == value), 'unable to serialize properly'
+        if (obj == 1):
+            fp = open(fn, 'rb')
+        else:
+            fp = FileInputStream(fn)
+        c.execute(('insert into %s (a, b) values (?, ?)' % tabname), [(0, fp)], {1: zxJDBC.BLOB, })
+        self.db.commit()
+        c.execute(('select * from %s' % tabname))
+        f = c.fetchall()
+        bytes = f[0][1]
+        blob = ObjectInputStream(ByteArrayInputStream(bytes)).readObject()
+        assert (hello == blob), 'blobs are not equal'
+    finally:
+        c.execute(('drop table %s' % tabname))
+        c.close()
+        self.db.commit()
+        if os.path.exists(fn):
+            if fp:
+                fp.close()
+            os.remove(fn)

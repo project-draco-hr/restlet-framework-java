@@ -1,0 +1,11 @@
+def retrbinary(self, cmd, callback, blocksize=8192, rest=None):
+    "Retrieve data in binary mode.\n\n        `cmd' is a RETR command.  `callback' is a callback function is\n        called for each block.  No more than `blocksize' number of\n        bytes will be read from the socket.  Optional `rest' is passed\n        to transfercmd().\n\n        A new port is created for you.  Return the response code.\n        "
+    self.voidcmd('TYPE I')
+    conn = self.transfercmd(cmd, rest)
+    while 1:
+        data = conn.recv(blocksize)
+        if (not data):
+            break
+        callback(data)
+    conn.close()
+    return self.voidresp()

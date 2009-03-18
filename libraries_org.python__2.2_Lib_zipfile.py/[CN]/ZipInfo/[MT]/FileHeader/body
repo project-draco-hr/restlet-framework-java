@@ -1,0 +1,13 @@
+def FileHeader(self):
+    'Return the per-file header as a string.'
+    dt = self.date_time
+    dosdate = ((((dt[0] - 1980) << 9) | (dt[1] << 5)) | dt[2])
+    dostime = (((dt[3] << 11) | (dt[4] << 5)) | (dt[5] // 2))
+    if (self.flag_bits & 8):
+        CRC = compress_size = file_size = 0
+    else:
+        CRC = self.CRC
+        compress_size = self.compress_size
+        file_size = self.file_size
+    header = struct.pack(structFileHeader, stringFileHeader, self.extract_version, self.reserved, self.flag_bits, self.compress_type, dostime, dosdate, CRC, compress_size, file_size, len(self.filename), len(self.extra))
+    return ((header + self.filename) + self.extra)

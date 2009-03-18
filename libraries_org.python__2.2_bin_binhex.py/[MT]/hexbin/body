@@ -1,0 +1,34 @@
+def hexbin(inp, out):
+    '(infilename, outfilename) - Decode binhexed file'
+    ifp = HexBin(inp)
+    finfo = ifp.FInfo
+    if (not out):
+        out = ifp.FName
+    if (os.name == 'mac'):
+        ofss = macfs.FSSpec(out)
+        out = ofss.as_pathname()
+    ofp = open(out, 'wb')
+    while 1:
+        d = ifp.read(128000)
+        if (not d):
+            break
+        ofp.write(d)
+    ofp.close()
+    ifp.close_data()
+    d = ifp.read_rsrc(128000)
+    if d:
+        ofp = openrsrc(out, 'wb')
+        ofp.write(d)
+        while 1:
+            d = ifp.read_rsrc(128000)
+            if (not d):
+                break
+            ofp.write(d)
+        ofp.close()
+    if (os.name == 'mac'):
+        nfinfo = ofss.GetFInfo()
+        nfinfo.Creator = finfo.Creator
+        nfinfo.Type = finfo.Type
+        nfinfo.Flags = finfo.Flags
+        ofss.SetFInfo(nfinfo)
+    ifp.close()

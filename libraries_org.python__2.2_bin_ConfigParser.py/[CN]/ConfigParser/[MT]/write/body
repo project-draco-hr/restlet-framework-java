@@ -1,0 +1,13 @@
+def write(self, fp):
+    'Write an .ini-format representation of the configuration state.'
+    if self.__defaults:
+        fp.write(('[%s]\n' % DEFAULTSECT))
+        for (key, value) in self.__defaults.items():
+            fp.write(('%s = %s\n' % (key, str(value).replace('\n', '\n\t'))))
+        fp.write('\n')
+    for section in self.__sections:
+        fp.write(('[%s]\n' % section))
+        for (key, value) in self.__sections[section].items():
+            if (key != '__name__'):
+                fp.write(('%s = %s\n' % (key, str(value).replace('\n', '\n\t'))))
+        fp.write('\n')

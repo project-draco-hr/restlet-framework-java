@@ -1,0 +1,17 @@
+def mkhier(root, descr):
+    mkdir(root)
+    for (name, contents) in descr:
+        comps = name.split()
+        fullname = root
+        for c in comps:
+            fullname = os.path.join(fullname, c)
+        if (contents is None):
+            mkdir(fullname)
+        else:
+            if verbose:
+                print 'write', fullname
+            f = open(fullname, 'w')
+            f.write(contents)
+            if (contents and (contents[(-1)] != '\n')):
+                f.write('\n')
+            f.close()

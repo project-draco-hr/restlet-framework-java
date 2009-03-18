@@ -1,0 +1,17 @@
+def readfp(self, fp):
+    'Read a single mime.types-format file.'
+    map = self.types_map
+    while 1:
+        line = fp.readline()
+        if (not line):
+            break
+        words = line.split()
+        for i in range(len(words)):
+            if (words[i][0] == '#'):
+                del words[i:]
+                break
+        if (not words):
+            continue
+        (type, suffixes) = (words[0], words[1:])
+        for suff in suffixes:
+            map[('.' + suff)] = type

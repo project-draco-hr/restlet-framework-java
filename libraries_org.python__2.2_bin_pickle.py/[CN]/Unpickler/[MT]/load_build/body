@@ -1,0 +1,15 @@
+def load_build(self):
+    stack = self.stack
+    value = stack[(-1)]
+    del stack[(-1)]
+    inst = stack[(-1)]
+    try:
+        setstate = inst.__setstate__
+    except AttributeError:
+        try:
+            inst.__dict__.update(value)
+        except RuntimeError:
+            for (k, v) in value.items():
+                setattr(inst, k, v)
+    else:
+        setstate(value)

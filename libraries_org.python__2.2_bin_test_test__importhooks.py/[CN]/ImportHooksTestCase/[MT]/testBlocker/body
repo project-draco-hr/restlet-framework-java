@@ -1,0 +1,11 @@
+def testBlocker(self):
+    mname = 'exceptions'
+    if (mname in sys.modules):
+        del sys.modules[mname]
+    sys.meta_path.append(ImportBlocker(mname))
+    try:
+        __import__(mname)
+    except ImportError:
+        pass
+    else:
+        self.fail(("'%s' was not supposed to be importable" % mname))

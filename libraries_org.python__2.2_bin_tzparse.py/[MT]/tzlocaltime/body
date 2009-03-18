@@ -1,0 +1,9 @@
+def tzlocaltime(secs, params):
+    'Given a Unix time in seconds and a tuple of information about\n    a timezone as returned by tzparse(), return the local time in the\n    form (year, month, day, hour, min, sec, yday, wday, tzname).'
+    import time
+    (tzname, delta, dstname, daystart, hourstart, dayend, hourend) = params
+    (year, month, days, hours, mins, secs, yday, wday, isdst) = time.gmtime((secs - (delta * 3600)))
+    if ((daystart, hourstart) <= ((yday + 1), hours) < (dayend, hourend)):
+        tzname = dstname
+        hours = (hours + 1)
+    return (year, month, days, hours, mins, secs, yday, wday, tzname)

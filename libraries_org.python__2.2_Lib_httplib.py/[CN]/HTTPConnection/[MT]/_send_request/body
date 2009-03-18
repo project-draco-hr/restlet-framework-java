@@ -1,0 +1,12 @@
+def _send_request(self, method, url, body, headers):
+    if ('Host' in (headers or [k for k in headers.iterkeys() if (k.lower() == 'host')])):
+        self.putrequest(method, url, skip_host=1)
+    else:
+        self.putrequest(method, url)
+    if body:
+        self.putheader('Content-Length', str(len(body)))
+    for (hdr, value) in headers.items():
+        self.putheader(hdr, value)
+    self.endheaders()
+    if body:
+        self.send(body)

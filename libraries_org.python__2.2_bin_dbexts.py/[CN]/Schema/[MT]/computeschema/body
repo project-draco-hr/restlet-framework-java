@@ -1,0 +1,49 @@
+def computeschema(self):
+    self.db.table(self.table, owner=self.owner)
+    self.columns = []
+    if self.db.results:
+        self.columns = map((lambda x: (x[3], x[5], x[6], x[10])), self.db.results)
+        if self.sort:
+            self.columns.sort((lambda x, y: cmp(x[0], y[0])))
+    self.db.fk(None, self.table)
+    self.imported = []
+    if self.db.results:
+        self.imported = map((lambda x: (x[2], x[3], x[7], x[11], x[12])), self.db.results)
+        if self.sort:
+            self.imported.sort((lambda x, y: cmp(x[2], y[2])))
+    self.exported = []
+    if self.full:
+        self.db.fk(self.table, None)
+        if self.db.results:
+            self.exported = map((lambda x: (x[3], x[6], x[7], x[11], x[12])), self.db.results)
+            if self.sort:
+                self.exported.sort((lambda x, y: cmp(x[1], y[1])))
+    self.db.pk(self.table)
+    self.primarykeys = []
+    if self.db.results:
+        self.primarykeys = map((lambda x: (x[3], x[4], x[5])), self.db.results)
+        if self.sort:
+            self.primarykeys.sort((lambda x, y: cmp(x[1], y[1])))
+    try:
+        self.indices = None
+        self.db.stat(self.table)
+        self.indices = []
+        if self.db.results:
+            idxdict = {}
+            idx = map((lambda x: (x[3], x[5].strip(), x[6], x[7], x[8])), filter((lambda x: x[5]), self.db.results))
+
+            def cckmp(x, y):
+                c = cmp(x[1], y[1])
+                if (c == 0):
+                    c = cmp(x[3], y[3])
+                return c
+            idx.sort(cckmp)
+            for a in idx:
+                if (not idxdict.has_key(a[1])):
+                    idxdict[a[1]] = []
+                idxdict[a[1]].append(a)
+            self.indices = idxdict.values()
+            if self.sort:
+                self.indices.sort((lambda x, y: cmp(x[0][1], y[0][1])))
+    except:
+        pass

@@ -1,0 +1,18 @@
+def Time2Internaldate(date_time):
+    'Convert \'date_time\' to IMAP4 INTERNALDATE representation.\n\n    Return string in form: \'"DD-Mmm-YYYY HH:MM:SS +HHMM"\'\n    '
+    if isinstance(date_time, (int, float)):
+        tt = time.localtime(date_time)
+    elif isinstance(date_time, (tuple, time.struct_time)):
+        tt = date_time
+    elif isinstance(date_time, str):
+        return date_time
+    else:
+        raise ValueError('date_time not of a known type')
+    dt = time.strftime('%d-%b-%Y %H:%M:%S', tt)
+    if (dt[0] == '0'):
+        dt = (' ' + dt[1:])
+    if (time.daylight and tt[(-1)]):
+        zone = (- time.altzone)
+    else:
+        zone = (- time.timezone)
+    return ((('"' + dt) + (' %+03d%02d' % divmod((zone / 60), 60))) + '"')

@@ -1,0 +1,11 @@
+def release(self):
+    me = currentThread()
+    assert (self.__owner is me), 'release() of un-acquire()d lock'
+    self.__count = count = (self.__count - 1)
+    if (not count):
+        self.__owner = None
+        self.__block.release()
+        if __debug__:
+            self._note('%s.release(): final release', self)
+    elif __debug__:
+        self._note('%s.release(): non-final release', self)

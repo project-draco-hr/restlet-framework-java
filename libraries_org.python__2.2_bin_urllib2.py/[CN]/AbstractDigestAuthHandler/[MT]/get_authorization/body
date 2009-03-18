@@ -1,0 +1,29 @@
+def get_authorization(self, req, chal):
+    try:
+        realm = chal['realm']
+        nonce = chal['nonce']
+        algorithm = chal.get('algorithm', 'MD5')
+        opaque = chal.get('opaque', None)
+    except KeyError:
+        return None
+    (H, KD) = self.get_algorithm_impls(algorithm)
+    if (H is None):
+        return None
+    (user, pw) = self.passwd.find_user_password(realm, req.get_full_url())
+    if (user is None):
+        return None
+    if req.has_data():
+        entdig = self.get_entity_digest(req.get_data(), chal)
+    else:
+        entdig = None
+    A1 = ('%s:%s:%s' % (user, realm, pw))
+    A2 = ('%s:%s' % (((req.has_data() and 'POST') or 'GET'), req.get_selector()))
+    respdig = KD(H(A1), ('%s:%s' % (nonce, H(A2))))
+    base = ('username="%s", realm="%s", nonce="%s", uri="%s", response="%s"' % (user, realm, nonce, req.get_selector(), respdig))
+    if opaque:
+        base = (base + (', opaque="%s"' % opaque))
+    if entdig:
+        base = (base + (', digest="%s"' % entdig))
+    if (algorithm != 'MD5'):
+        base = (base + (', algorithm="%s"' % algorithm))
+    return base

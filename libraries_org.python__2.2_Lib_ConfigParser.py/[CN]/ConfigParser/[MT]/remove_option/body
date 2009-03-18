@@ -1,0 +1,14 @@
+def remove_option(self, section, option):
+    'Remove an option.'
+    if ((not section) or (section == DEFAULTSECT)):
+        sectdict = self.__defaults
+    else:
+        try:
+            sectdict = self.__sections[section]
+        except KeyError:
+            raise NoSectionError(section)
+    option = self.optionxform(option)
+    existed = (option in sectdict)
+    if existed:
+        del sectdict[option]
+    return existed

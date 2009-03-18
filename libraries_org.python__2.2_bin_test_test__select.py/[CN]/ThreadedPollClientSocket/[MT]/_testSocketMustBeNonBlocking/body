@@ -1,0 +1,13 @@
+def _testSocketMustBeNonBlocking(self):
+    self.cli.setblocking(1)
+    self.cli.connect((test_socket.HOST, test_socket.PORT))
+    timeout = 1000
+    poll_object = select.poll()
+    try:
+        poll_object.register(self.cli)
+    except select.error as se:
+        self.failUnlessEqual(se[0], errno.ESOCKISBLOCKING)
+    except Exception as x:
+        self.fail(('Registering blocking socket should have raised select.error, not %s' % str(x)))
+    else:
+        self.fail('Registering blocking socket should have raised select.error')

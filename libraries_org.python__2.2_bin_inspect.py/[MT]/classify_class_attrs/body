@@ -1,0 +1,31 @@
+def classify_class_attrs(cls):
+    "Return list of attribute-descriptor tuples.\n\n    For each name in dir(cls), the return list contains a 4-tuple\n    with these elements:\n\n        0. The name (a string).\n\n        1. The kind of attribute this is, one of these strings:\n               'class method'    created via classmethod()\n               'static method'   created via staticmethod()\n               'property'        created via property()\n               'method'          any other flavor of method\n               'data'            not a method\n\n        2. The class which defined this attribute (a class).\n\n        3. The object as obtained directly from the defining class's\n           __dict__, not via getattr.  This is especially important for\n           data attributes:  C.data is just a data object, but\n           C.__dict__['data'] may be a data descriptor with additional\n           info, like a __doc__ string.\n    "
+    mro = getmro(cls)
+    names = dir(cls)
+    result = []
+    for name in names:
+        if (name in cls.__dict__):
+            obj = cls.__dict__[name]
+        else:
+            obj = getattr(cls, name)
+        homecls = getattr(obj, '__objclass__', None)
+        if (homecls is None):
+            for base in mro:
+                if (name in base.__dict__):
+                    homecls = base
+                    break
+        if ((homecls is not None) and (name in homecls.__dict__)):
+            obj = homecls.__dict__[name]
+        obj_via_getattr = getattr(cls, name)
+        if isinstance(obj, staticmethod):
+            kind = 'static method'
+        elif isinstance(obj, classmethod):
+            kind = 'class method'
+        elif isinstance(obj, property):
+            kind = 'property'
+        elif (ismethod(obj_via_getattr) or ismethoddescriptor(obj_via_getattr)):
+            kind = 'method'
+        else:
+            kind = 'data'
+        result.append((name, kind, homecls, obj))
+    return result

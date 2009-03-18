@@ -1,0 +1,14 @@
+def _make_boundary(text=None):
+    token = random.randint(0, (sys.maxint - 1))
+    boundary = ((('=' * 15) + (_fmt % token)) + '==')
+    if (text is None):
+        return boundary
+    b = boundary
+    counter = 0
+    while True:
+        cre = re.compile((('^--' + re.escape(b)) + '(--)?$'), re.MULTILINE)
+        if (not cre.search(text)):
+            break
+        b = ((boundary + '.') + str(counter))
+        counter += 1
+    return b

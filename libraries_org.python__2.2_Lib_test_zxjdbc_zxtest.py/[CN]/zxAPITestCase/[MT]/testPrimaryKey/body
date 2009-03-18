@@ -1,0 +1,11 @@
+def testPrimaryKey(self):
+    'testing for primary key information'
+    c = self.cursor()
+    try:
+        c.primarykeys(None, None, 'zxtesting')
+        f = c.fetchall()
+        assert (len(f) == 1), ('expected [1], got [%d]' % len(f))
+        assert (f[0][3].lower() == 'id'), ('expected [id], got [%s]' % f[0][3])
+    finally:
+        c.close()
+        self.db.commit()

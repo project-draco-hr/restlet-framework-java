@@ -1,0 +1,11 @@
+def BaseJoin(base, uriRef):
+    "\n    Merges a base URI reference with another URI reference, returning a\n    new URI reference.\n\n    It behaves exactly the same as Absolutize(), except the arguments\n    are reversed, and it accepts any URI reference (even a relative URI)\n    as the base URI. If the base has no scheme component, it is\n    evaluated as if it did, and then the scheme component of the result\n    is removed from the result, unless the uriRef had a scheme. Thus, if\n    neither argument has a scheme component, the result won't have one.\n\n    This function is named BaseJoin because it is very much like\n    urllib.basejoin(), but it follows the current rfc3986 algorithms\n    for path merging, dot segment elimination, and inheritance of query\n    and fragment components.\n\n    WARNING: This function exists for 2 reasons: (1) because of a need\n    within the 4Suite repository to perform URI reference absolutization\n    using base URIs that are stored (inappropriately) as absolute paths\n    in the subjects of statements in the RDF model, and (2) because of\n    a similar need to interpret relative repo paths in a 4Suite product\n    setup.xml file as being relative to a path that can be set outside\n    the document. When these needs go away, this function probably will,\n    too, so it is not advisable to use it.\n    "
+    if IsAbsolute(base):
+        return Absolutize(uriRef, base)
+    else:
+        dummyscheme = 'basejoin'
+        res = Absolutize(uriRef, ('%s:%s' % (dummyscheme, base)))
+        if IsAbsolute(uriRef):
+            return res
+        else:
+            return res[(len(dummyscheme) + 1):]

@@ -1,0 +1,8 @@
+def find_user_password(self, realm, authuri):
+    domains = self.passwd.get(realm, {})
+    authuri = self.reduce_uri(authuri)
+    for (uris, authinfo) in domains.items():
+        for uri in uris:
+            if self.is_suburi(uri, authuri):
+                return authinfo
+    return (None, None)

@@ -1,0 +1,21 @@
+def print_stats(self, *amount):
+    for filename in self.files:
+        print filename
+    if self.files:
+        print 
+    indent = (' ' * 8)
+    for func in self.top_level.keys():
+        print indent, func_get_function_name(func)
+    print indent, self.total_calls, 'function calls',
+    if (self.total_calls != self.prim_calls):
+        print ('(%d primitive calls)' % self.prim_calls),
+    print ('in %.3f CPU seconds' % self.total_tt)
+    print 
+    (width, list) = self.get_print_list(amount)
+    if list:
+        self.print_title()
+        for func in list:
+            self.print_line(func)
+        print 
+        print 
+    return self

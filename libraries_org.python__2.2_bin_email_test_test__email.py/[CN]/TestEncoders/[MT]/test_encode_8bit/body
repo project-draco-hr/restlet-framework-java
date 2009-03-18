@@ -1,0 +1,5 @@
+def test_encode_8bit(self):
+    eq = self.assertEqual
+    msg = MIMEText('hello \x80 world', _encoder=Encoders.encode_7or8bit)
+    eq(msg.get_payload(), 'hello \x80 world')
+    eq(msg['content-transfer-encoding'], '8bit')

@@ -1,0 +1,12 @@
+def make_connection(self, host):
+    import httplib
+    if isinstance(host, TupleType):
+        (host, x509) = host
+    else:
+        x509 = {}
+    try:
+        HTTPS = httplib.HTTPS
+    except AttributeError:
+        raise NotImplementedError, "your version of httplib doesn't support HTTPS"
+    else:
+        return apply(HTTPS, (host, None), x509)

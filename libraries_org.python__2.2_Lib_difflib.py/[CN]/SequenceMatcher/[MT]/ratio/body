@@ -1,0 +1,4 @@
+def ratio(self):
+    'Return a measure of the sequences\' similarity (float in [0,1]).\n\n        Where T is the total number of elements in both sequences, and\n        M is the number of matches, this is 2,0*M / T.\n        Note that this is 1 if the sequences are identical, and 0 if\n        they have nothing in common.\n\n        .ratio() is expensive to compute if you haven\'t already computed\n        .get_matching_blocks() or .get_opcodes(), in which case you may\n        want to try .quick_ratio() or .real_quick_ratio() first to get an\n        upper bound.\n\n        >>> s = SequenceMatcher(None, "abcd", "bcde")\n        >>> s.ratio()\n        0.75\n        >>> s.quick_ratio()\n        0.75\n        >>> s.real_quick_ratio()\n        1.0\n        '
+    matches = reduce((lambda sum, triple: (sum + triple[(-1)])), self.get_matching_blocks(), 0)
+    return _calculate_ratio(matches, (len(self.a) + len(self.b)))

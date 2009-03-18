@@ -1,0 +1,7 @@
+def bcp(self, src, table, where='(1=1)', params=[], include=[], exclude=[], autobatch=0, executor=executor):
+    'Bulkcopy of rows from a src database to the current database for a given table and where clause.'
+    if (type(src) == type('')):
+        src = dbexts(src, cfg=self.dbs)
+    bcp = self.bulkcopy(self, table, include, exclude, autobatch, executor)
+    num = bcp.transfer(src, where, params)
+    return num

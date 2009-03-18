@@ -1,0 +1,34 @@
+def MakeUrllibSafe(uriRef):
+    "\n    Makes the given RFC 3986-conformant URI reference safe for passing\n    to legacy urllib functions. The result may not be a valid URI.\n\n    As of Python 2.3.3, urllib.urlopen() does not fully support\n    internationalized domain names, it does not strip fragment components,\n    and on Windows, it expects file URIs to use '|' instead of ':' in the\n    path component corresponding to the drivespec. It also relies on\n    urllib.unquote(), which mishandles unicode arguments. This function\n    produces a URI reference that will work around these issues, although\n    the IDN workaround is limited to Python 2.3 only. May raise a\n    UnicodeEncodeError if the URI reference is Unicode and erroneously\n    contains non-ASCII characters.\n    "
+    if isinstance(uriRef, unicode):
+        try:
+            uriRef = uriRef.encode('us-ascii')
+        except UnicodeError:
+            raise ValueError(('uri %r must consist of ASCII characters.' % uriRef))
+    (scheme, auth, path, query, frag) = urlparse.urlsplit(uriRef)
+    if (auth and (auth.find('@') > (-1))):
+        (userinfo, hostport) = auth.split('@')
+    else:
+        userinfo = None
+        hostport = auth
+    if (hostport and (hostport.find(':') > (-1))):
+        (host, port) = hostport.split(':')
+    else:
+        host = hostport
+        port = None
+    if (host and REG_NAME_HOST_PATTERN.match(host)):
+        host = urllib.unquote(host)
+        if (sys.version_info[0:2] >= (2, 3)):
+            if isinstance(host, str):
+                host = host.decode('utf-8')
+            host = host.encode('idna')
+        auth = ''
+        if userinfo:
+            auth += (userinfo + '@')
+        auth += host
+        if port:
+            auth += (':' + port)
+    if ((os.name == 'nt') and (scheme == 'file')):
+        path = path.replace(':', '|', 1)
+    uri = urlparse.urlunsplit((scheme, auth, path, query, None))
+    return uri

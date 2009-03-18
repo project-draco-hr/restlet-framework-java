@@ -1,0 +1,23 @@
+'Module containing encoding functions for Image.Image and Text.Text.\n'
+import base64
+try:
+    from quopri import encodestring as _encodestring
+
+    def _qencode(s):
+        enc = _encodestring(s, quotetabs=1)
+        return enc.replace(' ', '=20')
+except ImportError:
+    from cStringIO import StringIO
+    import quopri as _quopri
+
+    def _qencode(s):
+        if (not s):
+            return s
+        hasnewline = (s[(-1)] == '\n')
+        infp = StringIO(s)
+        outfp = StringIO()
+        _quopri.encode(infp, outfp, quotetabs=1)
+        value = outfp.getvalue().replace(' ', '=20')
+        if ((not hasnewline) and (value[(-1)] == '\n')):
+            return value[:(-1)]
+        return value

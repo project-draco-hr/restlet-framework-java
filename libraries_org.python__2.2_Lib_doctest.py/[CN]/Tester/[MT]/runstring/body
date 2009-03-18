@@ -1,0 +1,12 @@
+def runstring(self, s, name):
+    '\n        s, name -> search string s for examples to run, logging as name.\n\n        Use string name as the key for logging the outcome.\n        Return (#failures, #examples).\n\n        >>> t = Tester(globs={}, verbose=1)\n        >>> test = r\'\'\'\n        ...    # just an example\n        ...    >>> x = 1 + 2\n        ...    >>> x\n        ...    3\n        ... \'\'\'\n        >>> t.runstring(test, "Example")\n        Running string Example\n        Trying: x = 1 + 2\n        Expecting: nothing\n        ok\n        Trying: x\n        Expecting: 3\n        ok\n        0 of 2 examples failed in string Example\n        (0, 2)\n        '
+    if self.verbose:
+        print 'Running string', name
+    f = t = 0
+    e = _extract_examples(s)
+    if e:
+        (f, t) = _run_examples(e, self.globs, self.verbose, name, self.compileflags)
+    if self.verbose:
+        print f, 'of', t, 'examples failed in string', name
+    self.__record_outcome(name, f, t)
+    return (f, t)

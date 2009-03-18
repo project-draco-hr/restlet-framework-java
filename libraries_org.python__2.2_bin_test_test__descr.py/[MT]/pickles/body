@@ -1,0 +1,131 @@
+def pickles():
+    if verbose:
+        print 'Testing pickling and copying new-style classes and objects...'
+    import pickle, cPickle
+
+    def sorteditems(d):
+        L = d.items()
+        L.sort()
+        return L
+    global C
+
+
+    class C(object):
+
+        def __init__(self, a, b):
+            super(C, self).__init__()
+            self.a = a
+            self.b = b
+
+        def __repr__(self):
+            return ('C(%r, %r)' % (self.a, self.b))
+    global C1
+
+
+    class C1(list):
+
+        def __new__(cls, a, b):
+            return super(C1, cls).__new__(cls)
+
+        def __getnewargs__(self):
+            return (self.a, self.b)
+
+        def __init__(self, a, b):
+            self.a = a
+            self.b = b
+
+        def __repr__(self):
+            return ('C1(%r, %r)<%r>' % (self.a, self.b, list(self)))
+    global C2
+
+
+    class C2(int):
+
+        def __new__(cls, a, b, val=0):
+            return super(C2, cls).__new__(cls, val)
+
+        def __getnewargs__(self):
+            return (self.a, self.b, int(self))
+
+        def __init__(self, a, b, val=0):
+            self.a = a
+            self.b = b
+
+        def __repr__(self):
+            return ('C2(%r, %r)<%r>' % (self.a, self.b, int(self)))
+    global C3
+
+
+    class C3(object):
+
+        def __init__(self, foo):
+            self.foo = foo
+
+        def __getstate__(self):
+            return self.foo
+
+        def __setstate__(self, foo):
+            self.foo = foo
+    global C4classic, C4
+
+
+    class C4classic:
+        pass
+
+
+    class C4(C4classic, object):
+        pass
+    for p in (pickle, cPickle):
+        for bin in (0, 1):
+            if verbose:
+                print p.__name__, ['text', 'binary'][bin]
+            for cls in (C, C1, C2):
+                s = p.dumps(cls, bin)
+                cls2 = p.loads(s)
+                verify((cls2 is cls))
+            a = C1(1, 2)
+            a.append(42)
+            a.append(24)
+            b = C2('hello', 'world', 42)
+            s = p.dumps((a, b), bin)
+            (x, y) = p.loads(s)
+            vereq(x.__class__, a.__class__)
+            vereq(sorteditems(x.__dict__), sorteditems(a.__dict__))
+            vereq(y.__class__, b.__class__)
+            vereq(sorteditems(y.__dict__), sorteditems(b.__dict__))
+            vereq(`x`, `a`)
+            vereq(`y`, `b`)
+            if verbose:
+                print 'a = x =', a
+                print 'b = y =', b
+            u = C3(42)
+            s = p.dumps(u, bin)
+            v = p.loads(s)
+            veris(u.__class__, v.__class__)
+            vereq(u.foo, v.foo)
+            u = C4()
+            u.foo = 42
+            s = p.dumps(u, bin)
+            v = p.loads(s)
+            veris(u.__class__, v.__class__)
+            vereq(u.foo, v.foo)
+    if verbose:
+        print 'deepcopy'
+    import copy
+    for cls in (C, C1, C2):
+        cls2 = copy.deepcopy(cls)
+        verify((cls2 is cls))
+    a = C1(1, 2)
+    a.append(42)
+    a.append(24)
+    b = C2('hello', 'world', 42)
+    (x, y) = copy.deepcopy((a, b))
+    vereq(x.__class__, a.__class__)
+    vereq(sorteditems(x.__dict__), sorteditems(a.__dict__))
+    vereq(y.__class__, b.__class__)
+    vereq(sorteditems(y.__dict__), sorteditems(b.__dict__))
+    vereq(`x`, `a`)
+    vereq(`y`, `b`)
+    if verbose:
+        print 'a = x =', a
+        print 'b = y =', b

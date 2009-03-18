@@ -1,0 +1,28 @@
+def testGetServBy(self):
+    if (sys.platform[:4] == 'java'):
+        return
+    eq = self.assertEqual
+    if (sys.platform in ('linux2', 'freebsd4', 'freebsd5', 'freebsd6', 'darwin')):
+        services = ('daytime', 'qotd', 'domain')
+    else:
+        services = ('echo', 'daytime', 'domain')
+    for service in services:
+        try:
+            port = socket.getservbyname(service, 'tcp')
+            break
+        except socket.error:
+            pass
+    else:
+        raise socket.error
+    port2 = socket.getservbyname(service)
+    eq(port, port2)
+    try:
+        udpport = socket.getservbyname(service, 'udp')
+    except socket.error:
+        udpport = None
+    else:
+        eq(udpport, port)
+    eq(socket.getservbyport(port2), service)
+    eq(socket.getservbyport(port, 'tcp'), service)
+    if (udpport is not None):
+        eq(socket.getservbyport(udpport, 'udp'), service)

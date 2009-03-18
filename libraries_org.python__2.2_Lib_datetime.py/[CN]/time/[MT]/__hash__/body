@@ -1,0 +1,9 @@
+def __hash__(self):
+    'Hash.'
+    tzoff = self._utcoffset()
+    if (not tzoff):
+        return hash(self.__getstate()[0])
+    (h, m) = divmod((((self.hour * 60) + self.minute) - tzoff), 60)
+    if (0 <= h < 24):
+        return hash(time(h, m, self.second, self.microsecond))
+    return hash((h, m, self.second, self.microsecond))

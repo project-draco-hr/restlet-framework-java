@@ -1,0 +1,9 @@
+def testConnectionAttribute(self):
+    'testing the getting and setting of cursor.connection'
+    c = self.cursor()
+    try:
+        from com.ziclix.python.sql import PyConnection
+        assert isinstance(c.connection, PyConnection), 'expected PyConnection'
+        self.assertRaises(TypeError, setattr, (c, 'connection', None), None)
+    finally:
+        c.close()

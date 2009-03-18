@@ -1,0 +1,28 @@
+def buffer_inherit():
+    import binascii
+    if verbose:
+        print 'Testing that buffer interface is inherited ...'
+
+
+    class MyStr(str):
+        pass
+    base = 'abc'
+    m = MyStr(base)
+    vereq(binascii.b2a_hex(m), binascii.b2a_hex(base))
+
+
+    class MyUni(unicode):
+        pass
+    base = u'abc'
+    m = MyUni(base)
+    vereq(binascii.b2a_hex(m), binascii.b2a_hex(base))
+
+
+    class MyInt(int):
+        pass
+    m = MyInt(42)
+    try:
+        binascii.b2a_hex(m)
+        raise TestFailed('subclass of int should not have a buffer interface')
+    except TypeError:
+        pass

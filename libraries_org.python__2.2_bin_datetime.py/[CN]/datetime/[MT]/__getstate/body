@@ -1,0 +1,9 @@
+def __getstate(self):
+    (yhi, ylo) = divmod(self.__year, 256)
+    (us2, us3) = divmod(self.__microsecond, 256)
+    (us1, us2) = divmod(us2, 256)
+    basestate = (('%c' * 10) % (yhi, ylo, self.__month, self.__day, self.__hour, self.__minute, self.__second, us1, us2, us3))
+    if (self._tzinfo is None):
+        return (basestate,)
+    else:
+        return (basestate, self._tzinfo)

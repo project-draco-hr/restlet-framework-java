@@ -1,0 +1,15 @@
+def save_string(self, object):
+    d = id(object)
+    memo = self.memo
+    if self.bin:
+        l = len(object)
+        s = mdumps(l)[1:]
+        if (l < 256):
+            self.write(((SHORT_BINSTRING + s[0]) + object))
+        else:
+            self.write(((BINSTRING + s) + object))
+    else:
+        self.write(((STRING + `object`) + '\n'))
+    memo_len = len(memo)
+    self.write(self.put(memo_len))
+    memo[d] = (memo_len, object)

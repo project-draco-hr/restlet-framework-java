@@ -1,0 +1,13 @@
+def _write_gzip_header(self):
+    self.fileobj.write('\x1f\x8b')
+    self.fileobj.write('\x08')
+    fname = self.filename[:(-3)]
+    flags = 0
+    if fname:
+        flags = FNAME
+    self.fileobj.write(chr(flags))
+    write32u(self.fileobj, long(time.time()))
+    self.fileobj.write('\x02')
+    self.fileobj.write('\xff')
+    if fname:
+        self.fileobj.write((fname + '\x00'))

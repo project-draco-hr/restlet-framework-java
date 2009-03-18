@@ -1,0 +1,28 @@
+def test_content_type(self):
+    eq = self.assertEquals
+    unless = self.failUnless
+    (msg, text) = self._msgobj('msg_05.txt')
+    eq(msg.get_type(), 'multipart/report')
+    params = {}
+    for (pk, pv) in msg.get_params():
+        params[pk] = pv
+    eq(params['report-type'], 'delivery-status')
+    eq(params['boundary'], 'D1690A7AC1.996856090/mail.example.com')
+    eq(msg.preamble, 'This is a MIME-encapsulated message.\n\n')
+    eq(msg.epilogue, '\n\n')
+    eq(len(msg.get_payload()), 3)
+    msg1 = msg.get_payload(0)
+    eq(msg1.get_type(), 'text/plain')
+    eq(msg1.get_payload(), 'Yadda yadda yadda\n')
+    msg2 = msg.get_payload(1)
+    eq(msg2.get_type(), None)
+    eq(msg2.get_payload(), 'Yadda yadda yadda\n')
+    msg3 = msg.get_payload(2)
+    eq(msg3.get_type(), 'message/rfc822')
+    self.failUnless(isinstance(msg3, Message))
+    payload = msg3.get_payload()
+    unless(isinstance(payload, ListType))
+    eq(len(payload), 1)
+    msg4 = payload[0]
+    unless(isinstance(msg4, Message))
+    eq(msg4.get_payload(), 'Yadda yadda yadda\n')

@@ -1,0 +1,11 @@
+def test_java_compat():
+    print_test('array', 2)
+    from java import awt
+    hsb = awt.Color.RGBtoHSB(0, 255, 255, None)
+    verify((hsb == array('f', [0.5, 1, 1])), 'output hsb float array does not correspond to input rgb values')
+    rgb = apply(awt.Color.HSBtoRGB, tuple(hsb))
+    verify((rgb == 4278255615), "output rgb bytes don't match input hsb floats")
+    print_test('zeros', 2)
+    hsb1 = zeros('f', 3)
+    awt.Color.RGBtoHSB(0, 255, 255, hsb1)
+    verify((hsb == hsb1), 'hsb float arrays were not equal')

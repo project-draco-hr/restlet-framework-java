@@ -1,0 +1,19 @@
+def url2pathname(url):
+    'Convert a URL to a DOS path.\n\n            ///C|/foo/bar/spam.foo\n\n                    becomes\n\n            C:\\foo\\bar\\spam.foo\n    '
+    import string, urllib
+    if (not ('|' in url)):
+        if (url[:4] == '////'):
+            url = url[2:]
+        components = url.split('/')
+        return urllib.unquote('\\'.join(components))
+    comp = url.split('|')
+    if ((len(comp) != 2) or (comp[0][(-1)] not in string.ascii_letters)):
+        error = ('Bad URL: ' + url)
+        raise IOError, error
+    drive = comp[0][(-1)].upper()
+    components = comp[1].split('/')
+    path = (drive + ':')
+    for comp in components:
+        if comp:
+            path = ((path + '\\') + urllib.unquote(comp))
+    return path

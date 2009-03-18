@@ -1,0 +1,10 @@
+def test_generate(self):
+    m = Message()
+    m['Subject'] = 'An enclosed message'
+    m.set_payload('Here is the body of the message.\n')
+    r = MIMEMessage(m)
+    r['Subject'] = 'The enclosing message'
+    s = StringIO()
+    g = Generator(s)
+    g.flatten(r)
+    self.assertEqual(s.getvalue(), 'Content-Type: message/rfc822\nMIME-Version: 1.0\nSubject: The enclosing message\n\nSubject: An enclosed message\n\nHere is the body of the message.\n')

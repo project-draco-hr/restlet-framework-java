@@ -1,0 +1,10 @@
+def splitpasswd(user):
+    "splitpasswd('user:passwd') -> 'user', 'passwd'."
+    global _passwdprog
+    if (_passwdprog is None):
+        import re
+        _passwdprog = re.compile('^([^:]*):(.*)$')
+    match = _passwdprog.match(user)
+    if match:
+        return match.group(1, 2)
+    return (user, None)

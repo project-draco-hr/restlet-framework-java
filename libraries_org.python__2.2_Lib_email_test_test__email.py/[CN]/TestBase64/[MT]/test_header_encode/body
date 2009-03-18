@@ -1,0 +1,9 @@
+def test_header_encode(self):
+    eq = self.assertEqual
+    he = base64MIME.header_encode
+    eq(he('hello'), '=?iso-8859-1?b?aGVsbG8=?=')
+    eq(he('hello\nworld'), '=?iso-8859-1?b?aGVsbG8NCndvcmxk?=')
+    eq(he('hello', charset='iso-8859-2'), '=?iso-8859-2?b?aGVsbG8=?=')
+    eq(he('hello\nworld', keep_eols=True), '=?iso-8859-1?b?aGVsbG8Kd29ybGQ=?=')
+    eq(he(('xxxx ' * 20), maxlinelen=40), '=?iso-8859-1?b?eHh4eCB4eHh4IHh4eHggeHg=?=\n =?iso-8859-1?b?eHggeHh4eCB4eHh4IHh4eHg=?=\n =?iso-8859-1?b?IHh4eHggeHh4eCB4eHh4IHg=?=\n =?iso-8859-1?b?eHh4IHh4eHggeHh4eCB4eHg=?=\n =?iso-8859-1?b?eCB4eHh4IHh4eHggeHh4eCA=?=\n =?iso-8859-1?b?eHh4eCB4eHh4IHh4eHgg?=')
+    eq(he(('xxxx ' * 20), maxlinelen=40, eol='\r\n'), '=?iso-8859-1?b?eHh4eCB4eHh4IHh4eHggeHg=?=\r\n =?iso-8859-1?b?eHggeHh4eCB4eHh4IHh4eHg=?=\r\n =?iso-8859-1?b?IHh4eHggeHh4eCB4eHh4IHg=?=\r\n =?iso-8859-1?b?eHh4IHh4eHggeHh4eCB4eHg=?=\r\n =?iso-8859-1?b?eCB4eHh4IHh4eHggeHh4eCA=?=\r\n =?iso-8859-1?b?eHh4eCB4eHh4IHh4eHgg?=')

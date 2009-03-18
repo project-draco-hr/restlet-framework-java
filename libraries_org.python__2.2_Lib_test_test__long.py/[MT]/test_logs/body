@@ -1,0 +1,23 @@
+def test_logs():
+    import math
+    if verbose:
+        print 'log and log10'
+    LOG10E = math.log10(math.e)
+    for exp in (range(10) + [100, 1000, 10000]):
+        value = (10 ** exp)
+        log10 = math.log10(value)
+        verify((fcmp(log10, exp) == 0))
+        expected = (exp / LOG10E)
+        log = math.log(value)
+        verify((fcmp(log, expected) == 0))
+    for bad in ((- (1L << 10000)), (-2L), 0L):
+        try:
+            math.log(bad)
+            raise TestFailed('expected ValueError from log(<= 0)')
+        except ValueError:
+            pass
+        try:
+            math.log10(bad)
+            raise TestFailed('expected ValueError from log10(<= 0)')
+        except ValueError:
+            pass

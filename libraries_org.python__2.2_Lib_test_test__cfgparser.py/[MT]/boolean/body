@@ -1,0 +1,16 @@
+def boolean(src):
+    print 'Testing interpretation of boolean Values...'
+    cf = ConfigParser.ConfigParser()
+    sio = StringIO.StringIO(src)
+    cf.readfp(sio)
+    for x in range(1, 5):
+        verify((cf.getboolean('BOOLTEST', ('t%d' % x)) == 1))
+    for x in range(1, 5):
+        verify((cf.getboolean('BOOLTEST', ('f%d' % x)) == 0))
+    for x in range(1, 5):
+        try:
+            cf.getboolean('BOOLTEST', ('e%d' % x))
+        except ValueError:
+            pass
+        else:
+            raise TestFailed('getboolean() failed to report a non boolean value')

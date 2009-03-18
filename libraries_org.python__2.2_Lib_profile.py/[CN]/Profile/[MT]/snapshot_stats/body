@@ -1,0 +1,9 @@
+def snapshot_stats(self):
+    self.stats = {}
+    for func in self.timings.keys():
+        (cc, ns, tt, ct, callers) = self.timings[func]
+        callers = callers.copy()
+        nc = 0
+        for func_caller in callers.keys():
+            nc = (nc + callers[func_caller])
+        self.stats[func] = (cc, nc, tt, ct, callers)

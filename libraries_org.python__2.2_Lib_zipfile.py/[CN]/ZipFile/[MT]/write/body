@@ -1,0 +1,53 @@
+def write(self, filename, arcname=None, compress_type=None):
+    'Put the bytes from filename into the archive under the name\n        arcname.'
+    st = os.stat(filename)
+    mtime = time.localtime(st[8])
+    date_time = mtime[0:6]
+    if (arcname is None):
+        zinfo = ZipInfo(filename, date_time)
+    else:
+        zinfo = ZipInfo(arcname, date_time)
+    zinfo.external_attr = (st[0] << 16)
+    if (compress_type is None):
+        zinfo.compress_type = self.compression
+    else:
+        zinfo.compress_type = compress_type
+    self._writecheck(zinfo)
+    fp = open(filename, 'rb')
+    zinfo.flag_bits = 0
+    zinfo.header_offset = self.fp.tell()
+    zinfo.CRC = CRC = 0
+    zinfo.compress_size = compress_size = 0
+    zinfo.file_size = file_size = 0
+    self.fp.write(zinfo.FileHeader())
+    zinfo.file_offset = self.fp.tell()
+    if (zinfo.compress_type == ZIP_DEFLATED):
+        cmpr = zlib.compressobj(zlib.Z_DEFAULT_COMPRESSION, zlib.DEFLATED, (-15))
+    else:
+        cmpr = None
+    while 1:
+        buf = fp.read((1024 * 8))
+        if (not buf):
+            break
+        file_size = (file_size + len(buf))
+        CRC = binascii.crc32(buf, CRC)
+        if cmpr:
+            buf = cmpr.compress(buf)
+            compress_size = (compress_size + len(buf))
+        self.fp.write(buf)
+    fp.close()
+    if cmpr:
+        buf = cmpr.flush()
+        compress_size = (compress_size + len(buf))
+        self.fp.write(buf)
+        zinfo.compress_size = compress_size
+    else:
+        zinfo.compress_size = file_size
+    zinfo.CRC = CRC
+    zinfo.file_size = file_size
+    position = self.fp.tell()
+    self.fp.seek((zinfo.header_offset + 14), 0)
+    self.fp.write(struct.pack('<lll', zinfo.CRC, zinfo.compress_size, zinfo.file_size))
+    self.fp.seek(position, 0)
+    self.filelist.append(zinfo)
+    self.NameToInfo[zinfo.filename] = zinfo

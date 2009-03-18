@@ -1,0 +1,18 @@
+def __init__(self, mod=None, globs=None, verbose=None, isprivate=None):
+    'mod=None, globs=None, verbose=None, isprivate=None\n\nSee doctest.__doc__ for an overview.\n\nOptional keyword arg "mod" is a module, whose globals are used for\nexecuting examples.  If not specified, globs must be specified.\n\nOptional keyword arg "globs" gives a dict to be used as the globals\nwhen executing examples; if not specified, use the globals from\nmodule mod.\n\nIn either case, a copy of the dict is used for each docstring\nexamined.\n\nOptional keyword arg "verbose" prints lots of stuff if true, only\nfailures if false; by default, it\'s true iff "-v" is in sys.argv.\n\nOptional keyword arg "isprivate" specifies a function used to determine\nwhether a name is private.  The default function is doctest.is_private;\nsee its docs for details.\n'
+    if ((mod is None) and (globs is None)):
+        raise TypeError('Tester.__init__: must specify mod or globs')
+    if ((mod is not None) and (not _ismodule(mod))):
+        raise TypeError(('Tester.__init__: mod must be a module; ' + `mod`))
+    if (globs is None):
+        globs = mod.__dict__
+    self.globs = globs
+    if (verbose is None):
+        import sys
+        verbose = ('-v' in sys.argv)
+    self.verbose = verbose
+    if (isprivate is None):
+        isprivate = is_private
+    self.isprivate = isprivate
+    self.name2ft = {}
+    self.compileflags = _extract_future_flags(globs)

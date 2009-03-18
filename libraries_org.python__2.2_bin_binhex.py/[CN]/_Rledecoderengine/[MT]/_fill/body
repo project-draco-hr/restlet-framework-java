@@ -1,0 +1,19 @@
+def _fill(self, wtd):
+    self.pre_buffer = (self.pre_buffer + self.ifp.read((wtd + 4)))
+    if self.ifp.eof:
+        self.post_buffer = (self.post_buffer + binascii.rledecode_hqx(self.pre_buffer))
+        self.pre_buffer = ''
+        return
+    mark = len(self.pre_buffer)
+    if (self.pre_buffer[(-3):] == ((RUNCHAR + '\x00') + RUNCHAR)):
+        mark = (mark - 3)
+    elif (self.pre_buffer[(-1)] == RUNCHAR):
+        mark = (mark - 2)
+    elif (self.pre_buffer[(-2):] == (RUNCHAR + '\x00')):
+        mark = (mark - 2)
+    elif (self.pre_buffer[(-2)] == RUNCHAR):
+        pass
+    else:
+        mark = (mark - 1)
+    self.post_buffer = (self.post_buffer + binascii.rledecode_hqx(self.pre_buffer[:mark]))
+    self.pre_buffer = self.pre_buffer[mark:]

@@ -1,0 +1,20 @@
+def binhex(inp, out):
+    '(infilename, outfilename) - Create binhex-encoded copy of a file'
+    finfo = getfileinfo(inp)
+    ofp = BinHex(finfo, out)
+    ifp = open(inp, 'rb')
+    while 1:
+        d = ifp.read(128000)
+        if (not d):
+            break
+        ofp.write(d)
+    ofp.close_data()
+    ifp.close()
+    ifp = openrsrc(inp, 'rb')
+    while 1:
+        d = ifp.read(128000)
+        if (not d):
+            break
+        ofp.write_rsrc(d)
+    ofp.close()
+    ifp.close()

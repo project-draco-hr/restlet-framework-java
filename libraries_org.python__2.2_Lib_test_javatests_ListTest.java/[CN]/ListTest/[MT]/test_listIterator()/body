@@ -1,0 +1,65 @@
+{
+  ListIterator li=newInstance(null).listIterator();
+  TestSupport.assertThat(li.hasNext() == false,"ListIterator.hasNext() is true for empty List");
+  TestSupport.assertThat(li.hasPrevious() == false,"ListIterator.hasPrevious() is true for empty List");
+  try {
+    li.next();
+    TestSupport.assertThat(false,"expected NoSuchElementException");
+  }
+ catch (  NoSuchElementException e) {
+  }
+  try {
+    li.previous();
+    TestSupport.assertThat(false,"expected NoSuchElementException");
+  }
+ catch (  NoSuchElementException e) {
+  }
+  int nextIndex=li.nextIndex();
+  TestSupport.assertThat(nextIndex == -1 || nextIndex == 0,"ListIterator.nextIndex() on empty List did not return 0 " + "(java 1.4) or did not return -1 (java 1.3)");
+  int prevIndex=li.previousIndex();
+  TestSupport.assertThat(prevIndex == -1 || prevIndex == -2,"ListIterator.previousIndex() on empty List did not return -1 " + "(java 1.4) or -2 (java 1.3)");
+  List l=new ArrayList();
+  l.add(new Integer(1));
+  li=newInstance(l).listIterator();
+  TestSupport.assertThat(li.hasPrevious() == false,"ListIterator.hasPrevious() is true with nothing previous");
+  TestSupport.assertThat(li.hasNext() == true,"ListIterator.hasNext() is false with next present");
+  TestSupport.assertThat(li.next().equals(new Integer(1)),"ListIterator.next() did not return expected Integer(1)");
+  if (!isReadOnly()) {
+    li.remove();
+    TestSupport.assertThat(li.hasNext() == false,"ListIterator.hasNext() is true for empty List");
+    TestSupport.assertThat(li.hasPrevious() == false,"ListIterator.hasPrevious() is true for empty List");
+    try {
+      li.set(new Integer(42));
+      TestSupport.assertThat(false,"expected IllegalStateException");
+    }
+ catch (    IllegalStateException e) {
+    }
+    try {
+      li.remove();
+      TestSupport.assertThat(false,"expected IllegalStateException");
+    }
+ catch (    IllegalStateException e) {
+    }
+  }
+  l=new ArrayList();
+  l.add(new Integer(0));
+  l.add(new Integer(1));
+  l.add(new Integer(2));
+  li=newInstance(l).listIterator();
+  for (int i=0, n=l.size(); i < n; i++) {
+    TestSupport.assertThat(li.next().equals(new Integer(i)),"ListIterator.previous did not return expected value");
+  }
+  while (!isReadOnly() && li.hasNext()) {
+    li.next();
+    li.set(new Integer(42));
+    TestSupport.assertThat(li.previous().equals(new Integer(42)),"ListIterator.previous() did not return the value that was set()");
+    li.remove();
+  }
+  if (isReadOnly()) {
+    li=newInstance(null).listIterator();
+  }
+  li=defaultList().listIterator(2);
+  TestSupport.assertThat(li.next().equals(new Integer(2)),"List.listIteraor(index) did not return expected value");
+  TestSupport.assertThat(li.next().equals(new Integer(3)),"List.listIteraor(index) did not return expected value");
+  TestSupport.assertThat(li.hasNext() == false,"listIterator.hasNext() at end of list returned true");
+}

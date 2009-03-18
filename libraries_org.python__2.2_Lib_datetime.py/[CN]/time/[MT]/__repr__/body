@@ -1,0 +1,13 @@
+def __repr__(self):
+    'Convert to formal string, for repr().'
+    if (self.__microsecond != 0):
+        s = (', %d, %d' % (self.__second, self.__microsecond))
+    elif (self.__second != 0):
+        s = (', %d' % self.__second)
+    else:
+        s = ''
+    s = ('%s(%d, %d%s)' % (('datetime.' + self.__class__.__name__), self.__hour, self.__minute, s))
+    if (self._tzinfo is not None):
+        assert (s[(-1):] == ')')
+        s = ((s[:(-1)] + (', tzinfo=%r' % self._tzinfo)) + ')')
+    return s

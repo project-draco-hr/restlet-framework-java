@@ -1,0 +1,11 @@
+def get_param(self, param, failobj=None, header='content-type', unquote=True):
+    "Return the parameter value if found in the Content-Type header.\n\n        Optional failobj is the object to return if there is no Content-Type\n        header, or the Content-Type header has no such parameter.  Optional\n        header is the header to search instead of Content-Type.\n\n        Parameter keys are always compared case insensitively.  The return\n        value can either be a string, or a 3-tuple if the parameter was RFC\n        2231 encoded.  When it's a 3-tuple, the elements of the value are of\n        the form (CHARSET, LANGUAGE, VALUE).  Note that both CHARSET and\n        LANGUAGE can be None, in which case you should consider VALUE to be\n        encoded in the us-ascii charset.  You can usually ignore LANGUAGE.\n\n        Your application should be prepared to deal with 3-tuple return\n        values, and can convert the parameter to a Unicode string like so:\n\n            param = msg.get_param('foo')\n            if isinstance(param, tuple):\n                param = unicode(param[2], param[0] or 'us-ascii')\n\n        In any case, the parameter value (either the returned string, or the\n        VALUE item in the 3-tuple) is always unquoted, unless unquote is set\n        to False.\n        "
+    if (not self.has_key(header)):
+        return failobj
+    for (k, v) in self._get_params_preserve(failobj, header):
+        if (k.lower() == param.lower()):
+            if unquote:
+                return _unquotevalue(v)
+            else:
+                return v
+    return failobj

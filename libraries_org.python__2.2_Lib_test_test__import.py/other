@@ -1,0 +1,19 @@
+from test_support import TESTFN, TestFailed
+import os
+import random
+import sys
+try:
+    import RAnDoM
+except ImportError:
+    pass
+else:
+    raise TestFailed('import of RAnDoM should have failed (case mismatch)')
+import double_const
+sys.path.insert(0, os.curdir)
+try:
+    test_with_extension((os.extsep + 'py'))
+    if sys.platform.startswith('win'):
+        for ext in ('.PY', '.Py', '.pY', '.pyw', '.PYW', '.pYw'):
+            test_with_extension(ext)
+finally:
+    del sys.path[0]

@@ -1,0 +1,9 @@
+def _testNonBlockingConnect(self):
+    self.cli.setblocking(0)
+    result = self.cli.connect_ex((HOST, PORT))
+    (rfds, wfds, xfds) = select.select([], [self.cli], [])
+    self.failUnless((self.cli in wfds))
+    try:
+        self.cli.send(MSG)
+    except socket.error:
+        self.fail('Sending on connected socket should not have raised socket.error')

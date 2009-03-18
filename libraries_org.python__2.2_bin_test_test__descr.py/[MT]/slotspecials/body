@@ -1,0 +1,43 @@
+def slotspecials():
+    if verbose:
+        print 'Testing __dict__ and __weakref__ in __slots__...'
+
+
+    class D(object):
+        __slots__ = ['__dict__']
+    a = D()
+    verify(hasattr(a, '__dict__'))
+    verify((not hasattr(a, '__weakref__')))
+    a.foo = 42
+    vereq(a.__dict__, {'foo': 42, })
+
+
+    class W(object):
+        __slots__ = ['__weakref__']
+    a = W()
+    verify(hasattr(a, '__weakref__'))
+    verify((not hasattr(a, '__dict__')))
+    try:
+        a.foo = 42
+    except AttributeError:
+        pass
+    else:
+        raise TestFailed, "shouldn't be allowed to set a.foo"
+
+
+    class C1(W, D):
+        __slots__ = []
+    a = C1()
+    verify(hasattr(a, '__dict__'))
+    verify(hasattr(a, '__weakref__'))
+    a.foo = 42
+    vereq(a.__dict__, {'foo': 42, })
+
+
+    class C2(D, W):
+        __slots__ = []
+    a = C2()
+    verify(hasattr(a, '__dict__'))
+    verify(hasattr(a, '__weakref__'))
+    a.foo = 42
+    vereq(a.__dict__, {'foo': 42, })

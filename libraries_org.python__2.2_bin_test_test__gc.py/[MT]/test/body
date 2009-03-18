@@ -1,0 +1,18 @@
+def test():
+    if verbose:
+        print 'disabling automatic collection'
+    enabled = gc.isenabled()
+    gc.disable()
+    verify((not gc.isenabled()))
+    debug = gc.get_debug()
+    gc.set_debug((debug & (~ gc.DEBUG_LEAK)))
+    try:
+        test_all()
+    finally:
+        gc.set_debug(debug)
+        if verbose:
+            print 'restoring automatic collection'
+        gc.enable()
+        verify(gc.isenabled())
+        if (not enabled):
+            gc.disable()

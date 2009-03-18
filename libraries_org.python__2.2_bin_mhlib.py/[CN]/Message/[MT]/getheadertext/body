@@ -1,0 +1,14 @@
+def getheadertext(self, pred=None):
+    "Return the message's header text as a string.  If an\n        argument is specified, it is used as a filter predicate to\n        decide which headers to return (its argument is the header\n        name converted to lower case)."
+    if (not pred):
+        return ''.join(self.headers)
+    headers = []
+    hit = 0
+    for line in self.headers:
+        if (not line[0].isspace()):
+            i = line.find(':')
+            if (i > 0):
+                hit = pred(line[:i].lower())
+        if hit:
+            headers.append(line)
+    return ''.join(headers)

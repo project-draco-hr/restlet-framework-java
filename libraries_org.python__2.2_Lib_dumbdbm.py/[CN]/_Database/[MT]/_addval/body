@@ -1,0 +1,10 @@
+def _addval(self, val):
+    f = _open(self._datfile, 'rb+')
+    f.seek(0, 2)
+    pos = int(f.tell())
+    npos = ((((pos + _BLOCKSIZE) - 1) // _BLOCKSIZE) * _BLOCKSIZE)
+    f.write(('\x00' * (npos - pos)))
+    pos = npos
+    f.write(val)
+    f.close()
+    return (pos, len(val))

@@ -1,0 +1,12 @@
+def join(path, *args):
+    'Join two or more pathname components, inserting os.sep as needed'
+    path = _tostr(path, 'join')
+    f = File(path)
+    for a in args:
+        a = _tostr(a, 'join')
+        g = File(a)
+        if (g.isAbsolute() or (len(f.getPath()) == 0)):
+            f = g
+        else:
+            f = File(f, a)
+    return f.getPath()

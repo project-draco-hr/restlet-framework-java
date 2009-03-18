@@ -1,0 +1,22 @@
+def testloop(proto, servers, hdlrcls, testfunc):
+    for svrcls in servers:
+        addr = pickaddr(proto)
+        if verbose:
+            print 'ADDR =', addr
+            print 'CLASS =', svrcls
+        t = ServerThread(addr, svrcls, hdlrcls)
+        if verbose:
+            print 'server created'
+        t.start()
+        if verbose:
+            print 'server running'
+        for i in range(NREQ):
+            time.sleep(DELAY)
+            if verbose:
+                print 'test client', i
+            testfunc(proto, addr)
+        if verbose:
+            print 'waiting for server'
+        t.join()
+        if verbose:
+            print 'done'

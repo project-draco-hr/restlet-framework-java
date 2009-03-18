@@ -1,0 +1,10 @@
+def get_content_charset(self, failobj=None):
+    'Return the charset parameter of the Content-Type header.\n\n        The returned string is always coerced to lower case.  If there is no\n        Content-Type header, or if that header has no charset parameter,\n        failobj is returned.\n        '
+    missing = []
+    charset = self.get_param('charset', missing)
+    if (charset is missing):
+        return failobj
+    if isinstance(charset, TupleType):
+        pcharset = (charset[0] or 'us-ascii')
+        charset = unicode(charset[2], pcharset).encode('us-ascii')
+    return charset.lower()

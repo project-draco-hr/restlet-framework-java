@@ -1,0 +1,12 @@
+def getreply(self):
+    'Compat definition since superclass does not define it.\n\n        Returns a tuple consisting of:\n        - server status code (e.g. \'200\' if all goes well)\n        - server "reason" corresponding to status code\n        - any RFC822 headers in the response from the server\n        '
+    try:
+        response = self._conn.getresponse()
+    except BadStatusLine as e:
+        self.file = self._conn.sock.makefile('rb', 0)
+        self.close()
+        self.headers = None
+        return ((-1), e.line, None)
+    self.headers = response.msg
+    self.file = response.fp
+    return (response.status, response.reason, response.msg)

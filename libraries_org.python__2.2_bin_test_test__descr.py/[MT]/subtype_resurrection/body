@@ -1,0 +1,17 @@
+def subtype_resurrection():
+    if verbose:
+        print 'Testing resurrection of new-style instance...'
+
+
+    class C(object):
+        container = []
+
+        def __del__(self):
+            C.container.append(self)
+    c = C()
+    c.attr = 42
+    del c
+    del C.container[(-1)]
+    vereq(len(C.container), 1)
+    vereq(C.container[(-1)].attr, 42)
+    del C.__del__

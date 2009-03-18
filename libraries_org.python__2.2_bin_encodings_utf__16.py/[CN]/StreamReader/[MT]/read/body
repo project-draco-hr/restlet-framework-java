@@ -1,0 +1,15 @@
+def read(self, size=(-1)):
+    if (not self.bom_read):
+        signature = self.stream.read(2)
+        if (signature == codecs.BOM_BE):
+            self.decode = codecs.utf_16_be_decode
+        elif (signature == codecs.BOM_LE):
+            self.decode = codecs.utf_16_le_decode
+        else:
+            raise UnicodeError, 'UTF-16 stream does not start with BOM'
+        if (size > 2):
+            size -= 2
+        elif (size >= 0):
+            size = 0
+        self.bom_read = 1
+    return codecs.StreamReader.read(self, size)

@@ -1,0 +1,8 @@
+def test_multiple_callbacks(self):
+    o = C()
+    ref1 = weakref.ref(o, self.callback)
+    ref2 = weakref.ref(o, self.callback)
+    del o
+    self.assert_((ref1() is None), 'expected reference to be invalidated')
+    self.assert_((ref2() is None), 'expected reference to be invalidated')
+    self.assert_((self.cbcalled == 2), 'callback not called the right number of times')

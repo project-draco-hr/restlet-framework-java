@@ -1,0 +1,16 @@
+def acquire(self, blocking=1):
+    rc = 0
+    self.__cond.acquire()
+    while (self.__value == 0):
+        if (not blocking):
+            break
+        if __debug__:
+            self._note('%s.acquire(%s): blocked waiting, value=%s', self, blocking, self.__value)
+        self.__cond.wait()
+    else:
+        self.__value = (self.__value - 1)
+        if __debug__:
+            self._note('%s.acquire: success, value=%s', self, self.__value)
+        rc = 1
+    self.__cond.release()
+    return rc

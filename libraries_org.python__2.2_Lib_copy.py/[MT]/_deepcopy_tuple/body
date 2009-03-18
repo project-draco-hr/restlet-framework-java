@@ -1,0 +1,17 @@
+def _deepcopy_tuple(x, memo):
+    y = []
+    for a in x:
+        y.append(deepcopy(a, memo))
+    d = id(x)
+    try:
+        return memo[d]
+    except KeyError:
+        pass
+    for i in range(len(x)):
+        if (x[i] is not y[i]):
+            y = tuple(y)
+            break
+    else:
+        y = x
+    memo[d] = y
+    return y

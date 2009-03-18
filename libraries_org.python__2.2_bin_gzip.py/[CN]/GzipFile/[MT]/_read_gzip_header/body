@@ -1,0 +1,25 @@
+def _read_gzip_header(self):
+    magic = self.fileobj.read(2)
+    if (magic != '\x1f\x8b'):
+        raise IOError, 'Not a gzipped file'
+    method = ord(self.fileobj.read(1))
+    if (method != 8):
+        raise IOError, 'Unknown compression method'
+    flag = ord(self.fileobj.read(1))
+    self.fileobj.read(6)
+    if (flag & FEXTRA):
+        xlen = ord(self.fileobj.read(1))
+        xlen = (xlen + (256 * ord(self.fileobj.read(1))))
+        self.fileobj.read(xlen)
+    if (flag & FNAME):
+        while 1:
+            s = self.fileobj.read(1)
+            if ((not s) or (s == '\x00')):
+                break
+    if (flag & FCOMMENT):
+        while 1:
+            s = self.fileobj.read(1)
+            if ((not s) or (s == '\x00')):
+                break
+    if (flag & FHCRC):
+        self.fileobj.read(2)

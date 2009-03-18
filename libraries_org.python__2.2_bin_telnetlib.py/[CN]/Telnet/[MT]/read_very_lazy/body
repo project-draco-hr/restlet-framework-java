@@ -1,0 +1,7 @@
+def read_very_lazy(self):
+    "Return any data available in the cooked queue (very lazy).\n\n        Raise EOFError if connection closed and no data available.\n        Return '' if no cooked data available otherwise.  Don't block.\n\n        "
+    buf = self.cookedq
+    self.cookedq = ''
+    if ((not buf) and self.eof and (not self.rawq)):
+        raise EOFError, 'telnet connection closed'
+    return buf

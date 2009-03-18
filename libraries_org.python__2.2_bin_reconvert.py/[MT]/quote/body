@@ -1,0 +1,21 @@
+def quote(s, quote=None):
+    'Convert a string object to a quoted string literal.\n\n    This is similar to repr() but will return a "raw" string (r\'...\'\n    or r"...") when the string contains backslashes, instead of\n    doubling all backslashes.  The resulting string does *not* always\n    evaluate to the same string as the original; however it will do\n    just the right thing when passed into re.compile().\n\n    The optional second argument forces the string quote; it must be\n    a single character which is a valid Python string quote.\n\n    '
+    if (quote is None):
+        q = "'"
+        altq = "'"
+        if ((q in s) and (altq not in s)):
+            q = altq
+    else:
+        assert (quote in ('"', "'"))
+        q = quote
+    res = q
+    for c in s:
+        if (c == q):
+            c = ('\\' + c)
+        elif ((c < ' ') or (c > '~')):
+            c = ('\\%03o' % ord(c))
+        res = (res + c)
+    res = (res + q)
+    if ('\\' in res):
+        res = ('r' + res)
+    return res

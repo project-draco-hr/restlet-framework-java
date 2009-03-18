@@ -1,0 +1,12 @@
+def read(self, length=None):
+    if (self.pos >= self.stop):
+        return ''
+    remaining = (self.stop - self.pos)
+    if ((length is None) or (length < 0)):
+        length = remaining
+    elif (length > remaining):
+        length = remaining
+    self.fp.seek(self.pos)
+    data = self.fp.read(length)
+    self.pos = self.fp.tell()
+    return data

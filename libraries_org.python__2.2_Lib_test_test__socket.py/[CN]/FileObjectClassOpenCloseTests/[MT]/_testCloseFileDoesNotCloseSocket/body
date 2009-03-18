@@ -1,0 +1,7 @@
+def _testCloseFileDoesNotCloseSocket(self):
+    self.cli_file = self.serv_conn.makefile('wb')
+    self.cli_file.close()
+    try:
+        self.serv_conn.send(MSG)
+    except Exception as x:
+        self.fail(('Closing file wrapper appears to have closed underlying socket: %s' % str(x)))

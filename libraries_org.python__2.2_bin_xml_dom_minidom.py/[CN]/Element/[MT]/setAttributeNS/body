@@ -1,0 +1,20 @@
+def setAttributeNS(self, namespaceURI, qualifiedName, value):
+    (prefix, localname) = _nssplit(qualifiedName)
+    attr = self.getAttributeNodeNS(namespaceURI, localname)
+    if (attr is None):
+        attr = Attr(qualifiedName, namespaceURI, localname, prefix)
+        d = attr.__dict__
+        d['prefix'] = prefix
+        d['nodeName'] = qualifiedName
+        d['value'] = d['nodeValue'] = value
+        d['ownerDocument'] = self.ownerDocument
+        self.setAttributeNode(attr)
+    else:
+        d = attr.__dict__
+        if (value != attr.value):
+            d['value'] = d['nodeValue'] = value
+            if attr.isId:
+                _clear_id_cache(self)
+        if (attr.prefix != prefix):
+            d['prefix'] = prefix
+            d['nodeName'] = qualifiedName

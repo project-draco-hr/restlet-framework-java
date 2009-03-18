@@ -1,0 +1,52 @@
+def initfp(self, file):
+    self._version = 0
+    self._decomp = None
+    self._convert = None
+    self._markers = []
+    self._soundpos = 0
+    self._file = Chunk(file)
+    if (self._file.getname() != 'FORM'):
+        raise Error, 'file does not start with FORM id'
+    formdata = self._file.read(4)
+    if (formdata == 'AIFF'):
+        self._aifc = 0
+    elif (formdata == 'AIFC'):
+        self._aifc = 1
+    else:
+        raise Error, 'not an AIFF or AIFF-C file'
+    self._comm_chunk_read = 0
+    while 1:
+        self._ssnd_seek_needed = 1
+        try:
+            chunk = Chunk(self._file)
+        except EOFError:
+            break
+        chunkname = chunk.getname()
+        if (chunkname == 'COMM'):
+            self._read_comm_chunk(chunk)
+            self._comm_chunk_read = 1
+        elif (chunkname == 'SSND'):
+            self._ssnd_chunk = chunk
+            dummy = chunk.read(8)
+            self._ssnd_seek_needed = 0
+        elif (chunkname == 'FVER'):
+            self._version = _read_long(chunk)
+        elif (chunkname == 'MARK'):
+            self._readmark(chunk)
+        elif (chunkname in _skiplist):
+            pass
+        else:
+            raise Error, ('unrecognized chunk type ' + chunk.chunkname)
+        chunk.skip()
+    if ((not self._comm_chunk_read) or (not self._ssnd_chunk)):
+        raise Error, 'COMM chunk and/or SSND chunk missing'
+    if (self._aifc and self._decomp):
+        import cl
+        params = [cl.ORIGINAL_FORMAT, 0, cl.BITS_PER_COMPONENT, (self._sampwidth * 8), cl.FRAME_RATE, self._framerate]
+        if (self._nchannels == 1):
+            params[1] = cl.MONO
+        elif (self._nchannels == 2):
+            params[1] = cl.STEREO_INTERLEAVED
+        else:
+            raise Error, 'cannot compress more than 2 channels'
+        self._decomp.SetParams(params)

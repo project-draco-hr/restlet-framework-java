@@ -1,0 +1,16 @@
+def onecmd(self, line):
+    'Interpret the argument as though it had been typed in response\n        to the prompt.\n\n        This may be overridden, but should not normally need to be;\n        see the precmd() and postcmd() methods for useful execution hooks.\n        The return value is a flag indicating whether interpretation of\n        commands by the interpreter should stop.\n\n        '
+    (cmd, arg, line) = self.parseline(line)
+    if (not line):
+        return self.emptyline()
+    if (cmd is None):
+        return self.default(line)
+    self.lastcmd = line
+    if (cmd == ''):
+        return self.default(line)
+    else:
+        try:
+            func = getattr(self, ('do_' + cmd))
+        except AttributeError:
+            return self.default(line)
+        return func(arg)

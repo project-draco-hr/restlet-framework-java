@@ -1,0 +1,24 @@
+def newslot():
+    if verbose:
+        print 'Testing __new__ slot override...'
+
+
+    class C(list):
+
+        def __new__(cls):
+            self = list.__new__(cls)
+            self.foo = 1
+            return self
+
+        def __init__(self):
+            self.foo = (self.foo + 2)
+    a = C()
+    vereq(a.foo, 3)
+    verify((a.__class__ is C))
+
+
+    class D(C):
+        pass
+    b = D()
+    vereq(b.foo, 3)
+    verify((b.__class__ is D))

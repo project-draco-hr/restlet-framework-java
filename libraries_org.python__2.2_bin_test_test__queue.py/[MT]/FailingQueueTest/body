@@ -1,0 +1,48 @@
+def FailingQueueTest(q):
+    if (not q.empty()):
+        raise RuntimeError, 'Call this function with an empty queue'
+    for i in range((queue_size - 1)):
+        q.put(i)
+    q.fail_next_put = True
+    try:
+        q.put('oops', block=0)
+        raise TestFailed("The queue didn't fail when it should have")
+    except FailingQueueException:
+        pass
+    q.put('last')
+    verify(q.full(), 'Queue should be full')
+    q.fail_next_put = True
+    try:
+        _doBlockingTest(q.put, ('full',), q.get, ())
+        raise TestFailed("The queue didn't fail when it should have")
+    except FailingQueueException:
+        pass
+    q.put('last')
+    verify(q.full(), 'Queue should be full')
+    q.get()
+    verify((not q.full()), 'Queue should not be full')
+    q.put('last')
+    verify(q.full(), 'Queue should be full')
+    _doBlockingTest(q.put, ('full',), q.get, ())
+    for i in range(queue_size):
+        q.get()
+    verify(q.empty(), 'Queue should be empty')
+    q.put('first')
+    q.fail_next_get = True
+    try:
+        q.get()
+        raise TestFailed("The queue didn't fail when it should have")
+    except FailingQueueException:
+        pass
+    verify((not q.empty()), 'Queue should not be empty')
+    q.get()
+    verify(q.empty(), 'Queue should be empty')
+    q.fail_next_get = True
+    try:
+        _doBlockingTest(q.get, (), q.put, ('empty',))
+        raise TestFailed("The queue didn't fail when it should have")
+    except FailingQueueException:
+        pass
+    verify((not q.empty()), 'Queue should not be empty')
+    q.get()
+    verify(q.empty(), 'Queue should be empty')

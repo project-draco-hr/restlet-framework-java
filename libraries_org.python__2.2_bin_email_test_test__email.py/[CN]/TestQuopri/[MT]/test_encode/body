@@ -1,0 +1,9 @@
+def test_encode(self):
+    eq = self.assertEqual
+    eq(quopriMIME.encode(''), '')
+    eq(quopriMIME.encode('hello'), 'hello')
+    eq(quopriMIME.encode('hello\r\nworld'), 'hello\nworld')
+    eq(quopriMIME.encode('hello\r\nworld', 0), 'hello\nworld')
+    eq(quopriMIME.encode(('xxxx ' * 20), maxlinelen=40), 'xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx=\n xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxx=\nx xxxx xxxx xxxx xxxx=20')
+    eq(quopriMIME.encode(('xxxx ' * 20), maxlinelen=40, eol='\r\n'), 'xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx=\r\n xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxx=\r\nx xxxx xxxx xxxx xxxx=20')
+    eq(quopriMIME.encode('one line\n\ntwo line'), 'one line\n\ntwo line')

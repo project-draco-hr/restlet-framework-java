@@ -1,0 +1,19 @@
+def testCursor(self):
+    c = self.cursor()
+    try:
+        c.execute("insert into sptest values ('a')")
+        c.execute("insert into sptest values ('b')")
+        c.execute("insert into sptest values ('c')")
+        c.execute("insert into sptest values ('d')")
+        c.execute("insert into sptest values ('e')")
+        c.execute('\n\t\t\t\tCREATE OR REPLACE PACKAGE types\n\t\t\t\tAS\n\t\t\t\t\tTYPE ref_cursor IS REF CURSOR;\n\t\t\t\tEND;\n\t\t\t')
+        c.execute('\n\t\t\t\tCREATE OR REPLACE FUNCTION funccur(v_x IN VARCHAR)\n\t\t\t\t\tRETURN types.ref_cursor\n\t\t\t\tAS\n\t\t\t\t\tfunccur_cursor types.ref_cursor;\n\t\t\t\tBEGIN\n\t\t\t\t\tOPEN funccur_cursor FOR\n\t\t\t\t\t\tSELECT x FROM sptest WHERE x < v_x;\n\t\t\t\t\tRETURN funccur_cursor;\n\t\t\t\tEND;\n\t\t\t')
+        self.proc_errors('funccur')
+        c.callproc('funccur', ('z',))
+        data = c.fetchall()
+        self.assertEquals(5, len(data))
+        c.callproc('funccur', ('c',))
+        data = c.fetchall()
+        self.assertEquals(2, len(data))
+    finally:
+        c.close()

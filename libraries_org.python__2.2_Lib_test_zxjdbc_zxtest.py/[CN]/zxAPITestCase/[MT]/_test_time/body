@@ -1,0 +1,23 @@
+def _test_time(self, (tabname, sql), factory, values, _type, _cmp=cmp, datahandler=None):
+    c = self.cursor()
+    if datahandler:
+        c.datahandler = datahandler(c.datahandler)
+    try:
+        c.execute(sql)
+        dates = map((lambda x, f=factory: apply(f, x)), values)
+        for a in dates:
+            c.execute(('insert into %s values (1, ?)' % tabname), [(a,)], {0: _type, })
+        self.db.commit()
+        c.execute(('select * from %s where b = ?' % tabname), [(dates[0],)], {0: _type, })
+        f = c.fetchall()
+        assert (len(f) == 1), ('expected length [1], got [%d]' % len(f))
+        assert (_cmp(f[0][1], dates[0]) == 0), ('expected date [%s], got [%s]' % (str(dates[0]), str(f[0][1])))
+        c.execute(('delete from %s where b = ?' % tabname), [(dates[1],)], {0: _type, })
+        self.db.commit()
+        c.execute(('select * from %s' % tabname))
+        f = c.fetchall()
+        self.assertEquals(len(f), (len(dates) - 1))
+    finally:
+        c.execute(('drop table %s' % tabname))
+        c.close()
+        self.db.commit()

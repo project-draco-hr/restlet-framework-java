@@ -1,0 +1,40 @@
+{
+  List a=defaultList();
+  TestSupport.assertThat((a.subList(0,a.size()) != a),"subList() returned the same instance");
+  TestSupport.assertEquals(a.subList(0,a.size()),a,"Complete subList() did not equal original List");
+  TestSupport.assertThat(a.subList(0,0).size() == 0,"empty subList had non-zero size");
+  try {
+    a.subList(-1,1);
+    TestSupport.assertThat(false,"Expected IndexOutOfBoundsException");
+  }
+ catch (  IndexOutOfBoundsException e) {
+  }
+  try {
+    a.subList(1,0);
+    TestSupport.assertThat(false,"Expected IllegalArgumentException");
+  }
+ catch (  IllegalArgumentException e) {
+  }
+  try {
+    a.subList(0,a.size() + 1);
+    TestSupport.assertThat(false,"Expected IndexOutOfBoundsException");
+  }
+ catch (  IndexOutOfBoundsException e) {
+  }
+  if (!isReadOnly()) {
+    a.subList(0,a.size()).clear();
+    TestSupport.assertThat(a.size() == 0,"clear()-ed sublist did not have zero size");
+    List c=newInstance(null);
+    c.addAll(defaultList());
+    List d=c.subList(1,3);
+    TestSupport.assertThat(d.size() == 2,"Expected subList to have size of 2");
+    TestSupport.assertThat(c.set(1,"canned").equals(new Integer(1)),"subList.set() did not return Integer(1) from index 1" + " of defaultList");
+    TestSupport.assertThat(d.get(0).equals("canned"),"subList does not update with changes to parent");
+    d.set(0,"spam");
+    TestSupport.assertThat(c.get(1).equals("spam"),"parent does not update with changes to subList child");
+  }
+ else {
+    List b=a.subList(0,a.size());
+    verifyImutability(b);
+  }
+}

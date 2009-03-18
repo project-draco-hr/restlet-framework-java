@@ -1,0 +1,21 @@
+def check_insort(n):
+    global nerrors
+    from random import choice
+    import sys
+    digits = '0123456789'
+    raw = []
+    insorted = []
+    for i in range(n):
+        digit = choice(digits)
+        raw.append(digit)
+        if (digit in '02468'):
+            f = bisect.insort_left
+        else:
+            f = bisect.insort_right
+        f(insorted, digit)
+    sorted = raw[:]
+    sorted.sort()
+    if (sorted == insorted):
+        return
+    print  >> sys.stderr, ('insort test failed: raw %s got %s' % (raw, insorted))
+    nerrors += 1

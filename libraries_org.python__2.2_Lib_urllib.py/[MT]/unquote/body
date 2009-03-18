@@ -1,0 +1,17 @@
+def unquote(s):
+    "unquote('abc%20def') -> 'abc def'."
+    mychr = chr
+    myatoi = int
+    list = s.split('%')
+    res = [list[0]]
+    myappend = res.append
+    del list[0]
+    for item in list:
+        if item[1:2]:
+            try:
+                myappend((mychr(myatoi(item[:2], 16)) + item[2:]))
+            except ValueError:
+                myappend(('%' + item))
+        else:
+            myappend(('%' + item))
+    return ''.join(res)

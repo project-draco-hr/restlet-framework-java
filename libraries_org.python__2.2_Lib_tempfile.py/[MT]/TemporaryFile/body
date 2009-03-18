@@ -1,0 +1,14 @@
+def TemporaryFile(mode='w+b', bufsize=(-1), suffix=''):
+    'Create and return a temporary file (opened read-write by default).'
+    name = mktemp(suffix)
+    if (os.name == 'posix'):
+        fd = os.open(name, ((os.O_RDWR | os.O_CREAT) | os.O_EXCL), 448)
+        try:
+            os.unlink(name)
+            return os.fdopen(fd, mode, bufsize)
+        except:
+            os.close(fd)
+            raise
+    else:
+        file = open(name, mode, bufsize)
+        return TemporaryFileWrapper(file, name)

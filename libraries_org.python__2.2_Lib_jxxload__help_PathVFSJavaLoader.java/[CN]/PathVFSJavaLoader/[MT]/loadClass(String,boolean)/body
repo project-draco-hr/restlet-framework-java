@@ -1,0 +1,20 @@
+{
+  Class c;
+  c=findLoadedClass(name);
+  if (c != null)   return c;
+  try {
+    if (parent != null)     return parent.loadClass(name);
+  }
+ catch (  ClassNotFoundException e) {
+  }
+  java.io.InputStream in=vfs.open(name.replace('.','/') + ".class");
+  if (in == null)   throw new ClassNotFoundException(name);
+  try {
+    byte[] buf=org.python.core.FileUtil.readBytes(in);
+    in.close();
+    return loadClassFromBytes(name,buf);
+  }
+ catch (  java.io.IOException e) {
+    throw new ClassNotFoundException(name);
+  }
+}

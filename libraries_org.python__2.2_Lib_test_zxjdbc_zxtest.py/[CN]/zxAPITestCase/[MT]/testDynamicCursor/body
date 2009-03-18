@@ -1,0 +1,9 @@
+def testDynamicCursor(self):
+    'testing dynamic cursor queries'
+    c = self.cursor(1)
+    try:
+        c.execute('select * from zxtesting')
+        f = c.fetchmany(4)
+        assert (len(f) == 4), ('expected [4] rows, got [%d]' % len(f))
+    finally:
+        c.close()

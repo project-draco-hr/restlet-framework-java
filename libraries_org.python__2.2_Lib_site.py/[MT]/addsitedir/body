@@ -1,0 +1,13 @@
+def addsitedir(sitedir):
+    sitedir = makepath(sitedir)
+    if (sitedir not in sys.path):
+        sys.path.append(sitedir)
+    try:
+        names = os.listdir(sitedir)
+    except os.error:
+        return
+    names = map(os.path.normcase, names)
+    names.sort()
+    for name in names:
+        if (name[(-4):] == '.pth'):
+            addpackage(sitedir, name)

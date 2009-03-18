@@ -1,0 +1,13 @@
+def _write(self, msg):
+    oldfp = self._fp
+    try:
+        self._fp = sfp = StringIO()
+        self._dispatch(msg)
+    finally:
+        self._fp = oldfp
+    meth = getattr(msg, '_write_headers', None)
+    if (meth is None):
+        self._write_headers(msg)
+    else:
+        meth(self)
+    self._fp.write(sfp.getvalue())

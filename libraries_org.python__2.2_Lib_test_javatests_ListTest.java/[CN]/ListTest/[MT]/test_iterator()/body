@@ -1,0 +1,15 @@
+{
+  TestSupport.assertThat(newInstance(null).iterator().hasNext() == false,"Iterator for empty list thinks it hasNext()");
+  try {
+    newInstance(null).iterator().next();
+    TestSupport.assertThat(false,"expected NoSuchElementException");
+  }
+ catch (  NoSuchElementException e) {
+  }
+  List a=defaultList();
+  int i=0;
+  for (Iterator iter=a.iterator(); iter.hasNext(); ) {
+    TestSupport.assertThat(iter.next() == a.get(i++),"Iterator next() failed identity test");
+  }
+  TestSupport.assertThat(i == a.size(),"Iterator did not iterator over entire list");
+}

@@ -1,0 +1,62 @@
+def main():
+    for (orig, expect) in parse_test_cases:
+        print repr(orig)
+        d = do_test(orig, 'GET')
+        verify((d == expect), ('Error parsing %s' % repr(orig)))
+        d = do_test(orig, 'POST')
+        verify((d == expect), ('Error parsing %s' % repr(orig)))
+        env = {'QUERY_STRING': orig, }
+        fcd = cgi.FormContentDict(env)
+        sd = cgi.SvFormContentDict(env)
+        fs = cgi.FieldStorage(environ=env)
+        if (type(expect) == type({})):
+            verify((len(expect) == len(fcd)))
+            verify((norm(expect.keys()) == norm(fcd.keys())))
+            verify((norm(expect.values()) == norm(fcd.values())))
+            verify((norm(expect.items()) == norm(fcd.items())))
+            verify((fcd.get('nonexistent field', 'default') == 'default'))
+            verify((len(sd) == len(fs)))
+            verify((norm(sd.keys()) == norm(fs.keys())))
+            verify((fs.getvalue('nonexistent field', 'default') == 'default'))
+            for key in expect.keys():
+                expect_val = expect[key]
+                verify(fcd.has_key(key))
+                verify((norm(fcd[key]) == norm(expect[key])))
+                verify((fcd.get(key, 'default') == fcd[key]))
+                verify(fs.has_key(key))
+                if (len(expect_val) > 1):
+                    single_value = 0
+                else:
+                    single_value = 1
+                try:
+                    val = sd[key]
+                except IndexError:
+                    verify((not single_value))
+                    verify((fs.getvalue(key) == expect_val))
+                else:
+                    verify(single_value)
+                    verify((val == expect_val[0]))
+                    verify((fs.getvalue(key) == expect_val[0]))
+                verify((norm(sd.getlist(key)) == norm(expect_val)))
+                if single_value:
+                    verify((norm(sd.values()) == first_elts(norm(expect.values()))))
+                    verify((norm(sd.items()) == first_second_elts(norm(expect.items()))))
+    env = {'QUERY_STRING': 'x=1&y=2.0&z=2-3.%2b0&1=1abc', }
+    expect = {'x': 1, 'y': 2.0, 'z': '2-3.+0', '1': '1abc', }
+    d = cgi.InterpFormContentDict(env)
+    for (k, v) in expect.items():
+        verify((d[k] == v))
+    for (k, v) in d.items():
+        verify((expect[k] == v))
+    verify((norm(expect.values()) == norm(d.values())))
+    print 'Testing log'
+    cgi.initlog()
+    cgi.log('Testing')
+    cgi.logfp = sys.stdout
+    cgi.initlog('%s', 'Testing initlog 1')
+    cgi.log('%s', 'Testing log 2')
+    if os.path.exists('/dev/null'):
+        cgi.logfp = None
+        cgi.logfile = '/dev/null'
+        cgi.initlog('%s', 'Testing log 3')
+        cgi.log('Testing log 4')

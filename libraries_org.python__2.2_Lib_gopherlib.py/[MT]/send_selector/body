@@ -1,0 +1,16 @@
+def send_selector(selector, host, port=0):
+    'Send a selector to a given host and port, return a file with the reply.'
+    import socket
+    if (not port):
+        i = host.find(':')
+        if (i >= 0):
+            (host, port) = (host[:i], int(host[(i + 1):]))
+    if (not port):
+        port = DEF_PORT
+    elif (type(port) == type('')):
+        port = int(port)
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((host, port))
+    s.sendall((selector + CRLF))
+    s.shutdown(1)
+    return s.makefile('rb')

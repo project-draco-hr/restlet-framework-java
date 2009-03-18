@@ -1,0 +1,26 @@
+def test_functionality(self):
+    if (java.lang.System.getProperty('java.version') < '1.2'):
+        return
+    from org.python.core import IdImpl2
+    i = java.lang.Integer(2)
+    j = java.lang.Integer(2)
+    assert ((i == j) and (i is not j))
+    h = java.lang.Integer(2)
+    widmap = IdImpl2.WeakIdentityMap()
+    widmap.put(i, 'i')
+    widmap.put(j, 'j')
+    widmap.put(h, 'h')
+    assert (widmap.get(i) == 'i')
+    assert (widmap.get(j) == 'j')
+    assert (widmap.get(h) == 'h')
+    assert (widmap._internal_map_size() == 3)
+    widmap.remove(h)
+    assert (widmap.get(h) is None)
+    assert (widmap._internal_map_size() == 2)
+    del j
+    java.lang.System.gc()
+    java.lang.System.runFinalization()
+    java.lang.System.gc()
+    java.lang.System.runFinalization()
+    assert (widmap.get(i) == 'i')
+    assert (widmap._internal_map_size() == 1)

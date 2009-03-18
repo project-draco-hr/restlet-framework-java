@@ -1,0 +1,10 @@
+def testUpdateSelectByDate(self):
+    'testing insert, update, query and delete by java.sql.Date'
+    assert self.has_table('datetable'), 'missing attribute datetable'
+
+    def _cmp_(x, y):
+        xt = (x.getYear(), x.getMonth(), x.getDay())
+        yt = (y.getYear(), y.getMonth(), y.getDay())
+        return (not (xt == yt))
+    values = [(1996, 6, 22), (2000, 11, 12), (2000, 1, 12), (1999, 9, 24)]
+    self._test_time(self.table('datetable'), zxJDBC.Date, values, zxJDBC.DATE, _cmp_)

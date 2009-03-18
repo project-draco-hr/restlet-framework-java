@@ -1,0 +1,10 @@
+def body_encode(self, s, convert=True):
+    'Body-encode a string and convert it to output_charset.\n\n        If convert is True (the default), the string will be converted from\n        the input charset to output charset automatically.  Unlike\n        header_encode(), there are no issues with byte boundaries and\n        multibyte charsets in email bodies, so this is usually pretty safe.\n\n        The type of encoding (base64 or quoted-printable) will be based on\n        self.body_encoding.\n        '
+    if convert:
+        s = self.convert(s)
+    if (self.body_encoding is BASE64):
+        return email.base64MIME.body_encode(s)
+    elif (self.body_encoding is QP):
+        return email.quopriMIME.body_encode(s)
+    else:
+        return s

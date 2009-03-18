@@ -1,0 +1,19 @@
+def _patchheader(self):
+    curpos = self._file.tell()
+    if (self._datawritten & 1):
+        datalength = (self._datawritten + 1)
+        self._file.write(chr(0))
+    else:
+        datalength = self._datawritten
+    if ((datalength == self._datalength) and (self._nframes == self._nframeswritten) and (self._marklength == 0)):
+        self._file.seek(curpos, 0)
+        return
+    self._file.seek(self._form_length_pos, 0)
+    dummy = self._write_form_length(datalength)
+    self._file.seek(self._nframes_pos, 0)
+    _write_long(self._file, self._nframeswritten)
+    self._file.seek(self._ssnd_length_pos, 0)
+    _write_long(self._file, (datalength + 8))
+    self._file.seek(curpos, 0)
+    self._nframes = self._nframeswritten
+    self._datalength = datalength

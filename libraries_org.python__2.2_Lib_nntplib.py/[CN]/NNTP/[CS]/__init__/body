@@ -1,0 +1,34 @@
+def __init__(self, host, port=NNTP_PORT, user=None, password=None, readermode=None):
+    "Initialize an instance.  Arguments:\n        - host: hostname to connect to\n        - port: port to connect to (default the standard NNTP port)\n        - user: username to authenticate with\n        - password: password to use with username\n        - readermode: if true, send 'mode reader' command after\n                      connecting.\n\n        readermode is sometimes necessary if you are connecting to an\n        NNTP server on the local machine and intend to call\n        reader-specific comamnds, such as `group'.  If you get\n        unexpected NNTPPermanentErrors, you might need to set\n        readermode.\n        "
+    self.host = host
+    self.port = port
+    self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    self.sock.connect((self.host, self.port))
+    self.file = self.sock.makefile('rb')
+    self.debugging = 0
+    self.welcome = self.getresp()
+    readermode_afterauth = 0
+    if readermode:
+        try:
+            self.welcome = self.shortcmd('mode reader')
+        except NNTPPermanentError:
+            pass
+        except NNTPTemporaryError as e:
+            if (user and (e.response[:3] == '480')):
+                readermode_afterauth = 1
+            else:
+                raise
+    if user:
+        resp = self.shortcmd(('authinfo user ' + user))
+        if (resp[:3] == '381'):
+            if (not password):
+                raise NNTPReplyError(resp)
+            else:
+                resp = self.shortcmd(('authinfo pass ' + password))
+                if (resp[:3] != '281'):
+                    raise NNTPPermanentError(resp)
+        if readermode_afterauth:
+            try:
+                self.welcome = self.shortcmd('mode reader')
+            except NNTPPermanentError:
+                pass

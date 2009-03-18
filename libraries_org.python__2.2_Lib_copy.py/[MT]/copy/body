@@ -1,0 +1,13 @@
+def copy(x):
+    "Shallow copy operation on arbitrary Python objects.\n\n    See the module's __doc__ string for more info.\n    "
+    try:
+        copierfunction = _copy_dispatch[type(x)]
+    except KeyError:
+        try:
+            copier = x.__copy__
+        except AttributeError:
+            raise error, ('un(shallow)copyable object of type %s' % type(x))
+        y = copier()
+    else:
+        y = copierfunction(x)
+    return y

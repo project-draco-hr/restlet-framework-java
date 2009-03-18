@@ -1,0 +1,11 @@
+def testNtoH(self):
+    if (sys.platform[:4] == 'java'):
+        return
+    sizes = {socket.htonl: 32, socket.ntohl: 32, socket.htons: 16, socket.ntohs: 16, }
+    for (func, size) in sizes.items():
+        mask = ((1L << size) - 1)
+        for i in (0, 1, 65535, (~ 65535), 2, 19088743, 1985229328):
+            self.assertEqual((i & mask), (func(func((i & mask))) & mask))
+        swapped = func(mask)
+        self.assertEqual((swapped & mask), mask)
+        self.assertRaises(OverflowError, func, (1L << 34))

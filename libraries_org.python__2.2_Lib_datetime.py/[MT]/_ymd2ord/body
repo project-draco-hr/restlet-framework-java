@@ -1,0 +1,8 @@
+def _ymd2ord(year, month, day):
+    'year, month, day -> ordinal, considering 01-Jan-0001 as day 1.'
+    if (not (1 <= month <= 12)):
+        raise ValueError('month must be in 1..12', month)
+    dim = _days_in_month(year, month)
+    if (not (1 <= day <= dim)):
+        raise ValueError(('day must be in 1..%d' % dim), day)
+    return ((_days_before_year(year) + _days_before_month(year, month)) + day)

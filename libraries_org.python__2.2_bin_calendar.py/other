@@ -1,0 +1,17 @@
+'Calendar printing functions\n\nNote when comparing these calendars to the ones printed by cal(1): By\ndefault, these calendars have Monday as the first day of the week, and\nSunday as the last (the European convention). Use setfirstweekday() to\nset the first day of the week (0=Monday, 6=Sunday).'
+from time import localtime, mktime, strftime
+from types import SliceType
+__all__ = ['error', 'setfirstweekday', 'firstweekday', 'isleap', 'leapdays', 'weekday', 'monthrange', 'monthcalendar', 'prmonth', 'month', 'prcal', 'calendar', 'timegm', 'month_name', 'month_abbr', 'day_name', 'day_abbr']
+error = ValueError
+January = 1
+February = 2
+mdays = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+day_name = _localized_day('%A')
+day_abbr = _localized_day('%a')
+month_name = _localized_month('%B')
+month_abbr = _localized_month('%b')
+(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY) = range(7)
+_firstweekday = 0
+_colwidth = ((7 * 3) - 1)
+_spacing = 6
+EPOCH = 1970

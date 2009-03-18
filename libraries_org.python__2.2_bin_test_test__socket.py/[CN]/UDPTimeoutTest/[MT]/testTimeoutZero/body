@@ -1,0 +1,13 @@
+def testTimeoutZero(self):
+    ok = False
+    try:
+        self.serv.settimeout(0.0)
+        foo = self.serv.recv(1024)
+    except socket.timeout:
+        self.fail('caught timeout instead of error (UDP)')
+    except socket.error:
+        ok = True
+    except Exception as x:
+        self.fail(('caught unexpected exception (UDP): %s' % str(x)))
+    if (not ok):
+        self.fail('recv() returned success when we did not expect it')

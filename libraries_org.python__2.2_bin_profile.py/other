@@ -1,0 +1,24 @@
+'Class for profiling Python code.'
+import sys
+import os
+import time
+import marshal
+__all__ = ['run', 'help', 'Profile']
+if (os.name == 'mac'):
+    import MacOS
+
+    def _get_time_mac(timer=MacOS.GetTicks):
+        return (timer() / 60.0)
+if hasattr(os, 'times'):
+
+    def _get_time_times(timer=os.times):
+        t = timer()
+        return (t[0] + t[1])
+if (__name__ == '__main__'):
+    if (not sys.argv[1:]):
+        print 'usage: profile.py scriptfile [arg] ...'
+        sys.exit(2)
+    filename = sys.argv[1]
+    del sys.argv[0]
+    sys.path.insert(0, os.path.dirname(filename))
+    run((('execfile(' + `filename`) + ')'))

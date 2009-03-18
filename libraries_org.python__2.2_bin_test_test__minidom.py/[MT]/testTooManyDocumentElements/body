@@ -1,0 +1,11 @@
+def testTooManyDocumentElements():
+    doc = parseString('<doc/>')
+    elem = doc.createElement('extra')
+    try:
+        doc.appendChild(elem)
+    except HierarchyRequestErr:
+        pass
+    else:
+        print 'Failed to catch expected exception when adding extra document element.'
+    elem.unlink()
+    doc.unlink()

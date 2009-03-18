@@ -1,0 +1,13 @@
+def dump_long(self, x):
+    self.f.write(TYPE_LONG)
+    sign = 1
+    if (x < 0):
+        sign = (-1)
+        x = (- x)
+    digits = []
+    while x:
+        digits.append((x & 32767))
+        x = (x >> 15)
+    self.w_long((len(digits) * sign))
+    for d in digits:
+        self.w_short(d)

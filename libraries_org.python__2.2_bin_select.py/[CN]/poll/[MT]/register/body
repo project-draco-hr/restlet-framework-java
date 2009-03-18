@@ -1,0 +1,9 @@
+def register(self, socket_object, mask=((POLLIN | POLLOUT) | POLLPRI)):
+    try:
+        channel = _getselectable(socket_object)
+        if (channel is None):
+            self.unconnected_sockets.append((socket_object, mask))
+            return
+        self._register_channel(socket_object, channel, mask)
+    except java.lang.Exception as jlx:
+        raise _map_exception(jlx)

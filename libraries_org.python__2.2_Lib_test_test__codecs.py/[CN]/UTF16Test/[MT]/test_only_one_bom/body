@@ -1,0 +1,11 @@
+def test_only_one_bom(self):
+    (_, _, reader, writer) = codecs.lookup('utf-16')
+    s = StringIO.StringIO()
+    f = writer(s)
+    f.write(u'spam')
+    f.write(u'spam')
+    d = s.getvalue()
+    self.assert_(((d == self.spamle) or (d == self.spambe)))
+    s = StringIO.StringIO(d)
+    f = reader(s)
+    self.assertEquals(f.read(), u'spamspam')

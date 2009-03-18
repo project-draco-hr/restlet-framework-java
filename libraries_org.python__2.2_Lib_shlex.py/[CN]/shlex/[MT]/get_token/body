@@ -1,0 +1,27 @@
+def get_token(self):
+    "Get a token from the input stream (or from stack if it's nonempty)"
+    if self.pushback:
+        tok = self.pushback[0]
+        self.pushback = self.pushback[1:]
+        if (self.debug >= 1):
+            print ('shlex: popping token ' + `tok`)
+        return tok
+    raw = self.read_token()
+    while (raw == self.source):
+        spec = self.sourcehook(self.read_token())
+        if spec:
+            (newfile, newstream) = spec
+            self.push_source(newstream, newfile)
+        raw = self.get_token()
+    while (raw == ''):
+        if (len(self.filestack) == 0):
+            return ''
+        else:
+            self.pop_source()
+            raw = self.get_token()
+    if (self.debug >= 1):
+        if raw:
+            print ('shlex: token=' + `raw`)
+        else:
+            print 'shlex: token=EOF'
+    return raw

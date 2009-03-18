@@ -1,0 +1,27 @@
+def _is_string_secure(self, s):
+    'Return true if s contains a string that is safe to eval\n\n        The definition of secure string is based on the implementation\n        in cPickle.  s is secure as long as it only contains a quoted\n        string and optional trailing whitespace.\n        '
+    q = s[0]
+    if (q not in ("'", '"')):
+        return 0
+    offset = 1
+    i = None
+    while 1:
+        try:
+            i = s.index(q, offset)
+        except ValueError:
+            if (offset == 1):
+                return 0
+        if (s[(i - 1)] != '\\'):
+            break
+        nslash = 0
+        j = (i - 1)
+        while ((j >= offset) and (s[j] == '\\')):
+            j = (j - 1)
+            nslash = (nslash + 1)
+        if ((nslash % 2) == 0):
+            break
+        offset = (i + 1)
+    for c in s[(i + 1):]:
+        if (ord(c) > 32):
+            return 0
+    return 1

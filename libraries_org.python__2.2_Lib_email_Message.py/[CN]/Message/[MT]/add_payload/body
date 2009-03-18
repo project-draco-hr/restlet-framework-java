@@ -1,0 +1,11 @@
+def add_payload(self, payload):
+    'Add the given payload to the current payload.\n\n        If the current payload is empty, then the current payload will be made\n        a scalar, set to the given value.\n\n        Note: This method is deprecated.  Use .attach() instead.\n        '
+    warnings.warn('add_payload() is deprecated, use attach() instead.', DeprecationWarning, 2)
+    if (self._payload is None):
+        self._payload = payload
+    elif isinstance(self._payload, ListType):
+        self._payload.append(payload)
+    elif (self.get_main_type() not in (None, 'multipart')):
+        raise Errors.MultipartConversionError('Message main content type must be "multipart" or missing')
+    else:
+        self._payload = [self._payload, payload]

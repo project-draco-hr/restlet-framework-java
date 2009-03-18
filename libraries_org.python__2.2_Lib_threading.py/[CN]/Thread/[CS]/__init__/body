@@ -1,0 +1,12 @@
+def __init__(self, group=None, target=None, name=None, args=(), kwargs={}, verbose=None):
+    assert (group is None), 'group argument must be None for now'
+    _Verbose.__init__(self, verbose)
+    self.__target = target
+    self.__name = str((name or _newname()))
+    self.__args = args
+    self.__kwargs = kwargs
+    self.__daemonic = self._set_daemon()
+    self.__started = 0
+    self.__stopped = 0
+    self.__block = Condition(Lock())
+    self.__initialized = 1

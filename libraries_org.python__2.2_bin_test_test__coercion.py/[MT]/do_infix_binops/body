@@ -1,0 +1,24 @@
+def do_infix_binops():
+    for a in candidates:
+        for b in candidates:
+            for op in infix_binops:
+                print ('%s %s %s' % (a, op, b)),
+                try:
+                    x = eval(('a %s b' % op))
+                except:
+                    error = sys.exc_info()[:2]
+                    print ('... %s' % error[0])
+                else:
+                    print '=', x
+                try:
+                    z = copy.copy(a)
+                except copy.Error:
+                    z = a
+                print ('%s %s= %s' % (a, op, b)),
+                try:
+                    exec ('z %s= b' % op)
+                except:
+                    error = sys.exc_info()[:2]
+                    print ('... %s' % error[0])
+                else:
+                    print '=>', z

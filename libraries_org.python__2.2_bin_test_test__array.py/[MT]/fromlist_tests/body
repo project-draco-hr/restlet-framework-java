@@ -1,0 +1,15 @@
+def fromlist_tests():
+    test = array('c', ['t', 'e', 's', 't', 'h', 'e', 'l', 'l', 'o'])
+    verify((fromlist_test('test: String fromlist', 'test', ['h', 'e', 'l', 'l', 'o'], 'c') == test), 'String fromlist failed')
+    test = array('i', [1, 2, 3, 4, 51, 52, 53, 54])
+    verify((fromlist_test('test: integer fromlist', [1, 2, 3, 4], [51, 52, 53, 54], 'i') == test), 'integer fromlist failed')
+    try:
+        fromlist_test('test: "broken" fromlist (integer)', [1, 2, 3, 4], [51, 52, 53, 'fred'], 'i')
+        raise TestFailed, 'test: "broken" fromlist (integer)'
+    except TypeError:
+        pass
+    try:
+        fromlist_test('test: invalid fromlist (tuple)', [1, 2, 3, 4], (51, 52, 53, 54), 'i')
+        raise TestFailed, 'test: invalid fromlist (tuple)'
+    except TypeError:
+        pass

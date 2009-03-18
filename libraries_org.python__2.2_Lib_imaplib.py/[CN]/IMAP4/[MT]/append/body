@@ -1,0 +1,16 @@
+def append(self, mailbox, flags, date_time, message):
+    "Append message to named mailbox.\n\n        (typ, [data]) = <instance>.append(mailbox, flags, date_time, message)\n\n                All args except `message' can be None.\n        "
+    name = 'APPEND'
+    if (not mailbox):
+        mailbox = 'INBOX'
+    if flags:
+        if ((flags[0], flags[(-1)]) != ('(', ')')):
+            flags = ('(%s)' % flags)
+    else:
+        flags = None
+    if date_time:
+        date_time = Time2Internaldate(date_time)
+    else:
+        date_time = None
+    self.literal = message
+    return self._simple_command(name, mailbox, flags, date_time)

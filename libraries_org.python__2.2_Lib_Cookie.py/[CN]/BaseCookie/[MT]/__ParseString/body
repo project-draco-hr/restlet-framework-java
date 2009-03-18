@@ -1,0 +1,20 @@
+def __ParseString(self, str, patt=_CookiePattern):
+    i = 0
+    n = len(str)
+    M = None
+    while (0 <= i < n):
+        match = patt.search(str, i)
+        if (not match):
+            break
+        (K, V) = (match.group('key'), match.group('val'))
+        i = match.end(0)
+        if (K[0] == '$'):
+            if M:
+                M[K[1:]] = V
+        elif (string.lower(K) in Morsel._reserved_keys):
+            if M:
+                M[K] = _unquote(V)
+        else:
+            (rval, cval) = self.value_decode(V)
+            self.__set(K, rval, cval)
+            M = self[K]

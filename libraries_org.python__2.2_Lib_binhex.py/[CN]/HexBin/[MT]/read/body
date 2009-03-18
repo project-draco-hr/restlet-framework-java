@@ -1,0 +1,13 @@
+def read(self, *n):
+    if (self.state != _DID_HEADER):
+        raise Error, 'Read data at wrong time'
+    if n:
+        n = n[0]
+        n = min(n, self.dlen)
+    else:
+        n = self.dlen
+    rv = ''
+    while (len(rv) < n):
+        rv = (rv + self._read((n - len(rv))))
+    self.dlen = (self.dlen - n)
+    return rv

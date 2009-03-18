@@ -1,0 +1,6 @@
+def test_whitespace_continuaton(self):
+    eq = self.assertEqual
+    msg = email.message_from_string("From: aperson@dom.ain\nTo: bperson@dom.ain\nSubject: the next line has a space on it\n \nDate: Mon, 8 Apr 2002 15:09:19 -0400\nMessage-ID: spam\n\nHere's the message body\n")
+    eq(msg['subject'], 'the next line has a space on it\n ')
+    eq(msg['message-id'], 'spam')
+    eq(msg.get_payload(), "Here's the message body\n")

@@ -1,0 +1,6 @@
+def write(self, buffer):
+    'Write a string to the socket, doubling any IAC characters.\n\n        Can block if the connection is blocked.  May raise\n        socket.error if the connection is closed.\n\n        '
+    if (IAC in buffer):
+        buffer = buffer.replace(IAC, (IAC + IAC))
+    self.msg('send %s', `buffer`)
+    self.sock.sendall(buffer)

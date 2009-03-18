@@ -1,0 +1,17 @@
+def do_test(buf, method):
+    env = {}
+    if (method == 'GET'):
+        fp = None
+        env['REQUEST_METHOD'] = 'GET'
+        env['QUERY_STRING'] = buf
+    elif (method == 'POST'):
+        fp = StringIO(buf)
+        env['REQUEST_METHOD'] = 'POST'
+        env['CONTENT_TYPE'] = 'application/x-www-form-urlencoded'
+        env['CONTENT_LENGTH'] = str(len(buf))
+    else:
+        raise ValueError, ('unknown method: %s' % method)
+    try:
+        return cgi.parse(fp, env, strict_parsing=1)
+    except StandardError as err:
+        return ComparableException(err)

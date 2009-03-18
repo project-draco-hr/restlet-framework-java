@@ -1,0 +1,9 @@
+def testSetBlocking(self):
+    self.serv.setblocking(0)
+    start = time.time()
+    try:
+        self.serv.accept()
+    except socket.error:
+        pass
+    end = time.time()
+    self.assert_(((end - start) < 1.0), 'Error setting non-blocking mode.')

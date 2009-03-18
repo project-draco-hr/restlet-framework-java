@@ -1,0 +1,30 @@
+def restricted():
+    return
+    import rexec
+    if verbose:
+        print 'Testing interaction with restricted execution ...'
+    sandbox = rexec.RExec()
+    code1 = ("f = open(%r, 'w')" % TESTFN)
+    code2 = ("f = file(%r, 'w')" % TESTFN)
+    code3 = ("f = open(%r)\nt = type(f)  # a sneaky way to get the file() constructor\nf.close()\nf = t(%r, 'w')  # rexec can't catch this by itself\n" % (TESTFN, TESTFN))
+    f = open(TESTFN, 'w')
+    f.close()
+    try:
+        for code in (code1, code2, code3):
+            try:
+                sandbox.r_exec(code)
+            except IOError as msg:
+                if (str(msg).find('restricted') >= 0):
+                    outcome = 'OK'
+                else:
+                    outcome = 'got an exception, but not an expected one'
+            else:
+                outcome = 'expected a restricted-execution exception'
+            if (outcome != 'OK'):
+                raise TestFailed(('%s, in %r' % (outcome, code)))
+    finally:
+        try:
+            import os
+            os.unlink(TESTFN)
+        except:
+            pass

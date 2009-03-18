@@ -1,0 +1,12 @@
+def __getattr__(self, name):
+    if (name != 'value'):
+        raise AttributeError, name
+    if self.file:
+        self.file.seek(0)
+        value = self.file.read()
+        self.file.seek(0)
+    elif (self.list is not None):
+        value = self.list
+    else:
+        value = None
+    return value

@@ -1,0 +1,15 @@
+def seek(self, offset):
+    if (self.mode == WRITE):
+        if (offset < self.offset):
+            raise IOError('Negative seek in write mode')
+        count = (offset - self.offset)
+        for i in range((count / 1024)):
+            self.write((1024 * '\x00'))
+        self.write(((count % 1024) * '\x00'))
+    elif (self.mode == READ):
+        if (offset < self.offset):
+            self.rewind()
+        count = (offset - self.offset)
+        for i in range((count / 1024)):
+            self.read(1024)
+        self.read((count % 1024))

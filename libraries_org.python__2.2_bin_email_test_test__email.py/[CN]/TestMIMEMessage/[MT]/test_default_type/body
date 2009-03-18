@@ -1,0 +1,19 @@
+def test_default_type(self):
+    eq = self.assertEqual
+    fp = openfile('msg_30.txt')
+    try:
+        msg = email.message_from_file(fp)
+    finally:
+        fp.close()
+    container1 = msg.get_payload(0)
+    eq(container1.get_default_type(), 'message/rfc822')
+    eq(container1.get_type(), None)
+    container2 = msg.get_payload(1)
+    eq(container2.get_default_type(), 'message/rfc822')
+    eq(container2.get_type(), None)
+    container1a = container1.get_payload(0)
+    eq(container1a.get_default_type(), 'text/plain')
+    eq(container1a.get_type(), 'text/plain')
+    container2a = container2.get_payload(0)
+    eq(container2a.get_default_type(), 'text/plain')
+    eq(container2a.get_type(), 'text/plain')

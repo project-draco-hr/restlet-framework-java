@@ -1,0 +1,45 @@
+def do_list(self, arg):
+    self.lastcmd = 'list'
+    last = None
+    if arg:
+        try:
+            x = eval(arg, {}, {})
+            if (type(x) == type(())):
+                (first, last) = x
+                first = int(first)
+                last = int(last)
+                if (last < first):
+                    last = (first + last)
+            else:
+                first = max(1, (int(x) - 5))
+        except:
+            print '*** Error in argument:', `arg`
+            return
+    elif (self.lineno is None):
+        first = max(1, (self.curframe.f_lineno - 5))
+    else:
+        first = (self.lineno + 1)
+    if (last is None):
+        last = (first + 10)
+    filename = self.curframe.f_code.co_filename
+    breaklist = self.get_file_breaks(filename)
+    try:
+        for lineno in range(first, (last + 1)):
+            line = linecache.getline(filename, lineno)
+            if (not line):
+                print '[EOF]'
+                break
+            else:
+                s = `lineno`.rjust(3)
+                if (len(s) < 4):
+                    s = (s + ' ')
+                if (lineno in breaklist):
+                    s = (s + 'B')
+                else:
+                    s = (s + ' ')
+                if (lineno == self.curframe.f_lineno):
+                    s = (s + '->')
+                print ((s + '\t') + line),
+                self.lineno = lineno
+    except KeyboardInterrupt:
+        pass

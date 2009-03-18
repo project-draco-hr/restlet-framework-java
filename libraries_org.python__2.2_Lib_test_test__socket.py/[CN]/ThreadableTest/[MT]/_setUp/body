@@ -1,0 +1,15 @@
+def _setUp(self):
+    self.server_ready = threading.Event()
+    self.client_ready = threading.Event()
+    self.done = threading.Event()
+    self.queue = Queue.Queue(1)
+    methodname = self.id()
+    i = methodname.rfind('.')
+    methodname = methodname[(i + 1):]
+    self.test_method_name = methodname
+    test_method = getattr(self, ('_' + methodname))
+    self.client_thread = thread.start_new_thread(self.clientRun, (test_method,))
+    self.__setUp()
+    if (not self.server_ready.isSet()):
+        self.server_ready.set()
+    self.client_ready.wait()

@@ -1,0 +1,14 @@
+def test_ref_reuse(self):
+    o = C()
+    ref1 = weakref.ref(o)
+    proxy = weakref.proxy(o)
+    ref2 = weakref.ref(o)
+    self.assert_((ref1 is ref2), 'reference object w/out callback should be re-used')
+    o = C()
+    proxy = weakref.proxy(o)
+    ref1 = weakref.ref(o)
+    ref2 = weakref.ref(o)
+    self.assert_((ref1 is ref2), 'reference object w/out callback should be re-used')
+    self.assert_((weakref.getweakrefcount(o) == 2), 'wrong weak ref count for object')
+    del proxy
+    self.assert_((weakref.getweakrefcount(o) == 1), 'wrong weak ref count for object after deleting proxy')

@@ -1,0 +1,14 @@
+def uid(self, command, *args):
+    'Execute "command arg ..." with messages identified by UID,\n                rather than message number.\n\n        (typ, [data]) = <instance>.uid(command, arg1, arg2, ...)\n\n        Returns response appropriate to \'command\'.\n        '
+    command = command.upper()
+    if (not Commands.has_key(command)):
+        raise self.error(('Unknown IMAP4 UID command: %s' % command))
+    if (self.state not in Commands[command]):
+        raise self.error(('command %s illegal in state %s' % (command, self.state)))
+    name = 'UID'
+    (typ, dat) = apply(self._simple_command, ((name, command) + args))
+    if (command in ('SEARCH', 'SORT')):
+        name = command
+    else:
+        name = 'FETCH'
+    return self._untagged_response(typ, dat, name)

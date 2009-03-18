@@ -1,0 +1,7 @@
+def __init__(self, table, cols):
+    self.cols = cols
+    self.table = table
+    if self.cols:
+        self.sql = ('insert into %s (%s) values (%s)' % (table, ','.join(self.cols), ','.join((('?',) * len(self.cols)))))
+    else:
+        self.sql = ('insert into %s values (%%s)' % table)

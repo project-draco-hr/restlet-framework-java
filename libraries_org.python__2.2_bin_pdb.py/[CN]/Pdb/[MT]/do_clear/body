@@ -1,0 +1,31 @@
+def do_clear(self, arg):
+    'Three possibilities, tried in this order:\n        clear -> clear all breaks, ask for confirmation\n        clear file:lineno -> clear all breaks at file:lineno\n        clear bpno bpno ... -> clear breakpoints by number'
+    if (not arg):
+        try:
+            reply = raw_input('Clear all breaks? ')
+        except EOFError:
+            reply = 'no'
+        reply = reply.strip().lower()
+        if (reply in ('y', 'yes')):
+            self.clear_all_breaks()
+        return
+    if (':' in arg):
+        i = arg.rfind(':')
+        filename = arg[:i]
+        arg = arg[(i + 1):]
+        try:
+            lineno = int(arg)
+        except:
+            err = ('Invalid line number (%s)' % arg)
+        else:
+            err = self.clear_break(filename, lineno)
+        if err:
+            print '***', err
+        return
+    numberlist = arg.split()
+    for i in numberlist:
+        err = self.clear_bpbynumber(i)
+        if err:
+            print '***', err
+        else:
+            print ('Deleted breakpoint %s ' % (i,))

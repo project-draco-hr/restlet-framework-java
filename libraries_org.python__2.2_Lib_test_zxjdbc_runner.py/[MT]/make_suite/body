@@ -1,0 +1,7 @@
+def make_suite(vendor, testcase, factory, mask=None):
+    clz = __imp__(testcase.frm, testcase.impt)
+    caseNames = filter((lambda x, i=testcase.ignore: (x not in i)), unittest.getTestCaseNames(clz, 'test'))
+    if (mask is not None):
+        caseNames = filter((lambda x, mask=mask: (x == mask)), caseNames)
+    tests = [clz(caseName, vendor, factory) for caseName in caseNames]
+    return unittest.TestSuite(tests)

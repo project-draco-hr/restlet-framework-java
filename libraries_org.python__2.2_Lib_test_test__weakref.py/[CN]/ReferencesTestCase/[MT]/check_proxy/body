@@ -1,0 +1,13 @@
+def check_proxy(self, o, proxy):
+    o.foo = 1
+    self.assert_((proxy.foo == 1), 'proxy does not reflect attribute addition')
+    o.foo = 2
+    self.assert_((proxy.foo == 2), 'proxy does not reflect attribute modification')
+    del o.foo
+    self.assert_((not hasattr(proxy, 'foo')), 'proxy does not reflect attribute removal')
+    proxy.foo = 1
+    self.assert_((o.foo == 1), 'object does not reflect attribute addition via proxy')
+    proxy.foo = 2
+    self.assert_((o.foo == 2), 'object does not reflect attribute modification via proxy')
+    del proxy.foo
+    self.assert_((not hasattr(o, 'foo')), 'object does not reflect attribute removal via proxy')

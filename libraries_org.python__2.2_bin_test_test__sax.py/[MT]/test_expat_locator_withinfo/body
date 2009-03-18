@@ -1,0 +1,11 @@
+def test_expat_locator_withinfo():
+    result = StringIO()
+    xmlgen = LocatorTest(result)
+    parser = make_parser()
+    parser.setContentHandler(xmlgen)
+    testfile = findfile('test.xml')
+    parser.parse(testfile)
+    import os
+    if (os.name == 'java'):
+        testfile = testfile.replace('\\', '/')
+    return (xmlgen.location.getSystemId().endswith(testfile) and (xmlgen.location.getPublicId() is None))

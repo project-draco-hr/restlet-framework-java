@@ -1,0 +1,6 @@
+def xatom(self, name, *args):
+    "Allow simple extension commands\n                notified by server in CAPABILITY response.\n\n        Assumes command is legal in current state.\n\n        (typ, [data]) = <instance>.xatom(name, arg, ...)\n\n        Returns response appropriate to extension command `name'.\n        "
+    name = name.upper()
+    if (not Commands.has_key(name)):
+        Commands[name] = (self.state,)
+    return apply(self._simple_command, ((name,) + args))

@@ -1,0 +1,31 @@
+'SMTP/ESMTP client class.\n\nThis should follow RFC 821 (SMTP), RFC 1869 (ESMTP), RFC 2554 (SMTP\nAuthentication) and RFC 2487 (Secure SMTP over TLS).\n\nNotes:\n\nPlease remember, when doing ESMTP, that the names of the SMTP service\nextensions are NOT the same thing as the option keywords for the RCPT\nand MAIL commands!\n\nExample:\n\n  >>> import smtplib\n  >>> s=smtplib.SMTP("localhost")\n  >>> print s.help()\n  This is Sendmail version 8.8.4\n  Topics:\n      HELO    EHLO    MAIL    RCPT    DATA\n      RSET    NOOP    QUIT    HELP    VRFY\n      EXPN    VERB    ETRN    DSN\n  For more info use "HELP <topic>".\n  To report bugs in the implementation send email to\n      sendmail-bugs@sendmail.org.\n  For local information send email to Postmaster at your site.\n  End of HELP info\n  >>> s.putcmd("vrfy","someone@here")\n  >>> s.getreply()\n  (250, "Somebody OverHere <somebody@here.my.org>")\n  >>> s.quit()\n'
+import socket
+import re
+import rfc822
+import types
+import base64
+import hmac
+__all__ = ['SMTPException', 'SMTPServerDisconnected', 'SMTPResponseException', 'SMTPSenderRefused', 'SMTPRecipientsRefused', 'SMTPDataError', 'SMTPConnectError', 'SMTPHeloError', 'SMTPAuthenticationError', 'quoteaddr', 'quotedata', 'SMTP']
+SMTP_PORT = 25
+CRLF = '\r\n'
+OLDSTYLE_AUTH = re.compile('auth=(.*)', re.I)
+if (__name__ == '__main__'):
+    import sys
+
+    def prompt(prompt):
+        sys.stdout.write((prompt + ': '))
+        return sys.stdin.readline().strip()
+    fromaddr = prompt('From')
+    toaddrs = prompt('To').split(',')
+    print 'Enter message, end with ^D:'
+    msg = ''
+    while 1:
+        line = sys.stdin.readline()
+        if (not line):
+            break
+        msg = (msg + line)
+    print ('Message length is ' + `len(msg)`)
+    server = SMTP('localhost')
+    server.set_debuglevel(1)
+    server.sendmail(fromaddr, toaddrs, msg)
+    server.quit()

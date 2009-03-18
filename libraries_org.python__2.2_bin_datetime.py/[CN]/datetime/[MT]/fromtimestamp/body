@@ -1,0 +1,14 @@
+def fromtimestamp(cls, t, tz=None):
+    'Construct a datetime from a POSIX timestamp (like time.time()).\n\n        A timezone info object may be passed in as well.\n        '
+    _check_tzinfo_arg(tz)
+    if (tz is None):
+        converter = _time.localtime
+    else:
+        converter = _time.gmtime
+    (y, m, d, hh, mm, ss, weekday, jday, dst) = converter(t)
+    us = int(((t % 1.0) * 1000000))
+    ss = min(ss, 59)
+    result = cls(y, m, d, hh, mm, ss, us, tz)
+    if (tz is not None):
+        result = tz.fromutc(result)
+    return result

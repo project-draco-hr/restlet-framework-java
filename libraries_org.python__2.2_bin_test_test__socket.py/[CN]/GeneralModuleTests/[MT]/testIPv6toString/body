@@ -1,0 +1,14 @@
+def testIPv6toString(self):
+    if (not hasattr(socket, 'inet_pton')):
+        return
+    try:
+        from socket import inet_pton, AF_INET6, has_ipv6
+        if (not has_ipv6):
+            return
+    except ImportError:
+        return
+    f = (lambda a: inet_pton(AF_INET6, a))
+    self.assertEquals(('\x00' * 16), f('::'))
+    self.assertEquals(('\x00' * 16), f('0::0'))
+    self.assertEquals(('\x00\x01' + ('\x00' * 14)), f('1::'))
+    self.assertEquals('E\xefv\xcb\x00\x1aV\xef\xaf\xeb\x0b\xac\x19$\xae\xae', f('45ef:76cb:1a:56ef:afeb:bac:1924:aeae'))

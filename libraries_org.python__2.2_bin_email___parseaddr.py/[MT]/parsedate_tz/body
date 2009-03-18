@@ -1,0 +1,77 @@
+def parsedate_tz(data):
+    'Convert a date string to a time tuple.\n\n    Accounts for military timezones.\n    '
+    data = data.split()
+    if (data[0].endswith(',') or (data[0].lower() in _daynames)):
+        del data[0]
+    else:
+        i = data[0].rfind(',')
+        if (i >= 0):
+            data[0] = data[0][(i + 1):]
+    if (len(data) == 3):
+        stuff = data[0].split('-')
+        if (len(stuff) == 3):
+            data = (stuff + data[1:])
+    if (len(data) == 4):
+        s = data[3]
+        i = s.find('+')
+        if (i > 0):
+            data[3:] = [s[:i], s[(i + 1):]]
+        else:
+            data.append('')
+    if (len(data) < 5):
+        return None
+    data = data[:5]
+    [dd, mm, yy, tm, tz] = data
+    mm = mm.lower()
+    if (mm not in _monthnames):
+        (dd, mm) = (mm, dd.lower())
+        if (mm not in _monthnames):
+            return None
+    mm = (_monthnames.index(mm) + 1)
+    if (mm > 12):
+        mm -= 12
+    if (dd[(-1)] == ','):
+        dd = dd[:(-1)]
+    i = yy.find(':')
+    if (i > 0):
+        (yy, tm) = (tm, yy)
+    if (yy[(-1)] == ','):
+        yy = yy[:(-1)]
+    if (not yy[0].isdigit()):
+        (yy, tz) = (tz, yy)
+    if (tm[(-1)] == ','):
+        tm = tm[:(-1)]
+    tm = tm.split(':')
+    if (len(tm) == 2):
+        [thh, tmm] = tm
+        tss = '0'
+    elif (len(tm) == 3):
+        [thh, tmm, tss] = tm
+    else:
+        return None
+    try:
+        yy = int(yy)
+        dd = int(dd)
+        thh = int(thh)
+        tmm = int(tmm)
+        tss = int(tss)
+    except ValueError:
+        return None
+    tzoffset = None
+    tz = tz.upper()
+    if _timezones.has_key(tz):
+        tzoffset = _timezones[tz]
+    else:
+        try:
+            tzoffset = int(tz)
+        except ValueError:
+            pass
+    if tzoffset:
+        if (tzoffset < 0):
+            tzsign = (-1)
+            tzoffset = (- tzoffset)
+        else:
+            tzsign = 1
+        tzoffset = (tzsign * (((tzoffset / 100) * 3600) + ((tzoffset % 100) * 60)))
+    tuple = (yy, mm, dd, thh, tmm, tss, 0, 0, 0, tzoffset)
+    return tuple

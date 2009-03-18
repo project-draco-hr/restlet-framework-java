@@ -1,0 +1,7 @@
+def test_long_lines_with_different_header(self):
+    eq = self.ndiffAssertEqual
+    h = 'List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spamassassin-talk>,\n        <mailto:spamassassin-talk-request@lists.sourceforge.net?subject=unsubscribe>'
+    msg = Message()
+    msg['List'] = h
+    msg['List'] = Header(h, header_name='List')
+    eq(msg.as_string(), 'List: List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spamassassin-talk>,\n\t<mailto:spamassassin-talk-request@lists.sourceforge.net?subject=unsubscribe>\nList: List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spamassassin-talk>,\n <mailto:spamassassin-talk-request@lists.sourceforge.net?subject=unsubscribe>\n\n')

@@ -1,0 +1,16 @@
+def getopt(args, shortopts, longopts=[]):
+    'getopt(args, options[, long_options]) -> opts, args\n\n    Parses command line options and parameter list.  args is the\n    argument list to be parsed, without the leading reference to the\n    running program.  Typically, this means "sys.argv[1:]".  shortopts\n    is the string of option letters that the script wants to\n    recognize, with options that require an argument followed by a\n    colon (i.e., the same format that Unix getopt() uses).  If\n    specified, longopts is a list of strings with the names of the\n    long options which should be supported.  The leading \'--\'\n    characters should not be included in the option name.  Options\n    which require an argument should be followed by an equal sign\n    (\'=\').\n\n    The return value consists of two elements: the first is a list of\n    (option, value) pairs; the second is the list of program arguments\n    left after the option list was stripped (this is a trailing slice\n    of the first argument).  Each option-and-value pair returned has\n    the option as its first element, prefixed with a hyphen (e.g.,\n    \'-x\'), and the option argument as its second element, or an empty\n    string if the option has no argument.  The options occur in the\n    list in the same order in which they were found, thus allowing\n    multiple occurrences.  Long and short options may be mixed.\n\n    '
+    opts = []
+    if (type(longopts) == type('')):
+        longopts = [longopts]
+    else:
+        longopts = list(longopts)
+    while (args and args[0].startswith('-') and (args[0] != '-')):
+        if (args[0] == '--'):
+            args = args[1:]
+            break
+        if (args[0][:2] == '--'):
+            (opts, args) = do_longs(opts, args[0][2:], longopts, args[1:])
+        else:
+            (opts, args) = do_shorts(opts, args[0][1:], shortopts, args[1:])
+    return (opts, args)

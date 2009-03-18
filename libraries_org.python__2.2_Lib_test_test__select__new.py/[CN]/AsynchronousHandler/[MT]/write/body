@@ -1,0 +1,14 @@
+def write(self):
+    '\n        Writes on this channel until select no longer reports it as writable.\n\n        Returns the number of bytes written\n        '
+    total_bytes = 0
+    while 1:
+        try:
+            if self.select_writable():
+                bytes_sent = self.socket.send(DATA_CHUNK)
+                total_bytes += bytes_sent
+            else:
+                return total_bytes
+        except socket.error as se:
+            if (se.value == 10035):
+                continue
+            raise se

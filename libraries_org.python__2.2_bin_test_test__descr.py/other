@@ -1,0 +1,21 @@
+from test.test_support import verify, vereq, verbose, TestFailed, TESTFN, get_original_stdout
+from copy import deepcopy
+import warnings
+warnings.filterwarnings('ignore', 'complex divmod\\(\\), // and % are deprecated$', DeprecationWarning, ('(<string>|%s)$' % __name__))
+binops = {'add': '+', 'sub': '-', 'mul': '*', 'div': '/', 'mod': '%', 'divmod': 'divmod', 'pow': '**', 'lshift': '<<', 'rshift': '>>', 'and': '&', 'xor': '^', 'or': '|', 'cmp': 'cmp', 'lt': '<', 'le': '<=', 'eq': '==', 'ne': '!=', 'gt': '>', 'ge': '>=', }
+for (name, expr) in binops.items():
+    if expr.islower():
+        expr = (expr + '(a, b)')
+    else:
+        expr = ('a %s b' % expr)
+    binops[name] = expr
+unops = {'pos': '+', 'neg': '-', 'abs': 'abs', 'invert': '~', 'int': 'int', 'long': 'long', 'float': 'float', 'oct': 'oct', 'hex': 'hex', }
+for (name, expr) in unops.items():
+    if expr.islower():
+        expr = (expr + '(a)')
+    else:
+        expr = ('%s a' % expr)
+    unops[name] = expr
+mro_err_msg = 'Cannot create a consistent method resolution\norder (MRO) for bases '
+if (__name__ == '__main__'):
+    test_main()

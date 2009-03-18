@@ -1,0 +1,12 @@
+def tearDown(self):
+    actions = []
+    os.path.walk(self.pkgname, zap, actions)
+    actions.append(self.pkgname)
+    actions.sort()
+    actions.reverse()
+    for p in actions:
+        if os.path.isdir(p):
+            os.rmdir(p)
+        else:
+            os.remove(p)
+    del sys.path[0]

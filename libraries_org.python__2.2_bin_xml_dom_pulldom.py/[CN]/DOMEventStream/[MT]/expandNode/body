@@ -1,0 +1,14 @@
+def expandNode(self, node):
+    event = self.getEvent()
+    parents = [node]
+    while event:
+        (token, cur_node) = event
+        if (cur_node is node):
+            return
+        if (token != END_ELEMENT):
+            parents[(-1)].appendChild(cur_node)
+        if (token == START_ELEMENT):
+            parents.append(cur_node)
+        elif (token == END_ELEMENT):
+            del parents[(-1)]
+        event = self.getEvent()

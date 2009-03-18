@@ -1,0 +1,8 @@
+def push(self, line):
+    "Push a line to the interpreter.\n\n        The line should not have a trailing newline; it may have\n        internal newlines.  The line is appended to a buffer and the\n        interpreter's runsource() method is called with the\n        concatenated contents of the buffer as source.  If this\n        indicates that the command was executed or invalid, the buffer\n        is reset; otherwise, the command is incomplete, and the buffer\n        is left as it was after the line was appended.  The return\n        value is 1 if more input is required, 0 if the line was dealt\n        with in some way (this is the same as runsource()).\n\n        "
+    self.buffer.append(line)
+    source = '\n'.join(self.buffer)
+    more = self.runsource(source, self.filename)
+    if (not more):
+        self.resetbuffer()
+    return more

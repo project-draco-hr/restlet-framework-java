@@ -1,0 +1,11 @@
+def parse_endtag(self, i):
+    rawdata = self.rawdata
+    match = endbracket.search(rawdata, (i + 1))
+    if (not match):
+        return (-1)
+    j = match.start(0)
+    tag = rawdata[(i + 2):j].strip().lower()
+    if (rawdata[j] == '>'):
+        j = (j + 1)
+    self.finish_endtag(tag)
+    return j

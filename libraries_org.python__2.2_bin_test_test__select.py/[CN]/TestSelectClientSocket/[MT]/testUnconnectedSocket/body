@@ -1,0 +1,10 @@
+def testUnconnectedSocket(self):
+    sockets = [socket.socket(socket.AF_INET, socket.SOCK_STREAM) for x in range(5)]
+    for pos in range(2):
+        args = [[], [], []]
+        args[pos] = sockets
+        timeout = 0
+        (rfd, wfd, xfd) = select.select(args[0], args[1], args[2], timeout)
+        for s in sockets:
+            self.failIf((s in rfd))
+            self.failIf((s in wfd))

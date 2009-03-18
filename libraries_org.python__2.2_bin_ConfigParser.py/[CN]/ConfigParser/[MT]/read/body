@@ -1,0 +1,11 @@
+def read(self, filenames):
+    "Read and parse a filename or a list of filenames.\n\n        Files that cannot be opened are silently ignored; this is\n        designed so that you can specify a list of potential\n        configuration file locations (e.g. current directory, user's\n        home directory, systemwide directory), and all existing\n        configuration files in the list will be read.  A single\n        filename may also be given.\n        "
+    if isinstance(filenames, types.StringTypes):
+        filenames = [filenames]
+    for filename in filenames:
+        try:
+            fp = open(filename)
+        except IOError:
+            continue
+        self.__read(fp, filename)
+        fp.close()

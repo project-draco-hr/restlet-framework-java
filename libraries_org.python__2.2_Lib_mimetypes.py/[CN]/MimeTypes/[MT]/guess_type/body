@@ -1,0 +1,37 @@
+def guess_type(self, url, strict=1):
+    "Guess the type of a file based on its URL.\n\n        Return value is a tuple (type, encoding) where type is None if\n        the type can't be guessed (no or unknown suffix) or a string\n        of the form type/subtype, usable for a MIME Content-type\n        header; and encoding is None for no encoding or the name of\n        the program used to encode (e.g. compress or gzip).  The\n        mappings are table driven.  Encoding suffixes are case\n        sensitive; type suffixes are first tried case sensitive, then\n        case insensitive.\n\n        The suffixes .tgz, .taz and .tz (case sensitive!) are all\n        mapped to '.tar.gz'.  (This is table-driven too, using the\n        dictionary suffix_map.)\n\n        Optional `strict' argument when false adds a bunch of commonly found,\n        but non-standard types.\n        "
+    (scheme, url) = urllib.splittype(url)
+    if (scheme == 'data'):
+        comma = url.find(',')
+        if (comma < 0):
+            return (None, None)
+        semi = url.find(';', 0, comma)
+        if (semi >= 0):
+            type = url[:semi]
+        else:
+            type = url[:comma]
+        if (('=' in type) or ('/' not in type)):
+            type = 'text/plain'
+        return (type, None)
+    (base, ext) = posixpath.splitext(url)
+    while self.suffix_map.has_key(ext):
+        (base, ext) = posixpath.splitext((base + self.suffix_map[ext]))
+    if self.encodings_map.has_key(ext):
+        encoding = self.encodings_map[ext]
+        (base, ext) = posixpath.splitext(base)
+    else:
+        encoding = None
+    types_map = self.types_map
+    common_types = self.common_types
+    if types_map.has_key(ext):
+        return (types_map[ext], encoding)
+    elif types_map.has_key(ext.lower()):
+        return (types_map[ext.lower()], encoding)
+    elif strict:
+        return (None, encoding)
+    elif common_types.has_key(ext):
+        return (common_types[ext], encoding)
+    elif common_types.has_key(ext.lower()):
+        return (common_types[ext.lower()], encoding)
+    else:
+        return (None, encoding)

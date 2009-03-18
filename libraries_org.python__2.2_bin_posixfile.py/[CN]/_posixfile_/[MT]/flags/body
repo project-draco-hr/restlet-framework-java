@@ -1,0 +1,38 @@
+def flags(self, *which):
+    import fcntl, os
+    if which:
+        if (len(which) > 1):
+            raise TypeError, 'Too many arguments'
+        which = which[0]
+    else:
+        which = '?'
+    l_flags = 0
+    if ('n' in which):
+        l_flags = (l_flags | os.O_NDELAY)
+    if ('a' in which):
+        l_flags = (l_flags | os.O_APPEND)
+    if ('s' in which):
+        l_flags = (l_flags | os.O_SYNC)
+    file = self._file_
+    if ('=' not in which):
+        cur_fl = fcntl.fcntl(file.fileno(), fcntl.F_GETFL, 0)
+        if ('!' in which):
+            l_flags = (cur_fl & (~ l_flags))
+        else:
+            l_flags = (cur_fl | l_flags)
+    l_flags = fcntl.fcntl(file.fileno(), fcntl.F_SETFL, l_flags)
+    if ('c' in which):
+        arg = ('!' not in which)
+        l_flags = fcntl.fcntl(file.fileno(), fcntl.F_SETFD, arg)
+    if ('?' in which):
+        which = ''
+        l_flags = fcntl.fcntl(file.fileno(), fcntl.F_GETFL, 0)
+        if (os.O_APPEND & l_flags):
+            which = (which + 'a')
+        if (fcntl.fcntl(file.fileno(), fcntl.F_GETFD, 0) & 1):
+            which = (which + 'c')
+        if (os.O_NDELAY & l_flags):
+            which = (which + 'n')
+        if (os.O_SYNC & l_flags):
+            which = (which + 's')
+        return which

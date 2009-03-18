@@ -1,0 +1,12 @@
+def split(p):
+    "Split a path into head (everything up to the last '/') and tail\n    (the rest).  After the trailing '/' is stripped, the invariant\n    join(head, tail) == p holds.\n    The resulting head won't end in '/' unless it is the root."
+    (d, p) = splitdrive(p)
+    i = len(p)
+    while (i and (p[(i - 1)] not in '/\\')):
+        i = (i - 1)
+    (head, tail) = (p[:i], p[i:])
+    head2 = head
+    while (head2 and (head2[(-1)] in '/\\')):
+        head2 = head2[:(-1)]
+    head = (head2 or head)
+    return ((d + head), tail)

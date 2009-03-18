@@ -1,0 +1,22 @@
+{
+  if (fname.length() == 0) {
+    if (!once.containsKey("")) {
+      once.put("",PRESENT);
+      vfs.addElement(new DirVFS(""));
+    }
+    return;
+  }
+  try {
+    File file=new File(fname);
+    String canon=file.getCanonicalPath().toString();
+    if (!once.containsKey(canon)) {
+      once.put(canon,PRESENT);
+      if (file.isDirectory())       vfs.addElement(new DirVFS(fname));
+ else       if (file.exists() && (fname.endsWith(".jar") || fname.endsWith(".zip"))) {
+        vfs.addElement(new JarVFS(fname));
+      }
+    }
+  }
+ catch (  IOException e) {
+  }
+}

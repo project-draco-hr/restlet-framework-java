@@ -1,0 +1,16 @@
+def recvfrom(self, n):
+    try:
+        assert self.sock_impl
+        bytes = jarray.zeros(n, 'b')
+        packet = java.net.DatagramPacket(bytes, n)
+        self.sock_impl.receive(packet)
+        host = None
+        if packet.getAddress():
+            host = packet.getAddress().getHostName()
+        port = packet.getPort()
+        m = packet.getLength()
+        if (m < n):
+            bytes = bytes[:m]
+        return (bytes.tostring(), (host, port))
+    except java.lang.Exception as jlx:
+        raise _map_exception(jlx)

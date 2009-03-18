@@ -1,0 +1,11 @@
+def mime_encode_header(line):
+    'Code a single header line as quoted-printable.'
+    newline = ''
+    pos = 0
+    while 1:
+        res = mime_header.search(line, pos)
+        if (res is None):
+            break
+        newline = ('%s%s%s=?%s?Q?%s?=' % (newline, line[pos:res.start(0)], res.group(1), CHARSET, mime_encode(res.group(2), 1)))
+        pos = res.end(0)
+    return (newline + line[pos:])

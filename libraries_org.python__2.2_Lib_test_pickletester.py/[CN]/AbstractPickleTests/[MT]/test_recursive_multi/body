@@ -1,0 +1,14 @@
+def test_recursive_multi(self):
+    l = []
+    d = {1: l, }
+    i = C()
+    i.attr = d
+    l.append(i)
+    s = self.dumps(l)
+    x = self.loads(s)
+    self.assertEqual(x, l)
+    self.assertEqual(x[0], i)
+    self.assertEqual(x[0].attr, d)
+    self.assertEqual(x[0].attr[1], x)
+    self.assertEqual(x[0].attr[1][0], i)
+    self.assertEqual(x[0].attr[1][0].attr, d)

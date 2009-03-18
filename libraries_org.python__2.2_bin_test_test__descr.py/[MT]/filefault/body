@@ -1,0 +1,16 @@
+def filefault():
+    if verbose:
+        print 'Testing sys.stdout is changed in getattr...'
+    import sys
+
+
+    class StdoutGuard:
+
+        def __getattr__(self, attr):
+            sys.stdout = sys.__stdout__
+            raise RuntimeError(('Premature access to sys.stdout.%s' % attr))
+    sys.stdout = StdoutGuard()
+    try:
+        print 'Oops!'
+    except RuntimeError:
+        pass

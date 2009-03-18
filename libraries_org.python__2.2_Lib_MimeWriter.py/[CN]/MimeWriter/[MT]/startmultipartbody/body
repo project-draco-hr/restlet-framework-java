@@ -1,0 +1,4 @@
+def startmultipartbody(self, subtype, boundary=None, plist=[], prefix=1):
+    'Returns a file-like object for writing the body of the message.\n\n        Additionally, this method initializes the multi-part code, where the\n        subtype parameter provides the multipart subtype, the boundary\n        parameter may provide a user-defined boundary specification, and the\n        plist parameter provides optional parameters for the subtype.  The\n        optional argument, prefix, determines where the header is inserted;\n        0 means append at the end, 1 means insert at the start. The default\n        is to insert at the start.  Subparts should be created using the\n        nextpart() method.\n\n        '
+    self._boundary = (boundary or mimetools.choose_boundary())
+    return self.startbody(('multipart/' + subtype), ([('boundary', self._boundary)] + plist), prefix=prefix)

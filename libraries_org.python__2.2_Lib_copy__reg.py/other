@@ -1,0 +1,16 @@
+'Helper to provide extensibility for pickle/cPickle.\n\nThis is only useful to add pickle support for extension types defined in\nC, not for instances of user-defined classes.\n'
+from types import ClassType as _ClassType
+__all__ = ['pickle', 'constructor']
+dispatch_table = {}
+safe_constructors = {}
+try:
+    complex
+except NameError:
+    pass
+else:
+
+    def pickle_complex(c):
+        return (complex, (c.real, c.imag))
+    pickle(complex, pickle_complex, complex)
+_reconstructor.__safe_for_unpickling__ = 1
+_HEAPTYPE = (1 << 9)

@@ -1,0 +1,25 @@
+def objects():
+    if verbose:
+        print 'Testing object class...'
+    a = object()
+    vereq(a.__class__, object)
+    vereq(type(a), object)
+    b = object()
+    verify((a is not b))
+    verify((not hasattr(a, 'foo')))
+    try:
+        a.foo = 12
+    except (AttributeError, TypeError):
+        pass
+    else:
+        verify(0, 'object() should not allow setting a foo attribute')
+    verify((not hasattr(object(), '__dict__')))
+
+
+    class Cdict(object):
+        pass
+    x = Cdict()
+    vereq(x.__dict__, {})
+    x.foo = 1
+    vereq(x.foo, 1)
+    vereq(x.__dict__, {'foo': 1, })

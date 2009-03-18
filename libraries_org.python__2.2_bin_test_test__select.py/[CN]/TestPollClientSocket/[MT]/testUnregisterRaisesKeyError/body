@@ -1,0 +1,9 @@
+def testUnregisterRaisesKeyError(self):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    poll_object = select.poll()
+    try:
+        poll_object.unregister(s)
+    except KeyError:
+        pass
+    else:
+        self.fail('Unregistering socket that is not registered should have raised KeyError')

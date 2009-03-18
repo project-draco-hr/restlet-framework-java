@@ -1,0 +1,15 @@
+def save_unicode(self, object):
+    d = id(object)
+    memo = self.memo
+    if self.bin:
+        encoding = object.encode('utf-8')
+        l = len(encoding)
+        s = mdumps(l)[1:]
+        self.write(((BINUNICODE + s) + encoding))
+    else:
+        object = object.replace('\\', '\\u005c')
+        object = object.replace('\n', '\\u000a')
+        self.write(((UNICODE + object.encode('raw-unicode-escape')) + '\n'))
+    memo_len = len(memo)
+    self.write(self.put(memo_len))
+    memo[d] = (memo_len, object)

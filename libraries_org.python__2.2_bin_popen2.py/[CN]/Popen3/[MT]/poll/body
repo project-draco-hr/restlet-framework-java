@@ -1,0 +1,6 @@
+def poll(self):
+    "Return the exit status of the child process if it has finished,\n        or -1 if it hasn't finished yet."
+    if ((self.sts < 0) and (not self.childWaiter)):
+        self._startChildWaiter()
+        self.childWaiter.join(0.1)
+    return self.sts

@@ -1,0 +1,18 @@
+def parse(self):
+    fp = open(self.cfg, 'r')
+    data = fp.readlines()
+    fp.close()
+    lines = filter((lambda x: ((len(x) > 0) and (x[0] not in ['#', ';']))), map((lambda x: x.strip()), data))
+    current = None
+    for i in range(len(lines)):
+        line = lines[i]
+        g = self.ctypeRE.match(line)
+        if g:
+            current = {}
+            if (not self.records.has_key(g.group(1))):
+                self.records[g.group(1)] = []
+            self.records[g.group(1)].append(current)
+        else:
+            g = self.entryRE.match(line)
+            if g:
+                current[g.group(1)] = g.group(2)

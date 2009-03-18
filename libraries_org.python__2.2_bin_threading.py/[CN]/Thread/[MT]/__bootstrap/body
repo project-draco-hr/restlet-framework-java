@@ -1,0 +1,29 @@
+def __bootstrap(self):
+    try:
+        self.__started = 1
+        _active_limbo_lock.acquire()
+        _active[_get_ident()] = self
+        del _limbo[self]
+        _active_limbo_lock.release()
+        if __debug__:
+            self._note('%s.__bootstrap(): thread started', self)
+        try:
+            self.run()
+        except SystemExit:
+            if __debug__:
+                self._note('%s.__bootstrap(): raised SystemExit', self)
+        except:
+            if __debug__:
+                self._note('%s.__bootstrap(): unhandled exception', self)
+            s = _StringIO()
+            _print_exc(file=s)
+            _sys.stderr.write(('Exception in thread %s:\n%s\n' % (self.getName(), s.getvalue())))
+        else:
+            if __debug__:
+                self._note('%s.__bootstrap(): normal return', self)
+    finally:
+        self.__stop()
+        try:
+            self.__delete()
+        except:
+            pass

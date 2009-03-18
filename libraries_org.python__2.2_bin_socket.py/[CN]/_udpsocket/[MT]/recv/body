@@ -1,0 +1,12 @@
+def recv(self, n):
+    try:
+        assert self.sock_impl
+        bytes = jarray.zeros(n, 'b')
+        packet = java.net.DatagramPacket(bytes, n)
+        self.sock_impl.receive(packet)
+        m = packet.getLength()
+        if (m < n):
+            bytes = bytes[:m]
+        return bytes.tostring()
+    except java.lang.Exception as jlx:
+        raise _map_exception(jlx)

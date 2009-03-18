@@ -1,0 +1,28 @@
+def play_sound_file(path):
+    fp = open(path, 'r')
+    (size, enc, rate, nchannels, extra) = sunaudio.gethdr(fp)
+    data = fp.read()
+    fp.close()
+    if (enc != SND_FORMAT_MULAW_8):
+        print 'Expect .au file with 8-bit mu-law samples'
+        return
+    try:
+        a = linuxaudiodev.open('w')
+    except linuxaudiodev.error as msg:
+        if (msg[0] in (errno.EACCES, errno.ENODEV, errno.EBUSY)):
+            raise TestSkipped, msg
+        raise TestFailed, msg
+    data = audioop.ulaw2lin(data, 2)
+    if (sys.byteorder == 'little'):
+        fmt = linuxaudiodev.AFMT_S16_LE
+    else:
+        fmt = linuxaudiodev.AFMT_S16_BE
+    a.bufsize()
+    a.obufcount()
+    a.obuffree()
+    a.getptr()
+    a.fileno()
+    a.setparameters(rate, 16, nchannels, fmt)
+    a.write(data)
+    a.flush()
+    a.close()

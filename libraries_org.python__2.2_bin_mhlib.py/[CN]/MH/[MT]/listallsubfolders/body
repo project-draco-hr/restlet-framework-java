@@ -1,0 +1,24 @@
+def listallsubfolders(self, name):
+    'Return the names of subfolders in a given folder, recursively.'
+    fullname = os.path.join(self.path, name)
+    st = os.stat(fullname)
+    nlinks = st[ST_NLINK]
+    if (nlinks <= 2):
+        return []
+    subfolders = []
+    subnames = os.listdir(fullname)
+    for subname in subnames:
+        if ((subname[0] == ',') or isnumeric(subname)):
+            continue
+        fullsubname = os.path.join(fullname, subname)
+        if os.path.isdir(fullsubname):
+            name_subname = os.path.join(name, subname)
+            subfolders.append(name_subname)
+            if (not os.path.islink(fullsubname)):
+                subsubfolders = self.listallsubfolders(name_subname)
+                subfolders = (subfolders + subsubfolders)
+            nlinks = (nlinks - 1)
+            if (nlinks <= 2):
+                break
+    subfolders.sort()
+    return subfolders

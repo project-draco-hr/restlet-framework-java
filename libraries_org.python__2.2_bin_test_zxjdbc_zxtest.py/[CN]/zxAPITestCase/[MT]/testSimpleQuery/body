@@ -1,0 +1,13 @@
+def testSimpleQuery(self):
+    'testing simple queries with cursor.execute(), no parameters'
+    c = self.cursor()
+    try:
+        c.execute('select count(*) from zxtesting')
+        f = c.fetchall()
+        assert (len(f) == 1), 'expecting one row'
+        c.execute('select * from zxtesting')
+        data = c.fetchone()
+        assert (len(f) == 1), 'expecting one row'
+        assert (data[0] == 1), ('expected [1] rows, got [%d]' % data[0])
+    finally:
+        c.close()

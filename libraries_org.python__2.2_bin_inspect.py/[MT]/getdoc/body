@@ -1,0 +1,27 @@
+def getdoc(object):
+    'Get the documentation string for an object.\n\n    All tabs are expanded to spaces.  To clean up docstrings that are\n    indented to line up with blocks of code, any whitespace than can be\n    uniformly removed from the second line onwards is removed.'
+    try:
+        doc = object.__doc__
+    except AttributeError:
+        return None
+    if (not isinstance(doc, (str, unicode))):
+        return None
+    try:
+        lines = string.split(string.expandtabs(doc), '\n')
+    except UnicodeError:
+        return None
+    else:
+        margin = None
+        for line in lines[1:]:
+            content = len(string.lstrip(line))
+            if (not content):
+                continue
+            indent = (len(line) - content)
+            if (margin is None):
+                margin = indent
+            else:
+                margin = min(margin, indent)
+        if (margin is not None):
+            for i in range(1, len(lines)):
+                lines[i] = lines[i][margin:]
+        return string.join(lines, '\n')

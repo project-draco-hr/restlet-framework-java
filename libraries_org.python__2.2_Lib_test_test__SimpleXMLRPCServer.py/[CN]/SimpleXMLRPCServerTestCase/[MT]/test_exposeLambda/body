@@ -1,0 +1,7 @@
+def test_exposeLambda(self):
+    'Expose a lambda function via XML-RPC.'
+    server = SimpleXMLRPCServer((HOST, PORT))
+    server.register_function((lambda x, y: (x + y)), 'add')
+    ServerThread(server).start()
+    client = xmlrpclib.ServerProxy(('http://%s:%d' % (HOST, PORT)))
+    self.assertEqual(client.add(10, 20), 30)

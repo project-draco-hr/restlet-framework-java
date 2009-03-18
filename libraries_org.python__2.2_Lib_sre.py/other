@@ -1,0 +1,28 @@
+'Support for regular expressions (RE).\n\nThis module provides regular expression matching operations similar to\nthose found in Perl.  It supports both 8-bit and Unicode strings; both\nthe pattern and the strings being processed can contain null bytes and\ncharacters outside the US ASCII range.\n\nRegular expressions can contain both special and ordinary characters.\nMost ordinary characters, like "A", "a", or "0", are the simplest\nregular expressions; they simply match themselves.  You can\nconcatenate ordinary characters, so last matches the string \'last\'.\n\nThe special characters are:\n    "."      Matches any character except a newline.\n    "^"      Matches the start of the string.\n    "$"      Matches the end of the string.\n    "*"      Matches 0 or more (greedy) repetitions of the preceding RE.\n             Greedy means that it will match as many repetitions as possible.\n    "+"      Matches 1 or more (greedy) repetitions of the preceding RE.\n    "?"      Matches 0 or 1 (greedy) of the preceding RE.\n    *?,+?,?? Non-greedy versions of the previous three special characters.\n    {m,n}    Matches from m to n repetitions of the preceding RE.\n    {m,n}?   Non-greedy version of the above.\n    "\\\\"      Either escapes special characters or signals a special sequence.\n    []       Indicates a set of characters.\n             A "^" as the first character indicates a complementing set.\n    "|"      A|B, creates an RE that will match either A or B.\n    (...)    Matches the RE inside the parentheses.\n             The contents can be retrieved or matched later in the string.\n    (?iLmsux) Set the I, L, M, S, U, or X flag for the RE (see below).\n    (?:...)  Non-grouping version of regular parentheses.\n    (?P<name>...) The substring matched by the group is accessible by name.\n    (?P=name)     Matches the text matched earlier by the group named name.\n    (?#...)  A comment; ignored.\n    (?=...)  Matches if ... matches next, but doesn\'t consume the string.\n    (?!...)  Matches if ... doesn\'t match next.\n\nThe special sequences consist of "\\\\" and a character from the list\nbelow.  If the ordinary character is not on the list, then the\nresulting RE will match the second character.\n    \\number  Matches the contents of the group of the same number.\n    \\A       Matches only at the start of the string.\n    \\Z       Matches only at the end of the string.\n    \\b       Matches the empty string, but only at the start or end of a word.\n    \\B       Matches the empty string, but not at the start or end of a word.\n    \\d       Matches any decimal digit; equivalent to the set [0-9].\n    \\D       Matches any non-digit character; equivalent to the set [^0-9].\n    \\s       Matches any whitespace character; equivalent to [ \\t\\n\\r\\f\\v].\n    \\S       Matches any non-whitespace character; equiv. to [^ \\t\\n\\r\\f\\v].\n    \\w       Matches any alphanumeric character; equivalent to [a-zA-Z0-9_].\n             With LOCALE, it will match the set [0-9_] plus characters defined\n             as letters for the current locale.\n    \\W       Matches the complement of \\w.\n    \\\\       Matches a literal backslash.\n\nThis module exports the following functions:\n    match    Match a regular expression pattern to the beginning of a string.\n    search   Search a string for the presence of a pattern.\n    sub      Substitute occurrences of a pattern found in a string.\n    subn     Same as sub, but also return the number of substitutions made.\n    split    Split a string by the occurrences of a pattern.\n    findall  Find all occurrences of a pattern in a string.\n    compile  Compile a pattern into a RegexObject.\n    purge    Clear the regular expression cache.\n    escape   Backslash all non-alphanumerics in a string.\n\nSome of the functions in this module takes flags as optional parameters:\n    I  IGNORECASE  Perform case-insensitive matching.\n    L  LOCALE      Make \\w, \\W, \\b, \\B, dependent on the current locale.\n    M  MULTILINE   "^" matches the beginning of lines as well as the string.\n                   "$" matches the end of lines as well as the string.\n    S  DOTALL      "." matches any character at all, including the newline.\n    X  VERBOSE     Ignore whitespace and comments for nicer looking RE\'s.\n    U  UNICODE     Make \\w, \\W, \\b, \\B, dependent on the Unicode locale.\n\nThis module also defines an exception \'error\'.\n\n'
+import sys
+import sre_compile
+import sre_parse
+__all__ = ['match', 'search', 'sub', 'subn', 'split', 'findall', 'compile', 'purge', 'template', 'escape', 'I', 'L', 'M', 'S', 'X', 'U', 'IGNORECASE', 'LOCALE', 'MULTILINE', 'DOTALL', 'VERBOSE', 'UNICODE', 'error']
+__version__ = '2.2.1'
+import string
+I = IGNORECASE = sre_compile.SRE_FLAG_IGNORECASE
+L = LOCALE = sre_compile.SRE_FLAG_LOCALE
+U = UNICODE = sre_compile.SRE_FLAG_UNICODE
+M = MULTILINE = sre_compile.SRE_FLAG_MULTILINE
+S = DOTALL = sre_compile.SRE_FLAG_DOTALL
+X = VERBOSE = sre_compile.SRE_FLAG_VERBOSE
+T = TEMPLATE = sre_compile.SRE_FLAG_TEMPLATE
+DEBUG = sre_compile.SRE_FLAG_DEBUG
+error = sre_compile.error
+if (sys.hexversion >= 33685504):
+    __all__.append('finditer')
+
+    def finditer(pattern, string):
+        'Return an iterator over all non-overlapping matches in the\n        string.  For each match, the iterator returns a match object.\n\n        Empty matches are included in the result.'
+        return _compile(pattern, 0).finditer(string)
+_cache = {}
+_cache_repl = {}
+_pattern_type = type(sre_compile.compile('', 0))
+_MAXCACHE = 100
+import copy_reg
+copy_reg.pickle(_pattern_type, _pickle, _compile)

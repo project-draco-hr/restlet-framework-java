@@ -1,0 +1,31 @@
+def _test_fetchapi(self, dynamic=0):
+    'Test the public Java API for Fetch'
+    from com.ziclix.python.sql import Fetch, WarningListener
+    cur = self.cursor()
+    try:
+        c = self.db.__connection__
+        stmt = c.prepareStatement('select * from zxtesting where id < ?')
+        stmt.setInt(1, 5)
+        rs = stmt.executeQuery()
+        fetch = Fetch.newFetch(cur.datahandler, dynamic)
+
+
+        class WL(WarningListener):
+
+            def warning(self, event):
+                raise event.getWarning()
+        wl = WL()
+        fetch.addWarningListener(wl)
+        fetch.add(rs)
+        if (not dynamic):
+            self.assertEquals(4, fetch.getRowCount())
+        assert fetch.fetchone()
+        assert fetch.fetchmany(2)
+        assert fetch.fetchall()
+        assert (not fetch.fetchall())
+        self.assertEquals(4, fetch.getRowCount())
+        assert fetch.removeWarningListener(wl)
+        fetch.close()
+        stmt.close()
+    finally:
+        cur.close()

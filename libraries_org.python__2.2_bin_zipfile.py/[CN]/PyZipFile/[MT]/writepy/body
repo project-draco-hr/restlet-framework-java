@@ -1,0 +1,47 @@
+def writepy(self, pathname, basename=''):
+    'Add all files from "pathname" to the ZIP archive.\n\n        If pathname is a package directory, search the directory and\n        all package subdirectories recursively for all *.py and enter\n        the modules into the archive.  If pathname is a plain\n        directory, listdir *.py and enter all modules.  Else, pathname\n        must be a Python *.py file and the module will be put into the\n        archive.  Added modules are always module.pyo or module.pyc.\n        This method will compile the module.py into module.pyc if\n        necessary.\n        '
+    (dir, name) = os.path.split(pathname)
+    if os.path.isdir(pathname):
+        initname = os.path.join(pathname, '__init__.py')
+        if os.path.isfile(initname):
+            if basename:
+                basename = ('%s/%s' % (basename, name))
+            else:
+                basename = name
+            if self.debug:
+                print 'Adding package in', pathname, 'as', basename
+            (fname, arcname) = self._get_codename(initname[0:(-3)], basename)
+            if self.debug:
+                print 'Adding', arcname
+            self.write(fname, arcname)
+            dirlist = os.listdir(pathname)
+            dirlist.remove('__init__.py')
+            for filename in dirlist:
+                path = os.path.join(pathname, filename)
+                (root, ext) = os.path.splitext(filename)
+                if os.path.isdir(path):
+                    if os.path.isfile(os.path.join(path, '__init__.py')):
+                        self.writepy(path, basename)
+                elif (ext == '.py'):
+                    (fname, arcname) = self._get_codename(path[0:(-3)], basename)
+                    if self.debug:
+                        print 'Adding', arcname
+                    self.write(fname, arcname)
+        else:
+            if self.debug:
+                print 'Adding files from directory', pathname
+            for filename in os.listdir(pathname):
+                path = os.path.join(pathname, filename)
+                (root, ext) = os.path.splitext(filename)
+                if (ext == '.py'):
+                    (fname, arcname) = self._get_codename(path[0:(-3)], basename)
+                    if self.debug:
+                        print 'Adding', arcname
+                    self.write(fname, arcname)
+    else:
+        if (pathname[(-3):] != '.py'):
+            raise RuntimeError, 'Files added with writepy() must end with ".py"'
+        (fname, arcname) = self._get_codename(pathname[0:(-3)], basename)
+        if self.debug:
+            print 'Adding file', arcname
+        self.write(fname, arcname)

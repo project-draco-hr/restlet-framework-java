@@ -1,0 +1,10 @@
+def dir(self, *args):
+    'List a directory in long form.\n        By default list current directory to stdout.\n        Optional last argument is callback function; all\n        non-empty arguments before it are concatenated to the\n        LIST command.  (This *should* only be used for a pathname.)'
+    cmd = 'LIST'
+    func = None
+    if (args[(-1):] and (type(args[(-1)]) != type(''))):
+        (args, func) = (args[:(-1)], args[(-1)])
+    for arg in args:
+        if arg:
+            cmd = (cmd + (' ' + arg))
+    self.retrlines(cmd, func)

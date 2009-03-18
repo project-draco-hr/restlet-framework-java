@@ -1,0 +1,10 @@
+def test_no_semis_header_splitter(self):
+    eq = self.ndiffAssertEqual
+    msg = Message()
+    msg['From'] = 'test@dom.ain'
+    msg['References'] = SPACE.join([('<%d@dom.ain>' % i) for i in range(10)])
+    msg.set_payload('Test')
+    sfp = StringIO()
+    g = Generator(sfp)
+    g.flatten(msg)
+    eq(sfp.getvalue(), 'From: test@dom.ain\nReferences: <0@dom.ain> <1@dom.ain> <2@dom.ain> <3@dom.ain> <4@dom.ain>\n\t<5@dom.ain> <6@dom.ain> <7@dom.ain> <8@dom.ain> <9@dom.ain>\n\nTest')

@@ -1,0 +1,27 @@
+def testoverflow(type, lowerLimit, upperLimit):
+    if verbose:
+        print ('test overflow: array(%s, [%s])' % (lowerLimit, type))
+    try:
+        a = array(type, [lowerLimit])
+    except:
+        raise TestFailed(('array(%s) overflowed assigning %s' % (lowerLimit, type)))
+    if verbose:
+        print ('test overflow: array(%s, [%s])' % ((lowerLimit - 1), type))
+    try:
+        a = array(type, [(lowerLimit - 1)])
+        raise TestFailed, ('array(%s) did not overflow assigning %s' % ((lowerLimit - 1), type))
+    except OverflowError:
+        pass
+    if verbose:
+        print ('test verflow: array(%s, [%s])' % (upperLimit, type))
+    try:
+        a = array(type, [upperLimit])
+    except:
+        raise TestFailed, ('array(%s) overflowed assigning %s' % (upperLimit, type))
+    if verbose:
+        print ('test overflow: array(%s, [%s])' % ((upperLimit + 1), type))
+    try:
+        a = array(type, [(upperLimit + 1)])
+        raise TestFailed, ('array(%s) did not overflow assigning %s' % ((upperLimit + 1), type))
+    except OverflowError:
+        pass

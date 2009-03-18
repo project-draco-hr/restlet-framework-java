@@ -1,0 +1,97 @@
+def pickleslots():
+    if verbose:
+        print 'Testing pickling of classes with __slots__ ...'
+    import pickle, cPickle
+    global B, C, D, E
+
+
+    class B(object):
+        pass
+    for base in [object, B]:
+
+
+        class C(base):
+            __slots__ = ['a']
+
+
+        class D(C):
+            pass
+        try:
+            pickle.dumps(C())
+        except TypeError:
+            pass
+        else:
+            raise TestFailed, ('should fail: pickle C instance - %s' % base)
+        try:
+            cPickle.dumps(C())
+        except TypeError:
+            pass
+        else:
+            raise TestFailed, ('should fail: cPickle C instance - %s' % base)
+        try:
+            pickle.dumps(C())
+        except TypeError:
+            pass
+        else:
+            raise TestFailed, ('should fail: pickle D instance - %s' % base)
+        try:
+            cPickle.dumps(D())
+        except TypeError:
+            pass
+        else:
+            raise TestFailed, ('should fail: cPickle D instance - %s' % base)
+
+
+        class C(base):
+            __slots__ = ['a']
+
+            def __getstate__(self):
+                try:
+                    d = self.__dict__.copy()
+                except AttributeError:
+                    d = {}
+                for cls in self.__class__.__mro__:
+                    for sn in cls.__dict__.get('__slots__', ()):
+                        try:
+                            d[sn] = getattr(self, sn)
+                        except AttributeError:
+                            pass
+                return d
+
+            def __setstate__(self, d):
+                for (k, v) in d.items():
+                    setattr(self, k, v)
+
+
+        class D(C):
+            pass
+        x = C()
+        y = pickle.loads(pickle.dumps(x))
+        vereq(hasattr(y, 'a'), 0)
+        y = cPickle.loads(cPickle.dumps(x))
+        vereq(hasattr(y, 'a'), 0)
+        x.a = 42
+        y = pickle.loads(pickle.dumps(x))
+        vereq(y.a, 42)
+        y = cPickle.loads(cPickle.dumps(x))
+        vereq(y.a, 42)
+        x = D()
+        x.a = 42
+        x.b = 100
+        y = pickle.loads(pickle.dumps(x))
+        vereq((y.a + y.b), 142)
+        y = cPickle.loads(cPickle.dumps(x))
+        vereq((y.a + y.b), 142)
+
+
+        class E(C):
+            __slots__ = ['b']
+        x = E()
+        x.a = 42
+        x.b = 'foo'
+        y = pickle.loads(pickle.dumps(x))
+        vereq(y.a, x.a)
+        vereq(y.b, x.b)
+        y = cPickle.loads(cPickle.dumps(x))
+        vereq(y.a, x.a)
+        vereq(y.b, x.b)

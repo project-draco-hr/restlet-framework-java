@@ -1,0 +1,12 @@
+def run(self):
+    "Execute events until the queue is empty.\n\n        When there is a positive delay until the first event, the\n        delay function is called and the event is left in the queue;\n        otherwise, the event is removed from the queue and executed\n        (its action function is called, passing it the argument).  If\n        the delay function returns prematurely, it is simply\n        restarted.\n\n        It is legal for both the delay function and the action\n        function to to modify the queue or to raise an exception;\n        exceptions are not caught but the scheduler's state remains\n        well-defined so run() may be called again.\n\n        A questionably hack is added to allow other threads to run:\n        just after an event is executed, a delay of 0 is executed, to\n        avoid monopolizing the CPU when other threads are also\n        runnable.\n\n        "
+    q = self.queue
+    while q:
+        (time, priority, action, argument) = q[0]
+        now = self.timefunc()
+        if (now < time):
+            self.delayfunc((time - now))
+        else:
+            del q[0]
+            void = apply(action, argument)
+            self.delayfunc(0)

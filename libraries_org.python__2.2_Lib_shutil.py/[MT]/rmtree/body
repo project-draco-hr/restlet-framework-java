@@ -1,0 +1,15 @@
+def rmtree(path, ignore_errors=0, onerror=None):
+    'Recursively delete a directory tree.\n\n    If ignore_errors is set, errors are ignored; otherwise, if\n    onerror is set, it is called to handle the error; otherwise, an\n    exception is raised.\n\n    '
+    cmdtuples = []
+    _build_cmdtuple(path, cmdtuples)
+    for cmd in cmdtuples:
+        try:
+            apply(cmd[0], (cmd[1],))
+        except:
+            exc = sys.exc_info()
+            if ignore_errors:
+                pass
+            elif onerror:
+                onerror(cmd[0], cmd[1], exc)
+            else:
+                raise exc[0], (exc[1][0], ((exc[1][1] + ' removing ') + cmd[1]))

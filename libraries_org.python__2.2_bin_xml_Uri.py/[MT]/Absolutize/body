@@ -1,0 +1,38 @@
+def Absolutize(uriRef, baseUri):
+    '\n    Resolves a URI reference to absolute form, effecting the result of RFC\n    3986 section 5. The URI reference is considered to be relative to the\n    given base URI.\n\n    It is the caller\'s responsibility to ensure that the base URI matches\n    the absolute-URI syntax rule of RFC 3986, and that its path component\n    does not contain \'.\' or \'..\' segments if the scheme is hierarchical.\n    Unexpected results may occur otherwise.\n\n    This function only conducts a minimal sanity check in order to determine\n    if relative resolution is possible: it raises a UriException if the base\n    URI does not have a scheme component. While it is true that the base URI\n    is irrelevant if the URI reference has a scheme, an exception is raised\n    in order to signal that the given string does not even come close to\n    meeting the criteria to be usable as a base URI.\n\n    It is the caller\'s responsibility to make a determination of whether the\n    URI reference constitutes a "same-document reference", as defined in RFC\n    2396 or RFC 3986. As per the spec, dereferencing a same-document\n    reference "should not" involve retrieval of a new representation of the\n    referenced resource. Note that the two specs have different definitions\n    of same-document reference: RFC 2396 says it is *only* the cases where the\n    reference is the empty string, or "#" followed by a fragment; RFC 3986\n    requires making a comparison of the base URI to the absolute form of the\n    reference (as is returned by the spec), minus its fragment component,\n    if any.\n\n    This function is similar to urlparse.urljoin() and urllib.basejoin().\n    Those functions, however, are (as of Python 2.3) outdated, buggy, and/or\n    designed to produce results acceptable for use with other core Python\n    libraries, rather than being earnest implementations of the relevant\n    specs. Their problems are most noticeable in their handling of\n    same-document references and \'file:\' URIs, both being situations that\n    come up far too often to consider the functions reliable enough for\n    general use.\n    '
+    if (not baseUri):
+        raise ValueError('baseUri is required and must be a non empty string')
+    if (not IsAbsolute(baseUri)):
+        raise ValueError(('%r is not an absolute URI' % baseUri))
+    if ((uriRef == '') or (uriRef[0] == '#')):
+        return (baseUri.split('#')[0] + uriRef)
+    tScheme = tAuth = tPath = tQuery = None
+    (rScheme, rAuth, rPath, rQuery, rFrag) = SplitUriRef(uriRef)
+    if (rScheme is not None):
+        tScheme = rScheme
+        tAuth = rAuth
+        tPath = RemoveDotSegments(rPath)
+        tQuery = rQuery
+    else:
+        (bScheme, bAuth, bPath, bQuery, bFrag) = SplitUriRef(baseUri)
+        if (rAuth is not None):
+            tAuth = rAuth
+            tPath = RemoveDotSegments(rPath)
+            tQuery = rQuery
+        else:
+            if (not rPath):
+                tPath = bPath
+                tQuery = (((rQuery is not None) and rQuery) or bQuery)
+            else:
+                if (rPath[0] == '/'):
+                    tPath = RemoveDotSegments(rPath)
+                else:
+                    if ((bAuth is not None) and (not bPath)):
+                        tPath = ('/' + rPath)
+                    else:
+                        tPath = (bPath[:(bPath.rfind('/') + 1)] + rPath)
+                    tPath = RemoveDotSegments(tPath)
+                tQuery = rQuery
+            tAuth = bAuth
+        tScheme = bScheme
+    return UnsplitUriRef((tScheme, tAuth, tPath, tQuery, rFrag))

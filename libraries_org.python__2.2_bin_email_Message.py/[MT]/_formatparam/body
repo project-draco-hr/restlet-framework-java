@@ -1,0 +1,12 @@
+def _formatparam(param, value=None, quote=True):
+    'Convenience function to format and return a key=value pair.\n\n    This will quote the value if needed or if quote is true.\n    '
+    if ((value is not None) and (len(value) > 0)):
+        if isinstance(value, TupleType):
+            param += '*'
+            value = Utils.encode_rfc2231(value[2], value[0], value[1])
+        if (quote or tspecials.search(value)):
+            return ('%s="%s"' % (param, Utils.quote(value)))
+        else:
+            return ('%s=%s' % (param, value))
+    else:
+        return param

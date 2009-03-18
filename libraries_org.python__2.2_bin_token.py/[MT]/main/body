@@ -1,0 +1,49 @@
+def main():
+    import re
+    import sys
+    args = sys.argv[1:]
+    inFileName = ((args and args[0]) or 'Include/token.h')
+    outFileName = 'Lib/token.py'
+    if (len(args) > 1):
+        outFileName = args[1]
+    try:
+        fp = open(inFileName)
+    except IOError as err:
+        sys.stdout.write(('I/O error: %s\n' % str(err)))
+        sys.exit(1)
+    lines = fp.read().split('\n')
+    fp.close()
+    prog = re.compile('#define[ \t][ \t]*([A-Z][A-Z_]*)[ \t][ \t]*([0-9][0-9]*)', re.IGNORECASE)
+    tokens = {}
+    for line in lines:
+        match = prog.match(line)
+        if match:
+            (name, val) = match.group(1, 2)
+            val = int(val)
+            tokens[val] = name
+    keys = tokens.keys()
+    keys.sort()
+    try:
+        fp = open(outFileName)
+    except IOError as err:
+        sys.stderr.write(('I/O error: %s\n' % str(err)))
+        sys.exit(2)
+    format = fp.read().split('\n')
+    fp.close()
+    try:
+        start = (format.index('#--start constants--') + 1)
+        end = format.index('#--end constants--')
+    except ValueError:
+        sys.stderr.write('target does not contain format markers')
+        sys.exit(3)
+    lines = []
+    for val in keys:
+        lines.append(('%s = %d' % (tokens[val], val)))
+    format[start:end] = lines
+    try:
+        fp = open(outFileName, 'w')
+    except IOError as err:
+        sys.stderr.write(('I/O error: %s\n' % str(err)))
+        sys.exit(4)
+    fp.write('\n'.join(format))
+    fp.close()

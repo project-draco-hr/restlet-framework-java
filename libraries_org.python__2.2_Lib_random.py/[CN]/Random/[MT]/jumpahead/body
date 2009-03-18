@@ -1,0 +1,9 @@
+def jumpahead(self, n):
+    'Act as if n calls to random() were made, but quickly.\n\n        n is an int, greater than or equal to 0.\n\n        Example use:  If you have 2 threads and know that each will\n        consume no more than a million random numbers, create two Random\n        objects r1 and r2, then do\n            r2.setstate(r1.getstate())\n            r2.jumpahead(1000000)\n        Then r1 and r2 will use guaranteed-disjoint segments of the full\n        period.\n        '
+    if (not (n >= 0)):
+        raise ValueError('n must be >= 0')
+    (x, y, z) = self._seed
+    x = (int((x * pow(171, n, 30269))) % 30269)
+    y = (int((y * pow(172, n, 30307))) % 30307)
+    z = (int((z * pow(170, n, 30323))) % 30323)
+    self._seed = (x, y, z)

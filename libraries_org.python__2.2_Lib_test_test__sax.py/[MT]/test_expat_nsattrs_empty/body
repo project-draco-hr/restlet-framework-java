@@ -1,0 +1,7 @@
+def test_expat_nsattrs_empty():
+    parser = make_parser()
+    parser.setFeature(handler.feature_namespaces, 1)
+    gather = AttrGatherer()
+    parser.setContentHandler(gather)
+    parser.parse(StringIO('<doc/>'))
+    return verify_empty_nsattrs(gather._attrs)

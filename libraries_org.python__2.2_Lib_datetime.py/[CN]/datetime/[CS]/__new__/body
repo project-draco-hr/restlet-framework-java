@@ -1,0 +1,17 @@
+def __new__(cls, year, month=None, day=None, hour=0, minute=0, second=0, microsecond=0, tzinfo=None):
+    if isinstance(year, str):
+        self = date.__new__(cls, year[:4])
+        self.__setstate((year, month))
+        return self
+    _check_tzinfo_arg(tzinfo)
+    _check_time_fields(hour, minute, second, microsecond)
+    self = date.__new__(cls, year, month, day)
+    self.__year = year
+    self.__month = month
+    self.__day = day
+    self.__hour = hour
+    self.__minute = minute
+    self.__second = second
+    self.__microsecond = microsecond
+    self._tzinfo = tzinfo
+    return self

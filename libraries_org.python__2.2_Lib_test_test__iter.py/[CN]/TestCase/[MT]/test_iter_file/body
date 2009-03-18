@@ -1,0 +1,17 @@
+def test_iter_file(self):
+    f = open(TESTFN, 'w')
+    try:
+        for i in range(5):
+            f.write(('%d\n' % i))
+    finally:
+        f.close()
+    f = open(TESTFN, 'r')
+    try:
+        self.check_for_loop(f, ['0\n', '1\n', '2\n', '3\n', '4\n'])
+        self.check_for_loop(f, [])
+    finally:
+        f.close()
+        try:
+            unlink(TESTFN)
+        except OSError:
+            pass

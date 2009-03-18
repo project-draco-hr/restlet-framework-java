@@ -1,0 +1,8 @@
+def test_wav(h, f):
+    if ((h[:4] != 'RIFF') or (h[8:12] != 'WAVE') or (h[12:16] != 'fmt ')):
+        return None
+    style = get_short_le(h[20:22])
+    nchannels = get_short_le(h[22:24])
+    rate = get_long_le(h[24:28])
+    sample_bits = get_short_le(h[34:36])
+    return ('wav', rate, nchannels, (-1), sample_bits)

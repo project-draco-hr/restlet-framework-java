@@ -1,0 +1,9 @@
+def config(self, mode, timeout):
+    self.mode = mode
+    if (self.mode == MODE_BLOCKING):
+        self.jchannel.configureBlocking(1)
+    if (self.mode == MODE_NONBLOCKING):
+        self.jchannel.configureBlocking(0)
+    if (self.mode == MODE_TIMEOUT):
+        self._timeout_millis = int((timeout * 1000))
+        self.jsocket.setSoTimeout(self._timeout_millis)

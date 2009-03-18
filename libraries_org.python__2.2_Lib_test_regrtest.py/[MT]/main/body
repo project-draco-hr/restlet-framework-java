@@ -1,0 +1,144 @@
+def main(tests=None, testdir=None, verbose=0, quiet=0, generate=0, exclude=0, single=0, randomize=0, findleaks=0, use_resources=None):
+    "Execute a test suite.\n\n    This also parses command-line options and modifies its behavior\n    accordingly.\n\n    tests -- a list of strings containing test names (optional)\n    testdir -- the directory in which to look for tests (optional)\n\n    Users other than the Python test suite will certainly want to\n    specify testdir; if it's omitted, the directory containing the\n    Python test suite is searched for.\n\n    If the tests argument is omitted, the tests listed on the\n    command-line will be used.  If that's empty, too, then all *.py\n    files beginning with test_ will be used.\n\n    The other default arguments (verbose, quiet, generate, exclude,\n    single, randomize, findleaks, and use_resources) allow programmers\n    calling main() directly to set the values that would normally be\n    set by flags on the command line.\n\n    "
+    test_support.record_original_stdout(sys.stdout)
+    try:
+        args = with_indirect_args(sys.argv[1:])
+        (opts, args) = getopt.getopt(args, 'hvgqxrlu:am:', ['help', 'verbose', 'quiet', 'generate', 'exclude', 'random', 'findleaks', 'use=', 'all', 'memo=', 'broad', 'oneonly='])
+    except getopt.error as msg:
+        usage(2, msg)
+    if (use_resources is None):
+        use_resources = []
+    all = 0
+    memo = None
+    oneonly = []
+
+    def strip_py(args):
+        for i in range(len(args)):
+            if (args[i][(-3):] == (os.extsep + 'py')):
+                args[i] = args[i][:(-3)]
+        return None
+    for (o, a) in opts:
+        if (o in ('-h', '--help')):
+            usage(0)
+        elif (o in ('-v', '--verbose')):
+            verbose += 1
+        elif (o in ('-q', '--quiet')):
+            quiet = 1
+            verbose = 0
+        elif (o in ('-g', '--generate')):
+            generate = 1
+        elif (o in ('-a', '--all')):
+            all = 1
+        elif (o in ('--broad',)):
+            all = 1
+        elif (o in ('--oneonly',)):
+            oneonly = a.split(',')
+            strip_py(oneonly)
+        elif (o in ('-x', '--exclude')):
+            exclude = 1
+        elif (o in ('-r', '--randomize')):
+            randomize = 1
+        elif (o in ('-l', '--findleaks')):
+            findleaks = 1
+        elif (o in ('-m', '--memo')):
+            memo = a
+        elif (o in ('-u', '--use')):
+            u = [x.lower() for x in a.split(',')]
+            for r in u:
+                if (r == 'all'):
+                    use_resources[:] = RESOURCE_NAMES
+                    continue
+                remove = False
+                if (r[0] == '-'):
+                    remove = True
+                    r = r[1:]
+                if (r not in RESOURCE_NAMES):
+                    usage(1, ('Invalid -u/--use option: ' + a))
+                if remove:
+                    if (r in use_resources):
+                        use_resources.remove(r)
+                elif (r not in use_resources):
+                    use_resources.append(r)
+    if (generate and verbose):
+        usage(2, "-g and -v don't go together!")
+    good = []
+    bad = []
+    skipped = []
+    if findleaks:
+        try:
+            import gc
+        except ImportError:
+            print 'No GC available, disabling findleaks.'
+            findleaks = 0
+        else:
+            found_garbage = []
+    strip_py(args)
+    stdtests = STDTESTS[:]
+    nottests = NOTTESTS[:]
+    if exclude:
+        for arg in args:
+            if (arg in stdtests):
+                stdtests.remove(arg)
+        nottests[:0] = args
+        args = []
+    clean_sys_path()
+    tests = (tests or args or findalltests(testdir, stdtests, nottests, all=all))
+    testdirs = findtestdirs(all)
+    if randomize:
+        random.shuffle(tests)
+    test_support.verbose = verbose
+    test_support.use_resources = use_resources
+    save_modules = sys.modules.keys()
+    saved_sys_path = sys.path
+    for test in tests:
+        test_basename = test
+        consider_dirs = testdirs
+        if (test_basename in oneonly):
+            consider_dirs = testdirs[:1]
+        for testdir in consider_dirs:
+            test = test_basename
+            if (not os.path.isfile(os.path.join(testdir, (test + '.py')))):
+                continue
+            test_spec = ('[%s]%s' % (testdir, test))
+            if (not quiet):
+                print test
+                sys.stdout.flush()
+            sys.path.insert(0, testdir)
+            ok = runtest(test, generate, verbose, quiet, testdir)
+            sys.path = saved_sys_path
+            if (ok > 0):
+                good.append(test)
+            elif (ok == 0):
+                bad.append(test)
+            else:
+                skipped.append(test)
+            if findleaks:
+                gc.collect()
+                if gc.garbage:
+                    print 'Warning: test created', len(gc.garbage),
+                    print 'uncollectable object(s).'
+                    found_garbage.extend(gc.garbage)
+                    del gc.garbage[:]
+            for module in sys.modules.keys():
+                if ((module not in save_modules) and (module.startswith('test.') or module.startswith('test_'))):
+                    test_support.unload(module)
+    good.sort()
+    bad.sort()
+    skipped.sort()
+    if (good and (not quiet)):
+        if ((not bad) and (not skipped) and (len(good) > 1)):
+            print 'All',
+        print count(len(good), 'test'), 'OK.'
+        if verbose:
+            print "CAUTION:  stdout isn't compared in verbose mode:  a test"
+            print 'that passes in verbose mode may fail without it.'
+    surprises = 0
+    if (skipped and (not quiet)):
+        print count(len(skipped), 'test'), 'skipped:'
+        surprises += countsurprises(_Expected(_skips), skipped, 'skip')
+    if bad:
+        print count(len(bad), 'test'), 'failed:'
+        surprises += countsurprises(_Expected(_failures), bad, 'fail')
+    if memo:
+        savememo(memo, good, bad, skipped)
+    return (surprises > 0)

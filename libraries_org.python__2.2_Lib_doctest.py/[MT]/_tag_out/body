@@ -1,0 +1,12 @@
+def _tag_out(printer, *tag_msg_pairs):
+    for (tag, msg) in tag_msg_pairs:
+        printer((tag + ':'))
+        msg_has_nl = (msg[(-1):] == '\n')
+        msg_has_two_nl = (msg_has_nl and (msg.find('\n') < (len(msg) - 1)))
+        if (((len(tag) + len(msg)) < 76) and (not msg_has_two_nl)):
+            printer(' ')
+        else:
+            printer('\n')
+        printer(msg)
+        if (not msg_has_nl):
+            printer('\n')

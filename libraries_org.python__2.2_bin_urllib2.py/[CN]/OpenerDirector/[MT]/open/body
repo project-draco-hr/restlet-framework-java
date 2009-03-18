@@ -1,0 +1,16 @@
+def open(self, fullurl, data=None):
+    if isinstance(fullurl, (types.StringType, types.UnicodeType)):
+        req = Request(fullurl, data)
+    else:
+        req = fullurl
+        if (data is not None):
+            req.add_data(data)
+    assert isinstance(req, Request)
+    result = self._call_chain(self.handle_open, 'default', 'default_open', req)
+    if result:
+        return result
+    type_ = req.get_type()
+    result = self._call_chain(self.handle_open, type_, (type_ + '_open'), req)
+    if result:
+        return result
+    return self._call_chain(self.handle_open, 'unknown', 'unknown_open', req)

@@ -1,0 +1,44 @@
+'Miscellaneous utilities.\n'
+import time
+import socket
+import re
+import random
+import os
+import warnings
+from cStringIO import StringIO
+from types import ListType
+from email._parseaddr import quote
+from email._parseaddr import AddressList as _AddressList
+from email._parseaddr import mktime_tz
+from email._parseaddr import parsedate as _parsedate
+from email._parseaddr import parsedate_tz as _parsedate_tz
+try:
+    (True, False)
+except NameError:
+    True = 1
+    False = 0
+try:
+    from quopri import decodestring as _qdecode
+except ImportError:
+
+    def _qdecode(s):
+        import quopri as _quopri
+        if (not s):
+            return s
+        infp = StringIO(s)
+        outfp = StringIO()
+        _quopri.decode(infp, outfp)
+        value = outfp.getvalue()
+        if ((not s.endswith('\n')) and value.endswith('\n')):
+            return value[:(-1)]
+        return value
+import base64
+from email.Encoders import _bencode, _qencode
+COMMASPACE = ', '
+EMPTYSTRING = ''
+UEMPTYSTRING = u''
+CRLF = '\r\n'
+specialsre = re.compile('[][\\\\()<>@,:;".]')
+escapesre = re.compile('[][\\\\()"]')
+ecre = re.compile('\n  =\\?                   # literal =?\n  (?P<charset>[^?]*?)   # non-greedy up to the next ? is the charset\n  \\?                    # literal ?\n  (?P<encoding>[qb])    # either a "q" or a "b", case insensitive\n  \\?                    # literal ?\n  (?P<atom>.*?)         # non-greedy up to the next ?= is the atom\n  \\?=                   # literal ?=\n  ', (re.VERBOSE | re.IGNORECASE))
+rfc2231_continuation = re.compile('^(?P<name>\\w+)\\*((?P<num>[0-9]+)\\*?)?$')

@@ -1,0 +1,25 @@
+def setUp(self):
+    zxCoreTestCase.setUp(self)
+    c = self.cursor()
+    try:
+        try:
+            c.execute('drop table sptest')
+        except:
+            self.db.rollback()
+        try:
+            c.execute('create table sptest (x varchar2(20))')
+            c.execute("create or replace procedure procnone is begin insert into sptest values ('testing'); end;")
+            c.execute('create or replace procedure procin (y in varchar2) is begin insert into sptest values (y); end;')
+            c.execute("create or replace procedure procout (y out varchar2) is begin y := 'tested'; end;")
+            c.execute("create or replace procedure procinout (y out varchar2, z in varchar2) is begin insert into sptest values (z); y := 'tested'; end;")
+            c.execute("create or replace function funcnone return varchar2 is begin return 'tested'; end;")
+            c.execute('create or replace function funcin (y varchar2) return varchar2 is begin return y || y; end;')
+            c.execute("create or replace function funcout (y out varchar2) return varchar2 is begin y := 'tested'; return 'returned'; end;")
+            self.db.commit()
+        except:
+            self.db.rollback()
+            self.fail('procedure creation failed')
+        self.proc_errors('PROC')
+        self.proc_errors('FUNC')
+    finally:
+        c.close()

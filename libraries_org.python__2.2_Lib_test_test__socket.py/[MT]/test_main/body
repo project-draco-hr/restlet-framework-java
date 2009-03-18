@@ -1,0 +1,8 @@
+def test_main():
+    tests = [GeneralModuleTests, BasicTCPTest, TCPTimeoutTest, TCPClientTimeoutTest, TestExceptions, TestTCPAddressParameters, TestUDPAddressParameters, BasicUDPTest, UDPTimeoutTest, NonBlockingTCPTests, NonBlockingUDPTests, FileObjectClassOpenCloseTests, FileObjectClassTestCase, UnbufferedFileObjectClassTestCase, LineBufferedFileObjectClassTestCase, SmallBufferedFileObjectClassTestCase]
+    if hasattr(socket, 'socketpair'):
+        tests.append(BasicSocketPairTest)
+    if (sys.platform[:4] == 'java'):
+        tests.append(TestJythonExceptions)
+    suites = [unittest.makeSuite(klass, 'test') for klass in tests]
+    test_support.run_suite(unittest.TestSuite(suites))

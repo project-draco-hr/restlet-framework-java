@@ -1,0 +1,14 @@
+def test_no_nl_preamble(self):
+    eq = self.ndiffAssertEqual
+    msg = Message()
+    msg['From'] = 'aperson@dom.ain'
+    msg['To'] = 'bperson@dom.ain'
+    msg['Subject'] = 'Test'
+    msg.preamble = 'MIME message'
+    msg.epilogue = ''
+    msg1 = MIMEText('One')
+    msg2 = MIMEText('Two')
+    msg.add_header('Content-Type', 'multipart/mixed', boundary='BOUNDARY')
+    msg.attach(msg1)
+    msg.attach(msg2)
+    eq(msg.as_string(), 'From: aperson@dom.ain\nTo: bperson@dom.ain\nSubject: Test\nContent-Type: multipart/mixed; boundary="BOUNDARY"\n\nMIME message\n--BOUNDARY\nContent-Type: text/plain; charset="us-ascii"\nMIME-Version: 1.0\nContent-Transfer-Encoding: 7bit\n\nOne\n--BOUNDARY\nContent-Type: text/plain; charset="us-ascii"\nMIME-Version: 1.0\nContent-Transfer-Encoding: 7bit\n\nTwo\n--BOUNDARY--\n')

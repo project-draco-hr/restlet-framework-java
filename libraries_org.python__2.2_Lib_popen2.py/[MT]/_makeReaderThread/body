@@ -1,0 +1,10 @@
+def _makeReaderThread(stream, outfunc, bufsize, name=None, postFunc=None):
+    'Create a thread that reads the stream, calling outfunc for each block,\n    and calling postFunc when the end of stream is reached.\n    '
+    Popen3.count += 1
+    name = (name or str(Popen3.count))
+    threadName = ('StreamReader %s' % name)
+    import threading
+    reader = threading.Thread(target=_readStream, name=threadName, args=(stream, outfunc, bufsize, postFunc))
+    reader.setDaemon(1)
+    reader.start()
+    return reader

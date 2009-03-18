@@ -1,0 +1,13 @@
+def whichmodule(func, funcname):
+    'Figure out the module in which a function occurs.\n\n    Search sys.modules for the module.\n    Cache in classmap.\n    Return a module name.\n    If the function cannot be found, return __main__.\n    '
+    if classmap.has_key(func):
+        return classmap[func]
+    for (name, module) in sys.modules.items():
+        if (module is None):
+            continue
+        if ((name != '__main__') and hasattr(module, funcname) and (getattr(module, funcname) is func)):
+            break
+    else:
+        name = '__main__'
+    classmap[func] = name
+    return name

@@ -1,0 +1,7 @@
+def sort(self, sort_criteria, charset, *search_criteria):
+    'IMAP4rev1 extension SORT command.\n\n        (typ, [data]) = <instance>.sort(sort_criteria, charset, search_criteria, ...)\n        '
+    name = 'SORT'
+    if ((sort_criteria[0], sort_criteria[(-1)]) != ('(', ')')):
+        sort_criteria = ('(%s)' % sort_criteria)
+    (typ, dat) = apply(self._simple_command, ((name, sort_criteria, charset) + search_criteria))
+    return self._untagged_response(typ, dat, name)

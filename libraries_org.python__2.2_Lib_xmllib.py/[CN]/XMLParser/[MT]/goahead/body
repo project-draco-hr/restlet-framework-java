@@ -1,0 +1,186 @@
+def goahead(self, end):
+    rawdata = self.rawdata
+    i = 0
+    n = len(rawdata)
+    while (i < n):
+        if (i > 0):
+            self.__at_start = 0
+        if self.nomoretags:
+            data = rawdata[i:n]
+            self.handle_data(data)
+            self.lineno = (self.lineno + data.count('\n'))
+            i = n
+            break
+        res = interesting.search(rawdata, i)
+        if res:
+            j = res.start(0)
+        else:
+            j = n
+        if (i < j):
+            data = rawdata[i:j]
+            if (self.__at_start and (space.match(data) is None)):
+                self.syntax_error('illegal data at start of file')
+            self.__at_start = 0
+            if ((not self.stack) and (space.match(data) is None)):
+                self.syntax_error('data not in content')
+            if ((not self.__accept_utf8) and illegal.search(data)):
+                self.syntax_error('illegal character in content')
+            self.handle_data(data)
+            self.lineno = (self.lineno + data.count('\n'))
+        i = j
+        if (i == n):
+            break
+        if (rawdata[i] == '<'):
+            if starttagopen.match(rawdata, i):
+                if self.literal:
+                    data = rawdata[i]
+                    self.handle_data(data)
+                    self.lineno = (self.lineno + data.count('\n'))
+                    i = (i + 1)
+                    continue
+                k = self.parse_starttag(i)
+                if (k < 0):
+                    break
+                self.__seen_starttag = 1
+                self.lineno = (self.lineno + rawdata[i:k].count('\n'))
+                i = k
+                continue
+            if endtagopen.match(rawdata, i):
+                k = self.parse_endtag(i)
+                if (k < 0):
+                    break
+                self.lineno = (self.lineno + rawdata[i:k].count('\n'))
+                i = k
+                continue
+            if commentopen.match(rawdata, i):
+                if self.literal:
+                    data = rawdata[i]
+                    self.handle_data(data)
+                    self.lineno = (self.lineno + data.count('\n'))
+                    i = (i + 1)
+                    continue
+                k = self.parse_comment(i)
+                if (k < 0):
+                    break
+                self.lineno = (self.lineno + rawdata[i:k].count('\n'))
+                i = k
+                continue
+            if cdataopen.match(rawdata, i):
+                k = self.parse_cdata(i)
+                if (k < 0):
+                    break
+                self.lineno = (self.lineno + rawdata[i:k].count('\n'))
+                i = k
+                continue
+            res = xmldecl.match(rawdata, i)
+            if res:
+                if (not self.__at_start):
+                    self.syntax_error('<?xml?> declaration not at start of document')
+                (version, encoding, standalone) = res.group('version', 'encoding', 'standalone')
+                if (version[1:(-1)] != '1.0'):
+                    raise Error('only XML version 1.0 supported')
+                if encoding:
+                    encoding = encoding[1:(-1)]
+                if standalone:
+                    standalone = standalone[1:(-1)]
+                self.handle_xml(encoding, standalone)
+                i = res.end(0)
+                continue
+            res = procopen.match(rawdata, i)
+            if res:
+                k = self.parse_proc(i)
+                if (k < 0):
+                    break
+                self.lineno = (self.lineno + rawdata[i:k].count('\n'))
+                i = k
+                continue
+            res = doctype.match(rawdata, i)
+            if res:
+                if self.literal:
+                    data = rawdata[i]
+                    self.handle_data(data)
+                    self.lineno = (self.lineno + data.count('\n'))
+                    i = (i + 1)
+                    continue
+                if self.__seen_doctype:
+                    self.syntax_error('multiple DOCTYPE elements')
+                if self.__seen_starttag:
+                    self.syntax_error('DOCTYPE not at beginning of document')
+                k = self.parse_doctype(res)
+                if (k < 0):
+                    break
+                self.__seen_doctype = res.group('name')
+                if self.__map_case:
+                    self.__seen_doctype = self.__seen_doctype.lower()
+                self.lineno = (self.lineno + rawdata[i:k].count('\n'))
+                i = k
+                continue
+        elif (rawdata[i] == '&'):
+            if self.literal:
+                data = rawdata[i]
+                self.handle_data(data)
+                i = (i + 1)
+                continue
+            res = charref.match(rawdata, i)
+            if (res is not None):
+                i = res.end(0)
+                if (rawdata[(i - 1)] != ';'):
+                    self.syntax_error("`;' missing in charref")
+                    i = (i - 1)
+                if (not self.stack):
+                    self.syntax_error('data not in content')
+                self.handle_charref(res.group('char')[:(-1)])
+                self.lineno = (self.lineno + res.group(0).count('\n'))
+                continue
+            res = entityref.match(rawdata, i)
+            if (res is not None):
+                i = res.end(0)
+                if (rawdata[(i - 1)] != ';'):
+                    self.syntax_error("`;' missing in entityref")
+                    i = (i - 1)
+                name = res.group('name')
+                if self.__map_case:
+                    name = name.lower()
+                if self.entitydefs.has_key(name):
+                    self.rawdata = rawdata = ((rawdata[:res.start(0)] + self.entitydefs[name]) + rawdata[i:])
+                    n = len(rawdata)
+                    i = res.start(0)
+                else:
+                    self.unknown_entityref(name)
+                self.lineno = (self.lineno + res.group(0).count('\n'))
+                continue
+        elif (rawdata[i] == ']'):
+            if self.literal:
+                data = rawdata[i]
+                self.handle_data(data)
+                i = (i + 1)
+                continue
+            if ((n - i) < 3):
+                break
+            if cdataclose.match(rawdata, i):
+                self.syntax_error("bogus `]]>'")
+            self.handle_data(rawdata[i])
+            i = (i + 1)
+            continue
+        else:
+            raise Error('neither < nor & ??')
+        break
+    if (i > 0):
+        self.__at_start = 0
+    if (end and (i < n)):
+        data = rawdata[i]
+        self.syntax_error(("bogus `%s'" % data))
+        if ((not self.__accept_utf8) and illegal.search(data)):
+            self.syntax_error('illegal character in content')
+        self.handle_data(data)
+        self.lineno = (self.lineno + data.count('\n'))
+        self.rawdata = rawdata[(i + 1):]
+        return self.goahead(end)
+    self.rawdata = rawdata[i:]
+    if end:
+        if (not self.__seen_starttag):
+            self.syntax_error('no elements in file')
+        if self.stack:
+            self.syntax_error('missing end tags')
+            while self.stack:
+                self.finish_endtag(self.stack[(-1)][0])

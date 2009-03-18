@@ -1,0 +1,9 @@
+def testAAA():
+    dom = parseString('<abc/>')
+    el = dom.documentElement
+    el.setAttribute('spam', 'jam2')
+    confirm((el.toxml() == '<abc spam="jam2"/>'), 'testAAA')
+    a = el.getAttributeNode('spam')
+    confirm((a.ownerDocument is dom), 'setAttribute() sets ownerDocument')
+    confirm((a.ownerElement is dom.documentElement), 'setAttribute() sets ownerElement')
+    dom.unlink()

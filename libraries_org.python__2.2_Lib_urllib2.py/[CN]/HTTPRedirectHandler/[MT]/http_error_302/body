@@ -1,0 +1,20 @@
+def http_error_302(self, req, fp, code, msg, headers):
+    if headers.has_key('location'):
+        newurl = headers['location']
+    elif headers.has_key('uri'):
+        newurl = headers['uri']
+    else:
+        return
+    newurl = urlparse.urljoin(req.get_full_url(), newurl)
+    new = self.redirect_request(req, fp, code, msg, headers, newurl)
+    if (new is None):
+        return
+    new.error_302_dict = {}
+    if hasattr(req, 'error_302_dict'):
+        if ((len(req.error_302_dict) > 10) or req.error_302_dict.has_key(newurl)):
+            raise HTTPError(req.get_full_url(), code, (self.inf_msg + msg), headers, fp)
+        new.error_302_dict.update(req.error_302_dict)
+    new.error_302_dict[newurl] = newurl
+    fp.read()
+    fp.close()
+    return self.parent.open(new)

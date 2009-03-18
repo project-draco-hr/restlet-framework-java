@@ -1,0 +1,8 @@
+def readmodule(module, path=[], inpackage=0):
+    'Backwards compatible interface.\n\n    Like readmodule_ex() but strips Function objects from the\n    resulting dictionary.'
+    dict = readmodule_ex(module, path, inpackage)
+    res = {}
+    for (key, value) in dict.items():
+        if (not isinstance(value, Function)):
+            res[key] = value
+    return res

@@ -1,0 +1,12 @@
+def test_truncate(self):
+    eq = self.assertEqual
+    f = self.MODULE.StringIO()
+    f.write(self._lines)
+    f.seek(10)
+    f.truncate()
+    eq(f.getvalue(), 'abcdefghij')
+    f.seek(0)
+    f.truncate(5)
+    eq(f.getvalue(), 'abcde')
+    f.close()
+    self.assertRaises(ValueError, f.write, 'frobnitz')

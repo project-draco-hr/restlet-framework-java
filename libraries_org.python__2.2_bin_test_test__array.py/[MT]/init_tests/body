@@ -1,0 +1,36 @@
+def init_tests():
+    test = array('c', ['t', 'e', 's', 't'])
+    verify((init_test('test: String initialisation', 'test', 'c') == test), 'string initialisation failed')
+    test = array('i', [41, 42, 43, 44])
+    s = test.tostring()
+    verify((init_test('test: String2 initialisation', s, 'i') == test), 'string 2 initialisation failed')
+    init_test('test: List initialisation', [1, 2, 3, 4], 'i')
+    init_test('test: Tuple initialisation', (1, 2, 3, 4), 'i')
+    test = array('i', [1, 2, 3, 4])
+    verify((init_test('test: array initialisation', test, 'i') == test), 'array init failed')
+    try:
+        init_test('test: "broken" list initialisation', [1, 2, 3, 4, 'fred'], 'i')
+        raise TestFailed, '"broken" list initialisation'
+    except TypeError:
+        pass
+    test = array('i', [1, 2, 3, 4])
+    try:
+        init_test('test: "broken" PyArray initialisation', test, 'd')
+        raise TestFailed, '"broken" PyArray initialisation'
+    except TypeError:
+        pass
+    f = open(TESTFN, 'w')
+    f.write('test message\nline2\nline3')
+    f.close()
+    f = open(TESTFN, 'r')
+    try:
+        init_test('test: Invalid initialisation object (file)', f, 'i')
+        raise TestFailed, 'Invalid initialisation object (file)'
+    except TypeError:
+        pass
+    f.close()
+    try:
+        init_test('test: Invalid initialisation object (module)', sys, 'i')
+        raise TestFailed, 'Invalid initialisation object (module)'
+    except TypeError:
+        pass

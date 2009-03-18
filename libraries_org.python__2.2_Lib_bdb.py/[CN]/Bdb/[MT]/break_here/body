@@ -1,0 +1,15 @@
+def break_here(self, frame):
+    filename = self.canonic(frame.f_code.co_filename)
+    if (not self.breaks.has_key(filename)):
+        return 0
+    lineno = frame.f_lineno
+    if (not (lineno in self.breaks[filename])):
+        return 0
+    (bp, flag) = effective(filename, lineno, frame)
+    if bp:
+        self.currentbp = bp.number
+        if (flag and bp.temporary):
+            self.do_clear(str(bp.number))
+        return 1
+    else:
+        return 0

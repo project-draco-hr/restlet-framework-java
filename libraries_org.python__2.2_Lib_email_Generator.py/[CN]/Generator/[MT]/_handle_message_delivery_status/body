@@ -1,0 +1,13 @@
+def _handle_message_delivery_status(self, msg):
+    blocks = []
+    for part in msg.get_payload():
+        s = StringIO()
+        g = self.clone(s)
+        g.flatten(part, unixfrom=False)
+        text = s.getvalue()
+        lines = text.split('\n')
+        if (lines and (lines[(-1)] == '')):
+            blocks.append(NL.join(lines[:(-1)]))
+        else:
+            blocks.append(text)
+    self._fp.write(NL.join(blocks))

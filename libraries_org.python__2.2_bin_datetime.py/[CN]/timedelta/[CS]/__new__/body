@@ -1,0 +1,80 @@
+def __new__(cls, days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0):
+    d = s = us = 0
+    days += (weeks * 7)
+    seconds += ((minutes * 60) + (hours * 3600))
+    microseconds += (milliseconds * 1000)
+    if isinstance(days, float):
+        (dayfrac, days) = _math.modf(days)
+        (daysecondsfrac, daysecondswhole) = _math.modf((dayfrac * (24.0 * 3600.0)))
+        assert (daysecondswhole == int(daysecondswhole))
+        s = int(daysecondswhole)
+        assert (days == long(days))
+        d = long(days)
+    else:
+        daysecondsfrac = 0.0
+        d = days
+    assert isinstance(daysecondsfrac, float)
+    assert (abs(daysecondsfrac) <= 1.0)
+    assert isinstance(d, (int, long))
+    assert (abs(s) <= (24 * 3600))
+    if isinstance(seconds, float):
+        (secondsfrac, seconds) = _math.modf(seconds)
+        assert (seconds == long(seconds))
+        seconds = long(seconds)
+        secondsfrac += daysecondsfrac
+        assert (abs(secondsfrac) <= 2.0)
+    else:
+        secondsfrac = daysecondsfrac
+    assert isinstance(secondsfrac, float)
+    assert (abs(secondsfrac) <= 2.0)
+    assert isinstance(seconds, (int, long))
+    (days, seconds) = divmod(seconds, (24 * 3600))
+    d += days
+    s += int(seconds)
+    assert isinstance(s, int)
+    assert (abs(s) <= ((2 * 24) * 3600))
+    usdouble = (secondsfrac * 1000000.0)
+    assert (abs(usdouble) < 2100000.0)
+    if isinstance(microseconds, float):
+        microseconds += usdouble
+        microseconds = round(microseconds)
+        (seconds, microseconds) = divmod(microseconds, 1000000.0)
+        assert (microseconds == int(microseconds))
+        assert (seconds == long(seconds))
+        (days, seconds) = divmod(seconds, (24.0 * 3600.0))
+        assert (days == long(days))
+        assert (seconds == int(seconds))
+        d += long(days)
+        s += int(seconds)
+        assert isinstance(s, int)
+        assert (abs(s) <= ((3 * 24) * 3600))
+    else:
+        (seconds, microseconds) = divmod(microseconds, 1000000)
+        (days, seconds) = divmod(seconds, (24 * 3600))
+        d += days
+        s += int(seconds)
+        assert isinstance(s, int)
+        assert (abs(s) <= ((3 * 24) * 3600))
+        microseconds = float(microseconds)
+        microseconds += usdouble
+        microseconds = round(microseconds)
+    assert (abs(s) <= ((3 * 24) * 3600))
+    assert (abs(microseconds) < 3100000.0)
+    assert isinstance(microseconds, float)
+    assert (int(microseconds) == microseconds)
+    us = int(microseconds)
+    (seconds, us) = divmod(us, 1000000)
+    s += seconds
+    assert isinstance(s, int)
+    (days, s) = divmod(s, (24 * 3600))
+    d += days
+    assert isinstance(d, (int, long))
+    assert (isinstance(s, int) and (0 <= s < (24 * 3600)))
+    assert (isinstance(us, int) and (0 <= us < 1000000))
+    self = object.__new__(cls)
+    self.__days = d
+    self.__seconds = s
+    self.__microseconds = us
+    if (abs(d) > 999999999):
+        raise OverflowError(('timedelta # of days is too large: %d' % d))
+    return self

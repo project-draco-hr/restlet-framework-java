@@ -1,0 +1,4 @@
+def test_rfc2231_no_language_or_charset_in_charset(self):
+    m = 'Content-Type: text/plain;\n\tcharset*0="This%20is%20even%20more%20";\n\tcharset*1="%2A%2A%2Afun%2A%2A%2A%20";\n\tcharset*2="is it not.pdf"\n\n'
+    msg = email.message_from_string(m)
+    self.assertEqual(msg.get_content_charset(), 'this is even more ***fun*** is it not.pdf')

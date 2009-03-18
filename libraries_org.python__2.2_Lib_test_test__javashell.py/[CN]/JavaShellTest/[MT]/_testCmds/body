@@ -1,0 +1,9 @@
+def _testCmds(self, _shellEnv, testCmds, whichEnv):
+    'test commands (key) and compare output to expected output (value).\n        this actually executes all the commands twice, testing the return\n        code by calling system(), and testing some of the output by calling\n        execute()\n        '
+    for (cmd, pattern) in testCmds:
+        dprint(("\nExecuting '%s' with %s environment" % (cmd, whichEnv)))
+        p = javashell.shellexecute(cmd)
+        line = PyFile(p.getInputStream()).readlines()[0]
+        assert re.match(pattern, line), ('expected match for %s, got %s' % (pattern, line))
+        dprint('waiting for', cmd, 'to complete')
+        assert (not p.waitFor()), ('%s failed with %s environment' % (cmd, whichEnv))

@@ -1,0 +1,13 @@
+def do_condition(self, arg):
+    args = arg.split(' ', 1)
+    bpnum = int(args[0].strip())
+    try:
+        cond = args[1]
+    except:
+        cond = None
+    bp = bdb.Breakpoint.bpbynumber[bpnum]
+    if bp:
+        bp.cond = cond
+        if (not cond):
+            print 'Breakpoint', bpnum,
+            print 'is now unconditional.'

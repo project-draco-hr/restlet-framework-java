@@ -1,0 +1,18 @@
+{
+  List a=defaultList();
+  a.retainAll(defaultList());
+  TestSupport.assertEquals(a,defaultList(),"retainAll(<equal List>) does not equal original list");
+  a=defaultList();
+  a.retainAll(newInstance(null));
+  TestSupport.assertThat(a.size() == 0,"retainAll(<empty List>))does not have size of zero");
+  a=defaultList();
+  a.remove(0);
+  a.remove(0);
+  a.add(new Integer(4));
+  a.add(new Integer(5));
+  List b=newInstance(null);
+  b.add(new Integer(2));
+  b.add(new Integer(3));
+  a.retainAll(b);
+  TestSupport.assertEquals(a,b,"retainAll() on overlap of indices [2,3] did not return that List");
+}

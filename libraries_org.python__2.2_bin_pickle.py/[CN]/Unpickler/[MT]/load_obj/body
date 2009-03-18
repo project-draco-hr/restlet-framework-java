@@ -1,0 +1,18 @@
+def load_obj(self):
+    stack = self.stack
+    k = self.marker()
+    klass = stack[(k + 1)]
+    del stack[(k + 1)]
+    args = tuple(stack[(k + 1):])
+    del stack[k:]
+    instantiated = 0
+    if ((not args) and (type(klass) is ClassType) and (not hasattr(klass, '__getinitargs__'))):
+        try:
+            value = _EmptyClass()
+            value.__class__ = klass
+            instantiated = 1
+        except RuntimeError:
+            pass
+    if (not instantiated):
+        value = apply(klass, args)
+    self.append(value)

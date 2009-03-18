@@ -1,0 +1,13 @@
+def getresp(self):
+    resp = self.getmultiline()
+    if self.debugging:
+        print '*resp*', self.sanitize(resp)
+    self.lastresp = resp[:3]
+    c = resp[:1]
+    if (c == '4'):
+        raise error_temp, resp
+    if (c == '5'):
+        raise error_perm, resp
+    if (c not in '123'):
+        raise error_proto, resp
+    return resp

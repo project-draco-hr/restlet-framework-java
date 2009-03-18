@@ -1,0 +1,16 @@
+def get_alt_textfile(f, func):
+    'Get a text file and pass each line to a function, with trailing CRLF stripped.'
+    while 1:
+        line = f.readline()
+        if (not line):
+            print '(Unexpected EOF from server)'
+            break
+        if (line[(-2):] == CRLF):
+            line = line[:(-2)]
+        elif (line[(-1):] in CRLF):
+            line = line[:(-1)]
+        if (line == '.'):
+            break
+        if (line[:2] == '..'):
+            line = line[1:]
+        func(line)

@@ -1,0 +1,10 @@
+def retry_https_basic_auth(self, url, realm, data=None):
+    (host, selector) = splithost(url)
+    i = (host.find('@') + 1)
+    host = host[i:]
+    (user, passwd) = self.get_user_passwd(host, realm, i)
+    if (not (user or passwd)):
+        return None
+    host = ((((quote(user, safe='') + ':') + quote(passwd, safe='')) + '@') + host)
+    newurl = (('//' + host) + selector)
+    return self.open_https(newurl, data)

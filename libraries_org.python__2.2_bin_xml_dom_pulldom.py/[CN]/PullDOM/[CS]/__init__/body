@@ -1,0 +1,14 @@
+def __init__(self, documentFactory=None):
+    from xml.dom import XML_NAMESPACE
+    self.documentFactory = documentFactory
+    self.firstEvent = [None, None]
+    self.lastEvent = self.firstEvent
+    self.elementStack = []
+    self.push = self.elementStack.append
+    try:
+        self.pop = self.elementStack.pop
+    except AttributeError:
+        pass
+    self._ns_contexts = [{XML_NAMESPACE: 'xml', }]
+    self._current_context = self._ns_contexts[(-1)]
+    self.pending_events = []

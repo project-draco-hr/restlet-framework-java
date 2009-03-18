@@ -1,0 +1,62 @@
+def __format(self, object, stream, indent, allowance, context, level):
+    level = (level + 1)
+    objid = _id(object)
+    if (objid in context):
+        stream.write(_recursion(object))
+        self.__recursive = 1
+        self.__readable = 0
+        return
+    rep = self.__repr(object, context, (level - 1))
+    typ = _type(object)
+    sepLines = (_len(rep) > (((self.__width - 1) - indent) - allowance))
+    write = stream.write
+    if sepLines:
+        if (typ is DictType):
+            write('{')
+            if (self.__indent_per_level > 1):
+                write(((self.__indent_per_level - 1) * ' '))
+            length = _len(object)
+            if length:
+                context[objid] = 1
+                indent = (indent + self.__indent_per_level)
+                items = object.items()
+                items.sort()
+                (key, ent) = items[0]
+                rep = self.__repr(key, context, level)
+                write(rep)
+                write(': ')
+                self.__format(ent, stream, ((indent + _len(rep)) + 2), (allowance + 1), context, level)
+                if (length > 1):
+                    for (key, ent) in items[1:]:
+                        rep = self.__repr(key, context, level)
+                        write((',\n%s%s: ' % ((' ' * indent), rep)))
+                        self.__format(ent, stream, ((indent + _len(rep)) + 2), (allowance + 1), context, level)
+                indent = (indent - self.__indent_per_level)
+                del context[objid]
+            write('}')
+            return
+        if ((typ is ListType) or (typ is TupleType)):
+            if (typ is ListType):
+                write('[')
+                endchar = ']'
+            else:
+                write('(')
+                endchar = ')'
+            if (self.__indent_per_level > 1):
+                write(((self.__indent_per_level - 1) * ' '))
+            length = _len(object)
+            if length:
+                context[objid] = 1
+                indent = (indent + self.__indent_per_level)
+                self.__format(object[0], stream, indent, (allowance + 1), context, level)
+                if (length > 1):
+                    for ent in object[1:]:
+                        write((',\n' + (' ' * indent)))
+                        self.__format(ent, stream, indent, (allowance + 1), context, level)
+                indent = (indent - self.__indent_per_level)
+                del context[objid]
+            if ((typ is TupleType) and (length == 1)):
+                write(',')
+            write(endchar)
+            return
+    write(rep)

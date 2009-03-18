@@ -1,0 +1,56 @@
+' Test script for the Unicode implementation.\n\nWritten by Bill Tutt.\nModified for Python 2.0 by Fredrik Lundh (fredrik@pythonware.com)\n\n(c) Copyright CNRI, All Rights Reserved. NO WARRANTY.\n\n'
+from test_support import verify, verbose
+print 'Testing General Unicode Character Name, and case insensitivity...',
+try:
+    exec '\ns = u"\\N{LATIN CAPITAL LETTER T}" \\\n    u"\\N{LATIN SMALL LETTER H}" \\\n    u"\\N{LATIN SMALL LETTER E}" \\\n    u"\\N{SPACE}" \\\n    u"\\N{LATIN SMALL LETTER R}" \\\n    u"\\N{LATIN CAPITAL LETTER E}" \\\n    u"\\N{LATIN SMALL LETTER D}" \\\n    u"\\N{SPACE}" \\\n    u"\\N{LATIN SMALL LETTER f}" \\\n    u"\\N{LATIN CAPITAL LeTtEr o}" \\\n    u"\\N{LATIN SMaLl LETTER x}" \\\n    u"\\N{SPACE}" \\\n    u"\\N{LATIN SMALL LETTER A}" \\\n    u"\\N{LATIN SMALL LETTER T}" \\\n    u"\\N{LATIN SMALL LETTER E}" \\\n    u"\\N{SPACE}" \\\n    u"\\N{LATIN SMALL LETTER T}" \\\n    u"\\N{LATIN SMALL LETTER H}" \\\n    u"\\N{LATIN SMALL LETTER E}" \\\n    u"\\N{SpAcE}" \\\n    u"\\N{LATIN SMALL LETTER S}" \\\n    u"\\N{LATIN SMALL LETTER H}" \\\n    u"\\N{LATIN SMALL LETTER E}" \\\n    u"\\N{LATIN SMALL LETTER E}" \\\n    u"\\N{LATIN SMALL LETTER P}" \\\n    u"\\N{FULL STOP}"\nverify(s == u"The rEd fOx ate the sheep.", s)\n'
+except UnicodeError as v:
+    print v
+print 'done.'
+import unicodedata
+print 'Testing name to code mapping....',
+for char in 'SPAM':
+    name = ('LATIN SMALL LETTER %s' % char)
+    code = unicodedata.lookup(name)
+    verify((unicodedata.name(code) == name))
+print 'done.'
+print 'Testing code to name mapping for all characters....',
+count = 0
+for code in range(65536):
+    try:
+        char = unichr(code)
+        name = unicodedata.name(char)
+        verify((unicodedata.lookup(name) == char))
+        count += 1
+    except (KeyError, ValueError):
+        pass
+print 'done.'
+print 'Found', count, 'characters in the unicode name database'
+print 'Testing misc. symbols for unicode character name expansion....',
+exec '\nverify(u"\\N{PILCROW SIGN}" == u"\\u00b6")\nverify(u"\\N{REPLACEMENT CHARACTER}" == u"\\uFFFD")\nverify(u"\\N{HALFWIDTH KATAKANA SEMI-VOICED SOUND MARK}" == u"\\uFF9F")\nverify(u"\\N{FULLWIDTH LATIN SMALL LETTER A}" == u"\\uFF41")\n'
+print 'done.'
+print 'Testing unicode character name expansion strict error handling....',
+try:
+    unicode('\\N{blah}', 'unicode-escape', 'strict')
+except UnicodeError:
+    pass
+else:
+    raise AssertionError, 'failed to raise an exception when given a bogus character name'
+try:
+    unicode((('\\N{' + ('x' * 100000)) + '}'), 'unicode-escape', 'strict')
+except UnicodeError:
+    pass
+else:
+    raise AssertionError, 'failed to raise an exception when given a very long bogus character name'
+try:
+    unicode('\\N{SPACE', 'unicode-escape', 'strict')
+except UnicodeError:
+    pass
+else:
+    raise AssertionError, 'failed to raise an exception for a missing closing brace.'
+try:
+    unicode('\\NSPACE', 'unicode-escape', 'strict')
+except UnicodeError:
+    pass
+else:
+    raise AssertionError, 'failed to raise an exception for a missing opening brace.'
+print 'done.'

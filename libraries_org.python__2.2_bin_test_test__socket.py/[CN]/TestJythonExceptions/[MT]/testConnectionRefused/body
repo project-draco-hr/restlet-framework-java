@@ -1,0 +1,9 @@
+def testConnectionRefused(self):
+    try:
+        self.s.connect((HOST, PORT))
+    except socket.error as se:
+        self.failUnlessEqual(se[0], errno.ECONNREFUSED)
+    except Exception as x:
+        self.fail(('Connection to non-existent host/port raised wrong exception: %s' % x))
+    else:
+        self.fail(('Socket (%s,%s) should not have been listening at this time' % (HOST, PORT)))

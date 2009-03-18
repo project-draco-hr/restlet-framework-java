@@ -1,0 +1,12 @@
+def failUnlessRaises(self, excClass, callableObj, *args, **kwargs):
+    'Fail unless an exception of class excClass is thrown\n           by callableObj when invoked with arguments args and keyword\n           arguments kwargs. If a different type of exception is\n           thrown, it will not be caught, and the test case will be\n           deemed to have suffered an error, exactly as for an\n           unexpected exception.\n        '
+    try:
+        apply(callableObj, args, kwargs)
+    except excClass:
+        return
+    else:
+        if hasattr(excClass, '__name__'):
+            excName = excClass.__name__
+        else:
+            excName = str(excClass)
+        raise self.failureException, excName

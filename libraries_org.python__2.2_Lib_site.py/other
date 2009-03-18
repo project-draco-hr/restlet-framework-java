@@ -1,0 +1,60 @@
+"Append module search paths for third-party packages to sys.path.\n\n****************************************************************\n* This module is automatically imported during initialization. *\n****************************************************************\n\nIn earlier versions of Python (up to 1.5a3), scripts or modules that\nneeded to use site-specific modules would place ``import site''\nsomewhere near the top of their code.  Because of the automatic\nimport, this is no longer necessary (but code that does it still\nworks).\n\nThis will append site-specific paths to to the module search path.  On\nUnix, it starts with sys.prefix and sys.exec_prefix (if different) and\nappends lib/python<version>/site-packages as well as lib/site-python.\nOn other platforms (mainly Mac and Windows), it uses just sys.prefix\n(and sys.exec_prefix, if different, but this is unlikely).  The\nresulting directories, if they exist, are appended to sys.path, and\nalso inspected for path configuration files.\n\nA path configuration file is a file whose name has the form\n<package>.pth; its contents are additional directories (one per line)\nto be added to sys.path.  Non-existing directories (or\nnon-directories) are never added to sys.path; no directory is added to\nsys.path more than once.  Blank lines and lines beginning with\n\\code{#} are skipped.\n\nFor example, suppose sys.prefix and sys.exec_prefix are set to\n/usr/local and there is a directory /usr/local/lib/python1.5/site-packages\nwith three subdirectories, foo, bar and spam, and two path\nconfiguration files, foo.pth and bar.pth.  Assume foo.pth contains the\nfollowing:\n\n  # foo package configuration\n  foo\n  bar\n  bletch\n\nand bar.pth contains:\n\n  # bar package configuration\n  bar\n\nThen the following directories are added to sys.path, in this order:\n\n  /usr/local/lib/python1.5/site-packages/bar\n  /usr/local/lib/python1.5/site-packages/foo\n\nNote that bletch is omitted because it doesn't exist; bar precedes foo\nbecause bar.pth comes alphabetically before foo.pth; and spam is\nomitted because it is not mentioned in either path configuration file.\n\nAfter these path manipulations, an attempt is made to import a module\nnamed sitecustomize, which can perform arbitrary additional\nsite-specific customizations.  If this import fails with an\nImportError exception, it is silently ignored.\n\n"
+import sys, os
+L = sys.modules.values()
+for m in L:
+    if hasattr(m, '__file__'):
+        m.__file__ = makepath(m.__file__)
+del m, L
+L = []
+for dir in sys.path:
+    dir = makepath(dir)
+    if (dir not in L):
+        L.append(dir)
+sys.path[:] = L
+del dir, L
+prefixes = [sys.prefix]
+if (sys.exec_prefix != sys.prefix):
+    prefixes.append(sys.exec_prefix)
+for prefix in prefixes:
+    if prefix:
+        if (os.sep == '/'):
+            sitedirs = [makepath(prefix, 'lib', ('python' + sys.version[:3]), 'site-packages'), makepath(prefix, 'lib', 'site-python')]
+        else:
+            sitedirs = [prefix]
+        for sitedir in sitedirs:
+            if os.path.isdir(sitedir):
+                addsitedir(sitedir)
+if (os.sep == ':'):
+    exit = 'Use Cmd-Q to quit.'
+elif (os.sep == '\\'):
+    exit = 'Use Ctrl-Z plus Return to exit.'
+else:
+    exit = 'Use Ctrl-D (i.e. EOF) to exit.'
+import __builtin__
+__builtin__.quit = __builtin__.exit = exit
+del exit
+__builtin__.copyright = _Printer('copyright', sys.copyright)
+if (sys.platform[:4] == 'java'):
+    __builtin__.credits = _Printer('credits', 'Jython is maintained by the Jython developers (www.jython.org).')
+else:
+    __builtin__.credits = _Printer('credits', 'Python development is led by BeOpen PythonLabs (www.pythonlabs.com).')
+here = (sys.prefix + '/Lib')
+__builtin__.license = _Printer('license', 'See http://www.pythonlabs.com/products/python2.0/license.html', ['LICENSE.txt', 'LICENSE'], [here, os.path.join(here, os.pardir), os.curdir])
+encoding = 'ascii'
+if 0:
+    import locale
+    loc = locale.getdefaultlocale()
+    if loc[1]:
+        encoding = loc[1]
+if 0:
+    encoding = 'undefined'
+if (encoding != 'ascii'):
+    sys.setdefaultencoding(encoding)
+try:
+    import sitecustomize
+except ImportError:
+    pass
+if hasattr(sys, 'setdefaultencoding'):
+    del sys.setdefaultencoding
+if (__name__ == '__main__'):
+    _test()

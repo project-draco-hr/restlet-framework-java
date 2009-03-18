@@ -1,0 +1,17 @@
+def putsequences(self, sequences):
+    'Write the set of sequences back to the folder.'
+    fullname = self.getsequencesfilename()
+    f = None
+    for key in sequences.keys():
+        s = IntSet('', ' ')
+        s.fromlist(sequences[key])
+        if (not f):
+            f = open(fullname, 'w')
+        f.write(('%s: %s\n' % (key, s.tostring())))
+    if (not f):
+        try:
+            os.unlink(fullname)
+        except os.error:
+            pass
+    else:
+        f.close()

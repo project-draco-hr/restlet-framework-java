@@ -1,0 +1,21 @@
+def do_ignore(self, arg):
+    'arg is bp number followed by ignore count.'
+    args = arg.split()
+    bpnum = int(args[0].strip())
+    try:
+        count = int(args[1].strip())
+    except:
+        count = 0
+    bp = bdb.Breakpoint.bpbynumber[bpnum]
+    if bp:
+        bp.ignore = count
+        if (count > 0):
+            reply = 'Will ignore next '
+            if (count > 1):
+                reply = (reply + ('%d crossings' % count))
+            else:
+                reply = (reply + '1 crossing')
+            print (reply + (' of breakpoint %d.' % bpnum))
+        else:
+            print 'Will stop next time breakpoint',
+            print bpnum, 'is reached.'

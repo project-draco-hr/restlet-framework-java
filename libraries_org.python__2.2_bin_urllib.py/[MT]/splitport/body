@@ -1,0 +1,10 @@
+def splitport(host):
+    "splitport('host:port') --> 'host', 'port'."
+    global _portprog
+    if (_portprog is None):
+        import re
+        _portprog = re.compile('^(.*):([0-9]+)$')
+    match = _portprog.match(host)
+    if match:
+        return match.group(1, 2)
+    return (host, None)

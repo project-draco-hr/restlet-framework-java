@@ -1,0 +1,13 @@
+def slow_format(x, base):
+    if ((x, base) == (0, 8)):
+        return '0L'
+    digits = []
+    sign = 0
+    if (x < 0):
+        (sign, x) = (1, (- x))
+    while x:
+        (x, r) = divmod(x, base)
+        digits.append(int(r))
+    digits.reverse()
+    digits = (digits or [0])
+    return ((('-'[:sign] + {8: '0', 10: '', 16: '0x', }[base]) + join(map((lambda i: '0123456789ABCDEF'[i]), digits), '')) + 'L')

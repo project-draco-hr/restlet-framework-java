@@ -1,0 +1,10 @@
+def testClosingConnectionWithOpenCursors(self):
+    'testing that a closed connection closes any open cursors'
+    c = self.cursor()
+    d = self.cursor()
+    e = self.cursor()
+    self.db.close()
+    self.db = self.connect()
+    self.assertRaises(zxJDBC.ProgrammingError, c.execute, ('select * from zxtesting',))
+    self.assertRaises(zxJDBC.ProgrammingError, d.execute, ('select * from zxtesting',))
+    self.assertRaises(zxJDBC.ProgrammingError, e.execute, ('select * from zxtesting',))

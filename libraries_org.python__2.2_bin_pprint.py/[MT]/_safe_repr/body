@@ -1,0 +1,77 @@
+def _safe_repr(object, context, maxlevels, level):
+    typ = _type(object)
+    if (typ is StringType):
+        if ('locale' not in _sys_modules):
+            return (`object`, 1, 0)
+        if (("'" in object) and ('"' not in object)):
+            closure = '"'
+            quotes = {'"': '\\"', }
+        else:
+            closure = "'"
+            quotes = {"'": "\\'", }
+        qget = quotes.get
+        sio = StringIO()
+        write = sio.write
+        for char in object:
+            if char.isalpha():
+                write(char)
+            else:
+                write(qget(char, `char`[1:(-1)]))
+        return (('%s%s%s' % (closure, sio.getvalue(), closure)), 1, 0)
+    if (typ is DictType):
+        if (not object):
+            return ('{}', 1, 0)
+        objid = _id(object)
+        if (maxlevels and (level > maxlevels)):
+            return ('{...}', 0, (objid in context))
+        if (objid in context):
+            return (_recursion(object), 0, 1)
+        context[objid] = 1
+        readable = 1
+        recursive = 0
+        components = []
+        append = components.append
+        level += 1
+        saferepr = _safe_repr
+        for (k, v) in object.iteritems():
+            (krepr, kreadable, krecur) = saferepr(k, context, maxlevels, level)
+            (vrepr, vreadable, vrecur) = saferepr(v, context, maxlevels, level)
+            append(('%s: %s' % (krepr, vrepr)))
+            readable = (readable and kreadable and vreadable)
+            if (krecur or vrecur):
+                recursive = 1
+        del context[objid]
+        return (('{%s}' % _commajoin(components)), readable, recursive)
+    if ((typ is ListType) or (typ is TupleType)):
+        if (typ is ListType):
+            if (not object):
+                return ('[]', 1, 0)
+            format = '[%s]'
+        elif (_len(object) == 1):
+            format = '(%s,)'
+        else:
+            if (not object):
+                return ('()', 1, 0)
+            format = '(%s)'
+        objid = _id(object)
+        if (maxlevels and (level > maxlevels)):
+            return ((format % '...'), 0, (objid in context))
+        if (objid in context):
+            return (_recursion(object), 0, 1)
+        context[objid] = 1
+        readable = 1
+        recursive = 0
+        components = []
+        append = components.append
+        level += 1
+        for o in object:
+            (orepr, oreadable, orecur) = _safe_repr(o, context, maxlevels, level)
+            append(orepr)
+            if (not oreadable):
+                readable = 0
+            if orecur:
+                recursive = 1
+        del context[objid]
+        return ((format % _commajoin(components)), readable, recursive)
+    rep = `object`
+    return (rep, (rep and (not rep.startswith('<'))), 0)

@@ -1,0 +1,26 @@
+def putrequest(self, method, url, skip_host=0):
+    "Send a request to the server.\n\n        `method' specifies an HTTP request method, e.g. 'GET'.\n        `url' specifies the object being requested, e.g. '/index.html'.\n        "
+    if (self.__response and self.__response.isclosed()):
+        self.__response = None
+    if (self.__state == _CS_IDLE):
+        self.__state = _CS_REQ_STARTED
+    else:
+        raise CannotSendRequest()
+    if (not url):
+        url = '/'
+    str = ('%s %s %s' % (method, url, self._http_vsn_str))
+    self._output(str)
+    if (self._http_vsn == 11):
+        if (not skip_host):
+            netloc = ''
+            if url.startswith('http'):
+                (nil, netloc, nil, nil, nil) = urlsplit(url)
+            if netloc:
+                self.putheader('Host', netloc)
+            elif (self.port == HTTP_PORT):
+                self.putheader('Host', self.host)
+            else:
+                self.putheader('Host', ('%s:%s' % (self.host, self.port)))
+        self.putheader('Accept-Encoding', 'identity')
+    else:
+        pass

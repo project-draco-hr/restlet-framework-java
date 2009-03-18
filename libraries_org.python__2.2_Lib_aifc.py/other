@@ -1,0 +1,35 @@
+'Stuff to parse AIFF-C and AIFF files.\n\nUnless explicitly stated otherwise, the description below is true\nboth for AIFF-C files and AIFF files.\n\nAn AIFF-C file has the following structure.\n\n  +-----------------+\n  | FORM            |\n  +-----------------+\n  | <size>          |\n  +----+------------+\n  |    | AIFC       |\n  |    +------------+\n  |    | <chunks>   |\n  |    |    .       |\n  |    |    .       |\n  |    |    .       |\n  +----+------------+\n\nAn AIFF file has the string "AIFF" instead of "AIFC".\n\nA chunk consists of an identifier (4 bytes) followed by a size (4 bytes,\nbig endian order), followed by the data.  The size field does not include\nthe size of the 8 byte header.\n\nThe following chunk types are recognized.\n\n  FVER\n      <version number of AIFF-C defining document> (AIFF-C only).\n  MARK\n      <# of markers> (2 bytes)\n      list of markers:\n          <marker ID> (2 bytes, must be > 0)\n          <position> (4 bytes)\n          <marker name> ("pstring")\n  COMM\n      <# of channels> (2 bytes)\n      <# of sound frames> (4 bytes)\n      <size of the samples> (2 bytes)\n      <sampling frequency> (10 bytes, IEEE 80-bit extended\n          floating point)\n      in AIFF-C files only:\n      <compression type> (4 bytes)\n      <human-readable version of compression type> ("pstring")\n  SSND\n      <offset> (4 bytes, not used by this program)\n      <blocksize> (4 bytes, not used by this program)\n      <sound data>\n\nA pstring consists of 1 byte length, a string of characters, and 0 or 1\nbyte pad to make the total length even.\n\nUsage.\n\nReading AIFF files:\n  f = aifc.open(file, \'r\')\nwhere file is either the name of a file or an open file pointer.\nThe open file pointer must have methods read(), seek(), and close().\nIn some types of audio files, if the setpos() method is not used,\nthe seek() method is not necessary.\n\nThis returns an instance of a class with the following public methods:\n  getnchannels()  -- returns number of audio channels (1 for\n             mono, 2 for stereo)\n  getsampwidth()  -- returns sample width in bytes\n  getframerate()  -- returns sampling frequency\n  getnframes()    -- returns number of audio frames\n  getcomptype()   -- returns compression type (\'NONE\' for AIFF files)\n  getcompname()   -- returns human-readable version of\n             compression type (\'not compressed\' for AIFF files)\n  getparams() -- returns a tuple consisting of all of the\n             above in the above order\n  getmarkers()    -- get the list of marks in the audio file or None\n             if there are no marks\n  getmark(id) -- get mark with the specified id (raises an error\n             if the mark does not exist)\n  readframes(n)   -- returns at most n frames of audio\n  rewind()    -- rewind to the beginning of the audio stream\n  setpos(pos) -- seek to the specified position\n  tell()      -- return the current position\n  close()     -- close the instance (make it unusable)\nThe position returned by tell(), the position given to setpos() and\nthe position of marks are all compatible and have nothing to do with\nthe actual position in the file.\nThe close() method is called automatically when the class instance\nis destroyed.\n\nWriting AIFF files:\n  f = aifc.open(file, \'w\')\nwhere file is either the name of a file or an open file pointer.\nThe open file pointer must have methods write(), tell(), seek(), and\nclose().\n\nThis returns an instance of a class with the following public methods:\n  aiff()      -- create an AIFF file (AIFF-C default)\n  aifc()      -- create an AIFF-C file\n  setnchannels(n) -- set the number of channels\n  setsampwidth(n) -- set the sample width\n  setframerate(n) -- set the frame rate\n  setnframes(n)   -- set the number of frames\n  setcomptype(type, name)\n          -- set the compression type and the\n             human-readable compression type\n  setparams(tuple)\n          -- set all parameters at once\n  setmark(id, pos, name)\n          -- add specified mark to the list of marks\n  tell()      -- return current position in output file (useful\n             in combination with setmark())\n  writeframesraw(data)\n          -- write audio frames without pathing up the\n             file header\n  writeframes(data)\n          -- write audio frames and patch up the file header\n  close()     -- patch up the file header and close the\n             output file\nYou should set the parameters before the first writeframesraw or\nwriteframes.  The total number of frames does not need to be set,\nbut when it is set to the correct value, the header does not have to\nbe patched up.\nIt is best to first set all parameters, perhaps possibly the\ncompression type, and then write audio frames using writeframesraw.\nWhen all frames have been written, either call writeframes(\'\') or\nclose() to patch up the sizes in the header.\nMarks can be added anytime.  If there are any marks, ypu must call\nclose() after all frames have been written.\nThe close() method is called automatically when the class instance\nis destroyed.\n\nWhen a file is opened with the extension \'.aiff\', an AIFF file is\nwritten, otherwise an AIFF-C file is written.  This default can be\nchanged by calling aiff() or aifc() before the first writeframes or\nwriteframesraw.\n'
+import struct
+import __builtin__
+__all__ = ['Error', 'open', 'openfp']
+_AIFC_version = 2726318400
+_skiplist = ('COMT', 'INST', 'MIDI', 'AESD', 'APPL', 'NAME', 'AUTH', '(c) ', 'ANNO')
+_HUGE_VAL = 1.79769313486231e+308
+from chunk import Chunk
+openfp = open
+if (__name__ == '__main__'):
+    import sys
+    if (not sys.argv[1:]):
+        sys.argv.append('/usr/demos/data/audio/bach.aiff')
+    fn = sys.argv[1]
+    f = open(fn, 'r')
+    print 'Reading', fn
+    print 'nchannels =', f.getnchannels()
+    print 'nframes   =', f.getnframes()
+    print 'sampwidth =', f.getsampwidth()
+    print 'framerate =', f.getframerate()
+    print 'comptype  =', f.getcomptype()
+    print 'compname  =', f.getcompname()
+    if sys.argv[2:]:
+        gn = sys.argv[2]
+        print 'Writing', gn
+        g = open(gn, 'w')
+        g.setparams(f.getparams())
+        while 1:
+            data = f.readframes(1024)
+            if (not data):
+                break
+            g.writeframes(data)
+        g.close()
+        f.close()
+        print 'Done.'

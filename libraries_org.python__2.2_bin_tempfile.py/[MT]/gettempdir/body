@@ -1,0 +1,10 @@
+def gettempdir():
+    'Function to calculate the directory to use.'
+    global tempdir
+    if (tempdir is not None):
+        return tempdir
+    _tempdir_lock.acquire()
+    try:
+        return _gettempdir_inner()
+    finally:
+        _tempdir_lock.release()

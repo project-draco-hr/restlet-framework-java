@@ -1,0 +1,12 @@
+def _fast_quote(s):
+    global _fast_safe
+    if (_fast_safe is None):
+        _fast_safe = {}
+        for c in _fast_safe_test:
+            _fast_safe[c] = c
+    res = list(s)
+    for i in range(len(res)):
+        c = res[i]
+        if (not _fast_safe.has_key(c)):
+            res[i] = ('%%%02X' % ord(c))
+    return ''.join(res)

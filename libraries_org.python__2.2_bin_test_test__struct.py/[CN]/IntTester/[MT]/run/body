@@ -1,0 +1,23 @@
+def run(self):
+    from random import randrange
+    values = []
+    for exp in range((self.bitsize + 3)):
+        values.append((1L << exp))
+    for i in range(self.bitsize):
+        val = 0L
+        for j in range(self.bytesize):
+            val = ((val << 8) | randrange(256))
+        values.append(val)
+    for base in values:
+        for val in ((- base), base):
+            for incr in ((-1), 0, 1):
+                x = (val + incr)
+                try:
+                    x = int(x)
+                except OverflowError:
+                    pass
+                self.test_one(x)
+    for direction in '<>':
+        for code in self.formatpair:
+            for badobject in ('a string', (3 + 42j), randrange):
+                any_err(struct.pack, (direction + code), badobject)

@@ -1,0 +1,24 @@
+def basic(src):
+    print 'Testing basic accessors...'
+    cf = ConfigParser.ConfigParser()
+    sio = StringIO.StringIO(src)
+    cf.readfp(sio)
+    L = cf.sections()
+    L.sort()
+    verify((L == ['Commented Bar', 'Foo Bar', 'Internationalized Stuff', 'Long Line', 'Section\\with$weird%characters[\t', 'Spaces', 'Spacey Bar']), 'unexpected list of section names')
+    verify((cf.get('Foo Bar', 'foo', raw=1) == 'bar'))
+    verify((cf.get('Spacey Bar', 'foo', raw=1) == 'bar'))
+    verify((cf.get('Commented Bar', 'foo', raw=1) == 'bar'))
+    verify((cf.get('Spaces', 'key with spaces', raw=1) == 'value'))
+    verify((cf.get('Spaces', 'another with spaces', raw=1) == 'splat!'))
+    verify(('__name__' not in cf.options('Foo Bar')), '__name__ "option" should not be exposed by the API!')
+    verify(cf.remove_option('Foo Bar', 'foo'), 'remove_option() failed to report existance of option')
+    verify((not cf.has_option('Foo Bar', 'foo')), 'remove_option() failed to remove option')
+    verify((not cf.remove_option('Foo Bar', 'foo')), 'remove_option() failed to report non-existance of option that was removed')
+    try:
+        cf.remove_option('No Such Section', 'foo')
+    except ConfigParser.NoSectionError:
+        pass
+    else:
+        raise TestFailed('remove_option() failed to report non-existance of option that never existed')
+    verify((cf.get('Long Line', 'foo', raw=1) == 'this line is much, much longer than my editor\nlikes it.'))

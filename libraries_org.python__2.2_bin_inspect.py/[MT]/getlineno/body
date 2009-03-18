@@ -1,0 +1,14 @@
+def getlineno(frame):
+    'Get the line number from a frame object, allowing for optimization.'
+    lineno = frame.f_lineno
+    code = frame.f_code
+    if hasattr(code, 'co_lnotab'):
+        table = code.co_lnotab
+        lineno = code.co_firstlineno
+        addr = 0
+        for i in range(0, len(table), 2):
+            addr = (addr + ord(table[i]))
+            if (addr > frame.f_lasti):
+                break
+            lineno = (lineno + ord(table[(i + 1)]))
+    return lineno

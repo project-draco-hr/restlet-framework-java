@@ -1,0 +1,25 @@
+def open_local_file(self, url):
+    'Use local file.'
+    import mimetypes, mimetools, rfc822, StringIO
+    (host, file) = splithost(url)
+    localname = url2pathname(file)
+    try:
+        stats = os.stat(localname)
+    except OSError as e:
+        raise IOError(e.errno, e.strerror, e.filename)
+    size = stats[stat.ST_SIZE]
+    modified = rfc822.formatdate(stats[stat.ST_MTIME])
+    mtype = mimetypes.guess_type(url)[0]
+    headers = mimetools.Message(StringIO.StringIO(('Content-Type: %s\nContent-Length: %d\nLast-modified: %s\n' % ((mtype or 'text/plain'), size, modified))))
+    if (not host):
+        urlfile = file
+        if (file[:1] == '/'):
+            urlfile = ('file://' + file)
+        return addinfourl(open(localname, 'rb'), headers, urlfile)
+    (host, port) = splitport(host)
+    if ((not port) and (socket.gethostbyname(host) in (localhost(), thishost()))):
+        urlfile = file
+        if (file[:1] == '/'):
+            urlfile = ('file://' + file)
+        return addinfourl(open(localname, 'rb'), headers, urlfile)
+    raise IOError, ('local file error', 'not on local host')

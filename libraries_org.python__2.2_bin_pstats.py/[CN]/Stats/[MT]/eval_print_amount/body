@@ -1,0 +1,18 @@
+def eval_print_amount(self, sel, list, msg):
+    new_list = list
+    if (type(sel) == type('')):
+        new_list = []
+        for func in list:
+            if re.search(sel, func_std_string(func)):
+                new_list.append(func)
+    else:
+        count = len(list)
+        if ((type(sel) == type(1.0)) and (0.0 <= sel < 1.0)):
+            count = int(((count * sel) + 0.5))
+            new_list = list[:count]
+        elif ((type(sel) == type(1)) and (0 <= sel < count)):
+            count = sel
+            new_list = list[:count]
+    if (len(list) != len(new_list)):
+        msg = (((((((msg + '   List reduced from ') + `len(list)`) + ' to ') + `len(new_list)`) + ' due to restriction <') + `sel`) + '>\n')
+    return (new_list, msg)

@@ -1,0 +1,21 @@
+def __cmp(self, other):
+    assert isinstance(other, datetime)
+    mytz = self._tzinfo
+    ottz = other._tzinfo
+    myoff = otoff = None
+    if (mytz is ottz):
+        base_compare = True
+    else:
+        if (mytz is not None):
+            myoff = self._utcoffset()
+        if (ottz is not None):
+            otoff = other._utcoffset()
+        base_compare = (myoff == otoff)
+    if base_compare:
+        return cmp((self.__year, self.__month, self.__day, self.__hour, self.__minute, self.__second, self.__microsecond), (other.__year, other.__month, other.__day, other.__hour, other.__minute, other.__second, other.__microsecond))
+    if ((myoff is None) or (otoff is None)):
+        raise TypeError('cannot compare naive and aware datetimes')
+    diff = (self - other)
+    if (diff.days < 0):
+        return (-1)
+    return ((diff and 1) or 0)

@@ -1,0 +1,22 @@
+def _do_reload(ls_name, mgr, pkg):
+    pkg_name = pkg.__name__
+    for n in pkg.__dict__.keys():
+        e = pkg.__dict__[n]
+        if isinstance(e, PyJavaClass):
+            if _is_lazy(e):
+                continue
+            del pkg.__dict__[n]
+            try:
+                c = mgr.findClass(pkg_name, n)
+                if c:
+                    pkg.__dict__[n] = c
+                    if pkg_name:
+                        n = ((((ls_name + '.') + pkg_name) + '.') + n)
+                    else:
+                        n = ((ls_name + '.') + n)
+                    if sys.modules.has_key(n):
+                        sys.modules[n] = c
+            except:
+                pass
+        elif isinstance(e, PyJavaPackage):
+            _do_reload(ls_name, mgr, e)

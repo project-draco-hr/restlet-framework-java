@@ -1,0 +1,20 @@
+def check_all(modname):
+    names = {}
+    try:
+        exec ('import %s' % modname) in names
+    except ImportError:
+        try:
+            del sys.modules[modname]
+        except KeyError:
+            pass
+        return
+    verify(hasattr(sys.modules[modname], '__all__'), ('%s has no __all__ attribute' % modname))
+    names = {}
+    exec ('from %s import *' % modname) in names
+    if names.has_key('__builtins__'):
+        del names['__builtins__']
+    keys = names.keys()
+    keys.sort()
+    all = list(sys.modules[modname].__all__)
+    all.sort()
+    verify((keys == all), ('%s != %s' % (keys, all)))

@@ -1,0 +1,35 @@
+def wait(self, timeout=None):
+    me = currentThread()
+    assert self._is_owned(), 'wait() of un-acquire()d lock'
+    waiter = _allocate_lock()
+    waiter.acquire()
+    self.__waiters.append(waiter)
+    saved_state = self._release_save()
+    try:
+        if (timeout is None):
+            waiter.acquire()
+            if __debug__:
+                self._note('%s.wait(): got it', self)
+        else:
+            endtime = (_time() + timeout)
+            delay = 0.0005
+            while 1:
+                gotit = waiter.acquire(0)
+                if gotit:
+                    break
+                remaining = (endtime - _time())
+                if (remaining <= 0):
+                    break
+                delay = min((delay * 2), remaining, 0.05)
+                _sleep(delay)
+            if (not gotit):
+                if __debug__:
+                    self._note('%s.wait(%s): timed out', self, timeout)
+                try:
+                    self.__waiters.remove(waiter)
+                except ValueError:
+                    pass
+            elif __debug__:
+                self._note('%s.wait(%s): got it', self, timeout)
+    finally:
+        self._acquire_restore(saved_state)

@@ -1,0 +1,8 @@
+def http_error_auth_reqed(self, authreq, host, req, headers):
+    authreq = headers.get(authreq, None)
+    if authreq:
+        mo = AbstractBasicAuthHandler.rx.match(authreq)
+        if mo:
+            (scheme, realm) = mo.groups()
+            if (scheme.lower() == 'basic'):
+                return self.retry_http_basic_auth(host, req, realm)

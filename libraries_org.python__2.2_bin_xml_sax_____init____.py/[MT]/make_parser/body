@@ -1,0 +1,12 @@
+def make_parser(parser_list=[]):
+    'Creates and returns a SAX parser.\n\n    Creates the first parser it is able to instantiate of the ones\n    given in the list created by doing parser_list +\n    default_parser_list.  The lists must contain the names of Python\n    modules containing both a SAX parser and a create_parser function.'
+    for parser_name in (parser_list + default_parser_list):
+        try:
+            return _create_parser(parser_name)
+        except ImportError as e:
+            import sys
+            if sys.modules.has_key(parser_name):
+                raise
+        except SAXReaderNotAvailable:
+            pass
+    raise SAXReaderNotAvailable('No parsers found', None)

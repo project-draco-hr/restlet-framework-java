@@ -1,0 +1,13 @@
+def getMIMEMsg(mf):
+    global boundaries, linecount
+    msg = mimetools.Message(mf)
+    if (msg.getmaintype() == 'multipart'):
+        boundary = msg.getparam('boundary')
+        boundaries += 1
+        mf.push(boundary)
+        while mf.next():
+            getMIMEMsg(mf)
+        mf.pop()
+    else:
+        lines = mf.readlines()
+        linecount += len(lines)

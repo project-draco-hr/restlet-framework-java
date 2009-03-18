@@ -1,0 +1,14 @@
+def test_iso_8859_1(self):
+    eq = self.assertEqual
+    s = '=?iso-8859-1?q?this=20is=20some=20text?='
+    eq(Utils.decode(s), 'this is some text')
+    s = '=?ISO-8859-1?Q?Keld_J=F8rn_Simonsen?='
+    eq(Utils.decode(s), u'Keld J\xf8rn Simonsen')
+    s = '=?ISO-8859-1?B?SWYgeW91IGNhbiByZWFkIHRoaXMgeW8=?==?ISO-8859-2?B?dSB1bmRlcnN0YW5kIHRoZSBleGFtcGxlLg==?='
+    eq(Utils.decode(s), 'If you can read this you understand the example.')
+    s = '=?iso-8859-8?b?7eXs+SDv4SDp7Oj08A==?='
+    eq(Utils.decode(s), u'\u05dd\u05d5\u05dc\u05e9 \u05df\u05d1 \u05d9\u05dc\u05d8\u05e4\u05e0')
+    s = '=?iso-8859-1?q?this=20is?= =?iso-8859-1?q?some=20text?='
+    eq(Utils.decode(s), u'this issome text')
+    s = '=?iso-8859-1?q?this=20is_?= =?iso-8859-1?q?some=20text?='
+    eq(Utils.decode(s), u'this is some text')

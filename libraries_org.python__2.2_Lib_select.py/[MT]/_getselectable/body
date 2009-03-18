@@ -1,0 +1,10 @@
+def _getselectable(selectable_object):
+    for method in ['getchannel', 'fileno']:
+        try:
+            channel = getattr(selectable_object, method)()
+            if (channel and (not isinstance(channel, java.nio.channels.SelectableChannel))):
+                raise TypeError(("Object '%s' is not watchable" % selectable_object), errno.ENOTSOCK)
+            return channel
+        except:
+            pass
+    raise TypeError(("Object '%s' is not watchable" % selectable_object), errno.ENOTSOCK)

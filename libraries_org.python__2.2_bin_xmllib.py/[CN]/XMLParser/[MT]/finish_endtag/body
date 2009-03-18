@@ -1,0 +1,28 @@
+def finish_endtag(self, tag):
+    self.literal = 0
+    if (not tag):
+        self.syntax_error('name-less end tag')
+        found = (len(self.stack) - 1)
+        if (found < 0):
+            self.unknown_endtag(tag)
+            return
+    else:
+        found = (-1)
+        for i in range(len(self.stack)):
+            if (tag == self.stack[i][0]):
+                found = i
+        if (found == (-1)):
+            self.syntax_error('unopened end tag')
+            return
+    while (len(self.stack) > found):
+        if (found < (len(self.stack) - 1)):
+            self.syntax_error(('missing close tag for %s' % self.stack[(-1)][2]))
+        nstag = self.stack[(-1)][2]
+        method = self.elements.get(nstag, (None, None))[1]
+        if (method is not None):
+            self.handle_endtag(nstag, method)
+        else:
+            self.unknown_endtag(nstag)
+        if (self.__use_namespaces == len(self.stack)):
+            self.__use_namespaces = 0
+        del self.stack[(-1)]

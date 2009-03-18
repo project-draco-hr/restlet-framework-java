@@ -1,0 +1,8 @@
+def loadTestsFromModule(self, module):
+    'Return a suite of all tests cases contained in the given module'
+    tests = []
+    for name in dir(module):
+        obj = getattr(module, name)
+        if ((type(obj) == types.ClassType) and issubclass(obj, TestCase)):
+            tests.append(self.loadTestsFromTestCase(obj))
+    return self.suiteClass(tests)

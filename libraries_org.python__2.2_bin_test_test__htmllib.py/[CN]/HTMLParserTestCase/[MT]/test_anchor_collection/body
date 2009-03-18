@@ -1,0 +1,5 @@
+def test_anchor_collection(self):
+    parser = AnchorCollector(formatter.NullFormatter(), verbose=1)
+    parser.feed("<a href='http://foo.org/' name='splat'> </a>\n            <a href='http://www.python.org/'> </a>\n            <a name='frob'> </a>\n            ")
+    parser.close()
+    self.assertEquals(parser.get_anchor_info(), [('http://foo.org/', 'splat', ''), ('http://www.python.org/', '', ''), ('', 'frob', '')])
