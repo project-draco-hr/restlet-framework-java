@@ -1,3 +1,21 @@
 {
-  super.write(outputStream);
+  if (getGraph() != null) {
+    Map<String,String> prefixes=new HashMap<String,String>();
+    prefixes.put(RDF_SCHEMA.toString(),"rdf");
+    prefixes.put(RDF_SYNTAX.toString(),"rdfs");
+    prefixes.put("http://www.w3.org/2000/10/swap/grammar/bnf#","cfg");
+    prefixes.put("http://www.w3.org/2000/10/swap/grammar/n3#","n3");
+    prefixes.put("http://www.w3.org/2000/10/swap/list#","list");
+    prefixes.put("http://www.w3.org/2000/10/swap/pim/doc#","doc");
+    prefixes.put("http://www.w3.org/2002/07/owl#","owl");
+    prefixes.put("http://www.w3.org/2000/10/swap/log#","log");
+    prefixes.put("http://purl.org/dc/elements/1.1/","dc");
+    StringBuilder builder=new StringBuilder();
+    for (    Entry<String,String> entry : prefixes.entrySet()) {
+      builder.append("@prefix ").append(entry.getValue()).append(":").append(entry.getKey()).append(".\n");
+    }
+    builder.append("@keywords a, is, of, has.\n");
+    outputStream.write(builder.toString().getBytes());
+    write(outputStream,getGraph(),prefixes);
+  }
 }

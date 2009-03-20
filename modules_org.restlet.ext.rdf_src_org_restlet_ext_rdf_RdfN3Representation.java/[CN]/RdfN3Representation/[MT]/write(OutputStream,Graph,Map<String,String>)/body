@@ -1,0 +1,37 @@
+{
+  for (  Link link : getGraph()) {
+    if (link.hasReferenceSource()) {
+      write(outputStream,link.getSourceAsReference(),prefixes);
+    }
+ else     if (link.hasLinkSource()) {
+      Link source=link.getSourceAsLink();
+    }
+ else     if (link.hasGraphSource()) {
+      outputStream.write("{".getBytes());
+      write(outputStream,link.getSourceAsGraph(),new HashMap<String,String>(prefixes));
+      outputStream.write("}".getBytes());
+    }
+ else {
+    }
+    outputStream.write(" ".getBytes());
+    write(outputStream,link.getTypeRef(),prefixes);
+    outputStream.write(" ".getBytes());
+    if (link.hasReferenceTarget()) {
+      write(outputStream,link.getTargetAsReference(),prefixes);
+    }
+ else     if (link.hasLiteralTarget()) {
+      Literal target=link.getTargetAsLiteral();
+      outputStream.write(target.toString().getBytes());
+    }
+ else     if (link.hasLinkTarget()) {
+    }
+ else     if (link.hasGraphTarget()) {
+      outputStream.write("{".getBytes());
+      write(outputStream,link.getTargetAsGraph(),new HashMap<String,String>(prefixes));
+      outputStream.write("}".getBytes());
+    }
+ else {
+    }
+    outputStream.write(".\n".getBytes());
+  }
+}
