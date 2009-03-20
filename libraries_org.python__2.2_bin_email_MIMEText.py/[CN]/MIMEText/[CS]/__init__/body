@@ -1,8 +1,0 @@
-def __init__(self, _text, _subtype='plain', _charset='us-ascii', _encoder=None):
-    'Create a text/* type MIME document.\n\n        _text is the string for this message object.\n\n        _subtype is the MIME sub content type, defaulting to "plain".\n\n        _charset is the character set parameter added to the Content-Type\n        header.  This defaults to "us-ascii".  Note that as a side-effect, the\n        Content-Transfer-Encoding header will also be set.\n\n        The use of the _encoder is deprecated.  The encoding of the payload,\n        and the setting of the character set parameter now happens implicitly\n        based on the _charset argument.  If _encoder is supplied, then a\n        DeprecationWarning is used, and the _encoder functionality may\n        override any header settings indicated by _charset.  This is probably\n        not what you want.\n        '
-    MIMENonMultipart.__init__(self, 'text', _subtype, **{'charset': _charset, })
-    self.set_payload(_text, _charset)
-    if (_encoder is not None):
-        warnings.warn('_encoder argument is obsolete.', DeprecationWarning, 2)
-        del self['content-transfer-encoding']
-        _encoder(self)

@@ -1,8 +1,0 @@
-def starttls(self, keyfile=None, certfile=None):
-    'Puts the connection to the SMTP server into TLS mode.\n\n        If the server supports TLS, this will encrypt the rest of the SMTP\n        session. If you provide the keyfile and certfile parameters,\n        the identity of the SMTP server and client can be checked. This,\n        however, depends on whether the socket module really checks the\n        certificates.\n        '
-    (resp, reply) = self.docmd('STARTTLS')
-    if (resp == 220):
-        sslobj = socket.ssl(self.sock, keyfile, certfile)
-        self.sock = SSLFakeSocket(self.sock, sslobj)
-        self.file = SSLFakeFile(sslobj)
-    return (resp, reply)
