@@ -1,0 +1,40 @@
+{
+  String result=null;
+  if (this.jsonObject != null) {
+    if (this.jsonObject instanceof JSONArray) {
+      JSONArray jsonArray=(JSONArray)this.jsonObject;
+      if (isIndent()) {
+        result=jsonArray.toString(getIndentFactor());
+      }
+ else {
+        result=jsonArray.toString();
+      }
+    }
+ else     if (this.jsonObject instanceof JSONObject) {
+      JSONObject jsonObject=(JSONObject)this.jsonObject;
+      if (isIndent()) {
+        result=jsonObject.toString(getIndentFactor());
+      }
+ else {
+        result=jsonObject.toString();
+      }
+    }
+ else     if (this.jsonObject instanceof JSONStringer) {
+      JSONStringer jsonStringer=(JSONStringer)this.jsonObject;
+      result=jsonStringer.toString();
+    }
+ else     if (this.jsonObject instanceof JSONTokener) {
+      JSONTokener jsonTokener=(JSONTokener)this.jsonObject;
+      result=jsonTokener.toString();
+    }
+  }
+ else   if (this.jsonRepresentation != null) {
+    try {
+      result=this.jsonRepresentation.getText();
+    }
+ catch (    IOException e) {
+      throw new JSONException(e);
+    }
+  }
+  return result;
+}
