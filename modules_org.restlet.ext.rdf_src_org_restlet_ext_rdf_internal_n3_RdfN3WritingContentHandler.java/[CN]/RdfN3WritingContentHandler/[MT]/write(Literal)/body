@@ -1,0 +1,22 @@
+{
+  this.bw.write("\"");
+  if (literal.getValue().contains("\n")) {
+    this.bw.write("\"");
+    this.bw.write("\"");
+    this.bw.write(literal.getValue());
+    this.bw.write("\"");
+    this.bw.write("\"");
+  }
+ else {
+    this.bw.write(literal.getValue());
+  }
+  this.bw.write("\"");
+  if (literal.getDatatypeRef() != null) {
+    this.bw.write("^^");
+    write(literal.getDatatypeRef(),context.getPrefixes());
+  }
+  if (literal.getLanguage() != null) {
+    this.bw.write("@");
+    this.bw.write(literal.getLanguage().toString());
+  }
+}

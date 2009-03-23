@@ -1,0 +1,28 @@
+{
+  scoutIndex++;
+  if (buffer[scoutIndex] == RdfN3ParsingContentHandler.EOF) {
+    if (scoutIndex == RdfN3ParsingContentHandler.BUFFER_SIZE) {
+      scoutIndex++;
+      int len=this.br.read(buffer,0,RdfN3ParsingContentHandler.BUFFER_SIZE);
+      if (len == -1) {
+        buffer[scoutIndex]=RdfN3ParsingContentHandler.EOF;
+      }
+ else {
+        buffer[RdfN3ParsingContentHandler.BUFFER_SIZE + len + 1]=RdfN3ParsingContentHandler.EOF;
+      }
+    }
+ else     if (scoutIndex == (2 * RdfN3ParsingContentHandler.BUFFER_SIZE + 1)) {
+      scoutIndex=0;
+      int len=this.br.read(buffer,0,RdfN3ParsingContentHandler.BUFFER_SIZE);
+      if (len == -1) {
+        buffer[scoutIndex]=RdfN3ParsingContentHandler.EOF;
+      }
+ else {
+        buffer[len]=RdfN3ParsingContentHandler.EOF;
+      }
+    }
+ else {
+    }
+  }
+  return buffer[scoutIndex];
+}
