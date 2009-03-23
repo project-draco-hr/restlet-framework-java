@@ -1,11 +1,24 @@
 {
   try {
-    write(source,this.context.getPrefixes());
-    this.bw.write(" ");
-    write(typeRef,this.context.getPrefixes());
-    this.bw.write(" ");
+    if (source.equals(this.precSource)) {
+      this.writeExtraDot=false;
+      if (typeRef.equals(this.precPredicate)) {
+        this.bw.write(", ");
+      }
+ else {
+        this.bw.write("; ");
+        write(typeRef,this.context.getPrefixes());
+        this.bw.write(" ");
+      }
+    }
+ else {
+      this.writeExtraDot=true;
+      write(source,this.context.getPrefixes());
+      this.bw.write(" ");
+      write(typeRef,this.context.getPrefixes());
+      this.bw.write(" ");
+    }
     write(target,this.context.getPrefixes());
-    this.bw.write(".\n");
   }
  catch (  IOException e) {
   }

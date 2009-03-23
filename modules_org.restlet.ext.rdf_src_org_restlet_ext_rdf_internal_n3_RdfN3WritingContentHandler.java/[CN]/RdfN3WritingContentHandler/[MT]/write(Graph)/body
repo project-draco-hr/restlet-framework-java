@@ -1,6 +1,10 @@
 {
   for (  Link link : linkset) {
     if (link.hasReferenceSource()) {
+      if (!link.getSourceAsReference().equals(this.precSource)) {
+        this.bw.write(".\n");
+        this.writeExtraDot=true;
+      }
       if (link.hasReferenceTarget()) {
         link(link.getSourceAsReference(),link.getTypeRef(),link.getTargetAsReference());
       }
@@ -13,6 +17,7 @@
       }
     }
  else     if (link.hasGraphSource()) {
+      this.writeExtraDot=false;
       if (link.hasReferenceTarget()) {
         link(link.getSourceAsGraph(),link.getTypeRef(),link.getTargetAsReference());
       }
@@ -23,6 +28,12 @@
       }
  else {
       }
+      this.bw.write(".\n");
     }
+    this.precSource=link.getSourceAsReference();
+    this.precPredicate=link.getTypeRef();
+  }
+  if (writeExtraDot) {
+    this.bw.write(".\n");
   }
 }
