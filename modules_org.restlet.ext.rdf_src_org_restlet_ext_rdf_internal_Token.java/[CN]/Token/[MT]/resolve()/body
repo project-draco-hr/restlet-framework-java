@@ -1,32 +1,18 @@
 {
   Object result=null;
-  setResolved(true);
-  int index=getValue().indexOf(":");
-  if (index != -1) {
-    String prefix=getValue().substring(0,index + 1);
-    String base=null;
-    if (getContext() != null) {
-      base=getContext().getPrefixes().get(prefix);
-    }
-    if (base != null) {
-      result=new Reference(base + getValue().substring(index));
-    }
- else {
-      result=null;
-    }
+  if (getContext().isQName(getValue())) {
+    result=(getContext() != null) ? getContext().resolve(getValue()) : getValue();
   }
  else {
-    if (getContext().getKeywords().contains(getValue())) {
-      String base=null;
-      if (getContext() != null) {
-        base=getContext().getPrefixes().get(":");
-        result=new Reference(base + getValue());
+    if (getValue().charAt(0) > '0' && getValue().charAt(0) < '9') {
+      if (getValue().contains(".")) {
+        result=new Literal(getValue(),RdfN3Representation.XML_SCHEMA_TYPE_FLOAT);
       }
  else {
+        result=new Literal(getValue(),RdfN3Representation.XML_SCHEMA_TYPE_INTEGER);
       }
     }
  else {
-      result=new Reference(getContext().getBase().toString() + getValue());
     }
   }
   setResolved(!(result == null));

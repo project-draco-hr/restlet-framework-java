@@ -1,0 +1,28 @@
+{
+  Reference result=null;
+  int index=qname.indexOf(":");
+  if (index != -1) {
+    String prefix=qname.substring(0,index + 1);
+    String base=getPrefixes().get(prefix);
+    if (base != null) {
+      result=new Reference(base + qname.substring(index + 1));
+    }
+ else {
+      result=null;
+    }
+  }
+ else {
+    if (getKeywords().contains(qname)) {
+      String base=getPrefixes().get(":");
+      if (qname != null) {
+        result=new Reference(base + qname);
+      }
+ else {
+      }
+    }
+ else {
+      result=new Reference(getBase().toString() + qname);
+    }
+  }
+  return result;
+}

@@ -37,4 +37,17 @@
     getContentHandler().step();
     getContentHandler().discard();
   }
+  int c=getContentHandler().getChar();
+  if (c == '@') {
+    this.language=getContentHandler().parseToken();
+  }
+ else   if (c == '^') {
+    c=getContentHandler().step();
+    if (c == '^') {
+      this.type=getContentHandler().parseToken();
+    }
+ else {
+      getContentHandler().stepBack();
+    }
+  }
 }

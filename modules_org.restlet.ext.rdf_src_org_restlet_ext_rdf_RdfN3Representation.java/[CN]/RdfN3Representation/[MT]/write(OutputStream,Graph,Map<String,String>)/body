@@ -1,5 +1,11 @@
 {
   for (  Link link : getGraph()) {
+    System.out.print("*** Link ");
+    System.out.print(link.getSource().toString());
+    System.out.print(" ");
+    System.out.print(link.getTypeRef().toString());
+    System.out.print(" ");
+    System.out.println(link.getTarget().toString());
     if (link.hasReferenceSource()) {
       write(outputStream,link.getSourceAsReference(),prefixes);
     }
@@ -20,7 +26,26 @@
     }
  else     if (link.hasLiteralTarget()) {
       Literal target=link.getTargetAsLiteral();
-      outputStream.write(target.toString().getBytes());
+      outputStream.write("\"".getBytes());
+      if (target.getValue().contains("\n")) {
+        outputStream.write("\"".getBytes());
+        outputStream.write("\"".getBytes());
+        outputStream.write(target.getValue().getBytes());
+        outputStream.write("\"".getBytes());
+        outputStream.write("\"".getBytes());
+      }
+ else {
+        outputStream.write(target.getValue().getBytes());
+      }
+      outputStream.write("\"".getBytes());
+      if (target.getDatatypeRef() != null) {
+        outputStream.write("^^".getBytes());
+        write(outputStream,target.getDatatypeRef(),prefixes);
+      }
+      if (target.getLanguage() != null) {
+        outputStream.write("@".getBytes());
+        outputStream.write(target.getLanguage().toString().getBytes());
+      }
     }
  else     if (link.hasLinkTarget()) {
     }
