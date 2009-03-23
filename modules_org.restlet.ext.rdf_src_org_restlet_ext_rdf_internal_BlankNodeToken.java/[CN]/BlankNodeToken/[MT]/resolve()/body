@@ -5,8 +5,13 @@
       getContentHandler().generateLinks(lexicalUnits);
     }
   }
-  if (this.getValue() != null) {
-    return new Reference(getValue());
+  if (getValue() != null) {
+    if (getValue().startsWith("_:")) {
+      return new Reference(getValue());
+    }
+ else {
+      return LinkReference.createBlank(getValue());
+    }
   }
  else {
   }
