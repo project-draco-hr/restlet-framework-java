@@ -1,0 +1,19 @@
+{
+  Reference currentBlankNode=(Reference)new BlankNodeToken(RdfN3ContentHandler.newBlankNodeId()).resolve();
+  for (  LexicalUnit lexicalUnit : lexicalUnits) {
+    Object element=lexicalUnit.resolve();
+    if (element instanceof Reference) {
+      getContentHandler().link(currentBlankNode,RdfN3Representation.LIST_FIRST,(Reference)element);
+    }
+ else     if (element instanceof String) {
+      getContentHandler().link(currentBlankNode,RdfN3Representation.LIST_FIRST,new Reference((String)element));
+    }
+ else {
+    }
+    Reference restBlankNode=(Reference)new BlankNodeToken(RdfN3ContentHandler.newBlankNodeId()).resolve();
+    getContentHandler().link(currentBlankNode,RdfN3Representation.LIST_REST,restBlankNode);
+    currentBlankNode=restBlankNode;
+  }
+  getContentHandler().link(currentBlankNode,RdfN3Representation.LIST_REST,RdfN3Representation.OBJECT_NIL);
+  return currentBlankNode;
+}
