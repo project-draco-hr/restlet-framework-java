@@ -3,9 +3,8 @@
     writer.write(getJsonText());
   }
  catch (  JSONException e) {
-    throw new IOException(e.getLocalizedMessage());
-  }
- finally {
-    writer.close();
+    IOException ioe=new IOException(e.getLocalizedMessage());
+    ioe.initCause(e.getCause());
+    throw ioe;
   }
 }
