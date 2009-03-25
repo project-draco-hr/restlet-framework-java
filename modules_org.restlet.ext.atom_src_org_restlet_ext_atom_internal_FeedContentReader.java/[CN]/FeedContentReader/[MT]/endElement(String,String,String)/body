@@ -1,0 +1,139 @@
+{
+  if (this.currentText != null) {
+    this.currentText.setContent(this.contentBuffer.toString());
+  }
+  if (this.currentDate != null) {
+    final String formattedDate=this.contentBuffer.toString();
+    final Date parsedDate=DateUtils.parse(formattedDate,DateUtils.FORMAT_RFC_3339);
+    if (parsedDate != null) {
+      this.currentDate.setTime(parsedDate.getTime());
+    }
+ else {
+      this.currentDate=null;
+    }
+  }
+  if (uri.equalsIgnoreCase(Feed.ATOM_NAMESPACE)) {
+    if (localName.equals("feed")) {
+      this.state=State.NONE;
+    }
+ else     if (localName.equals("title")) {
+      if (this.state == State.FEED_TITLE) {
+        this.currentFeed.setTitle(this.currentText);
+        this.state=State.FEED;
+      }
+ else       if (this.state == State.FEED_ENTRY_TITLE) {
+        this.currentEntry.setTitle(this.currentText);
+        this.state=State.FEED_ENTRY;
+      }
+ else       if (this.state == State.FEED_ENTRY_SOURCE_TITLE) {
+        this.currentEntry.getSource().setTitle(this.currentText);
+        this.state=State.FEED_ENTRY_SOURCE;
+      }
+    }
+ else     if (localName.equals("updated")) {
+      if (this.state == State.FEED_UPDATED) {
+        this.currentFeed.setUpdated(this.currentDate);
+        this.state=State.FEED;
+      }
+ else       if (this.state == State.FEED_ENTRY_UPDATED) {
+        this.currentEntry.setUpdated(this.currentDate);
+        this.state=State.FEED_ENTRY;
+      }
+ else       if (this.state == State.FEED_ENTRY_SOURCE_UPDATED) {
+        this.currentEntry.getSource().setUpdated(this.currentDate);
+        this.state=State.FEED_ENTRY_SOURCE;
+      }
+    }
+ else     if (localName.equals("published")) {
+      if (this.state == State.FEED_ENTRY_PUBLISHED) {
+        this.currentEntry.setPublished(this.currentDate);
+        this.state=State.FEED_ENTRY;
+      }
+    }
+ else     if (localName.equals("author")) {
+      if (this.state == State.FEED_AUTHOR) {
+        this.currentFeed.getAuthors().add(this.currentPerson);
+        this.state=State.FEED;
+      }
+ else       if (this.state == State.FEED_ENTRY_AUTHOR) {
+        this.currentEntry.getAuthors().add(this.currentPerson);
+        this.state=State.FEED_ENTRY;
+      }
+ else       if (this.state == State.FEED_ENTRY_SOURCE_AUTHOR) {
+        this.currentEntry.getSource().getAuthors().add(this.currentPerson);
+        this.state=State.FEED_ENTRY_SOURCE;
+      }
+    }
+ else     if (localName.equals("name")) {
+      this.currentPerson.setName(this.contentBuffer.toString());
+      if (this.state == State.FEED_AUTHOR_NAME) {
+        this.state=State.FEED_AUTHOR;
+      }
+ else       if (this.state == State.FEED_ENTRY_AUTHOR_NAME) {
+        this.state=State.FEED_ENTRY_AUTHOR;
+      }
+ else       if (this.state == State.FEED_ENTRY_SOURCE_AUTHOR_NAME) {
+        this.state=State.FEED_ENTRY_SOURCE_AUTHOR;
+      }
+    }
+ else     if (localName.equals("id")) {
+      if (this.state == State.FEED_ID) {
+        this.currentFeed.setId(this.contentBuffer.toString());
+        this.state=State.FEED;
+      }
+ else       if (this.state == State.FEED_ENTRY_ID) {
+        this.currentEntry.setId(this.contentBuffer.toString());
+        this.state=State.FEED_ENTRY;
+      }
+ else       if (this.state == State.FEED_ENTRY_SOURCE_ID) {
+        this.currentEntry.getSource().setId(this.contentBuffer.toString());
+        this.state=State.FEED_ENTRY_SOURCE;
+      }
+    }
+ else     if (localName.equals("link")) {
+      if (this.state == State.FEED_LINK) {
+        this.currentFeed.getLinks().add(this.currentLink);
+        this.state=State.FEED;
+      }
+ else       if (this.state == State.FEED_ENTRY_LINK) {
+        this.currentEntry.getLinks().add(this.currentLink);
+        this.state=State.FEED_ENTRY;
+      }
+ else       if (this.state == State.FEED_ENTRY_SOURCE_LINK) {
+        this.currentEntry.getSource().getLinks().add(this.currentLink);
+        this.state=State.FEED_ENTRY_SOURCE;
+      }
+    }
+ else     if (localName.equalsIgnoreCase("entry")) {
+      if (this.state == State.FEED_ENTRY) {
+        this.currentFeed.getEntries().add(this.currentEntry);
+        this.state=State.FEED;
+      }
+    }
+ else     if (localName.equals("category")) {
+      if (this.state == State.FEED_CATEGORY) {
+        this.currentFeed.getCategories().add(this.currentCategory);
+        this.state=State.FEED;
+      }
+ else       if (this.state == State.FEED_ENTRY_CATEGORY) {
+        this.currentEntry.getCategories().add(this.currentCategory);
+        this.state=State.FEED_ENTRY;
+      }
+ else       if (this.state == State.FEED_ENTRY_SOURCE_CATEGORY) {
+        this.currentEntry.getSource().getCategories().add(this.currentCategory);
+        this.state=State.FEED_ENTRY_SOURCE;
+      }
+    }
+ else     if (localName.equalsIgnoreCase("content")) {
+      if (this.state == State.FEED_ENTRY_CONTENT) {
+        if (this.currentEntry.getContent().isInline()) {
+          final StringRepresentation sr=(StringRepresentation)this.currentEntry.getContent().getInlineContent();
+          sr.setText(this.contentBuffer.toString());
+        }
+        this.state=State.FEED_ENTRY;
+      }
+    }
+  }
+  this.currentText=null;
+  this.currentDate=null;
+}
