@@ -1,12 +1,12 @@
 {
-  ScriptSource.ScriptDescriptor<EmbeddedScript> scriptDescriptor=ScriptedTextResource.scriptSource.getScriptDescriptor(name);
+  ScriptSource.ScriptDescriptor<EmbeddedScript> scriptDescriptor=this.resource.getScriptSource().getScriptDescriptor(name);
   EmbeddedScript script=scriptDescriptor.getScript();
   if (script == null) {
     String text=scriptDescriptor.getText();
     if (scriptEngineName != null) {
       text=EmbeddedScript.delimiter1Start + scriptEngineName + " "+ text+ EmbeddedScript.delimiter1End;
     }
-    script=new EmbeddedScript(text,ScriptedTextResource.scriptEngineManager,ScriptedTextResource.defaultEngineName,ScriptedTextResource.allowCompilation);
+    script=new EmbeddedScript(text,this.resource.getScriptEngineManager(),this.resource.getDefaultScriptEngineName(),this.resource.isAllowCompilation());
     scriptDescriptor.setScript(script);
   }
   String trivial=script.getTrivial();
@@ -14,10 +14,10 @@
     if (getWriter() != null) {
       getWriter().write(trivial);
     }
-    return new StringRepresentation(trivial,this.mediaType,this.language,this.characterSet);
+    return new StringRepresentation(trivial,getMediaType(),getLanguage(),getCharacterSet());
   }
   int startPosition=0;
-  if (!this.isStreaming) {
+  if (!isStreaming()) {
     if (getWriter() == null) {
       StringWriter stringWriter=new StringWriter();
       this.buffer=stringWriter.getBuffer();
@@ -29,23 +29,23 @@
     }
   }
   try {
-    if (script.run(getWriter(),this.errorWriter,this.scriptEngines,this.scriptContextController,!this.isStreaming)) {
+    if (script.run(getWriter(),getErrorWriter(),this.scriptEngines,this.scriptContextController,!isStreaming())) {
       if (this.startStreaming) {
         this.startStreaming=false;
         return new ScriptedTextStreamingRepresentation(this,script);
       }
-      if (this.isStreaming) {
+      if (isStreaming()) {
         return null;
       }
  else {
         getWriter().flush();
-        RepresentableString string=new RepresentableString(this.buffer.substring(startPosition),this.mediaType,this.language,this.characterSet);
+        RepresentableString string=new RepresentableString(this.buffer.substring(startPosition),getMediaType(),getLanguage(),getCharacterSet());
         this.cache.put(name,string);
         if (startPosition == 0) {
           return string.represent();
         }
  else {
-          return new StringRepresentation(this.buffer.toString(),this.mediaType,this.language,this.characterSet);
+          return new StringRepresentation(this.buffer.toString(),getMediaType(),getLanguage(),getCharacterSet());
         }
       }
     }

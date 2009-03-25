@@ -1,12 +1,12 @@
 {
   Request request=getRequest();
-  String name=ScriptUtils.getRelativePart(request,defaultName);
+  String name=ScriptUtils.getRelativePart(request,getDefaultName());
   try {
-    if (sourceViewable && TRUE.equals(request.getResourceRef().getQueryAsForm().getFirstValue(SOURCE))) {
-      return new StringRepresentation(scriptSource.getScriptDescriptor(name).getText());
+    if (isSourceViewable() && TRUE.equals(request.getResourceRef().getQueryAsForm().getFirstValue(SOURCE))) {
+      return new StringRepresentation(getScriptSource().getScriptDescriptor(name).getText());
     }
  else {
-      ScriptedTextResourceContainer container=new ScriptedTextResourceContainer(variant,request,getResponse(),cache);
+      ScriptedTextResourceContainer container=new ScriptedTextResourceContainer(this,variant,getCache());
       Representation representation=container.include(name);
       if (representation == null) {
         throw new ResourceException(Status.CLIENT_ERROR_NOT_FOUND);
@@ -16,13 +16,13 @@
       }
     }
   }
- catch (  FileNotFoundException x) {
-    throw new ResourceException(Status.CLIENT_ERROR_NOT_FOUND,x);
+ catch (  FileNotFoundException e) {
+    throw new ResourceException(Status.CLIENT_ERROR_NOT_FOUND,e);
   }
-catch (  IOException x) {
-    throw new ResourceException(x);
+catch (  IOException e) {
+    throw new ResourceException(e);
   }
-catch (  ScriptException x) {
-    throw new ResourceException(x);
+catch (  ScriptException e) {
+    throw new ResourceException(e);
   }
 }

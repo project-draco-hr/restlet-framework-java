@@ -1,17 +1,17 @@
 {
   ScriptedResourceContainer container=new ScriptedResourceContainer(this,variant);
   Request request=getRequest();
-  if (sourceViewable && TRUE.equals(request.getResourceRef().getQueryAsForm().getFirstValue(SOURCE))) {
-    String name=ScriptUtils.getRelativePart(request,defaultName);
+  if (isSourceViewable() && TRUE.equals(request.getResourceRef().getQueryAsForm().getFirstValue(SOURCE))) {
+    String name=ScriptUtils.getRelativePart(request,getDefaultName());
     try {
-      return new StringRepresentation(scriptSource.getScriptDescriptor(name).getText());
+      return new StringRepresentation(getScriptSource().getScriptDescriptor(name).getText());
     }
- catch (    IOException x) {
-      throw new ResourceException(Status.CLIENT_ERROR_NOT_FOUND,x);
+ catch (    IOException e) {
+      throw new ResourceException(Status.CLIENT_ERROR_NOT_FOUND,e);
     }
   }
  else {
-    Object r=container.invoke(representEntryPointName);
+    Object r=container.invoke(getRepresentEntryPointName());
     if (r == null) {
       return null;
     }

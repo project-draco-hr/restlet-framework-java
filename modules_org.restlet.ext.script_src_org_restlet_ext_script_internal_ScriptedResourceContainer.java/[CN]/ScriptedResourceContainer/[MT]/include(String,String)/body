@@ -1,12 +1,12 @@
 {
-  ScriptSource.ScriptDescriptor<EmbeddedScript> scriptDescriptor=ScriptedResource.scriptSource.getScriptDescriptor(name);
+  ScriptSource.ScriptDescriptor<EmbeddedScript> scriptDescriptor=this.resource.getScriptSource().getScriptDescriptor(name);
   EmbeddedScript script=scriptDescriptor.getScript();
   if (script == null) {
     String text=scriptDescriptor.getText();
     if (scriptEngineName != null) {
       text=EmbeddedScript.delimiter1Start + scriptEngineName + " "+ text+ EmbeddedScript.delimiter1End;
     }
-    script=new EmbeddedScript(text,ScriptedResource.scriptEngineManager,ScriptedResource.defaultEngineName,ScriptedResource.allowCompilation);
+    script=new EmbeddedScript(text,this.resource.getScriptEngineManager(),this.resource.getDefaultScriptEngineName(),this.resource.isAllowCompilation());
     scriptDescriptor.setScript(script);
   }
   script.run(this.writer,this.errorWriter,this.scriptEngines,this.scriptContextController,false);
