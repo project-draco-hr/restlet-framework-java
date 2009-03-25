@@ -1,3 +1,11 @@
 {
-  return null;
+  T result=null;
+  ConverterHelper ch=ConverterUtils.getHelper(representation,targetClass,resource);
+  if (ch != null) {
+    result=ch.toObject(representation,targetClass,resource);
+  }
+ else {
+    Context.getCurrentLogger().warning("Unable to find a converter for this representation : " + representation);
+  }
+  return result;
 }
