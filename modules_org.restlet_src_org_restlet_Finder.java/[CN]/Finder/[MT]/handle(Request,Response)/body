@@ -1,11 +1,19 @@
 {
   super.handle(request,response);
   if (isStarted()) {
-    final Handler target=findTarget(request,response);
+    final Handler targetHandler=findTarget(request,response);
     if (!response.getStatus().equals(Status.SUCCESS_OK)) {
     }
- else     if (target == null) {
-      response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+ else     if (targetHandler == null) {
+      final ServerResource targetResource=find(request,response);
+      if (!response.getStatus().equals(Status.SUCCESS_OK)) {
+      }
+ else       if (targetResource == null) {
+        response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+      }
+ else {
+        targetResource.handle();
+      }
     }
  else {
       final Method method=request.getMethod();
@@ -13,33 +21,33 @@
         response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,"No method specified");
       }
  else {
-        if (!allow(method,target)) {
+        if (!allow(method,targetHandler)) {
           response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
-          target.updateAllowedMethods();
+          targetHandler.updateAllowedMethods();
         }
  else {
           if (method.equals(Method.GET)) {
-            target.handleGet();
+            targetHandler.handleGet();
           }
  else           if (method.equals(Method.HEAD)) {
-            target.handleHead();
+            targetHandler.handleHead();
           }
  else           if (method.equals(Method.POST)) {
-            target.handlePost();
+            targetHandler.handlePost();
           }
  else           if (method.equals(Method.PUT)) {
-            target.handlePut();
+            targetHandler.handlePut();
           }
  else           if (method.equals(Method.DELETE)) {
-            target.handleDelete();
+            targetHandler.handleDelete();
           }
  else           if (method.equals(Method.OPTIONS)) {
-            target.handleOptions();
+            targetHandler.handleOptions();
           }
  else {
-            final java.lang.reflect.Method handleMethod=getHandleMethod(target,method);
+            final java.lang.reflect.Method handleMethod=getHandleMethod(targetHandler,method);
             if (handleMethod != null) {
-              invoke(target,handleMethod);
+              invoke(targetHandler,handleMethod);
             }
  else {
               response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);

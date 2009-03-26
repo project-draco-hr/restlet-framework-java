@@ -1,0 +1,34 @@
+{
+  ServerResource result=null;
+  if (targetClass != null) {
+    try {
+      Constructor<?> constructor;
+      try {
+        constructor=targetClass.getConstructor(Context.class,Request.class,Response.class);
+        result=(ServerResource)constructor.newInstance(getContext(),request,response);
+      }
+ catch (      NoSuchMethodException nsme) {
+        constructor=targetClass.getConstructor();
+        if (constructor != null) {
+          result=(ServerResource)constructor.newInstance();
+          result.init(getContext(),request,response);
+        }
+      }
+    }
+ catch (    InvocationTargetException e) {
+      if (e.getCause() instanceof Error) {
+        throw (Error)e.getCause();
+      }
+ else       if (e.getCause() instanceof RuntimeException) {
+        throw (RuntimeException)e.getCause();
+      }
+ else {
+        getLogger().log(Level.WARNING,"Exception while instantiating the target server resource.",e);
+      }
+    }
+catch (    Exception e) {
+      getLogger().log(Level.WARNING,"Exception while instantiating the target server resource.",e);
+    }
+  }
+  return result;
+}
