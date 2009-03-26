@@ -12,14 +12,14 @@
         preferredVariant=variants.get(0);
       }
  else {
-        getResponse().setStatus(Status.CLIENT_ERROR_PRECONDITION_FAILED);
+        setStatus(Status.CLIENT_ERROR_PRECONDITION_FAILED);
         canDelete=false;
       }
     }
     if (canDelete) {
       final Status status=getRequest().getConditions().getStatus(getRequest().getMethod(),get(preferredVariant));
       if (status != null) {
-        getResponse().setStatus(status);
+        setStatus(status);
         canDelete=false;
       }
     }
@@ -29,7 +29,7 @@
       result=delete();
     }
  catch (    ResourceException re) {
-      getResponse().setStatus(re.getStatus(),re);
+      setStatus(re.getStatus(),re);
     }
   }
   return result;
