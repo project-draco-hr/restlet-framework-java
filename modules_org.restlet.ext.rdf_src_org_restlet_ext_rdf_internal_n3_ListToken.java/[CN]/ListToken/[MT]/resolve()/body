@@ -3,17 +3,17 @@
   for (  LexicalUnit lexicalUnit : lexicalUnits) {
     Object element=lexicalUnit.resolve();
     if (element instanceof Reference) {
-      getContentHandler().link(currentBlankNode,RdfRepresentation.LIST_FIRST,(Reference)element);
+      getContentHandler().link(currentBlankNode,RdfConstants.LIST_FIRST,(Reference)element);
     }
  else     if (element instanceof String) {
-      getContentHandler().link(currentBlankNode,RdfRepresentation.LIST_FIRST,new Reference((String)element));
+      getContentHandler().link(currentBlankNode,RdfConstants.LIST_FIRST,new Reference((String)element));
     }
  else {
     }
     Reference restBlankNode=(Reference)new BlankNodeToken(RdfN3ParsingContentHandler.newBlankNodeId()).resolve();
-    getContentHandler().link(currentBlankNode,RdfRepresentation.LIST_REST,restBlankNode);
+    getContentHandler().link(currentBlankNode,RdfConstants.LIST_REST,restBlankNode);
     currentBlankNode=restBlankNode;
   }
-  getContentHandler().link(currentBlankNode,RdfRepresentation.LIST_REST,RdfRepresentation.OBJECT_NIL);
+  getContentHandler().link(currentBlankNode,RdfConstants.LIST_REST,RdfConstants.OBJECT_NIL);
   return currentBlankNode;
 }
