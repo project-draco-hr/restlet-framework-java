@@ -1,3 +1,36 @@
 {
-  return null;
+  Representation result=null;
+  try {
+    final Method method=getRequest().getMethod();
+    if (method == null) {
+      setStatus(Status.CLIENT_ERROR_BAD_REQUEST,"No method specified");
+    }
+ else {
+      if (method.equals(Method.GET)) {
+        result=get();
+      }
+ else       if (method.equals(Method.HEAD)) {
+        result=head();
+      }
+ else       if (method.equals(Method.POST)) {
+        result=post(getRequest().getEntity());
+      }
+ else       if (method.equals(Method.PUT)) {
+        result=put(getRequest().getEntity());
+      }
+ else       if (method.equals(Method.DELETE)) {
+        result=delete();
+      }
+ else       if (method.equals(Method.OPTIONS)) {
+        result=options();
+      }
+ else {
+        setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+      }
+    }
+  }
+ catch (  ResourceException re) {
+    setStatus(re.getStatus(),re.getCause(),re.getLocalizedMessage());
+  }
+  return result;
 }
