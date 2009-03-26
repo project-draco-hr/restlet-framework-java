@@ -1,15 +1,18 @@
 {
   Reference result=null;
   if (uri != null) {
-    Reference base=new Reference(uri);
-    if (base.isRelative()) {
-      base=new Reference(this.base,uri);
-    }
-    if (localName != null) {
-      result=new Reference(base,localName);
+    StringBuilder base=new StringBuilder();
+    if (new Reference(uri).isRelative()) {
+      base.append(this.base).append(uri);
     }
  else {
-      result=base;
+      base.append(uri);
+    }
+    if (localName != null) {
+      result=new Reference(base.append(localName).toString());
+    }
+ else {
+      result=new Reference(base.toString());
     }
   }
  else   if (name != null) {
@@ -22,7 +25,7 @@
     }
   }
  else {
-    result=new Reference(this.base,localName);
+    result=new Reference(this.base + localName);
   }
-  return result.getTargetRef();
+  return result;
 }
