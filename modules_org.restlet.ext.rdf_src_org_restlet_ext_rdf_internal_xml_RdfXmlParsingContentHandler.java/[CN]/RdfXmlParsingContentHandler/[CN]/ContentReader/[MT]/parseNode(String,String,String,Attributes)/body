@@ -4,15 +4,15 @@
   boolean found=false;
   for (int i=0; i < attributes.getLength(); i++) {
     String qName=attributes.getQName(i);
-    if ("rdf:about".equals(qName)) {
+    if (checkRdfQName("about",qName)) {
       found=true;
       result=getReference(null,attributes.getValue(i),null);
     }
- else     if ("rdf:nodeID".equals(qName)) {
+ else     if (checkRdfQName("nodeID",qName)) {
       found=true;
       result=LinkReference.createBlank(attributes.getValue(i));
     }
- else     if ("rdf:ID".equals(qName)) {
+ else     if (checkRdfQName("ID",qName)) {
       found=true;
       result=getReference(null,"#" + attributes.getValue(i),null);
     }
@@ -24,7 +24,7 @@
   if (!found) {
     result=LinkReference.createBlank(ContentReader.newBlankNodeId());
   }
-  if (!"rdf:Description".equals(name)) {
+  if (!checkRdfQName("Description",name)) {
     this.graphHandler.link(result,RdfXmlRepresentation.PREDICATE_TYPE,getReference(uri,localName,name));
   }
   for (  String[] arc : arcs) {

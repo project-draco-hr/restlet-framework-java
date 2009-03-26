@@ -4,7 +4,7 @@
     this.builder=new StringBuilder();
   }
   if (state == State.NONE) {
-    if (equals("rdf:RDF",uri,localName,name)) {
+    if (checkRdfQName("RDF",name)) {
       String base=attributes.getValue("xml:base");
       if (base != null) {
         this.base=new Reference(base);
@@ -21,16 +21,16 @@
     this.currentPredicate=getReference(uri,localName,name);
     for (int i=0; i < attributes.getLength(); i++) {
       String qName=attributes.getQName(i);
-      if ("rdf:resource".equals(qName)) {
+      if (checkRdfQName("resource",qName)) {
         this.graphHandler.link(getCurrentSubject(),this.currentPredicate,getReference(attributes.getValue(i),null,null));
         break;
       }
- else       if ("rdf:datatype".equals(qName)) {
+ else       if (checkRdfQName("datatype",qName)) {
         popState();
         pushState(State.LITERAL);
         this.currentDataType=attributes.getValue(i);
       }
- else       if ("rdf:parseType".equals(qName)) {
+ else       if (checkRdfQName("parseType",qName)) {
         String value=attributes.getValue(i);
         if ("Literal".equals(value)) {
           popState();
@@ -48,7 +48,7 @@
  else {
         }
       }
- else       if ("rdf:nodeID".equals(qName)) {
+ else       if (checkRdfQName("nodeID",qName)) {
         this.graphHandler.link(getCurrentSubject(),this.currentPredicate,LinkReference.createBlank(attributes.getValue(i)));
       }
  else {
