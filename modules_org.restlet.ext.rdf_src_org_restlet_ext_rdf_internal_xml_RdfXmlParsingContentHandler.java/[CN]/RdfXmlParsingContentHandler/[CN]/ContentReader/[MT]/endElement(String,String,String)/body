@@ -4,6 +4,9 @@
     popSubject();
   }
  else   if (state == State.PREDICATE) {
+    if (this.builder.length() > 0) {
+      this.graphHandler.link(getCurrentSubject(),this.currentPredicate,getLiteral(builder.toString(),null,this.currentLanguage));
+    }
   }
  else   if (state == State.OBJECT) {
     if (this.builder.length() > 0) {
@@ -12,8 +15,7 @@
   }
  else   if (state == State.LITERAL) {
     if (nodeDepth == 0) {
-      this.currentObject=getLiteral(builder.toString(),this.currentDataType,this.currentLanguage);
-      link();
+      this.graphHandler.link(getCurrentSubject(),this.currentPredicate,getLiteral(builder.toString(),this.currentDataType,this.currentLanguage));
     }
  else {
       this.builder.append("</");

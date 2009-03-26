@@ -12,25 +12,28 @@
     }
  else {
       pushSubject(parseNode(uri,localName,name,attributes));
+      pushState(State.SUBJECT);
     }
   }
  else   if (state == State.SUBJECT) {
     List<String[]> arcs=new ArrayList<String[]>();
+    pushState(State.PREDICATE);
     this.currentPredicate=getReference(uri,localName,name);
     for (int i=0; i < attributes.getLength(); i++) {
       String qName=attributes.getQName(i);
       if ("rdf:resource".equals(qName)) {
         this.graphHandler.link(getCurrentSubject(),this.currentPredicate,getReference(attributes.getValue(i),null,null));
-        pushState(State.PREDICATE);
         break;
       }
  else       if ("rdf:datatype".equals(qName)) {
+        popState();
         pushState(State.LITERAL);
         this.currentDataType=attributes.getValue(i);
       }
  else       if ("rdf:parseType".equals(qName)) {
         String value=attributes.getValue(i);
         if ("Literal".equals(value)) {
+          popState();
           pushState(State.LITERAL);
           this.currentDataType=RdfXmlRepresentation.RDF_SYNTAX + "XMLLiteral";
           nodeDepth=0;
@@ -38,6 +41,7 @@
  else         if ("Resource".equals(value)) {
           Reference ref=LinkReference.createBlank(ContentReader.newBlankNodeId());
           this.graphHandler.link(getCurrentSubject(),this.currentPredicate,ref);
+          popState();
           pushSubject(ref);
           break;
         }
@@ -46,14 +50,12 @@
       }
  else       if ("rdf:nodeID".equals(qName)) {
         this.graphHandler.link(getCurrentSubject(),this.currentPredicate,LinkReference.createBlank(attributes.getValue(i)));
-        pushState(State.PREDICATE);
       }
  else {
         if (!qName.startsWith("xlmns")) {
           String[] arc={qName,attributes.getValue(i)};
           arcs.add(arc);
         }
-        pushState(State.PREDICATE);
       }
     }
     if (!arcs.isEmpty()) {
