@@ -1,0 +1,84 @@
+{
+  State state=getCurrentState();
+  if (state != State.LITERAL && this.builder.length() > 0) {
+    this.builder=new StringBuilder();
+  }
+  if (state == State.NONE) {
+    if (equals("rdf:RDF",uri,localName,name)) {
+      String base=attributes.getValue("xml:base");
+      if (base != null) {
+        this.base=new Reference(base);
+      }
+    }
+ else {
+      pushSubject(parseNode(uri,localName,name,attributes));
+    }
+  }
+ else   if (state == State.SUBJECT) {
+    List<String[]> arcs=new ArrayList<String[]>();
+    this.currentPredicate=getReference(uri,localName,name);
+    for (int i=0; i < attributes.getLength(); i++) {
+      String qName=attributes.getQName(i);
+      if ("rdf:resource".equals(qName)) {
+        this.graphHandler.link(getCurrentSubject(),this.currentPredicate,getReference(attributes.getValue(i),null,null));
+        pushState(State.PREDICATE);
+        break;
+      }
+ else       if ("rdf:datatype".equals(qName)) {
+        pushState(State.LITERAL);
+        this.currentDataType=attributes.getValue(i);
+      }
+ else       if ("rdf:parseType".equals(qName)) {
+        String value=attributes.getValue(i);
+        if ("Literal".equals(value)) {
+          pushState(State.LITERAL);
+          this.currentDataType=RdfXmlRepresentation.RDF_SYNTAX + "XMLLiteral";
+          nodeDepth=0;
+        }
+ else         if ("Resource".equals(value)) {
+          Reference ref=LinkReference.createBlank(ContentReader.newBlankNodeId());
+          this.graphHandler.link(getCurrentSubject(),this.currentPredicate,ref);
+          pushSubject(ref);
+          break;
+        }
+ else {
+        }
+      }
+ else       if ("rdf:nodeID".equals(qName)) {
+        this.graphHandler.link(getCurrentSubject(),this.currentPredicate,LinkReference.createBlank(attributes.getValue(i)));
+        pushState(State.PREDICATE);
+      }
+ else {
+        if (!qName.startsWith("xlmns")) {
+          String[] arc={qName,attributes.getValue(i)};
+          arcs.add(arc);
+        }
+        pushState(State.PREDICATE);
+      }
+    }
+    if (!arcs.isEmpty()) {
+      Reference blankNode=LinkReference.createBlank(ContentReader.newBlankNodeId());
+      this.graphHandler.link(getCurrentSubject(),this.currentPredicate,blankNode);
+      for (      String[] arc : arcs) {
+        this.graphHandler.link(blankNode,getReference(arc[0],null,null),new Literal(arc[1]));
+      }
+    }
+    this.currentLanguage=attributes.getValue("xml:lang");
+  }
+ else   if (state == State.PREDICATE) {
+    Reference object=parseNode(uri,localName,name,attributes);
+    this.currentObject=object;
+    link();
+    pushSubject(object);
+  }
+ else   if (state == State.OBJECT) {
+  }
+ else   if (state == State.LITERAL) {
+    nodeDepth++;
+    this.builder.append("<");
+    if (uri != null && !"".equals(uri)) {
+      this.builder.append(uri).append(":");
+    }
+    this.builder.append(localName).append(">");
+  }
+}

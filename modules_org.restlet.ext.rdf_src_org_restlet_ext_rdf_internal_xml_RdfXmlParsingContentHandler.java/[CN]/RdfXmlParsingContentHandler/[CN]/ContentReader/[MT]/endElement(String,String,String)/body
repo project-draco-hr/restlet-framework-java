@@ -1,0 +1,28 @@
+{
+  State state=popState();
+  if (state == State.SUBJECT) {
+    popSubject();
+  }
+ else   if (state == State.PREDICATE) {
+  }
+ else   if (state == State.OBJECT) {
+    if (this.builder.length() > 0) {
+      this.currentObject=getLiteral(builder.toString(),null,this.currentLanguage);
+    }
+  }
+ else   if (state == State.LITERAL) {
+    if (nodeDepth == 0) {
+      this.currentObject=getLiteral(builder.toString(),this.currentDataType,this.currentLanguage);
+      link();
+    }
+ else {
+      this.builder.append("</");
+      if (uri != null && !"".equals(uri)) {
+        this.builder.append(uri).append(":");
+      }
+      this.builder.append(localName).append(">");
+      nodeDepth--;
+      pushState(state);
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  Reference result=null;
+  if (uri != null) {
+    Reference base=new Reference(uri);
+    if (base.isRelative()) {
+      base=new Reference(this.base,uri);
+    }
+    if (localName != null) {
+      result=new Reference(base,localName);
+    }
+ else {
+      result=base;
+    }
+  }
+ else   if (name != null) {
+    int index=name.indexOf(":");
+    if (index != -1) {
+      String prefix=name.substring(0,index);
+      if (this.prefixes.containsKey(prefix)) {
+        result=new Reference(this.prefixes.get(prefix),localName);
+      }
+    }
+  }
+ else {
+    result=new Reference(this.base,localName);
+  }
+  return result.getTargetRef();
+}
