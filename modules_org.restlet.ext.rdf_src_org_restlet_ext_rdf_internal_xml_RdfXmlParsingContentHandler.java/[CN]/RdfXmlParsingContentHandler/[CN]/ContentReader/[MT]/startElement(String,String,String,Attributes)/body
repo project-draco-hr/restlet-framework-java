@@ -23,7 +23,6 @@
       String qName=attributes.getQName(i);
       if (checkRdfQName("resource",qName)) {
         this.graphHandler.link(getCurrentSubject(),this.currentPredicate,getReference(attributes.getValue(i),null,null));
-        break;
       }
  else       if (checkRdfQName("datatype",qName)) {
         popState();
@@ -43,7 +42,6 @@
           this.graphHandler.link(getCurrentSubject(),this.currentPredicate,ref);
           popState();
           pushSubject(ref);
-          break;
         }
  else {
         }
@@ -53,6 +51,9 @@
       }
  else       if (checkRdfQName("ID",qName)) {
         reifiedRef=getReference(null,"#" + attributes.getValue(i),null);
+      }
+ else       if ("xml:lang".equals(qName)) {
+        this.currentLanguage=attributes.getValue(i);
       }
  else {
         if (!qName.startsWith("xmlns")) {
