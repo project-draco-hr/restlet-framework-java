@@ -1,0 +1,31 @@
+{
+  Representation result=null;
+  if (!isExists() && getConditions().hasSome() && getConditions().getMatch().contains(Tag.ALL)) {
+    setStatus(Status.CLIENT_ERROR_PRECONDITION_FAILED,"A non existing resource can't match any tag.");
+  }
+ else {
+    if (isNegotiated()) {
+      result=doNegotiatedHandle(method);
+    }
+ else {
+      result=doHandle(method);
+    }
+    if (result == null) {
+      if ((getStatus() == null) || (getStatus().isSuccess() && !Status.SUCCESS_NO_CONTENT.equals(getStatus()))) {
+        setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+      }
+ else {
+      }
+    }
+ else {
+      if (getRequest().getConditions().hasSome()) {
+        final Status status=getRequest().getConditions().getStatus(getRequest().getMethod(),result);
+        if (status != null) {
+          setStatus(status);
+          result=null;
+        }
+      }
+    }
+  }
+  return result;
+}

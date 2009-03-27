@@ -1,32 +1,14 @@
 {
   Representation result=null;
   try {
-    final Method method=getRequest().getMethod();
-    if (method == null) {
-      setStatus(Status.CLIENT_ERROR_BAD_REQUEST,"No method specified");
+    if (isConditional()) {
+      result=doConditionalHandle(getMethod());
+    }
+ else     if (isNegotiated()) {
+      result=doNegotiatedHandle(getMethod());
     }
  else {
-      if (method.equals(Method.GET)) {
-        result=get();
-      }
- else       if (method.equals(Method.HEAD)) {
-        result=head();
-      }
- else       if (method.equals(Method.POST)) {
-        result=handlePost();
-      }
- else       if (method.equals(Method.PUT)) {
-        result=handlePut();
-      }
- else       if (method.equals(Method.DELETE)) {
-        result=handleDelete();
-      }
- else       if (method.equals(Method.OPTIONS)) {
-        result=handleOptions();
-      }
- else {
-        setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
-      }
+      result=doHandle(getMethod());
     }
   }
  catch (  ResourceException re) {
