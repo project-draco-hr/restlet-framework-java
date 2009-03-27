@@ -6,6 +6,7 @@
     }
  else     if (targetHandler == null) {
       final ServerResource targetResource=find(request,response);
+      targetResource.init(getContext(),request,response);
       if (!response.getStatus().equals(Status.SUCCESS_OK)) {
       }
  else       if (targetResource == null) {
@@ -14,6 +15,7 @@
  else {
         targetResource.handle();
       }
+      targetResource.destroy();
     }
  else {
       final Method method=request.getMethod();
