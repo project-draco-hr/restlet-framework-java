@@ -25,11 +25,16 @@
       }
     }
     if ((getStatus() != null) && getStatus().isSuccess()) {
-      if (isNegotiated()) {
-        result=doNegotiatedHandle(method);
+      if (representationInfo instanceof Representation) {
+        result=(Representation)representationInfo;
       }
  else {
-        result=doHandle(method);
+        if (isNegotiated()) {
+          result=doNegotiatedHandle(method);
+        }
+ else {
+          result=doHandle(method);
+        }
       }
     }
   }
