@@ -2,11 +2,14 @@
   Reference result=null;
   List<String[]> arcs=new ArrayList<String[]>();
   boolean found=false;
+  if (attributes.getIndex("xml:base") != -1) {
+    this.base.add(new Reference(attributes.getValue("xml:base")));
+  }
   for (int i=0; i < attributes.getLength(); i++) {
     String qName=attributes.getQName(i);
     if (checkRdfQName("about",qName)) {
       found=true;
-      result=getReference(attributes.getValue(i),null,null);
+      result=resolve(attributes.getValue(i),false);
     }
  else     if (checkRdfQName("nodeID",qName)) {
       found=true;
@@ -14,10 +17,12 @@
     }
  else     if (checkRdfQName("ID",qName)) {
       found=true;
-      result=getReference(null,"#" + attributes.getValue(i),null);
+      result=resolve(attributes.getValue(i),true);
     }
  else     if ("xml:lang".equals(qName)) {
-      this.currentLanguage=attributes.getValue(i);
+      this.language.add(Language.valueOf(attributes.getValue(i)));
+    }
+ else     if ("xml:base".equals(qName)) {
     }
  else {
       if (!qName.startsWith("xmlns")) {
@@ -30,10 +35,10 @@
     result=LinkReference.createBlank(ContentReader.newBlankNodeId());
   }
   if (!checkRdfQName("Description",name)) {
-    this.graphHandler.link(result,RdfConstants.PREDICATE_TYPE,getReference(uri,localName,name));
+    this.graphHandler.link(result,RdfConstants.PREDICATE_TYPE,resolve(uri,name));
   }
   for (  String[] arc : arcs) {
-    this.graphHandler.link(result,getReference(null,null,arc[0]),getLiteral(arc[1],null,this.currentLanguage));
+    this.graphHandler.link(result,resolve(null,arc[0]),getLiteral(arc[1],null,this.language.getValue()));
   }
   return result;
 }

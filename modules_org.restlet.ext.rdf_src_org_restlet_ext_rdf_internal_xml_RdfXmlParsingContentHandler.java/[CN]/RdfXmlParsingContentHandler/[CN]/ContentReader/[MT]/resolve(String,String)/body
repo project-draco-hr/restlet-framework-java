@@ -1,0 +1,29 @@
+{
+  Reference result=null;
+  int index=qName.indexOf(":");
+  String prefix=null;
+  String localName=null;
+  if (index != -1) {
+    prefix=qName.substring(0,index);
+    localName=qName.substring(index + 1);
+  }
+ else {
+    localName=qName;
+    prefix="";
+  }
+  if (uri != null && !"".equals(uri)) {
+    if (!uri.endsWith("#") && !uri.endsWith("/")) {
+      result=new Reference(uri + "/" + localName);
+    }
+ else {
+      result=new Reference(uri + localName);
+    }
+  }
+ else {
+    String baseUri=this.prefixes.get(prefix);
+    if (baseUri != null) {
+      result=new Reference(baseUri + localName);
+    }
+  }
+  return (result == null) ? null : result.getTargetRef();
+}

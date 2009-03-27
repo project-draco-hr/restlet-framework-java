@@ -1,7 +1,14 @@
 {
   super();
   this.graphHandler=graphHandler;
+  this.base=new ScopedProperty<Reference>();
+  this.language=new ScopedProperty<Language>();
   if (representation.getIdentifier() != null) {
-    this.base=representation.getIdentifier().toString(true,true);
+    this.base.add(representation.getIdentifier().getTargetRef());
+    this.base.incrDepth();
+  }
+  if (representation.getLanguages().size() == 1) {
+    this.language.add(representation.getLanguages().get(1));
+    this.language.incrDepth();
   }
 }

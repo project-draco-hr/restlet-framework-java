@@ -4,13 +4,16 @@
     popSubject();
   }
  else   if (state == State.PREDICATE) {
-    link(getCurrentSubject(),this.currentPredicate,getLiteral(builder.toString(),null,this.currentLanguage));
+    if (this.consumeContent) {
+      link(getCurrentSubject(),this.currentPredicate,getLiteral(builder.toString(),null,this.language.getValue()));
+      this.consumeContent=false;
+    }
   }
  else   if (state == State.OBJECT) {
   }
  else   if (state == State.LITERAL) {
     if (nodeDepth == 0) {
-      link(getCurrentSubject(),this.currentPredicate,getLiteral(builder.toString(),this.currentDataType,this.currentLanguage));
+      link(getCurrentSubject(),this.currentPredicate,getLiteral(builder.toString(),this.currentDataType,this.language.getValue()));
     }
  else {
       this.builder.append("</");
@@ -22,4 +25,6 @@
       pushState(state);
     }
   }
+  this.base.decrDepth();
+  this.language.decrDepth();
 }

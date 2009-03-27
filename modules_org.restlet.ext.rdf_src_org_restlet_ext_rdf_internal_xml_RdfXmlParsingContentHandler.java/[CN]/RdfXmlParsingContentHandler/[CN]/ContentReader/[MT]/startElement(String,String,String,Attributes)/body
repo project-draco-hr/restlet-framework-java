@@ -1,13 +1,15 @@
 {
   State state=getCurrentState();
-  if (state != State.LITERAL && this.builder.length() > 0) {
-    this.builder=new StringBuilder();
+  this.base.incrDepth();
+  this.language.incrDepth();
+  if (!this.consumeContent && this.builder != null) {
+    this.builder=null;
   }
   if (state == State.NONE) {
     if (checkRdfQName("RDF",name)) {
       String base=attributes.getValue("xml:base");
       if (base != null) {
-        this.base=base;
+        this.base.add(new Reference(base));
       }
     }
  else {
@@ -18,15 +20,20 @@
  else   if (state == State.SUBJECT) {
     List<String[]> arcs=new ArrayList<String[]>();
     pushState(State.PREDICATE);
-    this.currentPredicate=getReference(uri,localName,name);
+    this.consumeContent=true;
+    Reference currentSubject=getCurrentSubject();
+    this.currentPredicate=resolve(uri,name);
+    Reference currentObject=null;
     for (int i=0; i < attributes.getLength(); i++) {
       String qName=attributes.getQName(i);
       if (checkRdfQName("resource",qName)) {
-        this.graphHandler.link(getCurrentSubject(),this.currentPredicate,getReference(attributes.getValue(i),null,null));
+        this.consumeContent=false;
+        currentObject=resolve(attributes.getValue(i),false);
         popState();
         pushState(State.OBJECT);
       }
  else       if (checkRdfQName("datatype",qName)) {
+        this.consumeContent=true;
         popState();
         pushState(State.LITERAL);
         this.currentDataType=attributes.getValue(i);
@@ -34,28 +41,35 @@
  else       if (checkRdfQName("parseType",qName)) {
         String value=attributes.getValue(i);
         if ("Literal".equals(value)) {
+          this.consumeContent=true;
           popState();
           pushState(State.LITERAL);
           this.currentDataType=RdfConstants.RDF_SYNTAX + "XMLLiteral";
           nodeDepth=0;
         }
  else         if ("Resource".equals(value)) {
-          Reference ref=LinkReference.createBlank(ContentReader.newBlankNodeId());
-          this.graphHandler.link(getCurrentSubject(),this.currentPredicate,ref);
+          this.consumeContent=false;
+          currentObject=LinkReference.createBlank(ContentReader.newBlankNodeId());
           popState();
-          pushSubject(ref);
+          pushState(State.SUBJECT);
+          pushSubject(currentObject);
         }
  else {
+          this.consumeContent=false;
         }
       }
  else       if (checkRdfQName("nodeID",qName)) {
-        this.graphHandler.link(getCurrentSubject(),this.currentPredicate,LinkReference.createBlank(attributes.getValue(i)));
+        this.consumeContent=false;
+        currentObject=LinkReference.createBlank(attributes.getValue(i));
+        popState();
+        pushState(State.SUBJECT);
+        pushSubject(currentObject);
       }
  else       if (checkRdfQName("ID",qName)) {
-        reifiedRef=getReference(null,"#" + attributes.getValue(i),null);
+        reifiedRef=resolve(attributes.getValue(i),true);
       }
  else       if ("xml:lang".equals(qName)) {
-        this.currentLanguage=attributes.getValue(i);
+        this.language.add(Language.valueOf(attributes.getValue(i)));
       }
  else {
         if (!qName.startsWith("xmlns")) {
@@ -64,22 +78,36 @@
         }
       }
     }
-    if (!arcs.isEmpty()) {
-      Reference blankNode=LinkReference.createBlank(ContentReader.newBlankNodeId());
-      this.graphHandler.link(getCurrentSubject(),this.currentPredicate,blankNode);
-      for (      String[] arc : arcs) {
-        this.graphHandler.link(blankNode,getReference(null,null,arc[0]),new Literal(arc[1]));
-      }
-      popState();
-      pushState(State.OBJECT);
+    if (currentObject != null) {
+      link(currentSubject,this.currentPredicate,currentObject);
     }
-    this.currentLanguage=attributes.getValue("xml:lang");
+    if (!arcs.isEmpty()) {
+      boolean found=false;
+      Reference blankNode=LinkReference.createBlank(ContentReader.newBlankNodeId());
+      for (      String[] arc : arcs) {
+        Reference pRef=resolve(null,arc[0]);
+        if (pRef != null) {
+          found=true;
+          this.graphHandler.link(blankNode,pRef,new Literal(arc[1]));
+        }
+      }
+      if (found) {
+        link(currentSubject,this.currentPredicate,blankNode);
+        popState();
+        pushState(State.OBJECT);
+      }
+    }
+    if (this.consumeContent) {
+      builder=new StringBuilder();
+    }
   }
  else   if (state == State.PREDICATE) {
+    this.consumeContent=false;
     Reference object=parseNode(uri,localName,name,attributes);
     this.currentObject=object;
     link();
     pushSubject(object);
+    pushState(State.SUBJECT);
   }
  else   if (state == State.OBJECT) {
   }
