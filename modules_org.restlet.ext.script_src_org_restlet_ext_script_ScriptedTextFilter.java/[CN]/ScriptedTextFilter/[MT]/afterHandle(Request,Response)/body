@@ -1,0 +1,19 @@
+{
+  if (response.isEntityAvailable()) {
+    Representation entity=response.getEntity();
+    try {
+      String text=entity.getText();
+      ScriptedTextRepresentation representation=new ScriptedTextRepresentation(entity.getMediaType(),text,this.defaultScriptEngineName,this.allowCompilation,this.scriptEngineManager);
+      if (this.scriptContextController != null) {
+        representation.setScriptContextController(this.scriptContextController);
+      }
+      response.setEntity(representation);
+    }
+ catch (    IOException e) {
+      response.setStatus(Status.SERVER_ERROR_INTERNAL,e);
+    }
+catch (    ScriptException e) {
+      response.setStatus(Status.SERVER_ERROR_INTERNAL,e);
+    }
+  }
+}
