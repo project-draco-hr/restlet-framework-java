@@ -8,8 +8,8 @@
     if (getContext() != null) {
       getContext().getAttributes().put(attributeName,this.annotations);
     }
-    for (    java.lang.reflect.Method method : getClass().getMethods()) {
-      for (      Annotation annotation : method.getAnnotations()) {
+    for (    java.lang.reflect.Method javaMethod : getClass().getMethods()) {
+      for (      Annotation annotation : javaMethod.getAnnotations()) {
         Annotation methodAnnotation=annotation.annotationType().getAnnotation(org.restlet.engine.Method.class);
         if (methodAnnotation != null) {
           Method restletMethod=Method.valueOf(((org.restlet.engine.Method)methodAnnotation).value());
@@ -17,7 +17,7 @@
           int startIndex=annotation.annotationType().getCanonicalName().length() + 8;
           int endIndex=toString.length() - 1;
           String value=toString.substring(startIndex,endIndex);
-          System.out.println(value);
+          this.annotations.add(new AnnotationInfo(restletMethod,javaMethod,value));
         }
       }
     }
