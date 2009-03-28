@@ -4,14 +4,14 @@
     setStatus(Status.CLIENT_ERROR_PRECONDITION_FAILED,"A non existing resource can't match any tag.");
   }
  else {
-    RepresentationInfo representationInfo=null;
+    RepresentationInfo resultInfo=null;
     if (isNegotiated()) {
-      representationInfo=doNegotiatedHandle(Method.GET);
+      resultInfo=getInfo(getPreferredVariant());
     }
  else {
-      representationInfo=doHandle(Method.GET);
+      resultInfo=getInfo();
     }
-    if (representationInfo == null) {
+    if (resultInfo == null) {
       if ((getStatus() == null) || (getStatus().isSuccess() && !Status.SUCCESS_NO_CONTENT.equals(getStatus()))) {
         setStatus(Status.CLIENT_ERROR_NOT_FOUND);
       }
@@ -19,14 +19,14 @@
       }
     }
  else     if (getRequest().getConditions().hasSome()) {
-      Status status=getConditions().getStatus(getMethod(),representationInfo);
+      Status status=getConditions().getStatus(getMethod(),resultInfo);
       if (status != null) {
         setStatus(status);
       }
     }
     if ((getStatus() != null) && getStatus().isSuccess()) {
-      if (representationInfo instanceof Representation) {
-        result=(Representation)representationInfo;
+      if (resultInfo instanceof Representation) {
+        result=(Representation)resultInfo;
       }
  else {
         if (isNegotiated()) {

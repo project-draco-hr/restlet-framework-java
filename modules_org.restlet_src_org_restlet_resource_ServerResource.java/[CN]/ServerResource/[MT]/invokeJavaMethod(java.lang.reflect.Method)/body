@@ -1,0 +1,46 @@
+{
+  Representation result=null;
+  ConverterService cs=getConverterService();
+  Class<?>[] parameterTypes=javaMethod.getParameterTypes();
+  List<Object> parameters=null;
+  Object resultObject=null;
+  try {
+    if (parameterTypes.length > 0) {
+      parameters=new ArrayList<Object>();
+      for (      Class<?> parameterType : parameterTypes) {
+        if (getRequest().getEntity() != null) {
+          try {
+            parameters.add(cs.toObject(getRequest().getEntity(),parameterType,this));
+          }
+ catch (          IOException e) {
+            e.printStackTrace();
+            parameters.add(null);
+          }
+        }
+ else {
+          parameters.add(null);
+        }
+      }
+      resultObject=javaMethod.invoke(this,parameters.toArray());
+    }
+ else {
+      resultObject=javaMethod.invoke(this);
+    }
+  }
+ catch (  IllegalArgumentException e) {
+    e.printStackTrace();
+  }
+catch (  IllegalAccessException e) {
+    e.printStackTrace();
+  }
+catch (  InvocationTargetException e) {
+    e.printStackTrace();
+  }
+  if (resultObject != null) {
+    Class<?> returnType=javaMethod.getReturnType();
+    if (returnType != null) {
+      result=cs.toRepresentation(resultObject);
+    }
+  }
+  return result;
+}

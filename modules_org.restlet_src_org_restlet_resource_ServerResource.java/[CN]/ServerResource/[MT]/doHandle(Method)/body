@@ -4,26 +4,39 @@
     setStatus(Status.CLIENT_ERROR_BAD_REQUEST,"No method specified");
   }
  else {
-    if (method.equals(Method.GET)) {
-      result=get();
+    boolean found=false;
+    java.lang.reflect.Method javaMethod=null;
+    if (isAnnotated() && hasAnnotations()) {
+      javaMethod=getJavaMethod(method);
+      if (javaMethod != null) {
+        found=true;
+      }
     }
- else     if (method.equals(Method.POST)) {
-      result=post(getRequest().getEntity());
-    }
- else     if (method.equals(Method.PUT)) {
-      result=put(getRequest().getEntity());
-    }
- else     if (method.equals(Method.DELETE)) {
-      result=delete();
-    }
- else     if (method.equals(Method.HEAD)) {
-      result=head();
-    }
- else     if (method.equals(Method.OPTIONS)) {
-      result=options();
+    if (found) {
+      result=invokeJavaMethod(javaMethod);
     }
  else {
-      setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+      if (method.equals(Method.GET)) {
+        result=get();
+      }
+ else       if (method.equals(Method.POST)) {
+        result=post(getRequest().getEntity());
+      }
+ else       if (method.equals(Method.PUT)) {
+        result=put(getRequest().getEntity());
+      }
+ else       if (method.equals(Method.DELETE)) {
+        result=delete();
+      }
+ else       if (method.equals(Method.HEAD)) {
+        result=head();
+      }
+ else       if (method.equals(Method.OPTIONS)) {
+        result=options();
+      }
+ else {
+        setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+      }
     }
   }
   return result;
