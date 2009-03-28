@@ -1,0 +1,25 @@
+{
+  String attributeName="org.restlet.resource.ServerResource.annotations." + getClass().getCanonicalName();
+  if (getContext() != null) {
+    this.annotations=(List<AnnotationInfo>)getContext().getAttributes().get(attributeName);
+  }
+  if (this.annotations == null) {
+    this.annotations=new ArrayList<AnnotationInfo>();
+    if (getContext() != null) {
+      getContext().getAttributes().put(attributeName,this.annotations);
+    }
+    for (    java.lang.reflect.Method method : getClass().getMethods()) {
+      for (      Annotation annotation : method.getAnnotations()) {
+        Annotation methodAnnotation=annotation.annotationType().getAnnotation(org.restlet.engine.Method.class);
+        if (methodAnnotation != null) {
+          Method restletMethod=Method.valueOf(((org.restlet.engine.Method)methodAnnotation).value());
+          String toString=annotation.toString();
+          int startIndex=annotation.annotationType().getCanonicalName().length() + 8;
+          int endIndex=toString.length() - 1;
+          String value=toString.substring(startIndex,endIndex);
+          System.out.println(value);
+        }
+      }
+    }
+  }
+}
