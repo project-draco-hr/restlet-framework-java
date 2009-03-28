@@ -4,26 +4,31 @@
   if (doubleDotPos > 0) {
     final String sch=className.substring(0,doubleDotPos).toUpperCase();
     final String cName=className.substring(doubleDotPos + 1);
-    try {
-      final Class<?> loaderClass=Engine.loadClass("oracle.aurora.rdbms.DbmsJava");
-      final Method meth=loaderClass.getMethod("classForNameAndSchema",new Class[]{String.class,String.class});
-      log("[Noelios Restlet Engine] - Schema: " + sch + " class: "+ cName+ " loader: "+ loaderClass);
-      targetClass=(Class<?>)meth.invoke(null,new Object[]{cName,sch});
+    if (System.getProperty("java.vm.name").equals("JServer VM")) {
+      try {
+        final Class<?> loaderClass=Engine.loadClass("oracle.aurora.rdbms.DbmsJava");
+        final Method meth=loaderClass.getMethod("classForNameAndSchema",new Class[]{String.class,String.class});
+        log("[Noelios Restlet Engine] - Schema: " + sch + " class: "+ cName+ " loader: "+ loaderClass);
+        targetClass=(Class<?>)meth.invoke(null,new Object[]{cName,sch});
+      }
+ catch (      NoSuchMethodException nse) {
+        log("[Noelios Restlet Engine] - Could not instantiate a class using SCHEMA: " + sch + " and class: "+ cName,nse);
+        targetClass=Engine.loadClass(className);
+      }
+catch (      IllegalAccessException iae) {
+        log("[Noelios Restlet Engine] - Could not instantiate a class using SCHEMA: " + sch + " and class: "+ cName,iae);
+        targetClass=Engine.loadClass(className);
+      }
+catch (      InvocationTargetException ite) {
+        log("[Noelios Restlet Engine] - Could not instantiate a class using SCHEMA: " + sch + " and class: "+ cName,ite);
+        targetClass=Engine.loadClass(className);
+      }
+catch (      AccessControlException ace) {
+        log("[Noelios Restlet Engine] - Could not instantiate a class using oracle.aurora.rdbms.DbmsJava " + sch + " and class: "+ cName,ace);
+        targetClass=Engine.loadClass(className);
+      }
     }
- catch (    NoSuchMethodException nse) {
-      log("[Noelios Restlet Engine] - Could not instantiate a class using SCHEMA: " + sch + " and class: "+ cName,nse);
-      targetClass=Engine.loadClass(className);
-    }
-catch (    IllegalAccessException iae) {
-      log("[Noelios Restlet Engine] - Could not instantiate a class using SCHEMA: " + sch + " and class: "+ cName,iae);
-      targetClass=Engine.loadClass(className);
-    }
-catch (    InvocationTargetException ite) {
-      log("[Noelios Restlet Engine] - Could not instantiate a class using SCHEMA: " + sch + " and class: "+ cName,ite);
-      targetClass=Engine.loadClass(className);
-    }
-catch (    AccessControlException ace) {
-      log("[Noelios Restlet Engine] - Could not instantiate a class using oracle.aurora.rdbms.DbmsJava " + sch + " and class: "+ cName,ace);
+ else {
       targetClass=Engine.loadClass(className);
     }
   }
