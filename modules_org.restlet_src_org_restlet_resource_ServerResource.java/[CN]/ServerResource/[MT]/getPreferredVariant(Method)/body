@@ -1,0 +1,25 @@
+{
+  if (this.preferredVariant == null) {
+    List<Variant> variants=(List<Variant>)getVariants().get(getMethod());
+    if (isAnnotated() && hasAnnotations()) {
+      ConverterService cs=getConverterService();
+      for (      AnnotationInfo annotationInfo : this.annotations) {
+        if (method.equals(annotationInfo.getRestletMethod())) {
+          List<Variant> methodVariants=cs.getVariants(annotationInfo.getJavaReturnType());
+          if (methodVariants != null) {
+            variants.addAll(methodVariants);
+          }
+        }
+      }
+    }
+    if ((variants != null) && (!variants.isEmpty())) {
+      Language language=null;
+      final Application app=Application.getCurrent();
+      if (app != null) {
+        language=app.getMetadataService().getDefaultLanguage();
+      }
+      this.preferredVariant=new VariantInfo(null,getClientInfo().getPreferredVariant(variants,language));
+    }
+  }
+  return preferredVariant;
+}

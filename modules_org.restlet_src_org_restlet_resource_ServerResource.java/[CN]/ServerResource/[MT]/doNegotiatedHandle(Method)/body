@@ -1,13 +1,13 @@
 {
   Representation result=null;
-  Variant preferredVariant=getPreferredVariant();
-  if (preferredVariant == null) {
+  VariantInfo preferredVariantInfo=getPreferredVariant(method);
+  if (preferredVariantInfo == null) {
     setStatus(Status.CLIENT_ERROR_NOT_ACCEPTABLE);
     result=describeVariants();
   }
  else {
     updateDimensions();
-    result=doHandle(method,preferredVariant);
+    result=doHandle(method,preferredVariantInfo.getVariant());
   }
   return result;
 }

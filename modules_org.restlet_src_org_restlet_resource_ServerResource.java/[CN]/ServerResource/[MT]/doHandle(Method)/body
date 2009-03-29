@@ -5,17 +5,14 @@
   }
  else {
     boolean found=false;
-    java.lang.reflect.Method javaMethod=null;
     if (isAnnotated() && hasAnnotations()) {
-      javaMethod=getJavaMethod(method);
+      java.lang.reflect.Method javaMethod=getJavaMethod(method);
       if (javaMethod != null) {
         found=true;
+        result=invokeJavaMethod(javaMethod);
       }
     }
-    if (found) {
-      result=invokeJavaMethod(javaMethod);
-    }
- else {
+    if (!found) {
       if (method.equals(Method.GET)) {
         result=get();
       }

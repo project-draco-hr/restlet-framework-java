@@ -1,13 +1,5 @@
 {
   final Component component=new Component();
   component.getServers().add(Protocol.HTTP,8182);
-  final Restlet restlet=new Restlet(){
-    @Override public void handle(    Request request,    Response response){
-      final String message="Resource URI  : " + request.getResourceRef() + '\n'+ "Root URI      : "+ request.getRootRef()+ '\n'+ "Routed part   : "+ request.getResourceRef().getBaseRef()+ '\n'+ "Remaining part: "+ request.getResourceRef().getRemainingPart();
-      response.setEntity(message,MediaType.TEXT_PLAIN);
-    }
-  }
-;
-  component.getDefaultHost().attach("/trace",restlet);
   component.start();
 }
