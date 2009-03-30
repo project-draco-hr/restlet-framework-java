@@ -1,6 +1,6 @@
 {
-  Writer writer=getWriter();
   boolean isStreaming=isStreaming();
+  Writer writer=this.resource.getWriter();
   ScriptSource.ScriptDescriptor<EmbeddedScript> scriptDescriptor=this.resource.getScriptSource().getScriptDescriptor(name);
   EmbeddedScript script=scriptDescriptor.getScript();
   if (script == null) {
@@ -24,7 +24,7 @@
       StringWriter stringWriter=new StringWriter();
       this.buffer=stringWriter.getBuffer();
       writer=new BufferedWriter(stringWriter);
-      setWriter(writer);
+      this.resource.setWriter(writer);
     }
  else {
       writer.flush();
@@ -32,10 +32,10 @@
     }
   }
   try {
-    if (script.run(writer,getErrorWriter(),this.scriptEngines,this.scriptContextController,!isStreaming)) {
+    if (script.run(writer,this.resource.getErrorWriter(),this.scriptEngines,this.scriptContextController,!isStreaming)) {
       if (this.startStreaming) {
         this.startStreaming=false;
-        return new ScriptedTextStreamingRepresentation(this,this.scriptEngines,this.scriptContextController,script);
+        return new ScriptedTextStreamingRepresentation(this.resource,this,this.scriptEngines,this.scriptContextController,script);
       }
       if (isStreaming) {
         return null;
@@ -68,7 +68,7 @@
  catch (  ScriptException x) {
     if (this.startStreaming) {
       this.startStreaming=false;
-      return new ScriptedTextStreamingRepresentation(this,this.scriptEngines,this.scriptContextController,script);
+      return new ScriptedTextStreamingRepresentation(this.resource,this,this.scriptEngines,this.scriptContextController,script);
     }
  else {
       throw x;
