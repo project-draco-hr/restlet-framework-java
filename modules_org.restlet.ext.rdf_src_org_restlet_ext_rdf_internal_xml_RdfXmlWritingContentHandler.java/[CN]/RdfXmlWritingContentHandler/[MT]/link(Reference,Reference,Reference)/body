@@ -1,8 +1,11 @@
 {
   try {
     writeNode(source,true);
-    this.writer.startElement(typeRef.getTargetRef().toString(true,true));
+    String typeRefNs=getNamespace(typeRef.getTargetRef());
+    String typeRefPrefix=getPrefix(typeRef.getTargetRef());
+    this.writer.startElement(typeRefNs,typeRefPrefix);
     writeNode(target,false);
+    this.writer.endElement(typeRefNs,typeRefPrefix);
     this.writer.endElement(RDF_SYNTAX,"Description");
   }
  catch (  SAXException e) {

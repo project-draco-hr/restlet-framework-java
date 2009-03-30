@@ -1,6 +1,8 @@
 {
   try {
     writeNode(source,true);
+    String typeRefNs=getNamespace(typeRef.getTargetRef());
+    String typeRefPrefix=getPrefix(typeRef.getTargetRef());
     if (target.getLanguage() != null || target.getDatatypeRef() != null) {
       AttributesImpl attr=new AttributesImpl();
       if (target.getLanguage() != null) {
@@ -9,13 +11,13 @@
       if (target.getDatatypeRef() != null) {
         attr.addAttribute(RDF_SYNTAX,"datatype","rdf:datatype","text",target.getDatatypeRef().toString(true,true));
       }
-      this.writer.startElement(typeRef.getTargetRef().toString(true,true),getPrefix(typeRef.getTargetRef()),null,attr);
+      this.writer.startElement(typeRefNs,typeRefPrefix,null,attr);
     }
  else {
-      this.writer.startElement(typeRef.getTargetRef().toString(true,true));
+      this.writer.startElement(typeRefNs,typeRefPrefix);
     }
     this.writer.characters(target.getValue());
-    this.writer.endElement(typeRef.getTargetRef().toString(true,true));
+    this.writer.endElement(typeRefNs,typeRefPrefix);
     this.writer.endElement(RDF_SYNTAX,"Description");
   }
  catch (  SAXException e) {
