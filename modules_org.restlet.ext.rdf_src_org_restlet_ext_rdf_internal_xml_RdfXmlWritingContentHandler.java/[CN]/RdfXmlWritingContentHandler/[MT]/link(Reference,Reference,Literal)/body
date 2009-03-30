@@ -1,2 +1,24 @@
 {
+  try {
+    writeNode(source,true);
+    if (target.getLanguage() != null || target.getDatatypeRef() != null) {
+      AttributesImpl attr=new AttributesImpl();
+      if (target.getLanguage() != null) {
+        attr.addAttribute(null,"lang","xml:lang","text",target.getLanguage().getName());
+      }
+      if (target.getDatatypeRef() != null) {
+        attr.addAttribute(RDF_SYNTAX,"datatype","rdf:datatype","text",getPrefix(target.getDatatypeRef()));
+      }
+      this.writer.startElement(typeRef.getTargetRef().toString(true,true),getPrefix(typeRef.getTargetRef()),null,attr);
+    }
+ else {
+      this.writer.startElement(typeRef.getTargetRef().toString(true,true));
+    }
+    this.writer.characters(target.getValue());
+    this.writer.endElement(typeRef.getTargetRef().toString(true,true));
+    this.writer.endElement(RDF_SYNTAX,"Description");
+  }
+ catch (  SAXException e) {
+    e.printStackTrace();
+  }
 }

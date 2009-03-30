@@ -1,0 +1,20 @@
+{
+  AttributesImpl atts=new AttributesImpl();
+  if (LinkReference.isBlank(reference)) {
+    atts.addAttribute(RDF_SYNTAX,"NodeId","rdf:NodeId","text",reference.getTargetRef().toString(true,true));
+  }
+ else {
+    atts.addAttribute(RDF_SYNTAX,"about","rdf:about","text",reference.getTargetRef().toString(true,true));
+  }
+  try {
+    if (!subject) {
+      this.writer.emptyElement(RDF_SYNTAX,"Description","rdf:Description",atts);
+    }
+ else {
+      this.writer.startElement(RDF_SYNTAX,"Description","rdf:Description",atts);
+    }
+  }
+ catch (  SAXException e) {
+    e.printStackTrace();
+  }
+}
