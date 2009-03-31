@@ -1,3 +1,14 @@
 {
-  return null;
+  List<Class<?>> result=null;
+  List<Class<?>> helperObjectClasses=null;
+  for (  ConverterHelper ch : Engine.getInstance().getRegisteredConverters()) {
+    helperObjectClasses=ch.getObjectClasses(sourceVariant);
+    if (helperObjectClasses != null) {
+      if (result == null) {
+        result=new ArrayList<Class<?>>();
+      }
+      result.addAll(helperObjectClasses);
+    }
+  }
+  return result;
 }
