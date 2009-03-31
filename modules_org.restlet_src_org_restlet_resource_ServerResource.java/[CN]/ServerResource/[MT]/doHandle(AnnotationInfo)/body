@@ -1,7 +1,7 @@
 {
   Representation result=null;
   ConverterService cs=getConverterService();
-  Class<?>[] parameterTypes=javaMethod.getParameterTypes();
+  Class<?>[] parameterTypes=annotationInfo.getJavaParameterTypes();
   List<Object> parameters=null;
   Object resultObject=null;
   try {
@@ -21,10 +21,10 @@
           parameters.add(null);
         }
       }
-      resultObject=javaMethod.invoke(this,parameters.toArray());
+      resultObject=annotationInfo.getJavaMethod().invoke(this,parameters);
     }
  else {
-      resultObject=javaMethod.invoke(this);
+      resultObject=annotationInfo.getJavaMethod().invoke(this);
     }
   }
  catch (  IllegalArgumentException e) {
@@ -37,10 +37,7 @@ catch (  InvocationTargetException e) {
     e.printStackTrace();
   }
   if (resultObject != null) {
-    Class<?> returnType=javaMethod.getReturnType();
-    if (returnType != null) {
-      result=cs.toRepresentation(resultObject);
-    }
+    result=cs.toRepresentation(resultObject);
   }
   return result;
 }

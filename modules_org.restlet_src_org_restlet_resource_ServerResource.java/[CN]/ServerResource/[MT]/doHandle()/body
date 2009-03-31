@@ -5,15 +5,11 @@
     setStatus(Status.CLIENT_ERROR_BAD_REQUEST,"No method specified");
   }
  else {
-    boolean found=false;
-    if (hasAnnotations()) {
-      java.lang.reflect.Method javaMethod=getJavaMethod(method);
-      if (javaMethod != null) {
-        found=true;
-        result=invokeJavaMethod(javaMethod);
-      }
+    AnnotationInfo annotationInfo=getAnnotation(method);
+    if (annotationInfo != null) {
+      result=doHandle(annotationInfo);
     }
-    if (!found) {
+ else {
       if (method.equals(Method.GET)) {
         result=get();
       }
