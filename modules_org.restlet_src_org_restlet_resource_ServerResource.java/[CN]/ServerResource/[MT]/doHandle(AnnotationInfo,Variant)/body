@@ -20,7 +20,12 @@
       resultObject=annotationInfo.getJavaMethod().invoke(this);
     }
     if (resultObject != null) {
-      result=cs.toRepresentation(resultObject,variant,this);
+      if (resultObject instanceof Representation) {
+        result=(Representation)resultObject;
+      }
+ else {
+        result=cs.toRepresentation(resultObject,variant,this);
+      }
     }
   }
  catch (  IllegalArgumentException e) {
