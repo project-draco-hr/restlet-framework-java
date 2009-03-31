@@ -1,13 +1,18 @@
 {
   Representation result=null;
-  VariantInfo preferredVariantInfo=getPreferredVariantInfo();
-  if (preferredVariantInfo == null) {
+  Variant preferredVariant=getPreferredVariant();
+  if (preferredVariant == null) {
     setStatus(Status.CLIENT_ERROR_NOT_ACCEPTABLE);
     result=describeVariants();
   }
  else {
     updateDimensions();
-    result=doHandle(preferredVariantInfo);
+    if (preferredVariant instanceof AnnotatedVariant) {
+      result=doHandle(((AnnotatedVariant)preferredVariant).getAnnotationInfo(),preferredVariant);
+    }
+ else {
+      result=doHandle(preferredVariant);
+    }
   }
   return result;
 }
