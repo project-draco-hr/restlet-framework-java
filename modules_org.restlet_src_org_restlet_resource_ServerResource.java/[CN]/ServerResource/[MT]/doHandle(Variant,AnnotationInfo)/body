@@ -1,0 +1,36 @@
+{
+  Representation result=null;
+  ConverterService cs=getConverterService();
+  Object resultObject=null;
+  try {
+    if (annotationInfo.getJavaParameterTypes() != null) {
+      List<Object> parameters=new ArrayList<Object>();
+      for (      Class<?> param : annotationInfo.getJavaParameterTypes()) {
+        try {
+          parameters.add(cs.toObject(getRequest().getEntity(),param,this));
+        }
+ catch (        Throwable e) {
+          e.printStackTrace();
+          parameters.add(null);
+        }
+      }
+      resultObject=annotationInfo.getJavaMethod().invoke(this,parameters);
+    }
+ else {
+      resultObject=annotationInfo.getJavaMethod().invoke(this);
+    }
+    if (resultObject != null) {
+      result=cs.toRepresentation(resultObject,variant,this);
+    }
+  }
+ catch (  IllegalArgumentException e) {
+    e.printStackTrace();
+  }
+catch (  IllegalAccessException e) {
+    e.printStackTrace();
+  }
+catch (  InvocationTargetException e) {
+    e.printStackTrace();
+  }
+  return result;
+}

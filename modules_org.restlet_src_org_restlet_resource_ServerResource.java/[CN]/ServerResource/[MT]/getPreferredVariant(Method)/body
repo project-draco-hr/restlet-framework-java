@@ -1,16 +1,34 @@
 {
   if (this.preferredVariant == null) {
-    List<Variant> variants=(List<Variant>)getVariants().get(getMethod());
+    List<Variant> variants=null;
     if (isAnnotated() && hasAnnotations()) {
       ConverterService cs=getConverterService();
+      List<Variant> annoVariants=null;
       for (      AnnotationInfo annotationInfo : this.annotations) {
         if (method.equals(annotationInfo.getRestletMethod())) {
-          List<Variant> methodVariants=cs.getVariants(annotationInfo.getJavaReturnType());
-          if (methodVariants != null) {
-            variants.addAll(methodVariants);
+          annoVariants=cs.getVariants(annotationInfo.getJavaReturnType());
+          if (annoVariants != null) {
+            if (variants == null) {
+              variants=new ArrayList<Variant>();
+            }
+            variants.addAll(annoVariants);
           }
         }
       }
+    }
+    List<Variant> methodVariants=(List<Variant>)getVariants().get(getMethod());
+    if (methodVariants != null) {
+      if (variants == null) {
+        variants=new ArrayList<Variant>();
+      }
+      variants.addAll(methodVariants);
+    }
+    List<Variant> allVariants=(List<Variant>)getVariants().get(Method.ALL);
+    if (allVariants != null) {
+      if (variants == null) {
+        variants=new ArrayList<Variant>();
+      }
+      variants.addAll(allVariants);
     }
     if ((variants != null) && (!variants.isEmpty())) {
       Language language=null;
