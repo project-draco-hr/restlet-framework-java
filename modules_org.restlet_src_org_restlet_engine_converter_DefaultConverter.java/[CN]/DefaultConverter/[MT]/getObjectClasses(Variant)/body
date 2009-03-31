@@ -1,7 +1,15 @@
 {
   List<Class<?>> result=null;
-  MediaType mediaType=variant.getMediaType();
-  if (mediaType != null) {
+  result=addObjectClass(result,String.class);
+  result=addObjectClass(result,InputStream.class);
+  result=addObjectClass(result,Reader.class);
+  result=addObjectClass(result,ReadableByteChannel.class);
+  if (variant.getMediaType() != null) {
+    MediaType mediaType=variant.getMediaType();
+    if (MediaType.APPLICATION_ALL_XML.equals(mediaType) || MediaType.TEXT_XML.equals(mediaType) || MediaType.APPLICATION_ATOMPUB_SERVICE.equals(mediaType)|| MediaType.APPLICATION_ATOM.equals(mediaType)|| MediaType.APPLICATION_RDF_XML.equals(mediaType)|| MediaType.APPLICATION_WADL.equals(mediaType)|| MediaType.APPLICATION_XHTML.equals(mediaType)) {
+      result=addObjectClass(result,Document.class);
+      result=addObjectClass(result,XmlRepresentation.class);
+    }
   }
   return result;
 }

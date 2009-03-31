@@ -2,7 +2,12 @@
   Representation result=null;
   ConverterHelper ch=ConverterUtils.getHelper(sourceObject,targetVariant,resource);
   if (ch != null) {
-    result=ch.toRepresentation(sourceObject,targetVariant,resource);
+    try {
+      result=ch.toRepresentation(sourceObject,targetVariant,resource);
+    }
+ catch (    IOException e) {
+      Context.getCurrentLogger().log(Level.WARNING,"Unable to convert object to a representation",e);
+    }
   }
  else {
     Context.getCurrentLogger().warning("Unable to find a converter for this object : " + sourceObject);
