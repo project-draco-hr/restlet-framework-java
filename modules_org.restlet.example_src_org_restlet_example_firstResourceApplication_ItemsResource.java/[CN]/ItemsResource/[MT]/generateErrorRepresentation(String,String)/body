@@ -1,0 +1,18 @@
+{
+  DomRepresentation result=null;
+  try {
+    result=new DomRepresentation(MediaType.TEXT_XML);
+    Document d=result.getDocument();
+    Element eltError=d.createElement("error");
+    Element eltCode=d.createElement("code");
+    eltCode.appendChild(d.createTextNode(errorCode));
+    eltError.appendChild(eltCode);
+    Element eltMessage=d.createElement("message");
+    eltMessage.appendChild(d.createTextNode(errorMessage));
+    eltError.appendChild(eltMessage);
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
+  }
+  return result;
+}

@@ -1,0 +1,11 @@
+{
+  Form form=new Form();
+  form.add("name",item.getName());
+  form.add("description",item.getDescription());
+  Representation rep=form.getWebRepresentation();
+  Response response=client.post(itemsUri,rep);
+  if (response.getStatus().isSuccess()) {
+    return response.getEntity().getIdentifier();
+  }
+  return null;
+}
