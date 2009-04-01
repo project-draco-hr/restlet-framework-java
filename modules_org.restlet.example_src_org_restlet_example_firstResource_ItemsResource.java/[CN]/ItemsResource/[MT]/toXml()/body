@@ -1,22 +1,24 @@
 {
-  if (MediaType.TEXT_XML.equals(variant.getMediaType())) {
-    try {
-      DomRepresentation representation=new DomRepresentation(MediaType.TEXT_XML);
-      Document d=representation.getDocument();
+  try {
+    DomRepresentation representation=new DomRepresentation(MediaType.TEXT_XML);
+    Document d=representation.getDocument();
+    Element r=d.createElement("items");
+    d.appendChild(r);
+    for (    Item item : items) {
       Element eltItem=d.createElement("item");
-      d.appendChild(eltItem);
       Element eltName=d.createElement("name");
       eltName.appendChild(d.createTextNode(item.getName()));
       eltItem.appendChild(eltName);
       Element eltDescription=d.createElement("description");
       eltDescription.appendChild(d.createTextNode(item.getDescription()));
       eltItem.appendChild(eltDescription);
-      d.normalizeDocument();
-      return representation;
+      r.appendChild(eltItem);
     }
- catch (    IOException e) {
-      e.printStackTrace();
-    }
+    d.normalizeDocument();
+    return representation;
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
   }
   return null;
 }
