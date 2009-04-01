@@ -1,18 +1,29 @@
 {
   Representation result=null;
-  Variant preferredVariant=getPreferredVariant(getMethod());
-  if (preferredVariant == null) {
-    setStatus(Status.CLIENT_ERROR_NOT_ACCEPTABLE);
-    result=describeVariants();
+  List<Variant> variants=getAvailableVariants(getMethod());
+  if ((variants != null) && (!variants.isEmpty())) {
+    Language language=null;
+    final Application app=Application.getCurrent();
+    if (app != null) {
+      language=app.getMetadataService().getDefaultLanguage();
+    }
+    Variant preferredVariant=getClientInfo().getPreferredVariant(variants,language);
+    if (preferredVariant == null) {
+      setStatus(Status.CLIENT_ERROR_NOT_ACCEPTABLE);
+      result=describeVariants();
+    }
+ else {
+      updateDimensions();
+      if (preferredVariant instanceof VariantInfo) {
+        result=doHandle(((VariantInfo)preferredVariant).getAnnotationInfo(),preferredVariant);
+      }
+ else {
+        result=doHandle(preferredVariant);
+      }
+    }
   }
  else {
-    updateDimensions();
-    if (preferredVariant instanceof VariantInfo) {
-      result=doHandle(((VariantInfo)preferredVariant).getAnnotationInfo(),preferredVariant);
-    }
- else {
-      result=doHandle(preferredVariant);
-    }
+    result=doHandle();
   }
   return result;
 }

@@ -1,52 +1,6 @@
 {
   Variant result=null;
-  List<Variant> variants=null;
-  if (isAnnotated() && hasAnnotations()) {
-    ConverterService cs=getConverterService();
-    List<Variant> annoVariants=null;
-    for (    AnnotationInfo annotationInfo : annotations) {
-      if (method.equals(annotationInfo.getRestletMethod())) {
-        if (annotationInfo.getValue() != null) {
-          MetadataService ms=getApplication().getMetadataService();
-          if (ms == null) {
-            ms=new MetadataService();
-          }
-          Metadata metadata=ms.getMetadata(annotationInfo.getValue());
-          if (metadata instanceof MediaType) {
-            if (variants == null) {
-              variants=new ArrayList<Variant>();
-            }
-            variants.add(new VariantInfo((MediaType)metadata,annotationInfo));
-          }
-        }
- else {
-          annoVariants=cs.getVariants(annotationInfo.getJavaReturnType());
-          if (annoVariants != null) {
-            if (variants == null) {
-              variants=new ArrayList<Variant>();
-            }
-            for (            Variant v : annoVariants) {
-              variants.add(new VariantInfo(v,annotationInfo));
-            }
-          }
-        }
-      }
-    }
-  }
-  List<Variant> methodVariants=getVariants(getMethod());
-  if (methodVariants != null) {
-    if (variants == null) {
-      variants=new ArrayList<Variant>();
-    }
-    variants.addAll(methodVariants);
-  }
-  methodVariants=getVariants(Method.ALL);
-  if (methodVariants != null) {
-    if (variants == null) {
-      variants=new ArrayList<Variant>();
-    }
-    variants.addAll(methodVariants);
-  }
+  List<Variant> variants=getAvailableVariants(method);
   if ((variants != null) && (!variants.isEmpty())) {
     Language language=null;
     final Application app=Application.getCurrent();
