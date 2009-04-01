@@ -10,9 +10,25 @@
       result=new ArrayList<Variant>();
       result.add(new Variant((MediaType)object));
     }
+ else     if (object instanceof List) {
+      List list=(List)object;
+      if (!list.isEmpty()) {
+        Object obj=list.get(0);
+        if (obj instanceof Variant) {
+          result=new ArrayList<Variant>();
+          result.addAll((List<Variant>)object);
+        }
+ else         if (obj instanceof MediaType) {
+          result=new ArrayList<Variant>();
+          for (          Object object2 : list) {
+            result.add(new Variant((MediaType)object2));
+          }
+        }
  else {
-      result=new ArrayList<Variant>();
-      result.addAll((List<Variant>)object);
+        }
+      }
+ else {
+      }
     }
   }
   return result;

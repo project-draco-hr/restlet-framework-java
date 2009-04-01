@@ -5,7 +5,12 @@
     result=ch.toObject(sourceRepresentation,targetClass,resource);
   }
  else {
-    Context.getCurrentLogger().warning("Unable to find a converter for this representation : " + sourceRepresentation);
+    if (targetClass.isAssignableFrom(sourceRepresentation.getClass())) {
+      result=(T)sourceRepresentation;
+    }
+ else {
+      Context.getCurrentLogger().warning("Unable to find a converter for this representation : " + sourceRepresentation);
+    }
   }
   return result;
 }
