@@ -1,0 +1,13 @@
+{
+  ScriptedResourceContainer container=new ScriptedResourceContainer(this,getVariants(),entity,variant);
+  Object r=container.invoke(getStoreRepresentationEntryPointName());
+  if (r != null) {
+    if (r instanceof Representation) {
+      return (Representation)r;
+    }
+ else {
+      return new StringRepresentation(r.toString(),container.getMediaType(),container.getLanguage(),container.getCharacterSet());
+    }
+  }
+  return null;
+}
