@@ -4,36 +4,36 @@
     consumeWhiteSpaces();
 switch (getChar()) {
 case '(':
-      l.getLexicalUnits().add(new ListToken(this,getContext()));
+      listToken.getLexicalUnits().add(new ListToken(this,getContext()));
     break;
 case '<':
   if (step() == '=') {
-    l.getLexicalUnits().add(new Token("<="));
+    listToken.getLexicalUnits().add(new Token("<="));
     step();
     discard();
   }
  else {
     stepBack();
-    l.getLexicalUnits().add(new UriToken(this,getContext()));
+    listToken.getLexicalUnits().add(new UriToken(this,getContext()));
   }
 break;
 case '_':
-l.getLexicalUnits().add(new BlankNodeToken(this.parseToken()));
+listToken.getLexicalUnits().add(new BlankNodeToken(this.parseToken()));
 break;
 case '"':
-l.getLexicalUnits().add(new StringToken(this,getContext()));
+listToken.getLexicalUnits().add(new StringToken(this,getContext()));
 break;
 case '[':
-l.getLexicalUnits().add(new BlankNodeToken(this,getContext()));
+listToken.getLexicalUnits().add(new BlankNodeToken(this,getContext()));
 break;
 case '{':
-l.getLexicalUnits().add(new FormulaToken(this,getContext()));
+listToken.getLexicalUnits().add(new FormulaToken(this,getContext()));
 break;
 case ')':
 break;
 default :
 if (!isEndOfFile(getChar())) {
-l.getLexicalUnits().add(new Token(this,getContext()));
+listToken.getLexicalUnits().add(new Token(this,getContext()));
 }
 break;
 }
