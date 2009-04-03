@@ -1,6 +1,6 @@
 {
   try {
-    DomRepresentation dom=new DomRepresentation(xmlConfigRepresentation);
+    DomRepresentation dom=new DomRepresentation(getXmlConfiguration());
     DefaultSaxHandler handler=new DefaultSaxHandler();
     dom.setErrorHandler(handler);
     dom.setEntityResolver(handler);
@@ -39,7 +39,7 @@
             client=new Client(new Context(),getProtocol(item.getNodeValue()));
           }
           if (client != null) {
-            getClients().add(client);
+            getComponent().getClients().add(client);
             for (int j=0; j < childNode.getChildNodes().getLength(); j++) {
               final Node childNode2=childNode.getChildNodes().item(j);
               if (isParameter(childNode2)) {
@@ -69,13 +69,13 @@
                 getLogger().warning("Please specify a port when defining a list of protocols.");
               }
  else {
-                server=new Server(new Context(),protocolsList,getInt(portNode,Protocol.UNKNOWN_PORT),getServers().getTarget());
+                server=new Server(new Context(),protocolsList,getInt(portNode,Protocol.UNKNOWN_PORT),getComponent().getServers().getTarget());
               }
             }
           }
  else {
             final Protocol protocol=getProtocol(item.getNodeValue());
-            server=new Server(new Context(),protocol,getInt(portNode,protocol.getDefaultPort()),getServers().getTarget());
+            server=new Server(new Context(),protocol,getInt(portNode,protocol.getDefaultPort()),getComponent().getServers().getTarget());
           }
           if (server != null) {
             if (addressNode != null) {
@@ -93,60 +93,60 @@
                 }
               }
             }
-            getServers().add(server);
+            getComponent().getServers().add(server);
           }
         }
  else         if (isParameter(childNode)) {
           Parameter p=parseParameter(childNode);
           if (p != null) {
-            getContext().getParameters().add(p);
+            getComponent().getContext().getParameters().add(p);
           }
         }
  else         if ("defaultHost".equals(childNode.getNodeName())) {
-          parseHost(getDefaultHost(),childNode);
+          parseHost(getComponent().getDefaultHost(),childNode);
         }
  else         if ("host".equals(childNode.getNodeName())) {
-          final VirtualHost host=new VirtualHost(getContext());
+          final VirtualHost host=new VirtualHost(getComponent().getContext());
           parseHost(host,childNode);
-          getHosts().add(host);
+          getComponent().getHosts().add(host);
         }
  else         if ("internalRouter".equals(childNode.getNodeName())) {
-          parseRouter(getInternalRouter(),childNode);
+          parseRouter(getComponent().getInternalRouter(),childNode);
         }
  else         if ("logService".equals(childNode.getNodeName())) {
           Node item=childNode.getAttributes().getNamedItem("logFormat");
           if (item != null) {
-            getLogService().setLogFormat(item.getNodeValue());
+            getComponent().getLogService().setLogFormat(item.getNodeValue());
           }
           item=childNode.getAttributes().getNamedItem("loggerName");
           if (item != null) {
-            getLogService().setLoggerName(item.getNodeValue());
+            getComponent().getLogService().setLoggerName(item.getNodeValue());
           }
           item=childNode.getAttributes().getNamedItem("enabled");
           if (item != null) {
-            getLogService().setEnabled(getBoolean(item,true));
+            getComponent().getLogService().setEnabled(getBoolean(item,true));
           }
           item=childNode.getAttributes().getNamedItem("identityCheck");
           if (item != null) {
-            getLogService().setIdentityCheck(getBoolean(item,true));
+            getComponent().getLogService().setIdentityCheck(getBoolean(item,true));
           }
         }
  else         if ("statusService".equals(childNode.getNodeName())) {
           Node item=childNode.getAttributes().getNamedItem("contactEmail");
           if (item != null) {
-            getStatusService().setContactEmail(item.getNodeValue());
+            getComponent().getStatusService().setContactEmail(item.getNodeValue());
           }
           item=childNode.getAttributes().getNamedItem("enabled");
           if (item != null) {
-            getStatusService().setEnabled(getBoolean(item,true));
+            getComponent().getStatusService().setEnabled(getBoolean(item,true));
           }
           item=childNode.getAttributes().getNamedItem("homeRef");
           if (item != null) {
-            getStatusService().setHomeRef(new Reference(item.getNodeValue()));
+            getComponent().getStatusService().setHomeRef(new Reference(item.getNodeValue()));
           }
           item=childNode.getAttributes().getNamedItem("overwrite");
           if (item != null) {
-            getStatusService().setOverwrite(getBoolean(item,true));
+            getComponent().getStatusService().setOverwrite(getBoolean(item,true));
           }
         }
       }
