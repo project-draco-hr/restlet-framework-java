@@ -1,0 +1,20 @@
+{
+  Reference currentBlankNode=(Reference)new BlankNodeToken(getContentHandler().newBlankNodeId()).resolve();
+  for (  LexicalUnit lexicalUnit : lexicalUnits) {
+    Object element=lexicalUnit.resolve();
+    if (element instanceof Reference) {
+      getContentHandler().link(currentBlankNode,RdfConstants.LIST_FIRST,(Reference)element);
+    }
+ else     if (element instanceof String) {
+      getContentHandler().link(currentBlankNode,RdfConstants.LIST_FIRST,new Reference((String)element));
+    }
+ else {
+      org.restlet.Context.getCurrentLogger().warning("The list contains an element which is neither a Reference nor a literal.");
+    }
+    Reference restBlankNode=(Reference)new BlankNodeToken(getContentHandler().newBlankNodeId()).resolve();
+    getContentHandler().link(currentBlankNode,RdfConstants.LIST_REST,restBlankNode);
+    currentBlankNode=restBlankNode;
+  }
+  getContentHandler().link(currentBlankNode,RdfConstants.LIST_REST,RdfConstants.OBJECT_NIL);
+  return currentBlankNode;
+}

@@ -1,0 +1,53 @@
+{
+  int c1=step();
+  int c2=step();
+  if ((c1 == c2) && (c1 == '"')) {
+    u.setMultiLines(true);
+    step();
+    discard();
+    int[] tab=new int[3];
+    int cpt=0;
+    int c=getChar();
+    while (!isEndOfFile(c)) {
+      if (c == '"') {
+        tab[++cpt - 1]=c;
+      }
+ else {
+        cpt=0;
+      }
+      if (cpt == 3) {
+        stepBack(2);
+        u.setValue(getCurrentToken());
+        step(3);
+        discard();
+        break;
+      }
+      c=step();
+    }
+  }
+ else {
+    u.setMultiLines(false);
+    stepBack(1);
+    discard();
+    int c=getChar();
+    while (!isEndOfFile(c) && (c != '"')) {
+      c=step();
+    }
+    u.setValue(getCurrentToken());
+    step();
+    discard();
+  }
+  int c=getChar();
+  if (c == '@') {
+    u.setLanguage(parseToken());
+  }
+ else   if (c == '^') {
+    c=step();
+    if (c == '^') {
+      u.setType(parseToken());
+    }
+ else {
+      stepBack();
+    }
+  }
+}

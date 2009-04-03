@@ -1,0 +1,35 @@
+{
+  step();
+  do {
+    consumeWhiteSpaces();
+switch (getChar()) {
+case '(':
+      l.getLexicalUnits().add(new ListToken(this,this.context));
+    break;
+case '<':
+  stepBack();
+l.getLexicalUnits().add(new UriToken(this,this.context));
+break;
+case '_':
+l.getLexicalUnits().add(new BlankNodeToken(parseToken()));
+break;
+case '"':
+l.getLexicalUnits().add(new StringToken(this,this.context));
+break;
+case '[':
+l.getLexicalUnits().add(new BlankNodeToken(this,this.context));
+break;
+case ')':
+break;
+default :
+if (!isEndOfFile(getChar())) {
+l.getLexicalUnits().add(new Token(this,this.context));
+}
+break;
+}
+}
+ while (!isEndOfFile(getChar()) && getChar() != ')');
+if (getChar() == ')') {
+step();
+}
+}

@@ -1,0 +1,23 @@
+{
+  String uri=reference.toString();
+  if (LinkReference.isBlank(reference)) {
+    this.bw.write(uri);
+  }
+ else {
+    boolean found=false;
+    for (    Entry<String,String> entry : prefixes.entrySet()) {
+      if (uri.startsWith(entry.getKey())) {
+        found=true;
+        this.bw.append(entry.getValue());
+        this.bw.append(":");
+        this.bw.append(uri.substring(entry.getKey().length()));
+        break;
+      }
+    }
+    if (!found) {
+      this.bw.append("<");
+      this.bw.append(uri);
+      this.bw.append(">");
+    }
+  }
+}

@@ -68,13 +68,13 @@ lexicalUnits.add(new FormulaToken(this,context));
 break;
 case '.':
 break;
-case RdfN3ParsingContentHandler.EOF:
-break;
 default :
+if (!isEndOfFile(getChar())) {
 lexicalUnits.add(new Token(this,context));
+}
 break;
 }
 }
- while (getChar() != RdfN3ParsingContentHandler.EOF && getChar() != '.' && getChar() != '}');
+ while (!isEndOfFile(getChar()) && getChar() != '.' && getChar() != '}');
 generateLinks(lexicalUnits);
 }

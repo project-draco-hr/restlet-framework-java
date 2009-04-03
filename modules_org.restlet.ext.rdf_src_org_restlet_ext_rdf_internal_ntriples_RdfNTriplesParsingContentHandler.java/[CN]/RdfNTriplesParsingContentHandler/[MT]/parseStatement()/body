@@ -15,7 +15,7 @@ case '"':
 stepBack(1);
 discard();
 int c=getChar();
-while (c != RdfN3ParsingContentHandler.EOF && (c != '"')) {
+while (!isEndOfFile(c) && (c != '"')) {
 c=step();
 }
 object=getCurrentToken();
@@ -24,13 +24,13 @@ discard();
 break;
 case '.':
 break;
-case RdfNTriplesParsingContentHandler.EOF:
+case EOF:
 break;
 default :
 break;
 }
 }
- while (getChar() != RdfNTriplesParsingContentHandler.EOF && getChar() != '.' && getChar() != '}');
+ while (!isEndOfFile(getChar()) && getChar() != '.' && getChar() != '}');
 if (object != null) {
 link(lexicalUnits.get(0),lexicalUnits.get(1),new Literal(object));
 }
