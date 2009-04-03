@@ -2,5 +2,12 @@
   this.context=context;
   this.request=request;
   this.response=response;
-  init();
+  try {
+    doInit();
+  }
+ catch (  ResourceException e) {
+    if (getResponse() != null) {
+      getResponse().setStatus(e.getStatus());
+    }
+  }
 }
