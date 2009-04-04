@@ -1,0 +1,26 @@
+{
+  String name=ScriptUtils.getRelativePart(this.resource.getRequest(),this.resource.getDefaultName());
+  try {
+    ScriptSource.ScriptDescriptor<EmbeddedScript> scriptDescriptor=this.resource.getScriptSource().getScriptDescriptor(name);
+    EmbeddedScript script=scriptDescriptor.getScript();
+    if (script == null) {
+      String text=scriptDescriptor.getText();
+      script=new EmbeddedScript(text,this.resource.getScriptEngineManager(),this.resource.getDefaultScriptEngineName(),this.resource.isAllowCompilation());
+      scriptDescriptor.setScript(script);
+      script.run(this.resource.getWriter(),this.resource.getErrorWriter(),true,this.scriptContexts,this,this.resource.getScriptContextController(),false);
+    }
+    return script.invoke(entryPointName,this.scriptContexts,this,this.resource.getScriptContextController());
+  }
+ catch (  FileNotFoundException e) {
+    throw new ResourceException(Status.CLIENT_ERROR_NOT_FOUND,e);
+  }
+catch (  IOException e) {
+    throw new ResourceException(e);
+  }
+catch (  ScriptException e) {
+    throw new ResourceException(e);
+  }
+catch (  NoSuchMethodException e) {
+    throw new ResourceException(e);
+  }
+}

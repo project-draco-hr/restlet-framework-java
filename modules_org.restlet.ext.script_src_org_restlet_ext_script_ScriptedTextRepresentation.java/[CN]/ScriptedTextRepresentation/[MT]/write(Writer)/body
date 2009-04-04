@@ -1,7 +1,7 @@
 {
   try {
-    ScriptedTextRepresentationContainer container=new ScriptedTextRepresentationContainer(this);
-    this.embeddedScript.run(writer,this.errorWriter,false,this.scriptEngines,new ScriptedTextRepresentationScriptContextController(this,container,this.embeddedScript.getContainerVariableName()),false);
+    ConcurrentMap<String,ScriptContext> scriptContexts=new ConcurrentHashMap<String,ScriptContext>();
+    this.embeddedScript.run(writer,this.errorWriter,false,scriptContexts,new ExposedScriptedTextRepresentationContainer(this),getScriptContextController(),false);
   }
  catch (  ScriptException e) {
     IOException ioe=new IOException("Script exception");
