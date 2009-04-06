@@ -32,10 +32,10 @@
     }
   }
   try {
-    if (script.run(writer,this.resource.getErrorWriter(),false,this.scriptContexts,this,this.resource.getScriptContextController(),!isStreaming)) {
+    if (script.run(writer,this.resource.getErrorWriter(),false,this.scriptEngines,this,this.resource.getScriptContextController(),!isStreaming)) {
       if (this.startStreaming) {
         this.startStreaming=false;
-        return new ScriptedTextStreamingRepresentation(this.resource,this,this.scriptContexts,this.resource.getScriptContextController(),script,this.flushLines);
+        return new ScriptedTextStreamingRepresentation(this.resource,this,this.scriptEngines,this.resource.getScriptContextController(),script,this.flushLines);
       }
       if (isStreaming) {
         return null;
@@ -68,7 +68,7 @@
  catch (  ScriptException x) {
     if (this.startStreaming) {
       this.startStreaming=false;
-      return new ScriptedTextStreamingRepresentation(this.resource,this,this.scriptContexts,this.resource.getScriptContextController(),script,this.flushLines);
+      return new ScriptedTextStreamingRepresentation(this.resource,this,this.scriptEngines,this.resource.getScriptContextController(),script,this.flushLines);
     }
  else {
       throw x;
