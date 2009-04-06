@@ -3,16 +3,15 @@
   Form form=new Form(entity);
   String itemName=form.getFirstValue("name");
   String itemDescription=form.getFirstValue("description");
-  if (getItems().containsKey(itemName)) {
-    setStatus(Status.CLIENT_ERROR_NOT_FOUND);
-    result=generateErrorRepresentation("Item " + itemName + " already exists.","1");
-  }
- else {
-    getItems().put(itemName,new Item(itemName,itemDescription));
+  if (!getItems().containsKey(itemName) && putIfAbsent(itemName,itemDescription) != null) {
     setStatus(Status.SUCCESS_CREATED);
     Representation rep=new StringRepresentation("Item created",MediaType.TEXT_PLAIN);
     rep.setIdentifier(getRequest().getResourceRef().getIdentifier() + "/" + itemName);
     result=rep;
+  }
+ else {
+    setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+    result=generateErrorRepresentation("Item " + itemName + " already exists.","1");
   }
   return result;
 }
