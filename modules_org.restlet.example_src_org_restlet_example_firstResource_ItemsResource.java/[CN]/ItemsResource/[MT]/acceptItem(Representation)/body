@@ -3,7 +3,7 @@
   Form form=new Form(entity);
   String itemName=form.getFirstValue("name");
   String itemDescription=form.getFirstValue("description");
-  if (!getItems().containsKey(itemName) && putIfAbsent(itemName,itemDescription) != null) {
+  if (!getItems().containsKey(itemName) && getItems().putIfAbsent(itemName,new Item(itemName,itemDescription)) == null) {
     setStatus(Status.SUCCESS_CREATED);
     Representation rep=new StringRepresentation("Item created",MediaType.TEXT_PLAIN);
     rep.setIdentifier(getRequest().getResourceRef().getIdentifier() + "/" + itemName);
