@@ -1,0 +1,13 @@
+{
+  final Router router=new Router(getContext());
+  router.attachDefault(new Redirector(getContext(),"/users",Redirector.MODE_CLIENT_PERMANENT));
+  final Directory imgDirectory=new Directory(getContext(),LocalReference.createFileReference(webRootPath + "/images"));
+  router.attach("/images",imgDirectory);
+  final Directory cssDirectory=new Directory(getContext(),LocalReference.createFileReference(webRootPath + "/stylesheets"));
+  router.attach("/stylesheets",cssDirectory);
+  router.attach("/users",UsersResource.class);
+  router.attach("/users/{userId}",UserResource.class);
+  router.attach("/users/{userId}/contacts",ContactsResource.class);
+  router.attach("/users/{userId}/contacts/{contactId}",ContactResource.class);
+  return router;
+}

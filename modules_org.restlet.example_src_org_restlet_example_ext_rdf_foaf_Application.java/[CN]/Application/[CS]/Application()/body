@@ -1,0 +1,19 @@
+{
+  getConnectorService().getClientProtocols().add(Protocol.FILE);
+  getConnectorService().getClientProtocols().add(Protocol.CLAP);
+  getConnectorService().getClientProtocols().add(Protocol.HTTP);
+  Properties properties=getProperties("clap://class/config/foafApplication.properties");
+  this.webRootPath=properties.getProperty("web.root.path");
+  this.dataFacade=new ObjectsFacade(new ListFacade());
+  try {
+    final File templateDir=new File(webRootPath + "/tmpl");
+    this.fmc=new freemarker.template.Configuration();
+    this.fmc.setDirectoryForTemplateLoading(templateDir);
+  }
+ catch (  Exception e) {
+    getLogger().severe("Unable to configure FreeMarker.");
+    e.printStackTrace();
+  }
+  getMetadataService().addExtension("foaf",MediaType.APPLICATION_RDF_XML,true);
+  getTunnelService().setExtensionsTunnel(true);
+}

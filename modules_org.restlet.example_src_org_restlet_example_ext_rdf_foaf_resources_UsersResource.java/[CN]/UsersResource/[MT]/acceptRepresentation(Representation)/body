@@ -1,0 +1,22 @@
+{
+  final Form form=new Form(entity);
+  User user=new User();
+  user.setFirstName(form.getFirstValue("firstName"));
+  user.setLastName(form.getFirstValue("lastName"));
+  user.setImage(form.getFirstValue("image"));
+  try {
+    user=getObjectsFacade().createUser(user);
+    getResponse().redirectSeeOther(getChildReference(getRequest().getResourceRef(),user.getId()));
+  }
+ catch (  ObjectsException e) {
+    final Map<String,Object> dataModel=new TreeMap<String,Object>();
+    dataModel.put("users",this.users);
+    dataModel.put("resourceRef",getRequest().getResourceRef());
+    dataModel.put("rootRef",getRequest().getRootRef());
+    dataModel.put("firstName",form.getFirstValue("firstName"));
+    dataModel.put("lastName",form.getFirstValue("lastName"));
+    dataModel.put("image",form.getFirstValue("image"));
+    dataModel.put("errorMessage",e.getMessage());
+    getResponse().setEntity(getTemplateRepresentation("users.html",dataModel,MediaType.TEXT_HTML));
+  }
+}
