@@ -1,7 +1,7 @@
 {
   Component component=null;
-  Client client=createWarClient(new Context(),getServletConfig());
-  Response response=client.get("war:///WEB-INF/restlet.xml");
+  Client warClient=createWarClient(new Context(),getServletConfig());
+  Response response=warClient.get("war:///WEB-INF/restlet.xml");
   if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
     component=new Component(response.getEntity());
   }
@@ -13,13 +13,13 @@
         component=(Component)targetClass.newInstance();
       }
  catch (      ClassNotFoundException e) {
-        log("[Noelios Restlet Engine] - The ServerServlet couldn't find the target class. Please check that your classpath includes " + componentClassName,e);
+        log("[Restlet] ServerServlet couldn't find the target class. Please check that your classpath includes " + componentClassName,e);
       }
 catch (      InstantiationException e) {
-        log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check this class has an empty constructor " + componentClassName,e);
+        log("[Restlet] ServerServlet couldn't instantiate the target class. Please check this class has an empty constructor " + componentClassName,e);
       }
 catch (      IllegalAccessException e) {
-        log("[Noelios Restlet Engine] - The ServerServlet couldn't instantiate the target class. Please check that you have to proper access rights to " + componentClassName,e);
+        log("[Restlet] ServerServlet couldn't instantiate the target class. Please check that you have to proper access rights to " + componentClassName,e);
       }
     }
   }
@@ -29,8 +29,15 @@ catch (      IllegalAccessException e) {
     final String clientProtocolsString=getInitParameter(CLIENTS_KEY,null);
     if (clientProtocolsString != null) {
       final String[] clientProtocols=clientProtocolsString.split(" ");
+      Client client;
       for (      final String clientProtocol : clientProtocols) {
-        component.getClients().add(Protocol.valueOf(clientProtocol));
+        client=new Client(clientProtocol);
+        if (client.isAvailable()) {
+          component.getClients().add(client);
+        }
+ else {
+          log("[Restlet] Couldn't find a client connector for protocol " + clientProtocol);
+        }
       }
     }
   }

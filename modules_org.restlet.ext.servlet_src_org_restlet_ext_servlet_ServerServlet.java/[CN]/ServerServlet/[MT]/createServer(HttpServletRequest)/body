@@ -7,7 +7,7 @@
     final String uriPattern=request.getContextPath() + request.getServletPath();
     if (isDefaultComponent()) {
       if (this.application != null) {
-        log("[Noelios Restlet Engine] - Attaching application: " + this.application + " to URI: "+ uriPattern);
+        log("[Restlet] Attaching application: " + this.application + " to URI: "+ uriPattern);
         component.getDefaultHost().attach(uriPattern,this.application);
       }
     }
@@ -74,20 +74,20 @@
           Route defaultRoute=component.getDefaultHost().getDefaultRoute();
           if (defaultRoute != null) {
             defaultRoute.getTemplate().setPattern(offsetPath + defaultRoute.getTemplate().getPattern());
-            log("[Noelios Restlet Engine] - Attaching restlet: " + defaultRoute.getNext() + " to URI: "+ offsetPath+ defaultRoute.getTemplate().getPattern());
+            log("[Restlet] Attaching restlet: " + defaultRoute.getNext() + " to URI: "+ offsetPath+ defaultRoute.getTemplate().getPattern());
           }
           for (          final Route route : component.getDefaultHost().getRoutes()) {
-            log("[Noelios Restlet Engine] - Attaching restlet: " + route.getNext() + " to URI: "+ offsetPath+ route.getTemplate().getPattern());
+            log("[Restlet] Attaching restlet: " + route.getNext() + " to URI: "+ offsetPath+ route.getTemplate().getPattern());
             route.getTemplate().setPattern(offsetPath + route.getTemplate().getPattern());
           }
           for (          final VirtualHost virtualHost : component.getHosts()) {
             defaultRoute=virtualHost.getDefaultRoute();
             if (defaultRoute != null) {
               defaultRoute.getTemplate().setPattern(offsetPath + defaultRoute.getTemplate().getPattern());
-              log("[Noelios Restlet Engine] - Attaching restlet: " + defaultRoute.getNext() + " to URI: "+ offsetPath+ defaultRoute.getTemplate().getPattern());
+              log("[Restlet] Attaching restlet: " + defaultRoute.getNext() + " to URI: "+ offsetPath+ defaultRoute.getTemplate().getPattern());
             }
             for (            final Route route : virtualHost.getRoutes()) {
-              log("[Noelios Restlet Engine] - Attaching restlet: " + route.getNext() + " to URI: "+ offsetPath+ route.getTemplate().getPattern());
+              log("[Restlet] Attaching restlet: " + route.getNext() + " to URI: "+ offsetPath+ route.getTemplate().getPattern());
               route.getTemplate().setPattern(offsetPath + route.getTemplate().getPattern());
             }
           }
