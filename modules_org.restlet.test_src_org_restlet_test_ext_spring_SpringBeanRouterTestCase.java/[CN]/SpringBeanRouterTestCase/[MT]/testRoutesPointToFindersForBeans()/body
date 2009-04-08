@@ -1,15 +1,8 @@
 {
   final RouteList actualRoutes=actualRoutes();
   assertEquals("Wrong number of routes",2,actualRoutes.size());
-  Route oreRoute=null, fishRoute=null;
-  for (  final Route actualRoute : actualRoutes) {
-    if (actualRoute.getTemplate().getPattern().equals(FISH_URI)) {
-      fishRoute=actualRoute;
-    }
-    if (actualRoute.getTemplate().getPattern().equals(ORE_URI)) {
-      oreRoute=actualRoute;
-    }
-  }
+  Route oreRoute=matchRouteFor(ORE_URI);
+  Route fishRoute=matchRouteFor(FISH_URI);
   assertNotNull("ore route not present: " + actualRoutes,oreRoute);
   assertNotNull("fish route not present: " + actualRoutes,fishRoute);
   assertFinderForBean("ore",oreRoute.getNext());

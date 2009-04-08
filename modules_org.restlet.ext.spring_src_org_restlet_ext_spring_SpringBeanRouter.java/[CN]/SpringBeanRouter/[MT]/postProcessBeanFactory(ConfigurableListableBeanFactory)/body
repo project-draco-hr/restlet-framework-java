@@ -4,7 +4,14 @@
   for (  final String name : names) {
     final String uri=resolveUri(name,factory);
     if (uri != null) {
-      attach(uri,createFinder(bf,name));
+      if (this.attachments == null || !this.attachments.containsKey(uri)) {
+        attach(uri,createFinder(bf,name));
+      }
+    }
+  }
+  if (this.attachments != null) {
+    for (    Map.Entry<String,String> attachment : this.attachments.entrySet()) {
+      attach(attachment.getKey(),createFinder(bf,attachment.getValue()));
     }
   }
 }
