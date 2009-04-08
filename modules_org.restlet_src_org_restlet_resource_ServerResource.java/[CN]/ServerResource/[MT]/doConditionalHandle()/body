@@ -1,41 +1,51 @@
 {
   Representation result=null;
-  if (!isExists() && getConditions().hasSome() && getConditions().getMatch().contains(Tag.ALL)) {
-    setStatus(Status.CLIENT_ERROR_PRECONDITION_FAILED,"A non existing resource can't match any tag.");
+  if (getConditions().hasSome()) {
+    if (!isExists() && getConditions().getMatch().contains(Tag.ALL)) {
+      setStatus(Status.CLIENT_ERROR_PRECONDITION_FAILED,"A non existing resource can't match any tag.");
+    }
+ else {
+      RepresentationInfo resultInfo=null;
+      if (isNegotiated()) {
+        resultInfo=doGetInfo(getPreferredVariant(Method.GET));
+      }
+ else {
+        resultInfo=doGetInfo();
+      }
+      if (resultInfo == null) {
+        if ((getStatus() == null) || (getStatus().isSuccess() && !Status.SUCCESS_NO_CONTENT.equals(getStatus()))) {
+          setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+        }
+ else {
+        }
+      }
+ else {
+        Status status=getConditions().getStatus(getMethod(),resultInfo);
+        if (status != null) {
+          setStatus(status);
+        }
+      }
+      if ((getStatus() != null) && getStatus().isSuccess()) {
+        if ((Method.GET.equals(getMethod()) || Method.HEAD.equals(getMethod())) && resultInfo instanceof Representation) {
+          result=(Representation)resultInfo;
+        }
+ else {
+          if (isNegotiated()) {
+            result=doNegotiatedHandle();
+          }
+ else {
+            result=doHandle();
+          }
+        }
+      }
+    }
   }
  else {
-    RepresentationInfo resultInfo=null;
     if (isNegotiated()) {
-      resultInfo=doGetInfo(getPreferredVariant(Method.GET));
+      result=doNegotiatedHandle();
     }
  else {
-      resultInfo=doGetInfo();
-    }
-    if (resultInfo == null) {
-      if ((getStatus() == null) || (getStatus().isSuccess() && !Status.SUCCESS_NO_CONTENT.equals(getStatus()))) {
-        setStatus(Status.CLIENT_ERROR_NOT_FOUND);
-      }
- else {
-      }
-    }
- else     if (getRequest().getConditions().hasSome()) {
-      Status status=getConditions().getStatus(getMethod(),resultInfo);
-      if (status != null) {
-        setStatus(status);
-      }
-    }
-    if ((getStatus() != null) && getStatus().isSuccess()) {
-      if ((Method.GET.equals(getRequest().getMethod()) || Method.HEAD.equals(getRequest().getMethod())) && resultInfo instanceof Representation) {
-        result=(Representation)resultInfo;
-      }
- else {
-        if (isNegotiated()) {
-          result=doNegotiatedHandle();
-        }
- else {
-          result=doHandle();
-        }
-      }
+      result=doHandle();
     }
   }
   return result;
