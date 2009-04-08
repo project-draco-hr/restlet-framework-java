@@ -8,8 +8,11 @@
     if (scriptEngineName != null) {
       text=EmbeddedScript.DEFAULT_DELIMITER1_START + scriptEngineName + " "+ text+ EmbeddedScript.DEFAULT_DELIMITER1_END;
     }
-    script=new EmbeddedScript(text,this.resource.getScriptEngineManager(),this.resource.getDefaultScriptEngineName(),this.resource.isAllowCompilation());
-    scriptDescriptor.setScript(script);
+    script=new EmbeddedScript(text,this.resource.getScriptEngineManager(),this.resource.getDefaultScriptEngineName(),this.resource.getScriptSource(),this.resource.isAllowCompilation());
+    EmbeddedScript existing=scriptDescriptor.setScript(script);
+    if (existing != null) {
+      script=existing;
+    }
   }
   String trivial=script.getTrivial();
   if (trivial != null) {
