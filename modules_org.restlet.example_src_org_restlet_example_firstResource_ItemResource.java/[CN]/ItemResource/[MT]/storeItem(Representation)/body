@@ -1,16 +1,13 @@
 {
-  boolean creation=(item == null);
   if (item == null) {
     item=new Item(itemName);
   }
   Form form=new Form(entity);
   item.setDescription(form.getFirstValue("description"));
-  getItems().put(item.getName(),item);
-  if (creation) {
+  if (getItems().putIfAbsent(item.getName(),item) == null) {
     setStatus(Status.SUCCESS_CREATED);
   }
  else {
     setStatus(Status.SUCCESS_OK);
   }
-  return null;
 }
