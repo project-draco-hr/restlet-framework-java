@@ -2,7 +2,7 @@
   int c1=step();
   int c2=step();
   if ((c1 == c2) && (c1 == '"')) {
-    u.setMultiLines(true);
+    stringToken.setMultiLines(true);
     step();
     discard();
     int[] tab=new int[3];
@@ -17,7 +17,7 @@
       }
       if (cpt == 3) {
         stepBack(2);
-        u.setValue(getCurrentToken());
+        stringToken.setValue(getCurrentToken());
         step(3);
         discard();
         break;
@@ -26,25 +26,25 @@
     }
   }
  else {
-    u.setMultiLines(false);
+    stringToken.setMultiLines(false);
     stepBack(1);
     discard();
     int c=getChar();
     while (!isEndOfFile(c) && (c != '"')) {
       c=step();
     }
-    u.setValue(getCurrentToken());
+    stringToken.setValue(getCurrentToken());
     step();
     discard();
   }
   int c=getChar();
   if (c == '@') {
-    u.setLanguage(parseToken());
+    stringToken.setLanguage(parseToken());
   }
  else   if (c == '^') {
     c=step();
     if (c == '^') {
-      u.setType(parseToken());
+      stringToken.setType(parseToken());
     }
  else {
       stepBack();

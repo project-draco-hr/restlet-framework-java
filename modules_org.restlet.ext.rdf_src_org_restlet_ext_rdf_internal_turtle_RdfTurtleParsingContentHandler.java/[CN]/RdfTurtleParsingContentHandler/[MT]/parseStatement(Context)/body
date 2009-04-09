@@ -7,15 +7,8 @@ case '(':
       lexicalUnits.add(new ListToken(this,context));
     break;
 case '<':
-  if (step() == '=') {
-    lexicalUnits.add(new Token("<="));
-    step();
-    discard();
-  }
- else {
-    stepBack();
-    lexicalUnits.add(new UriToken(this,context));
-  }
+  stepBack();
+lexicalUnits.add(new UriToken(this,context));
 break;
 case '_':
 lexicalUnits.add(new BlankNodeToken(parseToken()));
@@ -35,17 +28,6 @@ case '^':
 lexicalUnits.add(new Token("^"));
 step();
 discard();
-break;
-case '=':
-if (step() == '>') {
-lexicalUnits.add(new Token("=>"));
-step();
-discard();
-}
- else {
-lexicalUnits.add(new Token("="));
-discard();
-}
 break;
 case '@':
 step();

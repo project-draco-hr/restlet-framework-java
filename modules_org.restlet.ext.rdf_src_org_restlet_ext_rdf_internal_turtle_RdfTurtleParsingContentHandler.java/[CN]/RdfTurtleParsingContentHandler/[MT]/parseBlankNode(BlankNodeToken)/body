@@ -4,33 +4,26 @@
     consumeWhiteSpaces();
 switch (getChar()) {
 case '(':
-      bn.getLexicalUnits().add(new ListToken(this,this.context));
+      blankNode.getLexicalUnits().add(new ListToken(this,this.context));
     break;
 case '<':
-  if (step() == '=') {
-    bn.getLexicalUnits().add(new Token("<="));
-    step();
-    discard();
-  }
- else {
-    stepBack();
-    bn.getLexicalUnits().add(new UriToken(this,this.context));
-  }
+  stepBack();
+blankNode.getLexicalUnits().add(new UriToken(this,this.context));
 break;
 case '_':
-bn.getLexicalUnits().add(new BlankNodeToken(this.parseToken()));
+blankNode.getLexicalUnits().add(new BlankNodeToken(this.parseToken()));
 break;
 case '"':
-bn.getLexicalUnits().add(new StringToken(this,this.context));
+blankNode.getLexicalUnits().add(new StringToken(this,this.context));
 break;
 case '[':
-bn.getLexicalUnits().add(new BlankNodeToken(this,this.context));
+blankNode.getLexicalUnits().add(new BlankNodeToken(this,this.context));
 break;
 case ']':
 break;
 default :
 if (!isEndOfFile(getChar())) {
-bn.getLexicalUnits().add(new Token(this,this.context));
+blankNode.getLexicalUnits().add(new Token(this,this.context));
 }
 break;
 }
