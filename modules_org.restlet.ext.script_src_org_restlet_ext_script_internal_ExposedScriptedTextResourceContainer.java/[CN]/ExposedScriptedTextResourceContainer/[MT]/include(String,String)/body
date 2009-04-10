@@ -1,15 +1,15 @@
 {
   boolean isStreaming=isStreaming();
   Writer writer=this.resource.getWriter();
-  ScriptSource.ScriptDescriptor<EmbeddedScript> scriptDescriptor=this.resource.getScriptSource().getScriptDescriptor(name);
-  EmbeddedScript script=scriptDescriptor.getScript();
+  ScriptSource.ScriptDescriptor<CompositeScript> scriptDescriptor=this.resource.getScriptSource().getScriptDescriptor(name);
+  CompositeScript script=scriptDescriptor.getScript();
   if (script == null) {
     String text=scriptDescriptor.getText();
     if (scriptEngineName != null) {
-      text=EmbeddedScript.DEFAULT_DELIMITER1_START + scriptEngineName + " "+ text+ EmbeddedScript.DEFAULT_DELIMITER1_END;
+      text=CompositeScript.DEFAULT_DELIMITER1_START + scriptEngineName + " "+ text+ CompositeScript.DEFAULT_DELIMITER1_END;
     }
-    script=new EmbeddedScript(text,this.resource.getScriptEngineManager(),this.resource.getDefaultScriptEngineName(),this.resource.getScriptSource(),this.resource.isAllowCompilation());
-    EmbeddedScript existing=scriptDescriptor.setScriptIfAbsent(script);
+    script=new CompositeScript(text,this.resource.getScriptEngineManager(),this.resource.getDefaultScriptEngineName(),this.resource.getScriptSource(),this.resource.isAllowCompilation());
+    CompositeScript existing=scriptDescriptor.setScriptIfAbsent(script);
     if (existing != null) {
       script=existing;
     }
@@ -35,10 +35,10 @@
     }
   }
   try {
-    if (script.run(!isStreaming,writer,this.resource.getErrorWriter(),false,this.embeddedScriptContext,this,this.resource.getScriptContextController())) {
+    if (script.run(!isStreaming,writer,this.resource.getErrorWriter(),false,this.compositeScriptContext,this,this.resource.getScriptContextController())) {
       if (this.startStreaming) {
         this.startStreaming=false;
-        return new ScriptedTextStreamingRepresentation(this.resource,this,this.embeddedScriptContext,this.resource.getScriptContextController(),script,this.flushLines);
+        return new ScriptedTextStreamingRepresentation(this.resource,this,this.compositeScriptContext,this.resource.getScriptContextController(),script,this.flushLines);
       }
       if (isStreaming) {
         return null;
@@ -71,7 +71,7 @@
  catch (  ScriptException x) {
     if (this.startStreaming) {
       this.startStreaming=false;
-      return new ScriptedTextStreamingRepresentation(this.resource,this,this.embeddedScriptContext,this.resource.getScriptContextController(),script,this.flushLines);
+      return new ScriptedTextStreamingRepresentation(this.resource,this,this.compositeScriptContext,this.resource.getScriptContextController(),script,this.flushLines);
     }
  else {
       throw x;

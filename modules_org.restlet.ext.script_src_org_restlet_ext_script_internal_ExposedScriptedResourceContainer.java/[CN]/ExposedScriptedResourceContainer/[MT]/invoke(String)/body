@@ -1,16 +1,16 @@
 {
   String name=ScriptUtils.getRelativePart(this.resource.getRequest(),this.resource.getDefaultName());
   try {
-    ScriptSource.ScriptDescriptor<EmbeddedScript> scriptDescriptor=this.resource.getScriptSource().getScriptDescriptor(name);
-    EmbeddedScript script=scriptDescriptor.getScript();
+    ScriptSource.ScriptDescriptor<CompositeScript> scriptDescriptor=this.resource.getScriptSource().getScriptDescriptor(name);
+    CompositeScript script=scriptDescriptor.getScript();
     if (script == null) {
       String text=scriptDescriptor.getText();
-      script=new EmbeddedScript(text,this.resource.getScriptEngineManager(),this.resource.getDefaultScriptEngineName(),this.resource.getScriptSource(),this.resource.isAllowCompilation());
-      EmbeddedScript existing=scriptDescriptor.setScriptIfAbsent(script);
+      script=new CompositeScript(text,this.resource.getScriptEngineManager(),this.resource.getDefaultScriptEngineName(),this.resource.getScriptSource(),this.resource.isAllowCompilation());
+      CompositeScript existing=scriptDescriptor.setScriptIfAbsent(script);
       if (existing != null) {
         script=existing;
       }
-      script.run(false,this.resource.getWriter(),this.resource.getErrorWriter(),true,this.embeddedScriptContext,this,this.resource.getScriptContextController());
+      script.run(false,this.resource.getWriter(),this.resource.getErrorWriter(),true,this.compositeScriptContext,this,this.resource.getScriptContextController());
     }
     return script.invoke(entryPointName,this,this.resource.getScriptContextController());
   }
