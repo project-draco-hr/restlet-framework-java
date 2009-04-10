@@ -1,0 +1,13 @@
+{
+  addLink(graph,userRef,RDF_SYNTAX_NS + "type",FOAF_NS + "Person");
+  addFoafProperty(graph,userRef,"name",user.getFirstName() + " " + user.getLastName());
+  addFoafProperty(graph,userRef,"givenname",user.getFirstName());
+  addFoafProperty(graph,userRef,"firstName",user.getFirstName());
+  addFoafProperty(graph,userRef,"family_name",user.getLastName());
+  addFoafProperty(graph,userRef,"img",user.getImage());
+  addLink(graph,userRef,FOAF_NS + "homepage",userRef);
+  for (  Contact contact : user.getContacts()) {
+    Reference contactRef=new Reference(userRef + "/contacts/" + contact.getId());
+    addFoaf(graph,contact,contactRef);
+  }
+}
