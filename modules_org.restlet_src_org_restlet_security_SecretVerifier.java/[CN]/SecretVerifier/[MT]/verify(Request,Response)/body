@@ -7,7 +7,9 @@
     String identifier=request.getChallengeResponse().getIdentifier();
     char[] inputSecret=request.getChallengeResponse().getSecret();
     if (verify(identifier,inputSecret)) {
-      request.getClientInfo().getSubject().getPrincipals().add(createUserPrincipal(identifier));
+      if (request.getClientInfo().getSubject() != null) {
+        request.getClientInfo().getSubject().getPrincipals().add(createUserPrincipal(identifier));
+      }
     }
  else {
       result=RESULT_INVALID;
