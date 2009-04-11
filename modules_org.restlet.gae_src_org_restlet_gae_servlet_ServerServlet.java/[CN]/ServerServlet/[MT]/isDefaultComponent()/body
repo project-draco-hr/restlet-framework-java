@@ -1,0 +1,12 @@
+{
+  Client client=createWarClient(new Context(),getServletConfig());
+  Response response=client.get("war:///WEB-INF/restlet.xml");
+  if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
+    return false;
+  }
+  final String componentAttributeName=getInitParameter(COMPONENT_KEY,null);
+  if (componentAttributeName != null) {
+    return false;
+  }
+  return true;
+}

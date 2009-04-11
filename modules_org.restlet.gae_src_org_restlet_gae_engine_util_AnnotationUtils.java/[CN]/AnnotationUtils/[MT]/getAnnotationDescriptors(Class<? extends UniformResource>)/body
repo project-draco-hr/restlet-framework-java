@@ -1,0 +1,9 @@
+{
+  List<AnnotationInfo> result=cache.get(resourceClass);
+  if (result == null) {
+    result=computeAnnotationDescriptors(resourceClass);
+    List<AnnotationInfo> prev=cache.putIfAbsent(resourceClass,result);
+    if (prev != null)     result=prev;
+  }
+  return result;
+}

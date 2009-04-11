@@ -1,0 +1,16 @@
+{
+  this.registeredClients=new CopyOnWriteArrayList<ClientHelper>();
+  this.registeredServers=new CopyOnWriteArrayList<ServerHelper>();
+  this.registeredAuthenticators=new CopyOnWriteArrayList<AuthenticatorHelper>();
+  this.registeredConverters=new CopyOnWriteArrayList<ConverterHelper>();
+  if (discoverHelpers) {
+    try {
+      discoverConnectors();
+      discoverAuthenticators();
+      discoverConverters();
+    }
+ catch (    IOException e) {
+      Context.getCurrentLogger().log(Level.WARNING,"An error occured while discovering the engine helpers.",e);
+    }
+  }
+}

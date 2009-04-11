@@ -1,0 +1,19 @@
+{
+  List<Class<?>> classes;
+  for (  ConverterHelper ch : Engine.getInstance().getRegisteredConverters()) {
+    classes=ch.getObjectClasses(sourceVariant);
+    if (classes != null) {
+      if (targetClass != null) {
+        for (        Class<?> clazz : classes) {
+          if (targetClass.isAssignableFrom(clazz)) {
+            return ch;
+          }
+        }
+      }
+ else {
+        return ch;
+      }
+    }
+  }
+  return null;
+}

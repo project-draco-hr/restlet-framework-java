@@ -1,0 +1,62 @@
+{
+  Component component=null;
+  Client warClient=createWarClient(new Context(),getServletConfig());
+  Response response=warClient.get("war:///WEB-INF/restlet.xml");
+  if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
+    component=new Component(response.getEntity());
+  }
+  if (component == null) {
+    final String componentClassName=getInitParameter(COMPONENT_KEY,null);
+    if (componentClassName != null) {
+      try {
+        final Class<?> targetClass=loadClass(componentClassName);
+        component=(Component)targetClass.newInstance();
+      }
+ catch (      ClassNotFoundException e) {
+        log("[Restlet] ServerServlet couldn't find the target class. Please check that your classpath includes " + componentClassName,e);
+      }
+catch (      InstantiationException e) {
+        log("[Restlet] ServerServlet couldn't instantiate the target class. Please check this class has an empty constructor " + componentClassName,e);
+      }
+catch (      IllegalAccessException e) {
+        log("[Restlet] ServerServlet couldn't instantiate the target class. Please check that you have to proper access rights to " + componentClassName,e);
+      }
+    }
+  }
+  if (component == null) {
+    component=new Component();
+    component.getStatusService().setEnabled(false);
+    final String clientProtocolsString=getInitParameter(CLIENTS_KEY,null);
+    if (clientProtocolsString != null) {
+      final String[] clientProtocols=clientProtocolsString.split(" ");
+      Client client;
+      for (      final String clientProtocol : clientProtocols) {
+        client=new Client(clientProtocol);
+        if (client.isAvailable()) {
+          component.getClients().add(client);
+        }
+ else {
+          log("[Restlet] Couldn't find a client connector for protocol " + clientProtocol);
+        }
+      }
+    }
+  }
+  component.getClients().add(createWarClient(component.getContext(),getServletConfig()));
+  final ComponentContext componentContext=(ComponentContext)component.getContext();
+  String initParam;
+  final javax.servlet.ServletConfig servletConfig=getServletConfig();
+  for (final Enumeration<String> enum1=servletConfig.getInitParameterNames(); enum1.hasMoreElements(); ) {
+    initParam=enum1.nextElement();
+    componentContext.getParameters().add(initParam,servletConfig.getInitParameter(initParam));
+  }
+  for (final Enumeration<String> enum1=getServletContext().getInitParameterNames(); enum1.hasMoreElements(); ) {
+    initParam=enum1.nextElement();
+    componentContext.getParameters().add(initParam,getServletContext().getInitParameter(initParam));
+  }
+  String attributeName;
+  for (final Enumeration<String> namesEnum=getServletContext().getAttributeNames(); namesEnum.hasMoreElements(); ) {
+    attributeName=namesEnum.nextElement();
+    componentContext.getAttributes().put(attributeName,getServletContext().getAttribute(attributeName));
+  }
+  return component;
+}

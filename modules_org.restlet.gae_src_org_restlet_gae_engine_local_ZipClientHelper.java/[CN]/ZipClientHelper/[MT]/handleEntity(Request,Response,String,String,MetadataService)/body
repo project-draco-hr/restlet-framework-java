@@ -1,0 +1,28 @@
+{
+  int spi=decodedPath.indexOf("!/");
+  String fileUri;
+  String entryName;
+  if (spi != -1) {
+    fileUri=decodedPath.substring(0,spi);
+    entryName=decodedPath.substring(spi + 2);
+  }
+ else {
+    fileUri=decodedPath;
+    entryName="";
+  }
+  LocalReference fileRef=new LocalReference(fileUri);
+  if (Protocol.FILE.equals(fileRef.getSchemeProtocol())) {
+    final File file=fileRef.getFile();
+    if (Method.GET.equals(request.getMethod()) || Method.HEAD.equals(request.getMethod())) {
+      handleGet(request,response,file,entryName,metadataService);
+    }
+ else {
+      response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+      response.getAllowedMethods().add(Method.GET);
+      response.getAllowedMethods().add(Method.HEAD);
+    }
+  }
+ else {
+    response.setStatus(Status.SERVER_ERROR_NOT_IMPLEMENTED,"Only works on local files.");
+  }
+}

@@ -1,0 +1,11 @@
+{
+  if (!getRequest().isEntityAvailable()) {
+    getLogger().fine("POST request received without any entity. Continuing processing.");
+  }
+  try {
+    acceptRepresentation(getRequest().getEntity());
+  }
+ catch (  ResourceException re) {
+    getResponse().setStatus(re.getStatus(),re);
+  }
+}

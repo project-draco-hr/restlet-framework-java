@@ -1,0 +1,32 @@
+{
+  super.doHandle(request,response);
+  final Protocol protocol=request.getProtocol();
+  if (protocol.equals(Protocol.RIAP)) {
+    final LocalReference cr=new LocalReference(request.getResourceRef());
+    if (cr.getRiapAuthorityType() == LocalReference.RIAP_APPLICATION) {
+      if ((getChildContext() != null) && (getChildContext().getChild() instanceof Application)) {
+        Application application=(Application)getChildContext().getChild();
+        request.getResourceRef().setBaseRef(request.getResourceRef().getHostIdentifier());
+        application.getRoot().handle(request,response);
+      }
+    }
+ else     if (cr.getRiapAuthorityType() == LocalReference.RIAP_COMPONENT) {
+      parentHandle(request,response);
+    }
+ else     if (cr.getRiapAuthorityType() == LocalReference.RIAP_HOST) {
+      parentHandle(request,response);
+    }
+ else {
+      getLogger().warning("Unknown RIAP authority. Only \"component\", \"host\" and \"application\" are supported.");
+    }
+  }
+ else {
+    if ((getChildContext() != null) && (getChildContext().getChild() instanceof Application)) {
+      Application application=(Application)getChildContext().getChild();
+      if (!application.getConnectorService().getClientProtocols().contains(protocol)) {
+        getLogger().fine("The protocol used by this request is not declared in the application's connector service. " + "Please update the list of client connectors used by your application and restart it.");
+      }
+    }
+    parentHandle(request,response);
+  }
+}

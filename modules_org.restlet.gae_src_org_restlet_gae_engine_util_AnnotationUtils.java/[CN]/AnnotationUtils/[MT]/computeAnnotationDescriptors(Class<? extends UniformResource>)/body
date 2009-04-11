@@ -1,0 +1,20 @@
+{
+  List<AnnotationInfo> result=new ArrayList<AnnotationInfo>();
+  for (  java.lang.reflect.Method javaMethod : resourceClass.getMethods()) {
+    for (    Annotation annotation : javaMethod.getAnnotations()) {
+      Annotation methodAnnotation=annotation.annotationType().getAnnotation(org.restlet.gae.engine.Method.class);
+      if (methodAnnotation != null) {
+        Method restletMethod=Method.valueOf(((org.restlet.gae.engine.Method)methodAnnotation).value());
+        String toString=annotation.toString();
+        int startIndex=annotation.annotationType().getCanonicalName().length() + 8;
+        int endIndex=toString.length() - 1;
+        String value=toString.substring(startIndex,endIndex);
+        if ("".equals(value)) {
+          value=null;
+        }
+        result.add(new AnnotationInfo(restletMethod,javaMethod,value));
+      }
+    }
+  }
+  return result;
+}

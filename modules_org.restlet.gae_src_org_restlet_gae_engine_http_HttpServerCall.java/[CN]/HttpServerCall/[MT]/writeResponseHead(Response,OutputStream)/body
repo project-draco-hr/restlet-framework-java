@@ -1,0 +1,25 @@
+{
+  final String version=(getVersion() == null) ? "1.1" : getVersion();
+  headStream.write(version.getBytes());
+  headStream.write(' ');
+  headStream.write(Integer.toString(getStatusCode()).getBytes());
+  headStream.write(' ');
+  if (getReasonPhrase() != null) {
+    headStream.write(getReasonPhrase().getBytes());
+  }
+ else {
+    headStream.write(("Status " + getStatusCode()).getBytes());
+  }
+  headStream.write(13);
+  headStream.write(10);
+  getResponseHeaders().set(HttpConstants.HEADER_CONNECTION,"close",isServerKeepAlive());
+  if (shouldResponseBeChunked(response)) {
+    getResponseHeaders().add(HttpConstants.HEADER_TRANSFER_ENCODING,"chunked");
+  }
+  for (  final Parameter header : getResponseHeaders()) {
+    HttpUtils.writeHeader(header,headStream);
+  }
+  headStream.write(13);
+  headStream.write(10);
+  headStream.flush();
+}
