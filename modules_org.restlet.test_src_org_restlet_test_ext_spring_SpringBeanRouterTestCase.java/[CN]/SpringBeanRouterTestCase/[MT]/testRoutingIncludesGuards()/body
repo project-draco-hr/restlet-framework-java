@@ -1,0 +1,8 @@
+{
+  String expected="/protected/timber";
+  registerBeanDefinition("timber",expected,TestGuard.class,null);
+  doPostProcess();
+  Route guardRoute=matchRouteFor(expected);
+  assertNotNull("No route for guard",guardRoute);
+  assertTrue("Route is not for guard",guardRoute.getNext() instanceof TestGuard);
+}

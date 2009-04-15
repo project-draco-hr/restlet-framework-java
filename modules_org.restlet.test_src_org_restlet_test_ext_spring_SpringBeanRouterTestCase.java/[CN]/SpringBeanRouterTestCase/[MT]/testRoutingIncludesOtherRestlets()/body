@@ -1,0 +1,8 @@
+{
+  String expected="/singleton";
+  registerBeanDefinition("timber",expected,TestRestlet.class,null);
+  doPostProcess();
+  Route restletRoute=matchRouteFor(expected);
+  assertNotNull("No route for restlet",restletRoute);
+  assertTrue("Route is not for restlet",restletRoute.getNext() instanceof TestRestlet);
+}

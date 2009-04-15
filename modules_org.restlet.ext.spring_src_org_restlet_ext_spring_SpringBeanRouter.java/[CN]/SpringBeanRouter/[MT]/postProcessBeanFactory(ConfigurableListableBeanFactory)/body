@@ -1,17 +1,21 @@
 {
-  String[] names=isFindInAncestors() ? BeanFactoryUtils.beanNamesForTypeIncludingAncestors(factory,Resource.class,true,true) : factory.getBeanNamesForType(Resource.class,true,true);
-  BeanFactory bf=this.applicationContext == null ? factory : this.applicationContext;
-  for (  final String name : names) {
-    final String uri=resolveUri(name,factory);
-    if (uri != null) {
-      if (this.attachments == null || !this.attachments.containsKey(uri)) {
-        attach(uri,createFinder(bf,name));
+  ListableBeanFactory source=this.applicationContext == null ? factory : this.applicationContext;
+  attachAllResources(source);
+  attachAllRestlets(source);
+  if (getAttachments() != null) {
+    for (    Map.Entry<String,String> attachment : getAttachments().entrySet()) {
+      String uri=attachment.getKey();
+      String beanName=attachment.getValue();
+      Class beanType=source.getType(beanName);
+      if (Resource.class.isAssignableFrom(beanType)) {
+        attachResource(uri,beanName,source);
       }
-    }
-  }
-  if (this.attachments != null) {
-    for (    Map.Entry<String,String> attachment : this.attachments.entrySet()) {
-      attach(attachment.getKey(),createFinder(bf,attachment.getValue()));
+ else       if (Restlet.class.isAssignableFrom(beanType)) {
+        attachRestlet(uri,beanName,source);
+      }
+ else {
+        throw new IllegalStateException(beanName + " is not routable.  It must be either a Resource or a Restlet.");
+      }
     }
   }
 }

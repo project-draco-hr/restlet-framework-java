@@ -1,0 +1,8 @@
+{
+  String expected="/filtered/timber";
+  registerBeanDefinition("timber",expected,TestFilter.class,null);
+  doPostProcess();
+  Route filterRoute=matchRouteFor(expected);
+  assertNotNull("No route for filter",filterRoute);
+  assertTrue("Route is not for filter",filterRoute.getNext() instanceof Filter);
+}

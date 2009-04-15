@@ -1,0 +1,9 @@
+{
+  String expected="/protected/timber";
+  this.router.setAttachments(Collections.singletonMap(expected,"timber"));
+  registerBeanDefinition("timber",null,TestGuard.class,null);
+  doPostProcess();
+  Route timberRoute=matchRouteFor(expected);
+  assertNotNull("No route for " + expected,timberRoute);
+  assertTrue("Route is not for correct restlet",timberRoute.getNext() instanceof TestGuard);
+}
