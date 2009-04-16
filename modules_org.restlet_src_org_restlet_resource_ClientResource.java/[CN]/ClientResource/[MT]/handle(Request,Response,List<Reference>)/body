@@ -1,0 +1,20 @@
+{
+  getNext().handle(request,response);
+  if (request.getMethod().isSafe() && response.getStatus().isRedirection()) {
+    Reference newTargetRef=response.getLocationRef();
+    if ((references != null) && references.contains(newTargetRef)) {
+      getLogger().warning("Infinite redirection loop detected with URI: " + newTargetRef);
+    }
+ else     if (!request.isEntityAvailable()) {
+      getLogger().warning("Unable to follow the redirection because the request entity isn't available anymore.");
+    }
+ else {
+      if (references == null) {
+        references=new ArrayList<Reference>();
+      }
+      references.add(request.getResourceRef());
+      request.setResourceRef(newTargetRef);
+      handle(request,response,references);
+    }
+  }
+}
