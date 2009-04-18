@@ -1,7 +1,0 @@
-def jsonreplace_handler(exc):
-    'Error handler for json\n\n    If encoding fails, \\uxxxx must be emitted. This\n    is similar to the "backshashreplace" handler, only\n    that we never emit \\xnn since this is not legal\n    according to the JSON syntax specs.\n    '
-    if isinstance(exc, UnicodeEncodeError):
-        part = exc.object[exc.start]
-        return ((u'\\u%04x' % ord(part)), (exc.start + 1))
-    else:
-        raise exc
