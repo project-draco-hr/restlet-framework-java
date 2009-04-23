@@ -1,6 +1,6 @@
 {
   getNext().handle(request,response);
-  if (request.getMethod().isSafe() && response.getStatus().isRedirection()) {
+  if (request.getMethod().isSafe() && response.getStatus().isRedirection() && response.getLocationRef() != null) {
     Reference newTargetRef=response.getLocationRef();
     if ((references != null) && references.contains(newTargetRef)) {
       getLogger().warning("Infinite redirection loop detected with URI: " + newTargetRef);
