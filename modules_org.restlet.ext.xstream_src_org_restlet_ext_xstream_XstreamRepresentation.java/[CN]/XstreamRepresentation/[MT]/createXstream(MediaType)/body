@@ -1,11 +1,16 @@
 {
   XStream result=null;
-  if (MediaType.APPLICATION_JSON.isCompatible(representation.getMediaType())) {
-    result=new XStream(new JsonHierarchicalStreamDriver());
-    result.setMode(XStream.NO_REFERENCES);
-  }
+  try {
+    if (MediaType.APPLICATION_JSON.isCompatible(mediaType)) {
+      result=new XStream(getJsonDriverClass().newInstance());
+      result.setMode(XStream.NO_REFERENCES);
+    }
  else {
-    result=new XStream(new DomDriver());
+      result=new XStream(getJsonDriverClass().newInstance());
+    }
+  }
+ catch (  Exception e) {
+    Context.getCurrentLogger().log(Level.WARNING,"Unable to create the XStream driver.",e);
   }
   return result;
 }
