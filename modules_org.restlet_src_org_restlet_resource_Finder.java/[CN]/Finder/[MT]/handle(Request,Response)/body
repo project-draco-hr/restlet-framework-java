@@ -53,16 +53,18 @@
       }
  else {
         final ServerResource targetResource=find(request,response);
-        targetResource.init(getContext(),request,response);
-        if (!response.getStatus().equals(Status.SUCCESS_OK)) {
-        }
- else         if (targetResource == null) {
+        if (targetResource == null) {
           response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
         }
  else {
-          targetResource.handle();
+          targetResource.init(getContext(),request,response);
+          if (response.getStatus().equals(Status.SUCCESS_OK)) {
+            targetResource.handle();
+          }
+ else {
+          }
+          targetResource.release();
         }
-        targetResource.release();
       }
     }
   }
