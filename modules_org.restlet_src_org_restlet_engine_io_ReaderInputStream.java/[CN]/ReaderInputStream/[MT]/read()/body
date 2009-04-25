@@ -1,14 +1,12 @@
 {
   int result=-1;
   if (this.pipedInputStream.available() == 0) {
-    if (this.reader.ready()) {
-      int character=this.reader.read();
-      if (character != -1) {
-        this.outputStreamWriter.write(character);
-        this.outputStreamWriter.flush();
-        this.pipedOutputStream.flush();
-        result=this.pipedInputStream.read();
-      }
+    int character=this.reader.read();
+    if (character != -1) {
+      this.outputStreamWriter.write(character);
+      this.outputStreamWriter.flush();
+      this.pipedOutputStream.flush();
+      result=this.pipedInputStream.read();
     }
   }
  else {
