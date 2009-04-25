@@ -1,0 +1,14 @@
+{
+  if ((this.object == null) && (getText() != null)) {
+    try {
+      ServerSerializationStreamReader objectReader=new ServerSerializationStreamReader(Engine.getClassLoader(),new SimpleSerializationPolicyProvider());
+      objectReader.prepareToRead(getText());
+      this.object=(T)objectReader.deserializeValue(this.targetClass);
+    }
+ catch (    Exception e) {
+      this.object=null;
+      e.printStackTrace();
+    }
+  }
+  return object;
+}
