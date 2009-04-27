@@ -39,6 +39,9 @@
       for (      final Parameter header : getRequestHeaders()) {
         HttpUtils.writeHeader(header,getRequestHeadStream());
       }
+      if ((request.getEntity() == null || !request.isEntityAvailable() || request.getEntity().getSize() == 0) && (Method.POST.equals(request.getMethod()) || Method.PUT.equals(request.getMethod()))) {
+        HttpUtils.writeHeader(new Parameter(HttpConstants.HEADER_CONTENT_LENGTH,"0"),getRequestHeadStream());
+      }
       HttpUtils.writeCRLF(getRequestHeadStream());
       getRequestHeadStream().flush();
       result=super.sendRequest(request);
