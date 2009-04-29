@@ -5,16 +5,14 @@
     consumeWhiteSpaces();
 switch (getChar()) {
 case '<':
-      stepBack();
-    lexicalUnits.add(new Reference(parseUri()));
-  break;
+      lexicalUnits.add(new Reference(parseUri()));
+    break;
 case '_':
-lexicalUnits.add(LinkReference.createBlank(parseToken()));
+  lexicalUnits.add(LinkReference.createBlank(parseToken()));
 break;
 case '"':
-stepBack(1);
+int c=step();
 discard();
-int c=getChar();
 while (!isEndOfFile(c) && (c != '"')) {
 c=step();
 }
@@ -31,10 +29,12 @@ break;
 }
 }
  while (!isEndOfFile(getChar()) && getChar() != '.' && getChar() != '}');
+if (!lexicalUnits.isEmpty()) {
 if (object != null) {
 link(lexicalUnits.get(0),lexicalUnits.get(1),new Literal(object));
 }
  else {
 link(lexicalUnits.get(0),lexicalUnits.get(1),lexicalUnits.get(2));
+}
 }
 }
