@@ -41,6 +41,15 @@
  else         if (SaxRepresentation.class.isAssignableFrom(targetClass)) {
           result=new SaxRepresentation(representation);
         }
+ else         if (Serializable.class.isAssignableFrom(targetClass)) {
+          try {
+            result=new ObjectRepresentation(representation).getObject();
+          }
+ catch (          Exception e) {
+            IOException ioe=new IOException("Unable to create the Object representation");
+            ioe.initCause(e);
+          }
+        }
       }
     }
     if (result instanceof Representation) {

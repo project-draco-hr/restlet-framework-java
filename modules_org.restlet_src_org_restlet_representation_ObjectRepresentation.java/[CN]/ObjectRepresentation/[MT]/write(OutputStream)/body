@@ -1,5 +1,12 @@
 {
-  final ObjectOutputStream oos=new ObjectOutputStream(outputStream);
-  oos.writeObject(getObject());
-  oos.close();
+  if (MediaType.APPLICATION_JAVA_OBJECT.isCompatible(getMediaType())) {
+    ObjectOutputStream oos=new ObjectOutputStream(outputStream);
+    oos.writeObject(getObject());
+    oos.flush();
+  }
+ else   if (MediaType.APPLICATION_JAVA_OBJECT_XML.isCompatible(getMediaType())) {
+    XMLEncoder encoder=new XMLEncoder(outputStream);
+    encoder.writeObject(getObject());
+    encoder.flush();
+  }
 }
