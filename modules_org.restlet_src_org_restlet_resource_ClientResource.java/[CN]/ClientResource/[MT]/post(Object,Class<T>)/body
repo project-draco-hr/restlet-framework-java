@@ -1,15 +1,3 @@
 {
-  T result=null;
-  ConverterService cs=getConverterService();
-  Representation requestEntity=cs.toRepresentation(entity);
-  Representation responseEntity=post(requestEntity);
-  if (responseEntity != null) {
-    try {
-      result=cs.toObject(responseEntity,resultClass,this);
-    }
- catch (    IOException e) {
-      throw new ResourceException(e);
-    }
-  }
-  return result;
+  return toObject(post(toRepresentation(entity)),resultClass);
 }
