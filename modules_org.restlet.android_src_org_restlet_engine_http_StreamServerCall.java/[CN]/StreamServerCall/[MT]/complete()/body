@@ -1,0 +1,18 @@
+{
+  try {
+    if (!this.socket.isClosed()) {
+      ByteUtils.exhaust(getRequestEntityStream(getContentLength()));
+      if (!(this.socket instanceof SSLSocket)) {
+        this.socket.shutdownInput();
+      }
+      this.socket.getOutputStream().flush();
+      if (!(this.socket instanceof SSLSocket)) {
+        this.socket.shutdownOutput();
+      }
+      this.socket.close();
+    }
+  }
+ catch (  IOException ex) {
+    getLogger().log(Level.WARNING,"Unable to shutdown server socket",ex);
+  }
+}

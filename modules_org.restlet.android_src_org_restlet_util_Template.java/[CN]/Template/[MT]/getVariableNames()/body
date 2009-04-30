@@ -1,0 +1,38 @@
+{
+  final List<String> result=new ArrayList<String>();
+  StringBuilder varBuffer=null;
+  char next;
+  boolean inVariable=false;
+  final String pattern=getPattern();
+  for (int i=0; i < pattern.length(); i++) {
+    next=pattern.charAt(i);
+    if (inVariable) {
+      if (Reference.isUnreserved(next)) {
+        varBuffer.append(next);
+      }
+ else       if (next == '}') {
+        if (varBuffer.length() == 0) {
+          getLogger().warning("Empty pattern variables are not allowed : " + this.pattern);
+        }
+ else {
+          result.add(varBuffer.toString());
+          varBuffer=new StringBuilder();
+        }
+        inVariable=false;
+      }
+ else {
+        getLogger().warning("An invalid character was detected inside a pattern variable : " + this.pattern);
+      }
+    }
+ else {
+      if (next == '{') {
+        inVariable=true;
+        varBuffer=new StringBuilder();
+      }
+ else       if (next == '}') {
+        getLogger().warning("An invalid character was detected inside a pattern variable : " + this.pattern);
+      }
+    }
+  }
+  return result;
+}

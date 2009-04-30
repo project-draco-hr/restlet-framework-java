@@ -1,0 +1,60 @@
+{
+  Status result=null;
+  try {
+    Reference resourceRef=request.getResourceRef().isRelative() ? request.getResourceRef().getTargetRef() : request.getResourceRef();
+    final String hostDomain=resourceRef.getHostDomain();
+    int hostPort=resourceRef.getHostPort();
+    if (hostPort == -1) {
+      if (resourceRef.getSchemeProtocol() != null) {
+        hostPort=resourceRef.getSchemeProtocol().getDefaultPort();
+      }
+ else {
+        hostPort=getProtocol().getDefaultPort();
+      }
+    }
+    this.socket=createSocket(hostDomain,hostPort);
+    if (this.socket == null) {
+      getHelper().getLogger().log(Level.SEVERE,"Unable to create the client socket.");
+      result=new Status(Status.CONNECTOR_ERROR_INTERNAL,"Unable to create the client socket.");
+    }
+ else {
+      this.socket.setTcpNoDelay(getHelper().getTcpNoDelay());
+      this.requestStream=new BufferedOutputStream(this.socket.getOutputStream());
+      this.responseStream=new BufferedInputStream(this.socket.getInputStream());
+      getRequestHeadStream().write(getMethod().getBytes());
+      getRequestHeadStream().write(' ');
+      getRequestHeadStream().write(getRequestUri().getBytes());
+      getRequestHeadStream().write(' ');
+      getRequestHeadStream().write(getVersion().getBytes());
+      HttpUtils.writeCRLF(getRequestHeadStream());
+      if (shouldRequestBeChunked(request)) {
+        getRequestHeaders().set(HttpConstants.HEADER_TRANSFER_ENCODING,"chunked",true);
+      }
+      getRequestHeaders().set(HttpConstants.HEADER_CONNECTION,"close",isClientKeepAlive());
+      String host=hostDomain;
+      if (resourceRef.getHostPort() != -1) {
+        host+=":" + resourceRef.getHostPort();
+      }
+      getRequestHeaders().set(HttpConstants.HEADER_HOST,host,true);
+      for (      final Parameter header : getRequestHeaders()) {
+        HttpUtils.writeHeader(header,getRequestHeadStream());
+      }
+      if ((request.getEntity() == null || !request.isEntityAvailable() || request.getEntity().getSize() == 0) && (Method.POST.equals(request.getMethod()) || Method.PUT.equals(request.getMethod()))) {
+        HttpUtils.writeHeader(new Parameter(HttpConstants.HEADER_CONTENT_LENGTH,"0"),getRequestHeadStream());
+      }
+      HttpUtils.writeCRLF(getRequestHeadStream());
+      getRequestHeadStream().flush();
+      result=super.sendRequest(request);
+      if (result.equals(Status.CONNECTOR_ERROR_COMMUNICATION)) {
+        return result;
+      }
+      parseResponse();
+      result=new Status(getStatusCode(),null,getReasonPhrase(),null);
+    }
+  }
+ catch (  IOException ioe) {
+    getHelper().getLogger().log(Level.WARNING,"An error occured during the communication with the remote HTTP server.",ioe);
+    result=new Status(Status.CONNECTOR_ERROR_COMMUNICATION,ioe);
+  }
+  return result;
+}

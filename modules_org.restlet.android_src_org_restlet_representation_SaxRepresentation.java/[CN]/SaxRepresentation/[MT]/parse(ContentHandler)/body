@@ -1,0 +1,17 @@
+{
+  if (contentHandler != null) {
+    try {
+      SAXParserFactory spf=SAXParserFactory.newInstance();
+      SAXParser sp=spf.newSAXParser();
+      XMLReader xr=sp.getXMLReader();
+      xr.setContentHandler(contentHandler);
+      xr.parse(this.source);
+    }
+ catch (    Exception tce) {
+      throw new IOException("Couldn't parse the source representation: " + tce.getMessage());
+    }
+  }
+ else {
+    throw new IOException("Couldn't parse the source representation: no content restlet defined.");
+  }
+}

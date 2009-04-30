@@ -1,0 +1,49 @@
+{
+  super(in);
+  this.range=range;
+  this.position=0;
+  this.totalSize=totalSize;
+  if (totalSize == Representation.UNKNOWN_SIZE) {
+    if (range.getIndex() == Range.INDEX_LAST) {
+      if (range.getSize() == Range.SIZE_MAX) {
+        this.startIndex=-1;
+        this.endIndex=-1;
+      }
+ else {
+        throw new IllegalArgumentException("Can't determine the start and end index.");
+      }
+    }
+ else {
+      if (range.getSize() == Range.SIZE_MAX) {
+        this.startIndex=range.getIndex();
+        this.endIndex=-1;
+      }
+ else {
+        this.startIndex=range.getIndex();
+        this.endIndex=range.getIndex() + range.getSize() - 1;
+      }
+    }
+  }
+ else {
+    if (range.getIndex() == Range.INDEX_LAST) {
+      if (range.getSize() == Range.SIZE_MAX) {
+        this.startIndex=-1;
+        this.endIndex=-1;
+      }
+ else {
+        this.startIndex=totalSize - range.getSize();
+        this.endIndex=-1;
+      }
+    }
+ else {
+      if (range.getSize() == Range.SIZE_MAX) {
+        this.startIndex=range.getIndex();
+        this.endIndex=-1;
+      }
+ else {
+        this.startIndex=range.getIndex();
+        this.endIndex=range.getIndex() + range.getSize() - 1;
+      }
+    }
+  }
+}

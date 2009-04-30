@@ -1,0 +1,19 @@
+{
+  Tag result=null;
+  boolean weak=false;
+  String httpTagCopy=httpTag;
+  if (httpTagCopy.startsWith("W/")) {
+    weak=true;
+    httpTagCopy=httpTagCopy.substring(2);
+  }
+  if (httpTagCopy.startsWith("\"") && httpTagCopy.endsWith("\"")) {
+    result=new Tag(httpTagCopy.substring(1,httpTagCopy.length() - 1),weak);
+  }
+ else   if (httpTagCopy.equals("*")) {
+    result=new Tag("*",weak);
+  }
+ else {
+    Context.getCurrentLogger().log(Level.WARNING,"Invalid tag format detected: " + httpTagCopy);
+  }
+  return result;
+}

@@ -1,0 +1,11 @@
+{
+  if (isResponseChunked()) {
+    return new ChunkedInputStream(getResponseStream());
+  }
+ else   if (size >= 0) {
+    return new InputEntityStream(getResponseStream(),size);
+  }
+ else {
+    return getResponseStream();
+  }
+}

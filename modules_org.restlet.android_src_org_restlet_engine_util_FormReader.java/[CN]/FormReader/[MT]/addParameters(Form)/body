@@ -1,0 +1,24 @@
+{
+  boolean readNext=true;
+  Parameter param=null;
+  try {
+    while (readNext) {
+      param=readNextParameter();
+      if (param != null) {
+        form.add(param);
+      }
+ else {
+        readNext=false;
+      }
+    }
+  }
+ catch (  IOException ioe) {
+    Context.getCurrentLogger().log(Level.WARNING,"Unable to parse a form parameter. Skipping the remaining parameters.",ioe);
+  }
+  try {
+    this.stream.close();
+  }
+ catch (  IOException ioe) {
+    Context.getCurrentLogger().log(Level.WARNING,"Unable to close the form input stream",ioe);
+  }
+}

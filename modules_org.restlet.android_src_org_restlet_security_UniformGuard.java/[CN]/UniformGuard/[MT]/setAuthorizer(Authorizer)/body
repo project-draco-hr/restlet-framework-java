@@ -1,0 +1,18 @@
+{
+  this.authorizer=authorizer;
+  Filter next=authorizer;
+  while (next != null) {
+    if (next.getNext() == null) {
+      next.setNext(new Restlet(){
+      }
+);
+      next=null;
+    }
+ else     if (next.getNext() instanceof Filter) {
+      next=(Filter)next.getNext();
+    }
+ else {
+      next=null;
+    }
+  }
+}

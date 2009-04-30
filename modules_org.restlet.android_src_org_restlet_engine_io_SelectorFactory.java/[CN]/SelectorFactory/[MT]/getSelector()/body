@@ -1,0 +1,30 @@
+{
+synchronized (SELECTORS) {
+    Selector selector=null;
+    try {
+      if (SELECTORS.size() != 0) {
+        selector=SELECTORS.pop();
+      }
+    }
+ catch (    EmptyStackException ex) {
+    }
+    int attempts=0;
+    try {
+      while ((selector == null) && (attempts < MAX_ATTEMPTS)) {
+        SELECTORS.wait(TIMEOUT);
+        try {
+          if (SELECTORS.size() != 0) {
+            selector=SELECTORS.pop();
+          }
+        }
+ catch (        EmptyStackException ex) {
+          break;
+        }
+        attempts++;
+      }
+    }
+ catch (    InterruptedException ex) {
+    }
+    return selector;
+  }
+}

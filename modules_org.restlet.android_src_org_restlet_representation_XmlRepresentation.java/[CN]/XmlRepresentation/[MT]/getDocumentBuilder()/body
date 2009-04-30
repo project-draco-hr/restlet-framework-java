@@ -1,0 +1,16 @@
+{
+  DocumentBuilder result=null;
+  try {
+    final DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
+    dbf.setNamespaceAware(isNamespaceAware());
+    dbf.setValidating(isValidating());
+    dbf.setXIncludeAware(isXIncludeAware());
+    result=dbf.newDocumentBuilder();
+    result.setEntityResolver(getEntityResolver());
+    result.setErrorHandler(getErrorHandler());
+  }
+ catch (  ParserConfigurationException pce) {
+    throw new IOException("Couldn't create the empty document: " + pce.getMessage());
+  }
+  return result;
+}
