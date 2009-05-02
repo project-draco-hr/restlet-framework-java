@@ -1,7 +1,7 @@
 {
   final List<S3Bucket> result=new ArrayList<S3Bucket>();
   final Response response=authorizedGet(HOST);
-  final DomRepresentation document=response.getEntityAsDom();
+  final DomRepresentation document=new DomRepresentation(response.getEntity());
   if (response.getStatus().isSuccess()) {
     for (    final Node node : document.getNodes("//Bucket/Name")) {
       result.add(new S3Bucket(node.getTextContent()));

@@ -12,7 +12,7 @@
   final Client client=new Client(Protocol.HTTP);
   Response response=client.get("http://localhost:8182/xmlApplication/xml/mail.xml");
   if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
-    final DomRepresentation domRep=response.getEntityAsDom();
+    final DomRepresentation domRep=new DomRepresentation(response.getEntity());
     final NodeSet nodes=domRep.getNodes("/mail/recipients/to/text()");
     for (    final Node node : nodes) {
       System.out.println(node.getNodeValue());
@@ -24,7 +24,7 @@
   }
   response=client.get("http://localhost:8182/xmlApplication/xml/mail.xml");
   if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
-    final SaxRepresentation saxRep=response.getEntityAsSax();
+    final SaxRepresentation saxRep=new SaxRepresentation(response.getEntity());
     final ContentHandler contentHandler=new DefaultHandler(){
       @Override public void startElement(      String uri,      String localName,      String name,      Attributes attributes) throws SAXException {
         System.out.println("processing element : " + name);

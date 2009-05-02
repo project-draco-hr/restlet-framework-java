@@ -6,7 +6,7 @@
     final Request request=new Request(Method.GET,"https://api.del.icio.us/v1/posts/recent");
     request.setChallengeResponse(new ChallengeResponse(ChallengeScheme.HTTP_BASIC,args[0],args[1]));
     final Response response=new Client(Protocol.HTTPS).handle(request);
-    final DomRepresentation document=response.getEntityAsDom();
+    final DomRepresentation document=new DomRepresentation(response.getEntity());
     for (    final Node node : document.getNodes("/posts/post")) {
       final NamedNodeMap attrs=node.getAttributes();
       final String desc=attrs.getNamedItem("description").getNodeValue();

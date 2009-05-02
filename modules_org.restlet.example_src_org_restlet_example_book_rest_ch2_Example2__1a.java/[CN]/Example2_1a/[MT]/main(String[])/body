@@ -6,7 +6,7 @@
     final String term=Reference.encode(args[0]);
     final String uri=BASE_URI + "?appid=restbook&query=" + term;
     final Response response=new Client(Protocol.HTTP).get(uri);
-    final DomRepresentation document=response.getEntityAsDom();
+    final DomRepresentation document=new DomRepresentation(response.getEntity());
     final String expr="/ResultSet/Result/Title";
     for (    final Node node : document.getNodes(expr)) {
       System.out.println(node.getTextContent());

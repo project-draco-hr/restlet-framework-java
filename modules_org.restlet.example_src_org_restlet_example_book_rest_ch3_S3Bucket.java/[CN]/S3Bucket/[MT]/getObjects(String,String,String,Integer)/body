@@ -19,7 +19,7 @@
     suffix="&";
   }
   final Response response=authorizedGet(uri.toString());
-  final DomRepresentation document=response.getEntityAsDom();
+  final DomRepresentation document=new DomRepresentation(response.getEntity());
   this.truncated=document.getNodes("//IsTruncated").get(0).getTextContent().equals("true");
   for (  final Node node : document.getNodes("//Contents/Key")) {
     result.add(new S3Object(this,node.getTextContent()));
