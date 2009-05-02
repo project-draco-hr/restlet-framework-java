@@ -1,21 +1,14 @@
 {
   try {
-    DomRepresentation dom=new DomRepresentation(getXmlConfiguration());
+    DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
+    dbf.setNamespaceAware(true);
+    dbf.setValidating(true);
+    dbf.setXIncludeAware(true);
     DefaultSaxHandler handler=new DefaultSaxHandler();
-    dom.setErrorHandler(handler);
-    dom.setEntityResolver(handler);
-    dom.setNamespaceAware(true);
-    dom.setValidating(true);
-    dom.setXIncludeAware(true);
-    try {
-      Client client=new Client(Protocol.CLAP);
-      Representation xsd=client.get("clap://class/org/restlet/Component.xsd").getEntity();
-      dom.setSchema(xsd);
-    }
- catch (    Exception x) {
-      Context.getCurrentLogger().log(Level.CONFIG,"Unable to acquire a compiled instance of Component.xsd " + "to check the given restlet.xml. Ignore and continue");
-    }
-    final Document document=dom.getDocument();
+    DocumentBuilder db=dbf.newDocumentBuilder();
+    db.setErrorHandler(handler);
+    db.setEntityResolver(handler);
+    final Document document=db.parse(getXmlConfiguration().getStream());
     if ("component".equals(document.getFirstChild().getNodeName())) {
       final NodeList childNodes=document.getFirstChild().getChildNodes();
       Node childNode;

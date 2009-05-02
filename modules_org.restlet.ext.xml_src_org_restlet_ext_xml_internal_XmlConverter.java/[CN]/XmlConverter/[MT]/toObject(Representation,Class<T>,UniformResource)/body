@@ -1,0 +1,29 @@
+{
+  Object result=null;
+  if (representation != null) {
+    if (targetClass != null) {
+      if (targetClass.isAssignableFrom(representation.getClass())) {
+        result=(T)representation;
+      }
+ else {
+        if (Document.class.isAssignableFrom(targetClass)) {
+          result=new DomRepresentation(representation).getDocument();
+        }
+ else         if (DomRepresentation.class.isAssignableFrom(targetClass)) {
+          result=new DomRepresentation(representation);
+        }
+ else         if (SaxRepresentation.class.isAssignableFrom(targetClass)) {
+          result=new SaxRepresentation(representation);
+        }
+      }
+    }
+    if (result instanceof Representation) {
+      Representation resultRepresentation=(Representation)result;
+      resultRepresentation.setCharacterSet(representation.getCharacterSet());
+      resultRepresentation.setMediaType(representation.getMediaType());
+      resultRepresentation.setEncodings(representation.getEncodings());
+      resultRepresentation.setLanguages(representation.getLanguages());
+    }
+  }
+  return (T)result;
+}
