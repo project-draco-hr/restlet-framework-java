@@ -1,0 +1,21 @@
+{
+  if (MediaType.TEXT_RDF_N3.equals(rdfRepresentation.getMediaType())) {
+    return new RdfN3Writer(outputStream);
+  }
+ else   if (MediaType.TEXT_XML.equals(rdfRepresentation.getMediaType())) {
+    return new RdfXmlWriter(outputStream,getCharacterSet());
+  }
+ else   if (MediaType.APPLICATION_ALL_XML.includes(rdfRepresentation.getMediaType())) {
+    return new RdfXmlWriter(outputStream,getCharacterSet());
+  }
+ else   if (MediaType.TEXT_PLAIN.equals(rdfRepresentation.getMediaType())) {
+    return new RdfNTriplesWriter(outputStream);
+  }
+ else   if (MediaType.TEXT_RDF_NTRIPLES.equals(rdfRepresentation.getMediaType())) {
+    return new RdfNTriplesWriter(outputStream);
+  }
+ else   if (MediaType.APPLICATION_RDF_TURTLE.equals(rdfRepresentation.getMediaType())) {
+    return new RdfTurtleWriter(outputStream);
+  }
+  return null;
+}

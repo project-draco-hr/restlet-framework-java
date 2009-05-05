@@ -1,0 +1,40 @@
+{
+  List<Reference> lexicalUnits=new ArrayList<Reference>();
+  String object=null;
+  do {
+    consumeWhiteSpaces();
+switch (getChar()) {
+case '<':
+      lexicalUnits.add(new Reference(parseUri()));
+    break;
+case '_':
+  lexicalUnits.add(LinkReference.createBlank(parseToken()));
+break;
+case '"':
+int c=step();
+discard();
+while (!isEndOfFile(c) && (c != '"')) {
+c=step();
+}
+object=getCurrentToken();
+step();
+discard();
+break;
+case '.':
+break;
+case EOF:
+break;
+default :
+break;
+}
+}
+ while (!isEndOfFile(getChar()) && getChar() != '.' && getChar() != '}');
+if (!lexicalUnits.isEmpty()) {
+if (object != null) {
+getGraphHandler().link(lexicalUnits.get(0),lexicalUnits.get(1),new Literal(object));
+}
+ else {
+getGraphHandler().link(lexicalUnits.get(0),lexicalUnits.get(1),lexicalUnits.get(2));
+}
+}
+}

@@ -1,0 +1,22 @@
+{
+  if (rdfRepresentation != null) {
+    if (MediaType.TEXT_RDF_N3.equals(rdfRepresentation.getMediaType())) {
+      new RdfN3Reader(rdfRepresentation,graphHandler).parse();
+    }
+ else     if (MediaType.TEXT_XML.equals(rdfRepresentation.getMediaType())) {
+      new RdfXmlReader(rdfRepresentation,graphHandler).parse();
+    }
+ else     if (MediaType.APPLICATION_ALL_XML.includes(rdfRepresentation.getMediaType())) {
+      new RdfXmlReader(rdfRepresentation,graphHandler).parse();
+    }
+ else     if (MediaType.TEXT_PLAIN.equals(rdfRepresentation.getMediaType())) {
+      new RdfNTriplesReader(rdfRepresentation,graphHandler).parse();
+    }
+ else     if (MediaType.TEXT_RDF_NTRIPLES.equals(rdfRepresentation.getMediaType())) {
+      new RdfNTriplesReader(rdfRepresentation,graphHandler).parse();
+    }
+ else     if (MediaType.APPLICATION_RDF_TURTLE.equals(rdfRepresentation.getMediaType())) {
+      new RdfTurtleReader(rdfRepresentation,graphHandler).parse();
+    }
+  }
+}
