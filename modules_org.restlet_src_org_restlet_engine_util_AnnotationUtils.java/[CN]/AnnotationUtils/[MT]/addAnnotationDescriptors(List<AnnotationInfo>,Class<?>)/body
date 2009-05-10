@@ -1,6 +1,9 @@
 {
-  List<AnnotationInfo> result=new ArrayList<AnnotationInfo>();
-  for (  java.lang.reflect.Method javaMethod : resourceClass.getMethods()) {
+  List<AnnotationInfo> result=descriptors;
+  if (result == null) {
+    result=new ArrayList<AnnotationInfo>();
+  }
+  for (  java.lang.reflect.Method javaMethod : clazz.getMethods()) {
     for (    Annotation annotation : javaMethod.getAnnotations()) {
       Annotation methodAnnotation=annotation.annotationType().getAnnotation(org.restlet.engine.Method.class);
       if (methodAnnotation != null) {

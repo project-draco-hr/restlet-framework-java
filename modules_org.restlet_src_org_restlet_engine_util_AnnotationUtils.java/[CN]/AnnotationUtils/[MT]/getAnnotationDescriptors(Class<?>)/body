@@ -1,0 +1,17 @@
+{
+  List<AnnotationInfo> result=cache.get(clazz);
+  if (result == null) {
+    result=addAnnotationDescriptors(result,clazz);
+    List<AnnotationInfo> prev=cache.putIfAbsent(clazz,result);
+    if (prev != null) {
+      result=prev;
+    }
+    Class<?>[] interfaces=clazz.getInterfaces();
+    if (interfaces != null) {
+      for (      Class<?> interfaceClass : interfaces) {
+        result=addAnnotationDescriptors(result,interfaceClass);
+      }
+    }
+  }
+  return result;
+}
