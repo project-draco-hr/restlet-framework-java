@@ -1,6 +1,8 @@
 {
-  Guard guard=new Guard(getContext(),ChallengeScheme.HTTP_BASIC,"Tutorial");
-  guard.getSecrets().put("scott","tiger".toCharArray());
+  MapVerifier verifier=new MapVerifier();
+  verifier.getSecrets().put("scott","tiger".toCharArray());
+  ChallengeGuard guard=new ChallengeGuard(getContext(),ChallengeScheme.HTTP_BASIC,"Tutorial");
+  guard.getAuthenticator().setVerifier(verifier);
   Directory directory=new Directory(getContext(),ROOT_URI);
   guard.setNext(directory);
   return guard;
