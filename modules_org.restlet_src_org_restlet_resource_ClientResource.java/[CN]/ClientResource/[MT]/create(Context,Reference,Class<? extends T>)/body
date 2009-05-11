@@ -1,24 +1,4 @@
 {
-  final List<AnnotationInfo> annotations=AnnotationUtils.getAnnotationDescriptors(resourceInterface);
-  final ClientResource clientResource=new ClientResource(context,reference);
-  InvocationHandler h=new InvocationHandler(){
-    public Object invoke(    Object proxy,    java.lang.reflect.Method method,    Object[] args) throws Throwable {
-      Object result=null;
-      AnnotationInfo annotation=AnnotationUtils.getAnnotation(annotations,method);
-      if (annotation != null) {
-        clientResource.setMethod(annotation.getRestletMethod());
-        if ((args != null) && args.length > 0) {
-          Representation entity=clientResource.toRepresentation(args[0]);
-          clientResource.getRequest().setEntity(entity);
-        }
-        clientResource.handle();
-        if (annotation.getJavaReturnType() != null) {
-          result=clientResource.toObject(clientResource.getResponseEntity(),annotation.getJavaReturnType());
-        }
-      }
-      return result;
-    }
-  }
-;
-  return (T)Proxy.newProxyInstance(Engine.getClassLoader(),new Class<?>[]{resourceInterface},h);
+  ClientResource clientResource=new ClientResource(context,reference);
+  return clientResource.wrap(resourceInterface);
 }
