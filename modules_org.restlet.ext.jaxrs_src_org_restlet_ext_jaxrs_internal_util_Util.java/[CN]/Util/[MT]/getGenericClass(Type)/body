@@ -3,7 +3,9 @@
     return null;
   }
   final ParameterizedType pt=(ParameterizedType)genericType;
-  final Type atp=pt.getActualTypeArguments()[0];
+  Type[] actualTypeArguments=pt.getActualTypeArguments();
+  if (actualTypeArguments == null || actualTypeArguments.length == 0)   return null;
+  final Type atp=actualTypeArguments[0];
   if (atp instanceof Class) {
     return (Class<?>)atp;
   }
