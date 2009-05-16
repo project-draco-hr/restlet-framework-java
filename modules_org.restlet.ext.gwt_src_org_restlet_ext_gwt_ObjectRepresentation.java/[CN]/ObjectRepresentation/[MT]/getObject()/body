@@ -2,7 +2,8 @@
   if ((this.object == null) && (getText() != null)) {
     try {
       ServerSerializationStreamReader objectReader=new ServerSerializationStreamReader(Engine.getClassLoader(),new SimpleSerializationPolicyProvider());
-      objectReader.prepareToRead(getText());
+      String encodedString=AbstractSerializationStream.SERIALIZATION_STREAM_VERSION + "|1|0|0|0|" + getText()+ '|';
+      objectReader.prepareToRead(encodedString);
       this.object=(T)objectReader.deserializeValue(this.targetClass);
     }
  catch (    Exception e) {
