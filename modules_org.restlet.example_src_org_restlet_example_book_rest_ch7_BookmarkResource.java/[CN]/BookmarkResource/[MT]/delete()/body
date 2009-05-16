@@ -1,0 +1,18 @@
+{
+  if (isModifiable()) {
+    if ((this.bookmark != null) && (checkAuthorization() == 1)) {
+      getUser().getBookmarks().remove(this.bookmark);
+      getContainer().delete(this.bookmark);
+      getContainer().store(getUser());
+      getContainer().commit();
+      setStatus(Status.SUCCESS_OK);
+    }
+ else {
+      setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+    }
+  }
+ else {
+    return super.delete();
+  }
+  return null;
+}

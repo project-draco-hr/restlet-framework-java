@@ -1,0 +1,18 @@
+{
+  super.doInit();
+  if (getUser() != null) {
+    this.uri=(String)getRequestAttributes().get("URI");
+    this.bookmark=getUser().getBookmark(this.uri);
+    if (this.bookmark != null) {
+      if ((checkAuthorization() != 1) && this.bookmark.isRestrict()) {
+        setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+      }
+    }
+ else {
+      getVariants().clear();
+    }
+  }
+ else {
+    setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+  }
+}

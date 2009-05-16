@@ -1,0 +1,11 @@
+{
+  this.userName=(String)getRequestAttributes().get("username");
+  final ChallengeResponse cr=getChallengeResponse();
+  this.login=(cr != null) ? cr.getIdentifier() : null;
+  this.password=(cr != null) ? new String(cr.getSecret()) : null;
+  this.user=findUser();
+  if (this.user != null) {
+    getVariants().put(Method.GET,MediaType.TEXT_PLAIN);
+  }
+  modifiable=true;
+}

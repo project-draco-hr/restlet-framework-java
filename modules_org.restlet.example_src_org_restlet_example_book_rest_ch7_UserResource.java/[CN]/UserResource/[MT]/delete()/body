@@ -1,0 +1,24 @@
+{
+  if (isModifiable()) {
+switch (checkAuthorization()) {
+case 1:
+      for (      final Bookmark bookmark : this.user.getBookmarks()) {
+        getContainer().delete(bookmark);
+      }
+    getContainer().delete(this.user);
+  getContainer().commit();
+setStatus(Status.SUCCESS_OK);
+break;
+case 0:
+challenge();
+break;
+case -1:
+setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
+break;
+}
+}
+ else {
+return super.delete();
+}
+return null;
+}
