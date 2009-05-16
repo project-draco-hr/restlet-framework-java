@@ -1,17 +1,17 @@
 {
-  final Iterator<MediaType> mediaTypeIter=createIterator(this.mediaTypes);
-  final Iterator<Locale> languageIter=createIterator(this.languages);
-  final Iterator<String> encodingIter=createIterator(this.encodings);
+  Iterator<MediaType> mediaTypeIter=createIterator(this.mediaTypes);
   if (this.variants == null) {
     this.variants=new ArrayList<Variant>();
   }
   while (mediaTypeIter.hasNext()) {
-    final MediaType mediaType=mediaTypeIter.next();
+    MediaType mediaType=mediaTypeIter.next();
+    Iterator<Locale> languageIter=createIterator(this.languages);
     while (languageIter.hasNext()) {
-      final Locale language=languageIter.next();
+      Locale language=languageIter.next();
+      Iterator<String> encodingIter=createIterator(this.encodings);
       while (encodingIter.hasNext()) {
-        final String encoding=encodingIter.next();
-        final Variant variant=new Variant(mediaType,language,encoding);
+        String encoding=encodingIter.next();
+        Variant variant=new Variant(mediaType,language,encoding);
         this.variants.add(variant);
       }
     }

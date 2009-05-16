@@ -3,9 +3,9 @@
     try {
       for (      final Field field : jaxRsClass.getDeclaredFields()) {
         if (field.isAnnotationPresent(Context.class)) {
-          final InjectionAim aim=new FieldWrapper(field);
-          final Class<?> declaringClass=field.getType();
-          final Injector injector=getInjector(declaringClass,aim,tlContext,allProviders,extensionBackwardMapping);
+          InjectionAim aim=new FieldWrapper(field);
+          Class<?> declaringClass=field.getType();
+          Injector injector=getInjector(declaringClass,aim,tlContext,allProviders,extensionBackwardMapping);
           this.injEverSameAims.add(injector);
         }
       }
@@ -19,9 +19,9 @@ catch (    IllegalTypeException e) {
     try {
       for (      final Method method : jaxRsClass.getDeclaredMethods()) {
         if (isBeanSetter(method,Context.class)) {
-          final BeanSetter aim=new BeanSetter(method);
-          final Class<?> paramClass=method.getParameterTypes()[0];
-          final Injector injector=getInjector(paramClass,aim,tlContext,allProviders,extensionBackwardMapping);
+          BeanSetter aim=new BeanSetter(method);
+          Class<?> paramClass=method.getParameterTypes()[0];
+          Injector injector=getInjector(paramClass,aim,tlContext,allProviders,extensionBackwardMapping);
           this.injEverSameAims.add(injector);
         }
       }

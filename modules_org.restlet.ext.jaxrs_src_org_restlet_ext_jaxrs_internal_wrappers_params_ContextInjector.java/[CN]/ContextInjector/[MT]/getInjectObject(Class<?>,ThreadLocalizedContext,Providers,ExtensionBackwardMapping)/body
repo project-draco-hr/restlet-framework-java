@@ -9,7 +9,7 @@
     return extensionBackwardMapping;
   }
   if (declaringClass.equals(PathSegment.class)) {
-    final String msg="The use of PathSegment annotated with @Context is not standard.";
+    String msg="The use of PathSegment annotated with @Context is not standard.";
     logger.config(msg);
     return new GetLastPathSegment(tlContext);
   }
@@ -18,6 +18,10 @@
   }
   if (declaringClass.equals(UriInfo.class)) {
     throw new ImplementationException("You must not call the method ContextInjector.getInjectObject(.......) with class UriInfo");
+  }
+  String declaringClassName=declaringClass.getName();
+  if (declaringClassName.equals("javax.servlet.http.HttpServletRequest") || declaringClassName.equals("javax.servlet.http.HttpServletResponse")) {
+    throw new NotYetImplementedException("The returnin of Servlet depending Context is not implemented for now.");
   }
   throw new IllegalTypeException(declaringClass + " must not be annotated with @Context");
 }
