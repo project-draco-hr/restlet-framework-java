@@ -1,0 +1,11 @@
+{
+  for (  final java.lang.reflect.Method orig_classMethod : getClass().getMethods()) {
+    final java.lang.reflect.Method classMethod=getAncestorMethod(orig_classMethod);
+    if (classMethod.getName().startsWith("allow") && (classMethod.getParameterTypes().length == 0)) {
+      if ((Boolean)invoke(classMethod)) {
+        final Method allowedMethod=Method.valueOf(classMethod.getName().substring(5));
+        allowedMethods.add(allowedMethod);
+      }
+    }
+  }
+}

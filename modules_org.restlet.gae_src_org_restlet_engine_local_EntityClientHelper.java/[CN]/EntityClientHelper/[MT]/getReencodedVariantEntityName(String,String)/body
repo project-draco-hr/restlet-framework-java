@@ -1,0 +1,39 @@
+{
+  int i=0;
+  int j=0;
+  boolean stop=false;
+  char[] encodeds=encodedEntityName.toCharArray();
+  char[] decodeds=decodedVariantEntityName.toCharArray();
+  for (i=0; (i < decodeds.length) && (j < encodeds.length) && !stop; i++) {
+    char decodedChar=decodeds[i];
+    char encodedChar=encodeds[j];
+    if (encodedChar == '%') {
+      String dec=Reference.decode(encodedEntityName.substring(j,j + 3));
+      if (decodedChar == dec.charAt(0)) {
+        j+=3;
+      }
+ else {
+        stop=true;
+      }
+    }
+ else     if (decodedChar == encodedChar) {
+      j++;
+    }
+ else {
+      String dec=Reference.decode(encodedEntityName.substring(j,j + 1));
+      if (decodedChar == dec.charAt(0)) {
+        j++;
+      }
+ else {
+        stop=true;
+      }
+    }
+  }
+  if (stop) {
+    return encodedEntityName.substring(0,j) + decodedVariantEntityName.substring(i - 1);
+  }
+  if (j == encodedEntityName.length()) {
+    return encodedEntityName.substring(0,j) + decodedVariantEntityName.substring(i);
+  }
+  return encodedEntityName.substring(0,j - 1);
+}

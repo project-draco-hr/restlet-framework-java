@@ -1,0 +1,22 @@
+{
+  float result=0F;
+  if ((getRouter() != null) && (request.getResourceRef() != null) && (getTemplate() != null)) {
+    final String remainingPart=request.getResourceRef().getRemainingPart(false,getMatchQuery());
+    if (remainingPart != null) {
+      final int matchedLength=getTemplate().match(remainingPart);
+      if (matchedLength != -1) {
+        final float totalLength=remainingPart.length();
+        if (totalLength > 0.0F) {
+          result=getRouter().getRequiredScore() + (1.0F - getRouter().getRequiredScore()) * (matchedLength / totalLength);
+        }
+ else {
+          result=1.0F;
+        }
+      }
+    }
+    if (getLogger().isLoggable(Level.FINER)) {
+      getLogger().finer("Call score for the \"" + getTemplate().getPattern() + "\" URI pattern: "+ result);
+    }
+  }
+  return result;
+}

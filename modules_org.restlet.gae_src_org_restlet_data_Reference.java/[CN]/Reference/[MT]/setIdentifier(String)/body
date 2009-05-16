@@ -1,0 +1,16 @@
+{
+  identifier=encodeInvalidCharacters(identifier);
+  if (identifier == null) {
+    identifier="";
+  }
+  if (identifier.indexOf('#') != -1) {
+    throw new IllegalArgumentException("Illegal '#' character detected in parameter");
+  }
+  if (hasFragment()) {
+    this.internalRef=identifier + this.internalRef.substring(this.fragmentIndex);
+  }
+ else {
+    this.internalRef=identifier;
+  }
+  updateIndexes();
+}

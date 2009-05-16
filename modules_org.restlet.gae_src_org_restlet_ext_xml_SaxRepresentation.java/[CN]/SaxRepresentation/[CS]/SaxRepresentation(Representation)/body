@@ -1,0 +1,17 @@
+{
+  super((xmlRepresentation == null) ? null : xmlRepresentation.getMediaType());
+  try {
+    if (xmlRepresentation instanceof XmlRepresentation) {
+      this.source=((XmlRepresentation)xmlRepresentation).getSaxSource();
+    }
+ else {
+      this.source=new SAXSource(new InputSource(xmlRepresentation.getStream()));
+    }
+    if (xmlRepresentation.getIdentifier() != null) {
+      this.source.setSystemId(xmlRepresentation.getIdentifier().getTargetRef().toString());
+    }
+  }
+ catch (  IOException ioe) {
+    ioe.printStackTrace();
+  }
+}

@@ -1,0 +1,40 @@
+{
+  String vary=null;
+  if ((dimensions != null) && !dimensions.isEmpty()) {
+    final StringBuilder sb=new StringBuilder();
+    boolean first=true;
+    if (dimensions.contains(Dimension.CLIENT_ADDRESS) || dimensions.contains(Dimension.TIME) || dimensions.contains(Dimension.UNSPECIFIED)) {
+      vary="*";
+    }
+ else {
+      for (      final Dimension dim : dimensions) {
+        if (first) {
+          first=false;
+        }
+ else {
+          sb.append(", ");
+        }
+        if (dim == Dimension.CHARACTER_SET) {
+          sb.append(HttpConstants.HEADER_ACCEPT_CHARSET);
+        }
+ else         if (dim == Dimension.CLIENT_AGENT) {
+          sb.append(HttpConstants.HEADER_USER_AGENT);
+        }
+ else         if (dim == Dimension.ENCODING) {
+          sb.append(HttpConstants.HEADER_ACCEPT_ENCODING);
+        }
+ else         if (dim == Dimension.LANGUAGE) {
+          sb.append(HttpConstants.HEADER_ACCEPT_LANGUAGE);
+        }
+ else         if (dim == Dimension.MEDIA_TYPE) {
+          sb.append(HttpConstants.HEADER_ACCEPT);
+        }
+ else         if (dim == Dimension.AUTHORIZATION) {
+          sb.append(HttpConstants.HEADER_AUTHORIZATION);
+        }
+      }
+      vary=sb.toString();
+    }
+  }
+  return vary;
+}

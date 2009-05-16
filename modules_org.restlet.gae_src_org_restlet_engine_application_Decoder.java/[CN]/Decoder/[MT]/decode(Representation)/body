@@ -1,0 +1,14 @@
+{
+  Representation result=representation;
+  boolean supported=true;
+  boolean identityEncodings=true;
+  for (final Iterator<Encoding> iter=representation.getEncodings().iterator(); supported && iter.hasNext(); ) {
+    final Encoding encoding=iter.next();
+    supported=DecodeRepresentation.getSupportedEncodings().contains(encoding);
+    identityEncodings&=encoding.equals(Encoding.IDENTITY);
+  }
+  if (supported && !identityEncodings) {
+    result=new DecodeRepresentation(representation);
+  }
+  return result;
+}

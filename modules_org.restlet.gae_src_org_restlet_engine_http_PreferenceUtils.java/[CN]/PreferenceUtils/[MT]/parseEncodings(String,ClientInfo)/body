@@ -1,0 +1,18 @@
+{
+  if (acceptEncodingHeader != null) {
+    try {
+      final PreferenceReader pr=new PreferenceReader(PreferenceReader.TYPE_ENCODING,acceptEncodingHeader);
+      Preference currentPref=pr.readPreference();
+      while (currentPref != null) {
+        preference.getAcceptedEncodings().add(currentPref);
+        currentPref=pr.readPreference();
+      }
+    }
+ catch (    IOException ioe) {
+      throw new IllegalArgumentException("An exception occurred during encoding preferences parsing. Header: " + acceptEncodingHeader + ". Ignoring header.");
+    }
+  }
+ else {
+    preference.getAcceptedEncodings().add(new Preference(Encoding.IDENTITY));
+  }
+}

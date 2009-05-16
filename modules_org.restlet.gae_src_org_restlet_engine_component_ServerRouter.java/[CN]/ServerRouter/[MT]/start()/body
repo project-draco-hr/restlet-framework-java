@@ -1,0 +1,16 @@
+{
+  for (  final VirtualHost host : getComponent().getHosts()) {
+    getRoutes().add(new HostRoute(this,host));
+  }
+  if (getComponent().getDefaultHost() != null) {
+    getRoutes().add(new HostRoute(this,getComponent().getDefaultHost()));
+  }
+  final Restlet noHostMatched=new Restlet(getComponent().getContext().createChildContext()){
+    @Override public void handle(    Request request,    Response response){
+      response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,"No virtual host could handle the request");
+    }
+  }
+;
+  setDefaultRoute(new Route(this,"",noHostMatched));
+  super.start();
+}

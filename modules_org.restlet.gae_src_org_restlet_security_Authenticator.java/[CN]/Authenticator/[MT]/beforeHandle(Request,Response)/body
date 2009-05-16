@@ -1,0 +1,25 @@
+{
+  int result=CONTINUE;
+  boolean success=authenticate(request,response);
+  if (success) {
+    if (request.getChallengeResponse() != null) {
+      request.getChallengeResponse().setAuthenticated(success);
+    }
+    if (request.getClientInfo() != null) {
+      request.getClientInfo().setAuthenticated(success);
+    }
+    if (getEnroler() != null) {
+      getEnroler().enrole(request.getClientInfo().getSubject());
+    }
+  }
+ else   if (!isOptional()) {
+    if (request.getChallengeResponse() != null) {
+      request.getChallengeResponse().setAuthenticated(success);
+    }
+    if (request.getClientInfo() != null) {
+      request.getClientInfo().setAuthenticated(success);
+    }
+    result=STOP;
+  }
+  return result;
+}

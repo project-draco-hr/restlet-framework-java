@@ -1,0 +1,16 @@
+{
+  boolean authorized=false;
+  boolean forbidden=false;
+  if (getAuthorizedRoles().isEmpty()) {
+    authorized=true;
+  }
+ else {
+    for (    Role authorizedRole : getAuthorizedRoles()) {
+      authorized=authorized || request.getClientInfo().isInRole(authorizedRole);
+    }
+  }
+  for (  Role forbiddenRole : getForbiddenRoles()) {
+    forbidden=forbidden || request.getClientInfo().isInRole(forbiddenRole);
+  }
+  return authorized && !forbidden;
+}
