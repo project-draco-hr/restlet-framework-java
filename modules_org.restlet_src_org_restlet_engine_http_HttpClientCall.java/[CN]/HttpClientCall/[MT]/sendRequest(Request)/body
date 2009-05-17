@@ -7,17 +7,17 @@
   }
   try {
     if (entity != null) {
-      final OutputStream rs=getRequestEntityStream();
+      final OutputStream requestStream=getRequestEntityStream();
       final WritableByteChannel wbc=getRequestEntityChannel();
       if (wbc != null) {
         entity.write(wbc);
       }
- else       if (rs != null) {
-        entity.write(rs);
-        rs.flush();
+ else       if (requestStream != null) {
+        entity.write(requestStream);
+        requestStream.flush();
       }
-      if (rs != null) {
-        rs.close();
+      if (requestStream != null) {
+        requestStream.close();
       }
  else       if (wbc != null) {
         wbc.close();
