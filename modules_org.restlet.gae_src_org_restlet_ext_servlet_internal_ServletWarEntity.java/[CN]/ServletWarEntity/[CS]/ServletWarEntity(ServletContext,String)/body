@@ -1,0 +1,34 @@
+{
+  this.children=null;
+  this.servletContext=servletContext;
+  this.path=path;
+  if (path.endsWith("/")) {
+    this.directory=true;
+    this.fullName=path.substring(0,path.length() - 1);
+    Set childPaths=getServletContext().getResourcePaths(path);
+    if (childPaths != null && !childPaths.isEmpty()) {
+      this.children=new ArrayList<Entity>();
+      for (      Object childPath : childPaths) {
+        if (!childPath.equals(this.path)) {
+          this.children.add(new ServletWarEntity(this.servletContext,(String)childPath));
+        }
+      }
+    }
+  }
+ else {
+    this.fullName=path;
+    Set childPaths=getServletContext().getResourcePaths(path);
+    if (childPaths != null && !childPaths.isEmpty()) {
+      this.directory=true;
+      this.children=new ArrayList<Entity>();
+      for (      Object childPath : childPaths) {
+        if (!childPath.equals(this.path)) {
+          this.children.add(new ServletWarEntity(this.servletContext,(String)childPath));
+        }
+      }
+    }
+ else {
+      this.directory=false;
+    }
+  }
+}

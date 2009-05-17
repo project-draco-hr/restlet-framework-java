@@ -1,0 +1,24 @@
+{
+  if (isDataFormat()) {
+    this.stateStack.push(SEEN_ELEMENT);
+    this.state=SEEN_NOTHING;
+    if (this.depth > 0) {
+      characters("\n");
+    }
+    doIndent();
+  }
+  this.elementLevel++;
+  this.nsSupport.pushContext();
+  write('<');
+  writeName(uri,localName,qName,true);
+  writeAttributes(atts);
+  if (this.elementLevel == 1) {
+    forceNSDecls();
+  }
+  writeNSDecls();
+  write('>');
+  super.startElement(uri,localName,qName,atts);
+  if (isDataFormat()) {
+    this.depth++;
+  }
+}

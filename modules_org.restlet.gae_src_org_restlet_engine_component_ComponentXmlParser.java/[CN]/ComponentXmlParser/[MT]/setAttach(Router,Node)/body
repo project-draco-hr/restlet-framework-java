@@ -1,0 +1,58 @@
+{
+  final NodeList childNodes=node.getChildNodes();
+  for (int i=0; i < childNodes.getLength(); i++) {
+    final Node childNode=childNodes.item(i);
+    if (isParameter(childNode)) {
+      Parameter p=parseParameter(childNode);
+      if (p != null) {
+        router.getContext().getParameters().add(p);
+      }
+    }
+ else     if ("attach".equals(childNode.getNodeName())) {
+      String uriPattern=null;
+      Node item=childNode.getAttributes().getNamedItem("uriPattern");
+      if (item != null) {
+        uriPattern=item.getNodeValue();
+      }
+ else {
+        uriPattern="";
+      }
+      item=childNode.getAttributes().getNamedItem("default");
+      final boolean bDefault=getBoolean(item,false);
+      final Context oldContext=router.getContext();
+      router.setContext(new Context());
+      Route route=null;
+      item=childNode.getAttributes().getNamedItem("targetClass");
+      if (item != null) {
+        route=attach(router,item.getNodeValue(),uriPattern,bDefault);
+      }
+ else {
+        item=childNode.getAttributes().getNamedItem("targetDescriptor");
+        if (item != null) {
+          route=attachWithDescriptor(router,item.getNodeValue(),uriPattern,bDefault);
+        }
+ else {
+          getLogger().log(Level.WARNING,"Both targetClass name and targetDescriptor are missing. Couldn't attach a new route.");
+        }
+      }
+      if (route != null) {
+        final Template template=route.getTemplate();
+        item=childNode.getAttributes().getNamedItem("matchingMode");
+        template.setMatchingMode(getInt(item,Template.MODE_STARTS_WITH));
+        item=childNode.getAttributes().getNamedItem("defaultVariableType");
+        template.getDefaultVariable().setType(getInt(item,Variable.TYPE_URI_SEGMENT));
+        final NodeList childNodes2=childNode.getChildNodes();
+        for (int j=0; j < childNodes2.getLength(); j++) {
+          Node aNode=childNodes2.item(j);
+          if (isParameter(aNode)) {
+            Parameter p=parseParameter(aNode);
+            if (p != null) {
+              route.getContext().getParameters().add(p);
+            }
+          }
+        }
+      }
+      router.setContext(oldContext);
+    }
+  }
+}

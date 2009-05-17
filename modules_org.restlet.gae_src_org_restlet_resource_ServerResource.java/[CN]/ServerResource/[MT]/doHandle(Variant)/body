@@ -1,0 +1,51 @@
+{
+  Representation result=null;
+  Method method=getMethod();
+  if (method == null) {
+    setStatus(Status.CLIENT_ERROR_BAD_REQUEST,"No method specified");
+  }
+ else {
+    if (method.equals(Method.PUT)) {
+      result=put(getRequestEntity(),variant);
+    }
+ else     if (isExisting()) {
+      if (method.equals(Method.GET)) {
+        if (variant instanceof Representation) {
+          result=(Representation)variant;
+        }
+ else {
+          result=get(variant);
+        }
+      }
+ else       if (method.equals(Method.POST)) {
+        result=post(getRequestEntity(),variant);
+      }
+ else       if (method.equals(Method.DELETE)) {
+        result=delete(variant);
+      }
+ else       if (method.equals(Method.HEAD)) {
+        if (variant instanceof Representation) {
+          result=(Representation)variant;
+        }
+ else {
+          result=head(variant);
+        }
+      }
+ else       if (method.equals(Method.OPTIONS)) {
+        if (variant instanceof Representation) {
+          result=(Representation)variant;
+        }
+ else {
+          result=options(variant);
+        }
+      }
+ else {
+        setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+      }
+    }
+ else {
+      setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+    }
+  }
+  return result;
+}

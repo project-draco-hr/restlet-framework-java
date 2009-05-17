@@ -1,0 +1,12 @@
+{
+  Filter inboundFilter=null;
+  for (  Service service : getHelped().getServices()) {
+    if (service.isEnabled()) {
+      inboundFilter=service.createInboundFilter(getContext());
+      if (inboundFilter != null) {
+        addFilter(inboundFilter);
+      }
+    }
+  }
+  setNext(getHelped().getRoot());
+}

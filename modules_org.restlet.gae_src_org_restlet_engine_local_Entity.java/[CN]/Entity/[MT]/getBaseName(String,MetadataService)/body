@@ -1,0 +1,12 @@
+{
+  final String[] result=name.split("\\.");
+  final StringBuilder baseName=new StringBuilder().append(result[0]);
+  boolean extensionFound=false;
+  for (int i=1; (i < result.length) && !extensionFound; i++) {
+    extensionFound=metadataService.getMetadata(result[i]) != null;
+    if (!extensionFound) {
+      baseName.append(".").append(result[i]);
+    }
+  }
+  return baseName.toString();
+}

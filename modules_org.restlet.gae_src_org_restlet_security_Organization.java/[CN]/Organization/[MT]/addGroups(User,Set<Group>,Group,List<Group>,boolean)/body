@@ -1,0 +1,18 @@
+{
+  if ((currentGroup != null) && !stack.contains(currentGroup)) {
+    stack.add(currentGroup);
+    if (currentGroup.getMemberUsers().contains(user)) {
+      userGroups.add(currentGroup);
+      boolean inherit=!inheritOnly || currentGroup.isInheritRoles();
+      Group group;
+      for (int i=stack.size() - 2; inherit && (i >= 0); i--) {
+        group=stack.get(i);
+        userGroups.add(group);
+        inherit=!inheritOnly || group.isInheritRoles();
+      }
+    }
+    for (    Group group : currentGroup.getMemberGroups()) {
+      addGroups(user,userGroups,group,stack,inheritOnly);
+    }
+  }
+}

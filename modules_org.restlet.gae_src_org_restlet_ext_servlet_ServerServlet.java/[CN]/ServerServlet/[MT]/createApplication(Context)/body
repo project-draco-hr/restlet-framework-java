@@ -1,0 +1,46 @@
+{
+  Application application=null;
+  final String applicationClassName=getInitParameter(APPLICATION_KEY,null);
+  if (applicationClassName != null) {
+    try {
+      final Class<?> targetClass=loadClass(applicationClassName);
+      try {
+        application=(Application)targetClass.getConstructor().newInstance();
+        application.setContext(parentContext.createChildContext());
+      }
+ catch (      NoSuchMethodException e) {
+        log("[Restlet] ServerServlet couldn't invoke the constructor of the target class. Please check this class has a constructor without parameter. The constructor with a parameter of type Context will be used instead.");
+        application=(Application)targetClass.getConstructor(Context.class).newInstance(parentContext.createChildContext());
+      }
+    }
+ catch (    ClassNotFoundException e) {
+      log("[Restlet] ServerServlet couldn't find the target class. Please check that your classpath includes " + applicationClassName,e);
+    }
+catch (    InstantiationException e) {
+      log("[Restlet] ServerServlet couldn't instantiate the target class. Please check this class has an empty constructor " + applicationClassName,e);
+    }
+catch (    IllegalAccessException e) {
+      log("[Restlet] ServerServlet couldn't instantiate the target class. Please check that you have to proper access rights to " + applicationClassName,e);
+    }
+catch (    NoSuchMethodException e) {
+      log("[Restlet] ServerServlet couldn't invoke the constructor of the target class. Please check this class has a constructor with a single parameter of Context " + applicationClassName,e);
+    }
+catch (    InvocationTargetException e) {
+      log("[Restlet] ServerServlet couldn't instantiate the target class. An exception was thrown while creating " + applicationClassName,e);
+    }
+  }
+  if (application != null) {
+    final Context applicationContext=application.getContext();
+    String initParam;
+    final javax.servlet.ServletConfig servletConfig=getServletConfig();
+    for (final Enumeration<String> enum1=servletConfig.getInitParameterNames(); enum1.hasMoreElements(); ) {
+      initParam=enum1.nextElement();
+      applicationContext.getParameters().add(initParam,servletConfig.getInitParameter(initParam));
+    }
+    for (final Enumeration<String> enum1=getServletContext().getInitParameterNames(); enum1.hasMoreElements(); ) {
+      initParam=enum1.nextElement();
+      applicationContext.getParameters().add(initParam,getServletContext().getInitParameter(initParam));
+    }
+  }
+  return application;
+}

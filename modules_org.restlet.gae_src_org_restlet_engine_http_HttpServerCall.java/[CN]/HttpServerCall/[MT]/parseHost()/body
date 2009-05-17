@@ -1,0 +1,18 @@
+{
+  final String host=getRequestHeaders().getFirstValue(HttpConstants.HEADER_HOST,true);
+  if (host != null) {
+    final int colonIndex=host.indexOf(':');
+    if (colonIndex != -1) {
+      super.setHostDomain(host.substring(0,colonIndex));
+      super.setHostPort(Integer.valueOf(host.substring(colonIndex + 1)));
+    }
+ else {
+      super.setHostDomain(host);
+      super.setHostPort(getProtocol().getDefaultPort());
+    }
+  }
+ else {
+    getLogger().info("Couldn't find the mandatory \"Host\" HTTP header.");
+  }
+  this.hostParsed=true;
+}
