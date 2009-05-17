@@ -1,15 +1,12 @@
 {
-  if (getHelped().getTunnelService().isEnabled()) {
-    addFilter(createTunnelFilter(getContext()));
-  }
-  if (getHelped().getStatusService().isEnabled()) {
-    addFilter(createStatusFilter(getHelped()));
-  }
-  if (getHelped().getDecoderService().isEnabled()) {
-    addFilter(createDecoderFilter(getHelped()));
-  }
-  if (getHelped().getRangeService().isEnabled()) {
-    addFilter(createRangeFilter(getContext()));
+  Filter inboundFilter=null;
+  for (  Service service : getHelped().getServices()) {
+    if (service.isEnabled()) {
+      inboundFilter=service.createInboundFilter(getContext());
+      if (inboundFilter != null) {
+        addFilter(inboundFilter);
+      }
+    }
   }
   setNext(getHelped().getRoot());
 }
