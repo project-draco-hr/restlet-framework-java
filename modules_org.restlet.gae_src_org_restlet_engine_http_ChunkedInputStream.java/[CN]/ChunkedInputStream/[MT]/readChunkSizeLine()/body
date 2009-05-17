@@ -1,0 +1,21 @@
+{
+  final ByteArrayOutputStream buffer=new ByteArrayOutputStream();
+  checkCRLF();
+  for (; ; ) {
+    final int b=this.source.read();
+    if (b == -1) {
+      throw new IOException("Invalid chunk size specified. End of stream reached");
+    }
+    if (b == '\r') {
+      final int lf=this.source.read();
+      if (lf == '\n') {
+        break;
+      }
+ else {
+        throw new IOException("Invalid chunk size specified.  Expected crlf, only saw cr");
+      }
+    }
+    buffer.write(b);
+  }
+  return new String(buffer.toByteArray());
+}

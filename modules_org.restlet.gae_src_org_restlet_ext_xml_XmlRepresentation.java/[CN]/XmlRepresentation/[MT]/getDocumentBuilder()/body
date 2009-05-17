@@ -1,0 +1,20 @@
+{
+  DocumentBuilder result=null;
+  try {
+    DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
+    dbf.setNamespaceAware(isNamespaceAware());
+    dbf.setValidating(isValidating());
+    dbf.setXIncludeAware(isXIncludeAware());
+    Schema xsd=getSchema();
+    if (xsd != null) {
+      dbf.setSchema(xsd);
+    }
+    result=dbf.newDocumentBuilder();
+    result.setEntityResolver(getEntityResolver());
+    result.setErrorHandler(getErrorHandler());
+  }
+ catch (  ParserConfigurationException pce) {
+    throw new IOException("Couldn't create the empty document: " + pce.getMessage());
+  }
+  return result;
+}

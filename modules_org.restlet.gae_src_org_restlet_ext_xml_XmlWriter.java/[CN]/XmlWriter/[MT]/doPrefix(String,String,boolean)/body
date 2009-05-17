@@ -1,0 +1,45 @@
+{
+  final String defaultNS=this.nsSupport.getURI("");
+  if ("".equals(uri) || uri == null) {
+    if (isElement && (defaultNS != null)) {
+      this.nsSupport.declarePrefix("","");
+    }
+    return null;
+  }
+  String prefix;
+  if (isElement && (defaultNS != null) && uri.equals(defaultNS)) {
+    prefix="";
+  }
+ else {
+    prefix=this.nsSupport.getPrefix(uri);
+  }
+  if (prefix != null) {
+    return prefix;
+  }
+  prefix=this.doneDeclTable.get(uri);
+  if ((prefix != null) && (((!isElement || (defaultNS != null)) && "".equals(prefix)) || (this.nsSupport.getURI(prefix) != null))) {
+    prefix=null;
+  }
+  if (prefix == null) {
+    prefix=this.prefixTable.get(uri);
+    if ((prefix != null) && (((!isElement || (defaultNS != null)) && "".equals(prefix)) || (this.nsSupport.getURI(prefix) != null))) {
+      prefix=null;
+    }
+  }
+  if ((prefix == null) && (qName != null) && !"".equals(qName)) {
+    final int i=qName.indexOf(':');
+    if (i == -1) {
+      if (isElement && (defaultNS == null)) {
+        prefix="";
+      }
+    }
+ else {
+      prefix=qName.substring(0,i);
+    }
+  }
+  for (; (prefix == null) || (this.nsSupport.getURI(prefix) != null); prefix="__NS" + ++this.prefixCounter) {
+  }
+  this.nsSupport.declarePrefix(prefix,uri);
+  this.doneDeclTable.put(uri,prefix);
+  return prefix;
+}

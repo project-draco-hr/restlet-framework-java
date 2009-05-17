@@ -1,0 +1,69 @@
+{
+  final TunnelService tunnelService=getTunnelService();
+  boolean queryModified=false;
+  final Reference resourceRef=request.getResourceRef();
+  if (resourceRef.hasQuery()) {
+    final Form query=resourceRef.getQueryAsForm(null);
+    final Method method=request.getMethod();
+    if (tunnelService.isMethodTunnel()) {
+      final String methodName=query.getFirstValue(tunnelService.getMethodParameter());
+      Method tunnelledMethod=Method.valueOf(methodName);
+      if (tunnelledMethod != null && (Method.POST.equals(method) || Method.OPTIONS.equals(tunnelledMethod))) {
+        request.setMethod(tunnelledMethod);
+        query.removeFirst(tunnelService.getMethodParameter());
+        queryModified=true;
+      }
+    }
+    if (tunnelService.isPreferencesTunnel()) {
+      final String charSetParameter=tunnelService.getCharacterSetParameter();
+      final String encodingParameter=tunnelService.getEncodingParameter();
+      final String languageParameter=tunnelService.getLanguageParameter();
+      final String mediaTypeParameter=tunnelService.getMediaTypeParameter();
+      final String acceptedCharSet=query.getFirstValue(charSetParameter);
+      final String acceptedEncoding=query.getFirstValue(encodingParameter);
+      final String acceptedLanguage=query.getFirstValue(languageParameter);
+      final String acceptedMediaType=query.getFirstValue(mediaTypeParameter);
+      final ClientInfo clientInfo=request.getClientInfo();
+      Metadata metadata=getMetadata(acceptedCharSet);
+      if ((metadata == null) && (acceptedCharSet != null)) {
+        metadata=CharacterSet.valueOf(acceptedCharSet);
+      }
+      if (metadata instanceof CharacterSet) {
+        updateMetadata(clientInfo,metadata);
+        query.removeFirst(charSetParameter);
+        queryModified=true;
+      }
+      metadata=getMetadata(acceptedEncoding);
+      if ((metadata == null) && (acceptedEncoding != null)) {
+        metadata=Encoding.valueOf(acceptedEncoding);
+      }
+      if (metadata instanceof Encoding) {
+        updateMetadata(clientInfo,metadata);
+        query.removeFirst(encodingParameter);
+        queryModified=true;
+      }
+      metadata=getMetadata(acceptedLanguage);
+      if ((metadata == null) && (acceptedLanguage != null)) {
+        metadata=Language.valueOf(acceptedLanguage);
+      }
+      if (metadata instanceof Language) {
+        updateMetadata(clientInfo,metadata);
+        query.removeFirst(languageParameter);
+        queryModified=true;
+      }
+      metadata=getMetadata(acceptedMediaType);
+      if ((metadata == null) && (acceptedMediaType != null)) {
+        metadata=MediaType.valueOf(acceptedMediaType);
+      }
+      if (metadata instanceof MediaType) {
+        updateMetadata(clientInfo,metadata);
+        query.removeFirst(mediaTypeParameter);
+        queryModified=true;
+      }
+    }
+    if (queryModified) {
+      request.getResourceRef().setQuery(query.getQueryString(null));
+    }
+  }
+  return queryModified;
+}

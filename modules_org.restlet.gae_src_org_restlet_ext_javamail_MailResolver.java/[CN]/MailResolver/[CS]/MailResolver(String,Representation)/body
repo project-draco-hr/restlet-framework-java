@@ -1,0 +1,33 @@
+{
+  this.identifier=identifier;
+  if (mail != null) {
+    this.map=new HashMap<String,Object>();
+    DomRepresentation rep=null;
+    if (mail instanceof DomRepresentation) {
+      rep=(DomRepresentation)mail;
+    }
+ else {
+      rep=new DomRepresentation(mail);
+    }
+    Node node=rep.getNode("/email/head/from/text()");
+    if (node != null) {
+      add("from",node.getNodeValue());
+    }
+    final NodeList nodes=rep.getNodes("/email/head/to/text()");
+    if ((nodes != null) && (nodes.getLength() > 0)) {
+      final StringBuilder builder=new StringBuilder(nodes.item(0).getNodeValue());
+      for (int i=1; i < nodes.getLength(); i++) {
+        builder.append(", ").append(nodes.item(i).getNodeValue());
+      }
+      add("recipients",builder.toString());
+    }
+    node=rep.getNode("/email/head/subject/text()");
+    if (node != null) {
+      add("subject",node.getNodeValue());
+    }
+    node=rep.getNode("/email/body/text()");
+    if (node != null) {
+      add("message",node.getNodeValue());
+    }
+  }
+}

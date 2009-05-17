@@ -1,0 +1,17 @@
+{
+  DOMSource result=null;
+  Node document=null;
+  try {
+    document=getDocumentBuilder().parse(getStream());
+  }
+ catch (  SAXException se) {
+    throw new IOException("Couldn't read the XML representation. " + se.getMessage());
+  }
+  if (document != null) {
+    result=new DOMSource(document);
+    if (getIdentifier() != null) {
+      result.setSystemId(getIdentifier().getTargetRef().toString());
+    }
+  }
+  return result;
+}

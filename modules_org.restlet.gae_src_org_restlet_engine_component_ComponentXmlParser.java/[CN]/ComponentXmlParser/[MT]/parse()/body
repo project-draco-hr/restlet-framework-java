@@ -1,0 +1,154 @@
+{
+  try {
+    DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
+    dbf.setNamespaceAware(true);
+    dbf.setValidating(true);
+    dbf.setXIncludeAware(true);
+    DefaultSaxHandler handler=new DefaultSaxHandler();
+    DocumentBuilder db=dbf.newDocumentBuilder();
+    db.setErrorHandler(handler);
+    db.setEntityResolver(handler);
+    final Document document=db.parse(getXmlConfiguration().getStream());
+    if ("component".equals(document.getFirstChild().getNodeName())) {
+      final NodeList childNodes=document.getFirstChild().getChildNodes();
+      Node childNode;
+      for (int i=0; i < childNodes.getLength(); i++) {
+        childNode=childNodes.item(i);
+        if ("client".equals(childNode.getNodeName())) {
+          Node item=childNode.getAttributes().getNamedItem("protocol");
+          Client client=null;
+          if (item == null) {
+            item=childNode.getAttributes().getNamedItem("protocols");
+            if (item != null) {
+              final String[] protocols=item.getNodeValue().split(" ");
+              final List<Protocol> protocolsList=new ArrayList<Protocol>();
+              for (              final String protocol : protocols) {
+                protocolsList.add(getProtocol(protocol));
+              }
+              client=new Client(new Context(),protocolsList);
+            }
+          }
+ else {
+            client=new Client(new Context(),getProtocol(item.getNodeValue()));
+          }
+          if (client != null) {
+            getComponent().getClients().add(client);
+            for (int j=0; j < childNode.getChildNodes().getLength(); j++) {
+              final Node childNode2=childNode.getChildNodes().item(j);
+              if (isParameter(childNode2)) {
+                Parameter p=parseParameter(childNode2);
+                if (p != null) {
+                  client.getContext().getParameters().add(p);
+                }
+              }
+            }
+          }
+        }
+ else         if ("server".equals(childNode.getNodeName())) {
+          Node item=childNode.getAttributes().getNamedItem("protocol");
+          final Node portNode=childNode.getAttributes().getNamedItem("port");
+          final Node addressNode=childNode.getAttributes().getNamedItem("address");
+          Server server=null;
+          if (item == null) {
+            item=childNode.getAttributes().getNamedItem("protocols");
+            if (item != null) {
+              final String[] protocols=item.getNodeValue().split(" ");
+              final List<Protocol> protocolsList=new ArrayList<Protocol>();
+              for (              final String protocol : protocols) {
+                protocolsList.add(getProtocol(protocol));
+              }
+              final int port=getInt(portNode,Protocol.UNKNOWN_PORT);
+              if (port == Protocol.UNKNOWN_PORT) {
+                getLogger().warning("Please specify a port when defining a list of protocols.");
+              }
+ else {
+                server=new Server(new Context(),protocolsList,getInt(portNode,Protocol.UNKNOWN_PORT),getComponent().getServers().getTarget());
+              }
+            }
+          }
+ else {
+            final Protocol protocol=getProtocol(item.getNodeValue());
+            server=new Server(new Context(),protocol,getInt(portNode,protocol.getDefaultPort()),getComponent().getServers().getTarget());
+          }
+          if (server != null) {
+            if (addressNode != null) {
+              final String address=addressNode.getNodeValue();
+              if (address != null) {
+                server.setAddress(address);
+              }
+            }
+            for (int j=0; j < childNode.getChildNodes().getLength(); j++) {
+              final Node childNode2=childNode.getChildNodes().item(j);
+              if (isParameter(childNode2)) {
+                Parameter p=parseParameter(childNode2);
+                if (p != null) {
+                  server.getContext().getParameters().add(p);
+                }
+              }
+            }
+            getComponent().getServers().add(server);
+          }
+        }
+ else         if (isParameter(childNode)) {
+          Parameter p=parseParameter(childNode);
+          if (p != null) {
+            getComponent().getContext().getParameters().add(p);
+          }
+        }
+ else         if ("defaultHost".equals(childNode.getNodeName())) {
+          parseHost(getComponent().getDefaultHost(),childNode);
+        }
+ else         if ("host".equals(childNode.getNodeName())) {
+          final VirtualHost host=new VirtualHost(getComponent().getContext());
+          parseHost(host,childNode);
+          getComponent().getHosts().add(host);
+        }
+ else         if ("internalRouter".equals(childNode.getNodeName())) {
+          parseRouter(getComponent().getInternalRouter(),childNode);
+        }
+ else         if ("logService".equals(childNode.getNodeName())) {
+          Node item=childNode.getAttributes().getNamedItem("logFormat");
+          if (item != null) {
+            getComponent().getLogService().setLogFormat(item.getNodeValue());
+          }
+          item=childNode.getAttributes().getNamedItem("loggerName");
+          if (item != null) {
+            getComponent().getLogService().setLoggerName(item.getNodeValue());
+          }
+          item=childNode.getAttributes().getNamedItem("enabled");
+          if (item != null) {
+            getComponent().getLogService().setEnabled(getBoolean(item,true));
+          }
+          item=childNode.getAttributes().getNamedItem("identityCheck");
+          if (item != null) {
+            getComponent().getLogService().setIdentityCheck(getBoolean(item,true));
+          }
+        }
+ else         if ("statusService".equals(childNode.getNodeName())) {
+          Node item=childNode.getAttributes().getNamedItem("contactEmail");
+          if (item != null) {
+            getComponent().getStatusService().setContactEmail(item.getNodeValue());
+          }
+          item=childNode.getAttributes().getNamedItem("enabled");
+          if (item != null) {
+            getComponent().getStatusService().setEnabled(getBoolean(item,true));
+          }
+          item=childNode.getAttributes().getNamedItem("homeRef");
+          if (item != null) {
+            getComponent().getStatusService().setHomeRef(new Reference(item.getNodeValue()));
+          }
+          item=childNode.getAttributes().getNamedItem("overwrite");
+          if (item != null) {
+            getComponent().getStatusService().setOverwrite(getBoolean(item,true));
+          }
+        }
+      }
+    }
+ else {
+      getLogger().log(Level.WARNING,"Unable to find the root \"component\" node in the XML configuration.");
+    }
+  }
+ catch (  Exception e) {
+    getLogger().log(Level.WARNING,"Unable to parse the Component XML configuration.",e);
+  }
+}

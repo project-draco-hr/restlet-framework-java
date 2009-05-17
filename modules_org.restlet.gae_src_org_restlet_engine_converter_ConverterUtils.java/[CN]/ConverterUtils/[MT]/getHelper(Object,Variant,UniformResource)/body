@@ -1,0 +1,19 @@
+{
+  List<Variant> variants;
+  for (  ConverterHelper ch : Engine.getInstance().getRegisteredConverters()) {
+    variants=ch.getVariants(sourceObject.getClass(),targetVariant);
+    if (variants != null) {
+      if (targetVariant != null) {
+        for (        Variant variant : variants) {
+          if (variant.isCompatible(targetVariant)) {
+            return ch;
+          }
+        }
+      }
+ else {
+        return ch;
+      }
+    }
+  }
+  return null;
+}

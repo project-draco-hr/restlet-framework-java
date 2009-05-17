@@ -1,0 +1,13 @@
+{
+  Variant result=null;
+  final List<Variant> variants=getVariants();
+  if ((variants != null) && (!variants.isEmpty())) {
+    Language language=null;
+    final Application app=Application.getCurrent();
+    if (app != null) {
+      language=app.getMetadataService().getDefaultLanguage();
+    }
+    result=getRequest().getClientInfo().getPreferredVariant(variants,language);
+  }
+  return result;
+}

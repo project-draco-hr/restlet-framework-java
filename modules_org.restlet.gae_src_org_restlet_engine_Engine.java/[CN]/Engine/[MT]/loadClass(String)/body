@@ -1,0 +1,20 @@
+{
+  Class<?> result=null;
+  result=loadClass(getUserClassLoader(),className);
+  if (result == null) {
+    result=loadClass(Thread.currentThread().getContextClassLoader(),className);
+  }
+  if (result == null) {
+    result=loadClass(Engine.class.getClassLoader(),className);
+  }
+  if (result == null) {
+    result=Class.forName(className);
+  }
+  if (result == null) {
+    result=loadClass(ClassLoader.getSystemClassLoader(),className);
+  }
+  if (result == null) {
+    throw new ClassNotFoundException(className);
+  }
+  return result;
+}

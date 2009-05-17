@@ -1,0 +1,23 @@
+{
+  if (representation == null) {
+    return null;
+  }
+  final PipeStream pipe=new PipeStream();
+  final Application application=Application.getCurrent();
+  TaskService taskService=(application == null) ? new TaskService() : application.getTaskService();
+  taskService.execute(new Runnable(){
+    public void run(){
+      try {
+        final OutputStream os=pipe.getOutputStream();
+        representation.write(os);
+        os.write(-1);
+        os.close();
+      }
+ catch (      IOException ioe) {
+        Context.getCurrentLogger().log(Level.FINE,"Error while writing to the piped input stream.",ioe);
+      }
+    }
+  }
+);
+  return pipe.getInputStream();
+}

@@ -1,0 +1,22 @@
+{
+  Representation result=null;
+  try {
+    if (isConditional()) {
+      result=doConditionalHandle();
+    }
+ else     if (isNegotiated()) {
+      result=doNegotiatedHandle();
+    }
+ else {
+      result=doHandle();
+    }
+    getResponse().setEntity(result);
+    if (Status.CLIENT_ERROR_METHOD_NOT_ALLOWED.equals(getStatus())) {
+      updateAllowedMethods();
+    }
+  }
+ catch (  ResourceException re) {
+    setStatus(re.getStatus(),re.getCause(),re.getLocalizedMessage());
+  }
+  return result;
+}
