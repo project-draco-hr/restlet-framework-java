@@ -16,9 +16,19 @@
     this.responseHeadersAdded=false;
     if (this.connection instanceof HttpsURLConnection) {
       setConfidential(true);
+      final HttpsURLConnection https=(HttpsURLConnection)this.connection;
+      final SslContextFactory sslContextFactory=HttpsUtils.getSslContextFactory(getHelper());
+      if (sslContextFactory != null) {
+        try {
+          SSLContext sslContext=sslContextFactory.createSslContext();
+          https.setSSLSocketFactory(sslContext.getSocketFactory());
+        }
+ catch (        Exception e) {
+          throw new RuntimeException("Unable to create SSLContext.",e);
+        }
+      }
       final HostnameVerifier verifier=helper.getHostnameVerifier();
       if (verifier != null) {
-        final HttpsURLConnection https=(HttpsURLConnection)this.connection;
         https.setHostnameVerifier(verifier);
       }
     }

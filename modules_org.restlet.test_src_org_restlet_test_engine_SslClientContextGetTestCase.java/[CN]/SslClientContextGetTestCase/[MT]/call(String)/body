@@ -1,0 +1,13 @@
+{
+  final Request request=new Request(Method.GET,uri);
+  final Client client=new Client(Protocol.HTTPS);
+  if (client.getContext() == null) {
+    client.setContext(new Context());
+  }
+  configureSslParameters(client.getContext());
+  final Response r=client.handle(request);
+  assertEquals(r.getStatus().getDescription(),Status.SUCCESS_OK,r.getStatus());
+  assertEquals("Hello world",r.getEntity().getText());
+  Thread.sleep(200);
+  client.stop();
+}
