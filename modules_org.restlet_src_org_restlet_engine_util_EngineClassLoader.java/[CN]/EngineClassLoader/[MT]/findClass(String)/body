@@ -2,16 +2,28 @@
   Class<?> result=null;
   ClassLoader cl=Engine.getUserClassLoader();
   if (cl != null) {
-    result=cl.loadClass(name);
+    try {
+      result=cl.loadClass(name);
+    }
+ catch (    ClassNotFoundException cnfe) {
+    }
   }
   if (result == null) {
     cl=Thread.currentThread().getContextClassLoader();
     if (cl != null) {
-      result=cl.loadClass(name);
+      try {
+        result=cl.loadClass(name);
+      }
+ catch (      ClassNotFoundException cnfe) {
+      }
     }
   }
   if (result == null) {
-    result=Class.forName(name);
+    try {
+      result=Class.forName(name);
+    }
+ catch (    ClassNotFoundException cnfe) {
+    }
   }
   if (result == null) {
     throw new ClassNotFoundException(name);
