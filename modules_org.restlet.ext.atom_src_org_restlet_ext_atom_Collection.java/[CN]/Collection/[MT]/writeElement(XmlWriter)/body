@@ -7,8 +7,15 @@
   if (getTitle() != null) {
     writer.dataElement(ATOM_NAMESPACE,"title",getTitle());
   }
-  if (getMemberType() != null) {
-    getMemberType().writeElement(writer,APP_NAMESPACE);
+  if (getAccept() != null) {
+    StringBuilder sb=new StringBuilder();
+    for (    MediaType mediaType : getAccept()) {
+      if (sb.length() > 0) {
+        sb.append(", ");
+      }
+      sb.append(mediaType.toString());
+    }
+    writer.dataElement(APP_NAMESPACE,"accept",sb.toString());
   }
   try {
     if (getFeed() != null) {

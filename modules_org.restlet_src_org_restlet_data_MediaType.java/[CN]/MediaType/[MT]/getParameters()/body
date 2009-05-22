@@ -4,7 +4,17 @@
 synchronized (this) {
       p=this.parameters;
       if (p == null) {
-        this.parameters=p=(Series<Parameter>)Series.unmodifiableSeries(new Form());
+        Form params=null;
+        if (getName() != null) {
+          int index=getName().indexOf(';');
+          if (index != -1) {
+            params=new Form(getName().substring(index + 1),';');
+          }
+        }
+        if (params == null) {
+          params=new Form();
+        }
+        this.parameters=p=(Series<Parameter>)Series.unmodifiableSeries(params);
       }
     }
   }

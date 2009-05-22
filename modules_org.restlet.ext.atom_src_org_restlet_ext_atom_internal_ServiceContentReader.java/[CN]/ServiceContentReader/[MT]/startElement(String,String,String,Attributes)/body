@@ -5,7 +5,7 @@
     }
  else     if (localName.equalsIgnoreCase("workspace")) {
       if (this.state == IN_SERVICE) {
-        this.currentWorkspace=new Workspace(this.currentService,attrs.getValue("title"));
+        this.currentWorkspace=new Workspace(this.currentService);
         this.state=IN_WORKSPACE;
       }
     }
@@ -15,10 +15,22 @@
         this.state=IN_COLLECTION;
       }
     }
- else     if (localName.equalsIgnoreCase("member-type")) {
+ else     if (localName.equalsIgnoreCase("accept")) {
       if (this.state == IN_COLLECTION) {
         this.contentBuffer=new StringBuilder();
-        this.state=IN_MEMBER_TYPE;
+        this.state=IN_ACCEPT;
+      }
+    }
+  }
+ else   if (uri.equalsIgnoreCase(Feed.ATOM_NAMESPACE)) {
+    if (localName.equalsIgnoreCase("title")) {
+      if (this.state == IN_COLLECTION) {
+        this.contentBuffer=new StringBuilder();
+        this.state=IN_COLLECTION_TITLE;
+      }
+ else       if (this.state == IN_WORKSPACE) {
+        this.contentBuffer=new StringBuilder();
+        this.state=IN_WORKSPACE_TITLE;
       }
     }
   }
