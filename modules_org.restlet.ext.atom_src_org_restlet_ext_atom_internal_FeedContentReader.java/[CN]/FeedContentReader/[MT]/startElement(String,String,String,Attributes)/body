@@ -112,17 +112,26 @@
       if (this.state == State.FEED_ENTRY) {
         final MediaType type=getMediaType(attrs.getValue("","type"));
         final String srcAttr=attrs.getValue("","src");
-        final Content currentContent=new Content();
+        this.currentContent=new Content();
         if (srcAttr == null) {
-          currentContent.setInlineContent(new StringRepresentation(null,type));
+          StringWriter sw=new StringWriter();
+          currentContentWriter=new XmlWriter(sw);
+          for (          String prefix : this.prefixMappings.keySet()) {
+            currentContentWriter.forceNSDecl(this.prefixMappings.get(prefix),prefix);
+          }
         }
  else {
-          currentContent.setExternalRef(new Reference(srcAttr));
-          currentContent.setExternalType(type);
+          this.currentContent.setExternalRef(new Reference(srcAttr));
+          this.currentContent.setExternalType(type);
         }
         this.currentEntry.setContent(currentContent);
         this.state=State.FEED_ENTRY_CONTENT;
       }
+    }
+  }
+ else   if (this.state == State.FEED_ENTRY_CONTENT) {
+    if (this.currentContentWriter != null) {
+      this.currentContentWriter.startElement(uri,localName,qName,attrs);
     }
   }
 }

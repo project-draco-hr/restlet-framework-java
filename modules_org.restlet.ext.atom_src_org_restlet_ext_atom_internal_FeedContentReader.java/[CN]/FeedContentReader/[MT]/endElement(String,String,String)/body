@@ -126,12 +126,16 @@
     }
  else     if (localName.equalsIgnoreCase("content")) {
       if (this.state == State.FEED_ENTRY_CONTENT) {
-        if (this.currentEntry.getContent().isInline()) {
-          final StringRepresentation sr=(StringRepresentation)this.currentEntry.getContent().getInlineContent();
-          sr.setText(this.contentBuffer.toString());
+        if (!this.currentEntry.getContent().isExternal()) {
+          currentContent.setInlineContent(new StringRepresentation(this.currentContentWriter.getWriter().toString()));
         }
         this.state=State.FEED_ENTRY;
       }
+    }
+  }
+ else   if (this.state == State.FEED_ENTRY_CONTENT) {
+    if (this.currentContentWriter != null) {
+      this.currentContentWriter.endElement(uri,localName,qName);
     }
   }
   this.currentText=null;
