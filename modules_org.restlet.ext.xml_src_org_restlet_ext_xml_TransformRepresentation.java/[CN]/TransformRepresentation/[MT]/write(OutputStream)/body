@@ -1,8 +1,13 @@
 {
-  try {
-    getTransformer().transform(getSaxSource(),new StreamResult(outputStream));
+  if (getTransformer() == null) {
+    Context.getCurrentLogger().warning("Unable to apply the transformation. No transformer found!");
   }
- catch (  TransformerException te) {
-    throw new IOException("Transformer exception. " + te.getMessage());
+ else {
+    try {
+      getTransformer().transform(getSaxSource(),new StreamResult(outputStream));
+    }
+ catch (    TransformerException te) {
+      throw new IOException("Transformer exception. " + te.getMessage());
+    }
   }
 }
