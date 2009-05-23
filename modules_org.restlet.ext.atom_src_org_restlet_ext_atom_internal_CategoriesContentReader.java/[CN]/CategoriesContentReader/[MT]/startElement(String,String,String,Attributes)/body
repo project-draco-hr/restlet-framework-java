@@ -1,0 +1,25 @@
+{
+  if (uri.equalsIgnoreCase(Service.APP_NAMESPACE)) {
+    if (localName.equalsIgnoreCase("categories")) {
+      String attr=attrs.getValue("","fixed");
+      this.categories.setFixed((attr == null) ? false : Boolean.parseBoolean(attr));
+      attr=attrs.getValue("","scheme");
+      this.categories.setScheme((attr == null) ? null : new Reference(attr));
+    }
+  }
+ else   if (uri.equalsIgnoreCase(Feed.ATOM_NAMESPACE)) {
+    if (localName.equalsIgnoreCase("category")) {
+      Category category=new Category();
+      if (this.categories.getEntries() == null) {
+        this.categories.setEntries(new ArrayList<Category>());
+      }
+      this.categories.getEntries().add(category);
+      String attr=attrs.getValue("","term");
+      category.setTerm((attr == null) ? null : attr);
+      attr=attrs.getValue("","label");
+      category.setLabel((attr == null) ? null : attr);
+      attr=attrs.getValue("","scheme");
+      category.setScheme((attr == null) ? null : new Reference(attr));
+    }
+  }
+}
