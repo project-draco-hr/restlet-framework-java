@@ -9,10 +9,17 @@
       if (!(this.socket instanceof SSLSocket)) {
         this.socket.shutdownOutput();
       }
-      this.socket.close();
     }
   }
  catch (  IOException ex) {
     getLogger().log(Level.WARNING,"Unable to shutdown server socket",ex);
+  }
+  try {
+    if (!this.socket.isClosed()) {
+      this.socket.close();
+    }
+  }
+ catch (  IOException ex) {
+    getLogger().log(Level.WARNING,"Unable to close server socket",ex);
   }
 }
