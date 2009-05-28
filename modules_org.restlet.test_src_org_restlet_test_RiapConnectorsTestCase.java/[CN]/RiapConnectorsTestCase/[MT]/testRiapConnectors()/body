@@ -1,0 +1,29 @@
+{
+  Component component=new Component();
+  component.getServers().add(Protocol.RIAP);
+  component.getClients().add(Protocol.RIAP);
+  Application app=new Application(){
+    @Override public Restlet createRoot(){
+      Router router=new Router(getContext());
+      router.attach("/test",new Restlet(getContext()){
+        @Override public void handle(        Request request,        Response response){
+          response.setEntity("hello, world",MediaType.TEXT_PLAIN);
+        }
+      }
+);
+      return router;
+    }
+  }
+;
+  component.getInternalRouter().attach(app);
+  try {
+    component.start();
+    ClientResource res=new ClientResource("riap://component/test");
+    Representation rep=res.get();
+    assertEquals("hello, world",rep.getText());
+    component.stop();
+  }
+ catch (  Exception e) {
+    fail(e.getMessage());
+  }
+}

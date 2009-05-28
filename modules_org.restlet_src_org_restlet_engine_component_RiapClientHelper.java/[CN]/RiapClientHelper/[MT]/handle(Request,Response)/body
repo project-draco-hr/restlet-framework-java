@@ -1,0 +1,20 @@
+{
+  final String scheme=request.getResourceRef().getScheme();
+  if (Protocol.RIAP.getSchemeName().equalsIgnoreCase(scheme)) {
+    LocalReference ref=new LocalReference(request.getResourceRef());
+    if (ref.getRiapAuthorityType() == LocalReference.RIAP_COMPONENT) {
+      if (RiapServerHelper.instance != null && RiapServerHelper.instance.getContext() != null && RiapServerHelper.instance.getContext().getClientDispatcher() != null) {
+        RiapServerHelper.instance.getContext().getClientDispatcher().handle(request,response);
+      }
+ else {
+        super.handle(request,response);
+      }
+    }
+ else {
+      throw new IllegalArgumentException("Authority \"" + ref.getAuthority() + "\" not supported by the connector. Only \"component\" is supported.");
+    }
+  }
+ else {
+    throw new IllegalArgumentException("Protocol \"" + scheme + "\" not supported by the connector. Only RIAP is supported.");
+  }
+}
