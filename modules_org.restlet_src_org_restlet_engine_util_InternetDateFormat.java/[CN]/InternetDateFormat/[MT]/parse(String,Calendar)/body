@@ -1,0 +1,29 @@
+{
+  Matcher m=pattern.matcher(s);
+  if (!m.matches()) {
+    throw new IllegalArgumentException("Invalid date/time: " + s);
+  }
+  cal.clear();
+  cal.set(Calendar.YEAR,Integer.parseInt(m.group(1)));
+  cal.set(Calendar.MONTH,Integer.parseInt(m.group(2)) - 1);
+  cal.set(Calendar.DAY_OF_MONTH,Integer.parseInt(m.group(3)));
+  cal.set(Calendar.HOUR_OF_DAY,Integer.parseInt(m.group(4)));
+  cal.set(Calendar.MINUTE,Integer.parseInt(m.group(5)));
+  cal.set(Calendar.SECOND,Integer.parseInt(m.group(6)));
+  if (m.group(7) != null) {
+    float fraction=Float.parseFloat(m.group(7));
+    cal.set(Calendar.MILLISECOND,(int)(fraction * 1000F));
+  }
+  if (m.group(8) != null) {
+    cal.setTimeZone(new SimpleTimeZone(0,"Z"));
+  }
+ else {
+    int sign=m.group(9).equals("-") ? -1 : 1;
+    int tzhour;
+    tzhour=Integer.parseInt(m.group(10));
+    int tzminute=Integer.parseInt(m.group(11));
+    int offset=sign * ((tzhour * 60) + tzminute);
+    String id=Integer.toString(offset);
+    cal.setTimeZone(new SimpleTimeZone(offset * 60000,id));
+  }
+}
