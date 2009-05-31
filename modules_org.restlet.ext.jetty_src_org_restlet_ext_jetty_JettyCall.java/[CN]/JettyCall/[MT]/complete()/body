@@ -1,9 +1,14 @@
 {
   try {
     this.connection.flushResponse();
+  }
+ catch (  IOException ex) {
+    getLogger().log(Level.FINE,"Unable to flush the response",ex);
+  }
+  try {
     this.connection.completeResponse();
   }
  catch (  IOException ex) {
-    getLogger().log(Level.WARNING,"Unable to complete or commit the response",ex);
+    getLogger().log(Level.FINE,"Unable to complete the response",ex);
   }
 }
