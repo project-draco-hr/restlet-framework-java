@@ -27,6 +27,9 @@
     final String FRAGMENT=QUERY;
     final String URI_PATH=PCHAR + "|\\/";
     final String URI_ALL="[" + URI_RESERVED + URI_UNRESERVED+ "]|(?:"+ PCT_ENCODED+ ")";
+    final String QUERY_PARAM_DELIMS="\\!\\$\\'\\(\\)\\*\\+\\,\\;";
+    final String QUERY_PARAM_CHAR="[" + URI_UNRESERVED + QUERY_PARAM_DELIMS+ "\\:\\@]|(?:"+ PCT_ENCODED+ ")";
+    final String QUERY_PARAM=QUERY_PARAM_CHAR + "|\\/|\\?";
     final StringBuilder coreRegex=new StringBuilder();
 switch (variable.getType()) {
 case Variable.TYPE_ALL:
@@ -58,6 +61,9 @@ appendGroup(coreRegex,URI_PATH,variable.isRequired());
 break;
 case Variable.TYPE_URI_QUERY:
 appendGroup(coreRegex,QUERY,variable.isRequired());
+break;
+case Variable.TYPE_URI_QUERY_PARAM:
+appendGroup(coreRegex,QUERY_PARAM,variable.isRequired());
 break;
 case Variable.TYPE_URI_SEGMENT:
 appendGroup(coreRegex,PCHAR,variable.isRequired());
