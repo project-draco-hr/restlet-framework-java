@@ -1,0 +1,22 @@
+{
+  if (component != null) {
+    component.getClients().add(createWarClient(component.getContext(),getServletConfig()));
+    ComponentContext componentContext=(ComponentContext)component.getContext();
+    componentContext.getAttributes().put("org.restlet.ext.servlet.ServletContext",getServletContext());
+    String initParam;
+    javax.servlet.ServletConfig servletConfig=getServletConfig();
+    for (Enumeration<String> enum1=servletConfig.getInitParameterNames(); enum1.hasMoreElements(); ) {
+      initParam=enum1.nextElement();
+      componentContext.getParameters().add(initParam,servletConfig.getInitParameter(initParam));
+    }
+    for (Enumeration<String> enum1=getServletContext().getInitParameterNames(); enum1.hasMoreElements(); ) {
+      initParam=enum1.nextElement();
+      componentContext.getParameters().add(initParam,getServletContext().getInitParameter(initParam));
+    }
+    String attributeName;
+    for (Enumeration<String> namesEnum=getServletContext().getAttributeNames(); namesEnum.hasMoreElements(); ) {
+      attributeName=namesEnum.nextElement();
+      componentContext.getAttributes().put(attributeName,getServletContext().getAttribute(attributeName));
+    }
+  }
+}
