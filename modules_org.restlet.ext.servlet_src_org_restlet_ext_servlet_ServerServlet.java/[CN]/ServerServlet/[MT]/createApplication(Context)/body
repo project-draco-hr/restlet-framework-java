@@ -29,18 +29,5 @@ catch (    InvocationTargetException e) {
       log("[Restlet] ServerServlet couldn't instantiate the target class. An exception was thrown while creating " + applicationClassName,e);
     }
   }
-  if (application != null) {
-    final Context applicationContext=application.getContext();
-    String initParam;
-    final javax.servlet.ServletConfig servletConfig=getServletConfig();
-    for (final Enumeration<String> enum1=servletConfig.getInitParameterNames(); enum1.hasMoreElements(); ) {
-      initParam=enum1.nextElement();
-      applicationContext.getParameters().add(initParam,servletConfig.getInitParameter(initParam));
-    }
-    for (final Enumeration<String> enum1=getServletContext().getInitParameterNames(); enum1.hasMoreElements(); ) {
-      initParam=enum1.nextElement();
-      applicationContext.getParameters().add(initParam,getServletContext().getInitParameter(initParam));
-    }
-  }
   return application;
 }

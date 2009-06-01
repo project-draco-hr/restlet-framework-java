@@ -4,17 +4,6 @@
   application=(Application)getWebApplicationContext().getBean(applicationBeanName);
   if (application != null) {
     application.setContext(parentContext.createChildContext());
-    Context applicationContext=application.getContext();
-    String initParam;
-    final javax.servlet.ServletConfig servletConfig=getServletConfig();
-    for (final Enumeration<String> enum1=servletConfig.getInitParameterNames(); enum1.hasMoreElements(); ) {
-      initParam=enum1.nextElement();
-      applicationContext.getParameters().add(initParam,servletConfig.getInitParameter(initParam));
-    }
-    for (final Enumeration<String> enum1=getServletContext().getInitParameterNames(); enum1.hasMoreElements(); ) {
-      initParam=enum1.nextElement();
-      applicationContext.getParameters().add(initParam,getServletContext().getInitParameter(initParam));
-    }
   }
  else {
     application=super.createApplication(parentContext);
