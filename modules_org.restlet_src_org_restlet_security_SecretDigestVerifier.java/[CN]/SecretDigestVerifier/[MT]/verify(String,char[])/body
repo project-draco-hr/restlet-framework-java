@@ -1,11 +1,32 @@
 {
+  boolean result=false;
+  char[] inputSecretDigest=inputSecret;
   if (getInputAlgorithm() == null) {
     if (getOutputAlgorithm() != null) {
+      inputSecretDigest=digest(inputSecret,getOutputAlgorithm());
     }
  else {
     }
+    result=getWrappedVerifier().verify(identifier,inputSecretDigest);
   }
  else {
+    if (getOutputAlgorithm() == null) {
+      if (getWrappedVerifier() instanceof LocalVerifier) {
+        LocalVerifier localVerifier=(LocalVerifier)getWrappedVerifier();
+        result=compare(inputSecretDigest,digest(localVerifier.getSecret(identifier),getInputAlgorithm()));
+      }
+ else {
+        Context.getCurrentLogger().log(Level.WARNING,"The wrapped verifier must be a LocalVerifier to allow digesting of output secrets.");
+      }
+    }
+ else {
+      if (getInputAlgorithm().equals(getOutputAlgorithm())) {
+        result=getWrappedVerifier().verify(identifier,inputSecretDigest);
+      }
+ else {
+        Context.getCurrentLogger().log(Level.WARNING,"The input and output algorithms can't be different.");
+      }
+    }
   }
-  return true;
+  return result;
 }
