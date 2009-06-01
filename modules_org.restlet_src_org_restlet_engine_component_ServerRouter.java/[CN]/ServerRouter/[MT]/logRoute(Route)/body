@@ -1,0 +1,16 @@
+{
+  if (getLogger().isLoggable(Level.FINE)) {
+    if (route instanceof HostRoute) {
+      VirtualHost vhost=((HostRoute)route).getVirtualHost();
+      if (getComponent().getDefaultHost() == vhost) {
+        getLogger().fine("The default host was selected.");
+      }
+ else {
+        getLogger().fine("This virtual host was selected: \"" + vhost.getHostScheme() + "\", \""+ vhost.getHostDomain()+ "\", \""+ vhost.getHostPort()+ "\"");
+      }
+    }
+ else {
+      super.logRoute(route);
+    }
+  }
+}
