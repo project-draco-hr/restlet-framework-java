@@ -1,0 +1,45 @@
+{
+  List<AcceptReplacer> a=this.acceptReplacers;
+  if (a == null) {
+synchronized (this) {
+      a=this.acceptReplacers;
+      if (a == null) {
+        this.acceptReplacers=a=new ArrayList<AcceptReplacer>();
+        final URL userAgentPropertiesUrl=Engine.getClassLoader().getResource("org/restlet/service/accept.properties");
+        if (userAgentPropertiesUrl != null) {
+          BufferedReader reader;
+          try {
+            reader=new BufferedReader(new InputStreamReader(userAgentPropertiesUrl.openStream(),CharacterSet.UTF_8.getName()));
+            AcceptReplacer acceptReplacer=new AcceptReplacer();
+            String line=reader.readLine();
+            for (; line != null; line=reader.readLine()) {
+              if (!line.startsWith("#")) {
+                final String[] keyValue=line.split(":");
+                if (keyValue.length == 2) {
+                  final String key=keyValue[0].trim();
+                  final String value=keyValue[1].trim();
+                  if ("acceptOld".equalsIgnoreCase(key)) {
+                    acceptReplacer.setAcceptOld(("".equals(value)) ? null : value);
+                  }
+ else                   if ("acceptNew".equalsIgnoreCase(key)) {
+                    acceptReplacer.setAcceptNew(value);
+                    this.acceptReplacers.add(acceptReplacer);
+                    acceptReplacer=new AcceptReplacer();
+                  }
+ else {
+                    acceptReplacer.getAgentAttributes().put(key,value);
+                  }
+                }
+              }
+            }
+            reader.close();
+          }
+ catch (          IOException e) {
+            getContext().getLogger().warning("Cannot read '" + userAgentPropertiesUrl.toString() + "' due to: "+ e.getMessage());
+          }
+        }
+      }
+    }
+  }
+  return a;
+}
