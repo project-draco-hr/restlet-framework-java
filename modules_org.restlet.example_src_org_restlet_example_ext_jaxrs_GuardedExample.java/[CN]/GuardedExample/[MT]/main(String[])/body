@@ -2,7 +2,7 @@
   final Component comp=new Component();
   final Server server=comp.getServers().add(Protocol.HTTP,80);
   final JaxRsApplication application=new JaxRsApplication(comp.getContext().createChildContext());
-  final ChallengeGuard guard=new ChallengeGuard(application.getContext(),ChallengeScheme.HTTP_BASIC,"JAX-RS example");
+  final ChallengeAuthenticator guard=new ChallengeAuthenticator(application.getContext(),ChallengeScheme.HTTP_BASIC,"JAX-RS example");
   MemoryRealm realm=new MemoryRealm();
   application.getContext().setEnroler(realm.getEnroler());
   application.getContext().setVerifier(realm.getVerifier());
