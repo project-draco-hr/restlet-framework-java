@@ -1,5 +1,5 @@
 {
-  ListableBeanFactory source=this.applicationContext == null ? factory : this.applicationContext;
+  ListableBeanFactory source=this.applicationContext == null ? beanFactory : this.applicationContext;
   attachAllResources(source);
   attachAllRestlets(source);
   if (getAttachments() != null) {
@@ -7,14 +7,17 @@
       String uri=attachment.getKey();
       String beanName=attachment.getValue();
       Class<?> beanType=source.getType(beanName);
-      if (Resource.class.isAssignableFrom(beanType)) {
+      if (org.restlet.resource.Resource.class.isAssignableFrom(beanType)) {
+        attachResource(uri,beanName,source);
+      }
+ else       if (org.restlet.resource.ServerResource.class.isAssignableFrom(beanType)) {
         attachResource(uri,beanName,source);
       }
  else       if (Restlet.class.isAssignableFrom(beanType)) {
         attachRestlet(uri,beanName,source);
       }
  else {
-        throw new IllegalStateException(beanName + " is not routable.  It must be either a Resource or a Restlet.");
+        throw new IllegalStateException(beanName + " is not routable.  It must be either a Resource, a ServerResource or a Restlet.");
       }
     }
   }
