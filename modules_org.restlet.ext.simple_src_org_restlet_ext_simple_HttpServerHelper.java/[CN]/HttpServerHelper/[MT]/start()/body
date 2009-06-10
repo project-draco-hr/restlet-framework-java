@@ -12,10 +12,10 @@
   }
   final Container container=new SimpleContainer(this);
   final ContainerServer server=new ContainerServer(container,getDefaultThreads());
-  final SimpleServer filter=new SimpleServer(server);
-  final Connection connection=new SocketConnection(filter);
+  final SimpleServer restletServer=new SimpleServer(server);
+  final Connection connection=new SocketConnection(restletServer);
   setConfidential(false);
-  setContainer(server);
+  setContainerServer(server);
   setConnection(connection);
   InetSocketAddress address=(InetSocketAddress)getConnection().connect(getAddress());
   setEphemeralPort(address.getPort());
