@@ -1,25 +1,8 @@
 {
-  int result=CONTINUE;
-  boolean success=authenticate(request,response);
-  if (success) {
-    if (request.getChallengeResponse() != null) {
-      request.getChallengeResponse().setAuthenticated(success);
-    }
-    if (request.getClientInfo() != null) {
-      request.getClientInfo().setAuthenticated(success);
-    }
-    if (getEnroler() != null) {
-      getEnroler().enrole(request.getClientInfo().getSubject());
-    }
+  if (authenticate(request,response)) {
+    return authenticated(request,response);
   }
- else   if (!isOptional()) {
-    if (request.getChallengeResponse() != null) {
-      request.getChallengeResponse().setAuthenticated(success);
-    }
-    if (request.getClientInfo() != null) {
-      request.getClientInfo().setAuthenticated(success);
-    }
-    result=STOP;
+ else {
+    return unauthenticated(request,response);
   }
-  return result;
 }
