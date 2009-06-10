@@ -20,7 +20,7 @@
           addFullServletPath=component.getDefaultHost().getDefaultRoute() != null;
         }
  else {
-          for (          final Route route : component.getDefaultHost().getRoutes()) {
+          for (          final TemplateRoute route : component.getDefaultHost().getRoutes()) {
             if (route.getTemplate().getPattern() == null) {
               addFullServletPath=true;
               continue;
@@ -42,7 +42,7 @@
               addFullServletPath=virtualHost.getDefaultRoute() != null;
             }
  else {
-              for (              final Route route : virtualHost.getRoutes()) {
+              for (              final TemplateRoute route : virtualHost.getRoutes()) {
                 if (route.getTemplate().getPattern() == null) {
                   addFullServletPath=true;
                   continue;
@@ -71,22 +71,22 @@
  else {
             offsetPath=uriPattern;
           }
-          Route defaultRoute=component.getDefaultHost().getDefaultRoute();
+          TemplateRoute defaultRoute=component.getDefaultHost().getDefaultRoute();
           if (defaultRoute != null) {
             defaultRoute.getTemplate().setPattern(offsetPath + defaultRoute.getTemplate().getPattern());
             log("[Restlet] Attaching restlet: " + defaultRoute.getNext() + " to URI: "+ offsetPath+ defaultRoute.getTemplate().getPattern());
           }
-          for (          final Route route : component.getDefaultHost().getRoutes()) {
+          for (          TemplateRoute route : component.getDefaultHost().getRoutes()) {
             log("[Restlet] Attaching restlet: " + route.getNext() + " to URI: "+ offsetPath+ route.getTemplate().getPattern());
             route.getTemplate().setPattern(offsetPath + route.getTemplate().getPattern());
           }
-          for (          final VirtualHost virtualHost : component.getHosts()) {
+          for (          VirtualHost virtualHost : component.getHosts()) {
             defaultRoute=virtualHost.getDefaultRoute();
             if (defaultRoute != null) {
               defaultRoute.getTemplate().setPattern(offsetPath + defaultRoute.getTemplate().getPattern());
               log("[Restlet] Attaching restlet: " + defaultRoute.getNext() + " to URI: "+ offsetPath+ defaultRoute.getTemplate().getPattern());
             }
-            for (            final Route route : virtualHost.getRoutes()) {
+            for (            TemplateRoute route : virtualHost.getRoutes()) {
               log("[Restlet] Attaching restlet: " + route.getNext() + " to URI: "+ offsetPath+ route.getTemplate().getPattern());
               route.getTemplate().setPattern(offsetPath + route.getTemplate().getPattern());
             }
