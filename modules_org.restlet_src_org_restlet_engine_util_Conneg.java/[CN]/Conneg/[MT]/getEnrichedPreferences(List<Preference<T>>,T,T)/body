@@ -1,0 +1,26 @@
+{
+  List<Preference<T>> result=new ArrayList<Preference<T>>();
+  result.addAll(userPreferences);
+  T parent;
+  for (int i=0; i < result.size(); i++) {
+    parent=(T)result.get(i).getMetadata().getParent();
+    if (parent != null) {
+      result.add(new Preference<T>(parent,0.005f + (0.001f * result.get(i).getQuality())));
+    }
+  }
+  if (defaultValue != null) {
+    Preference<T> defaultPref=new Preference<T>(defaultValue,0.003f);
+    result.add(defaultPref);
+    T defaultParent=(T)defaultValue.getParent();
+    if (defaultParent != null) {
+      result.add(new Preference<T>(defaultParent,0.002f));
+    }
+  }
+  for (int i=result.size() - 1; i >= 0; i--) {
+    if (result.get(i).getMetadata().equals(allValue)) {
+      result.remove(i);
+    }
+  }
+  result.add(new Preference<T>(allValue,0.001f));
+  return result;
+}
