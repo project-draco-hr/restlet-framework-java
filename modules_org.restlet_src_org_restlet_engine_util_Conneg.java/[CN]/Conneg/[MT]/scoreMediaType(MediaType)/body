@@ -3,7 +3,10 @@
   float current;
   if (mediaType != null) {
     for (    Preference<MediaType> pref : getMediaTypePrefs()) {
-      current=score(mediaType,pref.getMetadata()) * pref.getQuality();
+      current=score(mediaType,pref.getMetadata());
+      if (current != -1.0F) {
+        current*=pref.getQuality();
+      }
       if (current > result) {
         result=current;
       }

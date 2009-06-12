@@ -1,0 +1,18 @@
+{
+  List<VariantInfo> result=null;
+  List<VariantInfo> helperVariants=null;
+  for (  ConverterHelper ch : Engine.getInstance().getRegisteredConverters()) {
+    helperVariants=ch.getVariants(sourceClass);
+    if (helperVariants != null) {
+      for (      VariantInfo helperVariant : helperVariants) {
+        if (helperVariant.isCompatible(targetVariant)) {
+          if (result == null) {
+            result=new ArrayList<VariantInfo>();
+          }
+          result.add(helperVariant);
+        }
+      }
+    }
+  }
+  return result;
+}

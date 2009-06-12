@@ -2,12 +2,7 @@
   Representation result=null;
   List<Variant> variants=getAvailableVariants(getMethod());
   if ((variants != null) && (!variants.isEmpty())) {
-    Language language=null;
-    final Application app=Application.getCurrent();
-    if (app != null) {
-      language=app.getMetadataService().getDefaultLanguage();
-    }
-    Variant preferredVariant=getClientInfo().getPreferredVariant(variants,language);
+    Variant preferredVariant=getClientInfo().getPreferredVariant(variants,(getApplication() == null) ? new MetadataService() : getApplication().getMetadataService());
     if (preferredVariant == null) {
       setStatus(Status.CLIENT_ERROR_NOT_ACCEPTABLE);
       result=describeVariants();

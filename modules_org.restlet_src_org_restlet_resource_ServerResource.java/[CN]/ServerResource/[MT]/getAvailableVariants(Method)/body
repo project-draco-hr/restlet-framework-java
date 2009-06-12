@@ -6,33 +6,35 @@
       ms=new MetadataService();
     }
     ConverterService cs=getConverterService();
-    List<Variant> annoVariants=null;
+    List<VariantInfo> annoVariants=null;
     for (    AnnotationInfo annotationInfo : annotations) {
       if (method.equals(annotationInfo.getRestletMethod())) {
         if (annotationInfo.getValue() != null) {
           List<Metadata> allMetadata=ms.getAllMetadata(annotationInfo.getValue());
           for (          Metadata metadata : allMetadata) {
             if (metadata instanceof MediaType) {
-              annoVariants=cs.getVariants(annotationInfo.getJavaReturnType(),new Variant((MediaType)metadata));
+              annoVariants=(List<VariantInfo>)cs.getVariants(annotationInfo.getJavaReturnType(),new Variant((MediaType)metadata));
               if (annoVariants != null) {
                 if (result == null) {
                   result=new ArrayList<Variant>();
                 }
-                for (                Variant v : annoVariants) {
-                  result.add(new VariantInfo(v,annotationInfo));
+                for (                VariantInfo v : annoVariants) {
+                  v.setAnnotationInfo(annotationInfo);
+                  result.add(v);
                 }
               }
             }
           }
         }
  else {
-          annoVariants=cs.getVariants(annotationInfo.getJavaReturnType(),null);
+          annoVariants=(List<VariantInfo>)cs.getVariants(annotationInfo.getJavaReturnType(),null);
           if (annoVariants != null) {
             if (result == null) {
               result=new ArrayList<Variant>();
             }
-            for (            Variant v : annoVariants) {
-              result.add(new VariantInfo(v,annotationInfo));
+            for (            VariantInfo v : annoVariants) {
+              v.setAnnotationInfo(annotationInfo);
+              result.add(v);
             }
           }
         }
