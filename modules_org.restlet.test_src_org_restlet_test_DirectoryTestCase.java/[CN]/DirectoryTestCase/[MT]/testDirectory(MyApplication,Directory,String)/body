@@ -22,7 +22,9 @@
   response=handle(application,this.webSiteURL,this.baseFileUrl,Method.PUT,new StringRepresentation("this is test 3a"),"3a");
   assertEquals(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED,response.getStatus());
   directory.setModifiable(true);
-  response=handle(application,this.webSiteURL,this.baseFileUrl,Method.PUT,new StringRepresentation("this is test 3b"),"3b");
+  Representation rep=new StringRepresentation("this is test 3b");
+  rep.getLanguages().add(Language.FRENCH);
+  response=handle(application,this.webSiteURL,this.baseFileUrlFr,Method.PUT,rep,"3b");
   assertEquals(Status.SUCCESS_CREATED,response.getStatus());
   response=handle(application,this.webSiteURL,this.baseFileUrl,Method.GET,null,"4");
   assertEquals(Status.SUCCESS_OK,response.getStatus());
@@ -57,7 +59,7 @@
     assertEquals(Status.CLIENT_ERROR_NOT_FOUND,response.getStatus());
   }
   response=handle(application,this.webSiteURL,this.baseFileUrlFr,Method.PUT,new StringRepresentation("message de test"),"7a");
-  assertEquals(Status.SUCCESS_CREATED,response.getStatus());
+  assertTrue(response.getStatus().isSuccess());
   directory.setNegotiateContent(false);
   response=handle(application,this.webSiteURL,this.baseFileUrlFrBis,Method.PUT,new StringRepresentation("message de test"),"7b-1");
   assertEquals(Status.SUCCESS_OK,response.getStatus());
@@ -102,12 +104,13 @@
  else {
     assertEquals(Status.CLIENT_ERROR_NOT_FOUND,response.getStatus());
   }
-  response=handle(application,this.webSiteURL,this.baseFileUrl,Method.DELETE,null,"8a");
-  assertEquals(Status.SUCCESS_NO_CONTENT,response.getStatus());
+  response=handle(application,this.webSiteURL,this.baseFileUrlFr,Method.DELETE,null,"8a");
   response=handle(application,this.webSiteURL,this.baseFileUrlEn,Method.DELETE,null,"8b");
   assertEquals(Status.SUCCESS_NO_CONTENT,response.getStatus());
   directory.setModifiable(true);
-  response=handle(application,this.webSiteURL,this.percentEncodedFileUrl,Method.PUT,new StringRepresentation("this is test 9a"),"9a");
+  rep=new StringRepresentation("this is test 9a");
+  rep.getLanguages().add(Language.FRENCH);
+  response=handle(application,this.webSiteURL,this.percentEncodedFileUrl,Method.PUT,rep,"9a");
   assertEquals(Status.SUCCESS_CREATED,response.getStatus());
   response=handle(application,this.webSiteURL,this.percentEncodedFileUrl,Method.GET,null,"9b");
   assertEquals(Status.SUCCESS_OK,response.getStatus());
