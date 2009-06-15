@@ -69,18 +69,12 @@
             }
           }
           final StringBuilder fileName=new StringBuilder(baseName);
-          if (metadataService.getExtension(request.getEntity().getMediaType()) != null) {
-            fileName.append("." + metadataService.getExtension(request.getEntity().getMediaType()));
-          }
+          updateFileExtension(fileName,request.getEntity().getMediaType(),metadataService);
           for (          final Language language : request.getEntity().getLanguages()) {
-            if (metadataService.getExtension(language) != null) {
-              fileName.append("." + metadataService.getExtension(language));
-            }
+            updateFileExtension(fileName,language,metadataService);
           }
           for (          final Encoding encoding : request.getEntity().getEncodings()) {
-            if (metadataService.getExtension(encoding) != null) {
-              fileName.append("." + metadataService.getExtension(encoding));
-            }
+            updateFileExtension(fileName,encoding,metadataService);
           }
           file=new File(file.getParentFile(),fileName.toString());
         }
