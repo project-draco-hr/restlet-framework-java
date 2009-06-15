@@ -2,11 +2,23 @@
   Restlet restlet=new Restlet(){
     @Override public void handle(    Request request,    Response response){
       Representation rep=request.getEntity();
-      StringRepresentation f=new StringRepresentation("9876543210");
-      f.setDigest(f.computeDigest(Digest.ALGORITHM_MD5));
-      response.setEntity(f);
-      if (rep.checkDigest(Digest.ALGORITHM_MD5)) {
+      DigesterRepresentation digester=rep.getDigester();
+      try {
+        digester.exhaust();
+      }
+ catch (      IOException e1) {
+      }
+      if (digester.checkDigest()) {
         response.setStatus(Status.SUCCESS_OK);
+        StringRepresentation f=new StringRepresentation("9876543210");
+        digester=f.getDigester();
+        try {
+          digester.exhaust();
+        }
+ catch (        IOException e) {
+        }
+        digester.setDigest(digester.computeDigest());
+        response.setEntity(digester);
       }
  else {
         response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
