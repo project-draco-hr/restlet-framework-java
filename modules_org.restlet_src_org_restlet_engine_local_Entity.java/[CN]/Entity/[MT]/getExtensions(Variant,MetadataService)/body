@@ -1,0 +1,24 @@
+{
+  final Set<String> result=new TreeSet<String>();
+  String extension=metadataService.getExtension(variant.getCharacterSet());
+  if (extension != null) {
+    result.add(extension);
+  }
+  extension=metadataService.getExtension(variant.getMediaType());
+  if (extension != null) {
+    result.add(extension);
+  }
+  for (  Language language : variant.getLanguages()) {
+    extension=metadataService.getExtension(language);
+    if (extension != null) {
+      result.add(extension);
+    }
+  }
+  for (  Encoding encoding : variant.getEncodings()) {
+    extension=metadataService.getExtension(encoding);
+    if (extension != null) {
+      result.add(extension);
+    }
+  }
+  return result;
+}
