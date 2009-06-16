@@ -1,23 +1,23 @@
 {
   Representation output=null;
   boolean found=false;
-  final Iterator<Preference<MediaType>> iterator=request.getClientInfo().getAcceptedMediaTypes().iterator();
+  Iterator<Preference<MediaType>> iterator=request.getClientInfo().getAcceptedMediaTypes().iterator();
   while (iterator.hasNext() && !found) {
-    final Preference<MediaType> pref=iterator.next();
+    Preference<MediaType> pref=iterator.next();
     found=pref.getMetadata().equals(MediaType.TEXT_URI_LIST);
   }
   if (found) {
-    final String baseName=entity.getBaseName(metadataService);
+    String baseName=entity.getBaseName();
     Entity parent=entity.getParent();
     if (parent != null) {
-      final Collection<Entity> entities=parent.getChildren();
+      Collection<Entity> entities=parent.getChildren();
       if (entities != null) {
-        final ReferenceList rl=new ReferenceList(entities.size());
-        final String scheme=request.getResourceRef().getScheme();
-        final String encodedParentDirectoryURI=path.substring(0,path.lastIndexOf("/"));
-        final String encodedEntityName=path.substring(path.lastIndexOf("/") + 1);
-        for (        final Entity entry : entities) {
-          if (baseName.equals(entry.getBaseName(metadataService))) {
+        ReferenceList rl=new ReferenceList(entities.size());
+        String scheme=request.getResourceRef().getScheme();
+        String encodedParentDirectoryURI=path.substring(0,path.lastIndexOf("/"));
+        String encodedEntityName=path.substring(path.lastIndexOf("/") + 1);
+        for (        Entity entry : entities) {
+          if (baseName.equals(entry.getBaseName())) {
             rl.add(createReference(scheme,encodedParentDirectoryURI,encodedEntityName,entry.getName()));
           }
         }
@@ -28,13 +28,13 @@
  else {
     if (entity.exists()) {
       if (entity.isDirectory()) {
-        final Collection<Entity> children=entity.getChildren();
-        final ReferenceList rl=new ReferenceList(children.size());
+        Collection<Entity> children=entity.getChildren();
+        ReferenceList rl=new ReferenceList(children.size());
         String directoryUri=request.getResourceRef().toString();
         if (!directoryUri.endsWith("/")) {
           directoryUri+="/";
         }
-        for (        final Entity entry : children) {
+        for (        Entity entry : children) {
           if (entry.isDirectory()) {
             rl.add(directoryUri + Reference.encode(entry.getName()) + "/");
           }
@@ -47,21 +47,21 @@
  else {
         output=entity.getRepresentation(metadataService.getDefaultMediaType(),getTimeToLive());
         output.setIdentifier(request.getResourceRef());
-        updateMetadata(metadataService,entity.getName(),output);
+        Entity.updateMetadata(metadataService,entity.getName(),output);
       }
     }
  else {
       Entity uniqueVariant=null;
-      final String baseName=entity.getBaseName(metadataService);
-      final Collection<String> extensions=entity.getExtensions(metadataService);
+      String baseName=entity.getBaseName();
+      Variant entityVariant=entity.getVariant();
       Entity parent=entity.getParent();
       if (parent != null) {
-        final Collection<Entity> files=parent.getChildren();
+        Collection<Entity> files=parent.getChildren();
         if (files != null) {
-          for (          final Entity entry : files) {
-            if (baseName.equals(entry.getBaseName(metadataService))) {
-              final Collection<String> entryExtensions=entry.getExtensions(metadataService);
-              if (entryExtensions.containsAll(extensions) && extensions.containsAll(entryExtensions)) {
+          for (          Entity entry : files) {
+            if (baseName.equals(entry.getBaseName())) {
+              Variant entryVariant=entry.getVariant();
+              if (entityVariant.isCompatible(entryVariant)) {
                 uniqueVariant=entry;
                 break;
               }
@@ -72,7 +72,7 @@
       if (uniqueVariant != null) {
         output=uniqueVariant.getRepresentation(metadataService.getDefaultMediaType(),getTimeToLive());
         output.setIdentifier(request.getResourceRef());
-        updateMetadata(metadataService,entity.getName(),output);
+        Entity.updateMetadata(metadataService,entity.getName(),output);
       }
     }
   }

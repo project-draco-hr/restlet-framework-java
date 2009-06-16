@@ -34,15 +34,15 @@
         }
       }
 ;
-      final File[] files=file.getParentFile().listFiles(filter);
+      File[] files=file.getParentFile().listFiles(filter);
       File uniqueVariant=null;
-      final List<File> variantsList=new ArrayList<File>();
+      List<File> variantsList=new ArrayList<File>();
       if (files != null) {
         Variant variant=new Variant();
-        updateMetadata(metadataService,file.getName(),variant);
-        final Collection<String> extensions=Entity.getExtensions(variant,metadataService);
-        for (        final File entry : files) {
-          final Collection<String> entryExtensions=Entity.getExtensions(entry.getName(),metadataService);
+        Entity.updateMetadata(metadataService,file.getName(),variant);
+        Collection<String> extensions=Entity.getExtensions(variant,metadataService);
+        for (        File entry : files) {
+          Collection<String> entryExtensions=Entity.getExtensions(entry.getName(),metadataService);
           if (entryExtensions.containsAll(extensions)) {
             variantsList.add(entry);
             if (extensions.containsAll(entryExtensions)) {
@@ -60,7 +60,7 @@
           return;
         }
  else {
-          updateMetadata(metadataService,file.getName(),request.getEntity());
+          Entity.updateMetadata(metadataService,file.getName(),request.getEntity());
           if (request.getEntity().getLanguages().isEmpty()) {
             if (metadataService.getDefaultLanguage() != null) {
               request.getEntity().getLanguages().add(metadataService.getDefaultLanguage());
@@ -74,12 +74,12 @@
               request.getEntity().getEncodings().add(metadataService.getDefaultEncoding());
             }
           }
-          final StringBuilder fileName=new StringBuilder(baseName);
+          StringBuilder fileName=new StringBuilder(baseName);
           updateFileExtension(fileName,request.getEntity().getMediaType(),metadataService);
-          for (          final Language language : request.getEntity().getLanguages()) {
+          for (          Language language : request.getEntity().getLanguages()) {
             updateFileExtension(fileName,language,metadataService);
           }
-          for (          final Encoding encoding : request.getEntity().getEncodings()) {
+          for (          Encoding encoding : request.getEntity().getEncodings()) {
             updateFileExtension(fileName,encoding,metadataService);
           }
           file=new File(file.getParentFile(),fileName.toString());
@@ -102,8 +102,8 @@
                 tmp.delete();
               }
               if (!tmp.exists()) {
-                final BufferedReader br=new BufferedReader(new FileReader(file));
-                final BufferedWriter wr=new BufferedWriter(new FileWriter(tmp));
+                BufferedReader br=new BufferedReader(new FileReader(file));
+                BufferedWriter wr=new BufferedWriter(new FileWriter(tmp));
                 String s;
                 while ((s=br.readLine()) != null) {
                   wr.append(s);
@@ -194,8 +194,8 @@
  else {
               if (tmp.exists()) {
                 try {
-                  final BufferedReader br=new BufferedReader(new FileReader(tmp));
-                  final BufferedWriter wr=new BufferedWriter(new FileWriter(file));
+                  BufferedReader br=new BufferedReader(new FileReader(tmp));
+                  BufferedWriter wr=new BufferedWriter(new FileWriter(file));
                   String s;
                   while ((s=br.readLine()) != null) {
                     wr.append(s);
@@ -225,7 +225,7 @@
           }
         }
  else {
-          final File parent=file.getParentFile();
+          File parent=file.getParentFile();
           if ((parent != null) && !parent.exists()) {
             if (!parent.mkdirs()) {
               getLogger().log(Level.WARNING,"Unable to create the parent directory");

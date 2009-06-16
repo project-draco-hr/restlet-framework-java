@@ -39,5 +39,17 @@
         variant.setMediaType(defaultMediaType);
       }
     }
+    if (variant.getEncodings().isEmpty()) {
+      final Encoding defaultEncoding=metadataService.getDefaultEncoding();
+      if ((defaultEncoding != null) && !defaultEncoding.equals(Encoding.ALL)) {
+        variant.getEncodings().add(defaultEncoding);
+      }
+    }
+    if (variant.getCharacterSet() == null) {
+      final CharacterSet defaultCharacterSet=metadataService.getDefaultCharacterSet();
+      if ((defaultCharacterSet != null) && !defaultCharacterSet.equals(CharacterSet.ALL)) {
+        variant.setCharacterSet(defaultCharacterSet);
+      }
+    }
   }
 }
