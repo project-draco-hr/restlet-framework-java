@@ -1,11 +1,9 @@
 {
   List<Class<?>> result=null;
-  if (variant.getMediaType() != null) {
-    MediaType mediaType=variant.getMediaType();
-    if (MediaType.APPLICATION_ALL_XML.isCompatible(mediaType) || MediaType.APPLICATION_XML.isCompatible(mediaType) || MediaType.TEXT_XML.isCompatible(mediaType)) {
-      result=addObjectClass(result,Document.class);
-      result=addObjectClass(result,XmlRepresentation.class);
-    }
+  if (VARIANT_APPLICATION_ALL_XML.isCompatible(source) || VARIANT_APPLICATION_XML.isCompatible(source) || VARIANT_TEXT_XML.isCompatible(source)) {
+    result=addObjectClass(result,Document.class);
+    result=addObjectClass(result,DomRepresentation.class);
+    result=addObjectClass(result,SaxRepresentation.class);
   }
   return result;
 }

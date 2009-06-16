@@ -1,17 +1,19 @@
 {
   T result=null;
-  if ((sourceRepresentation != null) && sourceRepresentation.isAvailable()) {
-    ConverterHelper ch=ConverterUtils.getHelper(sourceRepresentation,targetClass,resource);
+  if ((source != null) && source.isAvailable()) {
+    ConverterHelper ch=ConverterUtils.getBestHelper(source,target,resource);
     if (ch != null) {
-      result=ch.toObject(sourceRepresentation,targetClass,resource);
+      result=ch.toObject(source,target,resource);
+      if (result instanceof Representation) {
+        Representation resultRepresentation=(Representation)result;
+        resultRepresentation.setCharacterSet(source.getCharacterSet());
+        resultRepresentation.setMediaType(source.getMediaType());
+        resultRepresentation.getEncodings().addAll(source.getEncodings());
+        resultRepresentation.getLanguages().addAll(source.getLanguages());
+      }
     }
  else {
-      if (targetClass.isAssignableFrom(sourceRepresentation.getClass())) {
-        result=(T)sourceRepresentation;
-      }
- else {
-        Context.getCurrentLogger().warning("Unable to find a converter for this representation : " + sourceRepresentation);
-      }
+      Context.getCurrentLogger().warning("Unable to find a converter for this representation : " + source);
     }
   }
   return result;

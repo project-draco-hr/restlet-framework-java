@@ -1,13 +1,10 @@
 {
   Representation result=null;
-  if (object instanceof Document) {
-    result=new DomRepresentation(targetVariant == null ? null : targetVariant.getMediaType(),(Document)object);
+  if (source instanceof Document) {
+    result=new DomRepresentation(target.getMediaType(),(Document)source);
   }
-  if ((result != null) && (targetVariant != null)) {
-    result.setCharacterSet(targetVariant.getCharacterSet());
-    result.setMediaType(targetVariant.getMediaType());
-    result.setEncodings(targetVariant.getEncodings());
-    result.setLanguages(targetVariant.getLanguages());
+ else   if (source instanceof Representation) {
+    result=(Representation)source;
   }
   return result;
 }

@@ -1,8 +1,12 @@
 {
-  if (targetVariant == null) {
-    targetVariant=new Variant(MediaType.APPLICATION_JSON);
+  Representation result=null;
+  if (source instanceof XstreamRepresentation) {
+    result=(XstreamRepresentation)source;
   }
-  XstreamRepresentation<Object> xstreamRepresentation=new XstreamRepresentation<Object>(targetVariant.getMediaType(),object);
-  xstreamRepresentation.setJsonDriverClass(JettisonMappedXmlDriver.class);
-  return xstreamRepresentation;
+ else   if (source instanceof Object) {
+    XstreamRepresentation<Object> xstreamRepresentation=new XstreamRepresentation<Object>(target.getMediaType(),source);
+    xstreamRepresentation.setJsonDriverClass(JettisonMappedXmlDriver.class);
+    result=xstreamRepresentation;
+  }
+  return result;
 }

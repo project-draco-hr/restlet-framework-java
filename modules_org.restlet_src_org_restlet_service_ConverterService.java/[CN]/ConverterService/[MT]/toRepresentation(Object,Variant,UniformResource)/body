@@ -1,16 +1,25 @@
 {
   Representation result=null;
-  ConverterHelper ch=ConverterUtils.getHelper(sourceObject,targetVariant,resource);
+  ConverterHelper ch=ConverterUtils.getBestHelper(source,target,resource);
   if (ch != null) {
     try {
-      result=ch.toRepresentation(sourceObject,targetVariant,resource);
+      if (target == null) {
+        target=new Variant();
+      }
+      result=ch.toRepresentation(source,target,resource);
+      if (result != null) {
+        result.setCharacterSet(target.getCharacterSet());
+        result.setMediaType(target.getMediaType());
+        result.getEncodings().addAll(target.getEncodings());
+        result.getLanguages().addAll(target.getLanguages());
+      }
     }
  catch (    IOException e) {
       Context.getCurrentLogger().log(Level.WARNING,"Unable to convert object to a representation",e);
     }
   }
  else {
-    Context.getCurrentLogger().warning("Unable to find a converter for this object : " + sourceObject);
+    Context.getCurrentLogger().warning("Unable to find a converter for this object : " + source);
   }
   return result;
 }
