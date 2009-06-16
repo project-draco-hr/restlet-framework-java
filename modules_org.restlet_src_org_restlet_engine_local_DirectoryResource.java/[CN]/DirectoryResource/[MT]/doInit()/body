@@ -93,7 +93,7 @@
       }
       if (!fileTarget || (fileContent == null) || !getRequest().getMethod().isSafe()) {
         if (!this.directoryTarget) {
-          final int lastSlashIndex=this.targetUri.lastIndexOf('/');
+          int lastSlashIndex=this.targetUri.lastIndexOf('/');
           if (lastSlashIndex == -1) {
             this.directoryUri="";
             this.baseName=this.targetUri;
@@ -108,13 +108,11 @@
           }
         }
         if (this.baseName != null) {
-          final int firstDotIndex=this.baseName.indexOf('.');
-          if (firstDotIndex != -1) {
-            this.baseExtensions=getExtensions(this.baseName);
-            this.baseName=this.baseName.substring(0,firstDotIndex);
-          }
+          this.baseVariant=new Variant();
+          Entity.updateMetadata(getMetadataService(),this.baseName,this.baseVariant);
+          this.baseName=Entity.getBaseName(this.baseName,getMetadataService());
         }
-        final List<Variant> variants=getVariants(Method.GET);
+        List<Variant> variants=getVariants(Method.GET);
         if ((variants == null) || (variants.isEmpty())) {
           setExisting(false);
         }

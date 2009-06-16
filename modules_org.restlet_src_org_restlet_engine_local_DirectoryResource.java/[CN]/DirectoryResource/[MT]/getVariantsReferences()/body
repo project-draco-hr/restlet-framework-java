@@ -1,18 +1,17 @@
 {
   this.uniqueReference=null;
-  final ReferenceList result=new ReferenceList(0);
+  ReferenceList result=new ReferenceList(0);
   try {
-    final Response contextResponse=getRepresentation(this.targetUri,MediaType.TEXT_URI_LIST);
+    Response contextResponse=getRepresentation(this.targetUri,MediaType.TEXT_URI_LIST);
     if (contextResponse.getEntity() != null) {
       if (MediaType.TEXT_URI_LIST.equals(contextResponse.getEntity().getMediaType())) {
-        final ReferenceList listVariants=new ReferenceList(contextResponse.getEntity());
-        Set<String> extensions=null;
+        ReferenceList listVariants=new ReferenceList(contextResponse.getEntity());
         String entryUri;
         String fullEntryName;
         String baseEntryName;
         int lastSlashIndex;
         int firstDotIndex;
-        for (        final Reference ref : listVariants) {
+        for (        Reference ref : listVariants) {
           entryUri=ref.toString();
           lastSlashIndex=entryUri.lastIndexOf('/');
           fullEntryName=(lastSlashIndex == -1) ? entryUri : entryUri.substring(lastSlashIndex + 1);
@@ -23,9 +22,10 @@
           }
           if (baseEntryName.equals(this.baseName)) {
             boolean validVariant=true;
-            extensions=getExtensions(fullEntryName);
-            validVariant=(((extensions == null) && (this.baseExtensions == null)) || (this.baseExtensions == null) || extensions.containsAll(this.baseExtensions));
-            if (validVariant && (this.baseExtensions != null) && this.baseExtensions.containsAll(extensions)) {
+            Variant variant=new Variant();
+            Entity.updateMetadata(getMetadataService(),fullEntryName,variant);
+            validVariant=this.baseVariant.isCompatible(variant);
+            if (validVariant && this.baseVariant.equals(variant)) {
               this.uniqueReference=ref;
             }
             if (validVariant) {
