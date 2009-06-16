@@ -1,20 +1,11 @@
 {
   T result=null;
   ClientInfo currentClientInfo=getClientInfo();
-  ClientInfo newClientInfo=new ClientInfo();
-  ConverterService cs=getConverterService();
-  List<? extends Variant> variants=cs.getVariants(responseClass,null);
-  for (  Variant variant : variants) {
-    newClientInfo.getAcceptedMediaTypes().add(new Preference<MediaType>(variant.getMediaType()));
-  }
-  setClientInfo(newClientInfo);
   try {
-    result=cs.toObject(get(),responseClass,this);
+    updateClientInfo(resultClass);
+    result=toObject(get(),resultClass);
   }
- catch (  IOException e) {
-    throw new ResourceException(e);
-  }
- finally {
+  finally {
     setClientInfo(currentClientInfo);
   }
   return result;

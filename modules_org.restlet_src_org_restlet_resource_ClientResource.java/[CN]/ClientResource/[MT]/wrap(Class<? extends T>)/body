@@ -5,14 +5,27 @@
       Object result=null;
       AnnotationInfo annotation=AnnotationUtils.getAnnotation(annotations,javaMethod);
       if (annotation != null) {
-        setMethod(annotation.getRestletMethod());
-        if ((args != null) && args.length > 0) {
-          Representation entity=toRepresentation(args[0]);
-          getRequest().setEntity(entity);
+        ClientInfo currentClientInfo=getClientInfo();
+        try {
+          List<Variant> responseVariants=annotation.getResponseVariants(getMetadataService());
+          if (responseVariants != null) {
+            updateClientInfo(responseVariants);
+          }
+ else           if (annotation.getJavaReturnType() != null) {
+            updateClientInfo(annotation.getJavaReturnType());
+          }
+          setMethod(annotation.getRestletMethod());
+          if ((args != null) && args.length > 0) {
+            Representation entity=toRepresentation(args[0]);
+            getRequest().setEntity(entity);
+          }
+          handle();
+          if (annotation.getJavaReturnType() != null) {
+            result=toObject(getResponseEntity(),annotation.getJavaReturnType());
+          }
         }
-        handle();
-        if (annotation.getJavaReturnType() != null) {
-          result=toObject(getResponseEntity(),annotation.getJavaReturnType());
+  finally {
+          setClientInfo(currentClientInfo);
         }
       }
       return result;

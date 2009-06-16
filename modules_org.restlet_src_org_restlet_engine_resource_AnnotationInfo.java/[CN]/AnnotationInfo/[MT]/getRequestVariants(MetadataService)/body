@@ -1,0 +1,27 @@
+{
+  List<Variant> result=null;
+  String value=getValue();
+  if (value != null) {
+    int colonIndex=value.indexOf(':');
+    if (colonIndex == -1) {
+      if ((getJavaParameterTypes() == null) || (getJavaParameterTypes().length == 0)) {
+        value=null;
+      }
+    }
+ else {
+      value=getValue().substring(0,colonIndex);
+    }
+    if (value != null) {
+      List<MediaType> mediaTypes=metadataService.getAllMediaTypes(value);
+      if (mediaTypes != null) {
+        if (result == null) {
+          result=new ArrayList<Variant>();
+        }
+        for (        MediaType mediaType : mediaTypes) {
+          result.add(new Variant(mediaType));
+        }
+      }
+    }
+  }
+  return result;
+}

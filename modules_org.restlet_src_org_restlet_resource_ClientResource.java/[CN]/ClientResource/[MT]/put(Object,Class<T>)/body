@@ -1,3 +1,12 @@
 {
-  return toObject(put(toRepresentation(entity)),resultClass);
+  T result=null;
+  ClientInfo currentClientInfo=getClientInfo();
+  try {
+    updateClientInfo(resultClass);
+    result=toObject(put(toRepresentation(entity)),resultClass);
+  }
+  finally {
+    setClientInfo(currentClientInfo);
+  }
+  return result;
 }
