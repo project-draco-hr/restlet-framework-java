@@ -1,7 +1,7 @@
 {
-  this.uniqueReference=null;
   ReferenceList result=new ReferenceList(0);
   try {
+    this.uniqueReference=null;
     Response contextResponse=getRepresentation(this.targetUri,MediaType.TEXT_URI_LIST);
     if (contextResponse.getEntity() != null) {
       if (MediaType.TEXT_URI_LIST.equals(contextResponse.getEntity().getMediaType())) {
@@ -21,15 +21,13 @@
             baseEntryName=fullEntryName.substring(0,firstDotIndex);
           }
           if (baseEntryName.equals(this.baseName)) {
-            boolean validVariant=true;
             Variant variant=new Variant();
-            Entity.updateMetadata(getMetadataService(),fullEntryName,variant);
-            validVariant=this.baseVariant.isCompatible(variant);
-            if (validVariant && this.baseVariant.equals(variant)) {
-              this.uniqueReference=ref;
-            }
-            if (validVariant) {
+            Entity.updateMetadata(fullEntryName,variant,true,getMetadataService());
+            if (this.protoVariant.includes(variant)) {
               result.add(ref);
+            }
+            if (this.baseVariant.equals(variant)) {
+              this.uniqueReference=ref;
             }
           }
         }
