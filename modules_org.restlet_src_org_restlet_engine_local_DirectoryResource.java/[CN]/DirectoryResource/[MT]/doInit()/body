@@ -91,44 +91,46 @@
           this.targetUri=directory.getRootRef().toString();
         }
       }
-      if (!this.directoryTarget) {
-        final int lastSlashIndex=this.targetUri.lastIndexOf('/');
-        if (lastSlashIndex == -1) {
-          this.directoryUri="";
-          this.baseName=this.targetUri;
-        }
+      if (!fileTarget || (fileContent == null) || !getRequest().getMethod().isSafe()) {
+        if (!this.directoryTarget) {
+          final int lastSlashIndex=this.targetUri.lastIndexOf('/');
+          if (lastSlashIndex == -1) {
+            this.directoryUri="";
+            this.baseName=this.targetUri;
+          }
  else {
-          this.directoryUri=this.targetUri.substring(0,lastSlashIndex + 1);
-          this.baseName=this.targetUri.substring(lastSlashIndex + 1);
+            this.directoryUri=this.targetUri.substring(0,lastSlashIndex + 1);
+            this.baseName=this.targetUri.substring(lastSlashIndex + 1);
+          }
+          contextResponse=getRepresentation(this.directoryUri);
+          if ((contextResponse.getEntity() != null) && MediaType.TEXT_URI_LIST.equals(contextResponse.getEntity().getMediaType())) {
+            this.directoryContent=new ReferenceList(contextResponse.getEntity());
+          }
         }
-        contextResponse=getRepresentation(this.directoryUri);
-        if ((contextResponse.getEntity() != null) && MediaType.TEXT_URI_LIST.equals(contextResponse.getEntity().getMediaType())) {
-          this.directoryContent=new ReferenceList(contextResponse.getEntity());
+        if (this.baseName != null) {
+          final int firstDotIndex=this.baseName.indexOf('.');
+          if (firstDotIndex != -1) {
+            this.baseExtensions=getExtensions(this.baseName);
+            this.baseName=this.baseName.substring(0,firstDotIndex);
+          }
         }
-      }
-      if (this.baseName != null) {
-        final int firstDotIndex=this.baseName.indexOf('.');
-        if (firstDotIndex != -1) {
-          this.baseExtensions=getExtensions(this.baseName);
-          this.baseName=this.baseName.substring(0,firstDotIndex);
+        final List<Variant> variants=getVariants(Method.GET);
+        if ((variants == null) || (variants.isEmpty())) {
+          setExisting(false);
+        }
+        if (isExisting() && !this.directory.isDeeplyAccessible()) {
+          int index=this.relativePart.indexOf("/");
+          if (index != -1) {
+            index=this.relativePart.indexOf("/",index);
+            setExisting((index == -1));
+          }
         }
       }
     }
+    getLogger().info("Converted target URI: " + this.targetUri);
+    getLogger().fine("Converted base name : " + this.baseName);
   }
  catch (  IOException ioe) {
     throw new ResourceException(ioe);
   }
-  final List<Variant> variants=getVariants(Method.GET);
-  if ((variants == null) || (variants.isEmpty())) {
-    setExisting(false);
-  }
-  if (isExisting() && !this.directory.isDeeplyAccessible()) {
-    int index=this.relativePart.indexOf("/");
-    if (index != -1) {
-      index=this.relativePart.indexOf("/",index);
-      setExisting((index == -1));
-    }
-  }
-  getLogger().info("Converted target URI: " + this.targetUri);
-  getLogger().fine("Converted base name : " + this.baseName);
 }
