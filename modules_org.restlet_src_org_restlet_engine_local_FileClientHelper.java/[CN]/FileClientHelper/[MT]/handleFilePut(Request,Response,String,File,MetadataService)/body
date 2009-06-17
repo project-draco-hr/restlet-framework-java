@@ -37,7 +37,7 @@
       File[] files=file.getParentFile().listFiles(filter);
       File uniqueVariant=null;
       List<File> variantsList=new ArrayList<File>();
-      if (files != null) {
+      if (files != null && files.length > 0) {
         Variant variant=new Variant();
         Entity.updateMetadata(file.getName(),variant,true,metadataService);
         Collection<String> extensions=Entity.getExtensions(variant,metadataService);
@@ -61,19 +61,6 @@
         }
  else {
           Entity.updateMetadata(file.getName(),request.getEntity(),true,getMetadataService());
-          if (request.getEntity().getLanguages().isEmpty()) {
-            if (metadataService.getDefaultLanguage() != null) {
-              request.getEntity().getLanguages().add(metadataService.getDefaultLanguage());
-            }
-          }
-          if (request.getEntity().getMediaType() == null) {
-            request.getEntity().setMediaType(metadataService.getDefaultMediaType());
-          }
-          if (request.getEntity().getEncodings().isEmpty()) {
-            if ((metadataService.getDefaultEncoding() != null) && !metadataService.getDefaultEncoding().equals(Encoding.IDENTITY)) {
-              request.getEntity().getEncodings().add(metadataService.getDefaultEncoding());
-            }
-          }
           StringBuilder fileName=new StringBuilder(baseName);
           updateFileExtension(fileName,request.getEntity().getMediaType(),metadataService);
           for (          Language language : request.getEntity().getLanguages()) {
