@@ -1,0 +1,29 @@
+{
+  Graph result=null;
+  ClientInfo currentInfo=getClientInfo();
+  ClientInfo newInfo=new ClientInfo();
+  newInfo.getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.APPLICATION_RDF_XML));
+  newInfo.getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.TEXT_RDF_N3));
+  newInfo.getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.TEXT_RDF_NTRIPLES));
+  newInfo.getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.APPLICATION_RDF_TURTLE));
+  newInfo.getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.TEXT_XML,0.5F));
+  newInfo.getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.TEXT_PLAIN,0.4F));
+  newInfo.getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.APPLICATION_ALL_XML,0.3F));
+  try {
+    Representation rep=get();
+    if (rep != null) {
+      RdfRepresentation rdfRep=new RdfRepresentation(rep);
+      if (rdfRep != null) {
+        result=rdfRep.getGraph();
+      }
+    }
+ else {
+      getLogger().log(Level.WARNING,"Unable to retrieve an RDF representation of this resource.");
+    }
+  }
+ catch (  Exception e) {
+    getLogger().log(Level.WARNING,"Unable to retrieve an RDF representation of this resource.",e);
+  }
+  setClientInfo(currentInfo);
+  return result;
+}

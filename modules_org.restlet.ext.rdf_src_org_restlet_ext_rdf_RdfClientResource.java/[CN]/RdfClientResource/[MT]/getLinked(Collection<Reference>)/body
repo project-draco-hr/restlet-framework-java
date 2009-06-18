@@ -1,0 +1,15 @@
+{
+  Set<RdfClientResource> result=null;
+  Graph links=getLinks();
+  if (links != null) {
+    result=new HashSet<RdfClientResource>();
+    for (    Link link : links) {
+      if (link.hasReferenceTarget()) {
+        if ((typeRefs == null) || typeRefs.contains(link.getTypeRef())) {
+          result.add(new RdfClientResource(getContext(),link.getTargetAsReference()));
+        }
+      }
+    }
+  }
+  return result;
+}

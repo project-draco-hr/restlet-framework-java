@@ -1,0 +1,15 @@
+{
+  Set<Literal> result=null;
+  Graph links=getLinks();
+  if (links != null) {
+    result=new HashSet<Literal>();
+    for (    Link link : links) {
+      if (link.hasReferenceTarget()) {
+        if ((typeRefs == null) || typeRefs.contains(link.getTypeRef())) {
+          result.add(link.getTargetAsLiteral());
+        }
+      }
+    }
+  }
+  return result;
+}
