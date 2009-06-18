@@ -49,7 +49,7 @@
         }
  else         if ("Resource".equals(value)) {
           this.consumeContent=false;
-          currentObject=LinkReference.createBlank(ContentReader.newBlankNodeId());
+          currentObject=Link.createBlankRef(ContentReader.newBlankNodeId());
           popState();
           pushState(State.SUBJECT);
           pushSubject(currentObject);
@@ -60,7 +60,7 @@
       }
  else       if (checkRdfQName("nodeID",qName)) {
         this.consumeContent=false;
-        currentObject=LinkReference.createBlank(attributes.getValue(i));
+        currentObject=Link.createBlankRef(attributes.getValue(i));
         popState();
         pushState(State.SUBJECT);
         pushSubject(currentObject);
@@ -83,7 +83,7 @@
     }
     if (!arcs.isEmpty()) {
       boolean found=false;
-      Reference blankNode=LinkReference.createBlank(ContentReader.newBlankNodeId());
+      Reference blankNode=Link.createBlankRef(ContentReader.newBlankNodeId());
       for (      String[] arc : arcs) {
         Reference pRef=resolve(null,arc[0]);
         if (pRef != null) {
