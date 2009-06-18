@@ -1,10 +1,10 @@
 {
   super(helper,method,requestUri);
   if (requestUri.startsWith("http")) {
-    final URL url=new URL(requestUri);
+    URL url=new URL(requestUri);
     this.connection=(HttpURLConnection)url.openConnection();
-    final int majorVersionNumber=SystemUtils.getJavaMajorVersion();
-    final int minorVersionNumber=SystemUtils.getJavaMinorVersion();
+    int majorVersionNumber=SystemUtils.getJavaMajorVersion();
+    int minorVersionNumber=SystemUtils.getJavaMinorVersion();
     if ((majorVersionNumber > 1) || ((majorVersionNumber == 1) && (minorVersionNumber >= 5))) {
       this.connection.setConnectTimeout(getHelper().getConnectTimeout());
       this.connection.setReadTimeout(getHelper().getReadTimeout());
@@ -16,8 +16,8 @@
     this.responseHeadersAdded=false;
     if (this.connection instanceof HttpsURLConnection) {
       setConfidential(true);
-      final HttpsURLConnection https=(HttpsURLConnection)this.connection;
-      final SslContextFactory sslContextFactory=HttpsUtils.getSslContextFactory(getHelper());
+      HttpsURLConnection https=(HttpsURLConnection)this.connection;
+      SslContextFactory sslContextFactory=HttpsUtils.getSslContextFactory(getHelper());
       if (sslContextFactory != null) {
         try {
           SSLContext sslContext=sslContextFactory.createSslContext();
@@ -27,7 +27,7 @@
           throw new RuntimeException("Unable to create SSLContext.",e);
         }
       }
-      final HostnameVerifier verifier=helper.getHostnameVerifier();
+      HostnameVerifier verifier=helper.getHostnameVerifier();
       if (verifier != null) {
         https.setHostnameVerifier(verifier);
       }

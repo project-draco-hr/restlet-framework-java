@@ -2,9 +2,9 @@
   Status result=null;
   try {
     if (request.isEntityAvailable()) {
-      final Representation entity=request.getEntity();
-      final int majorVersionNumber=SystemUtils.getJavaMajorVersion();
-      final int minorVersionNumber=SystemUtils.getJavaMinorVersion();
+      Representation entity=request.getEntity();
+      int majorVersionNumber=SystemUtils.getJavaMajorVersion();
+      int minorVersionNumber=SystemUtils.getJavaMinorVersion();
       if ((majorVersionNumber > 1) || ((majorVersionNumber == 1) && (minorVersionNumber >= 5))) {
         if (entity.getSize() != -1) {
           getConnection().setFixedLengthStreamingMode((int)entity.getSize());
@@ -19,7 +19,7 @@
       }
     }
     getConnection().setRequestMethod(getMethod());
-    for (    final Parameter header : getRequestHeaders()) {
+    for (    Parameter header : getRequestHeaders()) {
       getConnection().addRequestProperty(header.getName(),header.getValue());
     }
     getConnection().connect();
