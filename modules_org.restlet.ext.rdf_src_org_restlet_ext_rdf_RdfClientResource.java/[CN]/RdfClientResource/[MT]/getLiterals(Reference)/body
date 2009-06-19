@@ -1,3 +1,15 @@
 {
-  return getLiterals(Collections.singleton(typeRef));
+  Set<Literal> result=null;
+  Graph links=getLinks();
+  if (links != null) {
+    result=new HashSet<Literal>();
+    for (    Link link : links) {
+      if (link.hasLiteralTarget()) {
+        if ((typeRef == null) || typeRef.equals(link.getTypeRef())) {
+          result.add(link.getTargetAsLiteral());
+        }
+      }
+    }
+  }
+  return result;
 }

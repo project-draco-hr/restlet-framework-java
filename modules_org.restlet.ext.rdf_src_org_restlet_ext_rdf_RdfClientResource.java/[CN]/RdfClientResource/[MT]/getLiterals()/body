@@ -1,3 +1,15 @@
 {
-  return getLiterals((Collection<Reference>)null);
+  Set<Couple<Reference,Literal>> result=null;
+  Graph links=getLinks();
+  if (links != null) {
+    for (    Link link : links) {
+      if (link.hasLiteralTarget()) {
+        if (result == null) {
+          result=new HashSet<Couple<Reference,Literal>>();
+        }
+        result.add(new Couple<Reference,Literal>(link.getTypeRef(),link.getTargetAsLiteral()));
+      }
+    }
+  }
+  return result;
 }
