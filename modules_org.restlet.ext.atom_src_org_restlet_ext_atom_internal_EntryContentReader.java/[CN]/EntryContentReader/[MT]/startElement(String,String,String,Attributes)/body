@@ -1,6 +1,12 @@
 {
   this.contentBuffer.delete(0,this.contentBuffer.length() + 1);
-  if (uri.equalsIgnoreCase(Feed.ATOM_NAMESPACE)) {
+  if (this.contentDepth >= 0) {
+    if (this.currentContentWriter != null) {
+      this.currentContentWriter.startElement(uri,localName,qName,attrs);
+    }
+    this.contentDepth++;
+  }
+ else   if (uri.equalsIgnoreCase(Feed.ATOM_NAMESPACE)) {
     if (localName.equals("title")) {
       startTextElement(attrs);
       if (this.state == State.FEED_ENTRY) {
@@ -54,7 +60,9 @@
       this.currentLink=new Link();
       this.currentLink.setHref(new Reference(attrs.getValue("","href")));
       this.currentLink.setRel(Relation.parse(attrs.getValue("","rel")));
-      this.currentLink.setType(new MediaType(attrs.getValue("","type")));
+      if ("".equals(attrs.getValue("","type"))) {
+        this.currentLink.setType(new MediaType(attrs.getValue("type")));
+      }
       this.currentLink.setHrefLang(new Language(attrs.getValue("","hreflang")));
       this.currentLink.setTitle(attrs.getValue("","title"));
       final String attr=attrs.getValue("","length");
@@ -64,6 +72,11 @@
       }
  else       if (this.state == State.FEED_ENTRY_SOURCE) {
         this.state=State.FEED_ENTRY_SOURCE_LINK;
+      }
+      if (Relation.ALTERNATE == this.currentLink.getRel()) {
+        this.currentContent=new Content();
+        initiateInlineMixedContent();
+        this.currentLink.setContent(currentContent);
       }
     }
  else     if (localName.equalsIgnoreCase("entry")) {
@@ -87,11 +100,7 @@
         final String srcAttr=attrs.getValue("","src");
         this.currentContent=new Content();
         if (srcAttr == null) {
-          StringWriter sw=new StringWriter();
-          currentContentWriter=new XmlWriter(sw);
-          for (          String prefix : this.prefixMappings.keySet()) {
-            currentContentWriter.forceNSDecl(this.prefixMappings.get(prefix),prefix);
-          }
+          initiateInlineMixedContent();
         }
  else {
           this.currentContent.setExternalRef(new Reference(srcAttr));
@@ -100,11 +109,6 @@
         this.currentEntry.setContent(currentContent);
         this.state=State.FEED_ENTRY_CONTENT;
       }
-    }
-  }
- else   if (this.state == State.FEED_ENTRY_CONTENT) {
-    if (this.currentContentWriter != null) {
-      this.currentContentWriter.startElement(uri,localName,qName,attrs);
     }
   }
 }

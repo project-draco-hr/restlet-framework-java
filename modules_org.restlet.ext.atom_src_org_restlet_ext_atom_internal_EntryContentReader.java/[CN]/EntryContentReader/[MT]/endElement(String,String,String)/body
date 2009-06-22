@@ -12,7 +12,13 @@
       this.currentDate=null;
     }
   }
-  if (uri.equalsIgnoreCase(Feed.ATOM_NAMESPACE)) {
+  if (contentDepth > 0) {
+    if (this.currentContentWriter != null) {
+      this.currentContentWriter.endElement(uri,localName,qName);
+    }
+    contentDepth--;
+  }
+ else   if (uri.equalsIgnoreCase(Feed.ATOM_NAMESPACE)) {
     if (localName.equals("feed")) {
       this.state=State.NONE;
     }
@@ -80,6 +86,15 @@
         this.currentEntry.getSource().getLinks().add(this.currentLink);
         this.state=State.FEED_ENTRY_SOURCE;
       }
+      if (Relation.ALTERNATE == this.currentLink.getRel()) {
+        contentDepth=-1;
+        if (this.currentLink.getType() != null) {
+          currentContent.setInlineContent(new StringRepresentation(this.currentContentWriter.getWriter().toString().trim(),this.currentLink.getType()));
+        }
+ else {
+          currentContent.setInlineContent(new StringRepresentation(this.currentContentWriter.getWriter().toString().trim()));
+        }
+      }
     }
  else     if (localName.equals("category")) {
       if (this.state == State.FEED_ENTRY_CATEGORY) {
@@ -94,15 +109,11 @@
  else     if (localName.equalsIgnoreCase("content")) {
       if (this.state == State.FEED_ENTRY_CONTENT) {
         if (!this.currentEntry.getContent().isExternal()) {
+          contentDepth=-1;
           currentContent.setInlineContent(new StringRepresentation(this.currentContentWriter.getWriter().toString().trim()));
         }
         this.state=State.FEED_ENTRY;
       }
-    }
-  }
- else   if (this.state == State.FEED_ENTRY_CONTENT) {
-    if (this.currentContentWriter != null) {
-      this.currentContentWriter.endElement(uri,localName,qName);
     }
   }
   this.currentText=null;

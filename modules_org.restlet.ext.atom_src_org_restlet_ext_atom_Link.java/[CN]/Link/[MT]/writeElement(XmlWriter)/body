@@ -1,5 +1,5 @@
 {
-  final AttributesImpl attributes=new AttributesImpl();
+  AttributesImpl attributes=new AttributesImpl();
   if ((getHref() != null) && (getHref().toString() != null)) {
     attributes.addAttribute("","href",null,"atomURI",getHref().toString());
   }
@@ -16,5 +16,12 @@
   if (getType() != null) {
     attributes.addAttribute("","type",null,"atomMediaType",getType().toString());
   }
-  writer.emptyElement(ATOM_NAMESPACE,"link",null,attributes);
+  if (getContent() != null) {
+    writer.startElement(ATOM_NAMESPACE,"link",null,attributes);
+    getContent().writeElement(writer);
+    writer.endElement(ATOM_NAMESPACE,"entry");
+  }
+ else {
+    writer.emptyElement(ATOM_NAMESPACE,"link",null,attributes);
+  }
 }
