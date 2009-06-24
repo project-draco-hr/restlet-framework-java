@@ -1,7 +1,8 @@
 {
+  List<Service> services=new ArrayList<Service>();
   Service service;
   boolean replaced=false;
-  for (int i=0; !replaced && (i < this.services.size()); i++) {
+  for (int i=0; (i < this.services.size()); i++) {
     service=this.services.get(i);
     if ((service != null) && service.getClass().isAssignableFrom(newService.getClass())) {
       try {
@@ -10,11 +11,12 @@
  catch (      Exception e) {
         getLogger().log(Level.WARNING,"Unable to stop service replaced",e);
       }
-      this.services.set(i,newService);
+      services.add(newService);
       replaced=true;
     }
   }
   if (!replaced) {
-    this.services.add(newService);
+    services.add(newService);
   }
+  setServices(services);
 }
