@@ -1,11 +1,20 @@
 {
   Enumeration<URL> allUrls=super.getResources(name);
   Vector<URL> result=new Vector<URL>();
-  URL url;
-  while (allUrls.hasMoreElements()) {
-    url=allUrls.nextElement();
-    if (result.indexOf(url) == -1) {
-      result.add(url);
+  if (allUrls != null) {
+    try {
+      URL url;
+      while (allUrls.hasMoreElements()) {
+        url=allUrls.nextElement();
+        if (result.indexOf(url) == -1) {
+          result.add(url);
+        }
+      }
+    }
+ catch (    NullPointerException e) {
+      if (Edition.CURRENT != Edition.ANDROID) {
+        throw e;
+      }
     }
   }
   return result.elements();
