@@ -4,15 +4,20 @@
   boolean replaced=false;
   for (int i=0; (i < this.services.size()); i++) {
     service=this.services.get(i);
-    if ((service != null) && service.getClass().isAssignableFrom(newService.getClass())) {
-      try {
-        service.stop();
+    if (service != null) {
+      if (service.getClass().isAssignableFrom(newService.getClass())) {
+        try {
+          service.stop();
+        }
+ catch (        Exception e) {
+          getLogger().log(Level.WARNING,"Unable to stop service replaced",e);
+        }
+        services.add(newService);
+        replaced=true;
       }
- catch (      Exception e) {
-        getLogger().log(Level.WARNING,"Unable to stop service replaced",e);
+ else {
+        services.add(service);
       }
-      services.add(newService);
-      replaced=true;
     }
   }
   if (!replaced) {
