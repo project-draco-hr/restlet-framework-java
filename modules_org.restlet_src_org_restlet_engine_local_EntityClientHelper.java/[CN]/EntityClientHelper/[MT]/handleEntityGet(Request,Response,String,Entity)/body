@@ -1,0 +1,87 @@
+{
+  Representation output=null;
+  boolean found=false;
+  Iterator<Preference<MediaType>> iterator=request.getClientInfo().getAcceptedMediaTypes().iterator();
+  while (iterator.hasNext() && !found) {
+    Preference<MediaType> pref=iterator.next();
+    found=pref.getMetadata().equals(MediaType.TEXT_URI_LIST);
+  }
+  if (found) {
+    String baseName=entity.getBaseName();
+    Entity parent=entity.getParent();
+    if (parent != null) {
+      Collection<Entity> entities=parent.getChildren();
+      if (entities != null) {
+        ReferenceList rl=new ReferenceList(entities.size());
+        String scheme=request.getResourceRef().getScheme();
+        String encodedParentDirectoryURI=path.substring(0,path.lastIndexOf("/"));
+        String encodedEntityName=path.substring(path.lastIndexOf("/") + 1);
+        for (        Entity entry : entities) {
+          if (baseName.equals(entry.getBaseName())) {
+            rl.add(createReference(scheme,encodedParentDirectoryURI,encodedEntityName,entry.getName()));
+          }
+        }
+        output=rl.getTextRepresentation();
+      }
+    }
+  }
+ else {
+    if (entity.exists()) {
+      if (entity.isDirectory()) {
+        Collection<Entity> children=entity.getChildren();
+        ReferenceList rl=new ReferenceList(children.size());
+        String directoryUri=request.getResourceRef().toString();
+        if (!directoryUri.endsWith("/")) {
+          directoryUri+="/";
+        }
+        for (        Entity entry : children) {
+          if (entry.isDirectory()) {
+            rl.add(directoryUri + Reference.encode(entry.getName()) + "/");
+          }
+ else {
+            rl.add(directoryUri + Reference.encode(entry.getName()));
+          }
+        }
+        output=rl.getTextRepresentation();
+      }
+ else {
+        output=entity.getRepresentation(getMetadataService().getDefaultMediaType(),getTimeToLive());
+        output.setIdentifier(request.getResourceRef());
+        Entity.updateMetadata(entity.getName(),output,true,getMetadataService());
+      }
+    }
+ else {
+      Entity uniqueVariant=null;
+      String baseName=entity.getBaseName();
+      Variant entityVariant=entity.getVariant();
+      Entity parent=entity.getParent();
+      if (parent != null) {
+        Collection<Entity> files=parent.getChildren();
+        if (files != null) {
+          for (          Entity entry : files) {
+            if (baseName.equals(entry.getBaseName())) {
+              Variant entryVariant=entry.getVariant();
+              if (entityVariant.isCompatible(entryVariant)) {
+                uniqueVariant=entry;
+                break;
+              }
+            }
+          }
+        }
+      }
+      if (uniqueVariant != null) {
+        output=uniqueVariant.getRepresentation(getMetadataService().getDefaultMediaType(),getTimeToLive());
+        output.setIdentifier(request.getResourceRef());
+        Entity.updateMetadata(entity.getName(),output,true,getMetadataService());
+      }
+    }
+  }
+  if (output == null) {
+    response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+  }
+ else {
+    output.setIdentifier(request.getResourceRef());
+    response.setEntity(output);
+    response.setStatus(Status.SUCCESS_OK);
+  }
+}

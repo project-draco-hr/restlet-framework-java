@@ -1,0 +1,32 @@
+{
+  boolean defaultMetadata=true;
+  if (getMetadataService() != null) {
+    if (metadata instanceof Language) {
+      Language language=(Language)metadata;
+      defaultMetadata=language.equals(getMetadataService().getDefaultLanguage());
+    }
+ else     if (metadata instanceof MediaType) {
+      MediaType mediaType=(MediaType)metadata;
+      defaultMetadata=mediaType.equals(getMetadataService().getDefaultMediaType());
+    }
+ else     if (metadata instanceof CharacterSet) {
+      CharacterSet characterSet=(CharacterSet)metadata;
+      defaultMetadata=characterSet.equals(getMetadataService().getDefaultCharacterSet());
+    }
+ else     if (metadata instanceof Encoding) {
+      Encoding encoding=(Encoding)metadata;
+      defaultMetadata=encoding.equals(getMetadataService().getDefaultEncoding());
+    }
+  }
+  if (!defaultMetadata) {
+    String extension=getMetadataService().getExtension(metadata);
+    if (extension != null) {
+      fileName.append("." + extension);
+    }
+ else {
+      if (metadata.getParent() != null) {
+        updateFileExtension(fileName,metadata.getParent());
+      }
+    }
+  }
+}
