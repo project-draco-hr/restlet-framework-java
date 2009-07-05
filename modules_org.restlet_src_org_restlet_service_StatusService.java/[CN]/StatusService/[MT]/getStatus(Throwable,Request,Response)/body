@@ -1,3 +1,12 @@
 {
-  return null;
+  Status result=null;
+  if (throwable instanceof ResourceException) {
+    ResourceException re=(ResourceException)throwable;
+    result=re.getStatus();
+  }
+ else {
+    Context.getCurrentLogger().log(Level.SEVERE,"Unhandled exception or error intercepted",throwable);
+    result=new Status(Status.SERVER_ERROR_INTERNAL,throwable);
+  }
+  return result;
 }
