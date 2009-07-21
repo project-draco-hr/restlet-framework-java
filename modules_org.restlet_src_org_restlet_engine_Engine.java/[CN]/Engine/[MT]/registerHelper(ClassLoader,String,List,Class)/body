@@ -1,0 +1,16 @@
+{
+  if ((provider != null) && (!provider.equals(""))) {
+    try {
+      Class providerClass=classLoader.loadClass(provider);
+      if (constructorClass == null) {
+        helpers.add(providerClass.newInstance());
+      }
+ else {
+        helpers.add(providerClass.getConstructor(constructorClass).newInstance(constructorClass.cast(null)));
+      }
+    }
+ catch (    Exception e) {
+      Context.getCurrentLogger().log(Level.INFO,"Unable to register the helper " + provider,e);
+    }
+  }
+}
