@@ -3,10 +3,15 @@
   float bestScore=-1.0F;
   float currentScore;
   for (  ConverterHelper ch : Engine.getInstance().getRegisteredConverters()) {
-    currentScore=ch.score(source,target,resource);
-    if (currentScore > bestScore) {
-      bestScore=currentScore;
-      result=ch;
+    try {
+      currentScore=ch.score(source,target,resource);
+      if (currentScore > bestScore) {
+        bestScore=currentScore;
+        result=ch;
+      }
+    }
+ catch (    Exception e) {
+      Context.getCurrentLogger().log(Level.SEVERE,"Unable get the score of the " + ch + " converter helper.",e);
     }
   }
   return result;

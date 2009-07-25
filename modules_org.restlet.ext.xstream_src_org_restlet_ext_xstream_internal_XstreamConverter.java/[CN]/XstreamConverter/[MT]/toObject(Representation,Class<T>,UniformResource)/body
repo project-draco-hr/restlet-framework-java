@@ -1,7 +1,10 @@
 {
   Object result=null;
   XstreamRepresentation<T> xstreamRepresentation;
-  if (VARIANT_JSON.isCompatible(source)) {
+  if (source instanceof XstreamRepresentation) {
+    result=((XstreamRepresentation)source).getObject();
+  }
+ else   if (VARIANT_JSON.isCompatible(source)) {
     xstreamRepresentation=new XstreamRepresentation<T>(source);
     xstreamRepresentation.setJsonDriverClass(JettisonMappedXmlDriver.class);
     result=xstreamRepresentation.getObject();

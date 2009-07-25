@@ -3,10 +3,19 @@
   if (source instanceof XstreamRepresentation) {
     result=(XstreamRepresentation)source;
   }
- else   if (source instanceof Object) {
-    XstreamRepresentation<Object> xstreamRepresentation=new XstreamRepresentation<Object>(target.getMediaType(),source);
-    xstreamRepresentation.setJsonDriverClass(JettisonMappedXmlDriver.class);
-    result=xstreamRepresentation;
+ else {
+    if (target.getMediaType() == null) {
+      target.setMediaType(MediaType.TEXT_XML);
+    }
+    if (VARIANT_JSON.isCompatible(target)) {
+      XstreamRepresentation<Object> xstreamRepresentation=new XstreamRepresentation<Object>(target.getMediaType(),source);
+      xstreamRepresentation.setJsonDriverClass(JettisonMappedXmlDriver.class);
+      result=xstreamRepresentation;
+    }
+ else     if (VARIANT_APPLICATION_ALL_XML.isCompatible(target) || VARIANT_APPLICATION_XML.isCompatible(target) || VARIANT_TEXT_XML.isCompatible(target)) {
+      XstreamRepresentation<Object> xstreamRepresentation=new XstreamRepresentation<Object>(target.getMediaType(),source);
+      result=xstreamRepresentation;
+    }
   }
   return result;
 }
