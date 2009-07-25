@@ -1,16 +1,16 @@
 {
   if (response != null) {
-    final Representation entity=response.getEntity();
-    final ConnectorService connectorService=getConnectorService(response.getRequest());
+    Representation responseEntity=response.getEntity();
+    ConnectorService connectorService=getConnectorService(response.getRequest());
     if (connectorService != null) {
-      connectorService.beforeSend(entity);
+      connectorService.beforeSend(responseEntity);
     }
     try {
       writeResponseHead(response);
-      if (entity != null) {
-        final WritableByteChannel responseEntityChannel=getResponseEntityChannel();
-        final OutputStream responseEntityStream=getResponseEntityStream();
-        writeResponseBody(entity,responseEntityChannel,responseEntityStream);
+      if (responseEntity != null) {
+        WritableByteChannel responseEntityChannel=getResponseEntityChannel();
+        OutputStream responseEntityStream=getResponseEntityStream();
+        writeResponseBody(responseEntity,responseEntityChannel,responseEntityStream);
         if (responseEntityStream != null) {
           try {
             responseEntityStream.flush();
@@ -23,11 +23,11 @@
       }
     }
   finally {
-      if (entity != null) {
-        entity.release();
+      if (responseEntity != null) {
+        responseEntity.release();
       }
       if (connectorService != null) {
-        connectorService.afterSend(entity);
+        connectorService.afterSend(responseEntity);
       }
     }
   }
