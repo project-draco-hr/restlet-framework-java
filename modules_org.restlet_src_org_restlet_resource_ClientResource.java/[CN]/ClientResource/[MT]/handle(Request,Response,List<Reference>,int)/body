@@ -14,7 +14,23 @@
       }
       references.add(request.getResourceRef());
       request.setResourceRef(newTargetRef);
-      handle(request,response,references);
+      handle(request,response,references,0);
+    }
+  }
+ else   if (request.getMethod().isIdempotent() && response.getStatus().isRecoverableError()) {
+    if (isRetryOnError() && (retryAttempt < getRetryAttempts())) {
+      if ((getRequestEntity() == null) || getRequestEntity().isAvailable()) {
+        getLogger().log(Level.INFO,"A recoverable error was detected, attempting again in " + getRetryDelay() + " ms.");
+        if (getRetryDelay() > 0) {
+          try {
+            Thread.sleep(getRetryDelay());
+          }
+ catch (          InterruptedException e) {
+            getLogger().log(Level.FINE,"Retry delay sleep was interrupted",e);
+          }
+        }
+        handle(request,response,references,++retryAttempt);
+      }
     }
   }
 }

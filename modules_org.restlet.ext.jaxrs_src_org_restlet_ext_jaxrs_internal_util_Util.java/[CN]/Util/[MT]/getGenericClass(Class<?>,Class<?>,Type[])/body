@@ -10,12 +10,12 @@
     final Type[] atps=pt.getActualTypeArguments();
     if (atps == null || atps.length == 0)     continue;
     final Type atp=atps[0];
-    if (atp instanceof Class) {
+    if (atp instanceof Class<?>) {
       return (Class<?>)atp;
     }
     if (atp instanceof ParameterizedType) {
       final Type rawType=((ParameterizedType)atp).getRawType();
-      if (rawType instanceof Class) {
+      if (rawType instanceof Class<?>) {
         return (Class<?>)rawType;
       }
     }
@@ -29,12 +29,12 @@
         if (tv2Name == null)         continue;
         if (tv2Name.equals(name)) {
           Type gsatpn=gsatp[i];
-          if (gsatpn instanceof Class) {
+          if (gsatpn instanceof Class<?>) {
             return (Class<?>)gsatpn;
           }
           if (gsatpn instanceof ParameterizedType) {
             final Type rawType=((ParameterizedType)gsatpn).getRawType();
-            if (rawType instanceof Class)             return (Class<?>)rawType;
+            if (rawType instanceof Class<?>)             return (Class<?>)rawType;
             throw new ImplementationException("Sorry, don't know how to return the class here");
           }
           if (gsatpn instanceof GenericArrayType) {
@@ -47,7 +47,7 @@
   }
   Class<?> superClass=clazz.getSuperclass();
   Type genericSuperClass=clazz.getGenericSuperclass();
-  if (genericSuperClass instanceof Class) {
+  if (genericSuperClass instanceof Class<?>) {
     return null;
   }
   if (gsatp == null) {
