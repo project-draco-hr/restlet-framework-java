@@ -33,26 +33,7 @@
  else {
       resultObject=annotationInfo.getJavaMethod().invoke(this);
     }
-    if (resultObject != null) {
-      if (resultObject instanceof Representation) {
-        result=(Representation)resultObject;
-        if (variant.getCharacterSet() != null) {
-          result.setCharacterSet(variant.getCharacterSet());
-        }
- else         if (variant.getMediaType() != null) {
-          result.setMediaType(variant.getMediaType());
-        }
- else         if ((variant.getLanguages() != null) && !variant.getLanguages().isEmpty()) {
-          result.setLanguages(variant.getLanguages());
-        }
- else         if ((variant.getEncodings() != null) && !variant.getEncodings().isEmpty()) {
-          result.setEncodings(variant.getEncodings());
-        }
-      }
- else {
-        result=cs.toRepresentation(resultObject,variant,this);
-      }
-    }
+    result=cs.toRepresentation(resultObject,variant,this);
   }
  catch (  IllegalArgumentException e) {
     throw new ResourceException(e);
