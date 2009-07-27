@@ -1,14 +1,14 @@
 {
   Status result=null;
   final Representation entity=request.isEntityAvailable() ? request.getEntity() : null;
-  final ConnectorService connectorService=getConnectorService(request);
+  final org.restlet.service.ConnectorService connectorService=getConnectorService(request);
   if (connectorService != null) {
     connectorService.beforeSend(entity);
   }
   try {
     if (entity != null) {
       final OutputStream requestStream=getRequestEntityStream();
-      final WritableByteChannel wbc=getRequestEntityChannel();
+      final java.nio.channels.WritableByteChannel wbc=getRequestEntityChannel();
       if (wbc != null) {
         entity.write(wbc);
       }
