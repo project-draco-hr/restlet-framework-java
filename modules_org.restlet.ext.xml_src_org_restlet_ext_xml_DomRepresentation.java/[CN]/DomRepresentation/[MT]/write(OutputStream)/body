@@ -1,17 +1,20 @@
 {
+  if (Edition.CURRENT == Edition.ANDROID) {
+    throw new UnsupportedOperationException("Instances of DomRepresentation cannot be written at this time.");
+  }
   try {
     if (getDocument() != null) {
-      final Transformer transformer=createTransformer();
-      transformer.transform(new DOMSource(getDocument()),new StreamResult(outputStream));
+      final javax.xml.transform.Transformer transformer=createTransformer();
+      transformer.transform(new javax.xml.transform.dom.DOMSource(getDocument()),new javax.xml.transform.stream.StreamResult(outputStream));
     }
   }
- catch (  TransformerConfigurationException tce) {
+ catch (  javax.xml.transform.TransformerConfigurationException tce) {
     throw new IOException("Couldn't write the XML representation: " + tce.getMessage());
   }
-catch (  TransformerException te) {
+catch (  javax.xml.transform.TransformerException te) {
     throw new IOException("Couldn't write the XML representation: " + te.getMessage());
   }
-catch (  TransformerFactoryConfigurationError tfce) {
+catch (  javax.xml.transform.TransformerFactoryConfigurationError tfce) {
     throw new IOException("Couldn't write the XML representation: " + tfce.getMessage());
   }
 }

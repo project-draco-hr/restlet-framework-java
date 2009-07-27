@@ -1,20 +1,20 @@
 {
   try {
-    final Transformer transformer=TransformerFactory.newInstance().newTransformer();
-    transformer.setOutputProperty(OutputKeys.METHOD,"xml");
+    final javax.xml.transform.Transformer transformer=javax.xml.transform.TransformerFactory.newInstance().newTransformer();
+    transformer.setOutputProperty(javax.xml.transform.OutputKeys.METHOD,"xml");
     DocumentType docType=getDocument().getDoctype();
     if (docType != null) {
       if (docType.getSystemId() != null) {
-        transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM,getDocument().getDoctype().getSystemId());
+        transformer.setOutputProperty(javax.xml.transform.OutputKeys.DOCTYPE_SYSTEM,getDocument().getDoctype().getSystemId());
       }
       if (docType.getPublicId() != null) {
-        transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC,getDocument().getDoctype().getPublicId());
+        transformer.setOutputProperty(javax.xml.transform.OutputKeys.DOCTYPE_PUBLIC,getDocument().getDoctype().getPublicId());
       }
-      transformer.setOutputProperty(OutputKeys.INDENT,Boolean.toString(isIndent()));
+      transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT,Boolean.toString(isIndent()));
     }
     return transformer;
   }
- catch (  TransformerConfigurationException tce) {
+ catch (  javax.xml.transform.TransformerConfigurationException tce) {
     throw new IOException("Couldn't write the XML representation: " + tce.getMessage());
   }
 }
