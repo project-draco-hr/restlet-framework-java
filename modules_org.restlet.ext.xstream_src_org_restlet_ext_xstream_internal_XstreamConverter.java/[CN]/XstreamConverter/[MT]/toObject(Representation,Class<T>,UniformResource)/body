@@ -1,17 +1,13 @@
 {
   Object result=null;
-  XstreamRepresentation<T> xstreamRepresentation;
   if (source instanceof XstreamRepresentation) {
     result=((XstreamRepresentation)source).getObject();
   }
  else   if (VARIANT_JSON.isCompatible(source)) {
-    xstreamRepresentation=new XstreamRepresentation<T>(source);
-    xstreamRepresentation.setJsonDriverClass(JettisonMappedXmlDriver.class);
-    result=xstreamRepresentation.getObject();
+    result=create(source).getObject();
   }
  else   if (VARIANT_APPLICATION_ALL_XML.isCompatible(source) || VARIANT_APPLICATION_XML.isCompatible(source) || VARIANT_TEXT_XML.isCompatible(source)) {
-    xstreamRepresentation=new XstreamRepresentation<T>(source);
-    result=xstreamRepresentation.getObject();
+    result=create(source).getObject();
   }
   return (T)result;
 }
