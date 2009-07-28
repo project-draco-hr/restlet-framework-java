@@ -8,7 +8,12 @@
     result=context.getLogger();
   }
   if (result == null) {
-    result=Logger.getLogger(getClass().getCanonicalName());
+    if (Edition.CURRENT == Edition.GWT) {
+      result=Logger.getLogger(getClass().getCanonicalName());
+    }
+ else {
+      result=Logger.getLogger(getClass().getName());
+    }
   }
   if (result == null) {
     result=Logger.getLogger("org.restlet.Restlet");
