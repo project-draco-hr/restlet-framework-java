@@ -7,8 +7,19 @@
     while (headerName != null) {
       result.add(headerName,headerValue);
       i++;
-      headerName=getConnection().getHeaderFieldKey(i);
-      headerValue=getConnection().getHeaderField(i);
+      if (Edition.CURRENT != Edition.GAE) {
+        headerName=getConnection().getHeaderFieldKey(i);
+        headerValue=getConnection().getHeaderField(i);
+      }
+ else {
+        try {
+          headerName=getConnection().getHeaderFieldKey(i);
+          headerValue=getConnection().getHeaderField(i);
+        }
+ catch (        java.util.NoSuchElementException e) {
+          headerName=null;
+        }
+      }
     }
     this.responseHeadersAdded=true;
   }
