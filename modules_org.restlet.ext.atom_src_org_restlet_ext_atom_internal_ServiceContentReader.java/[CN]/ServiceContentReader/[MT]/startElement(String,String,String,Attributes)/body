@@ -1,17 +1,29 @@
 {
   if (uri.equalsIgnoreCase(Service.APP_NAMESPACE)) {
     if (localName.equalsIgnoreCase("service")) {
+      String attr=attrs.getValue("xml:base");
+      if (attr != null) {
+        this.currentService.setBaseReference(new Reference(attr));
+      }
       this.state=IN_SERVICE;
     }
  else     if (localName.equalsIgnoreCase("workspace")) {
       if (this.state == IN_SERVICE) {
         this.currentWorkspace=new Workspace(this.currentService);
+        String attr=attrs.getValue("xml:base");
+        if (attr != null) {
+          this.currentWorkspace.setBaseReference(new Reference(attr));
+        }
         this.state=IN_WORKSPACE;
       }
     }
  else     if (localName.equalsIgnoreCase("collection")) {
       if (this.state == IN_WORKSPACE) {
         this.currentCollection=new Collection(this.currentWorkspace,attrs.getValue("title"),attrs.getValue("href"));
+        String attr=attrs.getValue("xml:base");
+        if (attr != null) {
+          this.currentCollection.setBaseReference(new Reference(attr));
+        }
         this.state=IN_COLLECTION;
       }
     }
