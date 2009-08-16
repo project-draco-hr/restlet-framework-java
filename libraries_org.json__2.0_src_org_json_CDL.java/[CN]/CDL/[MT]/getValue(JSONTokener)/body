@@ -1,5 +1,7 @@
 {
   char c;
+  char q;
+  StringBuffer sb;
   do {
     c=x.next();
   }
@@ -9,7 +11,19 @@ case 0:
     return null;
 case '"':
 case '\'':
-  return x.nextString(c);
+  q=c;
+sb=new StringBuffer();
+for (; ; ) {
+c=x.next();
+if (c == q) {
+  break;
+}
+if (c == 0 || c == '\n' || c == '\r') {
+  throw x.syntaxError("Missing close quote '" + q + "'.");
+}
+sb.append(c);
+}
+return sb.toString();
 case ',':
 x.back();
 return "";

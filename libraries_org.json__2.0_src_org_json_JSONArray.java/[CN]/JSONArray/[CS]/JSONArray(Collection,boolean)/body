@@ -1,8 +1,19 @@
 {
   this.myArrayList=new ArrayList();
   if (collection != null) {
-    for (Iterator iter=collection.iterator(); iter.hasNext(); ) {
-      this.myArrayList.add(new JSONObject(iter.next(),includeSuperClass));
+    Iterator iter=collection.iterator();
+    ;
+    while (iter.hasNext()) {
+      Object o=iter.next();
+      if (o instanceof Map) {
+        this.myArrayList.add(new JSONObject((Map)o,includeSuperClass));
+      }
+ else       if (!JSONObject.isStandardProperty(o.getClass())) {
+        this.myArrayList.add(new JSONObject(o,includeSuperClass));
+      }
+ else {
+        this.myArrayList.add(o);
+      }
     }
   }
 }

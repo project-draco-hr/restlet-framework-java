@@ -3,7 +3,13 @@
   if (array.getClass().isArray()) {
     int length=Array.getLength(array);
     for (int i=0; i < length; i+=1) {
-      this.put(new JSONObject(Array.get(array,i),includeSuperClass));
+      Object o=Array.get(array,i);
+      if (JSONObject.isStandardProperty(o.getClass())) {
+        this.myArrayList.add(o);
+      }
+ else {
+        this.myArrayList.add(new JSONObject(o,includeSuperClass));
+      }
     }
   }
  else {

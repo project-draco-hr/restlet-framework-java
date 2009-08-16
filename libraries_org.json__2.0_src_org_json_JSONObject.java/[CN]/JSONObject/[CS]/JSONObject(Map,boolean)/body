@@ -1,9 +1,15 @@
 {
   this.map=new HashMap();
   if (map != null) {
-    for (Iterator i=map.entrySet().iterator(); i.hasNext(); ) {
+    Iterator i=map.entrySet().iterator();
+    while (i.hasNext()) {
       Map.Entry e=(Map.Entry)i.next();
-      this.map.put(e.getKey(),new JSONObject(e.getValue(),includeSuperClass));
+      if (isStandardProperty(e.getValue().getClass())) {
+        this.map.put(e.getKey(),e.getValue());
+      }
+ else {
+        this.map.put(e.getKey(),new JSONObject(e.getValue(),includeSuperClass));
+      }
     }
   }
 }
