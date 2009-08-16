@@ -5,9 +5,15 @@
   Application app=new Application(){
     @Override public Restlet createRoot(){
       Router router=new Router(getContext());
-      router.attach("/test",new Restlet(getContext()){
+      router.attach("/testA",new Restlet(getContext()){
         @Override public void handle(        Request request,        Response response){
           response.setEntity("hello, world",MediaType.TEXT_PLAIN);
+        }
+      }
+);
+      router.attach("/testB",new Restlet(getContext()){
+        @Override public void handle(        Request request,        Response response){
+          response.setEntity(getContext().getClientDispatcher().get("riap://component/app/testA").getEntityAsText(),MediaType.TEXT_PLAIN);
         }
       }
 );
@@ -15,11 +21,15 @@
     }
   }
 ;
-  component.getInternalRouter().attach(app);
+  component.getInternalRouter().attach("/app",app);
   try {
     component.start();
-    ClientResource res=new ClientResource("riap://component/test");
+    ClientResource res=new ClientResource("riap://component/app/testA");
     Representation rep=res.get();
+    assertEquals("hello, world",rep.getText());
+    rep=null;
+    res=new ClientResource("riap://component/app/testB");
+    rep=res.get();
     assertEquals("hello, world",rep.getText());
     component.stop();
   }
