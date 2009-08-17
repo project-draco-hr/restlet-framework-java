@@ -38,7 +38,7 @@
           mediaTypeBuffer.append((char)nextChar);
         }
  else {
-          throw new IOException("Control characters are not allowed within a mediaType name.");
+          throw new IOException("The " + (char)nextChar + " character isn't allowed in a media type name.");
         }
       }
  else       if (readingParamName) {
@@ -73,7 +73,7 @@
           paramNameBuffer.append((char)nextChar);
         }
  else {
-          throw new IOException("Separator and control characters are not allowed within a token.");
+          throw new IOException("The \"" + (char)nextChar + "\" character isn't allowed in a media type parameter name.");
         }
       }
  else       if (readingParamValue) {
@@ -103,7 +103,7 @@
                 quotedPair=false;
               }
  else {
-                throw new IOException("Invalid character detected in quoted string. Please check your value");
+                throw new IOException("Invalid character \"" + (char)nextChar + "\" detected in quoted string. Please check your value");
               }
             }
  else             if (HttpUtils.isDoubleQuote(nextChar)) {
@@ -116,7 +116,7 @@
               paramValueBuffer.append((char)nextChar);
             }
  else {
-              throw new IOException("Invalid character detected in quoted string. Please check your value");
+              throw new IOException("Invalid character \"" + (char)nextChar + "\" detected in quoted string. Please check your value");
             }
           }
         }
@@ -124,7 +124,7 @@
           paramValueBuffer.append((char)nextChar);
         }
  else {
-          throw new IOException("Separator and control characters are not allowed within a token");
+          throw new IOException("The \"" + (char)nextChar + "\" character isn't allowed in a media type parameter value.");
         }
       }
       nextChar=(nextIndex < nextValue.length()) ? nextValue.charAt(nextIndex++) : -1;
