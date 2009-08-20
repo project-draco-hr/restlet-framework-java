@@ -1,11 +1,11 @@
 {
-  for (  final Parameter header : headers) {
+  for (  Parameter header : headers) {
     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_LOCATION)) {
       response.setLocationRef(header.getValue());
     }
  else     if ((header.getName().equalsIgnoreCase(HttpConstants.HEADER_SET_COOKIE)) || (header.getName().equalsIgnoreCase(HttpConstants.HEADER_SET_COOKIE2))) {
       try {
-        final CookieReader cr=new CookieReader(header.getValue());
+        CookieReader cr=new CookieReader(header.getValue());
         response.getCookieSettings().add(cr.readCookieSetting());
       }
  catch (      Exception e) {
@@ -13,29 +13,29 @@
       }
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_WWW_AUTHENTICATE)) {
-      final ChallengeRequest request=org.restlet.engine.security.AuthenticatorUtils.parseAuthenticateHeader(header.getValue());
+      ChallengeRequest request=org.restlet.engine.security.AuthenticatorUtils.parseAuthenticateHeader(header.getValue());
       response.getChallengeRequests().add(request);
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_PROXY_AUTHENTICATE)) {
-      final ChallengeRequest request=org.restlet.engine.security.AuthenticatorUtils.parseAuthenticateHeader(header.getValue());
+      ChallengeRequest request=org.restlet.engine.security.AuthenticatorUtils.parseAuthenticateHeader(header.getValue());
       response.getProxyChallengeRequests().add(request);
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_SERVER)) {
       response.getServerInfo().setAgent(header.getValue());
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_ALLOW)) {
-      final HeaderReader hr=new HeaderReader(header.getValue());
+      HeaderReader hr=new HeaderReader(header.getValue());
       String value=hr.readValue();
-      final Set<Method> allowedMethods=response.getAllowedMethods();
+      Set<Method> allowedMethods=response.getAllowedMethods();
       while (value != null) {
         allowedMethods.add(Method.valueOf(value));
         value=hr.readValue();
       }
     }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_VARY)) {
-      final HeaderReader hr=new HeaderReader(header.getValue());
+      HeaderReader hr=new HeaderReader(header.getValue());
       String value=hr.readValue();
-      final Set<Dimension> dimensions=response.getDimensions();
+      Set<Dimension> dimensions=response.getDimensions();
       while (value != null) {
         if (value.equalsIgnoreCase(HttpConstants.HEADER_ACCEPT)) {
           dimensions.add(Dimension.MEDIA_TYPE);
