@@ -1,0 +1,19 @@
+{
+  final Reference baseRef=request.getResourceRef().getBaseRef();
+  request.setResourceRef(targetRef);
+  request.getAttributes().remove("org.restlet.http.headers");
+  dispatcher.handle(request,response);
+  response.setEntity(rewrite(response.getEntity()));
+  response.getAttributes().remove("org.restlet.http.headers");
+  if (response.getLocationRef() != null) {
+    final Template rt=new Template(this.targetTemplate);
+    rt.setLogger(getLogger());
+    final int matched=rt.parse(response.getLocationRef().toString(),request);
+    if (matched > 0) {
+      final String remainingPart=(String)request.getAttributes().get("rr");
+      if (remainingPart != null) {
+        response.setLocationRef(baseRef.toString() + remainingPart);
+      }
+    }
+  }
+}
