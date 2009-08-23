@@ -1,16 +1,12 @@
 {
   List<Variant> result=null;
   if (isAnnotated() && hasAnnotations()) {
-    MetadataService ms=(getApplication() == null) ? null : getApplication().getMetadataService();
-    if (ms == null) {
-      ms=new MetadataService();
-    }
     ConverterService cs=getConverterService();
     List<VariantInfo> annoVariants=null;
     for (    AnnotationInfo annotationInfo : annotations) {
       if (method.equals(annotationInfo.getRestletMethod())) {
         if (annotationInfo.getValue() != null) {
-          List<Metadata> allMetadata=ms.getAllMetadata(annotationInfo.getValue());
+          List<Metadata> allMetadata=getMetadataService().getAllMetadata(annotationInfo.getValue());
           for (          Metadata metadata : allMetadata) {
             if (metadata instanceof MediaType) {
               annoVariants=(List<VariantInfo>)cs.getVariants(annotationInfo.getJavaReturnType(),new Variant((MediaType)metadata));
