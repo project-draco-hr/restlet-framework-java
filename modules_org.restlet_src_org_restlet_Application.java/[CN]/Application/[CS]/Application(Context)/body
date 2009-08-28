@@ -4,7 +4,15 @@
     this.helper=new ApplicationHelper(this);
   }
   this.roles=new CopyOnWriteArrayList<Role>();
-  this.root=null;
+  this.clientRoot=new Restlet(){
+    @Override public void handle(    Request request,    Response response){
+      if (getContext() != null) {
+        getContext().getClientDispatcher().handle(request,response);
+      }
+    }
+  }
+;
+  this.serverRoot=null;
   this.services=new CopyOnWriteArrayList<Service>();
   this.services.add(new TunnelService(true,true));
   this.services.add(new StatusService());
