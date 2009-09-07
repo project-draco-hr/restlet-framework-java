@@ -1,7 +1,8 @@
 {
   registerBeanFactoryBean(BEAN_NAME,SomeServerResource.class,createServerResourcePropertyValues());
   this.finder.setBeanFactory(beanFactory);
-  final ServerResource actual=this.finder.create();
+  final ServerResource actual=this.finder.create(SomeServerResource.class,null,null);
   assertNotNull("Resource not found",actual);
   assertTrue("Resource not the correct type",actual instanceof SomeServerResource);
+  assertEquals("Resource not from spring context","spring",((SomeServerResource)actual).getSrc());
 }
