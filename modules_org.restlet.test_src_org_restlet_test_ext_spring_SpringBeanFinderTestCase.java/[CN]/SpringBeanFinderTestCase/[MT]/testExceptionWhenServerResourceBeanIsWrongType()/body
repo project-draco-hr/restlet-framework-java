@@ -1,0 +1,11 @@
+{
+  registerBeanFactoryBean(BEAN_NAME,String.class);
+  this.finder.setBeanFactory(beanFactory);
+  try {
+    this.finder.create();
+    fail("Exception not thrown");
+  }
+ catch (  ClassCastException cce) {
+    assertEquals("fish does not resolve to an instance of org.restlet.resource.ServerResource",cce.getMessage());
+  }
+}
