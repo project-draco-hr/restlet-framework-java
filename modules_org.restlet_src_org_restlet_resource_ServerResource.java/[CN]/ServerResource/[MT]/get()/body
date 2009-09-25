@@ -1,4 +1,11 @@
 {
-  setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
-  return null;
+  Representation result=null;
+  AnnotationInfo annotationInfo=getAnnotation(Method.GET);
+  if (annotationInfo != null) {
+    result=doHandle(annotationInfo);
+  }
+ else {
+    setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+  }
+  return result;
 }
