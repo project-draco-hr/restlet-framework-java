@@ -109,7 +109,7 @@
         this.currentEntry.getSource().getLinks().add(this.currentLink);
         this.state=State.FEED_ENTRY_SOURCE;
       }
-      if (Relation.ALTERNATE == this.currentLink.getRel()) {
+      if (this.currentContentWriter != null) {
         String content=this.currentContentWriter.getWriter().toString().trim();
         contentDepth=-1;
         if ("".equals(content)) {
@@ -123,6 +123,7 @@
             currentContent.setInlineContent(new StringRepresentation(content));
           }
         }
+        this.currentContentWriter=null;
       }
     }
  else     if (localName.equalsIgnoreCase("entry")) {
@@ -159,6 +160,7 @@
         }
         this.state=State.FEED_ENTRY;
       }
+      this.currentContentWriter=null;
     }
   }
   this.currentText=null;
