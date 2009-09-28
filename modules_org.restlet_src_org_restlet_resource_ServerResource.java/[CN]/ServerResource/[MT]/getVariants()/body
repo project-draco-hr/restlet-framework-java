@@ -8,15 +8,17 @@
         if (getMethod().equals(annotationInfo.getRestletMethod())) {
           if (annotationInfo.getValue() != null) {
             List<Metadata> allMetadata=getMetadataService().getAllMetadata(annotationInfo.getValue());
-            for (            Metadata metadata : allMetadata) {
-              if (metadata instanceof MediaType) {
-                annoVariants=(List<VariantInfo>)cs.getVariants(annotationInfo.getJavaReturnType(),new Variant((MediaType)metadata));
-                if (annoVariants != null) {
-                  if (result == null) {
-                    result=new ArrayList<Variant>();
-                  }
-                  for (                  VariantInfo v : annoVariants) {
-                    result.add(new VariantInfo(v,annotationInfo));
+            if (allMetadata != null) {
+              for (              Metadata metadata : allMetadata) {
+                if (metadata instanceof MediaType) {
+                  annoVariants=(List<VariantInfo>)cs.getVariants(annotationInfo.getJavaReturnType(),new Variant((MediaType)metadata));
+                  if (annoVariants != null) {
+                    if (result == null) {
+                      result=new ArrayList<Variant>();
+                    }
+                    for (                    VariantInfo v : annoVariants) {
+                      result.add(new VariantInfo(v,annotationInfo));
+                    }
                   }
                 }
               }
