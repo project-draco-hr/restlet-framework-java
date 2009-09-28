@@ -5,7 +5,7 @@
   clientComponent.getClients().add(Protocol.HTTP);
   proxyComponent.getClients().add(Protocol.HTTP);
   final String target="http://localhost:" + (TEST_PORT + 1) + "{rr}";
-  final Redirector proxy=new Redirector(proxyComponent.getContext().createChildContext(),target,Redirector.MODE_DISPATCHER);
+  final Redirector proxy=new Redirector(proxyComponent.getContext().createChildContext(),target,Redirector.MODE_CLIENT_DISPATCHER);
   final Restlet trace=new Restlet(originComponent.getContext().createChildContext()){
     @Override public void handle(    Request request,    Response response){
       final String message="Resource URI:  " + request.getResourceRef() + '\n'+ "Base URI:      "+ request.getResourceRef().getBaseRef()+ '\n'+ "Remaining part: "+ request.getResourceRef().getRemainingPart()+ '\n'+ "Method name:   "+ request.getMethod()+ '\n';
