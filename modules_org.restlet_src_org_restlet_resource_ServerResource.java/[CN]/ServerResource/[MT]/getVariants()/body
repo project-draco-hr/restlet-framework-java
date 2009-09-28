@@ -1,39 +1,42 @@
 {
-  List<Variant> result=null;
-  if (isAnnotated() && hasAnnotations()) {
-    ConverterService cs=getConverterService();
-    List<VariantInfo> annoVariants=null;
-    for (    AnnotationInfo annotationInfo : getAnnotations()) {
-      if (getMethod().equals(annotationInfo.getRestletMethod())) {
-        if (annotationInfo.getValue() != null) {
-          List<Metadata> allMetadata=getMetadataService().getAllMetadata(annotationInfo.getValue());
-          for (          Metadata metadata : allMetadata) {
-            if (metadata instanceof MediaType) {
-              annoVariants=(List<VariantInfo>)cs.getVariants(annotationInfo.getJavaReturnType(),new Variant((MediaType)metadata));
-              if (annoVariants != null) {
-                if (result == null) {
-                  result=new ArrayList<Variant>();
-                }
-                for (                VariantInfo v : annoVariants) {
-                  result.add(new VariantInfo(v,annotationInfo));
+  List<Variant> result=this.variants;
+  if (result == null) {
+    if (isAnnotated() && hasAnnotations()) {
+      ConverterService cs=getConverterService();
+      List<VariantInfo> annoVariants=null;
+      for (      AnnotationInfo annotationInfo : getAnnotations()) {
+        if (getMethod().equals(annotationInfo.getRestletMethod())) {
+          if (annotationInfo.getValue() != null) {
+            List<Metadata> allMetadata=getMetadataService().getAllMetadata(annotationInfo.getValue());
+            for (            Metadata metadata : allMetadata) {
+              if (metadata instanceof MediaType) {
+                annoVariants=(List<VariantInfo>)cs.getVariants(annotationInfo.getJavaReturnType(),new Variant((MediaType)metadata));
+                if (annoVariants != null) {
+                  if (result == null) {
+                    result=new ArrayList<Variant>();
+                  }
+                  for (                  VariantInfo v : annoVariants) {
+                    result.add(new VariantInfo(v,annotationInfo));
+                  }
                 }
               }
             }
           }
-        }
  else {
-          annoVariants=(List<VariantInfo>)cs.getVariants(annotationInfo.getJavaReturnType(),null);
-          if (annoVariants != null) {
-            if (result == null) {
-              result=new ArrayList<Variant>();
-            }
-            for (            VariantInfo v : annoVariants) {
-              result.add(new VariantInfo(v,annotationInfo));
+            annoVariants=(List<VariantInfo>)cs.getVariants(annotationInfo.getJavaReturnType(),null);
+            if (annoVariants != null) {
+              if (result == null) {
+                result=new ArrayList<Variant>();
+              }
+              for (              VariantInfo v : annoVariants) {
+                result.add(new VariantInfo(v,annotationInfo));
+              }
             }
           }
         }
       }
     }
+    this.variants=result;
   }
   return result;
 }
