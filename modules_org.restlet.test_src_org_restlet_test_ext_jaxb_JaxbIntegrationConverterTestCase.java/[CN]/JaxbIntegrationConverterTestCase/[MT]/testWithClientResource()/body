@@ -1,0 +1,15 @@
+{
+  ClientResource sampleResource=new ClientResource(SERVER_URI);
+  List<Preference<MediaType>> m=new ArrayList<Preference<MediaType>>();
+  m.add(new Preference<MediaType>(MediaType.APPLICATION_XML));
+  sampleResource.getClientInfo().setAcceptedMediaTypes(m);
+  Sample sample=new Sample(IN_STRING);
+  sample=sampleResource.post(sample,Sample.class);
+  assertEquals(HELLO_OUT_STRING,sample.getVal());
+  sampleResource.put(sample);
+  assertTrue(sampleResource.getStatus().isSuccess());
+  sample=sampleResource.put(sample,Sample.class);
+  assertEquals(HELLO_OUT_STRING,sample.getVal());
+  sample=sampleResource.get(Sample.class);
+  assertEquals(IN_STRING,sample.getVal());
+}
