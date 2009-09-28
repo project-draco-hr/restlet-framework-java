@@ -1,0 +1,24 @@
+{
+  if (metadata == null) {
+    String sRef=serviceRef.toString();
+    if (!sRef.endsWith("/")) {
+      sRef+="/";
+    }
+    ClientResource resource=new ClientResource(sRef + "$metadata");
+    resource.setChallengeResponse(getCredentials());
+    try {
+      getLogger().log(Level.INFO,"Get the metadata for " + serviceRef + " at "+ resource.getReference());
+      Representation rep=resource.get();
+      if (resource.getStatus().isSuccess()) {
+        this.metadata=new Metadata(rep,resource.getReference());
+      }
+ else {
+        getLogger().log(Level.SEVERE,"Can't get the metadata for " + serviceRef + " (response's status: "+ resource.getStatus()+ ")");
+      }
+    }
+ catch (    Exception e) {
+      getLogger().log(Level.SEVERE,"Can't get the metadata for " + serviceRef,e);
+    }
+  }
+  return metadata;
+}

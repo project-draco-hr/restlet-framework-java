@@ -1,0 +1,66 @@
+{
+  Iterator<T> result=null;
+  if (this.entityClass == null) {
+    this.entityClass=ReflectUtils.getEntryClass(feed);
+  }
+  if (feed == null || metadata == null || entityClass == null) {
+    return result;
+  }
+  List<T> list=new ArrayList<T>();
+  EntityType entityType=metadata.getEntityType(entityClass);
+  for (  Entry entry : feed.getEntries()) {
+    try {
+      Object entity=entityClass.newInstance();
+      Representation content=entry.getContent().getInlineContent();
+      DomRepresentation dr=new DomRepresentation(content);
+      NodeSet propertyNodes=dr.getNodes("/properties/*");
+      for (      Node node : propertyNodes) {
+        String nodeName=node.getNodeName();
+        int index=nodeName.indexOf(":");
+        if (index != -1) {
+          nodeName=nodeName.substring(index + 1);
+        }
+        Property property=metadata.getProperty(entity,nodeName);
+        try {
+          ReflectUtils.setProperty(entity,property,node.getTextContent());
+        }
+ catch (        Exception e) {
+          getLogger().log(Level.WARNING,"Can't set the property " + nodeName + " of "+ entity.getClass(),e);
+        }
+      }
+      for (      Link link : entry.getLinks()) {
+        if (link.getContent() != null && link.getTitle() != null) {
+          String propertyName=ReflectUtils.normalize(link.getTitle());
+          AssociationEnd association=metadata.getAssociation(entityType,propertyName);
+          if (association != null) {
+            try {
+              Feed linkFeed=null;
+              if (association.isToMany()) {
+                linkFeed=new Feed(link.getContent().getInlineContent());
+              }
+ else {
+                linkFeed=new Feed();
+                linkFeed.getEntries().add(new Entry(link.getContent().getInlineContent()));
+              }
+              Class<?> linkClass=ReflectUtils.getEntryClass(linkFeed);
+              Iterator<?> iterator=createFeedParser(linkFeed,linkClass,metadata).parse();
+              ReflectUtils.setProperty(entity,propertyName,association.isToMany(),iterator,linkClass);
+            }
+ catch (            Exception e) {
+              getLogger().log(Level.WARNING,"Can't retrieve associated property " + propertyName,e);
+            }
+          }
+        }
+      }
+      list.add((T)entity);
+    }
+ catch (    InstantiationException e) {
+      getLogger().log(Level.WARNING,"Can't instantiate the constructor without arguments of the entity class: " + entityClass,e);
+    }
+catch (    IllegalAccessException e) {
+      getLogger().log(Level.WARNING,"Can't instantiate the constructor without arguments of the entity class: " + entityClass,e);
+    }
+  }
+  result=list.iterator();
+  return result;
+}

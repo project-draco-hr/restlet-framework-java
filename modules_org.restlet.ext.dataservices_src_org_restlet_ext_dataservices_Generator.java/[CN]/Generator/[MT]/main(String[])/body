@@ -1,0 +1,59 @@
+{
+  boolean error=(args.length != 2);
+  String step="step 1 - check parameters";
+  File outputDir=null;
+  Metadata metadata;
+  if (!error) {
+    outputDir=new File(args[1]);
+    if (outputDir.exists()) {
+      step="step 2 - check the ouput directory";
+      error=!outputDir.isDirectory();
+    }
+ else {
+      try {
+        step="step 3 - create the ouput directory";
+        outputDir.mkdirs();
+      }
+ catch (      Throwable e) {
+        error=true;
+      }
+    }
+  }
+  if (!error) {
+    String dataServiceUri=null;
+    if (args[0].endsWith("$metadata")) {
+      dataServiceUri=args[0].substring(0,args[0].length() - 10);
+    }
+ else     if (args[0].endsWith("/")) {
+      dataServiceUri=args[0].substring(0,args[0].length() - 1);
+    }
+ else {
+      dataServiceUri=args[0];
+    }
+    step="step 4 - get the metadata descriptor";
+    Session session=new Session(dataServiceUri);
+    if ((metadata=session.getMetadata()) == null) {
+      error=true;
+    }
+ else {
+      step="step 5 - generate source code";
+      Generator svcUtil=new Generator(new Reference(dataServiceUri),metadata);
+      try {
+        svcUtil.generateSourceCode(outputDir);
+      }
+ catch (      Exception e) {
+        error=true;
+      }
+    }
+  }
+  if (error) {
+    System.out.println("ADO.NET Data Services code generation tool");
+    System.out.println("******************************************");
+    System.out.println("Error encountered at this step: ");
+    System.out.println(step);
+    System.out.println();
+    System.out.println("Please check that you provide the following parameters:");
+    System.out.println("   - a valid URI for the remote service");
+    System.out.println("   - a valid directory path where to generate the files.");
+  }
+}

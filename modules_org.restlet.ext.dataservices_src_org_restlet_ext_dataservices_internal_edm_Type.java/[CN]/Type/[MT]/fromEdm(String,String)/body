@@ -1,0 +1,54 @@
+{
+  if (value == null) {
+    return null;
+  }
+  Object result=null;
+  try {
+    if (adoNetType.endsWith("Binary")) {
+      result=value.getBytes();
+    }
+ else     if (adoNetType.endsWith("Boolean")) {
+      result=Boolean.valueOf(value);
+    }
+ else     if (adoNetType.endsWith("DateTime")) {
+      result=DateUtils.parse(value,DateUtils.FORMAT_RFC_3339);
+    }
+ else     if (adoNetType.endsWith("DateTimeOffset")) {
+      result=DateUtils.parse(value,DateUtils.FORMAT_RFC_3339);
+    }
+ else     if (adoNetType.endsWith("Time")) {
+      result=timeFormat.parseObject(value);
+    }
+ else     if (adoNetType.endsWith("Decimal")) {
+      result=decimalFormat.parseObject(value);
+    }
+ else     if (adoNetType.endsWith("Single")) {
+      result=singleFormat.parseObject(value);
+    }
+ else     if (adoNetType.endsWith("Double")) {
+      result=doubleFormat.parseObject(value);
+    }
+ else     if (adoNetType.endsWith("Guid")) {
+      result=value;
+    }
+ else     if (adoNetType.endsWith("Int16")) {
+      result=Short.valueOf(value);
+    }
+ else     if (adoNetType.endsWith("Int32")) {
+      result=Integer.valueOf(value);
+    }
+ else     if (adoNetType.endsWith("Int64")) {
+      result=Long.valueOf(value);
+    }
+ else     if (adoNetType.endsWith("Byte")) {
+      result=Byte.valueOf(value);
+    }
+ else     if (adoNetType.endsWith("String")) {
+      result=value;
+    }
+  }
+ catch (  Exception e) {
+    Logger.getLogger(Type.class.getCanonicalName()).warning("Cannot convert " + value + " from this EDM type "+ adoNetType);
+  }
+  return result;
+}

@@ -1,0 +1,19 @@
+{
+  EntityType result=null;
+  String className=entityClass.getName();
+  int index=className.lastIndexOf(".");
+  if (index != -1) {
+    className=className.substring(index + 1);
+  }
+  for (Iterator<EntityContainer> iec=getContainers().iterator(); result == null && iec.hasNext(); ) {
+    EntityContainer entityContainer=iec.next();
+    for (Iterator<EntitySet> ies=entityContainer.getEntities().iterator(); result == null && ies.hasNext(); ) {
+      EntitySet entitySet=ies.next();
+      EntityType type=entitySet.getType();
+      if (type.getClassName().equals(className)) {
+        result=type;
+      }
+    }
+  }
+  return result;
+}

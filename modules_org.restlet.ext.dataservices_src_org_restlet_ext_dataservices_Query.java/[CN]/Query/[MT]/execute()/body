@@ -1,0 +1,37 @@
+{
+  if (!isExecuted()) {
+    String targetUri=createTargetUri();
+    ClientResource resource=new ClientResource(targetUri);
+    resource.setChallengeResponse(session.getCredentials());
+    Representation result=new StringRepresentation(resource.get().getText());
+    System.out.println(result.getText());
+    session.setLatestRequest(resource.getRequest());
+    session.setLatestResponse(resource.getResponse());
+    if (resource.getStatus().isSuccess()) {
+switch (guessType(targetUri)) {
+case TYPE_ENTITY_SET:
+        setFeed(new Feed(result));
+      break;
+case TYPE_ENTITY:
+    Feed feed=new Feed();
+  feed.getEntries().add(new Entry(result));
+setFeed(feed);
+break;
+case TYPE_UNKNOWN:
+Representation rep=new StringRepresentation(result.getText());
+String string=rep.getText().substring(0,100);
+if (string.contains("<feed")) {
+setFeed(new Feed(rep));
+}
+ else if (string.contains("<entry")) {
+Feed f=new Feed();
+f.getEntries().add(new Entry(result));
+setFeed(f);
+}
+default :
+break;
+}
+}
+setExecuted(true);
+}
+}

@@ -1,0 +1,12 @@
+{
+  Entry entry=new Entry();
+  entry.setContent(toContent(entity));
+  ClientResource resource=new ClientResource(new Reference(serviceRef.toString() + entitySetName));
+  resource.setChallengeResponse(getCredentials());
+  resource.post(entry);
+  this.latestRequest=resource.getRequest();
+  this.latestResponse=resource.getResponse();
+  if (!resource.getStatus().isSuccess()) {
+    throw new ResourceException(resource.getStatus(),"Can't add entity to this entity set " + resource.getReference());
+  }
+}

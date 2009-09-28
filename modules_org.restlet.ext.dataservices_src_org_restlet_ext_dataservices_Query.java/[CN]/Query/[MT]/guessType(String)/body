@@ -1,0 +1,21 @@
+{
+  String uri=targetUri;
+  int index=targetUri.indexOf("?");
+  if (index != -1) {
+    uri=uri.substring(0,index);
+  }
+  int type=TYPE_UNKNOWN;
+  String entitySet="{service}.svc/{entitySet}";
+  String entity=entitySet + "({keyPredicate})";
+  Template t=new Template(entity,Template.MODE_EQUALS);
+  t.getVariables().put("entitySet",new Variable(Variable.TYPE_ALL,"",true,false));
+  t.getVariables().put("keyPredicate",new Variable(Variable.TYPE_ALL,"",true,false));
+  if (t.match(uri) != -1) {
+    return TYPE_ENTITY;
+  }
+  t.setPattern(entitySet);
+  if (t.match(uri) != -1) {
+    return TYPE_ENTITY_SET;
+  }
+  return type;
+}

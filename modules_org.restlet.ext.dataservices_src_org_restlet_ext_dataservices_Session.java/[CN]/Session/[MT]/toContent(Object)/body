@@ -1,0 +1,31 @@
+{
+  DomRepresentation dr=new DomRepresentation(MediaType.APPLICATION_XML){
+    @Override protected Transformer createTransformer() throws IOException {
+      Transformer transformer=super.createTransformer();
+      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,"yes");
+      return transformer;
+    }
+  }
+;
+  Document document=dr.getDocument();
+  Element properties=document.createElementNS("http://schemas.microsoft.com/ado/2007/08/dataservices/metadata","properties");
+  for (  Field field : entity.getClass().getDeclaredFields()) {
+    String getter="get" + field.getName().substring(0,1).toUpperCase() + field.getName().substring(1);
+    for (    Method method : entity.getClass().getDeclaredMethods()) {
+      if (method.getReturnType() != null && getter.equals(method.getName()) && method.getParameterTypes().length == 0) {
+        Element property=document.createElementNS("http://schemas.microsoft.com/ado/2007/08/dataservices",field.getName());
+        Object value=method.invoke(entity,(Object[])null);
+        Text text=document.createTextNode((value != null) ? value.toString() : "");
+        property.appendChild(text);
+        properties.appendChild(property);
+        break;
+      }
+    }
+  }
+  document.appendChild(properties);
+  document.normalizeDocument();
+  Content content=new Content();
+  content.setInlineContent(dr);
+  content.setToEncode(false);
+  return content;
+}

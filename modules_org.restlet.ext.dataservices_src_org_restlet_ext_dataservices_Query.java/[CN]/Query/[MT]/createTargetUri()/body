@@ -1,0 +1,25 @@
+{
+  String service=getSession().getServiceRef().toString();
+  StringBuilder result=new StringBuilder(service);
+  String subpath=(getSubpath() == null) ? "" : getSubpath();
+  if (service.endsWith("/")) {
+    if (subpath.startsWith("/")) {
+      result.append(subpath.substring(1));
+    }
+ else {
+      result.append(subpath);
+    }
+  }
+ else {
+    if (subpath.startsWith("/")) {
+      result.append(subpath);
+    }
+ else {
+      result.append("/").append(subpath);
+    }
+  }
+  if (getQuery() != null) {
+    result.append("?").append(getQuery());
+  }
+  return result.toString();
+}

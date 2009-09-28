@@ -1,0 +1,46 @@
+{
+  StringBuffer result=new StringBuffer();
+  if (type.getKeys() != null && !type.getKeys().isEmpty()) {
+    if (type.getKeys().size() == 1) {
+      String keyName=type.getKeys().get(0).getNormalizedName();
+      String getterName="get" + keyName.substring(0,1).toUpperCase() + keyName.substring(1);
+      try {
+        Method getter=entity.getClass().getDeclaredMethod(getterName,(Class[])null);
+        Object value=getter.invoke(entity,(Object[])null);
+        if (value != null) {
+          result.append("'").append(value.toString()).append("'");
+        }
+ else {
+          result.append("''");
+        }
+      }
+ catch (      Exception e) {
+      }
+    }
+ else {
+      Iterator<Property> it=type.getKeys().iterator();
+      while (it.hasNext()) {
+        Property key=it.next();
+        String keyName=key.getNormalizedName();
+        result.append(key.getName()).append("=");
+        String getterName="get" + keyName.substring(0,1).toUpperCase() + keyName.substring(1);
+        try {
+          Method getter=entity.getClass().getDeclaredMethod(getterName,(Class[])null);
+          Object value=getter.invoke(entity,(Object[])null);
+          if (value != null) {
+            result.append("'").append(value.toString()).append("'");
+          }
+ else {
+            result.append("''");
+          }
+        }
+ catch (        Exception e) {
+        }
+        if (it.hasNext()) {
+          result.append(",");
+        }
+      }
+    }
+  }
+  return result.toString();
+}
