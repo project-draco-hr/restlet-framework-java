@@ -5,7 +5,13 @@
     try {
       Context.getCurrentLogger().fine("The following converter was selected for the " + source + " object: "+ ch);
       if (target == null) {
-        target=new Variant();
+        List<VariantInfo> variants=ch.getVariants(source.getClass());
+        if ((variants != null) && !variants.isEmpty()) {
+          target=variants.get(0);
+        }
+ else {
+          target=new Variant();
+        }
       }
       result=ch.toRepresentation(source,target,resource);
       if (result != null) {
