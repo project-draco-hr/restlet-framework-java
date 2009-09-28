@@ -1,29 +1,23 @@
 {
-  if (Edition.CURRENT != Edition.GAE) {
-    if (representation == null) {
-      return null;
-    }
-    final PipeStream pipe=new PipeStream();
-    final Application application=Application.getCurrent();
-    org.restlet.service.TaskService taskService=(application == null) ? new org.restlet.service.TaskService() : application.getTaskService();
-    taskService.execute(new Runnable(){
-      public void run(){
-        try {
-          OutputStream os=pipe.getOutputStream();
-          representation.write(os);
-          os.write(-1);
-          os.close();
-        }
- catch (        IOException ioe) {
-          Context.getCurrentLogger().log(Level.FINE,"Error while writing to the piped input stream.",ioe);
-        }
-      }
-    }
-);
-    return pipe.getInputStream();
-  }
- else {
-    Context.getCurrentLogger().log(Level.WARNING,"The GAE edition is unable to get an InputStream out of an OutputRepresentation.");
+  if (representation == null) {
     return null;
   }
+  final PipeStream pipe=new PipeStream();
+  final Application application=Application.getCurrent();
+  org.restlet.service.TaskService taskService=(application == null) ? new org.restlet.service.TaskService() : application.getTaskService();
+  taskService.execute(new Runnable(){
+    public void run(){
+      try {
+        OutputStream os=pipe.getOutputStream();
+        representation.write(os);
+        os.write(-1);
+        os.close();
+      }
+ catch (      IOException ioe) {
+        Context.getCurrentLogger().log(Level.FINE,"Error while writing to the piped input stream.",ioe);
+      }
+    }
+  }
+);
+  return pipe.getInputStream();
 }
