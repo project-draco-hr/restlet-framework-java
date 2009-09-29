@@ -1,18 +1,18 @@
 {
   Client client=new Client(new Context(),Arrays.asList(Protocol.HTTP));
-  Request request=new Request(Method.POST,SERVER_URI);
+  Request request=new Request(Method.POST,uri);
   request.setEntity(new JaxbRepresentation<Sample>(new Sample(IN_STRING)));
   Response response=client.handle(request);
   JaxbRepresentation<Sample> resultRepresentation=new JaxbRepresentation<Sample>(response.getEntity(),Sample.class);
   Sample sample=resultRepresentation.getObject();
   assertEquals(HELLO_OUT_STRING,sample.getVal());
-  request=new Request(Method.PUT,SERVER_URI);
+  request=new Request(Method.PUT,uri);
   request.setEntity(new JaxbRepresentation<Sample>(new Sample(IN_STRING)));
   response=client.handle(request);
   resultRepresentation=new JaxbRepresentation<Sample>(response.getEntity(),Sample.class);
   sample=resultRepresentation.getObject();
   assertEquals(HELLO_OUT_STRING,sample.getVal());
-  request=new Request(Method.GET,SERVER_URI);
+  request=new Request(Method.GET,uri);
   response=client.handle(request);
   resultRepresentation=new JaxbRepresentation<Sample>(response.getEntity(),Sample.class);
   sample=resultRepresentation.getObject();

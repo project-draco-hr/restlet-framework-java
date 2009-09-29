@@ -2,8 +2,8 @@
   if (getMetadata() == null || entity == null) {
     return;
   }
-  EntityType type=getMetadata().getEntityType(entity.getClass());
-  AssociationEnd association=getMetadata().getAssociation(type,propertyName);
+  EntityType type=((Metadata)getMetadata()).getEntityType(entity.getClass());
+  AssociationEnd association=((Metadata)getMetadata()).getAssociation(type,propertyName);
   if (association != null) {
     EntityType propertyEntityType=association.getType();
     try {
@@ -11,7 +11,7 @@
       if (propertyClass == null) {
         propertyClass=Type.getJavaClass(propertyEntityType);
       }
-      Iterator<?> iterator=createQuery(getMetadata().getSubpath(entity,propertyName),propertyClass).iterator();
+      Iterator<?> iterator=createQuery(getSubpath(entity,propertyName),propertyClass).iterator();
       ReflectUtils.setProperty(entity,propertyName,association.isToMany(),iterator,propertyClass);
     }
  catch (    Exception e) {
@@ -19,7 +19,7 @@
     }
   }
  else {
-    String ref=getServiceRef().toString() + getMetadata().getSubpath(entity,propertyName);
+    String ref=getServiceRef().toString() + getSubpath(entity,propertyName);
     try {
       ClientResource resource=new ClientResource(ref);
       resource.setChallengeResponse(getCredentials());
@@ -28,7 +28,7 @@
         DomRepresentation xmlRep=new DomRepresentation(rep);
         Node node=xmlRep.getNode("//" + propertyName);
         if (node != null) {
-          Property property=getMetadata().getProperty(entity,propertyName);
+          Property property=((Metadata)getMetadata()).getProperty(entity,propertyName);
           try {
             ReflectUtils.setProperty(entity,property,node.getTextContent());
           }
