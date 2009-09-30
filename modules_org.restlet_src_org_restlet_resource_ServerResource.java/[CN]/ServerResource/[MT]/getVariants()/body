@@ -1,6 +1,7 @@
 {
   List<Variant> result=this.variants;
   if (result == null) {
+    result=new ArrayList<Variant>();
     if (isAnnotated() && hasAnnotations()) {
       ConverterService cs=getConverterService();
       List<VariantInfo> annoVariants=null;
@@ -13,9 +14,6 @@
                 if (metadata instanceof MediaType) {
                   annoVariants=(List<VariantInfo>)cs.getVariants(annotationInfo.getJavaReturnType(),new Variant((MediaType)metadata));
                   if (annoVariants != null) {
-                    if (result == null) {
-                      result=new ArrayList<Variant>();
-                    }
                     for (                    VariantInfo v : annoVariants) {
                       result.add(new VariantInfo(v,annotationInfo));
                     }
@@ -27,9 +25,6 @@
  else {
             annoVariants=(List<VariantInfo>)cs.getVariants(annotationInfo.getJavaReturnType(),null);
             if (annoVariants != null) {
-              if (result == null) {
-                result=new ArrayList<Variant>();
-              }
               for (              VariantInfo v : annoVariants) {
                 result.add(new VariantInfo(v,annotationInfo));
               }
