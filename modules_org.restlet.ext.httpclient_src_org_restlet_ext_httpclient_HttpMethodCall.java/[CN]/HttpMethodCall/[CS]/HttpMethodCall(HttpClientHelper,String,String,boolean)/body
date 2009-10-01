@@ -3,51 +3,45 @@
   this.clientHelper=helper;
   if (requestUri.startsWith("http")) {
     if (method.equalsIgnoreCase(Method.GET.getName())) {
-      this.httpMethod=new GetMethod(requestUri);
+      this.httpRequest=new HttpGet(requestUri);
     }
  else     if (method.equalsIgnoreCase(Method.POST.getName())) {
-      this.httpMethod=new PostMethod(requestUri);
+      this.httpRequest=new HttpPost(requestUri);
     }
  else     if (method.equalsIgnoreCase(Method.PUT.getName())) {
-      this.httpMethod=new PutMethod(requestUri);
+      this.httpRequest=new HttpPut(requestUri);
     }
  else     if (method.equalsIgnoreCase(Method.HEAD.getName())) {
-      this.httpMethod=new HeadMethod(requestUri);
+      this.httpRequest=new HttpHead(requestUri);
     }
  else     if (method.equalsIgnoreCase(Method.DELETE.getName())) {
-      this.httpMethod=new DeleteMethod(requestUri);
-    }
- else     if (method.equalsIgnoreCase(Method.CONNECT.getName())) {
-      final HostConfiguration host=new HostConfiguration();
-      host.setHost(new URI(requestUri,false));
-      this.httpMethod=new ConnectMethod(host);
+      this.httpRequest=new HttpDelete(requestUri);
     }
  else     if (method.equalsIgnoreCase(Method.OPTIONS.getName())) {
-      this.httpMethod=new OptionsMethod(requestUri);
+      this.httpRequest=new HttpOptions(requestUri);
     }
  else     if (method.equalsIgnoreCase(Method.TRACE.getName())) {
-      this.httpMethod=new TraceMethod(requestUri);
+      this.httpRequest=new HttpTrace(requestUri);
     }
  else {
-      this.httpMethod=new EntityEnclosingMethod(requestUri){
-        @Override public String getName(){
+      this.httpRequest=new HttpEntityEnclosingRequestBase(){
+        @Override public URI getURI(){
+          try {
+            return new URI(requestUri);
+          }
+ catch (          URISyntaxException e) {
+            getLogger().log(Level.WARNING,"Invalid URI syntax",e);
+            return null;
+          }
+        }
+        @Override public String getMethod(){
           return method;
         }
       }
 ;
     }
-    this.httpMethod.setFollowRedirects(this.clientHelper.isFollowRedirects());
-    this.httpMethod.setDoAuthentication(false);
-    if (this.clientHelper.getRetryHandler() != null) {
-      try {
-        this.httpMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,Engine.loadClass(this.clientHelper.getRetryHandler()).newInstance());
-      }
- catch (      Exception e) {
-        this.clientHelper.getLogger().log(Level.WARNING,"An error occurred during the instantiation of the retry handler.",e);
-      }
-    }
     this.responseHeadersAdded=false;
-    setConfidential(this.httpMethod.getURI().getScheme().equalsIgnoreCase(Protocol.HTTPS.getSchemeName()));
+    setConfidential(this.httpRequest.getURI().getScheme().equalsIgnoreCase(Protocol.HTTPS.getSchemeName()));
   }
  else {
     throw new IllegalArgumentException("Only HTTP or HTTPS resource URIs are allowed here");

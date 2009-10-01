@@ -1,12 +1,12 @@
 {
   InputStream result=null;
   try {
-    final InputStream responseBodyAsStream=getHttpMethod().getResponseBodyAsStream();
-    if (responseBodyAsStream != null) {
-      result=new FilterInputStream(responseBodyAsStream){
+    final InputStream responseStream=getHttpResponse().getEntity().getContent();
+    if (responseStream != null) {
+      result=new FilterInputStream(responseStream){
         @Override public void close() throws IOException {
           super.close();
-          getHttpMethod().releaseConnection();
+          getHttpResponse().getEntity().consumeContent();
         }
       }
 ;

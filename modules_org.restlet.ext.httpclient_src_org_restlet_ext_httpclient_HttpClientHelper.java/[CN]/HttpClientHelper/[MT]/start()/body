@@ -1,13 +1,11 @@
 {
   super.start();
-  final MultiThreadedHttpConnectionManager connectionManager=new MultiThreadedHttpConnectionManager();
-  connectionManager.getParams().setDefaultMaxConnectionsPerHost(getMaxConnectionsPerHost());
-  connectionManager.getParams().setMaxTotalConnections(getMaxTotalConnections());
-  connectionManager.getParams().setTcpNoDelay(getTcpNoDelay());
-  this.httpClient=new HttpClient(connectionManager);
-  getHttpClient().getParams().setAuthenticationPreemptive(false);
-  getHttpClient().getParams().setConnectionManagerTimeout(getConnectionManagerTimeout());
-  getHttpClient().getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
-  getHttpClient().getParams().setSoTimeout(getReadTimeout());
+  HttpParams params=new BasicHttpParams();
+  configure(params);
+  SchemeRegistry schemeRegistry=new SchemeRegistry();
+  configure(schemeRegistry);
+  ClientConnectionManager connectionManager=createClientConnectionManager(params,schemeRegistry);
+  this.httpClient=new DefaultHttpClient(connectionManager,params);
+  configure(this.httpClient);
   getLogger().info("Starting the HTTP client");
 }

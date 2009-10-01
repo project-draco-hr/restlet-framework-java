@@ -2,37 +2,42 @@
   Status result=null;
   try {
     final Representation entity=request.getEntity();
-    for (    final Parameter header : getRequestHeaders()) {
-      getHttpMethod().addRequestHeader(header.getName(),header.getValue());
+    for (    Parameter header : getRequestHeaders()) {
+      if (!header.getName().equals(HttpConstants.HEADER_CONTENT_LENGTH)) {
+        getHttpRequest().addHeader(header.getName(),header.getValue());
+      }
     }
-    if ((entity != null) && (getHttpMethod() instanceof EntityEnclosingMethod)) {
-      final EntityEnclosingMethod eem=(EntityEnclosingMethod)getHttpMethod();
-      eem.setRequestEntity(new RequestEntity(){
+    if ((entity != null) && (getHttpRequest() instanceof HttpEntityEnclosingRequestBase)) {
+      final HttpEntityEnclosingRequestBase eem=(HttpEntityEnclosingRequestBase)getHttpRequest();
+      eem.setEntity(new AbstractHttpEntity(){
         public long getContentLength(){
           return entity.getSize();
         }
-        public String getContentType(){
-          return (entity.getMediaType() != null) ? entity.getMediaType().toString() : null;
+        public Header getContentType(){
+          return new BasicHeader(HttpConstants.HEADER_CONTENT_TYPE,(entity.getMediaType() != null) ? entity.getMediaType().toString() : null);
+        }
+        public InputStream getContent() throws IOException, IllegalStateException {
+          return entity.getStream();
+        }
+        public boolean isStreaming(){
+          return (entity.getSize() == Representation.UNKNOWN_SIZE);
+        }
+        public void writeTo(        OutputStream os) throws IOException {
+          entity.write(os);
         }
         public boolean isRepeatable(){
           return !entity.isTransient();
         }
-        public void writeRequest(        OutputStream os) throws IOException {
-          entity.write(os);
-        }
       }
 );
     }
-    this.clientHelper.getHttpClient().executeMethod(getHttpMethod());
+    this.httpResponse=this.clientHelper.getHttpClient().execute(getHttpRequest());
     result=new Status(getStatusCode(),null,getReasonPhrase(),null);
-    if (getHttpMethod().getResponseBodyAsStream() == null) {
-      getHttpMethod().releaseConnection();
-    }
   }
  catch (  IOException ioe) {
     this.clientHelper.getLogger().log(Level.WARNING,"An error occurred during the communication with the remote HTTP server.",ioe);
     result=new Status(Status.CONNECTOR_ERROR_COMMUNICATION,ioe);
-    getHttpMethod().releaseConnection();
+    getHttpRequest().abort();
   }
   return result;
 }

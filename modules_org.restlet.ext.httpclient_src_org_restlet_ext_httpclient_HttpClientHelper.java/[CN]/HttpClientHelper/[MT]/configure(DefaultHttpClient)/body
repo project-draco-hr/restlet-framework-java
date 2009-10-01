@@ -1,0 +1,11 @@
+{
+  if (getRetryHandler() != null) {
+    try {
+      HttpRequestRetryHandler retryHandler=(HttpRequestRetryHandler)Engine.loadClass(getRetryHandler()).newInstance();
+      this.httpClient.setHttpRequestRetryHandler(retryHandler);
+    }
+ catch (    Exception e) {
+      getLogger().log(Level.WARNING,"An error occurred during the instantiation of the retry handler.",e);
+    }
+  }
+}

@@ -1,8 +1,10 @@
 {
-  final Series<Parameter> result=super.getResponseHeaders();
+  Series<Parameter> result=super.getResponseHeaders();
   if (!this.responseHeadersAdded) {
-    for (    final Header header : getHttpMethod().getResponseHeaders()) {
-      result.add(header.getName(),header.getValue());
+    if ((getHttpResponse() != null) && (getHttpResponse().getAllHeaders() != null)) {
+      for (      Header header : getHttpResponse().getAllHeaders()) {
+        result.add(header.getName(),header.getValue());
+      }
     }
     this.responseHeadersAdded=true;
   }
