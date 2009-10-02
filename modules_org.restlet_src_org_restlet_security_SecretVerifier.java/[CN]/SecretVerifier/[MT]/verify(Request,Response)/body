@@ -4,12 +4,10 @@
     result=RESULT_MISSING;
   }
  else {
-    String identifier=request.getChallengeResponse().getIdentifier();
-    char[] inputSecret=request.getChallengeResponse().getSecret();
+    String identifier=getIdentifier(request,response);
+    char[] inputSecret=getSecret(request,response);
     if (verify(identifier,inputSecret)) {
-      if (request.getClientInfo().getSubject() != null) {
-        request.getClientInfo().getSubject().getPrincipals().add(createUserPrincipal(identifier));
-      }
+      request.getClientInfo().setUser(new User(identifier));
     }
  else {
       result=RESULT_INVALID;

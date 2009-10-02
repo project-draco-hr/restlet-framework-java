@@ -1,13 +1,5 @@
 {
-  Principal foundPrincipal=null;
-  for (  Principal principal : request.getClientInfo().getSubject().getPrincipals()) {
-    if (principal instanceof UserPrincipal) {
-      if (foundPrincipal != null) {
-        throw new RuntimeException("Multiple UserPrincipal's in Request.clientInfo.subject:" + " don't know which one to use.");
-      }
-      foundPrincipal=principal;
-    }
-  }
+  Principal foundPrincipal=(request.getChallengeResponse() == null) ? null : request.getChallengeResponse().getPrincipal();
   if (foundPrincipal != null)   return foundPrincipal;
   return SecurityUtil.getSslClientCertPrincipal(this.request);
 }
