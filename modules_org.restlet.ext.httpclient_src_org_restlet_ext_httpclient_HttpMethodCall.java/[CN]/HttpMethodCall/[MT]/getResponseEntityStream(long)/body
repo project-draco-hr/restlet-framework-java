@@ -1,7 +1,7 @@
 {
   InputStream result=null;
   try {
-    final InputStream responseStream=getHttpResponse().getEntity().getContent();
+    InputStream responseStream=(getHttpResponse() == null) ? null : (getHttpResponse().getEntity() == null) ? null : getHttpResponse().getEntity().getContent();
     if (responseStream != null) {
       result=new FilterInputStream(responseStream){
         @Override public void close() throws IOException {
