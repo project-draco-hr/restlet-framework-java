@@ -1,0 +1,13 @@
+{
+  int result=RESULT_VALID;
+  try {
+    Subject subject=new Subject();
+    subject.getPrincipals().addAll(request.getClientInfo().getPrincipals());
+    LoginContext loginContext=new LoginContext(getName(),subject,createCallbackHandler(request,response),getConfiguration());
+    loginContext.login();
+  }
+ catch (  LoginException le) {
+    result=RESULT_INVALID;
+  }
+  return result;
+}
