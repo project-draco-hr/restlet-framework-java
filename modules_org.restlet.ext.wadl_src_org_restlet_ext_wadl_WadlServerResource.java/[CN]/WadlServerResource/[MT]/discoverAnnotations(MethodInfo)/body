@@ -1,0 +1,31 @@
+{
+  MetadataService metadataService=getMetadataService();
+  List<AnnotationInfo> annotations=getAnnotations();
+  if (annotations != null && metadataService != null) {
+    for (    AnnotationInfo annotationInfo : annotations) {
+      if (info.getName().equals(annotationInfo.getRestletMethod())) {
+        Class<?>[] classes=annotationInfo.getJavaParameterTypes();
+        if (classes != null && classes.length == 1) {
+          List<Variant> variants=(List<Variant>)getApplication().getConverterService().getVariants(classes[0],null);
+          if (variants != null) {
+            for (            Variant variant : variants) {
+              if (!info.getRequest().getRepresentations().contains(variant)) {
+                info.addRequestRepresentation(variant);
+              }
+            }
+          }
+        }
+        if (annotationInfo.getJavaReturnType() != null) {
+          List<Variant> variants=(List<Variant>)getApplication().getConverterService().getVariants(annotationInfo.getJavaReturnType(),null);
+          if (variants != null) {
+            for (            Variant variant : variants) {
+              if (!info.getResponse().getRepresentations().contains(variant)) {
+                info.addResponseRepresentation(variant);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

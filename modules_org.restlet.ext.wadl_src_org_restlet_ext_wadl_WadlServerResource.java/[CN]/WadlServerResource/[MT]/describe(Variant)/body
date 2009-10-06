@@ -1,0 +1,25 @@
+{
+  Representation result=null;
+  if (variant != null) {
+    ResourceInfo resourceInfo=new ResourceInfo();
+    describe(resourceInfo);
+    if (getTitle() != null && !"".equals(getTitle())) {
+      DocumentationInfo doc=null;
+      if (resourceInfo.getDocumentations().isEmpty()) {
+        doc=new DocumentationInfo();
+        resourceInfo.getDocumentations().add(doc);
+      }
+ else {
+        doc=resourceInfo.getDocumentations().get(0);
+      }
+      doc.setTitle(getTitle());
+    }
+    if (MediaType.APPLICATION_WADL.equals(variant.getMediaType())) {
+      result=new WadlRepresentation(resourceInfo);
+    }
+ else     if (MediaType.TEXT_HTML.equals(variant.getMediaType())) {
+      result=new WadlRepresentation(resourceInfo).getHtmlRepresentation();
+    }
+  }
+  return result;
+}
