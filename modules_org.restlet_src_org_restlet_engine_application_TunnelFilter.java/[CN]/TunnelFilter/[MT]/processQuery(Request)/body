@@ -1,12 +1,12 @@
 {
-  final TunnelService tunnelService=getTunnelService();
+  TunnelService tunnelService=getTunnelService();
   boolean queryModified=false;
-  final Reference resourceRef=request.getResourceRef();
+  Reference resourceRef=request.getResourceRef();
   if (resourceRef.hasQuery()) {
-    final Form query=resourceRef.getQueryAsForm();
-    final Method method=request.getMethod();
+    Form query=resourceRef.getQueryAsForm();
+    Method method=request.getMethod();
     if (tunnelService.isMethodTunnel()) {
-      final String methodName=query.getFirstValue(tunnelService.getMethodParameter());
+      String methodName=query.getFirstValue(tunnelService.getMethodParameter());
       Method tunnelledMethod=Method.valueOf(methodName);
       if (tunnelledMethod != null && (Method.POST.equals(method) || Method.OPTIONS.equals(tunnelledMethod))) {
         request.setMethod(tunnelledMethod);
@@ -15,15 +15,15 @@
       }
     }
     if (tunnelService.isPreferencesTunnel()) {
-      final String charSetParameter=tunnelService.getCharacterSetParameter();
-      final String encodingParameter=tunnelService.getEncodingParameter();
-      final String languageParameter=tunnelService.getLanguageParameter();
-      final String mediaTypeParameter=tunnelService.getMediaTypeParameter();
-      final String acceptedCharSet=query.getFirstValue(charSetParameter);
-      final String acceptedEncoding=query.getFirstValue(encodingParameter);
-      final String acceptedLanguage=query.getFirstValue(languageParameter);
-      final String acceptedMediaType=query.getFirstValue(mediaTypeParameter);
-      final ClientInfo clientInfo=request.getClientInfo();
+      String charSetParameter=tunnelService.getCharacterSetParameter();
+      String encodingParameter=tunnelService.getEncodingParameter();
+      String languageParameter=tunnelService.getLanguageParameter();
+      String mediaTypeParameter=tunnelService.getMediaTypeParameter();
+      String acceptedCharSet=query.getFirstValue(charSetParameter);
+      String acceptedEncoding=query.getFirstValue(encodingParameter);
+      String acceptedLanguage=query.getFirstValue(languageParameter);
+      String acceptedMediaType=query.getFirstValue(mediaTypeParameter);
+      ClientInfo clientInfo=request.getClientInfo();
       Metadata metadata=getMetadata(acceptedCharSet);
       if ((metadata == null) && (acceptedCharSet != null)) {
         metadata=CharacterSet.valueOf(acceptedCharSet);
