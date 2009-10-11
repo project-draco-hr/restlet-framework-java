@@ -1,6 +1,6 @@
 {
   getNext().handle(request,response);
-  if (request.getMethod().isSafe() && response.getStatus().isRedirection() && response.getLocationRef() != null) {
+  if (isFollowRedirects() && response.getStatus().isRedirection() && (response.getLocationRef() != null)&& request.getMethod().isSafe()) {
     Reference newTargetRef=response.getLocationRef();
     if ((references != null) && references.contains(newTargetRef)) {
       getLogger().warning("Infinite redirection loop detected with URI: " + newTargetRef);
@@ -17,20 +17,16 @@
       handle(request,response,references,0);
     }
   }
- else   if (request.getMethod().isIdempotent() && response.getStatus().isRecoverableError()) {
-    if (isRetryOnError() && (retryAttempt < getRetryAttempts())) {
-      if ((getRequestEntity() == null) || getRequestEntity().isAvailable()) {
-        getLogger().log(Level.INFO,"A recoverable error was detected (" + response.getStatus().getCode() + "), attempting again in "+ getRetryDelay()+ " ms.");
-        if (getRetryDelay() > 0) {
-          try {
-            Thread.sleep(getRetryDelay());
-          }
- catch (          InterruptedException e) {
-            getLogger().log(Level.FINE,"Retry delay sleep was interrupted",e);
-          }
-        }
-        handle(request,response,references,++retryAttempt);
+ else   if (isRetryOnError() && response.getStatus().isRecoverableError() && request.getMethod().isIdempotent()&& (retryAttempt < getRetryAttempts())&& ((getRequestEntity() == null) || getRequestEntity().isAvailable())) {
+    getLogger().log(Level.INFO,"A recoverable error was detected (" + response.getStatus().getCode() + "), attempting again in "+ getRetryDelay()+ " ms.");
+    if (getRetryDelay() > 0) {
+      try {
+        Thread.sleep(getRetryDelay());
+      }
+ catch (      InterruptedException e) {
+        getLogger().log(Level.FINE,"Retry delay sleep was interrupted",e);
       }
     }
+    handle(request,response,references,++retryAttempt);
   }
 }
