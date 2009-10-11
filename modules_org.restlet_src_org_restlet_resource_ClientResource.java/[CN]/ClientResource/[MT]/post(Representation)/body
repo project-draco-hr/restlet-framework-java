@@ -1,5 +1,9 @@
 {
   setMethod(Method.POST);
   getRequest().setEntity(entity);
-  return handle();
+  Representation result=handle();
+  if (getStatus().isError()) {
+    throw new ResourceException(getStatus());
+  }
+  return result;
 }
