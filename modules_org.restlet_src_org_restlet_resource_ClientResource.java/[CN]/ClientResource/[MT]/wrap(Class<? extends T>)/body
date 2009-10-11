@@ -20,6 +20,9 @@
             getRequest().setEntity(entity);
           }
           handle();
+          if (getStatus().isError()) {
+            throw new ResourceException(getStatus());
+          }
           if (annotation.getJavaReturnType() != null) {
             result=toObject(getResponseEntity(),annotation.getJavaReturnType());
           }
