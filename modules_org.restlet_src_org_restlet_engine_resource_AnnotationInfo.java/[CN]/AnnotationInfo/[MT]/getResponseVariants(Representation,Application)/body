@@ -1,0 +1,38 @@
+{
+  List<Variant> result=null;
+  String value=getValue();
+  boolean compatibleRequestEntity=true;
+  if (value != null) {
+    int colonIndex=value.indexOf(':');
+    if (colonIndex != -1) {
+      value=getValue().substring(colonIndex + 1);
+    }
+    if (value != null) {
+      if (requestEntity != null) {
+        List<Variant> requestVariants=getRequestVariants(application.getMetadataService());
+        if ((requestVariants != null) && !requestVariants.isEmpty()) {
+          compatibleRequestEntity=false;
+          for (int i=0; (!compatibleRequestEntity) && (i < requestVariants.size()); i++) {
+            compatibleRequestEntity=(requestVariants.get(i).isCompatible(requestEntity));
+          }
+        }
+      }
+      if (compatibleRequestEntity) {
+        List<MediaType> mediaTypes=application.getMetadataService().getAllMediaTypes(value);
+        if (mediaTypes != null) {
+          if (result == null) {
+            result=new ArrayList<Variant>();
+          }
+          for (          MediaType mediaType : mediaTypes) {
+            result.add(new Variant(mediaType));
+          }
+        }
+      }
+    }
+  }
+  if (compatibleRequestEntity && (result == null)) {
+    ConverterService cs=application.getConverterService();
+    result=(List<Variant>)cs.getVariants(getJavaOutputType(),null);
+  }
+  return result;
+}

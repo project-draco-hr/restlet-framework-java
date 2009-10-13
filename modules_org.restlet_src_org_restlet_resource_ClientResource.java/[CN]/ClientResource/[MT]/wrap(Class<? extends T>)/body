@@ -7,15 +7,16 @@
       if (annotation != null) {
         ClientInfo currentClientInfo=getClientInfo();
         try {
-          List<Variant> responseVariants=annotation.getResponseVariants(getApplication());
+          Representation requestEntity=null;
+          if ((args != null) && args.length > 0) {
+            requestEntity=toRepresentation(args[0]);
+            getRequest().setEntity(requestEntity);
+          }
+          List<Variant> responseVariants=annotation.getResponseVariants(requestEntity,getApplication());
           if (responseVariants != null) {
             updateClientInfo(responseVariants);
           }
           setMethod(annotation.getRestletMethod());
-          if ((args != null) && args.length > 0) {
-            Representation entity=toRepresentation(args[0]);
-            getRequest().setEntity(entity);
-          }
           handle();
           if (getStatus().isError()) {
             throw new ResourceException(getStatus());
