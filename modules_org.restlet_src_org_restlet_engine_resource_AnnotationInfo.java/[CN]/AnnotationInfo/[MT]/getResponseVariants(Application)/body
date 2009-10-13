@@ -3,16 +3,11 @@
   String value=getValue();
   if (value != null) {
     int colonIndex=value.indexOf(':');
-    if (colonIndex == -1) {
-      if ((getJavaReturnType() == null) || ((getJavaParameterTypes() != null) && (getJavaParameterTypes().length > 0))) {
-        value=null;
-      }
-    }
- else {
+    if (colonIndex != -1) {
       value=getValue().substring(colonIndex + 1);
     }
     if (value != null) {
-      List<MediaType> mediaTypes=metadataService.getAllMediaTypes(value);
+      List<MediaType> mediaTypes=application.getMetadataService().getAllMediaTypes(value);
       if (mediaTypes != null) {
         if (result == null) {
           result=new ArrayList<Variant>();
@@ -22,6 +17,10 @@
         }
       }
     }
+  }
+  if (result == null) {
+    ConverterService cs=application.getConverterService();
+    result=(List<Variant>)cs.getVariants(getJavaOutputType(),null);
   }
   return result;
 }

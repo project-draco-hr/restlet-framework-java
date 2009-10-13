@@ -7,12 +7,9 @@
       if (annotation != null) {
         ClientInfo currentClientInfo=getClientInfo();
         try {
-          List<Variant> responseVariants=annotation.getResponseVariants(getApplication().getMetadataService());
+          List<Variant> responseVariants=annotation.getResponseVariants(getApplication());
           if (responseVariants != null) {
             updateClientInfo(responseVariants);
-          }
- else           if (annotation.getJavaReturnType() != null) {
-            updateClientInfo(annotation.getJavaReturnType());
           }
           setMethod(annotation.getRestletMethod());
           if ((args != null) && args.length > 0) {
@@ -23,8 +20,8 @@
           if (getStatus().isError()) {
             throw new ResourceException(getStatus());
           }
-          if (annotation.getJavaReturnType() != null) {
-            result=toObject(getResponseEntity(),annotation.getJavaReturnType());
+          if (annotation.getJavaOutputType() != null) {
+            result=toObject(getResponseEntity(),annotation.getJavaOutputType());
           }
         }
   finally {

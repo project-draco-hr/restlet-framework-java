@@ -3,31 +3,13 @@
   if (result == null) {
     result=new ArrayList<Variant>();
     if (isAnnotated() && hasAnnotations()) {
-      ConverterService cs=getConverterService();
-      List<VariantInfo> annoVariants=null;
+      List<Variant> annoVariants=null;
       for (      AnnotationInfo annotationInfo : getAnnotations()) {
         if (getMethod().equals(annotationInfo.getRestletMethod())) {
-          if (annotationInfo.getValue() != null) {
-            List<Metadata> allMetadata=getMetadataService().getAllMetadata(annotationInfo.getValue());
-            if (allMetadata != null) {
-              for (              Metadata metadata : allMetadata) {
-                if (metadata instanceof MediaType) {
-                  annoVariants=(List<VariantInfo>)cs.getVariants(annotationInfo.getJavaReturnType(),new Variant((MediaType)metadata));
-                  if (annoVariants != null) {
-                    for (                    VariantInfo v : annoVariants) {
-                      result.add(new VariantInfo(v,annotationInfo));
-                    }
-                  }
-                }
-              }
-            }
-          }
- else {
-            annoVariants=(List<VariantInfo>)cs.getVariants(annotationInfo.getJavaReturnType(),null);
-            if (annoVariants != null) {
-              for (              VariantInfo v : annoVariants) {
-                result.add(new VariantInfo(v,annotationInfo));
-              }
+          annoVariants=annotationInfo.getResponseVariants(getApplication());
+          if (annoVariants != null) {
+            for (            Variant v : annoVariants) {
+              result.add(new VariantInfo(v,annotationInfo));
             }
           }
         }
