@@ -3,14 +3,14 @@
   if (this.context != null) {
     Reference targetRef=null;
     if ((base != null) && !base.equals("")) {
-      final Reference baseRef=new Reference(base);
+      Reference baseRef=new Reference(base);
       targetRef=new Reference(baseRef,href);
     }
  else {
       targetRef=new Reference(href);
     }
-    final String targetUri=targetRef.getTargetRef().toString();
-    final Response response=this.context.getClientDispatcher().get(targetUri);
+    String targetUri=targetRef.getTargetRef().toString();
+    Response response=this.context.getClientDispatcher().get(targetUri);
     if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
       try {
         result=new StreamSource(response.getEntity().getStream());
