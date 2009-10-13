@@ -1,0 +1,11 @@
+{
+  final Series<Parameter> result=super.getRequestHeaders();
+  if (!this.requestHeadersAdded) {
+    final Set<String> names=this.request.getHeaderNames();
+    for (    String name : names) {
+      result.add(new Parameter(name,this.request.getHeader(name)));
+    }
+    this.requestHeadersAdded=true;
+  }
+  return result;
+}

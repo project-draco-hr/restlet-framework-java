@@ -1,0 +1,22 @@
+{
+  SslContextFactory sslContextFactory=HttpsUtils.getSslContextFactory(this);
+  if (sslContextFactory == null) {
+    KeyStore keyStore=KeyStore.getInstance(getKeystoreType());
+    FileInputStream fis=getKeystorePath() == null ? null : new FileInputStream(getKeystorePath());
+    char[] password=getKeystorePassword() == null ? null : getKeystorePassword().toCharArray();
+    keyStore.load(fis,password);
+    if (fis != null) {
+      fis.close();
+    }
+    KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(getCertAlgorithm());
+    keyManagerFactory.init(keyStore,getKeyPassword().toCharArray());
+    TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance(getCertAlgorithm());
+    trustManagerFactory.init(keyStore);
+    sslContext=SSLContext.getInstance(getSslProtocol());
+    sslContext.init(keyManagerFactory.getKeyManagers(),trustManagerFactory.getTrustManagers(),null);
+  }
+ else {
+    sslContext=sslContextFactory.createSslContext();
+  }
+  super.start();
+}
