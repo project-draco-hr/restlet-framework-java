@@ -1,31 +1,23 @@
 {
   boolean result=false;
-  char[] inputSecretDigest=inputSecret;
-  if (getInputAlgorithm() == null) {
-    if (getOutputAlgorithm() != null) {
-      inputSecretDigest=digest(inputSecret,getOutputAlgorithm());
+  char[] secretDigest=secret;
+  if (getAlgorithm() == null) {
+    if (getWrappedAlgorithm() != null) {
+      secretDigest=digest(identifier,secret,getWrappedAlgorithm());
     }
  else {
     }
-    result=getWrappedVerifier().verify(identifier,inputSecretDigest);
+    result=getWrappedVerifier().verify(identifier,secretDigest);
   }
  else {
-    if (getOutputAlgorithm() == null) {
-      if (getWrappedVerifier() instanceof LocalVerifier) {
-        LocalVerifier localVerifier=(LocalVerifier)getWrappedVerifier();
-        result=compare(inputSecretDigest,digest(localVerifier.getSecret(identifier),getInputAlgorithm()));
-      }
- else {
-        Context.getCurrentLogger().log(Level.WARNING,"The wrapped verifier must be a LocalVerifier to allow digesting of output secrets.");
-      }
+    if (getWrappedAlgorithm() == null) {
+      result=compare(secretDigest,getWrappedSecretDigest(identifier));
+    }
+ else     if (getAlgorithm().equals(getWrappedAlgorithm())) {
+      result=getWrappedVerifier().verify(identifier,secretDigest);
     }
  else {
-      if (getInputAlgorithm().equals(getOutputAlgorithm())) {
-        result=getWrappedVerifier().verify(identifier,inputSecretDigest);
-      }
- else {
-        Context.getCurrentLogger().log(Level.WARNING,"The input and output algorithms can't be different.");
-      }
+      Context.getCurrentLogger().log(Level.WARNING,"The input and output algorithms can't be different.");
     }
   }
   return result;

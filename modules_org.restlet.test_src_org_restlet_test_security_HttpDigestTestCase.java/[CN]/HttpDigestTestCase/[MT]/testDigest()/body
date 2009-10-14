@@ -1,0 +1,31 @@
+{
+  Context context=new Context();
+  DigestAuthenticator da=new DigestAuthenticator(context,"TestRealm","mySecretServerKey");
+  MapVerifier mapVerifier=new MapVerifier();
+  mapVerifier.getLocalSecrets().put("scott","tiger".toCharArray());
+  da.setWrappedVerifier(mapVerifier);
+  ClientResource cr=new ClientResource("http://localhost:8182/");
+  cr.setNext(da);
+  try {
+    cr.get();
+  }
+ catch (  ResourceException re) {
+    assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED,cr.getStatus());
+    ChallengeRequest c1=cr.getChallengeRequests().get(0);
+    String realm=c1.getRealm();
+    String nonce=c1.getParameters().getFirstValue("nonce");
+    assertEquals(ChallengeScheme.HTTP_DIGEST,c1.getScheme());
+    assertEquals("TestRealm",realm);
+    ChallengeResponse c2=new ChallengeResponse(ChallengeScheme.HTTP_DIGEST);
+    c2.setIdentifier("scott");
+    c2.setSecret("tiger");
+    c2.getParameters().add("realm",realm);
+    c2.getParameters().add("nonce",nonce);
+    c2.getParameters().add("uri","/");
+    c2.getParameters().add("qop","auth");
+    c2.getParameters().add("nc","");
+    c2.getParameters().add("cnonce","");
+    c2.getParameters().add("response","");
+    cr.setChallengeResponse(c2);
+  }
+}

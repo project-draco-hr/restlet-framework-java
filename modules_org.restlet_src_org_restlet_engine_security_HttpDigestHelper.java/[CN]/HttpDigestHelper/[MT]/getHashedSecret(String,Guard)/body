@@ -1,7 +1,7 @@
 {
-  char[] result=guard.getSecretResolver().resolve(identifier);
-  if (result != null) {
-    return DigestUtils.toMd5(identifier + ":" + guard.getRealm()+ ":"+ new String(result));
+  char[] secret=guard.getSecretResolver().resolve(identifier);
+  if (secret != null) {
+    return DigestUtils.toHttpDigest(identifier,secret,guard.getRealm());
   }
  else {
     return null;

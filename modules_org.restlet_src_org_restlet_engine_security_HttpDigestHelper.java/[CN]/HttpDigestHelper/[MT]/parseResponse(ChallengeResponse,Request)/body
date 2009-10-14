@@ -1,3 +1,15 @@
 {
-  AuthenticatorUtils.parseParameters(cr.getCredentials(),cr.getParameters());
+  Series<Parameter> parameters=cr.getParameters();
+  AuthenticatorUtils.parseParameters(cr.getCredentials(),parameters);
+  String username=parameters.getFirstValue("username");
+  parameters.removeAll("username");
+  String response=parameters.getFirstValue("response");
+  parameters.removeAll("response");
+  if ((username != null) && (response != null)) {
+    cr.setIdentifier(username);
+    cr.setSecret(response);
+  }
+ else {
+    getLogger().warning("Invalid credentials given by client with IP: " + ((request != null) ? request.getClientInfo().getAddress() : "?"));
+  }
 }

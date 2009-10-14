@@ -1,0 +1,58 @@
+{
+  int result=RESULT_VALID;
+  ChallengeResponse cr=request.getChallengeResponse();
+  if (cr == null) {
+    result=RESULT_MISSING;
+  }
+ else {
+    Series<Parameter> parameters=cr.getParameters();
+    String nonce=parameters.getFirstValue("nonce");
+    String uri=parameters.getFirstValue("uri");
+    String qop=parameters.getFirstValue("qop");
+    String nc=parameters.getFirstValue("nc");
+    String cnonce=parameters.getFirstValue("cnonce");
+    String username=getIdentifier(request,response);
+    String cresponse=new String(getSecret(request,response));
+    try {
+      if (!HttpDigestHelper.isNonceValid(nonce,getDigestAuthenticator().getServerKey(),getDigestAuthenticator().getNonceLifespan())) {
+        result=RESULT_STALE;
+      }
+    }
+ catch (    Exception ce) {
+      result=RESULT_INVALID;
+    }
+    if (result == RESULT_VALID) {
+      if (AuthenticatorUtils.anyNull(nonce,uri)) {
+        result=RESULT_MISSING;
+      }
+ else {
+        Reference resourceRef=request.getResourceRef();
+        String requestUri=resourceRef.getPath();
+        if ((resourceRef.getQuery() != null) && (uri.indexOf('?') > -1)) {
+          requestUri+="?" + resourceRef.getQuery();
+        }
+        if (uri.equals(requestUri)) {
+          char[] a1=getWrappedSecretDigest(username);
+          if (a1 != null) {
+            String a2=DigestUtils.toMd5(request.getMethod() + ":" + requestUri);
+            StringBuilder expectedResponse=new StringBuilder().append(a1).append(':').append(nonce);
+            if (!AuthenticatorUtils.anyNull(qop,cnonce,nc)) {
+              expectedResponse.append(':').append(nc).append(':').append(cnonce).append(':').append(qop);
+            }
+            expectedResponse.append(':').append(a2);
+            if (!cresponse.equals(DigestUtils.toMd5(expectedResponse.toString()))) {
+              result=RESULT_INVALID;
+            }
+          }
+ else {
+            result=RESULT_INVALID;
+          }
+        }
+ else {
+          result=RESULT_INVALID;
+        }
+      }
+    }
+  }
+  return result;
+}

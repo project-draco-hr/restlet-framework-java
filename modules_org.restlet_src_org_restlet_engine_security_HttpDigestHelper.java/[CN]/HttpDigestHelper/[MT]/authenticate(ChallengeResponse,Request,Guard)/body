@@ -1,12 +1,12 @@
 {
-  final Series<Parameter> credentials=cr.getParameters();
-  final String username=credentials.getFirstValue("username");
-  final String nonce=credentials.getFirstValue("nonce");
-  final String response=credentials.getFirstValue("response");
-  final String uri=credentials.getFirstValue("uri");
-  final String qop=credentials.getFirstValue("qop");
-  final String nc=credentials.getFirstValue("nc");
-  final String cnonce=credentials.getFirstValue("cnonce");
+  Series<Parameter> parameters=cr.getParameters();
+  String username=cr.getIdentifier();
+  String response=new String(cr.getSecret());
+  String nonce=parameters.getFirstValue("nonce");
+  String uri=parameters.getFirstValue("uri");
+  String qop=parameters.getFirstValue("qop");
+  String nc=parameters.getFirstValue("nc");
+  String cnonce=parameters.getFirstValue("cnonce");
   try {
     if (!isNonceValid(nonce,guard.getServerKey(),guard.getNonceLifespan())) {
       return Guard.AUTHENTICATION_STALE;
@@ -16,16 +16,16 @@
     return Guard.AUTHENTICATION_INVALID;
   }
   if (!AuthenticatorUtils.anyNull(username,nonce,response,uri)) {
-    final Reference resourceRef=request.getResourceRef();
+    Reference resourceRef=request.getResourceRef();
     String requestUri=resourceRef.getPath();
     if ((resourceRef.getQuery() != null) && (uri.indexOf('?') > -1)) {
       requestUri+="?" + resourceRef.getQuery();
     }
     if (uri.equals(requestUri)) {
-      final String a1=getHashedSecret(username,guard);
+      String a1=getHashedSecret(username,guard);
       if (a1 != null) {
-        final String a2=DigestUtils.toMd5(request.getMethod() + ":" + requestUri);
-        final StringBuffer expectedResponse=new StringBuffer(a1).append(':').append(nonce);
+        String a2=DigestUtils.toMd5(request.getMethod() + ":" + requestUri);
+        StringBuffer expectedResponse=new StringBuffer(a1).append(':').append(nonce);
         if (!AuthenticatorUtils.anyNull(qop,cnonce,nc)) {
           expectedResponse.append(':').append(nc).append(':').append(cnonce).append(':').append(qop);
         }

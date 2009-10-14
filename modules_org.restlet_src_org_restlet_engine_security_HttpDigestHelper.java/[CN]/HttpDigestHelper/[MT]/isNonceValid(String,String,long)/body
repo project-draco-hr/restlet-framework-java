@@ -1,13 +1,13 @@
 {
   try {
-    final String decodedNonce=new String(Base64.decode(nonce));
-    final long nonceTimeMS=Long.parseLong(decodedNonce.substring(0,decodedNonce.indexOf(':')));
+    String decodedNonce=new String(Base64.decode(nonce));
+    long nonceTimeMS=Long.parseLong(decodedNonce.substring(0,decodedNonce.indexOf(':')));
     if (decodedNonce.equals(nonceTimeMS + ":" + DigestUtils.toMd5(nonceTimeMS + ":" + secretKey))) {
-      return lifespanMS > (System.currentTimeMillis() - nonceTimeMS);
+      return lifespan > (System.currentTimeMillis() - nonceTimeMS);
     }
   }
  catch (  Exception e) {
-    throw new Exception("error parsing nonce: " + e);
+    throw new Exception("Error detected parsing nonce: " + e);
   }
-  throw new Exception("nonce does not match secretKey");
+  throw new Exception("The nonce does not match secretKey");
 }

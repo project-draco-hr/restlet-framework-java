@@ -1,7 +1,7 @@
 {
   MapVerifier mv=new MapVerifier();
-  mv.getSecrets().put("scott","RuPXcqGIjq3/JsetpH/XUC15bgc=".toCharArray());
-  DigestVerifier sdv=new DigestVerifier(Digest.ALGORITHM_SHA_1,Digest.ALGORITHM_SHA_1,mv);
+  mv.getLocalSecrets().put("scott","RuPXcqGIjq3/JsetpH/XUC15bgc=".toCharArray());
+  DigestVerifier<MapVerifier> sdv=new DigestVerifier<MapVerifier>(Digest.ALGORITHM_SHA_1,mv,Digest.ALGORITHM_SHA_1);
   assertTrue(sdv.verify("scott","RuPXcqGIjq3/JsetpH/XUC15bgc=".toCharArray()));
   assertFalse(sdv.verify("scott","xxxxx".toCharArray()));
   assertFalse(sdv.verify("tom","RuPXcqGIjq3/JsetpH/XUC15bgc=".toCharArray()));

@@ -1,0 +1,13 @@
+{
+  char[] result=null;
+  if (getWrappedAlgorithm() == null) {
+    result=digest(identifier,getWrappedSecret(identifier),getAlgorithm());
+  }
+ else   if (getAlgorithm().equals(getWrappedAlgorithm())) {
+    result=getWrappedSecret(identifier);
+  }
+ else {
+    Context.getCurrentLogger().log(Level.WARNING,"The digest algorithms can't be different.");
+  }
+  return result;
+}

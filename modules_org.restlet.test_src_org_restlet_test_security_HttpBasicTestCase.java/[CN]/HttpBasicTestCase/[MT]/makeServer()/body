@@ -5,9 +5,11 @@
   this.uri="http://localhost:" + port + "/";
   final Application application=new Application(){
     @Override public Restlet createInboundRoot(){
-      HttpBasicTestCase.this.guard=new TestGuard(getContext());
-      HttpBasicTestCase.this.guard.setNext(new AuthenticatedRestlet());
-      return HttpBasicTestCase.this.guard;
+      HttpBasicTestCase.this.verifier=new TestVerifier();
+      HttpBasicTestCase.this.authenticator=new ChallengeAuthenticator(getContext(),ChallengeScheme.HTTP_BASIC,HttpBasicTestCase.class.getSimpleName());
+      HttpBasicTestCase.this.authenticator.setVerifier(HttpBasicTestCase.this.verifier);
+      HttpBasicTestCase.this.authenticator.setNext(new AuthenticatedRestlet());
+      return HttpBasicTestCase.this.authenticator;
     }
   }
 ;

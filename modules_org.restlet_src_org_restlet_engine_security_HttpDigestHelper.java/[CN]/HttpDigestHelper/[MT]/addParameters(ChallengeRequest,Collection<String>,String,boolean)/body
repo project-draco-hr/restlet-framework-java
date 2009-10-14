@@ -1,0 +1,15 @@
+{
+  Series<Parameter> parameters=challengeRequest.getParameters();
+  StringBuffer domain=new StringBuffer();
+  for (  String baseUri : domainUris) {
+    domain.append(baseUri).append(' ');
+  }
+  if (domain.length() > 0) {
+    domain.delete(domain.length() - 1,domain.length());
+    parameters.add("domain",domain.toString());
+  }
+  parameters.add("nonce",makeNonce(serverKey));
+  if (stale) {
+    parameters.add("stale","true");
+  }
+}
