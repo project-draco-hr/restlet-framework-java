@@ -1,8 +1,8 @@
 {
   ChallengeResponse result=super.getChallengeResponse();
   if (!this.securityAdded) {
-    final String authorization=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_AUTHORIZATION);
-    result=AuthenticatorUtils.parseResponse(this,authorization);
+    String authorization=getHttpCall().getRequestHeaders().getValues(HttpConstants.HEADER_AUTHORIZATION);
+    result=AuthenticatorUtils.parseResponse(this,authorization,getHttpCall().getRequestHeaders());
     setChallengeResponse(result);
     this.securityAdded=true;
   }
