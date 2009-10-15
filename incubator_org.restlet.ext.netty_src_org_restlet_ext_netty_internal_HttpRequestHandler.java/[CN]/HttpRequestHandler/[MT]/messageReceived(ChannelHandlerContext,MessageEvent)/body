@@ -21,12 +21,15 @@
     content=chunk.getContent();
   }
   close=HttpHeaders.Values.CLOSE.equalsIgnoreCase(request.getHeader(HttpHeaders.Names.CONNECTION)) || request.getProtocolVersion().equals(HttpVersion.HTTP_1_0) && !HttpHeaders.Values.KEEP_ALIVE.equalsIgnoreCase(request.getHeader(HttpHeaders.Names.CONNECTION));
-  HttpResponse response=new DefaultHttpResponse(HttpVersion.HTTP_1_1,HttpResponseStatus.OK);
+  HttpResponse response=null;
   if ((content != null) && (!isLastChunk)) {
     SslHandler sslHandler=ctx.getPipeline().get(SslHandler.class);
     SSLEngine sslEngine=sslHandler == null ? null : sslHandler.getEngine();
-    NettyServerCall httpCall=new NettyServerCall(this.helper.getHelped(),content,request,response,(this.helper instanceof HttpsServerHelper),sslEngine);
+    NettyServerCall httpCall=new NettyServerCall(this.helper.getHelped(),content,request,(this.helper instanceof HttpsServerHelper),sslEngine);
     this.helper.handle(httpCall);
+  }
+  if (response == null) {
+    response=new DefaultHttpResponse(HttpVersion.HTTP_1_1,HttpResponseStatus.OK);
   }
   Channel ch=e.getChannel();
   if (!close) {

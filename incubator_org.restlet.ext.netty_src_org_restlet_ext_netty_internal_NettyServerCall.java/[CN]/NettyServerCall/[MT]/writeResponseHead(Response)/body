@@ -1,5 +1,11 @@
 {
-  this.response.clearHeaders();
+  if (this.response != null) {
+    this.response.clearHeaders();
+  }
+ else {
+    final HttpResponseStatus status=new HttpResponseStatus(restletResponse.getStatus().getCode(),restletResponse.getStatus().getDescription());
+    this.response=new DefaultHttpResponse(HttpVersion.HTTP_1_1,status);
+  }
   for (  final Parameter header : getResponseHeaders()) {
     this.response.addHeader(header.getName(),header.getValue());
   }
