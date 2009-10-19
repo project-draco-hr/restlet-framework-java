@@ -1,0 +1,16 @@
+{
+  final SSLEngine sslEngine=getSslEngine();
+  if (sslEngine != null) {
+    final SSLSession sslSession=sslEngine.getSession();
+    if (sslSession != null) {
+      try {
+        final List<Certificate> clientCertificates=Arrays.asList(sslSession.getPeerCertificates());
+        return clientCertificates;
+      }
+ catch (      SSLPeerUnverifiedException e) {
+        getLogger().log(Level.FINE,"Can't get the client certificates.",e);
+      }
+    }
+  }
+  return null;
+}
