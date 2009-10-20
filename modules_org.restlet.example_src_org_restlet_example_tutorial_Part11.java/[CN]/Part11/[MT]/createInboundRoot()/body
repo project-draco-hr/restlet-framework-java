@@ -4,7 +4,7 @@
   verifier.getLocalSecrets().put("scott","tiger".toCharArray());
   ChallengeAuthenticator guard=new ChallengeAuthenticator(getContext(),ChallengeScheme.HTTP_BASIC,"Tutorial");
   guard.setVerifier(verifier);
-  router.attach("/docs/",guard);
+  router.attach("/docs/",guard).setMatchingMode(Template.MODE_STARTS_WITH);
   Directory directory=new Directory(getContext(),ROOT_URI);
   guard.setNext(directory);
   Restlet account=new Restlet(){
