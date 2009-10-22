@@ -1,0 +1,16 @@
+{
+  Series<Parameter> options=getHelpedParameters();
+  for (  Parameter option : options) {
+    String paramName=option.getName();
+    if (paramName.startsWith(CHILD_CHANNEL_PREFIX)) {
+      paramName=option.getName().substring(CHILD_CHANNEL_PREFIX.length());
+    }
+    NettyParams param=NettyParams.valueOf(paramName);
+    if (param != null) {
+      final Object value=param.getValue(option.getValue());
+      if (value != null) {
+        bootstrap.setOption(option.getName(),value);
+      }
+    }
+  }
+}
