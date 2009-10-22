@@ -8,7 +8,22 @@
     result=context.getLogger();
   }
   if (result == null) {
-    result=Logger.getLogger(getClass().getCanonicalName());
+    String loggerName=null;
+    Class<? extends Restlet> clazz=getClass();
+    if (clazz != null) {
+      if (Edition.CURRENT == Edition.GWT) {
+        loggerName=clazz.getName();
+      }
+ else {
+        loggerName=clazz.getCanonicalName();
+      }
+    }
+    if (loggerName != null) {
+      result=Logger.getLogger(loggerName);
+    }
+ else {
+      result=Logger.getAnonymousLogger();
+    }
   }
   if (result == null) {
     result=Logger.getLogger("org.restlet.Restlet");
