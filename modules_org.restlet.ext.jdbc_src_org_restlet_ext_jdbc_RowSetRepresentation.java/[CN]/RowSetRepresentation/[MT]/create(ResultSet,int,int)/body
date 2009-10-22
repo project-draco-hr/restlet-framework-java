@@ -7,7 +7,11 @@
     Context.getCurrentLogger().log(Level.WARNING,"Unable to instantiate the Sun's WebRowSet implementation",t);
   }
   if (resultSet != null) {
-    result.populate(resultSet);
+    if (limit > -1) {
+      result.setPageSize(limit);
+      result.setMaxRows(limit);
+    }
+    result.populate(resultSet,start < 0 ? 1 : start + 1);
   }
   return result;
 }

@@ -2,15 +2,19 @@
   Connection connection=null;
   if (request.getMethod().equals(Method.POST)) {
     try {
-      final String connectionURI=request.getResourceRef().toString();
-      final DocumentBuilder docBuilder=DocumentBuilderFactory.newInstance().newDocumentBuilder();
-      final Document requestDoc=docBuilder.parse(request.getEntity().getStream());
-      final Element rootElt=(Element)requestDoc.getElementsByTagName("request").item(0);
-      final Element headerElt=(Element)rootElt.getElementsByTagName("header").item(0);
-      final Element connectionElt=(Element)headerElt.getElementsByTagName("connection").item(0);
-      final Node usePoolingNode=connectionElt.getElementsByTagName("usePooling").item(0);
-      final boolean usePooling=usePoolingNode.getTextContent().equals("true") ? true : false;
-      final NodeList propertyNodes=connectionElt.getElementsByTagName("property");
+      String connectionURI=request.getResourceRef().toString();
+      DocumentBuilder docBuilder=DocumentBuilderFactory.newInstance().newDocumentBuilder();
+      Document requestDoc=docBuilder.parse(request.getEntity().getStream());
+      Element rootElt=(Element)requestDoc.getElementsByTagName("request").item(0);
+      Element headerElt=(Element)rootElt.getElementsByTagName("header").item(0);
+      Element connectionElt=(Element)headerElt.getElementsByTagName("connection").item(0);
+      Node usePoolingNode=connectionElt.getElementsByTagName("usePooling").item(0);
+      boolean usePooling=usePoolingNode.getTextContent().equals("true") ? true : false;
+      Node startNode=headerElt.getElementsByTagName("start").item(0);
+      int start=startNode != null && startNode.getTextContent().trim().length() > 0 ? Integer.parseInt(startNode.getTextContent()) : 0;
+      Node limitNode=headerElt.getElementsByTagName("limit").item(0);
+      int limit=limitNode != null && limitNode.getTextContent().trim().length() > 0 ? Integer.parseInt(limitNode.getTextContent()) : -1;
+      NodeList propertyNodes=connectionElt.getElementsByTagName("property");
       Node propertyNode=null;
       Properties properties=null;
       String name=null;
@@ -24,18 +28,18 @@
         value=propertyNode.getTextContent();
         properties.setProperty(name,value);
       }
-      final Node returnGeneratedKeysNode=headerElt.getElementsByTagName("returnGeneratedKeys").item(0);
-      final boolean returnGeneratedKeys=returnGeneratedKeysNode.getTextContent().equals("true") ? true : false;
-      final Element bodyElt=(Element)rootElt.getElementsByTagName("body").item(0);
-      final NodeList statementNodes=bodyElt.getElementsByTagName("statement");
-      final List<String> sqlRequests=new ArrayList<String>();
+      Node returnGeneratedKeysNode=headerElt.getElementsByTagName("returnGeneratedKeys").item(0);
+      boolean returnGeneratedKeys=returnGeneratedKeysNode.getTextContent().equals("true") ? true : false;
+      Element bodyElt=(Element)rootElt.getElementsByTagName("body").item(0);
+      NodeList statementNodes=bodyElt.getElementsByTagName("statement");
+      List<String> sqlRequests=new ArrayList<String>();
       for (int i=0; i < statementNodes.getLength(); i++) {
-        final String sqlRequest=statementNodes.item(i).getTextContent();
+        String sqlRequest=statementNodes.item(i).getTextContent();
         sqlRequests.add(sqlRequest);
       }
       connection=getConnection(connectionURI,properties,usePooling);
-      final JdbcResult result=handleSqlRequests(connection,returnGeneratedKeys,sqlRequests);
-      response.setEntity(new RowSetRepresentation(result));
+      JdbcResult result=handleSqlRequests(connection,returnGeneratedKeys,sqlRequests);
+      response.setEntity(new RowSetRepresentation(result,start,limit));
     }
  catch (    SQLException se) {
       getLogger().log(Level.WARNING,"Error while processing the SQL request",se);
