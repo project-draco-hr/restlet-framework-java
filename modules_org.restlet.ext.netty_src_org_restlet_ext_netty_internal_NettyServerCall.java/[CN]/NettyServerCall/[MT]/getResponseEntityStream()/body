@@ -1,10 +1,11 @@
 {
+  ChannelBuffer buf=dynamicBuffer();
+  this.response.setContent(buf);
+  OutputStream stream=new ChannelBufferOutputStream(response.getContent());
   if (isResponseChunked()) {
-    ChannelBuffer buf=dynamicBuffer();
-    this.response.setContent(buf);
-    return new ChunkedOutputStream(new ChannelBufferOutputStream(response.getContent()));
+    return new ChunkedOutputStream(stream);
   }
  else {
-    return null;
+    return stream;
   }
 }

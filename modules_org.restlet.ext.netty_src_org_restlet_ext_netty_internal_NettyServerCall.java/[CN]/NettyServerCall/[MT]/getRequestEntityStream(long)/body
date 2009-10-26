@@ -1,9 +1,9 @@
 {
+  InputStream stream=new ChannelBufferInputStream(content);
   if (isRequestChunked()) {
-    InputStream entity=new ChannelBufferInputStream(content);
-    return entity;
+    return new ChunkedInputStream(stream);
   }
  else {
-    return null;
+    return stream;
   }
 }
