@@ -1,13 +1,10 @@
 {
-  String result=null;
-  if (this.request != null) {
-    final Object variable=this.request.getAttributes().get(variableName);
-    if (variable != null) {
-      result=variable.toString();
-    }
-  }
+  Object result=null;
   if ((result == null) && (this.response != null) && this.response.getAttributes().containsKey(variableName)) {
-    result=this.response.getAttributes().get(variableName).toString();
+    result=this.response.getAttributes().get(variableName);
+  }
+  if ((result == null) && (this.request != null) && this.request.getAttributes().containsKey(variableName)) {
+    result=this.request.getAttributes().get(variableName);
   }
   if (result == null) {
     if (this.request != null) {
