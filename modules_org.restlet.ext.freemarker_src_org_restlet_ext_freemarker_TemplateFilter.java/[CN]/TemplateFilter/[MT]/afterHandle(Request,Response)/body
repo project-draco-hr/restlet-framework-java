@@ -1,12 +1,7 @@
 {
   if (response.isEntityAvailable() && response.getEntity().getEncodings().contains(Encoding.FREEMARKER)) {
-    final TemplateRepresentation representation=new TemplateRepresentation(response.getEntity(),this.configuration,response.getEntity().getMediaType());
-    if (this.dataModel == null) {
-      representation.setDataModel(request,response);
-    }
- else {
-      representation.setDataModel(this.dataModel);
-    }
+    TemplateRepresentation representation=new TemplateRepresentation(response.getEntity(),this.configuration,response.getEntity().getMediaType());
+    representation.setDataModel(createDataModel(request,response));
     response.setEntity(representation);
   }
 }
