@@ -1,18 +1,18 @@
 {
   HttpServerHelper result=null;
-  final Component component=getComponent();
+  Component component=getComponent();
   if (component != null) {
-    final Server server=new Server(component.getContext().createChildContext(),(List<Protocol>)null,this.getLocalAddr(request),this.getLocalPort(request),component);
+    Server server=new Server(component.getContext().createChildContext(),(List<Protocol>)null,this.getLocalAddr(request),this.getLocalPort(request),component);
     result=new HttpServerHelper(server);
-    final String uriPattern=this.getContextPath(request) + request.getServletPath();
+    String uriPattern=this.getContextPath(request) + request.getServletPath();
     if (isDefaultComponent()) {
-      if (this.application != null) {
-        log("[Restlet] Attaching application: " + this.application + " to URI: "+ uriPattern);
-        component.getDefaultHost().attach(uriPattern,this.application);
+      if (getApplication() != null) {
+        log("[Restlet] Attaching application: " + getApplication() + " to URI: "+ uriPattern);
+        component.getDefaultHost().attach(uriPattern,getApplication());
       }
     }
  else {
-      final String autoWire=getInitParameter(AUTO_WIRE_KEY,AUTO_WIRE_KEY_DEFAULT);
+      String autoWire=getInitParameter(AUTO_WIRE_KEY,AUTO_WIRE_KEY_DEFAULT);
       if (AUTO_WIRE_KEY_DEFAULT.equalsIgnoreCase(autoWire)) {
         boolean addContextPath=false;
         boolean addFullServletPath=false;
@@ -20,7 +20,7 @@
           addFullServletPath=component.getDefaultHost().getDefaultRoute() != null;
         }
  else {
-          for (          final TemplateRoute route : component.getDefaultHost().getRoutes()) {
+          for (          TemplateRoute route : component.getDefaultHost().getRoutes()) {
             if (route.getTemplate().getPattern() == null) {
               addFullServletPath=true;
               continue;
@@ -37,12 +37,12 @@
           }
         }
         if (!addContextPath) {
-          for (          final VirtualHost virtualHost : component.getHosts()) {
+          for (          VirtualHost virtualHost : component.getHosts()) {
             if (virtualHost.getRoutes().isEmpty()) {
               addFullServletPath=virtualHost.getDefaultRoute() != null;
             }
  else {
-              for (              final TemplateRoute route : virtualHost.getRoutes()) {
+              for (              TemplateRoute route : virtualHost.getRoutes()) {
                 if (route.getTemplate().getPattern() == null) {
                   addFullServletPath=true;
                   continue;
