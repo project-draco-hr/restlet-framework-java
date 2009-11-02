@@ -1,0 +1,11 @@
+{
+  Tracer tracer=new Tracer(getContext());
+  Blocker blocker=new Blocker(getContext());
+  blocker.getBlockedAddresses().add("127.0.0.1");
+  blocker.setNext(tracer);
+  Router router=new Router(getContext());
+  router.attach("http://localhost:8182/",tracer);
+  router.attach("http://localhost:8182/accounts/",tracer);
+  router.attach("http://localhost:8182/accounts/{accountId}",blocker);
+  return router;
+}

@@ -1,0 +1,18 @@
+{
+  Component component=new Component();
+  component.getServers().add(Protocol.HTTP,8182);
+  component.getClients().add(Protocol.FILE);
+  Application app=new Application(){
+    @Override public Restlet createInboundRoot(){
+      Router router=new Router(getContext());
+      String tmpDirUri="file:///" + System.getProperty("java.io.tmpdir");
+      Directory directory=new Directory(getContext(),tmpDirUri);
+      router.attach("/static",directory);
+      router.attach("/hello",MergeSitesServicesServerResource.class);
+      return router;
+    }
+  }
+;
+  component.getDefaultHost().attach(app);
+  component.start();
+}
