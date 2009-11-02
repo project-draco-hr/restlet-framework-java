@@ -1,7 +1,14 @@
 {
   Set<EntityType> result=new TreeSet<EntityType>();
   for (  NavigationProperty property : getAssociations()) {
-    result.add(property.getToRole().getType());
+    try {
+      System.err.println(property.getToRole().getType());
+      result.add(property.getToRole().getType());
+    }
+ catch (    Throwable e) {
+      e.printStackTrace();
+      System.out.println(e.getMessage());
+    }
   }
   return result;
 }
