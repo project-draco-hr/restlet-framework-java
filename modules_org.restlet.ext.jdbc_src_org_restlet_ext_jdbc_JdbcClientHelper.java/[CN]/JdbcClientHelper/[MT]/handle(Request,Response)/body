@@ -4,7 +4,7 @@
     try {
       String connectionURI=request.getResourceRef().toString();
       DocumentBuilder docBuilder=DocumentBuilderFactory.newInstance().newDocumentBuilder();
-      Document requestDoc=docBuilder.parse(request.getEntity().getStream());
+      Document requestDoc=docBuilder.parse(new InputSource(request.getEntity().getReader()));
       Element rootElt=(Element)requestDoc.getElementsByTagName("request").item(0);
       Element headerElt=(Element)rootElt.getElementsByTagName("header").item(0);
       Element connectionElt=(Element)headerElt.getElementsByTagName("connection").item(0);
