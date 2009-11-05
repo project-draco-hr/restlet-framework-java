@@ -7,4 +7,9 @@
   HttpConnectionParams.setTcpNoDelay(params,getTcpNoDelay());
   HttpConnectionParams.setConnectionTimeout(params,getConnectTimeout());
   HttpConnectionParams.setSoTimeout(params,getSocketTimeout());
+  String httpProxyHost=getProxyHost();
+  if (httpProxyHost != null) {
+    HttpHost proxy=new HttpHost(httpProxyHost,getProxyPort());
+    params.setParameter(ConnRoutePNames.DEFAULT_PROXY,proxy);
+  }
 }
