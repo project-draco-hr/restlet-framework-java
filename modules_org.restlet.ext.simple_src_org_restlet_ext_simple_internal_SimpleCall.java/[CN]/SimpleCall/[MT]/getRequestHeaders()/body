@@ -3,7 +3,9 @@
   if (!this.requestHeadersAdded) {
     final List<String> names=this.request.getNames();
     for (    String name : names) {
-      result.add(new Parameter(name,this.request.getValue(name)));
+      for (      String value : this.request.getValues(name)) {
+        result.add(new Parameter(name,value));
+      }
     }
     this.requestHeadersAdded=true;
   }
