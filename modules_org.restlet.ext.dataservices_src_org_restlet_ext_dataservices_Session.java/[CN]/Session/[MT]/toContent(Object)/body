@@ -11,14 +11,17 @@
   Element properties=document.createElementNS("http://schemas.microsoft.com/ado/2007/08/dataservices/metadata","properties");
   for (  Field field : entity.getClass().getDeclaredFields()) {
     String getter="get" + field.getName().substring(0,1).toUpperCase() + field.getName().substring(1);
-    for (    Method method : entity.getClass().getDeclaredMethods()) {
-      if (method.getReturnType() != null && getter.equals(method.getName()) && method.getParameterTypes().length == 0) {
-        Element property=document.createElementNS("http://schemas.microsoft.com/ado/2007/08/dataservices",field.getName());
-        Object value=method.invoke(entity,(Object[])null);
-        Text text=document.createTextNode((value != null) ? value.toString() : "");
-        property.appendChild(text);
-        properties.appendChild(property);
-        break;
+    Property prop=getMetadata().getProperty(entity,field.getName());
+    if (prop != null) {
+      for (      Method method : entity.getClass().getDeclaredMethods()) {
+        if (method.getReturnType() != null && getter.equals(method.getName()) && method.getParameterTypes().length == 0) {
+          Element property=document.createElementNS("http://schemas.microsoft.com/ado/2007/08/dataservices",prop.getName());
+          Object value=method.invoke(entity,(Object[])null);
+          Text text=document.createTextNode((value != null) ? Type.toEdm(value,prop.getType()) : "");
+          property.appendChild(text);
+          properties.appendChild(property);
+          break;
+        }
       }
     }
   }

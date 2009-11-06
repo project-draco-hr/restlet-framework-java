@@ -2,8 +2,8 @@
   if (getMetadata() == null || entity == null) {
     return;
   }
-  EntityType type=((Metadata)getMetadata()).getEntityType(entity.getClass());
-  AssociationEnd association=((Metadata)getMetadata()).getAssociation(type,propertyName);
+  EntityType type=getMetadata().getEntityType(entity.getClass());
+  AssociationEnd association=getMetadata().getAssociation(type,propertyName);
   if (association != null) {
     EntityType propertyEntityType=association.getType();
     try {
@@ -28,7 +28,7 @@
         DomRepresentation xmlRep=new DomRepresentation(rep);
         Node node=xmlRep.getNode("//" + propertyName);
         if (node != null) {
-          Property property=((Metadata)getMetadata()).getProperty(entity,propertyName);
+          Property property=getMetadata().getProperty(entity,propertyName);
           try {
             ReflectUtils.setProperty(entity,property,node.getTextContent());
           }
