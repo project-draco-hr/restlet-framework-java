@@ -1,13 +1,16 @@
 {
   checkForChunkedHeader(getRequest());
   final DomRepresentation dom=new DomRepresentation(entity);
+  DomRepresentation rep=null;
   try {
     final Document doc=dom.getDocument();
     assertXML(dom);
-    getResponse().setEntity(new DomRepresentation(MediaType.TEXT_XML,doc));
+    rep=new DomRepresentation(MediaType.TEXT_XML,doc);
+    getResponse().setEntity(rep);
   }
  catch (  IOException ex) {
     ex.printStackTrace();
     fail(ex.getMessage());
   }
+  return rep;
 }
