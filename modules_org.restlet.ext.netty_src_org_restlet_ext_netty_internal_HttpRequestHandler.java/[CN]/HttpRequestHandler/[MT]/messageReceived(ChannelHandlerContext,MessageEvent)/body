@@ -46,6 +46,8 @@
   }
  else {
     ChannelFuture future=ch.write(response);
-    future.addListener(ChannelFutureListener.CLOSE);
+    if (shouldCloseConnection()) {
+      future.addListener(ChannelFutureListener.CLOSE);
+    }
   }
 }
