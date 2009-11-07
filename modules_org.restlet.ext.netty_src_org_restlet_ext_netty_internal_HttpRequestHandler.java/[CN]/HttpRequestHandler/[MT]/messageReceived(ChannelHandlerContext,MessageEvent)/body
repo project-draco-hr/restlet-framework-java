@@ -46,7 +46,7 @@
   }
  else {
     ChannelFuture future=ch.write(response);
-    if (shouldCloseConnection()) {
+    if (shouldCloseConnection() || (request.getMethod() == HttpMethod.GET)) {
       future.addListener(ChannelFutureListener.CLOSE);
     }
   }
