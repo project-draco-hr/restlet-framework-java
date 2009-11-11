@@ -1,4 +1,18 @@
 {
   schemeRegistry.register(new Scheme("http",PlainSocketFactory.getSocketFactory(),80));
-  schemeRegistry.register(new Scheme("https",SSLSocketFactory.getSocketFactory(),443));
+  SSLSocketFactory sslSocketFactory=null;
+  SslContextFactory sslContextFactory=HttpsUtils.getSslContextFactory(this);
+  if (sslContextFactory != null) {
+    try {
+      SSLContext sslContext=sslContextFactory.createSslContext();
+      sslSocketFactory=new SSLSocketFactory(sslContext);
+    }
+ catch (    Exception e) {
+      throw new RuntimeException("Unable to create SSLContext.",e);
+    }
+  }
+ else {
+    sslSocketFactory=SSLSocketFactory.getSocketFactory();
+  }
+  schemeRegistry.register(new Scheme("https",sslSocketFactory,443));
 }

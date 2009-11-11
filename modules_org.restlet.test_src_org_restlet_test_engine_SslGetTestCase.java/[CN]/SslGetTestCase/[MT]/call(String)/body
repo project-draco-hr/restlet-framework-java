@@ -1,6 +1,8 @@
 {
   final Request request=new Request(Method.GET,uri);
   final Client client=new Client(Protocol.HTTPS);
+  client.setContext(new Context());
+  configureSslClientParameters(client.getContext());
   final Response r=client.handle(request);
   assertEquals(r.getStatus().getDescription(),Status.SUCCESS_OK,r.getStatus());
   assertEquals("Hello world",r.getEntity().getText());
