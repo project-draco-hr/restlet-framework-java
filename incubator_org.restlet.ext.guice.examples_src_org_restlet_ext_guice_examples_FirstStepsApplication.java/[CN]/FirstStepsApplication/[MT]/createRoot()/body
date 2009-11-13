@@ -1,0 +1,18 @@
+{
+  FinderFactory factory;
+switch (mode) {
+case EXPLICIT_INJECTOR:
+    factory=RestletGuice.createInjector(this).getInstance(FinderFactory.class);
+  break;
+case AUTO_INJECTOR:
+factory=new FinderFactoryModule(this);
+break;
+default :
+throw new IllegalStateException("No Injector creation mode specified.");
+}
+Router router=new Router(getContext());
+router.attach("/hello/resource",factory.finderOf(Key.get(ServerResource.class,HelloWorld.class),getContext()));
+router.attach("/hello/handler",factory.finderFor(Key.get(Handler.class,HelloWorld.class)));
+router.attachDefault(DefaultResource.class);
+return router;
+}
