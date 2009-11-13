@@ -2,7 +2,7 @@
   ContentReader.State state=getCurrentState();
   this.base.incrDepth();
   this.language.incrDepth();
-  if (!this.consumeContent && this.builder != null) {
+  if (!this.consumingContent && this.builder != null) {
     this.builder=null;
   }
   if (state == State.NONE) {
@@ -20,20 +20,20 @@
  else   if (state == State.SUBJECT) {
     List<String[]> arcs=new ArrayList<String[]>();
     pushState(State.PREDICATE);
-    this.consumeContent=true;
+    this.consumingContent=true;
     Reference currentSubject=getCurrentSubject();
     this.currentPredicate=resolve(uri,name);
     Reference currentObject=null;
     for (int i=0; i < attributes.getLength(); i++) {
       String qName=attributes.getQName(i);
       if (checkRdfQName("resource",qName)) {
-        this.consumeContent=false;
+        this.consumingContent=false;
         currentObject=resolve(attributes.getValue(i),false);
         popState();
         pushState(State.OBJECT);
       }
  else       if (checkRdfQName("datatype",qName)) {
-        this.consumeContent=true;
+        this.consumingContent=true;
         popState();
         pushState(State.LITERAL);
         this.currentDataType=attributes.getValue(i);
@@ -41,25 +41,25 @@
  else       if (checkRdfQName("parseType",qName)) {
         String value=attributes.getValue(i);
         if ("Literal".equals(value)) {
-          this.consumeContent=true;
+          this.consumingContent=true;
           popState();
           pushState(State.LITERAL);
           this.currentDataType=RdfConstants.RDF_SYNTAX + "XMLLiteral";
           nodeDepth=0;
         }
  else         if ("Resource".equals(value)) {
-          this.consumeContent=false;
+          this.consumingContent=false;
           currentObject=Link.createBlankRef(ContentReader.newBlankNodeId());
           popState();
           pushState(State.SUBJECT);
           pushSubject(currentObject);
         }
  else {
-          this.consumeContent=false;
+          this.consumingContent=false;
         }
       }
  else       if (checkRdfQName("nodeID",qName)) {
-        this.consumeContent=false;
+        this.consumingContent=false;
         currentObject=Link.createBlankRef(attributes.getValue(i));
         popState();
         pushState(State.SUBJECT);
@@ -97,12 +97,12 @@
         pushState(State.OBJECT);
       }
     }
-    if (this.consumeContent) {
+    if (this.consumingContent) {
       builder=new StringBuilder();
     }
   }
  else   if (state == State.PREDICATE) {
-    this.consumeContent=false;
+    this.consumingContent=false;
     Reference object=parseNode(uri,localName,name,attributes);
     this.currentObject=object;
     link();
