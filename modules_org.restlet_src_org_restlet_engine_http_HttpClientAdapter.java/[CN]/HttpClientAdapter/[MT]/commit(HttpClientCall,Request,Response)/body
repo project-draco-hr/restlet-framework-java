@@ -1,5 +1,30 @@
 {
   if (httpCall != null) {
-    updateResponse(response,httpCall.sendRequest(request),httpCall);
+    if (response.getOnReceived() != null) {
+      final Uniform userCallback=response.getOnReceived();
+      httpCall.sendRequest(request,response,new Uniform(){
+        public void handle(        Request request,        Response response){
+          try {
+            updateResponse(response,new Status(httpCall.getStatusCode(),null,httpCall.getReasonPhrase(),null),httpCall);
+            userCallback.handle(request,response);
+          }
+ catch (          Exception e) {
+            if ((response.getStatus() == null) || !response.getStatus().isError()) {
+              response.setStatus(Status.CONNECTOR_ERROR_INTERNAL,e);
+              userCallback.handle(request,response);
+            }
+          }
+        }
+      }
+);
+    }
+ else {
+      if (Edition.CURRENT == Edition.GWT) {
+        System.err.println("HTTP client calls must have a callback in the GWT edition");
+      }
+ else {
+        updateResponse(response,httpCall.sendRequest(request),httpCall);
+      }
+    }
   }
 }

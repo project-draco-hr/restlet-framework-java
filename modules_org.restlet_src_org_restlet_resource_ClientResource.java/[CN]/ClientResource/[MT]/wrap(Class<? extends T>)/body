@@ -1,6 +1,7 @@
 {
+  T result=null;
   final List<AnnotationInfo> annotations=AnnotationUtils.getAnnotationDescriptors(resourceInterface);
-  InvocationHandler h=new InvocationHandler(){
+  java.lang.reflect.InvocationHandler h=new java.lang.reflect.InvocationHandler(){
     public Object invoke(    Object proxy,    java.lang.reflect.Method javaMethod,    Object[] args) throws Throwable {
       Object result=null;
       AnnotationInfo annotation=AnnotationUtils.getAnnotation(annotations,javaMethod);
@@ -33,5 +34,6 @@
     }
   }
 ;
-  return (T)Proxy.newProxyInstance(Engine.getClassLoader(),new Class<?>[]{resourceInterface},h);
+  result=(T)java.lang.reflect.Proxy.newProxyInstance(Engine.getClassLoader(),new Class<?>[]{resourceInterface},h);
+  return result;
 }
