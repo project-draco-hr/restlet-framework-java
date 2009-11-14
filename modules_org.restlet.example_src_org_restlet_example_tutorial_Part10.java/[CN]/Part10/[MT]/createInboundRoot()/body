@@ -2,7 +2,8 @@
   Router router=new Router(getContext());
   String target="http://www.google.com/search?q=site:mysite.org+{keywords}";
   Redirector redirector=new Redirector(getContext(),target,Redirector.MODE_CLIENT_TEMPORARY);
-  Route route=router.attach("/search",redirector);
-  route.extractQuery("keywords","kwd",true);
+  Extractor extractor=new Extractor(getContext(),redirector);
+  extractor.extractQuery("keywords","kwd",true);
+  router.attach("/search",extractor);
   return router;
 }
