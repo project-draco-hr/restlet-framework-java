@@ -3,6 +3,29 @@
     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_LOCATION)) {
       response.setLocationRef(header.getValue());
     }
+ else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_AGE)) {
+      try {
+        response.setAge(Long.parseLong(header.getValue()));
+      }
+ catch (      NumberFormatException nfe) {
+        Context.getCurrentLogger().log(Level.WARNING,"Error during Age header parsing. Header: " + header.getValue(),nfe);
+      }
+    }
+ else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_RETRY_AFTER)) {
+      Date retryAfter=DateUtils.parse(header.getValue());
+      if (retryAfter == null) {
+        try {
+          int retryAfterSecs=Integer.parseInt(header.getValue());
+          Calendar calendar=Calendar.getInstance();
+          calendar.add(Calendar.SECOND,retryAfterSecs);
+          retryAfter=calendar.getTime();
+        }
+ catch (        NumberFormatException nfe) {
+          Context.getCurrentLogger().log(Level.WARNING,"Error during Retry-After header parsing. Header: " + header.getValue(),nfe);
+        }
+      }
+      response.setRetryAfter(retryAfter);
+    }
  else     if ((header.getName().equalsIgnoreCase(HttpConstants.HEADER_SET_COOKIE)) || (header.getName().equalsIgnoreCase(HttpConstants.HEADER_SET_COOKIE2))) {
       try {
         CookieReader cr=new CookieReader(header.getValue());

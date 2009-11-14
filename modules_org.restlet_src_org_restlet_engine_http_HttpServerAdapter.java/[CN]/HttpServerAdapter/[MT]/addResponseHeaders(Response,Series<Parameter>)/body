@@ -1,6 +1,6 @@
 {
   if (response.getStatus().equals(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED) || Method.OPTIONS.equals(response.getRequest().getMethod())) {
-    final StringBuilder sb=new StringBuilder();
+    StringBuilder sb=new StringBuilder();
     boolean first=true;
     for (    final Method method : response.getAllowedMethods()) {
       if (first) {
@@ -14,7 +14,13 @@
     responseHeaders.add(HttpConstants.HEADER_ALLOW,sb.toString());
   }
   responseHeaders.add(HttpConstants.HEADER_DATE,DateUtils.format(new Date()));
-  final List<CookieSetting> cookies=response.getCookieSettings();
+  if (response.getAge() > 0) {
+    responseHeaders.add(HttpConstants.HEADER_AGE,Long.toString(response.getAge()));
+  }
+  if (response.getRetryAfter() != null) {
+    responseHeaders.add(HttpConstants.HEADER_RETRY_AFTER,DateUtils.format(response.getRetryAfter()));
+  }
+  List<CookieSetting> cookies=response.getCookieSettings();
   for (int i=0; i < cookies.size(); i++) {
     responseHeaders.add(HttpConstants.HEADER_SET_COOKIE,CookieUtils.format(cookies.get(i)));
   }
