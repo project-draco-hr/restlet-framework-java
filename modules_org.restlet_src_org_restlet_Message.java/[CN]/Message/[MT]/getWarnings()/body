@@ -1,0 +1,12 @@
+{
+  List<Warning> r=this.warnings;
+  if (r == null) {
+synchronized (this) {
+      r=this.warnings;
+      if (r == null) {
+        this.warnings=r=new CopyOnWriteArrayList<Warning>();
+      }
+    }
+  }
+  return r;
+}

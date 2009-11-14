@@ -9,7 +9,7 @@
   this.proxySecurityAdded=false;
   this.httpCall=httpCall;
   setMethod(Method.valueOf(httpCall.getMethod()));
-  final StringBuilder sb=new StringBuilder();
+  StringBuilder sb=new StringBuilder();
   sb.append(httpCall.getProtocol().getSchemeName()).append("://");
   sb.append(httpCall.getHostDomain());
   if ((httpCall.getHostPort() != -1) && (httpCall.getHostPort() != httpCall.getProtocol().getDefaultPort())) {
@@ -28,4 +28,13 @@
     }
     setOriginalRef(getResourceRef().getTargetRef());
   }
+  String dateHeader=httpCall.getRequestHeaders().getFirstValue(HttpConstants.HEADER_DATE);
+  Date date=null;
+  if (dateHeader != null) {
+    date=DateUtils.parse(dateHeader);
+  }
+  if (date == null) {
+    date=new Date();
+  }
+  setDate(date);
 }

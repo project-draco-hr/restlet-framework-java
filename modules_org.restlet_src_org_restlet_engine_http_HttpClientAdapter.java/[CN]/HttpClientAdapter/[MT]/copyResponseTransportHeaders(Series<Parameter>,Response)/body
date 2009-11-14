@@ -11,6 +11,13 @@
         Context.getCurrentLogger().log(Level.WARNING,"Error during Age header parsing. Header: " + header.getValue(),nfe);
       }
     }
+ else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_DATE)) {
+      Date date=DateUtils.parse(header.getValue());
+      if (date == null) {
+        date=new Date();
+      }
+      response.setDate(date);
+    }
  else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_RETRY_AFTER)) {
       Date retryAfter=DateUtils.parse(header.getValue());
       if (retryAfter == null) {
