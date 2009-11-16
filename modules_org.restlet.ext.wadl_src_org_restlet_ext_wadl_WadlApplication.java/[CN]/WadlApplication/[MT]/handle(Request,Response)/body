@@ -1,6 +1,7 @@
 {
+  Reference rr=request.getResourceRef().clone();
   super.handle(request,response);
-  Reference rr=request.getResourceRef();
+  request.setResourceRef(rr);
   String rp=rr.getRemainingPart(false,false);
   if (isAutoDescribed() && Method.OPTIONS.equals(request.getMethod()) && (Status.CLIENT_ERROR_NOT_FOUND.equals(response.getStatus()) || !response.isEntityAvailable())&& ("/".equals(rp) || "".equals(rp))) {
     if (!rr.getBaseRef().getIdentifier().endsWith("/")) {
