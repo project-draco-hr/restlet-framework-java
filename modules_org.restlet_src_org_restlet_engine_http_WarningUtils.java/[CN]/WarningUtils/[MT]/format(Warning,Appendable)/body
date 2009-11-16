@@ -1,0 +1,21 @@
+{
+  final String agent=warning.getAgent();
+  final String text=warning.getText();
+  if (warning.getStatus() == null) {
+    throw new IllegalArgumentException("Can't write warning. Invalid status code detected");
+  }
+  if ((agent == null) || (agent.length() == 0)) {
+    throw new IllegalArgumentException("Can't write warning. Invalid agent detected");
+  }
+  if ((text == null) || (text.length() == 0)) {
+    throw new IllegalArgumentException("Can't write warning. Invalid text detected");
+  }
+  destination.append(Integer.toString(warning.getStatus().getCode()));
+  destination.append(" ");
+  destination.append(agent);
+  destination.append(" ");
+  HttpUtils.appendQuote(text,destination);
+  if (warning.getDate() != null) {
+    HttpUtils.appendQuote(DateUtils.format(warning.getDate()),destination);
+  }
+}

@@ -48,4 +48,9 @@
   if (response.getServerInfo().isAcceptingRanges()) {
     responseHeaders.add(HttpConstants.HEADER_ACCEPT_RANGES,"bytes");
   }
+  if (!response.getWarnings().isEmpty()) {
+    for (    Warning warning : response.getWarnings()) {
+      responseHeaders.add(HttpConstants.HEADER_WARNING,WarningUtils.format(warning));
+    }
+  }
 }
