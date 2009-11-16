@@ -149,5 +149,10 @@
     if (proxyChallengeResponse != null) {
       requestHeaders.add(HttpConstants.HEADER_PROXY_AUTHORIZATION,org.restlet.engine.security.AuthenticatorUtils.formatResponse(proxyChallengeResponse,request,requestHeaders));
     }
+    if (!request.getWarnings().isEmpty()) {
+      for (      Warning warning : request.getWarnings()) {
+        requestHeaders.add(HttpConstants.HEADER_WARNING,WarningUtils.format(warning));
+      }
+    }
   }
 }

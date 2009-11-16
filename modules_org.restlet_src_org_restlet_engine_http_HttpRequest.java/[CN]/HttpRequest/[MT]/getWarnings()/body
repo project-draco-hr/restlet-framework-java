@@ -1,0 +1,16 @@
+{
+  List<Warning> result=super.getWarnings();
+  if (!warningsAdded) {
+    for (    String string : getHttpCall().getRequestHeaders().getValuesArray(HttpConstants.HEADER_WARNING)) {
+      WarningReader hr=new WarningReader(string);
+      try {
+        result.add(hr.readWarning());
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().log(Level.WARNING,"Error during warning parsing. Header: " + string,e);
+      }
+    }
+    setWarnings(result);
+  }
+  return result;
+}
