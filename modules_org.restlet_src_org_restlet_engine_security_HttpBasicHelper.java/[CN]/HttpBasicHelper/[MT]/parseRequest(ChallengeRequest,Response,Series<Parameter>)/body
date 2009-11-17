@@ -1,0 +1,25 @@
+{
+  if (challenge.getRawValue() != null) {
+    HeaderReader hr=new HeaderReader(challenge.getRawValue());
+    try {
+      Parameter param=hr.readParameter();
+      while (param != null) {
+        try {
+          if ("realm".equals(param.getName())) {
+            challenge.setRealm(param.getValue());
+          }
+ else {
+            challenge.getParameters().add(param);
+          }
+          param=hr.readParameter();
+        }
+ catch (        Exception e) {
+          Context.getCurrentLogger().log(Level.WARNING,"Unable to parse the challenge request header parameter",e);
+        }
+      }
+    }
+ catch (    Exception e) {
+      Context.getCurrentLogger().log(Level.WARNING,"Unable to parse the challenge request header parameter",e);
+    }
+  }
+}

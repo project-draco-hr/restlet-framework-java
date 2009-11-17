@@ -1,0 +1,43 @@
+{
+  AuthenticationInfo result=null;
+  HeaderReader hr=new HeaderReader(header);
+  try {
+    Parameter param;
+    param=hr.readParameter();
+    while (param != null) {
+      param=hr.readParameter();
+    }
+    String nextNonce=null;
+    int nonceCount=0;
+    String cnonce=null;
+    String qop=null;
+    String responseAuth=null;
+    String[] authFields=header.split(",");
+    for (    String field : authFields) {
+      String[] nameValuePair=field.trim().split("=");
+      if (nameValuePair[0].equals("nextnonce")) {
+        nextNonce=nameValuePair[1];
+      }
+ else       if (nameValuePair[0].equals("nc")) {
+        nonceCount=Integer.parseInt(nameValuePair[1],16);
+      }
+ else       if (nameValuePair[0].equals("cnonce")) {
+        cnonce=nameValuePair[1];
+        if (cnonce.charAt(0) == '"') {
+          cnonce=cnonce.substring(1,cnonce.length() - 1);
+        }
+      }
+ else       if (nameValuePair[0].equals("qop")) {
+        qop=nameValuePair[1];
+      }
+ else       if (nameValuePair[0].equals("responseAuth")) {
+        responseAuth=nameValuePair[1];
+      }
+    }
+    result=new AuthenticationInfo(nextNonce,nonceCount,cnonce,qop,responseAuth);
+  }
+ catch (  IOException e) {
+    Context.getCurrentLogger().log(Level.WARNING,"Unable to parse the authentication info header: " + header,e);
+  }
+  return result;
+}

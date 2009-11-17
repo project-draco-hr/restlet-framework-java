@@ -7,5 +7,9 @@
       break;
     }
   }
-  addParameters(mainChallengeRequest,guard.getDomainUris(),guard.getServerKey(),stale);
+  if (mainChallengeRequest != null) {
+    mainChallengeRequest.setDomainUris(guard.getDomainUris());
+    mainChallengeRequest.setStale(stale);
+    mainChallengeRequest.setServerNonce(CryptoUtils.makeNonce(guard.getServerKey()));
+  }
 }

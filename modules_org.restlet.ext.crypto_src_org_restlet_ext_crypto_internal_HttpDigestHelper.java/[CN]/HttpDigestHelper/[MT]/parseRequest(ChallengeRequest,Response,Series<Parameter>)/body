@@ -1,0 +1,42 @@
+{
+  if (challenge.getRawValue() != null) {
+    HeaderReader hr=new HeaderReader(challenge.getRawValue());
+    try {
+      Parameter param=hr.readParameter();
+      while (param != null) {
+        try {
+          if ("realm".equals(param.getName())) {
+            challenge.setRealm(param.getValue());
+          }
+ else           if ("domain".equals(param.getName())) {
+            challenge.setRealm(param.getValue());
+          }
+ else           if ("nonce".equals(param.getName())) {
+            challenge.setServerNonce(param.getValue());
+          }
+ else           if ("opaque".equals(param.getName())) {
+            challenge.setOpaque(param.getValue());
+          }
+ else           if ("stale".equals(param.getName())) {
+            challenge.setStale(Boolean.valueOf(param.getValue()));
+          }
+ else           if ("algorithm".equals(param.getName())) {
+            challenge.setDigestAlgorithm(param.getValue());
+          }
+ else           if ("qop".equals(param.getName())) {
+          }
+ else {
+            challenge.getParameters().add(param);
+          }
+          param=hr.readParameter();
+        }
+ catch (        Exception e) {
+          Context.getCurrentLogger().log(Level.WARNING,"Unable to parse the challenge request header parameter",e);
+        }
+      }
+    }
+ catch (    Exception e) {
+      Context.getCurrentLogger().log(Level.WARNING,"Unable to parse the challenge request header parameter",e);
+    }
+  }
+}

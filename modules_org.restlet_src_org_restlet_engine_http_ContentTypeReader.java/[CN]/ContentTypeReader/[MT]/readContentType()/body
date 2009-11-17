@@ -54,7 +54,7 @@
         }
  else         if (nextChar == -1) {
           if (paramNameBuffer.length() > 0) {
-            parameters.add(HttpUtils.createParameter(paramNameBuffer,null));
+            parameters.add(Parameter.create(paramNameBuffer,null));
             result=createContentType(mediaTypeBuffer,parameters);
           }
  else {
@@ -62,7 +62,7 @@
           }
         }
  else         if (nextChar == ';') {
-          parameters.add(HttpUtils.createParameter(paramNameBuffer,null));
+          parameters.add(Parameter.create(paramNameBuffer,null));
           paramNameBuffer=new StringBuilder();
           readingParamName=true;
           readingParamValue=false;
@@ -79,7 +79,7 @@
  else       if (readingParamValue) {
         if (nextChar == -1) {
           if (paramValueBuffer.length() > 0) {
-            parameters.add(HttpUtils.createParameter(paramNameBuffer,paramValueBuffer));
+            parameters.add(Parameter.create(paramNameBuffer,paramValueBuffer));
             result=createContentType(mediaTypeBuffer,parameters);
           }
  else {
@@ -87,7 +87,7 @@
           }
         }
  else         if (nextChar == ';') {
-          parameters.add(HttpUtils.createParameter(paramNameBuffer,paramValueBuffer));
+          parameters.add(Parameter.create(paramNameBuffer,paramValueBuffer));
           paramNameBuffer=new StringBuilder();
           readingParamName=true;
           readingParamValue=false;

@@ -1,0 +1,42 @@
+{
+  boolean result=(obj == this);
+  if (!result) {
+    if (obj instanceof AuthenticationInfo) {
+      final AuthenticationInfo that=(AuthenticationInfo)obj;
+      if (getNextServerNonce() != null) {
+        result=getNextServerNonce().equals(that.getNextServerNonce());
+      }
+ else {
+        result=(that.getNextServerNonce() == null);
+      }
+      if (result) {
+        result=(getNonceCount() == that.getNonceCount());
+      }
+      if (result) {
+        if (getClientNonce() != null) {
+          result=getClientNonce().equals(that.getClientNonce());
+        }
+ else {
+          result=(that.getClientNonce() == null);
+        }
+      }
+      if (result) {
+        if (getQuality() != null) {
+          result=getQuality().equals(that.getQuality());
+        }
+ else {
+          result=(that.getQuality() == null);
+        }
+      }
+      if (result) {
+        if (getResponseDigest() != null) {
+          result=getResponseDigest().equals(that.getResponseDigest());
+        }
+ else {
+          result=(that.getResponseDigest() == null);
+        }
+      }
+    }
+  }
+  return result;
+}

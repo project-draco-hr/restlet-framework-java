@@ -1,0 +1,45 @@
+{
+  if (challenge.getRealm() != null) {
+    hb.appendQuotedParameter("realm",challenge.getRealm());
+  }
+  if (!challenge.getDomainRefs().isEmpty()) {
+    hb.append(", domain=\"");
+    for (int i=0; i < challenge.getDomainRefs().size(); i++) {
+      if (i > 0) {
+        hb.append(' ');
+      }
+      hb.append(challenge.getDomainRefs().get(i).toString());
+    }
+    hb.append('"');
+  }
+  if (challenge.getServerNonce() != null) {
+    hb.appendQuotedParameter("nonce",challenge.getServerNonce());
+  }
+  if (challenge.getOpaque() != null) {
+    hb.appendQuotedParameter("opaque",challenge.getOpaque());
+  }
+  if (challenge.isStale()) {
+    hb.appendParameter("stale","true");
+  }
+  if (challenge.getDigestAlgorithm() != null) {
+    hb.appendParameter("algorithm",challenge.getDigestAlgorithm());
+  }
+  if (!challenge.getQualityOptions().isEmpty()) {
+    hb.append(", qop=\"");
+    for (int i=0; i < challenge.getQualityOptions().size(); i++) {
+      if (i > 0) {
+        hb.append(',');
+      }
+      hb.appendToken(challenge.getQualityOptions().get(i).toString());
+    }
+    hb.append('"');
+  }
+  for (  Parameter param : challenge.getParameters()) {
+    if (HttpUtils.isToken(param.getValue())) {
+      hb.appendParameter(param);
+    }
+ else {
+      hb.appendQuotedParameter(param);
+    }
+  }
+}

@@ -143,11 +143,21 @@
     addAdditionalHeaders(requestHeaders,additionalHeaders);
     ChallengeResponse challengeResponse=request.getChallengeResponse();
     if (challengeResponse != null) {
-      requestHeaders.add(HttpConstants.HEADER_AUTHORIZATION,org.restlet.engine.security.AuthenticatorUtils.formatResponse(challengeResponse,request,requestHeaders));
+      try {
+        requestHeaders.add(HttpConstants.HEADER_AUTHORIZATION,org.restlet.engine.security.AuthenticatorUtils.formatResponse(challengeResponse,request,requestHeaders));
+      }
+ catch (      IOException e) {
+        Context.getCurrentLogger().log(Level.WARNING,"Unable to write the Authorization header",e);
+      }
     }
     ChallengeResponse proxyChallengeResponse=request.getProxyChallengeResponse();
     if (proxyChallengeResponse != null) {
-      requestHeaders.add(HttpConstants.HEADER_PROXY_AUTHORIZATION,org.restlet.engine.security.AuthenticatorUtils.formatResponse(proxyChallengeResponse,request,requestHeaders));
+      try {
+        requestHeaders.add(HttpConstants.HEADER_PROXY_AUTHORIZATION,org.restlet.engine.security.AuthenticatorUtils.formatResponse(proxyChallengeResponse,request,requestHeaders));
+      }
+ catch (      IOException e) {
+        Context.getCurrentLogger().log(Level.WARNING,"Unable to write the Proxy-Authorization header",e);
+      }
     }
     if (!request.getWarnings().isEmpty()) {
       for (      Warning warning : request.getWarnings()) {

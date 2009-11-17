@@ -1,15 +1,52 @@
 {
-  Series<Parameter> parameters=challenge.getParameters();
-  AuthenticatorUtils.parseParameters(challenge.getCredentials(),parameters);
-  String username=parameters.getFirstValue("username");
-  parameters.removeAll("username");
-  String response=parameters.getFirstValue("response");
-  parameters.removeAll("response");
-  if ((username != null) && (response != null)) {
-    challenge.setIdentifier(username);
-    challenge.setSecret(response);
-  }
+  if (challenge.getCredentials() != null) {
+    HeaderReader hr=new HeaderReader(challenge.getCredentials());
+    try {
+      Parameter param=hr.readParameter();
+      while (param != null) {
+        try {
+          if ("username".equals(param.getName())) {
+            challenge.setIdentifier(param.getValue());
+          }
+ else           if ("realm".equals(param.getName())) {
+            challenge.setRealm(param.getValue());
+          }
+ else           if ("nonce".equals(param.getName())) {
+            challenge.setServerNonce(param.getValue());
+          }
+ else           if ("uri".equals(param.getName())) {
+            challenge.setDigestRef(new Reference(param.getValue()));
+          }
+ else           if ("response".equals(param.getName())) {
+            challenge.setSecret(param.getValue());
+          }
+ else           if ("algorithm".equals(param.getName())) {
+            challenge.setDigestAlgorithm(param.getValue());
+          }
+ else           if ("cnonce".equals(param.getName())) {
+            challenge.setClientNonce(param.getValue());
+          }
+ else           if ("opaque".equals(param.getName())) {
+            challenge.setOpaque(param.getValue());
+          }
+ else           if ("qop".equals(param.getName())) {
+            challenge.setQuality(param.getValue());
+          }
+ else           if ("nc".equals(param.getName())) {
+            challenge.setServerNounceCount(Integer.valueOf(param.getValue()));
+          }
  else {
-    getLogger().warning("Invalid credentials given by client with IP: " + ((request != null) ? request.getClientInfo().getAddress() : "?"));
+            challenge.getParameters().add(param);
+          }
+          param=hr.readParameter();
+        }
+ catch (        Exception e) {
+          Context.getCurrentLogger().log(Level.WARNING,"Unable to parse the challenge request header parameter",e);
+        }
+      }
+    }
+ catch (    Exception e) {
+      Context.getCurrentLogger().log(Level.WARNING,"Unable to parse the challenge request header parameter",e);
+    }
   }
 }

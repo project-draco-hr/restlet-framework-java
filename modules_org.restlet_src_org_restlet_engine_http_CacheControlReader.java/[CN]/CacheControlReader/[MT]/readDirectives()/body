@@ -10,13 +10,13 @@
       String name=directive.substring(0,index);
       String value=directive.substring(index + 1);
       HeaderReader hr=new HeaderReader(value){
-        @Override protected void appendQuotedString(        Appendable buffer) throws IOException {
+        @Override public void readQuotedString(        Appendable buffer) throws IOException {
           int nextChar=read();
           while (nextChar != '"' && (nextChar != -1)) {
             nextChar=read();
           }
           if (nextChar == '"') {
-            super.appendQuotedString(buffer);
+            super.readQuotedString(buffer);
           }
         }
       }

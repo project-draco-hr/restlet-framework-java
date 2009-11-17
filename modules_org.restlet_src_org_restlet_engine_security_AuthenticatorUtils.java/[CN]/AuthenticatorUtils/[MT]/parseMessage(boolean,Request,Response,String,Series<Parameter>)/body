@@ -1,0 +1,32 @@
+{
+  ChallengeMessage result=null;
+  if (header != null) {
+    int space=header.indexOf(' ');
+    if (space != -1) {
+      String scheme=header.substring(0,space);
+      String rawValue=header.substring(space + 1);
+      if (isChallengeResponse) {
+        result=new ChallengeResponse(new ChallengeScheme("HTTP_" + scheme,scheme));
+      }
+ else {
+        result=new ChallengeRequest(new ChallengeScheme("HTTP_" + scheme,scheme));
+      }
+      result.setRawValue(rawValue);
+    }
+  }
+  if (result != null) {
+    AuthenticatorHelper helper=Engine.getInstance().findHelper(result.getScheme(),true,false);
+    if (helper != null) {
+      if (isChallengeResponse) {
+        helper.parseResponse((ChallengeResponse)result,request,httpHeaders);
+      }
+ else {
+        helper.parseRequest((ChallengeRequest)result,response,httpHeaders);
+      }
+    }
+ else {
+      Context.getCurrentLogger().warning("Couldn't find any helper support the " + result.getScheme() + " challenge scheme.");
+    }
+  }
+  return result;
+}

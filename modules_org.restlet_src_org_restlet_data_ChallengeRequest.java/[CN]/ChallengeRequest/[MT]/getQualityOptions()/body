@@ -1,0 +1,13 @@
+{
+  List<String> r=this.qualityOptions;
+  if (r == null) {
+synchronized (this) {
+      r=this.qualityOptions;
+      if (r == null) {
+        this.qualityOptions=r=new CopyOnWriteArrayList<String>();
+        this.qualityOptions.add(QUALITY_AUTHENTICATION);
+      }
+    }
+  }
+  return r;
+}

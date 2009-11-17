@@ -1,11 +1,11 @@
 {
-  StringBuilder sb=new StringBuilder();
-  sb.append(challenge.getScheme().getTechnicalName()).append(' ');
-  if (challenge.getCredentials() != null) {
-    sb.append(challenge.getCredentials());
+  HeaderBuilder hb=new HeaderBuilder();
+  hb.append(challenge.getScheme().getTechnicalName()).appendSpace();
+  if (challenge.getRawValue() != null) {
+    hb.append(challenge.getRawValue());
   }
  else {
-    formatCredentials(sb,challenge,request,httpHeaders);
+    formatRawResponse(hb,challenge,request,httpHeaders);
   }
-  return sb.toString();
+  return hb.toString();
 }

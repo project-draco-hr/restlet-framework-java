@@ -1,9 +1,14 @@
 {
   String result=null;
   if (challenge != null) {
-    final AuthenticatorHelper helper=Engine.getInstance().findHelper(challenge.getScheme(),false,true);
+    AuthenticatorHelper helper=Engine.getInstance().findHelper(challenge.getScheme(),false,true);
     if (helper != null) {
-      result=helper.formatRequest(challenge,response,httpHeaders);
+      try {
+        result=helper.formatRequest(challenge,response,httpHeaders);
+      }
+ catch (      IOException e) {
+        Context.getCurrentLogger().log(Level.WARNING,"Unable to format the challenge request: " + challenge,e);
+      }
     }
  else {
       result="?";
