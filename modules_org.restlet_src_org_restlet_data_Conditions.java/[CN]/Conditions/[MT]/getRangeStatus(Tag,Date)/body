@@ -1,0 +1,17 @@
+{
+  Status result=Status.CLIENT_ERROR_PRECONDITION_FAILED;
+  if (getRangeTag() != null) {
+    boolean all=getRangeTag().equals(Tag.ALL);
+    if (tag != null) {
+      if (all || getRangeTag().equals(tag)) {
+        result=Status.SUCCESS_OK;
+      }
+    }
+  }
+ else   if (getRangeDate() != null) {
+    if (getRangeDate().equals(modificationDate)) {
+      result=Status.SUCCESS_OK;
+    }
+  }
+  return result;
+}

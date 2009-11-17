@@ -1,0 +1,20 @@
+{
+  Client client=new Client(Protocol.HTTP);
+  Request request=new Request(Method.GET,"http://localhost:" + TEST_PORT + "/testGet");
+  Response response=client.handle(request);
+  Tag entityTag=response.getEntity().getTag();
+  request.setRanges(Arrays.asList(new Range(1,Range.SIZE_MAX)));
+  request.getConditions().setRangeTag(entityTag);
+  response=client.handle(request);
+  assertEquals(Status.SUCCESS_PARTIAL_CONTENT,response.getStatus());
+  assertEquals("234567890",response.getEntity().getText());
+  assertEquals(9,response.getEntity().getSize());
+  assertEquals(1,response.getEntity().getRange().getIndex());
+  assertEquals(9,response.getEntity().getRange().getSize());
+  entityTag=new Tag(entityTag.getName() + "-test");
+  request.setRanges(Arrays.asList(new Range(1,Range.SIZE_MAX)));
+  request.getConditions().setRangeTag(entityTag);
+  response=client.handle(request);
+  assertEquals(Status.SUCCESS_OK,response.getStatus());
+  assertEquals("1234567890",response.getEntity().getText());
+}
