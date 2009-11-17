@@ -100,5 +100,14 @@
         Context.getCurrentLogger().log(Level.WARNING,"Error during warning parsing. Header: " + header.getValue(),e);
       }
     }
+ else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CACHE_CONTROL)) {
+      CacheControlReader ccr=new CacheControlReader(header.getValue());
+      try {
+        response.getCacheDirectives().addAll(ccr.readDirectives());
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().log(Level.WARNING,"Error during cache control parsing. Header: " + header.getValue(),e);
+      }
+    }
   }
 }
