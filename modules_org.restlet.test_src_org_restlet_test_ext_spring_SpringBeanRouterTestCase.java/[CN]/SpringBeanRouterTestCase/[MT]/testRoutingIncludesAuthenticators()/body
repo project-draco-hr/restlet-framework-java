@@ -1,0 +1,8 @@
+{
+  String expected="/protected/timber";
+  registerBeanDefinition("timber",expected,TestAuthenticator.class,null);
+  doPostProcess();
+  TemplateRoute authenticatorRoute=matchRouteFor(expected);
+  assertNotNull("No route for authenticator",authenticatorRoute);
+  assertTrue("Route is not for authenticator",authenticatorRoute.getNext() instanceof TestAuthenticator);
+}

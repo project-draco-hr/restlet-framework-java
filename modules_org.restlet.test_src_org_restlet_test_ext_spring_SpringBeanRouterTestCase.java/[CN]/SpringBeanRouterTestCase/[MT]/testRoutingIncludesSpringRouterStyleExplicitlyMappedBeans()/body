@@ -1,5 +1,5 @@
 {
-  final BeanDefinition bd=new RootBeanDefinition(Resource.class);
+  final BeanDefinition bd=new RootBeanDefinition(ServerResource.class);
   bd.setScope(BeanDefinition.SCOPE_PROTOTYPE);
   this.factory.registerBeanDefinition("timber",bd);
   this.factory.registerAlias("timber","no-slash");
@@ -7,7 +7,7 @@
   router.setAttachments(Collections.singletonMap(expectedTemplate,"timber"));
   final RouteList actualRoutes=actualRoutes();
   assertEquals("Wrong number of routes",3,actualRoutes.size());
-  Route timberRoute=matchRouteFor(expectedTemplate);
+  TemplateRoute timberRoute=matchRouteFor(expectedTemplate);
   assertNotNull("Missing timber route: " + actualRoutes,timberRoute);
   assertFinderForBean("timber",timberRoute.getNext());
 }
