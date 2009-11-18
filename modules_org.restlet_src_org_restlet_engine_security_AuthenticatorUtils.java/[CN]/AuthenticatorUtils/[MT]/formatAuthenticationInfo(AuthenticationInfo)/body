@@ -1,0 +1,34 @@
+{
+  HeaderBuilder hb=new HeaderBuilder();
+  boolean firstParameter=true;
+  if (info != null) {
+    if (info.getNextServerNonce() != null && info.getNextServerNonce().length() > 0) {
+      hb.setFirstParameter(firstParameter);
+      hb.appendQuotedParameter("nextnonce",info.getNextServerNonce());
+      firstParameter=false;
+    }
+    if (info.getQuality() != null && info.getQuality().length() > 0) {
+      hb.setFirstParameter(firstParameter);
+      hb.appendParameter("qop",info.getQuality());
+      firstParameter=false;
+      if (info.getNonceCount() > 0) {
+        StringBuilder result=new StringBuilder(Integer.toHexString(info.getNonceCount()));
+        while (result.length() < 8) {
+          result.insert(0,'0');
+        }
+        hb.appendParameter("nc",result.toString());
+      }
+    }
+    if (info.getResponseDigest() != null && info.getResponseDigest().length() > 0) {
+      hb.setFirstParameter(firstParameter);
+      hb.appendQuotedParameter("rspauth",info.getResponseDigest());
+      firstParameter=false;
+    }
+    if (info.getClientNonce() != null && info.getClientNonce().length() > 0) {
+      hb.setFirstParameter(firstParameter);
+      hb.appendParameter("cnonce",info.getClientNonce());
+      firstParameter=false;
+    }
+  }
+  return hb.toString();
+}
