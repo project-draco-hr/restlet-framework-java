@@ -5,12 +5,11 @@
     result=RESULT_MISSING;
   }
  else {
-    Series<Parameter> parameters=cr.getParameters();
-    String nonce=parameters.getFirstValue("nonce");
-    String uri=parameters.getFirstValue("uri");
-    String qop=parameters.getFirstValue("qop");
-    String nc=parameters.getFirstValue("nc");
-    String cnonce=parameters.getFirstValue("cnonce");
+    String nonce=cr.getServerNonce();
+    String uri=(cr.getDigestRef() == null) ? null : cr.getDigestRef().toString();
+    String qop=cr.getQuality();
+    int nc=cr.getServerNounceCount();
+    String cnonce=cr.getClientNonce();
     String username=getIdentifier(request,response);
     String cresponse=new String(getSecret(request,response));
     try {
@@ -37,10 +36,10 @@
             String a2=DigestUtils.toMd5(request.getMethod() + ":" + requestUri);
             StringBuilder expectedResponse=new StringBuilder().append(a1).append(':').append(nonce);
             if (!AuthenticatorUtils.anyNull(qop,cnonce,nc)) {
-              expectedResponse.append(':').append(nc).append(':').append(cnonce).append(':').append(qop);
+              expectedResponse.append(':').append(AuthenticatorUtils.formatNonceCount(nc)).append(':').append(cnonce).append(':').append(qop);
             }
             expectedResponse.append(':').append(a2);
-            if (!cresponse.equals(DigestUtils.toMd5(expectedResponse.toString()))) {
+            if (!DigestUtils.toMd5(expectedResponse.toString()).equals(cresponse)) {
               result=RESULT_INVALID;
             }
           }

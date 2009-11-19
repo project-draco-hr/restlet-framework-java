@@ -12,11 +12,7 @@
       hb.appendParameter("qop",info.getQuality());
       firstParameter=false;
       if (info.getNonceCount() > 0) {
-        StringBuilder result=new StringBuilder(Integer.toHexString(info.getNonceCount()));
-        while (result.length() < 8) {
-          result.insert(0,'0');
-        }
-        hb.appendParameter("nc",result.toString());
+        hb.appendParameter("nc",formatNonceCount(info.getNonceCount()));
       }
     }
     if (info.getResponseDigest() != null && info.getResponseDigest().length() > 0) {
