@@ -1,0 +1,14 @@
+{
+  CacheControl jaxRsCacheControl=new CacheControl();
+  for (  CacheDirective cacheDirective : cacheDirectives) {
+    if (cacheDirective.getName() == HttpConstants.CACHE_MAX_AGE)     jaxRsCacheControl.setMaxAge(Integer.valueOf(cacheDirective.getValue()));
+ else     if (cacheDirective.getName() == HttpConstants.CACHE_MUST_REVALIDATE)     jaxRsCacheControl.setMustRevalidate(true);
+ else     if (cacheDirective.getName() == HttpConstants.CACHE_NO_CACHE)     jaxRsCacheControl.setNoCache(true);
+ else     if (cacheDirective.getName() == HttpConstants.CACHE_NO_STORE)     jaxRsCacheControl.setNoStore(true);
+ else     if (cacheDirective.getName() == HttpConstants.CACHE_NO_TRANSFORM)     jaxRsCacheControl.setNoTransform(true);
+ else     if (cacheDirective.getName() == HttpConstants.CACHE_PROXY_MUST_REVALIDATE)     jaxRsCacheControl.setProxyRevalidate(true);
+ else     if (cacheDirective.getName() == HttpConstants.CACHE_PUBLIC)     jaxRsCacheControl.setPrivate(false);
+ else     jaxRsCacheControl.getCacheExtension().put(cacheDirective.getName(),cacheDirective.getValue());
+  }
+  return jaxRsCacheControl;
+}

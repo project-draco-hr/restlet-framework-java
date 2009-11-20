@@ -1,0 +1,17 @@
+{
+  List<CacheDirective> directives=new ArrayList<CacheDirective>();
+  if (cacheControl.getMaxAge() >= 0)   directives.add(CacheDirective.maxAge(cacheControl.getMaxAge()));
+  if (cacheControl.getSMaxAge() >= 0)   directives.add(CacheDirective.sharedMaxAge(cacheControl.getSMaxAge()));
+  if (!cacheControl.getNoCacheFields().isEmpty())   directives.add(CacheDirective.noCache(cacheControl.getNoCacheFields()));
+  if (!cacheControl.getPrivateFields().isEmpty())   directives.add(CacheDirective.privateInfo(cacheControl.getPrivateFields()));
+  if (cacheControl.isMustRevalidate())   directives.add(CacheDirective.mustRevalidate());
+  if (cacheControl.isNoCache())   directives.add(CacheDirective.noCache());
+  if (cacheControl.isNoStore())   directives.add(CacheDirective.noStore());
+  if (cacheControl.isNoTransform())   directives.add(CacheDirective.noTransform());
+  if (cacheControl.isPrivate())   directives.add(CacheDirective.privateInfo());
+  if (cacheControl.isProxyRevalidate())   directives.add(CacheDirective.proxyMustRevalidate());
+  for (  Map.Entry<String,String> c : cacheControl.getCacheExtension().entrySet()) {
+    directives.add(new CacheDirective(c.getKey(),c.getValue()));
+  }
+  return directives;
+}
