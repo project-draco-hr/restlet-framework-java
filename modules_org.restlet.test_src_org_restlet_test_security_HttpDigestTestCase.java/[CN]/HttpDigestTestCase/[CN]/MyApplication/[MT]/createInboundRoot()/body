@@ -1,0 +1,16 @@
+{
+  Router router=new Router(getContext());
+  DigestAuthenticator da=new DigestAuthenticator(getContext(),"TestRealm","mySecretServerKey");
+  MapVerifier mapVerifier=new MapVerifier();
+  mapVerifier.getLocalSecrets().put("scott","tiger".toCharArray());
+  da.setWrappedVerifier(mapVerifier);
+  Restlet restlet=new Restlet(getContext()){
+    @Override public void handle(    Request request,    Response response){
+      response.setEntity("hello, world",MediaType.TEXT_PLAIN);
+    }
+  }
+;
+  da.setNext(restlet);
+  router.attach("/",da);
+  return router;
+}

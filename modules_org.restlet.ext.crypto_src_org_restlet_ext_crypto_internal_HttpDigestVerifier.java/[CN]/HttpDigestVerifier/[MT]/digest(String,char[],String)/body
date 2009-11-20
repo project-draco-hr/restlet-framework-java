@@ -1,8 +1,10 @@
 {
   if (Digest.ALGORITHM_HTTP_DIGEST.equals(algorithm)) {
-    return DigestUtils.toHttpDigest(identifier,secret,getDigestAuthenticator().getRealm()).toCharArray();
+    String result=DigestUtils.toHttpDigest(identifier,secret,getDigestAuthenticator().getRealm());
+    if (result != null) {
+      return result.toCharArray();
+    }
+    return null;
   }
- else {
-    return super.digest(identifier,secret,algorithm);
-  }
+  return super.digest(identifier,secret,algorithm);
 }

@@ -12,7 +12,16 @@
     hb.appendQuotedParameter("uri",challenge.getDigestRef().toString());
   }
   if (challenge.getSecret() != null) {
-    hb.appendQuotedParameter("response",new String(challenge.getSecret()));
+    if (challenge.getSecret() != null) {
+      String a1=new String(challenge.getSecret());
+      String a2=DigestUtils.toMd5(request.getMethod() + ":" + challenge.getDigestRef().toString());
+      StringBuilder response=new StringBuilder().append(a1).append(':').append(challenge.getServerNonce());
+      if (!AuthenticatorUtils.anyNull(challenge.getQuality(),challenge.getClientNonce(),challenge.getServerNounceCount())) {
+        response.append(':').append(AuthenticatorUtils.formatNonceCount(challenge.getServerNounceCount())).append(':').append(challenge.getClientNonce()).append(':').append(challenge.getQuality());
+      }
+      response.append(':').append(a2);
+      hb.appendQuotedParameter("response",DigestUtils.toMd5(response.toString()));
+    }
   }
   if ((challenge.getDigestAlgorithm() != null) && !Digest.ALGORITHM_MD5.equals(challenge.getDigestAlgorithm())) {
     hb.appendParameter("algorithm",challenge.getDigestAlgorithm());
