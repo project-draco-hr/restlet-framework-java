@@ -1,6 +1,6 @@
 {
   List<Variant> result=null;
-  if ((Method.GET.equals(method) || Method.HEAD.equals(method)) && ((result == null) || result.isEmpty())) {
+  if ((Method.GET.equals(method) || Method.HEAD.equals(method))) {
     if (variantsGet != null) {
       result=variantsGet;
     }
@@ -35,10 +35,7 @@
           }
         }
         if (!resultSet.isEmpty()) {
-          if (result == null) {
-            result=new ArrayList<Variant>();
-          }
-          result.addAll(resultSet);
+          result=new ArrayList<Variant>(resultSet);
         }
         if (resultSet.isEmpty()) {
           if (this.directoryTarget && getDirectory().isListingAllowed()) {
@@ -72,9 +69,7 @@
  else {
           this.fileContent.setIdentifier(getReference());
         }
-        if (result == null) {
-          result=new ArrayList<Variant>();
-        }
+        result=new ArrayList<Variant>();
         result.add(this.fileContent);
       }
       this.variantsGet=result;

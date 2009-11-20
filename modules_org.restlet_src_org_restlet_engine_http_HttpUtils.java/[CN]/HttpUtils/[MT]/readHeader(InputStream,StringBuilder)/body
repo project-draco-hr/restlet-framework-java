@@ -16,30 +16,26 @@
     if (next == -1) {
       throw new IOException("Unable to parse the header name. End of stream reached too early.");
     }
- else {
-      result.setName(sb.toString());
-      sb.delete(0,sb.length());
+    result.setName(sb.toString());
+    sb.delete(0,sb.length());
+    next=is.read();
+    while (HttpUtils.isSpace(next)) {
       next=is.read();
-      while (HttpUtils.isSpace(next)) {
-        next=is.read();
-      }
-      while ((next != -1) && (!HttpUtils.isCarriageReturn(next))) {
-        sb.append((char)next);
-        next=is.read();
-      }
-      if (next == -1) {
-        throw new IOException("Unable to parse the header value. End of stream reached too early.");
-      }
+    }
+    while ((next != -1) && (!HttpUtils.isCarriageReturn(next))) {
+      sb.append((char)next);
+      next=is.read();
+    }
+    if (next == -1) {
+      throw new IOException("Unable to parse the header value. End of stream reached too early.");
+    }
+    next=is.read();
+    if (HttpUtils.isLineFeed(next)) {
+      result.setValue(sb.toString());
+      sb.delete(0,sb.length());
+    }
  else {
-        next=is.read();
-        if (HttpUtils.isLineFeed(next)) {
-          result.setValue(sb.toString());
-          sb.delete(0,sb.length());
-        }
- else {
-          throw new IOException("Unable to parse the HTTP header value. The carriage return must be followed by a line feed.");
-        }
-      }
+      throw new IOException("Unable to parse the HTTP header value. The carriage return must be followed by a line feed.");
     }
   }
   return result;

@@ -1,5 +1,8 @@
 {
-  if (file.exists()) {
+  if (!file.exists()) {
+    response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+  }
+ else {
     ZipFile zipFile;
     try {
       zipFile=new ZipFile(file);
@@ -10,6 +13,9 @@
     }
     Entity entity=new ZipEntryEntity(zipFile,entryName,metadataService);
     if (entity.exists()) {
+      response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+    }
+ else {
       final Representation output;
       if (entity.isDirectory()) {
         final Collection<Entity> children=entity.getChildren();
@@ -34,11 +40,6 @@
       }
       response.setStatus(Status.SUCCESS_OK);
       response.setEntity(output);
-      return;
-    }
- else {
-      response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
     }
   }
-  response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
 }
