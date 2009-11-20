@@ -1,7 +1,8 @@
 {
   HttpServerHelper result=this.helper;
   if (result == null) {
-synchronized (ServerServlet.class) {
+synchronized (this) {
+      result=this.helper;
       if (result == null) {
         final String serverAttributeName=getInitParameter(NAME_SERVER_ATTRIBUTE,NAME_SERVER_ATTRIBUTE_DEFAULT + "." + getServletName());
         result=(HttpServerHelper)getServletContext().getAttribute(serverAttributeName);
