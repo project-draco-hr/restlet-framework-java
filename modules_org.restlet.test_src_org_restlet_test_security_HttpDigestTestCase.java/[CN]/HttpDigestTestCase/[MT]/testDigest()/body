@@ -15,10 +15,7 @@
     assertEquals(ChallengeScheme.HTTP_DIGEST,c1.getScheme());
     String realm=c1.getRealm();
     assertEquals("TestRealm",realm);
-    ChallengeResponse c2=new ChallengeResponse(ChallengeScheme.HTTP_DIGEST);
-    c2.setIdentifier("scott");
-    c2.setPassword("tiger");
-    AuthenticatorUtils.update(c2,cr.getRequest(),cr.getResponse());
+    ChallengeResponse c2=new ChallengeResponse(c1,cr.getRequest(),cr.getResponse(),"scott","tiger",ChallengeScheme.HTTP_DIGEST);
     cr.setChallengeResponse(c2);
     cr.get();
     assertTrue(cr.getStatus().isSuccess());
