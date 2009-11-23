@@ -1,0 +1,17 @@
+{
+  Request rq=new Request();
+  Response rs=new Response(rq);
+  Validator validator=new Validator();
+  validator.setNext(new TraceRestlet(null));
+  validator.validateFormat("a","\\d*");
+  validator.handle(rq,rs);
+  assertEquals(Status.SUCCESS_OK,rs.getStatus());
+  rq.getAttributes().put("a","abc");
+  rs.setStatus(Status.SUCCESS_OK);
+  validator.handle(rq,rs);
+  assertEquals(Status.CLIENT_ERROR_BAD_REQUEST,rs.getStatus());
+  rq.getAttributes().put("a","123");
+  rs.setStatus(Status.SUCCESS_OK);
+  validator.handle(rq,rs);
+  assertEquals(Status.SUCCESS_OK,rs.getStatus());
+}
