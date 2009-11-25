@@ -1,19 +1,20 @@
 {
   Representation result=null;
+  Class<?>[] parameterTypes=annotationInfo.getJavaInputTypes();
   ConverterService cs=getConverterService();
   Object resultObject=null;
   try {
-    if ((annotationInfo.getJavaInputTypes() != null) && (annotationInfo.getJavaInputTypes().length > 0)) {
+    if (parameterTypes.length > 0) {
       List<Object> parameters=new ArrayList<Object>();
       Object parameter=null;
-      for (      Class<?> param : annotationInfo.getJavaInputTypes()) {
-        if (Variant.class.equals(param)) {
+      for (      Class<?> parameterType : parameterTypes) {
+        if (Variant.class.equals(parameterType)) {
           parameters.add(variant);
         }
  else {
-          if (getRequestEntity().isAvailable()) {
+          if (getRequestEntity() != null && getRequestEntity().isAvailable()) {
             try {
-              parameter=cs.toObject(getRequestEntity(),param,this);
+              parameter=cs.toObject(getRequestEntity(),parameterType,this);
             }
  catch (            IOException e) {
               parameter=null;
@@ -33,7 +34,6 @@
  else {
       resultObject=annotationInfo.getJavaMethod().invoke(this);
     }
-    result=cs.toRepresentation(resultObject,variant,this);
   }
  catch (  IllegalArgumentException e) {
     throw new ResourceException(e);
@@ -46,6 +46,14 @@ catch (  InvocationTargetException e) {
       throw (ResourceException)e.getTargetException();
     }
     throw new ResourceException(e.getTargetException());
+  }
+  if (resultObject != null) {
+    if (variant != null) {
+      result=cs.toRepresentation(resultObject,variant,this);
+    }
+ else {
+      result=cs.toRepresentation(resultObject);
+    }
   }
   return result;
 }
