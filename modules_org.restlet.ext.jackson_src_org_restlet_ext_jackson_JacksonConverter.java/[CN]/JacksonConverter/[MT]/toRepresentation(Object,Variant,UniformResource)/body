@@ -1,0 +1,16 @@
+{
+  Representation result=null;
+  if (source instanceof JacksonRepresentation) {
+    result=(JacksonRepresentation)source;
+  }
+ else {
+    if (target.getMediaType() == null) {
+      target.setMediaType(MediaType.APPLICATION_JSON);
+    }
+    if (VARIANT_JSON.isCompatible(target)) {
+      JacksonRepresentation<Object> jacksonRepresentation=create(target.getMediaType(),source);
+      result=jacksonRepresentation;
+    }
+  }
+  return result;
+}
