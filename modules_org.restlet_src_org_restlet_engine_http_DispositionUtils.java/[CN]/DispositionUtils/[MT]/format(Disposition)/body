@@ -1,0 +1,20 @@
+{
+  final StringBuilder sb=new StringBuilder();
+  sb.append(disposition.getType());
+  for (  Parameter parameter : disposition.getParameters()) {
+    sb.append("; ");
+    sb.append(parameter.getName());
+    sb.append("=");
+    if (HttpUtils.isToken(parameter.getValue())) {
+      sb.append(parameter.getValue());
+    }
+ else {
+      try {
+        HttpUtils.appendQuote(parameter.getValue(),sb);
+      }
+ catch (      IOException e) {
+      }
+    }
+  }
+  return sb.toString();
+}

@@ -9,12 +9,11 @@
     }
  else     if (this.encoding.equals(Encoding.ZIP)) {
       final ZipOutputStream stream=new ZipOutputStream(outputStream);
-      if (getWrappedRepresentation().getDownloadName() != null) {
-        stream.putNextEntry(new ZipEntry(getWrappedRepresentation().getDownloadName()));
+      String name="entry";
+      if (getWrappedRepresentation().getDisposition() != null) {
+        name=getWrappedRepresentation().getDisposition().getParameters().getFirstValue(Disposition.DISPOSITION_PARAMETER_FILENAME,true,name);
       }
- else {
-        stream.putNextEntry(new ZipEntry("entry"));
-      }
+      stream.putNextEntry(new ZipEntry(name));
       encoderOutputStream=stream;
     }
  else     if (this.encoding.equals(Encoding.IDENTITY)) {
