@@ -1,9 +1,12 @@
 {
   if (this.representation != null) {
     try {
-      if (this.representation.getDownloadName() != null) {
-        getMetadata().set(TikaMetadataKeys.RESOURCE_NAME_KEY,this.representation.getDownloadName());
-        getMetadata().set(HttpHeaders.CONTENT_DISPOSITION,this.representation.getDownloadName());
+      if (this.representation.getDisposition() != null) {
+        String name=this.representation.getDisposition().getFilename();
+        if (name != null) {
+          getMetadata().set(TikaMetadataKeys.RESOURCE_NAME_KEY,name);
+          getMetadata().set(HttpHeaders.CONTENT_DISPOSITION,name);
+        }
       }
       getMetadata().set(HttpHeaders.CONTENT_TYPE,this.representation.getMediaType().toString());
       if (this.representation.getSize() != UNKNOWN_SIZE) {
