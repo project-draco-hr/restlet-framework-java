@@ -26,6 +26,46 @@ break;
 case '[':
 blankNode.getLexicalUnits().add(new BlankNodeToken(this,getContext()));
 break;
+case '!':
+blankNode.getLexicalUnits().add(new Token("!"));
+step();
+discard();
+break;
+case '^':
+blankNode.getLexicalUnits().add(new Token("^"));
+step();
+discard();
+break;
+case '=':
+if (step() == '>') {
+blankNode.getLexicalUnits().add(new Token("=>"));
+step();
+discard();
+}
+ else {
+blankNode.getLexicalUnits().add(new Token("="));
+discard();
+}
+break;
+case '@':
+step();
+discard();
+blankNode.getLexicalUnits().add(new Token(this,getContext()));
+discard();
+break;
+case ';':
+step();
+discard();
+blankNode.getLexicalUnits().add(new Token(";"));
+break;
+case ',':
+step();
+discard();
+blankNode.getLexicalUnits().add(new Token(","));
+break;
+case '#':
+parseComment();
+break;
 case '{':
 blankNode.getLexicalUnits().add(new FormulaToken(this,getContext()));
 break;
