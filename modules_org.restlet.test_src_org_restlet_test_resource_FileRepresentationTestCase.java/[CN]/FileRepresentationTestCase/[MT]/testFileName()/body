@@ -4,7 +4,6 @@
       return new Restlet(){
         @Override public void handle(        Request request,        Response response){
           response.setEntity(new FileRepresentation(file,MediaType.TEXT_PLAIN));
-          response.getEntity().setDownloadable(true);
         }
       }
 ;
@@ -18,5 +17,5 @@
   Representation entity=response.getEntity();
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   assertEquals("abc",entity.getText());
-  assertEquals(getClass().getName(),entity.getDownloadName());
+  assertEquals(getClass().getName(),entity.getDisposition().getFilename());
 }

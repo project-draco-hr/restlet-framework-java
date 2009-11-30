@@ -1,9 +1,17 @@
 {
-  assertEquals("file.txt",HttpClientCall.parseContentDisposition("attachment; fileName=\"file.txt\""));
-  assertEquals("file.txt",HttpClientCall.parseContentDisposition("attachment; fileName=file.txt"));
-  assertEquals("file with space.txt",HttpClientCall.parseContentDisposition("attachment; filename=\"file with space.txt\""));
-  assertEquals("file with space.txt",HttpClientCall.parseContentDisposition("attachment; filename=file with space.txt"));
-  assertEquals("",HttpClientCall.parseContentDisposition("attachment; fileName=\"\""));
-  assertEquals("",HttpClientCall.parseContentDisposition("attachment; fileName="));
-  assertNull(HttpClientCall.parseContentDisposition("attachment; fileNam"));
+  Disposition disposition=new DispositionReader("attachment; fileName=\"file.txt\"").readDisposition();
+  assertEquals("file.txt",disposition.getParameters().getFirstValue("fileName"));
+  disposition=new DispositionReader("attachment; fileName=file.txt").readDisposition();
+  assertEquals("file.txt",disposition.getParameters().getFirstValue("fileName"));
+  disposition=new DispositionReader("attachment; filename=\"file with space.txt\"").readDisposition();
+  assertEquals("file with space.txt",disposition.getParameters().getFirstValue("filename"));
+  disposition=new DispositionReader("attachment; filename=\"\"").readDisposition();
+  assertEquals("",disposition.getParameters().getFirstValue("filename"));
+  disposition=new DispositionReader("attachment; filename=").readDisposition();
+  assertEquals("",disposition.getParameters().getFirstValue("filename"));
+  disposition=new DispositionReader("attachment; filenam").readDisposition();
+  assertNull(disposition.getParameters().getFirstValue("filename"));
+  disposition=new DispositionReader("attachment; modification-date=\"Wed, 11 Nov 09 22:11:12 GMT\"").readDisposition();
+  String str=disposition.getParameters().getFirstValue("modification-date");
+  assertEquals("Wed, 11 Nov 09 22:11:12 GMT",str);
 }
