@@ -12,8 +12,9 @@
       }
     }
  else {
-      this.writingExtraDot=true;
-      this.bw.write(".\n");
+      if (this.writingExtraDot) {
+        this.bw.write(".\n");
+      }
       write(source,this.context.getPrefixes());
       this.bw.write(" ");
       write(typeRef,this.context.getPrefixes());
@@ -22,6 +23,7 @@
     write(target,this.context.getPrefixes());
     this.precSource=source;
     this.precPredicate=typeRef;
+    this.writingExtraDot=true;
   }
  catch (  IOException e) {
     org.restlet.Context.getCurrentLogger().warning("Cannot write the representation of a statement due to " + e.getMessage());
