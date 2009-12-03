@@ -1,0 +1,15 @@
+{
+  try {
+    Method method=target.getClass().getMethod("setNext",Restlet.class);
+    method.invoke(target,restlet);
+  }
+ catch (  NoSuchMethodException e) {
+    throw new UnsupportedOperationException("setNext not supported on target");
+  }
+catch (  IllegalAccessException e) {
+    throw new UnsupportedOperationException("setNext not accessible on target");
+  }
+catch (  InvocationTargetException e) {
+    throw (RuntimeException)e.getCause();
+  }
+}
