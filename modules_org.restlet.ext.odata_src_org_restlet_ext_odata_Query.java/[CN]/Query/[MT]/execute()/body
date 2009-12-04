@@ -2,11 +2,11 @@
   if (!isExecuted()) {
     String targetUri=createTargetUri();
     ClientResource resource=new ClientResource(targetUri);
-    resource.setChallengeResponse(session.getCredentials());
+    resource.setChallengeResponse(service.getCredentials());
     Representation result=new StringRepresentation(resource.get(MediaType.APPLICATION_ATOM).getText());
     getLogger().fine(result.getText());
-    session.setLatestRequest(resource.getRequest());
-    session.setLatestResponse(resource.getResponse());
+    service.setLatestRequest(resource.getRequest());
+    service.setLatestResponse(resource.getResponse());
     if (resource.getStatus().isSuccess()) {
 switch (guessType(targetUri)) {
 case TYPE_ENTITY_SET:
