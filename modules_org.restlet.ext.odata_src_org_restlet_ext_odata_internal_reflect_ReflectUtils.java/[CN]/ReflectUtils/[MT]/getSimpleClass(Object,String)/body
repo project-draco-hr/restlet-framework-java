@@ -1,0 +1,24 @@
+{
+  Class<?> result=null;
+  String normPteName=normalize(propertyName);
+  try {
+    Field field=entity.getClass().getDeclaredField(normPteName);
+    if (field.getType().isArray()) {
+      result=field.getType().getComponentType();
+    }
+ else {
+      java.lang.reflect.Type genericFieldType=field.getGenericType();
+      if (genericFieldType instanceof ParameterizedType) {
+        ParameterizedType aType=(ParameterizedType)genericFieldType;
+        java.lang.reflect.Type[] fieldArgTypes=aType.getActualTypeArguments();
+        if (fieldArgTypes.length == 1) {
+          result=(Class<?>)fieldArgTypes[0];
+        }
+      }
+    }
+  }
+ catch (  Exception e) {
+    logger.log(Level.WARNING,"Can't access to the following property " + normPteName + " on "+ entity.getClass()+ ".",e);
+  }
+  return result;
+}

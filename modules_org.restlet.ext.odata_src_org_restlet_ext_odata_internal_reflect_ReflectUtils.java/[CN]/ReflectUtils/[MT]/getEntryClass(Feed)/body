@@ -1,0 +1,18 @@
+{
+  Class<?> result=null;
+  if (feed != null && feed.getEntries() != null && !feed.getEntries().isEmpty()) {
+    for (    Entry entry : feed.getEntries()) {
+      if (entry.getCategories() != null && !entry.getCategories().isEmpty()) {
+        Category category=entry.getCategories().get(0);
+        try {
+          result=Class.forName(Type.getFullClassName(category.getTerm()));
+          break;
+        }
+ catch (        ClassNotFoundException e) {
+          continue;
+        }
+      }
+    }
+  }
+  return result;
+}

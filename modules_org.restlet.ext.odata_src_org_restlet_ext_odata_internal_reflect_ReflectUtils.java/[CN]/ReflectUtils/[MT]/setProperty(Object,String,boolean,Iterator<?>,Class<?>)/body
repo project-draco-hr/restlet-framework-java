@@ -1,0 +1,53 @@
+{
+  String normPteName=normalize(propertyName);
+  if (iterator == null || !iterator.hasNext()) {
+    return;
+  }
+  boolean isGeneric=false;
+  boolean isArray=false;
+  Field field=entity.getClass().getDeclaredField(normPteName);
+  if (field.getType().isArray()) {
+    isArray=true;
+  }
+ else {
+    java.lang.reflect.Type genericFieldType=field.getGenericType();
+    if (genericFieldType instanceof ParameterizedType) {
+      ParameterizedType aType=(ParameterizedType)genericFieldType;
+      java.lang.reflect.Type[] fieldArgTypes=aType.getActualTypeArguments();
+      if (fieldArgTypes.length == 1) {
+        isGeneric=true;
+      }
+    }
+  }
+  if (isCollection) {
+    if (isArray) {
+      List<Object> list=new ArrayList<Object>();
+      for (; iterator.hasNext(); ) {
+        list.add(iterator.next());
+      }
+      ReflectUtils.invokeSetter(entity,normPteName,list.toArray());
+    }
+ else     if (isGeneric) {
+      if (List.class.isAssignableFrom(field.getType())) {
+        List<Object> list=new ArrayList<Object>();
+        for (; iterator.hasNext(); ) {
+          list.add(iterator.next());
+        }
+        ReflectUtils.invokeSetter(entity,normPteName,list);
+      }
+ else       if (Set.class.isAssignableFrom(field.getType())) {
+        Set<Object> set=new TreeSet<Object>();
+        for (; iterator.hasNext(); ) {
+          set.add(iterator.next());
+        }
+        ReflectUtils.invokeSetter(entity,normPteName,set);
+      }
+    }
+  }
+ else {
+    for (; iterator.hasNext(); ) {
+      Object property=iterator.next();
+      ReflectUtils.invokeSetter(entity,normPteName,property);
+    }
+  }
+}
