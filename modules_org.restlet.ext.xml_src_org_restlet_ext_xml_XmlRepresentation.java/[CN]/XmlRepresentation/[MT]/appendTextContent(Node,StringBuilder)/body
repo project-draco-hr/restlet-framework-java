@@ -1,0 +1,44 @@
+{
+switch (node.getNodeType()) {
+case Node.TEXT_NODE:
+    sb.append(node.getNodeValue());
+  break;
+case Node.CDATA_SECTION_NODE:
+sb.append(node.getNodeValue());
+break;
+case Node.COMMENT_NODE:
+sb.append(node.getNodeValue());
+break;
+case Node.PROCESSING_INSTRUCTION_NODE:
+sb.append(node.getNodeValue());
+break;
+case Node.ENTITY_REFERENCE_NODE:
+if (node.getNodeName().startsWith("#")) {
+int ch=Integer.parseInt(node.getNodeName().substring(1));
+sb.append((char)ch);
+}
+break;
+case Node.ELEMENT_NODE:
+for (int i=0; i < node.getChildNodes().getLength(); i++) {
+appendTextContent(node.getChildNodes().item(i),sb);
+}
+break;
+case Node.ATTRIBUTE_NODE:
+for (int i=0; i < node.getChildNodes().getLength(); i++) {
+appendTextContent(node.getChildNodes().item(i),sb);
+}
+break;
+case Node.ENTITY_NODE:
+for (int i=0; i < node.getChildNodes().getLength(); i++) {
+appendTextContent(node.getChildNodes().item(i),sb);
+}
+break;
+case Node.DOCUMENT_FRAGMENT_NODE:
+for (int i=0; i < node.getChildNodes().getLength(); i++) {
+appendTextContent(node.getChildNodes().item(i),sb);
+}
+break;
+default :
+break;
+}
+}
