@@ -1,0 +1,23 @@
+{
+  String result=null;
+  if (entity == null) {
+    return result;
+  }
+  String entityClass=entity.getClass().getName();
+  int index=entityClass.lastIndexOf(".");
+  if (index != -1) {
+    entityClass=entityClass.substring(index + 1);
+  }
+  for (  EntityContainer entityContainer : getContainers()) {
+    for (    EntitySet entitySet : entityContainer.getEntities()) {
+      EntityType type=entitySet.getType();
+      if (type.getClassName().equals(entityClass)) {
+        String value=getKeyValue(type,entity);
+        if (value != null) {
+          result="/" + entitySet.getName() + "("+ value+ ")";
+        }
+      }
+    }
+  }
+  return result;
+}

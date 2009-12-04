@@ -1,0 +1,50 @@
+{
+  String result=null;
+  if (name != null) {
+    StringBuilder b=new StringBuilder();
+    boolean upperCase=false;
+    char oldChar=0;
+    for (int i=0; i < name.length(); i++) {
+      char c=name.charAt(i);
+      if (Character.isDigit(c)) {
+        b.append(c);
+        oldChar=c;
+      }
+ else       if (c >= 'a' && c <= 'z') {
+        if (upperCase) {
+          b.append(Character.toUpperCase(c));
+          upperCase=false;
+        }
+ else {
+          b.append(c);
+        }
+        oldChar=c;
+      }
+ else       if (c >= 'A' && c <= 'Z') {
+        if (upperCase) {
+          b.append(c);
+          upperCase=false;
+        }
+ else         if (oldChar != 0 && Character.isLowerCase(oldChar)) {
+          b.append(c);
+        }
+ else {
+          b.append(Character.toLowerCase(c));
+        }
+        oldChar=c;
+      }
+ else       if (c == '.') {
+        upperCase=true;
+      }
+ else       if (Character.isJavaIdentifierPart(c)) {
+        b.append(c);
+        oldChar=c;
+      }
+ else {
+        upperCase=true;
+      }
+    }
+    result=b.toString();
+  }
+  return result;
+}
