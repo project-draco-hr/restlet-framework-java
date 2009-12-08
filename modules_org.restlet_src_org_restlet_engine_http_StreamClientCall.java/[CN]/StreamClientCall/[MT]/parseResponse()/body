@@ -1,7 +1,7 @@
 {
   final StringBuilder sb=new StringBuilder();
   int next=getResponseStream().read();
-  while ((next != -1) && !HttpUtils.isSpace(next)) {
+  while ((next != -1) && !HeaderUtils.isSpace(next)) {
     sb.append((char)next);
     next=getResponseStream().read();
   }
@@ -11,7 +11,7 @@
   setVersion(sb.toString());
   sb.delete(0,sb.length());
   next=getResponseStream().read();
-  while ((next != -1) && !HttpUtils.isSpace(next)) {
+  while ((next != -1) && !HeaderUtils.isSpace(next)) {
     sb.append((char)next);
     next=getResponseStream().read();
   }
@@ -21,7 +21,7 @@
   setStatusCode(Integer.parseInt(sb.toString()));
   sb.delete(0,sb.length());
   next=getResponseStream().read();
-  while ((next != -1) && !HttpUtils.isCarriageReturn(next)) {
+  while ((next != -1) && !HeaderUtils.isCarriageReturn(next)) {
     sb.append((char)next);
     next=getResponseStream().read();
   }
@@ -29,13 +29,13 @@
     throw new IOException("Unable to parse the reason phrase. End of stream reached too early.");
   }
   next=getResponseStream().read();
-  if (HttpUtils.isLineFeed(next)) {
+  if (HeaderUtils.isLineFeed(next)) {
     setReasonPhrase(sb.toString());
     sb.delete(0,sb.length());
-    Parameter header=HttpUtils.readHeader(getResponseStream(),sb);
+    Parameter header=HeaderUtils.readHeader(getResponseStream(),sb);
     while (header != null) {
       getResponseHeaders().add(header);
-      header=HttpUtils.readHeader(getResponseStream(),sb);
+      header=HeaderUtils.readHeader(getResponseStream(),sb);
     }
   }
  else {

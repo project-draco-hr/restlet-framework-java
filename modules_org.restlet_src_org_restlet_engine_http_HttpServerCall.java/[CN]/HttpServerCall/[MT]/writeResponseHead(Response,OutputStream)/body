@@ -12,12 +12,12 @@
   }
   headStream.write(13);
   headStream.write(10);
-  getResponseHeaders().set(HttpConstants.HEADER_CONNECTION,"close",isServerKeepAlive());
+  getResponseHeaders().set(HeaderConstants.HEADER_CONNECTION,"close",isServerKeepAlive());
   if (shouldResponseBeChunked(response)) {
-    getResponseHeaders().add(HttpConstants.HEADER_TRANSFER_ENCODING,"chunked");
+    getResponseHeaders().add(HeaderConstants.HEADER_TRANSFER_ENCODING,"chunked");
   }
   for (  final Parameter header : getResponseHeaders()) {
-    HttpUtils.writeHeader(header,headStream);
+    HeaderUtils.writeHeader(header,headStream);
   }
   headStream.write(13);
   headStream.write(10);

@@ -1,5 +1,5 @@
 {
-  final SslContextFactory sslContextFactory=HttpsUtils.getSslContextFactory(this);
+  final SslContextFactory sslContextFactory=SslUtils.getSslContextFactory(this);
   SSLContext sslContext;
   if (sslContextFactory == null) {
     final KeyStore keyStore=KeyStore.getInstance(getKeystoreType());
@@ -20,7 +20,7 @@
   }
   final SSLReadFilter readFilter=new SSLReadFilter();
   readFilter.setSSLContext(sslContext);
-  final String[] enabledCipherSuites=HttpsUtils.getEnabledCipherSuites(this);
+  final String[] enabledCipherSuites=SslUtils.getEnabledCipherSuites(this);
   if (enabledCipherSuites != null) {
     readFilter.setEnabledCipherSuites(enabledCipherSuites);
   }

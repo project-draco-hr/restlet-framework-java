@@ -11,54 +11,54 @@
       }
       sb.append(method.getName());
     }
-    responseHeaders.add(HttpConstants.HEADER_ALLOW,sb.toString());
+    responseHeaders.add(HeaderConstants.HEADER_ALLOW,sb.toString());
   }
   response.setDate(new Date());
-  responseHeaders.add(HttpConstants.HEADER_DATE,DateUtils.format(response.getDate()));
+  responseHeaders.add(HeaderConstants.HEADER_DATE,DateUtils.format(response.getDate()));
   if (response.getAge() > 0) {
-    responseHeaders.add(HttpConstants.HEADER_AGE,Integer.toString(response.getAge()));
+    responseHeaders.add(HeaderConstants.HEADER_AGE,Integer.toString(response.getAge()));
   }
   if (response.getRetryAfter() != null) {
-    responseHeaders.add(HttpConstants.HEADER_RETRY_AFTER,DateUtils.format(response.getRetryAfter()));
+    responseHeaders.add(HeaderConstants.HEADER_RETRY_AFTER,DateUtils.format(response.getRetryAfter()));
   }
   List<CookieSetting> cookies=response.getCookieSettings();
   for (int i=0; i < cookies.size(); i++) {
-    responseHeaders.add(HttpConstants.HEADER_SET_COOKIE,CookieUtils.format(cookies.get(i)));
+    responseHeaders.add(HeaderConstants.HEADER_SET_COOKIE,CookieUtils.format(cookies.get(i)));
   }
   if (response.getLocationRef() != null) {
-    responseHeaders.add(HttpConstants.HEADER_LOCATION,response.getLocationRef().getTargetRef().toString());
+    responseHeaders.add(HeaderConstants.HEADER_LOCATION,response.getLocationRef().getTargetRef().toString());
   }
   if (response.getChallengeRequests() != null) {
     for (    final ChallengeRequest challengeRequest : response.getChallengeRequests()) {
-      responseHeaders.add(HttpConstants.HEADER_WWW_AUTHENTICATE,AuthenticatorUtils.formatRequest(challengeRequest,response,responseHeaders));
+      responseHeaders.add(HeaderConstants.HEADER_WWW_AUTHENTICATE,AuthenticatorUtils.formatRequest(challengeRequest,response,responseHeaders));
     }
   }
   if (response.getProxyChallengeRequests() != null) {
     for (    final ChallengeRequest challengeRequest : response.getProxyChallengeRequests()) {
-      responseHeaders.add(HttpConstants.HEADER_PROXY_AUTHENTICATE,AuthenticatorUtils.formatRequest(challengeRequest,response,responseHeaders));
+      responseHeaders.add(HeaderConstants.HEADER_PROXY_AUTHENTICATE,AuthenticatorUtils.formatRequest(challengeRequest,response,responseHeaders));
     }
   }
   if (!((response.getRequest().getClientInfo().getAgent() != null) && response.getRequest().getClientInfo().getAgent().contains("MSIE"))) {
     final Set<Dimension> dimensions=response.getDimensions();
-    final String vary=HttpUtils.createVaryHeader(dimensions);
+    final String vary=HeaderUtils.createVaryHeader(dimensions);
     if (vary != null) {
-      responseHeaders.add(HttpConstants.HEADER_VARY,vary);
+      responseHeaders.add(HeaderConstants.HEADER_VARY,vary);
     }
   }
   if (response.getServerInfo().isAcceptingRanges()) {
-    responseHeaders.add(HttpConstants.HEADER_ACCEPT_RANGES,"bytes");
+    responseHeaders.add(HeaderConstants.HEADER_ACCEPT_RANGES,"bytes");
   }
   if (!response.getWarnings().isEmpty()) {
     for (    Warning warning : response.getWarnings()) {
-      responseHeaders.add(HttpConstants.HEADER_WARNING,WarningUtils.format(warning));
+      responseHeaders.add(HeaderConstants.HEADER_WARNING,WarningUtils.format(warning));
     }
   }
   if (!response.getCacheDirectives().isEmpty()) {
-    responseHeaders.add(HttpConstants.HEADER_CACHE_CONTROL,CacheControlUtils.format(response.getCacheDirectives()));
+    responseHeaders.add(HeaderConstants.HEADER_CACHE_CONTROL,CacheControlUtils.format(response.getCacheDirectives()));
   }
   if (response.getAuthenticationInfo() != null) {
     try {
-      responseHeaders.add(HttpConstants.HEADER_AUTHENTICATION_INFO,org.restlet.engine.security.AuthenticatorUtils.formatAuthenticationInfo(response.getAuthenticationInfo()));
+      responseHeaders.add(HeaderConstants.HEADER_AUTHENTICATION_INFO,org.restlet.engine.security.AuthenticatorUtils.formatAuthenticationInfo(response.getAuthenticationInfo()));
     }
  catch (    IOException e) {
       Context.getCurrentLogger().log(Level.WARNING,"Unable to write the Authentication-Info header",e);

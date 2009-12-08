@@ -1,9 +1,9 @@
 {
   for (  Parameter header : headers) {
-    if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_LOCATION)) {
+    if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_LOCATION)) {
       response.setLocationRef(header.getValue());
     }
- else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_AGE)) {
+ else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_AGE)) {
       try {
         response.setAge(Integer.parseInt(header.getValue()));
       }
@@ -11,14 +11,14 @@
         Context.getCurrentLogger().log(Level.WARNING,"Error during Age header parsing. Header: " + header.getValue(),nfe);
       }
     }
- else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_DATE)) {
+ else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_DATE)) {
       Date date=DateUtils.parse(header.getValue());
       if (date == null) {
         date=new Date();
       }
       response.setDate(date);
     }
- else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_RETRY_AFTER)) {
+ else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_RETRY_AFTER)) {
       Date retryAfter=DateUtils.parse(header.getValue());
       if (retryAfter == null) {
         try {
@@ -33,7 +33,7 @@
       }
       response.setRetryAfter(retryAfter);
     }
- else     if ((header.getName().equalsIgnoreCase(HttpConstants.HEADER_SET_COOKIE)) || (header.getName().equalsIgnoreCase(HttpConstants.HEADER_SET_COOKIE2))) {
+ else     if ((header.getName().equalsIgnoreCase(HeaderConstants.HEADER_SET_COOKIE)) || (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_SET_COOKIE2))) {
       try {
         CookieReader cr=new CookieReader(header.getValue());
         response.getCookieSettings().add(cr.readCookieSetting());
@@ -42,22 +42,22 @@
         Context.getCurrentLogger().log(Level.WARNING,"Error during cookie setting parsing. Header: " + header.getValue(),e);
       }
     }
- else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_WWW_AUTHENTICATE)) {
+ else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_WWW_AUTHENTICATE)) {
       ChallengeRequest request=org.restlet.engine.security.AuthenticatorUtils.parseRequest(response,header.getValue(),headers);
       response.getChallengeRequests().add(request);
     }
- else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_PROXY_AUTHENTICATE)) {
+ else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_PROXY_AUTHENTICATE)) {
       ChallengeRequest request=org.restlet.engine.security.AuthenticatorUtils.parseRequest(response,header.getValue(),headers);
       response.getProxyChallengeRequests().add(request);
     }
- else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_AUTHENTICATION_INFO)) {
+ else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_AUTHENTICATION_INFO)) {
       AuthenticationInfo authenticationInfo=org.restlet.engine.security.AuthenticatorUtils.parseAuthenticationInfo(header.getValue());
       response.setAuthenticationInfo(authenticationInfo);
     }
- else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_SERVER)) {
+ else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_SERVER)) {
       response.getServerInfo().setAgent(header.getValue());
     }
- else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_ALLOW)) {
+ else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_ALLOW)) {
       HeaderReader hr=new HeaderReader(header.getValue());
       String value=hr.readValue();
       Set<Method> allowedMethods=response.getAllowedMethods();
@@ -66,27 +66,27 @@
         value=hr.readValue();
       }
     }
- else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_VARY)) {
+ else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_VARY)) {
       HeaderReader hr=new HeaderReader(header.getValue());
       String value=hr.readValue();
       Set<Dimension> dimensions=response.getDimensions();
       while (value != null) {
-        if (value.equalsIgnoreCase(HttpConstants.HEADER_ACCEPT)) {
+        if (value.equalsIgnoreCase(HeaderConstants.HEADER_ACCEPT)) {
           dimensions.add(Dimension.MEDIA_TYPE);
         }
- else         if (value.equalsIgnoreCase(HttpConstants.HEADER_ACCEPT_CHARSET)) {
+ else         if (value.equalsIgnoreCase(HeaderConstants.HEADER_ACCEPT_CHARSET)) {
           dimensions.add(Dimension.CHARACTER_SET);
         }
- else         if (value.equalsIgnoreCase(HttpConstants.HEADER_ACCEPT_ENCODING)) {
+ else         if (value.equalsIgnoreCase(HeaderConstants.HEADER_ACCEPT_ENCODING)) {
           dimensions.add(Dimension.ENCODING);
         }
- else         if (value.equalsIgnoreCase(HttpConstants.HEADER_ACCEPT_LANGUAGE)) {
+ else         if (value.equalsIgnoreCase(HeaderConstants.HEADER_ACCEPT_LANGUAGE)) {
           dimensions.add(Dimension.LANGUAGE);
         }
- else         if (value.equalsIgnoreCase(HttpConstants.HEADER_AUTHORIZATION)) {
+ else         if (value.equalsIgnoreCase(HeaderConstants.HEADER_AUTHORIZATION)) {
           dimensions.add(Dimension.AUTHORIZATION);
         }
- else         if (value.equalsIgnoreCase(HttpConstants.HEADER_USER_AGENT)) {
+ else         if (value.equalsIgnoreCase(HeaderConstants.HEADER_USER_AGENT)) {
           dimensions.add(Dimension.CLIENT_AGENT);
         }
  else         if (value.equals("*")) {
@@ -95,7 +95,7 @@
         value=hr.readValue();
       }
     }
- else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_WARNING)) {
+ else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_WARNING)) {
       WarningReader hr=new WarningReader(header.getValue());
       try {
         response.getWarnings().add(hr.readWarning());
@@ -104,7 +104,7 @@
         Context.getCurrentLogger().log(Level.WARNING,"Error during warning parsing. Header: " + header.getValue(),e);
       }
     }
- else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CACHE_CONTROL)) {
+ else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_CACHE_CONTROL)) {
       CacheControlReader ccr=new CacheControlReader(header.getValue());
       try {
         response.getCacheDirectives().addAll(ccr.readDirectives());

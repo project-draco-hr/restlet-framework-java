@@ -8,18 +8,18 @@
       if ((hostRefPortValue != -1) && (hostRefPortValue != request.getProtocol().getDefaultPort())) {
         host=host + ':' + hostRefPortValue;
       }
-      requestHeaders.add(HttpConstants.HEADER_HOST,host);
+      requestHeaders.add(HeaderConstants.HEADER_HOST,host);
     }
     request.setDate(new Date());
-    requestHeaders.add(HttpConstants.HEADER_DATE,DateUtils.format(request.getDate()));
+    requestHeaders.add(HeaderConstants.HEADER_DATE,DateUtils.format(request.getDate()));
     if (request.getClientInfo().getAgent() != null) {
-      requestHeaders.add(HttpConstants.HEADER_USER_AGENT,request.getClientInfo().getAgent());
+      requestHeaders.add(HeaderConstants.HEADER_USER_AGENT,request.getClientInfo().getAgent());
     }
  else {
-      requestHeaders.add(HttpConstants.HEADER_USER_AGENT,Engine.VERSION_HEADER);
+      requestHeaders.add(HeaderConstants.HEADER_USER_AGENT,Engine.VERSION_HEADER);
     }
     if (request.getClientInfo().getFrom() != null) {
-      requestHeaders.add(HttpConstants.HEADER_FROM,request.getClientInfo().getFrom());
+      requestHeaders.add(HeaderConstants.HEADER_FROM,request.getClientInfo().getFrom());
     }
     Conditions condition=request.getConditions();
     if (!condition.getMatch().isEmpty()) {
@@ -30,11 +30,11 @@
         }
         value.append(condition.getMatch().get(i).format());
       }
-      httpCall.getRequestHeaders().add(HttpConstants.HEADER_IF_MATCH,value.toString());
+      httpCall.getRequestHeaders().add(HeaderConstants.HEADER_IF_MATCH,value.toString());
     }
     if (condition.getModifiedSince() != null) {
       String imsDate=DateUtils.format(condition.getModifiedSince());
-      requestHeaders.add(HttpConstants.HEADER_IF_MODIFIED_SINCE,imsDate);
+      requestHeaders.add(HeaderConstants.HEADER_IF_MODIFIED_SINCE,imsDate);
     }
     if (!condition.getNoneMatch().isEmpty()) {
       StringBuilder value=new StringBuilder();
@@ -44,46 +44,46 @@
         }
         value.append(condition.getNoneMatch().get(i).format());
       }
-      requestHeaders.add(HttpConstants.HEADER_IF_NONE_MATCH,value.toString());
+      requestHeaders.add(HeaderConstants.HEADER_IF_NONE_MATCH,value.toString());
     }
     if (condition.getRangeTag() != null && condition.getRangeDate() != null) {
       getLogger().log(Level.WARNING,"Unable to format the HTTP If-Range header due to the presence of both entity tag and modification date.");
     }
  else {
       if (condition.getRangeTag() != null) {
-        requestHeaders.add(HttpConstants.HEADER_IF_RANGE,condition.getRangeTag().format());
+        requestHeaders.add(HeaderConstants.HEADER_IF_RANGE,condition.getRangeTag().format());
       }
  else       if (condition.getRangeDate() != null) {
         String rDate=DateUtils.format(condition.getRangeDate(),DateUtils.FORMAT_RFC_1123.get(0));
-        requestHeaders.add(HttpConstants.HEADER_IF_RANGE,rDate);
+        requestHeaders.add(HeaderConstants.HEADER_IF_RANGE,rDate);
       }
     }
     if (condition.getUnmodifiedSince() != null) {
       String iusDate=DateUtils.format(condition.getUnmodifiedSince(),DateUtils.FORMAT_RFC_1123.get(0));
-      requestHeaders.add(HttpConstants.HEADER_IF_UNMODIFIED_SINCE,iusDate);
+      requestHeaders.add(HeaderConstants.HEADER_IF_UNMODIFIED_SINCE,iusDate);
     }
     if (request.getCookies().size() > 0) {
       String cookies=CookieUtils.format(request.getCookies());
-      requestHeaders.add(HttpConstants.HEADER_COOKIE,cookies);
+      requestHeaders.add(HeaderConstants.HEADER_COOKIE,cookies);
     }
     if (request.getReferrerRef() != null) {
-      requestHeaders.add(HttpConstants.HEADER_REFERRER,request.getReferrerRef().toString());
+      requestHeaders.add(HeaderConstants.HEADER_REFERRER,request.getReferrerRef().toString());
     }
     ClientInfo client=request.getClientInfo();
     if (client.getAcceptedMediaTypes().size() > 0) {
       try {
-        requestHeaders.add(HttpConstants.HEADER_ACCEPT,PreferenceUtils.format(client.getAcceptedMediaTypes()));
+        requestHeaders.add(HeaderConstants.HEADER_ACCEPT,PreferenceUtils.format(client.getAcceptedMediaTypes()));
       }
  catch (      IOException ioe) {
         getLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
       }
     }
  else {
-      requestHeaders.add(HttpConstants.HEADER_ACCEPT,MediaType.ALL.getName());
+      requestHeaders.add(HeaderConstants.HEADER_ACCEPT,MediaType.ALL.getName());
     }
     if (client.getAcceptedCharacterSets().size() > 0) {
       try {
-        requestHeaders.add(HttpConstants.HEADER_ACCEPT_CHARSET,PreferenceUtils.format(client.getAcceptedCharacterSets()));
+        requestHeaders.add(HeaderConstants.HEADER_ACCEPT_CHARSET,PreferenceUtils.format(client.getAcceptedCharacterSets()));
       }
  catch (      IOException ioe) {
         getLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
@@ -91,7 +91,7 @@
     }
     if (client.getAcceptedEncodings().size() > 0) {
       try {
-        requestHeaders.add(HttpConstants.HEADER_ACCEPT_ENCODING,PreferenceUtils.format(client.getAcceptedEncodings()));
+        requestHeaders.add(HeaderConstants.HEADER_ACCEPT_ENCODING,PreferenceUtils.format(client.getAcceptedEncodings()));
       }
  catch (      IOException ioe) {
         getLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
@@ -99,14 +99,14 @@
     }
     if (client.getAcceptedLanguages().size() > 0) {
       try {
-        requestHeaders.add(HttpConstants.HEADER_ACCEPT_LANGUAGE,PreferenceUtils.format(client.getAcceptedLanguages()));
+        requestHeaders.add(HeaderConstants.HEADER_ACCEPT_LANGUAGE,PreferenceUtils.format(client.getAcceptedLanguages()));
       }
  catch (      IOException ioe) {
         getLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
       }
     }
     if (!request.getRanges().isEmpty()) {
-      requestHeaders.add(HttpConstants.HEADER_RANGE,org.restlet.engine.util.RangeUtils.formatRanges(request.getRanges()));
+      requestHeaders.add(HeaderConstants.HEADER_RANGE,org.restlet.engine.util.RangeUtils.formatRanges(request.getRanges()));
     }
     if (request.isEntityAvailable()) {
       if (request.getEntity().getMediaType() != null) {
@@ -114,7 +114,7 @@
         if ((request.getEntity().getMediaType().getParameters().getFirstValue("charset") == null) && (request.getEntity().getCharacterSet() != null)) {
           contentType=contentType + "; charset=" + request.getEntity().getCharacterSet().getName();
         }
-        requestHeaders.add(HttpConstants.HEADER_CONTENT_TYPE,contentType);
+        requestHeaders.add(HeaderConstants.HEADER_CONTENT_TYPE,contentType);
       }
       if (!request.getEntity().getEncodings().isEmpty()) {
         final StringBuilder value=new StringBuilder();
@@ -124,7 +124,7 @@
           }
           value.append(request.getEntity().getEncodings().get(i).getName());
         }
-        requestHeaders.add(HttpConstants.HEADER_CONTENT_ENCODING,value.toString());
+        requestHeaders.add(HeaderConstants.HEADER_CONTENT_ENCODING,value.toString());
       }
       if (!request.getEntity().getLanguages().isEmpty()) {
         final StringBuilder value=new StringBuilder();
@@ -134,29 +134,29 @@
           }
           value.append(request.getEntity().getLanguages().get(i).getName());
         }
-        requestHeaders.add(HttpConstants.HEADER_CONTENT_LANGUAGE,value.toString());
+        requestHeaders.add(HeaderConstants.HEADER_CONTENT_LANGUAGE,value.toString());
       }
       if (request.getEntity().getSize() > 0) {
-        requestHeaders.add(HttpConstants.HEADER_CONTENT_LENGTH,String.valueOf(request.getEntity().getSize()));
+        requestHeaders.add(HeaderConstants.HEADER_CONTENT_LENGTH,String.valueOf(request.getEntity().getSize()));
       }
       if (request.getEntity().getRange() != null) {
         try {
-          requestHeaders.add(HttpConstants.HEADER_CONTENT_RANGE,org.restlet.engine.util.RangeUtils.formatContentRange(request.getEntity().getRange(),request.getEntity().getSize()));
+          requestHeaders.add(HeaderConstants.HEADER_CONTENT_RANGE,org.restlet.engine.util.RangeUtils.formatContentRange(request.getEntity().getRange(),request.getEntity().getSize()));
         }
  catch (        Exception e) {
           getLogger().log(Level.WARNING,"Unable to format the HTTP Content-Range header",e);
         }
       }
       if (request.getEntity().getDigest() != null && org.restlet.data.Digest.ALGORITHM_MD5.equals(request.getEntity().getDigest().getAlgorithm())) {
-        requestHeaders.add(HttpConstants.HEADER_CONTENT_MD5,org.restlet.engine.util.Base64.encode(request.getEntity().getDigest().getValue(),false));
+        requestHeaders.add(HeaderConstants.HEADER_CONTENT_MD5,org.restlet.engine.util.Base64.encode(request.getEntity().getDigest().getValue(),false));
       }
     }
-    Series<Parameter> additionalHeaders=(Series<Parameter>)request.getAttributes().get(HttpConstants.ATTRIBUTE_HEADERS);
+    Series<Parameter> additionalHeaders=(Series<Parameter>)request.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
     addAdditionalHeaders(requestHeaders,additionalHeaders);
     ChallengeResponse challengeResponse=request.getChallengeResponse();
     if (challengeResponse != null) {
       try {
-        requestHeaders.add(HttpConstants.HEADER_AUTHORIZATION,org.restlet.engine.security.AuthenticatorUtils.formatResponse(challengeResponse,request,requestHeaders));
+        requestHeaders.add(HeaderConstants.HEADER_AUTHORIZATION,org.restlet.engine.security.AuthenticatorUtils.formatResponse(challengeResponse,request,requestHeaders));
       }
  catch (      IOException e) {
         Context.getCurrentLogger().log(Level.WARNING,"Unable to write the Authorization header",e);
@@ -165,7 +165,7 @@
     ChallengeResponse proxyChallengeResponse=request.getProxyChallengeResponse();
     if (proxyChallengeResponse != null) {
       try {
-        requestHeaders.add(HttpConstants.HEADER_PROXY_AUTHORIZATION,org.restlet.engine.security.AuthenticatorUtils.formatResponse(proxyChallengeResponse,request,requestHeaders));
+        requestHeaders.add(HeaderConstants.HEADER_PROXY_AUTHORIZATION,org.restlet.engine.security.AuthenticatorUtils.formatResponse(proxyChallengeResponse,request,requestHeaders));
       }
  catch (      IOException e) {
         Context.getCurrentLogger().log(Level.WARNING,"Unable to write the Proxy-Authorization header",e);
@@ -173,11 +173,11 @@
     }
     if (!request.getWarnings().isEmpty()) {
       for (      Warning warning : request.getWarnings()) {
-        requestHeaders.add(HttpConstants.HEADER_WARNING,WarningUtils.format(warning));
+        requestHeaders.add(HeaderConstants.HEADER_WARNING,WarningUtils.format(warning));
       }
     }
     if (!request.getCacheDirectives().isEmpty()) {
-      requestHeaders.add(HttpConstants.HEADER_CACHE_CONTROL,CacheControlUtils.format(request.getCacheDirectives()));
+      requestHeaders.add(HeaderConstants.HEADER_CACHE_CONTROL,CacheControlUtils.format(request.getCacheDirectives()));
     }
   }
 }

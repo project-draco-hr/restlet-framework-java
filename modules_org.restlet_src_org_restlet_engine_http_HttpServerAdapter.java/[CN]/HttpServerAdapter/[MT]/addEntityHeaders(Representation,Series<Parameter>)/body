@@ -1,10 +1,10 @@
 {
   if (entity == null) {
-    responseHeaders.add(HttpConstants.HEADER_CONTENT_LENGTH,"0");
+    responseHeaders.add(HeaderConstants.HEADER_CONTENT_LENGTH,"0");
   }
  else {
     if (entity.getExpirationDate() != null) {
-      responseHeaders.add(HttpConstants.HEADER_EXPIRES,DateUtils.format(entity.getExpirationDate()));
+      responseHeaders.add(HeaderConstants.HEADER_EXPIRES,DateUtils.format(entity.getExpirationDate()));
     }
     if (!entity.getEncodings().isEmpty()) {
       final StringBuilder value=new StringBuilder();
@@ -17,7 +17,7 @@
         }
       }
       if (value.length() > 0) {
-        responseHeaders.add(HttpConstants.HEADER_CONTENT_ENCODING,value.toString());
+        responseHeaders.add(HeaderConstants.HEADER_CONTENT_ENCODING,value.toString());
       }
     }
     if (!entity.getLanguages().isEmpty()) {
@@ -28,41 +28,41 @@
         }
         value.append(entity.getLanguages().get(i).getName());
       }
-      responseHeaders.add(HttpConstants.HEADER_CONTENT_LANGUAGE,value.toString());
+      responseHeaders.add(HeaderConstants.HEADER_CONTENT_LANGUAGE,value.toString());
     }
     if (entity.getMediaType() != null) {
       final StringBuilder contentType=new StringBuilder(entity.getMediaType().getName());
       if (entity.getCharacterSet() != null) {
         contentType.append("; charset=").append(entity.getCharacterSet().getName());
       }
-      responseHeaders.add(HttpConstants.HEADER_CONTENT_TYPE,contentType.toString());
+      responseHeaders.add(HeaderConstants.HEADER_CONTENT_TYPE,contentType.toString());
     }
     if (entity.getModificationDate() != null) {
-      responseHeaders.add(HttpConstants.HEADER_LAST_MODIFIED,HttpCall.formatDate(entity.getModificationDate(),false));
+      responseHeaders.add(HeaderConstants.HEADER_LAST_MODIFIED,HttpCall.formatDate(entity.getModificationDate(),false));
     }
     if (entity.getTag() != null) {
-      responseHeaders.add(HttpConstants.HEADER_ETAG,entity.getTag().format());
+      responseHeaders.add(HeaderConstants.HEADER_ETAG,entity.getTag().format());
     }
     long size=entity.getAvailableSize();
     if (size != Representation.UNKNOWN_SIZE) {
-      responseHeaders.add(HttpConstants.HEADER_CONTENT_LENGTH,Long.toString(size));
+      responseHeaders.add(HeaderConstants.HEADER_CONTENT_LENGTH,Long.toString(size));
     }
     if (entity.getIdentifier() != null) {
-      responseHeaders.add(HttpConstants.HEADER_CONTENT_LOCATION,entity.getIdentifier().toString());
+      responseHeaders.add(HeaderConstants.HEADER_CONTENT_LOCATION,entity.getIdentifier().toString());
     }
     if (entity.getDisposition() != null && !Disposition.TYPE_NONE.equals(entity.getDisposition().getType())) {
-      responseHeaders.add(HttpConstants.HEADER_CONTENT_DISPOSITION,DispositionUtils.format(entity.getDisposition()));
+      responseHeaders.add(HeaderConstants.HEADER_CONTENT_DISPOSITION,DispositionUtils.format(entity.getDisposition()));
     }
     if (entity.getRange() != null) {
       try {
-        responseHeaders.add(HttpConstants.HEADER_CONTENT_RANGE,RangeUtils.formatContentRange(entity.getRange(),entity.getSize()));
+        responseHeaders.add(HeaderConstants.HEADER_CONTENT_RANGE,RangeUtils.formatContentRange(entity.getRange(),entity.getSize()));
       }
  catch (      Exception e) {
         Context.getCurrentLogger().log(Level.WARNING,"Unable to format the HTTP Content-Range header",e);
       }
     }
     if (entity.getDigest() != null && Digest.ALGORITHM_MD5.equals(entity.getDigest().getAlgorithm())) {
-      responseHeaders.add(HttpConstants.HEADER_CONTENT_MD5,new String(Base64.encode(entity.getDigest().getValue(),false)));
+      responseHeaders.add(HeaderConstants.HEADER_CONTENT_MD5,new String(Base64.encode(entity.getDigest().getValue(),false)));
     }
   }
 }

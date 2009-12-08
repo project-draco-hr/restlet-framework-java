@@ -11,7 +11,7 @@
   }
   result.setSize(contentLength);
   for (  final Parameter header : getRequestHeaders()) {
-    if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_ENCODING)) {
+    if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_CONTENT_ENCODING)) {
       final HeaderReader hr=new HeaderReader(header.getValue());
       String value=hr.readValue();
       while (value != null) {
@@ -22,7 +22,7 @@
         value=hr.readValue();
       }
     }
- else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_LANGUAGE)) {
+ else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_CONTENT_LANGUAGE)) {
       final HeaderReader hr=new HeaderReader(header.getValue());
       String value=hr.readValue();
       while (value != null) {
@@ -30,15 +30,15 @@
         value=hr.readValue();
       }
     }
- else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_TYPE)) {
+ else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_CONTENT_TYPE)) {
       final ContentType contentType=new ContentType(header.getValue());
       result.setMediaType(contentType.getMediaType());
       result.setCharacterSet(contentType.getCharacterSet());
     }
- else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_RANGE)) {
+ else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_CONTENT_RANGE)) {
       RangeUtils.parseContentRange(header.getValue(),result);
     }
- else     if (header.getName().equalsIgnoreCase(HttpConstants.HEADER_CONTENT_MD5)) {
+ else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_CONTENT_MD5)) {
       result.setDigest(new Digest(Digest.ALGORITHM_MD5,Base64.decode(header.getValue())));
     }
   }

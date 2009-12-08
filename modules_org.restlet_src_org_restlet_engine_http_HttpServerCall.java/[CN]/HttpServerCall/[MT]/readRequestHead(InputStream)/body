@@ -1,7 +1,7 @@
 {
   final StringBuilder sb=new StringBuilder();
   int next=headStream.read();
-  while ((next != -1) && !HttpUtils.isSpace(next)) {
+  while ((next != -1) && !HeaderUtils.isSpace(next)) {
     sb.append((char)next);
     next=headStream.read();
   }
@@ -11,7 +11,7 @@
   setMethod(sb.toString());
   sb.delete(0,sb.length());
   next=headStream.read();
-  while ((next != -1) && !HttpUtils.isSpace(next)) {
+  while ((next != -1) && !HeaderUtils.isSpace(next)) {
     sb.append((char)next);
     next=headStream.read();
   }
@@ -21,7 +21,7 @@
   setRequestUri(sb.toString());
   sb.delete(0,sb.length());
   next=headStream.read();
-  while ((next != -1) && !HttpUtils.isCarriageReturn(next)) {
+  while ((next != -1) && !HeaderUtils.isCarriageReturn(next)) {
     sb.append((char)next);
     next=headStream.read();
   }
@@ -29,13 +29,13 @@
     throw new IOException("Unable to parse the HTTP version. End of stream reached too early.");
   }
   next=headStream.read();
-  if (HttpUtils.isLineFeed(next)) {
+  if (HeaderUtils.isLineFeed(next)) {
     setVersion(sb.toString());
     sb.delete(0,sb.length());
-    Parameter header=HttpUtils.readHeader(headStream,sb);
+    Parameter header=HeaderUtils.readHeader(headStream,sb);
     while (header != null) {
       getRequestHeaders().add(header);
-      header=HttpUtils.readHeader(headStream,sb);
+      header=HeaderUtils.readHeader(headStream,sb);
     }
   }
  else {
