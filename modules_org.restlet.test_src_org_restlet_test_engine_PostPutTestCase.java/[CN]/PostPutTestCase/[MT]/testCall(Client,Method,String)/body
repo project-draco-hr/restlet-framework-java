@@ -6,7 +6,8 @@
   request.setEntity(inputForm.getWebRepresentation());
   final Response response=client.handle(request);
   assertNotNull(response.getEntity());
-  final Form outputForm=response.getEntityAsForm();
+  final Representation entity=response.getEntity();
+  final Form outputForm=new Form(entity);
   assertEquals(2,outputForm.size());
   assertEquals("a",outputForm.getFirstValue("a"));
   assertEquals("b",outputForm.getFirstValue("b"));

@@ -3,8 +3,10 @@
     @Override public Restlet createInboundRoot(){
       final Restlet trace=new Restlet(getContext()){
         @Override public void handle(        Request request,        Response response){
-          final Form inputForm=request.getEntityAsForm();
-          response.setEntity(inputForm.getWebRepresentation());
+          Representation entity=request.getEntity();
+          if (entity != null) {
+            response.setEntity(new Form(entity).getWebRepresentation());
+          }
         }
       }
 ;
