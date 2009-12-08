@@ -7,7 +7,7 @@
   this.serverSocketChannel=createServerSocket();
   setEphemeralPort(this.serverSocketChannel.socket());
   this.latch=new CountDownLatch(1);
-  this.listenerService.submit(new Listener(this,this.serverSocketChannel,this.latch,this.handlerService));
+  this.listenerService.submit(new ConnectionListener(this,this.serverSocketChannel,this.latch,this.handlerService));
   try {
     this.latch.await();
   }
