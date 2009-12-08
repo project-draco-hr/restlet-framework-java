@@ -1,6 +1,8 @@
 {
   Representation entity=this.tlContext.get().getRequest().getEntity();
-  final Form form=(entity == null) ? null : new Form(entity);
+  if (entity != null && entity.isAvailable()) {
+    form=new Form(entity);
+  }
   final String paramName=this.formParam.value();
   try {
     return super.getParamValue(form,paramName);
