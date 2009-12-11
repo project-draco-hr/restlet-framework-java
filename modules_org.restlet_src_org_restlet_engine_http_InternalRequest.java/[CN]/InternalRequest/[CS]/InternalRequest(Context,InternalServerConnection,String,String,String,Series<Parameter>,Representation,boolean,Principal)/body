@@ -1,0 +1,80 @@
+{
+  this.context=context;
+  this.clientAdded=false;
+  this.conditionAdded=false;
+  this.connection=connection;
+  this.cookiesAdded=false;
+  this.referrerAdded=false;
+  this.securityAdded=false;
+  this.userPrincipal=userPrincipal;
+  this.proxySecurityAdded=false;
+  this.warningsAdded=false;
+  this.methodName=methodName;
+  this.resourceUri=resourceUri;
+  setMethod(Method.valueOf(this.methodName));
+  setEntity(entity);
+  getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,headers);
+  if (httpVersion != null) {
+    getAttributes().put(HeaderConstants.ATTRIBUTE_VERSION,httpVersion);
+  }
+  if (confidential) {
+    final List<Certificate> clientCertificates=getConnection().getSslClientCertificates();
+    if (clientCertificates != null) {
+      getAttributes().put(HeaderConstants.ATTRIBUTE_HTTPS_CLIENT_CERTIFICATES,clientCertificates);
+    }
+    final String cipherSuite=getConnection().getSslCipherSuite();
+    if (cipherSuite != null) {
+      getAttributes().put(HeaderConstants.ATTRIBUTE_HTTPS_CIPHER_SUITE,cipherSuite);
+    }
+    final Integer keySize=getConnection().getSslKeySize();
+    if (keySize != null) {
+      getAttributes().put(HeaderConstants.ATTRIBUTE_HTTPS_KEY_SIZE,keySize);
+    }
+  }
+  String host=getHeaders().getFirstValue(HeaderConstants.HEADER_HOST,true);
+  String hostDomain=null;
+  int hostPort=-1;
+  if (host != null) {
+    int colonIndex=host.indexOf(':');
+    if (colonIndex != -1) {
+      hostDomain=host.substring(0,colonIndex);
+      hostPort=Integer.valueOf(host.substring(colonIndex + 1));
+    }
+ else {
+      hostDomain=host;
+      hostPort=getProtocol().getDefaultPort();
+    }
+  }
+ else {
+    Context.getCurrentLogger().info("Couldn't find the mandatory \"Host\" HTTP header.");
+  }
+  Protocol protocol=getConnection().getHelper().getHelped().getProtocols().get(0);
+  StringBuilder sb=new StringBuilder();
+  sb.append(protocol.getSchemeName()).append("://");
+  sb.append(hostDomain);
+  if ((hostPort != -1) && (hostPort != protocol.getDefaultPort())) {
+    sb.append(':').append(hostPort);
+  }
+  setHostRef(sb.toString());
+  if (resourceUri != null) {
+    setResourceRef(new Reference(getHostRef(),this.resourceUri));
+    if (getResourceRef().isRelative()) {
+      if (!this.resourceUri.startsWith("/")) {
+        setResourceRef(new Reference(getHostRef().toString() + "/" + this.resourceUri));
+      }
+ else {
+        setResourceRef(new Reference(getHostRef().toString() + this.resourceUri));
+      }
+    }
+    setOriginalRef(getResourceRef().getTargetRef());
+  }
+  String dateHeader=getHeaders().getFirstValue(HeaderConstants.HEADER_DATE);
+  Date date=null;
+  if (dateHeader != null) {
+    date=DateUtils.parse(dateHeader);
+  }
+  if (date == null) {
+    date=new Date();
+  }
+  setDate(date);
+}

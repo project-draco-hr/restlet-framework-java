@@ -1,0 +1,75 @@
+{
+  final Conditions result=super.getConditions();
+  if (!this.conditionAdded) {
+    final String ifMatchHeader=getHeaders().getValues(HeaderConstants.HEADER_IF_MATCH);
+    final String ifNoneMatchHeader=getHeaders().getValues(HeaderConstants.HEADER_IF_NONE_MATCH);
+    Date ifModifiedSince=null;
+    Date ifUnmodifiedSince=null;
+    String ifRangeHeader=getHeaders().getFirstValue(HeaderConstants.HEADER_IF_RANGE);
+    for (    final Parameter header : getHeaders()) {
+      if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_IF_MODIFIED_SINCE)) {
+        ifModifiedSince=Call.parseDate(header.getValue(),false);
+      }
+ else       if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_IF_UNMODIFIED_SINCE)) {
+        ifUnmodifiedSince=Call.parseDate(header.getValue(),false);
+      }
+    }
+    if ((ifModifiedSince != null) && (ifModifiedSince.getTime() != -1)) {
+      result.setModifiedSince(ifModifiedSince);
+    }
+    if ((ifUnmodifiedSince != null) && (ifUnmodifiedSince.getTime() != -1)) {
+      result.setUnmodifiedSince(ifUnmodifiedSince);
+    }
+    List<Tag> match=null;
+    Tag current=null;
+    if (ifMatchHeader != null) {
+      try {
+        final HeaderReader hr=new HeaderReader(ifMatchHeader);
+        String value=hr.readValue();
+        while (value != null) {
+          current=Tag.parse(value);
+          if (match == null) {
+            match=new ArrayList<Tag>();
+            result.setMatch(match);
+          }
+          match.add(current);
+          value=hr.readValue();
+        }
+      }
+ catch (      Exception e) {
+        this.context.getLogger().log(Level.INFO,"Unable to process the if-match header: " + ifMatchHeader);
+      }
+    }
+    List<Tag> noneMatch=null;
+    if (ifNoneMatchHeader != null) {
+      try {
+        final HeaderReader hr=new HeaderReader(ifNoneMatchHeader);
+        String value=hr.readValue();
+        while (value != null) {
+          current=Tag.parse(value);
+          if (noneMatch == null) {
+            noneMatch=new ArrayList<Tag>();
+            result.setNoneMatch(noneMatch);
+          }
+          noneMatch.add(current);
+          value=hr.readValue();
+        }
+      }
+ catch (      Exception e) {
+        this.context.getLogger().log(Level.INFO,"Unable to process the if-none-match header: " + ifNoneMatchHeader);
+      }
+    }
+    if (ifRangeHeader != null && ifRangeHeader.length() > 0) {
+      Tag tag=Tag.parse(ifRangeHeader);
+      if (tag != null) {
+        result.setRangeTag(tag);
+      }
+ else {
+        Date date=Call.parseDate(ifRangeHeader,false);
+        result.setRangeDate(date);
+      }
+    }
+    this.conditionAdded=true;
+  }
+  return result;
+}

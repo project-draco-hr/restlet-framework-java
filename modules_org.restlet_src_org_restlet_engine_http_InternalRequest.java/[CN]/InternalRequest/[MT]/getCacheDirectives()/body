@@ -1,0 +1,16 @@
+{
+  List<CacheDirective> result=super.getCacheDirectives();
+  if (!cacheDirectivesAdded) {
+    for (    String string : getHeaders().getValuesArray(HeaderConstants.HEADER_CACHE_CONTROL)) {
+      CacheControlReader ccr=new CacheControlReader(string);
+      try {
+        result.addAll(ccr.readDirectives());
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().log(Level.WARNING,"Error during cache control parsing. Header: " + string,e);
+      }
+    }
+    setCacheDirectives(result);
+  }
+  return result;
+}

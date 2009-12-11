@@ -1,0 +1,9 @@
+{
+  final List<Range> result=super.getRanges();
+  if (!this.rangesAdded) {
+    final String ranges=getHeaders().getValues(HeaderConstants.HEADER_RANGE);
+    result.addAll(RangeUtils.parseRangeHeader(ranges));
+    this.rangesAdded=true;
+  }
+  return result;
+}
