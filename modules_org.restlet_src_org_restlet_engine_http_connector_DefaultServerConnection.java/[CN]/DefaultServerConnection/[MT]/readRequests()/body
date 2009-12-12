@@ -1,15 +1,17 @@
 {
   try {
-    ConnectedRequest request=readRequest();
     if (isPipelining()) {
-      boolean idempotentSequence=true;
     }
  else {
-      getInboundRequests().add(request);
-      getHelper().getPendingRequests().add(request);
+      if (getInboundRequests().size() == 0) {
+        ConnectedRequest request=readRequest();
+        if (request != null) {
+          getInboundRequests().add(request);
+          getHelper().getPendingRequests().add(request);
+        }
+      }
     }
-    while (request != null) {
-    }
+    getHelper().handleNext();
   }
  catch (  Exception e) {
     getLogger().log(Level.WARNING,"Error while reading an HTTP request: ",e.getMessage());

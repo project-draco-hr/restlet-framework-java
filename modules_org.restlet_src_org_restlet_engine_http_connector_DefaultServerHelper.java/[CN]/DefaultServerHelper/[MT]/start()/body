@@ -1,12 +1,14 @@
 {
   super.start();
   getLogger().info("Starting the default HTTP server");
+  this.acceptorService=createListenerService();
+  this.controllerService=createControllerService();
   this.handlerService=createHandlerService();
-  this.listenerService=createListenerService();
   this.serverSocketChannel=createServerSocket();
   setEphemeralPort(this.serverSocketChannel.socket());
   this.latch=new CountDownLatch(1);
-  this.listenerService.submit(new ConnectionListener(this,this.serverSocketChannel,this.latch));
+  this.acceptorService.submit(new ConnectionAcceptor(this,this.serverSocketChannel,this.latch));
+  this.controllerService.submit(new ConnectionAcceptor(this,this.serverSocketChannel,this.latch));
   try {
     this.latch.await();
   }

@@ -1,0 +1,26 @@
+{
+  if (!getHandlerService().isShutdown()) {
+    try {
+      if (!isInboundBusy()) {
+        getHandlerService().execute(new Runnable(){
+          public void run(){
+            readRequests();
+          }
+        }
+);
+      }
+      if (!isOutboundBusy()) {
+        getHandlerService().execute(new Runnable(){
+          public void run(){
+            writeResponses();
+          }
+        }
+);
+      }
+    }
+ catch (    Exception e) {
+      getLogger().log(Level.WARNING,"Error while controlling an HTTP connection: ",e.getMessage());
+      getLogger().log(Level.INFO,"Error while controlling an HTTP connection",e);
+    }
+  }
+}
