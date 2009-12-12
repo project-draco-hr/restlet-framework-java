@@ -1,10 +1,10 @@
 {
   this.latch.countDown();
-  for (; ; ) {
+  while (true) {
     try {
       SocketChannel client=this.serverSocket.accept();
-      if (!this.handlerService.isShutdown()) {
-        this.handlerService.submit(new DefaultServerHandler(this.helper,client.socket()));
+      if (!this.helper.getHandlerService().isShutdown()) {
+        this.helper.getHandlerService().submit(new ConnectionHandler(this.helper,client.socket()));
       }
     }
  catch (    ClosedByInterruptException ex) {

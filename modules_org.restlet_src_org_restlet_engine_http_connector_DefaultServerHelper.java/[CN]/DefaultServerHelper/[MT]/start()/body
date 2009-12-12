@@ -1,13 +1,13 @@
 {
   super.start();
-  getLogger().info("Starting the internal HTTP server");
+  getLogger().info("Starting the default HTTP server");
   final ThreadFactory factory=new LoggingThreadFactory(getLogger());
   this.handlerService=Executors.newFixedThreadPool(10,factory);
   this.listenerService=Executors.newSingleThreadExecutor(factory);
   this.serverSocketChannel=createServerSocket();
   setEphemeralPort(this.serverSocketChannel.socket());
   this.latch=new CountDownLatch(1);
-  this.listenerService.submit(new DefaultServerListener(this,this.serverSocketChannel,this.latch,this.handlerService));
+  this.listenerService.submit(new ConnectionListener(this,this.serverSocketChannel,this.latch));
   try {
     this.latch.await();
   }
