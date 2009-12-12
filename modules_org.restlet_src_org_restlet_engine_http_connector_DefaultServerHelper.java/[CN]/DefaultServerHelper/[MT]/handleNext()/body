@@ -1,0 +1,13 @@
+{
+  ConnectedRequest nextRequest=getPendingRequests().poll();
+  if (nextRequest != null) {
+    Response response=new Response(nextRequest);
+    handle(nextRequest,response);
+  }
+  Response nextResponse=getPendingResponses().poll();
+  while (nextResponse != null) {
+    ConnectedRequest request=(ConnectedRequest)nextResponse.getRequest();
+    request.getConnection().writeResponse(nextResponse);
+    nextResponse=getPendingResponses().poll();
+  }
+}
