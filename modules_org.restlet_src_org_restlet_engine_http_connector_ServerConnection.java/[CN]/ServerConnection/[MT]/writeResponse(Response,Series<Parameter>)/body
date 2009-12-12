@@ -1,0 +1,34 @@
+{
+  if (response != null) {
+    Representation responseEntity=response.getEntity();
+    ConnectorService connectorService=ConnectorHelper.getConnectorService(response.getRequest());
+    if (connectorService != null) {
+      connectorService.beforeSend(responseEntity);
+    }
+    try {
+      writeResponseHead(response);
+      if (responseEntity != null) {
+        WritableByteChannel responseEntityChannel=getResponseEntityChannel();
+        OutputStream responseEntityStream=getResponseEntityStream();
+        writeResponseBody(responseEntity,responseEntityChannel,responseEntityStream);
+        if (responseEntityStream != null) {
+          try {
+            responseEntityStream.flush();
+            responseEntityStream.close();
+          }
+ catch (          IOException ioe) {
+            getLogger().log(Level.FINE,"Exception while flushing and closing the entity stream.",ioe);
+          }
+        }
+      }
+    }
+  finally {
+      if (responseEntity != null) {
+        responseEntity.release();
+      }
+      if (connectorService != null) {
+        connectorService.afterSend(responseEntity);
+      }
+    }
+  }
+}
