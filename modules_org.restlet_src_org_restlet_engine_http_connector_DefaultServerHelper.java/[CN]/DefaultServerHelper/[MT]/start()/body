@@ -1,9 +1,8 @@
 {
   super.start();
   getLogger().info("Starting the default HTTP server");
-  final ThreadFactory factory=new LoggingThreadFactory(getLogger());
-  this.handlerService=Executors.newFixedThreadPool(10,factory);
-  this.listenerService=Executors.newSingleThreadExecutor(factory);
+  this.handlerService=createHandlerService();
+  this.listenerService=createListenerService();
   this.serverSocketChannel=createServerSocket();
   setEphemeralPort(this.serverSocketChannel.socket());
   this.latch=new CountDownLatch(1);
