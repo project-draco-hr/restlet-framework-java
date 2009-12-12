@@ -25,6 +25,9 @@
     throw new IOException("Unable to parse the request URI. End of stream reached too early.");
   }
   requestUri=sb.toString();
+  if ((requestUri == null) || (requestUri.equals(""))) {
+    requestUri="/";
+  }
   sb.delete(0,sb.length());
   next=getInboundStream().read();
   while ((next != -1) && !HeaderUtils.isCarriageReturn(next)) {

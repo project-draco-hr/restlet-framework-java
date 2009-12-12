@@ -1,6 +1,6 @@
 {
   Representation result=null;
-  long contentLength=getContentLength();
+  long contentLength=HeaderUtils.getContentLength(headers);
   InputStream requestStream=getRequestEntityStream(contentLength);
   ReadableByteChannel requestChannel=getRequestEntityChannel(contentLength);
   if (requestStream != null) {
@@ -10,7 +10,7 @@
     result=new ReadableRepresentation(requestChannel,null,contentLength);
   }
   result.setSize(contentLength);
-  for (  Parameter header : getRequestHeaders()) {
+  for (  Parameter header : headers) {
     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_CONTENT_ENCODING)) {
       HeaderReader hr=new HeaderReader(header.getValue());
       String value=hr.readValue();
