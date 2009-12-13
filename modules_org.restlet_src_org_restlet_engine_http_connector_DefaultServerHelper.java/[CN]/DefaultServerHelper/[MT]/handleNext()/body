@@ -3,6 +3,10 @@
   if (nextRequest != null) {
     Response response=new Response(nextRequest);
     handle(nextRequest,response);
+    if (!response.isCommitted() && response.isAutoCommitting()) {
+      getPendingResponses().add(response);
+      response.setCommitted(true);
+    }
   }
   Response nextResponse=getPendingResponses().poll();
   while (nextResponse != null) {
