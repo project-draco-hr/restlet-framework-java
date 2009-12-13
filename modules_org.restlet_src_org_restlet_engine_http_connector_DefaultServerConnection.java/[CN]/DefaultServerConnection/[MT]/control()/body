@@ -1,7 +1,7 @@
 {
   if (!getHandlerService().isShutdown()) {
     try {
-      if (!isInboundBusy()) {
+      if (!isInboundBusy() && (getInboundRequests().isEmpty() || isPipelining())) {
         getHandlerService().execute(new Runnable(){
           public void run(){
             readRequests();

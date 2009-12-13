@@ -1,4 +1,12 @@
 {
-  ThreadPoolExecutor result=new ThreadPoolExecutor(getMinThreads(),getMaxThreads(),(long)getThreadMaxIdleTimeMs(),TimeUnit.MILLISECONDS,new LinkedBlockingQueue<Runnable>(),new LoggingThreadFactory(getLogger()));
+  int maxThreads=getMaxThreads();
+  int minThreads=getMinThreads();
+  ThreadPoolExecutor result=new ThreadPoolExecutor(minThreads,maxThreads,(long)getThreadMaxIdleTimeMs(),TimeUnit.MILLISECONDS,new LinkedBlockingQueue<Runnable>(),new LoggingThreadFactory(getLogger()));
+  result.setRejectedExecutionHandler(new RejectedExecutionHandler(){
+    public void rejectedExecution(    Runnable r,    ThreadPoolExecutor executor){
+      getLogger().warning("Unable to run the following task: " + r);
+    }
+  }
+);
   return result;
 }
