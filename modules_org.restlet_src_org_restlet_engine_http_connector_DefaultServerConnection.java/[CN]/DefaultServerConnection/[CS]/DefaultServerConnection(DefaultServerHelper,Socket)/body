@@ -1,8 +1,9 @@
 {
   super(helper,socket);
-  this.inboundStream=new BufferedInputStream(socket.getInputStream());
-  this.outboundStream=new BufferedOutputStream(socket.getOutputStream());
+  this.inboundStream=new InboundStream(socket.getInputStream());
+  this.outboundStream=new OutboundStream(socket.getOutputStream());
   this.pipelining=false;
   this.inboundRequests=new ConcurrentLinkedQueue<Request>();
   this.outboundResponses=new ConcurrentLinkedQueue<Response>();
+  setPersistent(true);
 }
