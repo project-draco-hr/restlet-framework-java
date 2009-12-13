@@ -8,10 +8,20 @@
       response.setCommitted(true);
     }
   }
-  Response nextResponse=getPendingResponses().poll();
-  while (nextResponse != null) {
-    ConnectedRequest request=(ConnectedRequest)nextResponse.getRequest();
-    request.getConnection().writeResponse(nextResponse);
+  Response nextResponse=null;
+  ConnectedRequest request=null;
+  DefaultServerConnection connection=null;
+  int count=getPendingResponses().size();
+  for (int i=0; i < count; i++) {
     nextResponse=getPendingResponses().poll();
+    request=(ConnectedRequest)nextResponse.getRequest();
+    connection=(DefaultServerConnection)request.getConnection();
+    if (connection.getInboundRequests().peek() == request) {
+      connection.getInboundRequests().remove(request);
+      connection.getOutboundResponses().add(nextResponse);
+    }
+ else {
+      getPendingResponses().add(nextResponse);
+    }
   }
 }
