@@ -6,10 +6,11 @@
       connectorService.beforeSend(responseEntity);
     }
     try {
-      writeResponseHead(response);
+      writeResponseHead(response,headers);
       if (responseEntity != null) {
-        WritableByteChannel responseEntityChannel=getResponseEntityChannel();
-        OutputStream responseEntityStream=getResponseEntityStream();
+        boolean chunked=HeaderUtils.isChunkedEncoding(headers);
+        WritableByteChannel responseEntityChannel=getResponseEntityChannel(chunked);
+        OutputStream responseEntityStream=getResponseEntityStream(chunked);
         writeResponseBody(responseEntity,responseEntityChannel,responseEntityStream);
         if (responseEntityStream != null) {
           try {
