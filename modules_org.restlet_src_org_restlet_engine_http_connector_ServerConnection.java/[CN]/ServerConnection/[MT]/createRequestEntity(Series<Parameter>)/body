@@ -1,15 +1,21 @@
 {
   Representation result=null;
   long contentLength=HeaderUtils.getContentLength(headers);
-  InputStream requestStream=getRequestEntityStream(contentLength);
-  ReadableByteChannel requestChannel=getRequestEntityChannel(contentLength);
-  if (requestStream != null) {
-    result=new InputRepresentation(requestStream,null,contentLength);
+  boolean chunkedEncoding=HeaderUtils.isChunkedEncoding(headers);
+  if ((contentLength != Representation.UNKNOWN_SIZE) || chunkedEncoding) {
+    InputStream requestStream=getRequestEntityStream(contentLength,chunkedEncoding);
+    ReadableByteChannel requestChannel=getRequestEntityChannel(contentLength,chunkedEncoding);
+    if (requestStream != null) {
+      result=new InputRepresentation(requestStream,null,contentLength);
+    }
+ else     if (requestChannel != null) {
+      result=new ReadableRepresentation(requestChannel,null,contentLength);
+    }
+    result.setSize(contentLength);
   }
- else   if (requestChannel != null) {
-    result=new ReadableRepresentation(requestChannel,null,contentLength);
+ else {
+    result=new EmptyRepresentation();
   }
-  result.setSize(contentLength);
   for (  Parameter header : headers) {
     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_CONTENT_ENCODING)) {
       HeaderReader hr=new HeaderReader(header.getValue());
