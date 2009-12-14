@@ -17,7 +17,9 @@
     request=(ConnectedRequest)nextResponse.getRequest();
     connection=(DefaultServerConnection)request.getConnection();
     if (connection.getInboundRequests().peek() == request) {
-      connection.getInboundRequests().remove(request);
+      if (!nextResponse.getStatus().isInformational()) {
+        connection.getInboundRequests().remove(request);
+      }
       connection.getOutboundResponses().add(nextResponse);
     }
  else {
