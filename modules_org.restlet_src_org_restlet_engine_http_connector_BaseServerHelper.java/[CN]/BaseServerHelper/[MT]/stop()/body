@@ -1,0 +1,24 @@
+{
+  super.stop();
+  if (this.handlerService != null) {
+    this.handlerService.shutdown();
+    try {
+      this.handlerService.awaitTermination(30,TimeUnit.SECONDS);
+    }
+ catch (    InterruptedException ex) {
+      getLogger().log(Level.FINE,"Interruption while shutting down internal server",ex);
+    }
+  }
+  if (this.acceptorService != null) {
+    this.acceptorService.shutdownNow();
+    try {
+      this.acceptorService.awaitTermination(30,TimeUnit.SECONDS);
+    }
+ catch (    Exception ex) {
+      getLogger().log(Level.FINE,"Interruption while shutting down internal server",ex);
+    }
+  }
+  if (this.serverSocketChannel != null) {
+    this.serverSocketChannel.close();
+  }
+}

@@ -1,0 +1,18 @@
+{
+  super.start();
+  this.acceptorService=createAcceptorService();
+  this.controllerService=createControllerService();
+  this.handlerService=createHandlerService();
+  this.serverSocketChannel=createServerSocket();
+  setEphemeralPort(this.serverSocketChannel.socket());
+  this.latch=new CountDownLatch(1);
+  this.acceptorService.submit(new ConnectionAcceptor(this,this.serverSocketChannel,this.latch));
+  this.controllerService.submit(new ConnectionController(this));
+  try {
+    this.latch.await();
+  }
+ catch (  InterruptedException ex) {
+    getLogger().log(Level.WARNING,"Interrupted while waiting for starting latch. Stopping...",ex);
+    stop();
+  }
+}

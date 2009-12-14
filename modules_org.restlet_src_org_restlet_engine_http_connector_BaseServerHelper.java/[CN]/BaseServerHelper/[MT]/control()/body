@@ -1,0 +1,32 @@
+{
+  ConnectedRequest nextRequest=getPendingRequests().poll();
+  if (nextRequest != null) {
+    Response response=new Response(nextRequest);
+    handle(nextRequest,response);
+    if (!response.isCommitted() && response.isAutoCommitting()) {
+      getPendingResponses().add(response);
+      response.setCommitted(true);
+    }
+  }
+  Response nextResponse=null;
+  ConnectedRequest request=null;
+  BaseServerConnection connection=null;
+  int count=getPendingResponses().size();
+  for (int i=0; i < count; i++) {
+    nextResponse=getPendingResponses().poll();
+    request=(ConnectedRequest)nextResponse.getRequest();
+    connection=(BaseServerConnection)request.getConnection();
+    if (connection.getInboundRequests().peek() == request) {
+      if (!nextResponse.getStatus().isInformational()) {
+        connection.getInboundRequests().remove(request);
+      }
+      connection.getOutboundResponses().add(nextResponse);
+    }
+ else {
+      getPendingResponses().add(nextResponse);
+    }
+  }
+  for (  BaseServerConnection conn : getConnections()) {
+    conn.control();
+  }
+}
