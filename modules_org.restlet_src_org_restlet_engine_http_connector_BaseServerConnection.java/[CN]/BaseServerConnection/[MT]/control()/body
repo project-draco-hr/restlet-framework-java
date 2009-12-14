@@ -1,21 +1,23 @@
 {
   if (!getHandlerService().isShutdown()) {
     try {
-      if (!isInboundBusy() && (getInboundRequests().isEmpty() || isPipelining())) {
-        getHandlerService().execute(new Runnable(){
-          public void run(){
-            readRequests();
+      if (getState() == ConnectionState.OPEN) {
+        if (!isInboundBusy() && (getInboundRequests().isEmpty() || isPipelining())) {
+          getHandlerService().execute(new Runnable(){
+            public void run(){
+              readRequests();
+            }
           }
-        }
 );
-      }
-      if (!isOutboundBusy()) {
-        getHandlerService().execute(new Runnable(){
-          public void run(){
-            writeResponses();
+        }
+        if (!isOutboundBusy()) {
+          getHandlerService().execute(new Runnable(){
+            public void run(){
+              writeResponses();
+            }
           }
-        }
 );
+        }
       }
     }
  catch (    Exception e) {
