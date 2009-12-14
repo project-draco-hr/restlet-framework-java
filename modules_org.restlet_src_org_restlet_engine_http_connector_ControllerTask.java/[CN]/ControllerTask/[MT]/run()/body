@@ -1,0 +1,50 @@
+{
+  while (true) {
+    try {
+      for (int i=0; i < getHelper().getPendingRequests().size(); i++) {
+        final ConnectedRequest request=getHelper().getPendingRequests().poll();
+        if (request != null) {
+          getHelper().getWorkerService().execute(new Runnable(){
+            public void run(){
+              getHelper().handle(request);
+            }
+          }
+);
+        }
+      }
+      for (int i=0; i < getHelper().getPendingRequests().size(); i++) {
+        final Response response=getHelper().getPendingResponses().poll();
+        if (response != null) {
+          getHelper().getWorkerService().execute(new Runnable(){
+            public void run(){
+              getHelper().handle(response);
+            }
+          }
+);
+        }
+      }
+      for (      final BaseServerConnection conn : getHelper().getConnections()) {
+        if (conn.canRead()) {
+          getHelper().getWorkerService().execute(new Runnable(){
+            public void run(){
+              conn.readRequests();
+            }
+          }
+);
+        }
+        if (conn.canWrite()) {
+          getHelper().getWorkerService().execute(new Runnable(){
+            public void run(){
+              conn.writeResponses();
+            }
+          }
+);
+        }
+      }
+      Thread.sleep(100);
+    }
+ catch (    Exception ex) {
+      this.helper.getLogger().log(Level.WARNING,"Unexpected error while controlling connections",ex);
+    }
+  }
+}

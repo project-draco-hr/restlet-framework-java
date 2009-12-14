@@ -1,0 +1,11 @@
+{
+  if (request != null) {
+    Response response=new Response(request);
+    handle(request,response);
+    if (!response.isCommitted() && response.isAutoCommitting()) {
+      getPendingResponses().add(response);
+      response.setCommitted(true);
+    }
+  }
+  handleNextResponse();
+}

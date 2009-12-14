@@ -3,12 +3,15 @@
     if (isPipelining()) {
     }
  else {
-      if (getOutboundResponses().size() > 0) {
-        Response nextResponse=getOutboundResponses().poll();
-        writeResponse(nextResponse);
+      Response response=null;
+synchronized (getOutboundResponses()) {
+        if (canWrite()) {
+          response=getOutboundResponses().poll();
+          setOutboundBusy((response != null));
+        }
       }
+      writeResponse(response);
     }
-    readRequests();
   }
  catch (  Exception e) {
     getLogger().log(Level.WARNING,"Error while writing an HTTP response: ",e.getMessage());

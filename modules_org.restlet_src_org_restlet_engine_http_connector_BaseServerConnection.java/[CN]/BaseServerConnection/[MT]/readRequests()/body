@@ -2,13 +2,16 @@
   try {
     if (isPipelining()) {
     }
- else     if (!isInboundBusy()) {
-      if (getInboundRequests().size() == 0) {
-        ConnectedRequest request=readRequest();
-        if (request != null) {
-          getInboundRequests().add(request);
-          getHelper().getPendingRequests().add(request);
+ else {
+      boolean doRead=false;
+synchronized (getInboundRequests()) {
+        if (canRead()) {
+          doRead=(getInboundStream().available() > 0);
+          setInboundBusy(doRead);
         }
+      }
+      if (doRead) {
+        readRequest();
       }
     }
   }
@@ -16,4 +19,5 @@
     getLogger().log(Level.WARNING,"Error while reading an HTTP request: ",e.getMessage());
     getLogger().log(Level.INFO,"Error while reading an HTTP request",e);
   }
+  getHelper().handleNextRequest();
 }

@@ -3,10 +3,15 @@
   while (true) {
     try {
       SocketChannel client=this.serverSocket.accept();
-      BaseServerConnection connection=new BaseServerConnection(getHelper(),client.socket());
+      final BaseServerConnection connection=new BaseServerConnection(getHelper(),client.socket());
       getHelper().getConnections().add(connection);
       connection.open();
-      connection.control();
+      getHelper().getWorkerService().execute(new Runnable(){
+        public void run(){
+          connection.readRequests();
+        }
+      }
+);
     }
  catch (    ClosedByInterruptException ex) {
       this.helper.getLogger().log(Level.FINE,"ServerSocket channel was closed by interrupt",ex);
