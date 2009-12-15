@@ -11,6 +11,9 @@ synchronized (getOutboundResponses()) {
         }
       }
       writeResponse(response);
+      if (getState() == ConnectionState.CLOSING) {
+        close(true);
+      }
     }
   }
  catch (  Exception e) {
