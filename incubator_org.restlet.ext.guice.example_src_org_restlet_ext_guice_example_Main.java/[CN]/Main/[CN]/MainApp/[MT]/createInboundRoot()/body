@@ -1,19 +1,19 @@
 {
-  DependencyInjection dependencyInjection=null;
+  DependencyInjection di=null;
 switch (mode) {
 case EXPLICIT_INJECTOR:
     Injector injector=RestletGuice.createInjector(mainModule);
-  dependencyInjection=injector.getInstance(DependencyInjection.class);
+  di=injector.getInstance(DependencyInjection.class);
 break;
 case AUTO_INJECTOR:
-dependencyInjection=new RestletGuice.Module(mainModule);
+di=new RestletGuice.Module(mainModule);
 break;
 }
-if (dependencyInjection == null) {
+if (di == null) {
 throw new IllegalStateException("No Injector creation mode specified.");
 }
 Router router=new Router(getContext());
-dependencyInjection.attach(router,HELLO_PATH,ServerResource.class,HelloWorld.class);
-dependencyInjection.attachDefault(router,DefaultResource.class);
+router.attach(HELLO_PATH,di.inject(ServerResource.class,HelloWorld.class));
+router.attachDefault(di.inject(DefaultResource.class));
 return router;
 }
