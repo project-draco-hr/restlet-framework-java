@@ -6,10 +6,22 @@
     InputStream requestStream=getRequestEntityStream(contentLength,chunkedEncoding);
     ReadableByteChannel requestChannel=getRequestEntityChannel(contentLength,chunkedEncoding);
     if (requestStream != null) {
-      result=new InputRepresentation(requestStream,null,contentLength);
+      result=new InputRepresentation(requestStream,null,contentLength){
+        @Override public void release(){
+          super.release();
+          setInboundBusy(false);
+        }
+      }
+;
     }
  else     if (requestChannel != null) {
-      result=new ReadableRepresentation(requestChannel,null,contentLength);
+      result=new ReadableRepresentation(requestChannel,null,contentLength){
+        @Override public void release(){
+          super.release();
+          setInboundBusy(false);
+        }
+      }
+;
     }
     result.setSize(contentLength);
   }
