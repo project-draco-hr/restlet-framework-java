@@ -1,7 +1,9 @@
 {
   ConnectedRequest result=super.readRequest();
   if (result != null) {
-    getInboundRequests().add(result);
+    if (result.producesResponse()) {
+      getInboundRequests().add(result);
+    }
     getHelper().getPendingRequests().add(result);
   }
   return result;
