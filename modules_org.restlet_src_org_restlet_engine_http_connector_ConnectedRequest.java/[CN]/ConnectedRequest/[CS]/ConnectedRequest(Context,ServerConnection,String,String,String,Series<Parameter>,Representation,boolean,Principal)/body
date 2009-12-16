@@ -9,9 +9,7 @@
   this.userPrincipal=userPrincipal;
   this.proxySecurityAdded=false;
   this.warningsAdded=false;
-  this.methodName=methodName;
-  this.resourceUri=resourceUri;
-  setMethod(Method.valueOf(this.methodName));
+  setMethod(Method.valueOf(methodName));
   setEntity(entity);
   getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,headers);
   if (version != null) {
@@ -67,13 +65,13 @@
   }
   setHostRef(sb.toString());
   if (resourceUri != null) {
-    setResourceRef(new Reference(getHostRef(),this.resourceUri));
+    setResourceRef(new Reference(getHostRef(),resourceUri));
     if (getResourceRef().isRelative()) {
-      if (!this.resourceUri.startsWith("/")) {
-        setResourceRef(new Reference(getHostRef().toString() + "/" + this.resourceUri));
+      if (!resourceUri.startsWith("/")) {
+        setResourceRef(new Reference(getHostRef().toString() + "/" + resourceUri));
       }
  else {
-        setResourceRef(new Reference(getHostRef().toString() + this.resourceUri));
+        setResourceRef(new Reference(getHostRef().toString() + resourceUri));
       }
     }
     setOriginalRef(getResourceRef().getTargetRef());
@@ -87,4 +85,13 @@
     date=new Date();
   }
   setDate(date);
+  String maxForwardsHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(HeaderConstants.HEADER_MAX_FORWARDS);
+  if (maxForwardsHeader != null) {
+    try {
+      setMaxForwards(Integer.parseInt(maxForwardsHeader));
+    }
+ catch (    NumberFormatException nfe) {
+      Context.getCurrentLogger().info("Unable to parse the Max-Forwards header: " + maxForwardsHeader);
+    }
+  }
 }
