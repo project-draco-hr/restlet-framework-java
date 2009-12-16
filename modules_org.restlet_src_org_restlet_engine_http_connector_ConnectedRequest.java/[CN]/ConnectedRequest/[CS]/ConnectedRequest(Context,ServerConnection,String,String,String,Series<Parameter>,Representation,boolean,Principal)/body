@@ -39,7 +39,7 @@
   }
   Protocol serverProtocol=getConnection().getHelper().getHelped().getProtocols().get(0);
   setProtocol(new Protocol(serverProtocol.getSchemeName(),serverProtocol.getName(),serverProtocol.getDescription(),serverProtocol.getDefaultPort(),serverProtocol.isConfidential(),version));
-  String host=getHeaders().getFirstValue(HeaderConstants.HEADER_HOST,true);
+  String host=(getHeaders() == null) ? null : getHeaders().getFirstValue(HeaderConstants.HEADER_HOST,true);
   String hostDomain=null;
   int hostPort=-1;
   if (host != null) {
@@ -78,7 +78,7 @@
     }
     setOriginalRef(getResourceRef().getTargetRef());
   }
-  String dateHeader=getHeaders().getFirstValue(HeaderConstants.HEADER_DATE);
+  String dateHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(HeaderConstants.HEADER_DATE);
   Date date=null;
   if (dateHeader != null) {
     date=DateUtils.parse(dateHeader);

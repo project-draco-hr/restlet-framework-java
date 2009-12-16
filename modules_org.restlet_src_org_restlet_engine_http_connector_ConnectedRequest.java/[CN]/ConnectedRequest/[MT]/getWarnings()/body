@@ -1,16 +1,19 @@
 {
   List<Warning> result=super.getWarnings();
-  if (!warningsAdded) {
-    for (    String string : getHeaders().getValuesArray(HeaderConstants.HEADER_WARNING)) {
-      WarningReader hr=new WarningReader(string);
-      try {
-        result.add(hr.readWarning());
+  if (!this.warningsAdded) {
+    if (getHeaders() != null) {
+      for (      String string : getHeaders().getValuesArray(HeaderConstants.HEADER_WARNING)) {
+        WarningReader hr=new WarningReader(string);
+        try {
+          result.add(hr.readWarning());
+        }
+ catch (        Exception e) {
+          Context.getCurrentLogger().log(Level.WARNING,"Error during warning parsing. Header: " + string,e);
+        }
       }
- catch (      Exception e) {
-        Context.getCurrentLogger().log(Level.WARNING,"Error during warning parsing. Header: " + string,e);
-      }
+      setWarnings(result);
     }
-    setWarnings(result);
+    this.warningsAdded=true;
   }
   return result;
 }

@@ -1,9 +1,11 @@
 {
   ChallengeResponse result=super.getProxyChallengeResponse();
   if (!this.proxySecurityAdded) {
-    final String authorization=getHeaders().getValues(HeaderConstants.HEADER_PROXY_AUTHORIZATION);
-    result=AuthenticatorUtils.parseResponse(this,authorization,getHeaders());
-    setProxyChallengeResponse(result);
+    if (getHeaders() != null) {
+      final String authorization=getHeaders().getValues(HeaderConstants.HEADER_PROXY_AUTHORIZATION);
+      result=AuthenticatorUtils.parseResponse(this,authorization,getHeaders());
+      setProxyChallengeResponse(result);
+    }
     this.proxySecurityAdded=true;
   }
   return result;

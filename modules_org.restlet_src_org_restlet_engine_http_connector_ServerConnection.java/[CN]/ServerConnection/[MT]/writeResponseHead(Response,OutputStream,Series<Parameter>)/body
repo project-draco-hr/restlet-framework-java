@@ -1,6 +1,7 @@
 {
-  String requestVersion=response.getRequest().getProtocol().getVersion();
-  String version="HTTP/" + ((requestVersion == null) ? "1.1" : requestVersion);
+  Protocol protocol=response.getRequest().getProtocol();
+  String requestVersion=protocol.getVersion();
+  String version=protocol.getTechnicalName() + '/' + ((requestVersion == null) ? "1.1" : requestVersion);
   headStream.write(version.getBytes());
   headStream.write(' ');
   headStream.write(Integer.toString(response.getStatus().getCode()).getBytes());
