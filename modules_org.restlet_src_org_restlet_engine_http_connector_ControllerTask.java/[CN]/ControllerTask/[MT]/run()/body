@@ -1,44 +1,49 @@
 {
   while (true) {
     try {
-      for (      final BaseServerConnection conn : getHelper().getConnections()) {
-        if (conn.canRead()) {
-          getHelper().getWorkerService().execute(new Runnable(){
-            public void run(){
-              conn.readRequests();
-            }
-          }
-);
-        }
-        if (conn.canWrite()) {
-          getHelper().getWorkerService().execute(new Runnable(){
-            public void run(){
-              conn.writeResponses();
-            }
-          }
-);
-        }
+      if (isWorkerServiceBusy()) {
+        getHelper().getLogger().log(Level.INFO,"Can't submit additional tasks. Consider increasing the maximum number of threads.");
       }
-      for (int i=0; i < getHelper().getPendingRequests().size(); i++) {
-        final ConnectedRequest request=getHelper().getPendingRequests().poll();
-        if (request != null) {
-          getHelper().getWorkerService().execute(new Runnable(){
-            public void run(){
-              getHelper().handle(request);
+ else {
+        for (        final BaseServerConnection conn : getHelper().getConnections()) {
+          if (conn.canRead()) {
+            execute(new Runnable(){
+              public void run(){
+                conn.readRequests();
+              }
             }
-          }
 );
+          }
+          if (conn.canWrite()) {
+            execute(new Runnable(){
+              public void run(){
+                conn.writeResponses();
+              }
+            }
+);
+          }
         }
-      }
-      for (int i=0; i < getHelper().getPendingResponses().size(); i++) {
-        final Response response=getHelper().getPendingResponses().poll();
-        if (response != null) {
-          getHelper().getWorkerService().execute(new Runnable(){
-            public void run(){
-              getHelper().handle(response);
+        for (int i=0; i < getHelper().getPendingRequests().size(); i++) {
+          final ConnectedRequest request=getHelper().getPendingRequests().poll();
+          if (request != null) {
+            execute(new Runnable(){
+              public void run(){
+                getHelper().handle(request);
+              }
             }
-          }
 );
+          }
+        }
+        for (int i=0; i < getHelper().getPendingResponses().size(); i++) {
+          final Response response=getHelper().getPendingResponses().poll();
+          if (response != null) {
+            execute(new Runnable(){
+              public void run(){
+                getHelper().handle(response);
+              }
+            }
+);
+          }
         }
       }
       Thread.sleep(100);

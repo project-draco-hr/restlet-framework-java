@@ -13,18 +13,15 @@
         OutputStream responseEntityStream=getResponseEntityStream(chunked);
         writeResponseBody(responseEntity,responseEntityChannel,responseEntityStream);
         if (responseEntityStream != null) {
-          try {
-            responseEntityStream.flush();
-            responseEntityStream.close();
-          }
- catch (          IOException ioe) {
-            getLogger().log(Level.FINE,"Exception while flushing and closing the entity stream.",ioe);
-          }
+          responseEntityStream.flush();
+          responseEntityStream.close();
         }
       }
     }
-  finally {
-      getSocket().getOutputStream().flush();
+ catch (    IOException ioe) {
+      getLogger().log(Level.FINE,"Exception while flushing and closing the entity stream.",ioe);
+    }
+ finally {
       setOutboundBusy(false);
       if (responseEntity != null) {
         responseEntity.release();
