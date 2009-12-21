@@ -2,7 +2,7 @@
   if (request != null) {
     ConnectedRequest connectedRequest=(ConnectedRequest)request;
     Response response=null;
-    if (connectedRequest.producesResponse()) {
+    if (connectedRequest.isExpectingResponse()) {
       response=createResponse(connectedRequest);
       response.getServerInfo().setAgent(Engine.VERSION_HEADER);
     }
@@ -11,7 +11,7 @@
       getPendingResponses().add(response);
       response.setCommitted(true);
     }
-    if ((request.getEntity() != null) && (!connectedRequest.producesResponse() || ((response != null) && response.isCommitted()))) {
+    if ((request.getEntity() != null) && (!connectedRequest.isExpectingResponse() || ((response != null) && response.isCommitted()))) {
       try {
         request.getEntity().exhaust();
       }
