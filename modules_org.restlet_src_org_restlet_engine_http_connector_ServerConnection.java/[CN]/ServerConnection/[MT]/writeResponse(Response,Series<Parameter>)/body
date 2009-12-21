@@ -9,8 +9,8 @@
       writeResponseHead(response,headers);
       if (responseEntity != null) {
         boolean chunked=HeaderUtils.isChunkedEncoding(headers);
-        WritableByteChannel responseEntityChannel=getResponseEntityChannel(chunked);
-        OutputStream responseEntityStream=getResponseEntityStream(chunked);
+        WritableByteChannel responseEntityChannel=getOutboundEntityChannel(chunked);
+        OutputStream responseEntityStream=getOutboundEntityStream(chunked);
         writeResponseBody(responseEntity,responseEntityChannel,responseEntityStream);
         if (responseEntityStream != null) {
           responseEntityStream.flush();

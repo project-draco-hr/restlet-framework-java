@@ -3,10 +3,10 @@
   long contentLength=HeaderUtils.getContentLength(headers);
   boolean chunkedEncoding=HeaderUtils.isChunkedEncoding(headers);
   if ((contentLength != Representation.UNKNOWN_SIZE) || chunkedEncoding) {
-    InputStream requestStream=getRequestEntityStream(contentLength,chunkedEncoding);
-    ReadableByteChannel requestChannel=getRequestEntityChannel(contentLength,chunkedEncoding);
-    if (requestStream != null) {
-      result=new InputRepresentation(requestStream,null,contentLength){
+    InputStream inboundEntityStream=getInboundEntityStream(contentLength,chunkedEncoding);
+    ReadableByteChannel inboundEntityChannel=getInboundEntityChannel(contentLength,chunkedEncoding);
+    if (inboundEntityStream != null) {
+      result=new InputRepresentation(inboundEntityStream,null,contentLength){
         @Override public void release(){
           super.release();
           setInboundBusy(false);
@@ -14,8 +14,8 @@
       }
 ;
     }
- else     if (requestChannel != null) {
-      result=new ReadableRepresentation(requestChannel,null,contentLength){
+ else     if (inboundEntityChannel != null) {
+      result=new ReadableRepresentation(inboundEntityChannel,null,contentLength){
         @Override public void release(){
           super.release();
           setInboundBusy(false);

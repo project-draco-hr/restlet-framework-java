@@ -1,4 +1,11 @@
 {
+  addGeneralHeaders(response,headers);
+  if (response.getServerInfo().isAcceptingRanges()) {
+    headers.add(HeaderConstants.HEADER_ACCEPT_RANGES,"bytes");
+  }
+  if (response.getAge() > 0) {
+    headers.add(HeaderConstants.HEADER_AGE,Integer.toString(response.getAge()));
+  }
   if (response.getStatus().equals(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED) || Method.OPTIONS.equals(response.getRequest().getMethod())) {
     StringBuilder sb=new StringBuilder();
     boolean first=true;
@@ -11,57 +18,49 @@
       }
       sb.append(method.getName());
     }
-    responseHeaders.add(HeaderConstants.HEADER_ALLOW,sb.toString());
-  }
-  response.setDate(new Date());
-  responseHeaders.add(HeaderConstants.HEADER_DATE,DateUtils.format(response.getDate()));
-  if (response.getAge() > 0) {
-    responseHeaders.add(HeaderConstants.HEADER_AGE,Integer.toString(response.getAge()));
-  }
-  if (response.getRetryAfter() != null) {
-    responseHeaders.add(HeaderConstants.HEADER_RETRY_AFTER,DateUtils.format(response.getRetryAfter()));
-  }
-  List<CookieSetting> cookies=response.getCookieSettings();
-  for (int i=0; i < cookies.size(); i++) {
-    responseHeaders.add(HeaderConstants.HEADER_SET_COOKIE,CookieUtils.format(cookies.get(i)));
+    headers.add(HeaderConstants.HEADER_ALLOW,sb.toString());
   }
   if (response.getLocationRef() != null) {
-    responseHeaders.add(HeaderConstants.HEADER_LOCATION,response.getLocationRef().getTargetRef().toString());
-  }
-  if (response.getChallengeRequests() != null) {
-    for (    final ChallengeRequest challengeRequest : response.getChallengeRequests()) {
-      responseHeaders.add(HeaderConstants.HEADER_WWW_AUTHENTICATE,org.restlet.engine.security.AuthenticatorUtils.formatRequest(challengeRequest,response,responseHeaders));
-    }
+    headers.add(HeaderConstants.HEADER_LOCATION,response.getLocationRef().getTargetRef().toString());
   }
   if (response.getProxyChallengeRequests() != null) {
     for (    final ChallengeRequest challengeRequest : response.getProxyChallengeRequests()) {
-      responseHeaders.add(HeaderConstants.HEADER_PROXY_AUTHENTICATE,org.restlet.engine.security.AuthenticatorUtils.formatRequest(challengeRequest,response,responseHeaders));
+      headers.add(HeaderConstants.HEADER_PROXY_AUTHENTICATE,org.restlet.engine.security.AuthenticatorUtils.formatRequest(challengeRequest,response,headers));
     }
+  }
+  if (response.getRetryAfter() != null) {
+    headers.add(HeaderConstants.HEADER_RETRY_AFTER,DateUtils.format(response.getRetryAfter()));
+  }
+  if ((response.getServerInfo() != null) && (response.getServerInfo().getAgent() != null)) {
+    headers.add(HeaderConstants.HEADER_SERVER,response.getServerInfo().getAgent());
+  }
+ else {
+    headers.add(HeaderConstants.HEADER_SERVER,Engine.VERSION_HEADER);
   }
   if (!((response.getRequest().getClientInfo().getAgent() != null) && response.getRequest().getClientInfo().getAgent().contains("MSIE"))) {
     final Set<Dimension> dimensions=response.getDimensions();
-    final String vary=HeaderUtils.createVaryHeader(dimensions);
+    final String vary=createVaryHeader(dimensions);
     if (vary != null) {
-      responseHeaders.add(HeaderConstants.HEADER_VARY,vary);
+      headers.add(HeaderConstants.HEADER_VARY,vary);
     }
   }
-  if (response.getServerInfo().isAcceptingRanges()) {
-    responseHeaders.add(HeaderConstants.HEADER_ACCEPT_RANGES,"bytes");
-  }
-  if (!response.getWarnings().isEmpty()) {
-    for (    Warning warning : response.getWarnings()) {
-      responseHeaders.add(HeaderConstants.HEADER_WARNING,WarningUtils.format(warning));
+  if (response.getChallengeRequests() != null) {
+    for (    final ChallengeRequest challengeRequest : response.getChallengeRequests()) {
+      headers.add(HeaderConstants.HEADER_WWW_AUTHENTICATE,org.restlet.engine.security.AuthenticatorUtils.formatRequest(challengeRequest,response,headers));
     }
-  }
-  if (!response.getCacheDirectives().isEmpty()) {
-    responseHeaders.add(HeaderConstants.HEADER_CACHE_CONTROL,CacheControlUtils.format(response.getCacheDirectives()));
   }
   if (response.getAuthenticationInfo() != null) {
     try {
-      responseHeaders.add(HeaderConstants.HEADER_AUTHENTICATION_INFO,org.restlet.engine.security.AuthenticatorUtils.formatAuthenticationInfo(response.getAuthenticationInfo()));
+      headers.add(HeaderConstants.HEADER_AUTHENTICATION_INFO,org.restlet.engine.security.AuthenticatorUtils.formatAuthenticationInfo(response.getAuthenticationInfo()));
     }
  catch (    IOException e) {
       Context.getCurrentLogger().log(Level.WARNING,"Unable to write the Authentication-Info header",e);
     }
   }
+  List<CookieSetting> cookies=response.getCookieSettings();
+  for (int i=0; i < cookies.size(); i++) {
+    headers.add(HeaderConstants.HEADER_SET_COOKIE,CookieUtils.format(cookies.get(i)));
+  }
+  Series<Parameter> additionalHeaders=(Series<Parameter>)response.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
+  addExtensionHeaders(headers,additionalHeaders);
 }

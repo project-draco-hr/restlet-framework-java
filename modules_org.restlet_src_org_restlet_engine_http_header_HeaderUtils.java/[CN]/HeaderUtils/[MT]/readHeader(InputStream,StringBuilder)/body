@@ -1,9 +1,9 @@
 {
   Parameter result=null;
   int next=is.read();
-  if (HeaderUtils.isCarriageReturn(next)) {
+  if (isCarriageReturn(next)) {
     next=is.read();
-    if (!HeaderUtils.isLineFeed(next)) {
+    if (!isLineFeed(next)) {
       throw new IOException("Invalid end of headers. Line feed missing after the carriage return.");
     }
   }
@@ -19,10 +19,10 @@
     result.setName(sb.toString());
     sb.delete(0,sb.length());
     next=is.read();
-    while (HeaderUtils.isSpace(next)) {
+    while (isSpace(next)) {
       next=is.read();
     }
-    while ((next != -1) && (!HeaderUtils.isCarriageReturn(next))) {
+    while ((next != -1) && (!isCarriageReturn(next))) {
       sb.append((char)next);
       next=is.read();
     }
@@ -30,7 +30,7 @@
       throw new IOException("Unable to parse the header value. End of stream reached too early.");
     }
     next=is.read();
-    if (HeaderUtils.isLineFeed(next)) {
+    if (isLineFeed(next)) {
       result.setValue(sb.toString());
       sb.delete(0,sb.length());
     }

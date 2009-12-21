@@ -1,5 +1,10 @@
 {
   ClientCall result=client.create(request);
-  addRequestHeaders(result,request);
+  if (result != null) {
+    HeaderUtils.addRequestHeaders(request,result.getRequestHeaders());
+    if (request.isEntityAvailable()) {
+      HeaderUtils.addEntityHeaders(request.getEntity(),result.getRequestHeaders());
+    }
+  }
   return result;
 }

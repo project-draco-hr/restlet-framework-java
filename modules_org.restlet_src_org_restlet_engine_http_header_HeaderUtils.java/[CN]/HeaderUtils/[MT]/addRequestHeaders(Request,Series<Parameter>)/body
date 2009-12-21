@@ -1,0 +1,131 @@
+{
+  addGeneralHeaders(request,headers);
+  ClientInfo client=request.getClientInfo();
+  if (client.getAcceptedMediaTypes().size() > 0) {
+    try {
+      headers.add(HeaderConstants.HEADER_ACCEPT,PreferenceUtils.format(client.getAcceptedMediaTypes()));
+    }
+ catch (    IOException ioe) {
+      Context.getCurrentLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
+    }
+  }
+ else {
+    headers.add(HeaderConstants.HEADER_ACCEPT,MediaType.ALL.getName());
+  }
+  if (client.getAcceptedCharacterSets().size() > 0) {
+    try {
+      headers.add(HeaderConstants.HEADER_ACCEPT_CHARSET,PreferenceUtils.format(client.getAcceptedCharacterSets()));
+    }
+ catch (    IOException ioe) {
+      Context.getCurrentLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
+    }
+  }
+  if (client.getAcceptedEncodings().size() > 0) {
+    try {
+      headers.add(HeaderConstants.HEADER_ACCEPT_ENCODING,PreferenceUtils.format(client.getAcceptedEncodings()));
+    }
+ catch (    IOException ioe) {
+      Context.getCurrentLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
+    }
+  }
+  if (client.getAcceptedLanguages().size() > 0) {
+    try {
+      headers.add(HeaderConstants.HEADER_ACCEPT_LANGUAGE,PreferenceUtils.format(client.getAcceptedLanguages()));
+    }
+ catch (    IOException ioe) {
+      Context.getCurrentLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
+    }
+  }
+  if (request.getClientInfo().getFrom() != null) {
+    headers.add(HeaderConstants.HEADER_FROM,request.getClientInfo().getFrom());
+  }
+  Reference hostRef=(request.getResourceRef().getBaseRef() != null) ? request.getResourceRef().getBaseRef() : request.getResourceRef();
+  if (hostRef.getHostDomain() != null) {
+    String host=hostRef.getHostDomain();
+    int hostRefPortValue=hostRef.getHostPort();
+    if ((hostRefPortValue != -1) && (hostRefPortValue != request.getProtocol().getDefaultPort())) {
+      host=host + ':' + hostRefPortValue;
+    }
+    headers.add(HeaderConstants.HEADER_HOST,host);
+  }
+  Conditions condition=request.getConditions();
+  if (!condition.getMatch().isEmpty()) {
+    StringBuilder value=new StringBuilder();
+    for (int i=0; i < condition.getMatch().size(); i++) {
+      if (i > 0) {
+        value.append(", ");
+      }
+      value.append(condition.getMatch().get(i).format());
+    }
+    headers.add(HeaderConstants.HEADER_IF_MATCH,value.toString());
+  }
+  if (condition.getModifiedSince() != null) {
+    String imsDate=DateUtils.format(condition.getModifiedSince());
+    headers.add(HeaderConstants.HEADER_IF_MODIFIED_SINCE,imsDate);
+  }
+  if (!condition.getNoneMatch().isEmpty()) {
+    StringBuilder value=new StringBuilder();
+    for (int i=0; i < condition.getNoneMatch().size(); i++) {
+      if (i > 0) {
+        value.append(", ");
+      }
+      value.append(condition.getNoneMatch().get(i).format());
+    }
+    headers.add(HeaderConstants.HEADER_IF_NONE_MATCH,value.toString());
+  }
+  if (condition.getRangeTag() != null && condition.getRangeDate() != null) {
+    Context.getCurrentLogger().log(Level.WARNING,"Unable to format the HTTP If-Range header due to the presence of both entity tag and modification date.");
+  }
+ else {
+    if (condition.getRangeTag() != null) {
+      headers.add(HeaderConstants.HEADER_IF_RANGE,condition.getRangeTag().format());
+    }
+ else     if (condition.getRangeDate() != null) {
+      String rDate=DateUtils.format(condition.getRangeDate(),DateUtils.FORMAT_RFC_1123.get(0));
+      headers.add(HeaderConstants.HEADER_IF_RANGE,rDate);
+    }
+  }
+  if (condition.getUnmodifiedSince() != null) {
+    String iusDate=DateUtils.format(condition.getUnmodifiedSince(),DateUtils.FORMAT_RFC_1123.get(0));
+    headers.add(HeaderConstants.HEADER_IF_UNMODIFIED_SINCE,iusDate);
+  }
+  if (request.getMaxForwards() > -1) {
+    headers.add(HeaderConstants.HEADER_MAX_FORWARDS,Integer.toString(request.getMaxForwards()));
+  }
+  if (!request.getRanges().isEmpty()) {
+    headers.add(HeaderConstants.HEADER_RANGE,org.restlet.engine.http.header.RangeUtils.formatRanges(request.getRanges()));
+  }
+  if (request.getReferrerRef() != null) {
+    headers.add(HeaderConstants.HEADER_REFERRER,request.getReferrerRef().toString());
+  }
+  if (request.getClientInfo().getAgent() != null) {
+    headers.add(HeaderConstants.HEADER_USER_AGENT,request.getClientInfo().getAgent());
+  }
+ else {
+    headers.add(HeaderConstants.HEADER_USER_AGENT,Engine.VERSION_HEADER);
+  }
+  if (request.getCookies().size() > 0) {
+    String cookies=CookieUtils.format(request.getCookies());
+    headers.add(HeaderConstants.HEADER_COOKIE,cookies);
+  }
+  Series<Parameter> additionalHeaders=(Series<Parameter>)request.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
+  addExtensionHeaders(headers,additionalHeaders);
+  ChallengeResponse challengeResponse=request.getChallengeResponse();
+  if (challengeResponse != null) {
+    try {
+      headers.add(HeaderConstants.HEADER_AUTHORIZATION,org.restlet.engine.security.AuthenticatorUtils.formatResponse(challengeResponse,request,headers));
+    }
+ catch (    IOException e) {
+      Context.getCurrentLogger().log(Level.WARNING,"Unable to write the Authorization header",e);
+    }
+  }
+  ChallengeResponse proxyChallengeResponse=request.getProxyChallengeResponse();
+  if (proxyChallengeResponse != null) {
+    try {
+      headers.add(HeaderConstants.HEADER_PROXY_AUTHORIZATION,org.restlet.engine.security.AuthenticatorUtils.formatResponse(proxyChallengeResponse,request,headers));
+    }
+ catch (    IOException e) {
+      Context.getCurrentLogger().log(Level.WARNING,"Unable to write the Proxy-Authorization header",e);
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  if (!message.getCacheDirectives().isEmpty()) {
+    headers.add(HeaderConstants.HEADER_CACHE_CONTROL,CacheControlUtils.format(message.getCacheDirectives()));
+  }
+  message.setDate(new Date());
+  headers.add(HeaderConstants.HEADER_DATE,DateUtils.format(message.getDate()));
+  if (!message.getWarnings().isEmpty()) {
+    for (    Warning warning : message.getWarnings()) {
+      headers.add(HeaderConstants.HEADER_WARNING,WarningUtils.format(warning));
+    }
+  }
+}
