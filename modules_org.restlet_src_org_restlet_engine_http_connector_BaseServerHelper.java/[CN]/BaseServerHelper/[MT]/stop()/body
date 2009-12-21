@@ -1,14 +1,6 @@
 {
   super.stop();
-  if (this.workerService != null) {
-    this.workerService.shutdown();
-    try {
-      this.workerService.awaitTermination(30,TimeUnit.SECONDS);
-    }
- catch (    InterruptedException ex) {
-      getLogger().log(Level.FINE,"Interruption while shutting down internal server",ex);
-    }
-  }
+  getAttributes().put("ephemeralPort",-1);
   if (this.acceptorService != null) {
     this.acceptorService.shutdownNow();
     try {

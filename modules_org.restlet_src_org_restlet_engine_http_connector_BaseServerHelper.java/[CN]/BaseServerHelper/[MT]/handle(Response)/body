@@ -1,13 +1,13 @@
 {
   if (response != null) {
     ConnectedRequest request=(ConnectedRequest)response.getRequest();
-    BaseServerConnection connection=(BaseServerConnection)request.getConnection();
-    if (connection.getInboundRequests().peek() == request) {
+    ServerConnection connection=(ServerConnection)request.getConnection();
+    if (connection.getInboundMessages().peek() == request) {
       if (!response.getStatus().isInformational()) {
-        connection.getInboundRequests().remove(request);
+        connection.getInboundMessages().remove(request);
       }
-      connection.getOutboundResponses().add(response);
-      connection.writeResponses();
+      connection.getOutboundMessages().add(response);
+      connection.writeMessages();
     }
  else {
       getPendingResponses().add(response);

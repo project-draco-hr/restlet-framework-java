@@ -10,11 +10,11 @@
           getHelper().getLogger().log(Level.INFO,"Can't submit additional tasks. Consider increasing the maximum number of threads.");
         }
  else {
-          for (          final BaseServerConnection conn : getHelper().getConnections()) {
+          for (          final Connection<?> conn : getHelper().getConnections()) {
             if (conn.canRead()) {
               execute(new Runnable(){
                 public void run(){
-                  conn.readRequests();
+                  conn.readMessages();
                 }
               }
 );
@@ -22,14 +22,14 @@
             if (conn.canWrite()) {
               execute(new Runnable(){
                 public void run(){
-                  conn.writeResponses();
+                  conn.writeMessages();
                 }
               }
 );
             }
           }
           for (int i=0; i < getHelper().getPendingRequests().size(); i++) {
-            final ConnectedRequest request=getHelper().getPendingRequests().poll();
+            final Request request=getHelper().getPendingRequests().poll();
             if (request != null) {
               execute(new Runnable(){
                 public void run(){
@@ -52,7 +52,7 @@
           }
         }
       }
-      Thread.sleep(100);
+      Thread.sleep(getHelper().getControllerSleepTimeMs());
     }
  catch (    Exception ex) {
       this.helper.getLogger().log(Level.WARNING,"Unexpected error while controlling connections",ex);

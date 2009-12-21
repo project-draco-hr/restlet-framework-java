@@ -1,0 +1,27 @@
+{
+  if (request != null) {
+    ConnectedRequest connectedRequest=(ConnectedRequest)request;
+    Response response=null;
+    if (connectedRequest.producesResponse()) {
+      response=createResponse(connectedRequest);
+      response.getServerInfo().setAgent(Engine.VERSION_HEADER);
+    }
+    handle(request,response);
+    if ((response != null) && !response.isCommitted() && response.isAutoCommitting()) {
+      getPendingResponses().add(response);
+      response.setCommitted(true);
+    }
+    if ((request.getEntity() != null) && (!connectedRequest.producesResponse() || ((response != null) && response.isCommitted()))) {
+      try {
+        request.getEntity().exhaust();
+      }
+ catch (      IOException e) {
+        getLogger().log(Level.INFO,"Unable to exhaust request entity",e);
+      }
+ finally {
+        request.getEntity().release();
+      }
+    }
+  }
+  handleNextResponse();
+}
