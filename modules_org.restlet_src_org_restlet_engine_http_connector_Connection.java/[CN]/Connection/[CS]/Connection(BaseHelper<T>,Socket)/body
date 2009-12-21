@@ -1,8 +1,10 @@
 {
   this.helper=helper;
+  this.inboundStream=new InboundStream(socket.getInputStream());
   this.inboundMessages=new ConcurrentLinkedQueue<Message>();
+  this.outboundStream=new OutboundStream(socket.getOutputStream());
   this.outboundMessages=new ConcurrentLinkedQueue<Message>();
-  this.persistent=false;
+  this.persistent=helper.isPersistingConnections();
   this.pipelining=false;
   this.state=ConnectionState.CLOSED;
   this.socket=socket;
