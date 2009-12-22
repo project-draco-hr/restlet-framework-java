@@ -1,0 +1,24 @@
+{
+  try {
+    if (isPipelining()) {
+    }
+ else {
+      boolean doRead=false;
+synchronized (getInboundMessages()) {
+        if (canRead()) {
+          doRead=true;
+          setInboundBusy(doRead);
+        }
+      }
+      if (doRead) {
+        readMessage();
+      }
+    }
+  }
+ catch (  Exception e) {
+    getLogger().log(Level.FINE,"Error while reading an HTTP message. Closing the connection: ",e.getMessage());
+    getLogger().log(Level.FINE,"Error while reading an HTTP message. Closing the connection.",e);
+    close(false);
+  }
+  handleNextMessage();
+}

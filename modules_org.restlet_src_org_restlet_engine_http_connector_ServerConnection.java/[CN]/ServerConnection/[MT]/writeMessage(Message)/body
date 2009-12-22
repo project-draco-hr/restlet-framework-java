@@ -1,17 +1,18 @@
 {
-  if (response != null) {
+  if (message instanceof Response) {
+    Response response=(Response)message;
     Series<Parameter> headers=new Form();
     try {
       if ((response.getRequest().getMethod() != null) && response.getRequest().getMethod().equals(Method.HEAD)) {
-        writeEntityHeaders(response,headers);
+        writeEntityHeaders(response.getEntity(),headers);
         response.setEntity(null);
       }
  else       if (Method.GET.equals(response.getRequest().getMethod()) && Status.SUCCESS_OK.equals(response.getStatus()) && (!response.isEntityAvailable())) {
-        writeEntityHeaders(response,headers);
+        writeEntityHeaders(response.getEntity(),headers);
         getLogger().warning("A response with a 200 (Ok) status should have an entity. Make sure that resource \"" + response.getRequest().getResourceRef() + "\" returns one or sets the status to 204 (No content).");
       }
  else       if (response.getStatus().equals(Status.SUCCESS_NO_CONTENT)) {
-        writeEntityHeaders(response,headers);
+        writeEntityHeaders(response.getEntity(),headers);
         if (response.isEntityAvailable()) {
           getLogger().fine("Responses with a 204 (No content) status generally don't have an entity. Only adding entity headers for resource \"" + response.getRequest().getResourceRef() + "\".");
           response.setEntity(null);
@@ -24,7 +25,7 @@
         }
       }
  else       if (response.getStatus().equals(Status.REDIRECTION_NOT_MODIFIED)) {
-        writeEntityHeaders(response,headers);
+        writeEntityHeaders(response.getEntity(),headers);
         if (response.isEntityAvailable()) {
           getLogger().warning("Responses with a 304 (Not modified) status can't have an entity. Only adding entity headers for resource \"" + response.getRequest().getResourceRef() + "\".");
           response.setEntity(null);
@@ -37,7 +38,7 @@
         }
       }
  else {
-        writeEntityHeaders(response,headers);
+        writeEntityHeaders(response.getEntity(),headers);
         if ((response.getEntity() != null) && !response.getEntity().isAvailable()) {
           getLogger().warning("A response with an unavailable entity was returned. Ignoring the entity for resource \"" + response.getRequest().getResourceRef() + "\".");
           response.setEntity(null);

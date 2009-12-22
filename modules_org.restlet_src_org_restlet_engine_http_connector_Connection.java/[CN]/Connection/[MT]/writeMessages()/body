@@ -1,0 +1,23 @@
+{
+  try {
+    if (isPipelining()) {
+    }
+ else {
+      Message message=null;
+synchronized (getOutboundMessages()) {
+        if (canWrite()) {
+          message=getOutboundMessages().poll();
+          setOutboundBusy((message != null));
+        }
+      }
+      writeMessage(message);
+      if (getState() == ConnectionState.CLOSING) {
+        close(true);
+      }
+    }
+  }
+ catch (  Exception e) {
+    getLogger().log(Level.WARNING,"Error while writing an HTTP message: ",e.getMessage());
+    getLogger().log(Level.INFO,"Error while writing an HTTP message",e);
+  }
+}
