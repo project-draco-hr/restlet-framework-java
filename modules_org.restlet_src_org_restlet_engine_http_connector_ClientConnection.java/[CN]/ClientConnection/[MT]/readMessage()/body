@@ -1,3 +1,64 @@
 {
-  return null;
+  ConnectedResponse result=null;
+  String version=null;
+  Series<Parameter> headers=null;
+  int statusCode=0;
+  String reasonPhrase=null;
+  setInboundBusy(true);
+  StringBuilder sb=new StringBuilder();
+  int next=getInboundStream().read();
+  while ((next != -1) && !HeaderUtils.isSpace(next)) {
+    sb.append((char)next);
+    next=getInboundStream().read();
+  }
+  if (next == -1) {
+    throw new IOException("Unable to parse the response HTTP version. End of stream reached too early.");
+  }
+  version=sb.toString();
+  sb.delete(0,sb.length());
+  next=getInboundStream().read();
+  while ((next != -1) && !HeaderUtils.isSpace(next)) {
+    sb.append((char)next);
+    next=getInboundStream().read();
+  }
+  if (next == -1) {
+    throw new IOException("Unable to parse the response status. End of stream reached too early.");
+  }
+  statusCode=Integer.parseInt(sb.toString());
+  sb.delete(0,sb.length());
+  next=getInboundStream().read();
+  while ((next != -1) && !HeaderUtils.isCarriageReturn(next)) {
+    sb.append((char)next);
+    next=getInboundStream().read();
+  }
+  if (next == -1) {
+    throw new IOException("Unable to parse the reason phrase. End of stream reached too early.");
+  }
+  next=getInboundStream().read();
+  if (HeaderUtils.isLineFeed(next)) {
+    reasonPhrase=sb.toString();
+    sb.delete(0,sb.length());
+    Parameter header=HeaderUtils.readHeader(getInboundStream(),sb);
+    while (header != null) {
+      if (headers == null) {
+        headers=new Form();
+      }
+      headers.add(header);
+      header=HeaderUtils.readHeader(getInboundStream(),sb);
+    }
+  }
+ else {
+    throw new IOException("Unable to parse the reason phrase. The carriage return must be followed by a line feed.");
+  }
+  if (HeaderUtils.isConnectionClose(headers)) {
+    setState(ConnectionState.CLOSING);
+  }
+  result=createResponse(getHelper().getContext(),this,null,version,statusCode,reasonPhrase,getSocket().getLocalAddress().toString(),getSocket().getPort());
+  if (result != null) {
+    if (!result.getStatus().isInformational()) {
+      getInboundMessages().add(result);
+    }
+    getHelper().getPendingResponses().add(result);
+  }
+  return result;
 }

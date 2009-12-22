@@ -4,14 +4,12 @@
       getSocket().getOutputStream().flush();
       if (!(getSocket() instanceof SSLSocket)) {
         getSocket().shutdownInput();
-      }
-      if (!(getSocket() instanceof SSLSocket)) {
         getSocket().shutdownOutput();
       }
     }
   }
  catch (  IOException ex) {
-    getLogger().log(Level.FINE,"Unable to shutdown socket",ex);
+    getLogger().log(Level.FINE,"Unable to properly shutdown socket",ex);
   }
   try {
     if (!getSocket().isClosed()) {
@@ -19,7 +17,7 @@
     }
   }
  catch (  IOException ex) {
-    getLogger().log(Level.FINE,"Unable to close socket",ex);
+    getLogger().log(Level.FINE,"Unable to properly close socket",ex);
   }
  finally {
     setState(ConnectionState.CLOSED);

@@ -3,7 +3,7 @@
   String requestMethod=null;
   String requestUri=null;
   String version=null;
-  Series<Parameter> requestHeaders=null;
+  Series<Parameter> headers=null;
   setInboundBusy(true);
   StringBuilder sb=new StringBuilder();
   int next=getInboundStream().read();
@@ -35,7 +35,7 @@
     next=getInboundStream().read();
   }
   if (next == -1) {
-    throw new IOException("Unable to parse the HTTP version. End of stream reached too early.");
+    throw new IOException("Unable to parse the protocol version. End of stream reached too early.");
   }
   next=getInboundStream().read();
   if (HeaderUtils.isLineFeed(next)) {
@@ -43,20 +43,20 @@
     sb.delete(0,sb.length());
     Parameter header=HeaderUtils.readHeader(getInboundStream(),sb);
     while (header != null) {
-      if (requestHeaders == null) {
-        requestHeaders=new Form();
+      if (headers == null) {
+        headers=new Form();
       }
-      requestHeaders.add(header);
+      headers.add(header);
       header=HeaderUtils.readHeader(getInboundStream(),sb);
     }
   }
  else {
-    throw new IOException("Unable to parse the HTTP version. The carriage return must be followed by a line feed.");
+    throw new IOException("Unable to parse the protocol version. The carriage return must be followed by a line feed.");
   }
-  if (HeaderUtils.isConnectionClose(requestHeaders)) {
+  if (HeaderUtils.isConnectionClose(headers)) {
     setState(ConnectionState.CLOSING);
   }
-  result=createRequest(getHelper().getContext(),this,requestMethod,requestUri,version,requestHeaders,createInboundEntity(requestHeaders),false,null);
+  result=createRequest(getHelper().getContext(),this,requestMethod,requestUri,version,headers,createInboundEntity(headers),false,null);
   if (result != null) {
     if (result.isExpectingResponse()) {
       getInboundMessages().add(result);

@@ -1,0 +1,17 @@
+{
+  Protocol protocol=response.getRequest().getProtocol();
+  String protocolVersion=protocol.getVersion();
+  String version=protocol.getTechnicalName() + '/' + ((protocolVersion == null) ? "1.1" : protocolVersion);
+  headStream.write(version.getBytes());
+  headStream.write(' ');
+  headStream.write(Integer.toString(response.getStatus().getCode()).getBytes());
+  headStream.write(' ');
+  if (response.getStatus().getDescription() != null) {
+    headStream.write(response.getStatus().getDescription().getBytes());
+  }
+ else {
+    headStream.write(("Status " + response.getStatus().getCode()).getBytes());
+  }
+  headStream.write(13);
+  headStream.write(10);
+}

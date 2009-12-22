@@ -3,8 +3,11 @@
   if (chunked) {
     result=new ChunkedInputStream(getInboundStream());
   }
- else {
+ else   if (size >= 0) {
     result=new InputEntityStream(getInboundStream(),size);
+  }
+ else {
+    result=getInboundStream();
   }
   return result;
 }

@@ -1,16 +1,16 @@
 {
   Status result=null;
   Representation entity=request.isEntityAvailable() ? request.getEntity() : null;
-  org.restlet.service.ConnectorService connectorService=ConnectorHelper.getConnectorService(request);
+  org.restlet.service.ConnectorService connectorService=ConnectorHelper.getConnectorService();
   if (connectorService != null) {
     connectorService.beforeSend(entity);
   }
   try {
     if (entity != null) {
       OutputStream requestStream=getRequestEntityStream();
-      java.nio.channels.WritableByteChannel wbc=getRequestEntityChannel();
-      if (wbc != null) {
-        entity.write(wbc);
+      java.nio.channels.WritableByteChannel requestChannel=getRequestEntityChannel();
+      if (requestChannel != null) {
+        entity.write(requestChannel);
       }
  else       if (requestStream != null) {
         entity.write(requestStream);
@@ -19,8 +19,8 @@
       if (requestStream != null) {
         requestStream.close();
       }
- else       if (wbc != null) {
-        wbc.close();
+ else       if (requestChannel != null) {
+        requestChannel.close();
       }
     }
     result=new Status(getStatusCode(),null,getReasonPhrase(),null);
