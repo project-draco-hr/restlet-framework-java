@@ -1,6 +1,7 @@
 {
   Server server=new Server(new Context(),Protocol.SIP,UacServerResource.class);
-  File file=new File("uacServerResource.properties");
+  server.start();
+  File file=new File("UacServerResource.properties");
   if (file.exists()) {
     Properties p=new Properties();
     p.load(new FileInputStream(file));
@@ -9,7 +10,7 @@
     }
     String str=p.getProperty("sleepTime","100");
     try {
-      sleepTime=Integer.parseInt(str);
+      SLEEP_TIME=Integer.parseInt(str);
     }
  catch (    Throwable e) {
     }
@@ -20,5 +21,4 @@
  catch (    Throwable e) {
     }
   }
-  server.start();
 }

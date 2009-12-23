@@ -2,16 +2,18 @@
   if (response != null) {
     ConnectedRequest request=(ConnectedRequest)response.getRequest();
     ServerConnection connection=(ServerConnection)request.getConnection();
-    Response nextResponse=connection.getInboundMessages().peek();
-    if ((nextResponse != null) && (nextResponse.getRequest() == request)) {
-      connection.getOutboundMessages().add(response);
-      if (!response.getStatus().isInformational()) {
-        connection.getInboundMessages().remove(nextResponse);
+    if (request.isExpectingResponse()) {
+      Response nextResponse=connection.getInboundMessages().peek();
+      if ((nextResponse != null) && (nextResponse.getRequest() == request)) {
+        connection.getOutboundMessages().add(response);
+        if (!response.getStatus().isInformational()) {
+          connection.getInboundMessages().remove(nextResponse);
+        }
+        connection.writeMessages();
       }
-      connection.writeMessages();
-    }
  else {
-      getOutboundMessages().add(response);
+        getOutboundMessages().add(response);
+      }
     }
   }
 }

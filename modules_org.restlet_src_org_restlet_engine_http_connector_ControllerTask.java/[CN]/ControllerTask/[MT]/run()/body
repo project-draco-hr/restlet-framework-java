@@ -2,58 +2,18 @@
   while (true) {
     try {
       if (isOverloaded()) {
-        setOverloaded(isWorkerServiceBusy());
+        if (!isWorkerServiceFull()) {
+          setOverloaded(false);
+          getHelper().getLogger().log(Level.INFO,"Accepting new connections and transactions again.");
+        }
       }
  else {
-        if (isWorkerServiceBusy()) {
+        if (isWorkerServiceFull()) {
           setOverloaded(true);
-          getHelper().getLogger().log(Level.INFO,"Can't submit additional tasks. Consider increasing the maximum number of threads.");
+          getHelper().getLogger().log(Level.INFO,"Stop accepting new connections and transactions. Consider increasing the maximum number of threads.");
         }
- else {
-          for (          final Connection<?> conn : getHelper().getConnections()) {
-            if (conn.canRead()) {
-              execute(new Runnable(){
-                public void run(){
-                  conn.readMessages();
-                }
-              }
-);
-            }
-            if (conn.canWrite()) {
-              execute(new Runnable(){
-                public void run(){
-                  conn.writeMessages();
-                }
-              }
-);
-            }
-            if (conn.getState() == ConnectionState.CLOSED) {
-              getHelper().getConnections().remove(conn);
-            }
-          }
-          for (int i=0; i < getHelper().getInboundMessages().size(); i++) {
-            final Response response=getHelper().getInboundMessages().poll();
-            if (response != null) {
-              execute(new Runnable(){
-                public void run(){
-                  getHelper().handleInbound(response);
-                }
-              }
-);
-            }
-          }
-          for (int i=0; i < getHelper().getOutboundMessages().size(); i++) {
-            final Response response=getHelper().getOutboundMessages().poll();
-            if (response != null) {
-              execute(new Runnable(){
-                public void run(){
-                  getHelper().handleOutbound(response);
-                }
-              }
-);
-            }
-          }
-        }
+        controlConnections();
+        controlHelper();
       }
       Thread.sleep(getHelper().getControllerSleepTimeMs());
     }

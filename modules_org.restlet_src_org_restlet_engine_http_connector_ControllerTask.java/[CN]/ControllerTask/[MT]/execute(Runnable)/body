@@ -1,5 +1,10 @@
 {
-  if (!isWorkerServiceBusy()) {
-    getWorkerService().execute(task);
+  try {
+    if (!isOverloaded()) {
+      getWorkerService().execute(task);
+    }
+  }
+ catch (  Exception e) {
+    getHelper().getLogger().log(Level.WARNING,"Unable to execute a controller task",e);
   }
 }

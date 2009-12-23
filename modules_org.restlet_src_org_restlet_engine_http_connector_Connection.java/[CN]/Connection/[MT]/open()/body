@@ -1,3 +1,9 @@
 {
-  setState(ConnectionState.OPEN);
+  try {
+    getSocket().setReuseAddress(true);
+    setState(ConnectionState.OPEN);
+  }
+ catch (  IOException ex) {
+    getLogger().log(Level.FINE,"Unable to properly shutdown socket",ex);
+  }
 }
