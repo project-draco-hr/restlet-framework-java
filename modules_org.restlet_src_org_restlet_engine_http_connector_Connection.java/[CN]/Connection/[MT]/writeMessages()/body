@@ -10,9 +10,11 @@ synchronized (getOutboundMessages()) {
           setOutboundBusy((message != null));
         }
       }
-      writeMessage(message);
-      if (getState() == ConnectionState.CLOSING) {
-        close(true);
+      if (message != null) {
+        writeMessage(message);
+        if (getState() == ConnectionState.CLOSING) {
+          close(true);
+        }
       }
     }
   }
