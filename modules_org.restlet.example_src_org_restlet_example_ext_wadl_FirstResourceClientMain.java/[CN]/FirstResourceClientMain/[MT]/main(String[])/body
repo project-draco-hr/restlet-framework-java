@@ -1,0 +1,20 @@
+{
+  ClientResource app=new ClientResource("http://localhost:8182/firstResource");
+  ClientResource itemsResource=new ClientResource("http://localhost:8182/firstResource/items");
+  ClientResource itemResource=null;
+  Item item=new Item("item1","this is an item.");
+  Representation r=itemsResource.post(getRepresentation(item));
+  if (itemsResource.getStatus().isSuccess()) {
+    itemResource=new ClientResource(r.getIdentifier());
+  }
+  app.options().write(System.out);
+  if (itemResource != null) {
+    get(itemResource);
+    get(itemsResource);
+    item.setDescription("This is an other description");
+    itemResource.put(getRepresentation(item));
+    get(itemsResource);
+    itemResource.delete();
+    get(itemsResource);
+  }
+}
