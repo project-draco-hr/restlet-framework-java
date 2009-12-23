@@ -1,5 +1,6 @@
 {
-  ConnectedRequest result=null;
+  Response result=null;
+  ConnectedRequest request=null;
   String requestMethod=null;
   String requestUri=null;
   String version=null;
@@ -56,12 +57,13 @@
   if (HeaderUtils.isConnectionClose(headers)) {
     setState(ConnectionState.CLOSING);
   }
-  result=createRequest(getHelper().getContext(),this,requestMethod,requestUri,version,headers,createInboundEntity(headers),false,null);
-  if (result != null) {
-    if (result.isExpectingResponse()) {
+  request=createRequest(getHelper().getContext(),this,requestMethod,requestUri,version,headers,createInboundEntity(headers),false,null);
+  result=getHelper().createResponse(request);
+  if (request != null) {
+    if (request.isExpectingResponse()) {
       getInboundMessages().add(result);
     }
-    getHelper().getPendingRequests().add(result);
+    getHelper().getInboundMessages().add(result);
   }
   return result;
 }

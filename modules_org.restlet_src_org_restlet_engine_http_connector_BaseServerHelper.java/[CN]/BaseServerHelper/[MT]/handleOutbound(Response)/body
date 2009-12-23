@@ -1,0 +1,16 @@
+{
+  if (response != null) {
+    ConnectedRequest request=(ConnectedRequest)response.getRequest();
+    ServerConnection connection=(ServerConnection)request.getConnection();
+    if (connection.getInboundMessages().peek().getRequest() == request) {
+      if (!response.getStatus().isInformational()) {
+        connection.getInboundMessages().remove(request);
+      }
+      connection.getOutboundMessages().add(response);
+      connection.writeMessages();
+    }
+ else {
+      getOutboundMessages().add(response);
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  if (response.getRequest() != null) {
+    ConnectedRequest request=(ConnectedRequest)response.getRequest();
+    handle(request,response);
+    if ((response != null) && !response.isCommitted() && response.isAutoCommitting()) {
+      getOutboundMessages().add(response);
+      response.setCommitted(true);
+    }
+    if ((request.getEntity() != null) && (!request.isExpectingResponse() || ((response != null) && response.isCommitted()))) {
+      try {
+        request.getEntity().exhaust();
+      }
+ catch (      IOException e) {
+        getLogger().log(Level.INFO,"Unable to exhaust request entity",e);
+      }
+ finally {
+        request.getEntity().release();
+      }
+    }
+  }
+  handleNextOutbound();
+}

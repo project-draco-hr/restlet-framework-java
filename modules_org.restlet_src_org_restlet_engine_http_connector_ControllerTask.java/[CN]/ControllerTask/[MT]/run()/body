@@ -10,7 +10,7 @@
           getHelper().getLogger().log(Level.INFO,"Can't submit additional tasks. Consider increasing the maximum number of threads.");
         }
  else {
-          for (          final Connection<?,?,?> conn : getHelper().getConnections()) {
+          for (          final Connection<?> conn : getHelper().getConnections()) {
             if (conn.canRead()) {
               execute(new Runnable(){
                 public void run(){
@@ -31,23 +31,23 @@
               getHelper().getConnections().remove(conn);
             }
           }
-          for (int i=0; i < getHelper().getPendingRequests().size(); i++) {
-            final Request request=getHelper().getPendingRequests().poll();
-            if (request != null) {
+          for (int i=0; i < getHelper().getInboundMessages().size(); i++) {
+            final Response response=getHelper().getInboundMessages().poll();
+            if (response != null) {
               execute(new Runnable(){
                 public void run(){
-                  getHelper().handle(request);
+                  getHelper().handleInbound(response);
                 }
               }
 );
             }
           }
-          for (int i=0; i < getHelper().getPendingResponses().size(); i++) {
-            final Response response=getHelper().getPendingResponses().poll();
+          for (int i=0; i < getHelper().getOutboundMessages().size(); i++) {
+            final Response response=getHelper().getOutboundMessages().poll();
             if (response != null) {
               execute(new Runnable(){
                 public void run(){
-                  getHelper().handle(response);
+                  getHelper().handleOutbound(response);
                 }
               }
 );

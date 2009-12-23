@@ -1,5 +1,16 @@
 {
   try {
+    Reference resourceRef=request.getResourceRef().isRelative() ? request.getResourceRef().getTargetRef() : request.getResourceRef();
+    String hostDomain=resourceRef.getHostDomain();
+    int hostPort=resourceRef.getHostPort();
+    if (hostPort == -1) {
+      if (resourceRef.getSchemeProtocol() != null) {
+        hostPort=resourceRef.getSchemeProtocol().getDefaultPort();
+      }
+ else {
+        hostPort=getProtocols().get(0).getDefaultPort();
+      }
+    }
   }
  catch (  Exception e) {
     getLogger().log(Level.INFO,"Error while handling a " + request.getProtocol().getName() + " client request",e);
