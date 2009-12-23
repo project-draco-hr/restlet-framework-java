@@ -1,5 +1,24 @@
 {
   Server server=new Server(new Context(),Protocol.SIP,UacServerResource.class);
-  server.getContext().getParameters().add("maxThreads","100");
+  File file=new File("uacServerResource.properties");
+  if (file.exists()) {
+    Properties p=new Properties();
+    p.load(new FileInputStream(file));
+    for (    Map.Entry<Object,Object> entry : p.entrySet()) {
+      server.getContext().getParameters().add((String)entry.getKey(),(String)entry.getValue());
+    }
+    String str=p.getProperty("sleepTime","100");
+    try {
+      sleepTime=Integer.parseInt(str);
+    }
+ catch (    Throwable e) {
+    }
+    str=p.getProperty("trace","false");
+    try {
+      TRACE=Boolean.parseBoolean(str);
+    }
+ catch (    Throwable e) {
+    }
+  }
   server.start();
 }
