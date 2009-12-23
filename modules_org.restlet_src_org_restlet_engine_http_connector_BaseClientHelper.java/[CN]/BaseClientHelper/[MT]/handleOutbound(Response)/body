@@ -1,2 +1,53 @@
 {
+  try {
+    Request request=response.getRequest();
+    Reference resourceRef=request.getResourceRef().isRelative() ? request.getResourceRef().getTargetRef() : request.getResourceRef();
+    String hostDomain=resourceRef.getHostDomain();
+    int hostPort=resourceRef.getHostPort();
+    if (hostPort == -1) {
+      if (resourceRef.getSchemeProtocol() != null) {
+        hostPort=resourceRef.getSchemeProtocol().getDefaultPort();
+      }
+ else {
+        hostPort=getProtocols().get(0).getDefaultPort();
+      }
+    }
+    Socket socket=createSocket(request.isConfidential(),hostDomain,hostPort);
+    InetAddress socketAddress=socket.getInetAddress();
+    int hostConnectionCount=0;
+    int bestCount=0;
+    Connection<Client> bestConn=null;
+    boolean foundConn=false;
+    for (    Connection<Client> currConn : getConnections()) {
+      if (currConn.getSocket().getInetAddress().equals(socketAddress)) {
+        hostConnectionCount++;
+        if (currConn.getState().equals(ConnectionState.OPEN) && !currConn.isOutboundBusy()) {
+          bestConn=currConn;
+          foundConn=true;
+          continue;
+        }
+ else {
+          int currCount=currConn.getOutboundMessages().size();
+          if (bestCount > currCount) {
+            bestCount=currCount;
+            bestConn=currConn;
+          }
+        }
+      }
+    }
+    if (!foundConn && (hostConnectionCount < getMaxConnectionsPerHost())) {
+      bestConn=createConnection(this,socket);
+      bestCount=0;
+    }
+    if (bestConn != null) {
+      bestConn.getOutboundMessages().add(response);
+    }
+ else {
+      getLogger().warning("Unable to find a connection to send the request");
+    }
+  }
+ catch (  IOException ioe) {
+    getLogger().log(Level.FINE,"An error occured during the communication with the remote server.",ioe);
+    response.setStatus(Status.CONNECTOR_ERROR_COMMUNICATION,ioe);
+  }
 }
