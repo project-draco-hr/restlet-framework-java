@@ -1,12 +1,16 @@
 {
   info.setIdentifier("item");
   info.setDocumentation("To retrieve details of a specific item");
+  ResponseInfo response=new ResponseInfo();
   RepresentationInfo repInfo=new RepresentationInfo(MediaType.TEXT_XML);
   repInfo.setXmlElement("item");
   repInfo.setDocumentation("XML representation of the current item.");
-  info.getResponse().getRepresentations().add(repInfo);
-  FaultInfo faultInfo=new FaultInfo(Status.CLIENT_ERROR_NOT_FOUND,"Item not found");
-  faultInfo.setIdentifier("itemError");
-  faultInfo.setMediaType(MediaType.TEXT_HTML);
-  info.getResponse().getFaults().add(faultInfo);
+  response.getRepresentations().add(repInfo);
+  info.getResponses().add(response);
+  response=new ResponseInfo("Item not found");
+  repInfo=new RepresentationInfo(MediaType.TEXT_HTML);
+  repInfo.setIdentifier("itemError");
+  response.getStatuses().add(Status.CLIENT_ERROR_NOT_FOUND);
+  response.getRepresentations().add(repInfo);
+  info.getResponses().add(response);
 }
