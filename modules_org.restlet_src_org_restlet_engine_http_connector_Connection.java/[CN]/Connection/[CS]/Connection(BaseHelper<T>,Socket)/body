@@ -1,7 +1,7 @@
 {
   this.helper=helper;
   this.inboundStream=new InboundStream(socket.getInputStream());
-  this.inboundMessages=new ConcurrentLinkedQueue<Response>();
+  this.inboundMessages=helper.isClientSide() ? null : new ConcurrentLinkedQueue<Response>();
   this.outboundStream=new OutboundStream(socket.getOutputStream());
   this.outboundMessages=new ConcurrentLinkedQueue<Response>();
   this.persistent=helper.isPersistingConnections();

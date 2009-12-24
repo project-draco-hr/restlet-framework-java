@@ -4,7 +4,7 @@
     }
  else {
       boolean doRead=false;
-synchronized (getInboundMessages()) {
+synchronized (this) {
         if (canRead()) {
           doRead=true;
           setInboundBusy(doRead);
@@ -20,5 +20,5 @@ synchronized (getInboundMessages()) {
     getLogger().log(Level.FINE,"Error while reading an HTTP message. Closing the connection.",e);
     close(false);
   }
-  handleNextMessage();
+  getHelper().handleNextInbound();
 }

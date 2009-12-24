@@ -57,6 +57,8 @@
   response.getServerInfo().setAgent(Engine.VERSION_HEADER);
   response.getServerInfo().setPort(getSocket().getPort());
   response.setEntity(createInboundEntity(headers));
-  getInboundMessages().add(response);
+  if (!response.getStatus().isInformational()) {
+    getOutboundMessages().poll();
+  }
   getHelper().getInboundMessages().add(response);
 }

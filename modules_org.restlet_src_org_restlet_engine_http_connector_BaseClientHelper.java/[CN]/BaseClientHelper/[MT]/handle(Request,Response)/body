@@ -1,10 +1,13 @@
 {
   try {
-    getOutboundMessages().add(response);
     if (response.getOnReceived() == null) {
       CountDownLatch latch=new CountDownLatch(1);
       request.getAttributes().put("org.restlet.engine.http.connector.latch",latch);
+      getOutboundMessages().add(response);
       latch.await();
+    }
+ else {
+      getOutboundMessages().add(response);
     }
   }
  catch (  Exception e) {
