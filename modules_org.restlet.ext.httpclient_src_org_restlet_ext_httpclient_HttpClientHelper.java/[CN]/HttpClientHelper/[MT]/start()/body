@@ -7,5 +7,9 @@
   ClientConnectionManager connectionManager=createClientConnectionManager(params,schemeRegistry);
   this.httpClient=new DefaultHttpClient(connectionManager,params);
   configure(this.httpClient);
+  if (this.idleConnectionReaper != null) {
+    this.idleConnectionReaper.stop();
+  }
+  this.idleConnectionReaper=new HttpIdleConnectionReaper(httpClient,getIdleConnectionCheckIntervalMillis(),getReapConnectionsOlderThanMillis());
   getLogger().info("Starting the HTTP client");
 }

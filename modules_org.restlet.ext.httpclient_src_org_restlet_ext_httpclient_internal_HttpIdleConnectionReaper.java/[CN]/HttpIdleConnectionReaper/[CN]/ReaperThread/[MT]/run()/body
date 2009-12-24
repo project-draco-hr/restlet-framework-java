@@ -1,0 +1,18 @@
+{
+  try {
+    startupLatch.countDown();
+    while (!shutdown && !isInterrupted()) {
+      try {
+        Thread.sleep(sleepBetweenChecksMillis);
+      }
+ catch (      InterruptedException interrupted) {
+        continue;
+      }
+      httpClient.getConnectionManager().closeExpiredConnections();
+      httpClient.getConnectionManager().closeIdleConnections(reapConnectionIdleMillis,TimeUnit.MILLISECONDS);
+    }
+  }
+  finally {
+    shutdownLatch.countDown();
+  }
+}

@@ -1,0 +1,12 @@
+{
+  if (httpClient == null) {
+    throw new IllegalArgumentException("HttpClient is a required parameter");
+  }
+  this.httpClient=httpClient;
+  this.sleepBetweenChecksMillis=sleepBetweenChecksMillis;
+  this.reapConnectionIdleMillis=reapConnectionIdleMillis;
+  this.reaperThread=sleepBetweenChecksMillis > 0L ? new ReaperThread() : null;
+  if (reaperThread != null) {
+    reaperThread.start();
+  }
+}
