@@ -2,11 +2,11 @@
   if ((response != null) && (response.getRequest() != null)) {
     ConnectedRequest request=(ConnectedRequest)response.getRequest();
     handle(request,response);
-    if ((response != null) && !response.isCommitted() && response.isAutoCommitting()) {
+    if (!response.isCommitted() && response.isAutoCommitting()) {
       getOutboundMessages().add(response);
       response.setCommitted(true);
     }
-    if ((request.getEntity() != null) && (!request.isExpectingResponse() || ((response != null) && response.isCommitted()))) {
+    if ((request.getEntity() != null) && (!request.isExpectingResponse() || (response.isCommitted()))) {
       try {
         request.getEntity().exhaust();
       }
