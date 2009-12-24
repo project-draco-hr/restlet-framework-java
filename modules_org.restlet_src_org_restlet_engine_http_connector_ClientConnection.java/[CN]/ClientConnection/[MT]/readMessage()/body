@@ -1,10 +1,8 @@
 {
-  ConnectedResponse result=null;
-  String version=null;
+  @SuppressWarnings("unused") String version=null;
   Series<Parameter> headers=null;
   int statusCode=0;
   String reasonPhrase=null;
-  setInboundBusy(true);
   StringBuilder sb=new StringBuilder();
   int next=getInboundStream().read();
   while ((next != -1) && !HeaderUtils.isSpace(next)) {
@@ -53,12 +51,12 @@
   if (HeaderUtils.isConnectionClose(headers)) {
     setState(ConnectionState.CLOSING);
   }
-  result=createResponse(getHelper().getContext(),this,null,version,statusCode,reasonPhrase,getSocket().getLocalAddress().toString(),getSocket().getPort());
-  if (result != null) {
-    if (!result.getStatus().isInformational()) {
-      getInboundMessages().add(result);
-    }
-    getHelper().getOutboundMessages().add(result);
-  }
-  return result;
+  Response response=getOutboundMessages().peek();
+  response.setStatus(Status.valueOf(statusCode),reasonPhrase);
+  response.getServerInfo().setAddress(getSocket().getLocalAddress().toString());
+  response.getServerInfo().setAgent(Engine.VERSION_HEADER);
+  response.getServerInfo().setPort(getSocket().getPort());
+  response.setEntity(createInboundEntity(headers));
+  getInboundMessages().add(response);
+  getHelper().getInboundMessages().add(response);
 }

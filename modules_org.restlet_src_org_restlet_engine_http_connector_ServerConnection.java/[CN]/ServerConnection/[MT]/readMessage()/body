@@ -1,11 +1,9 @@
 {
-  Response result=null;
   ConnectedRequest request=null;
   String requestMethod=null;
   String requestUri=null;
   String version=null;
   Series<Parameter> headers=null;
-  setInboundBusy(true);
   StringBuilder sb=new StringBuilder();
   int next=getInboundStream().read();
   while ((next != -1) && !HeaderUtils.isSpace(next)) {
@@ -58,12 +56,11 @@
     setState(ConnectionState.CLOSING);
   }
   request=createRequest(getHelper().getContext(),this,requestMethod,requestUri,version,headers,createInboundEntity(headers),false,null);
-  result=getHelper().createResponse(request);
+  Response response=getHelper().createResponse(request);
   if (request != null) {
     if (request.isExpectingResponse()) {
-      getInboundMessages().add(result);
+      getInboundMessages().add(response);
     }
-    getHelper().getInboundMessages().add(result);
+    getHelper().getInboundMessages().add(response);
   }
-  return result;
 }
