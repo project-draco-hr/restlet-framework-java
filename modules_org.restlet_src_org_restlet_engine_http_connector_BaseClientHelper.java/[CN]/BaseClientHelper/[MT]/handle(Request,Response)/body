@@ -1,11 +1,11 @@
 {
   try {
+    getOutboundMessages().add(response);
     if (response.getOnReceived() == null) {
       CountDownLatch latch=new CountDownLatch(1);
       request.getAttributes().put("org.restlet.engine.http.connector.latch",latch);
       latch.await();
     }
-    getOutboundMessages().add(response);
   }
  catch (  Exception e) {
     getLogger().log(Level.INFO,"Error while handling a " + request.getProtocol().getName() + " client request",e);
