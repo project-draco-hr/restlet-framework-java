@@ -2,15 +2,15 @@
   this.latch.countDown();
   while (true) {
     try {
-      SocketChannel client=this.serverSocket.accept();
+      SocketChannel socketChannel=this.serverSocket.accept();
       int connectionsCount=getHelper().getConnections().size();
       if ((getHelper().getMaxTotalConnections() == -1) || (connectionsCount <= getHelper().getMaxTotalConnections())) {
-        Connection<Server> connection=getHelper().createConnection(getHelper(),client.socket());
+        Connection<Server> connection=getHelper().createConnection(getHelper(),socketChannel.socket(),socketChannel);
         connection.open();
         getHelper().getConnections().add(connection);
       }
  else {
-        client.close();
+        socketChannel.close();
         getHelper().getLogger().info("Maximum number of concurrent connections reached. New connection rejected.");
       }
     }
