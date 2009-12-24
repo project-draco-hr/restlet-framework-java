@@ -9,7 +9,7 @@
   if ((getTargetRef() != null) && (getTargetRef().toString() != null)) {
     attributes.addAttribute("","href",null,"xs:anyURI",getTargetRef().toString());
   }
-  if (getDocumentations().isEmpty() && (getRequest() == null) && (getResponse() == null)) {
+  if (getDocumentations().isEmpty() && (getRequest() == null) && (getResponses().isEmpty())) {
     writer.emptyElement(APP_NAMESPACE,"method",null,attributes);
   }
  else {
@@ -20,8 +20,22 @@
     if (getRequest() != null) {
       getRequest().writeElement(writer);
     }
-    if (getResponse() != null) {
-      getResponse().writeElement(writer);
+    if (!getResponses().isEmpty()) {
+      for (      ResponseInfo response : getResponses()) {
+        response.writeElement(writer);
+        if (!response.getFaults().isEmpty()) {
+          for (          FaultInfo faultInfo : response.getFaults()) {
+            ResponseInfo r=new ResponseInfo();
+            for (            Status status : faultInfo.getStatuses()) {
+              if (!r.getStatuses().contains(status)) {
+                r.getStatuses().add(status);
+              }
+            }
+            r.getRepresentations().add(faultInfo);
+            r.writeElement(writer);
+          }
+        }
+      }
     }
     writer.endElement(APP_NAMESPACE,"method");
   }

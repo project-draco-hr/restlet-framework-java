@@ -1,20 +1,29 @@
 {
-  if (getDocumentations().isEmpty() && getFaults().isEmpty() && getParameters().isEmpty()&& getRepresentations().isEmpty()) {
-    writer.emptyElement(APP_NAMESPACE,"response");
+  AttributesImpl attributes=new AttributesImpl();
+  if ((getStatuses() != null) && !getStatuses().isEmpty()) {
+    StringBuilder builder=new StringBuilder();
+    for (Iterator<Status> iterator=getStatuses().iterator(); iterator.hasNext(); ) {
+      Status status=iterator.next();
+      builder.append(status.getCode());
+      if (iterator.hasNext()) {
+        builder.append(" ");
+      }
+    }
+    attributes.addAttribute("","status",null,"xs:string",builder.toString());
+  }
+  if (getDocumentations().isEmpty() && getParameters().isEmpty() && getRepresentations().isEmpty()) {
+    writer.emptyElement(APP_NAMESPACE,"response",null,attributes);
   }
  else {
-    writer.startElement(APP_NAMESPACE,"response");
-    for (    final DocumentationInfo documentationInfo : getDocumentations()) {
+    writer.startElement(APP_NAMESPACE,"response",null,attributes);
+    for (    DocumentationInfo documentationInfo : getDocumentations()) {
       documentationInfo.writeElement(writer);
     }
-    for (    final ParameterInfo parameterInfo : getParameters()) {
+    for (    ParameterInfo parameterInfo : getParameters()) {
       parameterInfo.writeElement(writer);
     }
-    for (    final RepresentationInfo representationInfo : getRepresentations()) {
+    for (    RepresentationInfo representationInfo : getRepresentations()) {
       representationInfo.writeElement(writer);
-    }
-    for (    final FaultInfo faultInfo : getFaults()) {
-      faultInfo.writeElement(writer);
     }
     writer.endElement(APP_NAMESPACE,"response");
   }
