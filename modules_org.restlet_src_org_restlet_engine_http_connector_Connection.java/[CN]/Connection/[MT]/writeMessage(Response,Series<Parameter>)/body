@@ -1,6 +1,9 @@
 {
   if (message != null) {
-    Representation entity=message.isEntityAvailable() ? message.getEntity() : null;
+    Representation entity=isClientSide() ? message.getRequest().getEntity() : message.getEntity();
+    if (entity != null) {
+      entity=entity.isAvailable() ? entity : null;
+    }
     ConnectorService connectorService=ConnectorHelper.getConnectorService();
     if (connectorService != null) {
       connectorService.beforeSend(entity);
