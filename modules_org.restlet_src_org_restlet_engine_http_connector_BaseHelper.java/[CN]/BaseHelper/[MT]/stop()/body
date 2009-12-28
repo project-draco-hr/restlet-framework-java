@@ -6,10 +6,20 @@
       this.workerService.awaitTermination(30,TimeUnit.SECONDS);
     }
  catch (    InterruptedException ex) {
-      getLogger().log(Level.FINE,"Interruption while shutting down internal server",ex);
+      getLogger().log(Level.FINE,"Interruption while shutting down the worker service",ex);
     }
   }
   for (  Connection<T> connection : getConnections()) {
-    connection.close(true);
+    connection.setState(ConnectionState.CLOSING);
+  }
+  if (this.controllerService != null) {
+    this.controllerFuture.cancel(true);
+    this.controllerService.shutdown();
+    try {
+      this.controllerService.awaitTermination(30,TimeUnit.SECONDS);
+    }
+ catch (    InterruptedException ex) {
+      getLogger().log(Level.FINE,"Interruption while shutting down the controller service",ex);
+    }
   }
 }

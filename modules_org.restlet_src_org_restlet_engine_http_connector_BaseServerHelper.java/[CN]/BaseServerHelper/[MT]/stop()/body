@@ -1,11 +1,12 @@
 {
   if (this.acceptorService != null) {
-    this.acceptorService.shutdownNow();
+    this.acceptorFuture.cancel(true);
+    this.acceptorService.shutdown();
     try {
       this.acceptorService.awaitTermination(30,TimeUnit.SECONDS);
     }
  catch (    Exception ex) {
-      getLogger().log(Level.FINE,"Interruption while shutting down internal server",ex);
+      getLogger().log(Level.FINE,"Interruption while shutting down the acceptor service",ex);
     }
   }
   super.stop();
