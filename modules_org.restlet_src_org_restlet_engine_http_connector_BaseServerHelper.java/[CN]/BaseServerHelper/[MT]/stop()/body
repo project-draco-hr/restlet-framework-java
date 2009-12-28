@@ -1,6 +1,4 @@
 {
-  super.stop();
-  getAttributes().put("ephemeralPort",-1);
   if (this.acceptorService != null) {
     this.acceptorService.shutdownNow();
     try {
@@ -10,7 +8,9 @@
       getLogger().log(Level.FINE,"Interruption while shutting down internal server",ex);
     }
   }
+  super.stop();
   if (this.serverSocketChannel != null) {
     this.serverSocketChannel.close();
   }
+  getAttributes().put("ephemeralPort",-1);
 }

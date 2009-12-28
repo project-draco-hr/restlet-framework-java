@@ -8,6 +8,11 @@
     if (inboundEntityStream != null) {
       result=new InputRepresentation(inboundEntityStream,null,contentLength){
         @Override public void release(){
+          if (getHelper().isTracing()) {
+synchronized (System.out) {
+              System.out.println("\n");
+            }
+          }
           super.release();
           setInboundBusy(false);
         }
