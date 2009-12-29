@@ -1,10 +1,10 @@
 {
   final Reference baseRef=request.getResourceRef().getBaseRef();
   request.setResourceRef(targetRef);
-  request.getAttributes().remove("org.restlet.http.headers");
+  request.getAttributes().remove(HeaderConstants.ATTRIBUTE_HEADERS);
   dispatcher.handle(request,response);
   response.setEntity(rewrite(response.getEntity()));
-  response.getAttributes().remove("org.restlet.http.headers");
+  response.getAttributes().remove(HeaderConstants.ATTRIBUTE_HEADERS);
   if (response.getLocationRef() != null) {
     final Template rt=new Template(this.targetTemplate);
     rt.setLogger(getLogger());
