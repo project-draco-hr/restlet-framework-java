@@ -4,7 +4,8 @@
   this.serverSocketChannel=createServerSocket();
   setEphemeralPort(this.serverSocketChannel.socket());
   this.latch=new CountDownLatch(1);
-  this.acceptorFuture=this.acceptorService.submit(new AcceptorTask(this,this.serverSocketChannel,this.latch));
+  this.acceptorTask=new AcceptorTask(this,this.serverSocketChannel,this.latch);
+  this.acceptorService.submit(this.acceptorTask);
   try {
     this.latch.await();
   }

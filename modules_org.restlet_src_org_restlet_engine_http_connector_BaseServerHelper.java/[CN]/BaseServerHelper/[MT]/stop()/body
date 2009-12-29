@@ -1,6 +1,7 @@
 {
   if (this.acceptorService != null) {
-    this.acceptorFuture.cancel(true);
+    this.acceptorTask.setRunning(false);
+    this.acceptorTask.getServerSocket().close();
     this.acceptorService.shutdown();
     try {
       this.acceptorService.awaitTermination(30,TimeUnit.SECONDS);
@@ -9,9 +10,9 @@
       getLogger().log(Level.FINE,"Interruption while shutting down the acceptor service",ex);
     }
   }
-  super.stop();
   if (this.serverSocketChannel != null) {
     this.serverSocketChannel.close();
   }
+  super.stop();
   getAttributes().put("ephemeralPort",-1);
 }

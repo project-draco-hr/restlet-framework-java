@@ -1,6 +1,7 @@
 {
   this.latch.countDown();
-  while (true) {
+  setRunning(true);
+  while (isRunning()) {
     try {
       SocketChannel socketChannel=this.serverSocket.accept();
       int connectionsCount=getHelper().getConnections().size();
@@ -17,6 +18,9 @@
  catch (    ClosedByInterruptException ex) {
       this.helper.getLogger().log(Level.FINE,"ServerSocket channel was closed by interrupt",ex);
       break;
+    }
+catch (    AsynchronousCloseException ace) {
+      this.helper.getLogger().log(Level.FINE,"The server socket was closed",ace);
     }
 catch (    IOException ex) {
       this.helper.getLogger().log(Level.WARNING,"Unexpected error while accepting new connection",ex);
