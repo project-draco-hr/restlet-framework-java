@@ -2,6 +2,9 @@
   Server server=new Server(new Context(),Protocol.SIP,UacServerResource.class);
   ClassLoader cl=UacServerResource.class.getClassLoader();
   InputStream is=cl.getResourceAsStream("UacServerResource.properties");
+  if (is == null) {
+    is=cl.getResourceAsStream("org/restlet/ext/sip/example/UacServerResource.properties");
+  }
   if (is != null) {
     Properties p=new Properties();
     p.load(is);
