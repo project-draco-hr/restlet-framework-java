@@ -9,11 +9,14 @@
     getHelped().stop();
   }
  else {
-    if (getHelped().getLogService().isEnabled()) {
-      addFilter(getHelped().getLogService().createInboundFilter(getContext().createChildContext()));
-    }
-    if (getHelped().getStatusService().isEnabled()) {
-      addFilter(getHelped().getStatusService().createInboundFilter(getContext().createChildContext()));
+    Filter inboundFilter=null;
+    for (    Service service : getHelped().getServices()) {
+      if (service.isEnabled()) {
+        inboundFilter=service.createInboundFilter(getContext().createChildContext());
+        if (inboundFilter != null) {
+          addFilter(inboundFilter);
+        }
+      }
     }
     setNext(getServerRouter());
   }

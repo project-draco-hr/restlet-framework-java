@@ -3,13 +3,14 @@
   this.clients=new ClientList(null);
   this.servers=new ServerList(null,this);
   this.realms=new CopyOnWriteArrayList<Realm>();
+  this.services=new ServiceList();
   if (Engine.getInstance() != null) {
     this.helper=new ComponentHelper(this);
     if (this.helper != null) {
       this.defaultHost=new VirtualHost(getContext().createChildContext());
       this.internalRouter=new InternalRouter(getContext().createChildContext());
-      this.logService=new LogService();
-      this.statusService=new StatusService();
+      this.services.add(new LogService());
+      this.services.add(new StatusService());
       this.clients.setContext(getContext());
       this.servers.setContext(getContext());
     }
