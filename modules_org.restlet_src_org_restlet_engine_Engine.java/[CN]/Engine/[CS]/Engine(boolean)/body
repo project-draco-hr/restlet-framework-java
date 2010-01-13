@@ -14,12 +14,14 @@
     }
   }
   this.registeredClients=new CopyOnWriteArrayList<ConnectorHelper<Client>>();
+  this.registeredProtocols=new CopyOnWriteArrayList<ProtocolHelper>();
   this.registeredServers=new CopyOnWriteArrayList<ConnectorHelper<org.restlet.Server>>();
   this.registeredAuthenticators=new CopyOnWriteArrayList<org.restlet.engine.security.AuthenticatorHelper>();
   this.registeredConverters=new CopyOnWriteArrayList<org.restlet.engine.converter.ConverterHelper>();
   if (discoverHelpers) {
     try {
       discoverConnectors();
+      discoverProtocols();
       discoverAuthenticators();
       discoverConverters();
     }
