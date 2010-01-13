@@ -3,8 +3,14 @@
     this.representation.write(outputStream);
   }
  else   if (object != null) {
-    Resource emfResource=createEmfResource();
-    emfResource.getContents().add((EObject)this.object);
-    emfResource.save(outputStream,getSaveOptions());
+    if (getMediaType().isCompatible(MediaType.APPLICATION_ALL_XML)) {
+      Resource emfResource=createEmfResource();
+      emfResource.getContents().add((EObject)this.object);
+      emfResource.save(outputStream,getSaveOptions());
+    }
+ else     if (getMediaType().isCompatible(MediaType.TEXT_HTML)) {
+      EmfHtmlWriter htmlWriter=new EmfHtmlWriter(getObject());
+      htmlWriter.write(new OutputStreamWriter(outputStream,((getCharacterSet() == null) ? "UTF-8" : getCharacterSet().getName())));
+    }
   }
 }

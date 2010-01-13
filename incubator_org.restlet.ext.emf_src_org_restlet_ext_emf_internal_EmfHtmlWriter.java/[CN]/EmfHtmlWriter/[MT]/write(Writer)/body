@@ -1,0 +1,48 @@
+{
+  String title=null;
+  EClass eClass=getObject().eClass();
+  EAnnotation annotation=eClass.getEAnnotation(ANNOTATION_URI);
+  if (annotation != null) {
+    title=(String)annotation.getDetails().get("label");
+  }
+  title=(title == null) ? eClass.getName() : title;
+  writer.write("<html>\n");
+  writer.write("<body style=\"font-family: sans-serif;\">\n");
+  writer.write("<h2>" + title + "</h2>\n");
+  writer.write("<table border=\"0\">\n");
+  writer.write("<thead>\n");
+  writer.write("<tr>");
+  writer.write("<td><b>Property</b></td>\n");
+  writer.write("<td><b>Value</b></td>\n");
+  writer.write("</tr>\n");
+  writer.write("</thead>\n");
+  writer.write("<tbody>\n");
+  for (  EObject content : eClass.eContents()) {
+    if (content instanceof EStructuralFeature) {
+      EStructuralFeature sf=(EStructuralFeature)content;
+      String label=null;
+      boolean hyperlink=false;
+      annotation=sf.getEAnnotation(ANNOTATION_URI);
+      if (annotation != null) {
+        label=(String)annotation.getDetails().get("label");
+        hyperlink=Boolean.parseBoolean(annotation.getDetails().get("hyperlink"));
+      }
+      label=(label == null) ? sf.getName() : label;
+      Object value=getObject().eGet(sf);
+      if (value instanceof EList) {
+        EList<Object> items=(EList<Object>)value;
+        for (        Object item : items) {
+          writeRow(writer,label,item.toString(),hyperlink);
+        }
+      }
+ else {
+        writeRow(writer,label,value.toString(),hyperlink);
+      }
+    }
+  }
+  writer.write("</tbody>\n");
+  writer.write("</table>\n");
+  writer.write("</body>\n");
+  writer.write("</html>\n");
+  writer.flush();
+}
