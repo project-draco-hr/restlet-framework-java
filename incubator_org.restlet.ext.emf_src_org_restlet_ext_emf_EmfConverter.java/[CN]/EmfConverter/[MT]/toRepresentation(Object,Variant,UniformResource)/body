@@ -1,0 +1,19 @@
+{
+  Representation result=null;
+  if (source instanceof EmfRepresentation) {
+    result=(EmfRepresentation)source;
+  }
+ else {
+    if (target.getMediaType() == null) {
+      target.setMediaType(MediaType.TEXT_XML);
+    }
+    if (VARIANT_JSON.isCompatible(target)) {
+      EmfRepresentation<EObject> xstreamRepresentation=create(target.getMediaType(),(EObject)source);
+      result=xstreamRepresentation;
+    }
+ else     if (isCompatible(target)) {
+      result=create(target.getMediaType(),(EObject)source);
+    }
+  }
+  return result;
+}
