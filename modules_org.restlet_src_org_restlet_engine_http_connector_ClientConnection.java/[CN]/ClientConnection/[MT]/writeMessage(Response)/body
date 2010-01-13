@@ -32,6 +32,10 @@
     }
     if (!request.isExpectingResponse()) {
       getOutboundMessages().remove(response);
+      CountDownLatch latch=(CountDownLatch)response.getRequest().getAttributes().get("org.restlet.engine.http.connector.latch");
+      if (latch != null) {
+        latch.countDown();
+      }
     }
   }
 }
