@@ -1,6 +1,9 @@
 {
-  this.bb.clear();
-  this.bb.put(b,off,len);
-  this.bb.flip();
-  doWrite();
+  for (int index=0; index < len; index=index + _BUFFER_SIZE) {
+    int size=len - index > _BUFFER_SIZE ? _BUFFER_SIZE : len - index;
+    this.bb.clear();
+    this.bb.put(b,index,size);
+    this.bb.flip();
+    doWrite();
+  }
 }
