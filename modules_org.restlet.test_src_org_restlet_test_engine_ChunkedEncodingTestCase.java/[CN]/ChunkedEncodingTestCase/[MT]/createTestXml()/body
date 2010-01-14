@@ -7,5 +7,13 @@
     e.setAttribute("name","name-" + i);
     root.appendChild(e);
   }
-  return new DomRepresentation(MediaType.TEXT_XML,doc);
+  Representation rep=null;
+  try {
+    rep=new StringRepresentation(new DomRepresentation(MediaType.TEXT_XML,doc).getText());
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
+  }
+  rep.setSize(-1);
+  return rep;
 }
