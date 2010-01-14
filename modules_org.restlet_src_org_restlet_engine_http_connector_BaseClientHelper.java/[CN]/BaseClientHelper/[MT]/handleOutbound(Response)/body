@@ -42,6 +42,13 @@
       if (bestConn != null) {
         bestConn.getOutboundMessages().add(response);
         getConnections().add(bestConn);
+        if (!request.isExpectingResponse()) {
+          bestConn.writeMessages();
+          CountDownLatch latch=(CountDownLatch)response.getRequest().getAttributes().get("org.restlet.engine.http.connector.latch");
+          if (latch != null) {
+            latch.countDown();
+          }
+        }
       }
  else {
         getLogger().warning("Unable to find a connection to send the request");
