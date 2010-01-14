@@ -1,6 +1,7 @@
 {
   final Request request=new Request(Method.PUT,uri,createTestXml());
-  final Response r=new Client(Protocol.HTTP).handle(request);
+  Client c=new Client(Protocol.HTTP);
+  final Response r=c.handle(request);
   try {
     if (this.checkedForChunkedResponse) {
       checkForChunkedHeader(r);
@@ -10,5 +11,6 @@
   }
   finally {
     r.release();
+    c.stop();
   }
 }
