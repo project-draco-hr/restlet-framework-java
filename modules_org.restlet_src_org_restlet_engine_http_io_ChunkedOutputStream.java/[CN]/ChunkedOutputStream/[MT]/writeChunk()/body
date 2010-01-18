@@ -1,7 +1,9 @@
 {
   if (this.bytesWritten > 0) {
-    writePosition();
-    writeBuffer();
+    this.destination.write(Integer.toHexString(this.bytesWritten).getBytes());
+    HeaderUtils.writeCRLF(this.destination);
+    this.destination.write(this.buffer,0,this.bytesWritten);
+    HeaderUtils.writeCRLF(this.destination);
     reset();
   }
 }

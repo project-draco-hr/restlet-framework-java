@@ -7,7 +7,7 @@
 synchronized (this) {
         if (canRead()) {
           doRead=true;
-          setInboundBusy(doRead);
+          setInboundBusy(true);
         }
       }
       if (doRead) {
@@ -16,6 +16,7 @@ synchronized (this) {
     }
   }
  catch (  Exception e) {
+    e.printStackTrace();
     getLogger().log(Level.FINE,"Error while reading an HTTP message. Closing the connection: ",e.getMessage());
     getLogger().log(Level.FINE,"Error while reading an HTTP message. Closing the connection.",e);
     close(false);

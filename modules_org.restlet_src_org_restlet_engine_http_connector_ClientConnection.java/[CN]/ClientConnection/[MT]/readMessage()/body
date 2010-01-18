@@ -51,16 +51,23 @@
   if (HeaderUtils.isConnectionClose(headers)) {
     setState(ConnectionState.CLOSING);
   }
-  Response response=getOutboundMessages().peek();
-  response.setStatus(Status.valueOf(statusCode),reasonPhrase);
+  Response finalResponse=getInboundMessages().peek();
+  Response response=null;
+  Status status=Status.valueOf(statusCode);
+  if (status.isInformational()) {
+    response=new Response(finalResponse.getRequest());
+  }
+ else {
+    response=finalResponse;
+  }
+  response.setStatus(status,reasonPhrase);
   response.getServerInfo().setAddress(getSocket().getLocalAddress().toString());
   response.getServerInfo().setAgent(Engine.VERSION_HEADER);
   response.getServerInfo().setPort(getSocket().getPort());
   response.setEntity(createInboundEntity(headers));
   response.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,headers);
   if (!response.getStatus().isInformational()) {
-    getOutboundMessages().poll();
-    setOutboundBusy(false);
+    getInboundMessages().poll();
   }
   getHelper().getInboundMessages().add(response);
 }

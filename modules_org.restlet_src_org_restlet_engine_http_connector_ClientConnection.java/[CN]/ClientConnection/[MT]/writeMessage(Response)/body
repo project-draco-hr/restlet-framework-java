@@ -30,9 +30,10 @@
     if (request.getOnSent() != null) {
       request.getOnSent().handle(request,response);
     }
-    if (!request.isExpectingResponse()) {
-      getOutboundMessages().remove(response);
-      setOutboundBusy(false);
+    getOutboundMessages().poll();
+    if (request.isExpectingResponse()) {
+      getInboundMessages().add(response);
     }
+    setOutboundBusy(false);
   }
 }
