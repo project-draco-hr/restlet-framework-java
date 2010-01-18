@@ -1,34 +1,37 @@
 {
-  final StringBuilder sb=new StringBuilder();
-  final long currentTime=System.currentTimeMillis();
+  StringBuilder sb=new StringBuilder();
+  long currentTime=System.currentTimeMillis();
   sb.append(String.format("%tF",currentTime));
   sb.append('\t');
   sb.append(String.format("%tT",currentTime));
   sb.append('\t');
-  final String clientAddress=request.getClientInfo().getUpstreamAddress();
+  String clientAddress=request.getClientInfo().getUpstreamAddress();
   sb.append((clientAddress == null) ? "-" : clientAddress);
   sb.append('\t');
   if (this.logService.isIdentityCheck()) {
-    final IdentClient ic=new IdentClient(request.getClientInfo().getUpstreamAddress(),request.getClientInfo().getPort(),response.getServerInfo().getPort());
+    IdentClient ic=new IdentClient(request.getClientInfo().getUpstreamAddress(),request.getClientInfo().getPort(),response.getServerInfo().getPort());
     sb.append((ic.getUserIdentifier() == null) ? "-" : ic.getUserIdentifier());
+  }
+ else   if ((request.getChallengeResponse() != null) && (request.getChallengeResponse().getIdentifier() != null)) {
+    sb.append(request.getChallengeResponse().getIdentifier());
   }
  else {
     sb.append('-');
   }
   sb.append('\t');
-  final String serverAddress=response.getServerInfo().getAddress();
+  String serverAddress=response.getServerInfo().getAddress();
   sb.append((serverAddress == null) ? "-" : serverAddress);
   sb.append('\t');
-  final Integer serverport=response.getServerInfo().getPort();
+  Integer serverport=response.getServerInfo().getPort();
   sb.append((serverport == null) ? "-" : serverport.toString());
   sb.append('\t');
-  final String methodName=(request.getMethod() == null) ? "-" : request.getMethod().getName();
+  String methodName=(request.getMethod() == null) ? "-" : request.getMethod().getName();
   sb.append((methodName == null) ? "-" : methodName);
   sb.append('\t');
-  final String resourcePath=(request.getResourceRef() == null) ? "-" : request.getResourceRef().getPath();
+  String resourcePath=(request.getResourceRef() == null) ? "-" : request.getResourceRef().getPath();
   sb.append((resourcePath == null) ? "-" : resourcePath);
   sb.append('\t');
-  final String resourceQuery=(request.getResourceRef() == null) ? "-" : request.getResourceRef().getQuery();
+  String resourceQuery=(request.getResourceRef() == null) ? "-" : request.getResourceRef().getQuery();
   sb.append((resourceQuery == null) ? "-" : resourceQuery);
   sb.append('\t');
   sb.append((response.getStatus() == null) ? "-" : Integer.toString(response.getStatus().getCode()));
@@ -51,7 +54,7 @@
   sb.append('\t');
   sb.append((request.getHostRef() == null) ? "-" : request.getHostRef().toString());
   sb.append('\t');
-  final String agentName=request.getClientInfo().getAgent();
+  String agentName=request.getClientInfo().getAgent();
   sb.append((agentName == null) ? "-" : agentName);
   sb.append('\t');
   sb.append((request.getReferrerRef() == null) ? "-" : request.getReferrerRef().getIdentifier());
