@@ -13,14 +13,13 @@
       }
     }
     try {
-      Socket socket=createSocket(request.isConfidential(),hostDomain,hostPort);
-      InetAddress socketAddress=socket.getInetAddress();
+      InetSocketAddress socketAddress=new InetSocketAddress(hostDomain,hostPort);
       int hostConnectionCount=0;
       int bestCount=0;
       Connection<Client> bestConn=null;
       boolean foundConn=false;
       for (      Connection<Client> currConn : getConnections()) {
-        if (currConn.getSocket().getInetAddress().equals(socketAddress)) {
+        if (socketAddress.getAddress().equals(currConn.getSocket().getInetAddress()) && socketAddress.getPort() == currConn.getSocket().getPort()) {
           hostConnectionCount++;
           if (currConn.getState().equals(ConnectionState.OPEN) && !currConn.isOutboundBusy()) {
             bestConn=currConn;
@@ -35,7 +34,7 @@
         }
       }
       if (!foundConn && ((getMaxTotalConnections() == -1) || (getConnections().size() < getMaxTotalConnections())) && ((getMaxConnectionsPerHost() == -1) || (hostConnectionCount < getMaxConnectionsPerHost()))) {
-        bestConn=createConnection(this,socket,null);
+        bestConn=createConnection(this,createSocket(request.isConfidential(),hostDomain,hostPort),null);
         bestConn.open();
         bestCount=0;
       }
