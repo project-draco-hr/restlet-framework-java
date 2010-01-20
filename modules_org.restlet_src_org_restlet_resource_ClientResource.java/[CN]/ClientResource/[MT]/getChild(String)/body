@@ -1,15 +1,3 @@
 {
-  ClientResource result=null;
-  if (getReference().isHierarchical()) {
-    result=new ClientResource(this);
-    if (!getReference().getIdentifier().endsWith("/")) {
-      Reference parentRef=getReference().getTargetRef();
-      parentRef.setIdentifier(parentRef.getIdentifier() + "/");
-      result.setReference(new Reference(parentRef,relativeUri));
-    }
-  }
- else {
-    throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,"The resource URI is not hierarchical.");
-  }
-  return result;
+  return getChild(new Reference(relativeUri));
 }

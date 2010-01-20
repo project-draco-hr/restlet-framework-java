@@ -1,0 +1,11 @@
+{
+  ClientResource result=null;
+  if ((relativeRef != null) && relativeRef.isRelative()) {
+    result=new ClientResource(this);
+    result.setReference(new Reference(getReference().getTargetRef(),relativeRef).getTargetRef());
+  }
+ else {
+    throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,"The child URI is not relative.");
+  }
+  return result;
+}
