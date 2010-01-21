@@ -65,6 +65,7 @@
   response.getServerInfo().setAgent(Engine.VERSION_HEADER);
   response.getServerInfo().setPort(getSocket().getPort());
   response.setEntity(createInboundEntity(headers));
+  HeaderUtils.copyResponseTransportHeaders(headers,response);
   response.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,headers);
   if (!response.getStatus().isInformational()) {
     getInboundMessages().poll();
