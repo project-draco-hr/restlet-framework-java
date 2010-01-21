@@ -6,4 +6,7 @@
   Server server=getServers().add(Protocol.HTTP,8182);
   server.getContext().getParameters().set("tracing","true");
   getDefaultHost().attachDefault(new MailServerApplication());
+  ClientResource logProperties=new ClientResource("clap://system/org/restlet/example/book/restlet/ch04/sec3/server/log.properties");
+  LogManager.getLogManager().readConfiguration(logProperties.get().getStream());
+  getLogService().setLoggerName("MailServer.AccessLog");
 }
