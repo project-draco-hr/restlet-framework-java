@@ -1,20 +1,16 @@
 {
   try {
-    if (isPipelining()) {
-    }
- else {
-      Response message=null;
+    Response message=null;
 synchronized (this) {
-        if (canWrite()) {
-          message=getOutboundMessages().peek();
-          setOutboundBusy((message != null));
-        }
+      if (canWrite()) {
+        message=getOutboundMessages().peek();
+        setOutboundBusy((message != null));
       }
-      if (message != null) {
-        writeMessage(message);
-        if ((getState() == ConnectionState.CLOSING) && !isBusy()) {
-          close(true);
-        }
+    }
+    if (message != null) {
+      writeMessage(message);
+      if ((getState() == ConnectionState.CLOSING) && !isBusy()) {
+        close(true);
       }
     }
   }

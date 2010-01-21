@@ -1,18 +1,14 @@
 {
   try {
-    if (isPipelining()) {
-    }
- else {
-      boolean doRead=false;
+    boolean doRead=false;
 synchronized (this) {
-        if (canRead()) {
-          doRead=true;
-          setInboundBusy(true);
-        }
+      if (canRead()) {
+        doRead=true;
+        setInboundBusy(true);
       }
-      if (doRead) {
-        readMessage();
-      }
+    }
+    if (doRead) {
+      readMessage();
     }
   }
  catch (  Exception e) {
