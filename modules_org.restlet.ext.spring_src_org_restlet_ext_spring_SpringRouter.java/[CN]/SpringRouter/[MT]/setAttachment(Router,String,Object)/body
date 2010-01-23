@@ -1,0 +1,29 @@
+{
+  Class resourceClass;
+  if (route instanceof Restlet) {
+    router.attach(path,(Restlet)route);
+  }
+ else   if (route instanceof Class) {
+    router.attach(path,(Class<?>)route);
+  }
+ else   if (route instanceof String) {
+    try {
+      resourceClass=Engine.loadClass((String)route);
+      if (org.restlet.resource.Resource.class.isAssignableFrom(resourceClass)) {
+        router.attach(path,resourceClass);
+      }
+ else       if (org.restlet.resource.ServerResource.class.isAssignableFrom(resourceClass)) {
+        router.attach(path,resourceClass);
+      }
+ else {
+        router.getLogger().warning("Unknown class found in the mappings. Only subclasses of org.restlet.resource.Resource and ServerResource are allowed.");
+      }
+    }
+ catch (    ClassNotFoundException e) {
+      router.getLogger().log(Level.WARNING,"Unable to set the router mappings",e);
+    }
+  }
+ else {
+    router.getLogger().warning("Unknown object found in the mappings. Only instances of Restlet and subclasses of org.restlet.resource.Resource and ServerResource are allowed.");
+  }
+}
