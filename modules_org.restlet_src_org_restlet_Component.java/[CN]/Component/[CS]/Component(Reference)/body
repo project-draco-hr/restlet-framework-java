@@ -2,21 +2,13 @@
   this();
   Representation xmlConfigRepresentation=null;
   if (xmlConfigRef != null) {
-    Protocol protocol=xmlConfigRef.getSchemeProtocol();
-    if (Protocol.FILE.equals(protocol)) {
-      xmlConfigRepresentation=new FileRepresentation(new LocalReference(xmlConfigRef).getFile(),MediaType.TEXT_XML);
+    ClientResource cr=new ClientResource(xmlConfigRef);
+    xmlConfigRepresentation=cr.get();
+    if (xmlConfigRepresentation != null) {
+      new ComponentXmlParser(this,xmlConfigRepresentation).parse();
     }
  else {
-      Response response=new Client(protocol).get(xmlConfigRef);
-      if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
-        xmlConfigRepresentation=response.getEntity();
-      }
+      getLogger().log(Level.WARNING,"Unable to get the Component XML configuration located at this URI: " + xmlConfigRef);
     }
-  }
-  if (xmlConfigRepresentation != null) {
-    new ComponentXmlParser(this,xmlConfigRepresentation).parse();
-  }
- else {
-    getLogger().log(Level.WARNING,"Unable to get the Component XML configuration located at this URI: " + xmlConfigRef);
   }
 }
