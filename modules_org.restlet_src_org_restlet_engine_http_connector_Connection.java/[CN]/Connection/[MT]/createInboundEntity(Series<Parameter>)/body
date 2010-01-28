@@ -2,7 +2,8 @@
   Representation result=null;
   long contentLength=HeaderUtils.getContentLength(headers);
   boolean chunkedEncoding=HeaderUtils.isChunkedEncoding(headers);
-  if ((contentLength != Representation.UNKNOWN_SIZE && contentLength != 0) || chunkedEncoding) {
+  boolean connectionClosed=HeaderUtils.isConnectionClose(headers);
+  if ((contentLength != Representation.UNKNOWN_SIZE && contentLength != 0) || chunkedEncoding || connectionClosed) {
     InputStream inboundEntityStream=getInboundEntityStream(contentLength,chunkedEncoding);
     ReadableByteChannel inboundEntityChannel=getInboundEntityChannel(contentLength,chunkedEncoding);
     if (inboundEntityStream != null) {
