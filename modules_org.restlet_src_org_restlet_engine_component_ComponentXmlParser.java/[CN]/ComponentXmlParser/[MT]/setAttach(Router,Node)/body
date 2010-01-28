@@ -8,7 +8,7 @@
         router.getContext().getParameters().add(p);
       }
     }
- else     if ("attach".equals(childNode.getNodeName())) {
+ else     if ("attach".equals(childNode.getNodeName()) || "attachDefault".equals(childNode.getNodeName())) {
       String uriPattern=null;
       Node item=childNode.getAttributes().getNamedItem("uriPattern");
       if (item != null) {
@@ -18,7 +18,7 @@
         uriPattern="";
       }
       item=childNode.getAttributes().getNamedItem("default");
-      final boolean bDefault=getBoolean(item,false);
+      final boolean bDefault=getBoolean(item,false) || "attachDefault".equals(childNode.getNodeName());
       final Context oldContext=router.getContext();
       router.setContext(new Context());
       org.restlet.routing.Route route=null;
@@ -38,7 +38,7 @@
       if (route != null) {
         final Template template=route.getTemplate();
         item=childNode.getAttributes().getNamedItem("matchingMode");
-        template.setMatchingMode(getInt(item,Template.MODE_STARTS_WITH));
+        template.setMatchingMode(getInt(item,Template.MODE_EQUALS));
         item=childNode.getAttributes().getNamedItem("defaultVariableType");
         template.getDefaultVariable().setType(getInt(item,Variable.TYPE_URI_SEGMENT));
         final NodeList childNodes2=childNode.getChildNodes();

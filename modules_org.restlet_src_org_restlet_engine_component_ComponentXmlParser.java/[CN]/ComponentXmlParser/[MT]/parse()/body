@@ -33,6 +33,7 @@
           }
           if (client != null) {
             getComponent().getClients().add(client);
+            parseRestlet(client,childNode);
             for (int j=0; j < childNode.getChildNodes().getLength(); j++) {
               final Node childNode2=childNode.getChildNodes().item(j);
               if (isParameter(childNode2)) {
@@ -71,6 +72,7 @@
             server=new Server(new Context(),protocol,getInt(portNode,protocol.getDefaultPort()),getComponent().getServers().getNext());
           }
           if (server != null) {
+            parseRestlet(server,childNode);
             if (addressNode != null) {
               final String address=addressNode.getNodeValue();
               if (address != null) {
