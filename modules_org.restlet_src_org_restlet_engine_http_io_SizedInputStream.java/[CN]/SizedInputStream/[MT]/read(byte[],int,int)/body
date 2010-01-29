@@ -1,0 +1,13 @@
+{
+  int result=-1;
+  if (this.availableSize > 0) {
+    result=getInboundStream().read(b,off,Math.min(len,(int)this.availableSize));
+    if (result > 0) {
+      this.availableSize-=result;
+    }
+ else     if (result == -1) {
+      onEndReached();
+    }
+  }
+  return result;
+}
