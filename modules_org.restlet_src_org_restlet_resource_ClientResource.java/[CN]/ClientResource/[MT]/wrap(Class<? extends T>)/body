@@ -12,14 +12,45 @@
         result=clientResource;
       }
  else {
-        org.restlet.engine.resource.AnnotationInfo annotation=org.restlet.engine.resource.AnnotationUtils.getAnnotation(annotations,javaMethod);
+        final org.restlet.engine.resource.AnnotationInfo annotation=org.restlet.engine.resource.AnnotationUtils.getAnnotation(annotations,javaMethod);
         if (annotation != null) {
           ClientInfo currentClientInfo=getClientInfo();
           try {
             Representation requestEntity=null;
+            boolean isSynchrone=true;
             if ((args != null) && args.length > 0) {
-              requestEntity=toRepresentation(args[0]);
-              getRequest().setEntity(requestEntity);
+              for (int i=0; i < args.length; i++) {
+                Object o=args[i];
+                if (Result.class.isAssignableFrom(o.getClass())) {
+                  isSynchrone=false;
+                  final Result rCallback=(Result)o;
+                  java.lang.reflect.Type[] genericParameterTypes=javaMethod.getGenericParameterTypes();
+                  java.lang.reflect.Type genericParameterType=genericParameterTypes[i];
+                  ParameterizedType parameterizedType=(genericParameterType instanceof ParameterizedType) ? (ParameterizedType)genericParameterType : null;
+                  final Class<?> actualType=(parameterizedType.getActualTypeArguments()[0] instanceof Class<?>) ? (Class<?>)parameterizedType.getActualTypeArguments()[0] : null;
+                  Uniform callback=new Uniform(){
+                    public void handle(                    Request request,                    Response response){
+                      if (response.getStatus().isError()) {
+                        rCallback.onFailure(new ResourceException(response.getStatus()));
+                      }
+ else {
+                        if (actualType != null) {
+                          rCallback.onSuccess(toObject(response.getEntity(),actualType.getClass()));
+                        }
+ else {
+                          rCallback.onSuccess(null);
+                        }
+                      }
+                    }
+                  }
+;
+                  setOnResponse(callback);
+                }
+ else {
+                  requestEntity=toRepresentation(args[i]);
+                  getRequest().setEntity(requestEntity);
+                }
+              }
             }
             List<org.restlet.representation.Variant> responseVariants=annotation.getResponseVariants(requestEntity,getMetadataService(),getConverterService());
             if (responseVariants != null) {
@@ -27,11 +58,13 @@
             }
             setMethod(annotation.getRestletMethod());
             handle();
-            if (getStatus().isError()) {
-              throw new ResourceException(getStatus());
-            }
-            if (annotation.getJavaOutputType() != null) {
-              result=toObject(getResponseEntity(),annotation.getJavaOutputType());
+            if (isSynchrone) {
+              if (getStatus().isError()) {
+                throw new ResourceException(getStatus());
+              }
+              if (annotation.getJavaOutputType() != null) {
+                result=toObject(getResponseEntity(),annotation.getJavaOutputType());
+              }
             }
           }
   finally {
