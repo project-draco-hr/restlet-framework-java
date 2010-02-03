@@ -57,6 +57,9 @@
   }
   request=createRequest(getHelper().getContext(),this,requestMethod,requestUri,version,headers,createInboundEntity(headers),false,null);
   Response response=getHelper().createResponse(request);
+  response.getServerInfo().setAddress(getHelper().getHelped().getAddress());
+  response.getServerInfo().setAgent(Engine.VERSION_HEADER);
+  response.getServerInfo().setPort(getHelper().getHelped().getPort());
   if (request != null) {
     if (request.isExpectingResponse()) {
       getInboundMessages().add(response);
