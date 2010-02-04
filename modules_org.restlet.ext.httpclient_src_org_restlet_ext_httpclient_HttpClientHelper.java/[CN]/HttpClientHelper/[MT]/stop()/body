@@ -1,5 +1,7 @@
 {
-  getIdleConnectionReaper().stop();
+  if (this.idleConnectionReaper != null) {
+    this.idleConnectionReaper.stop();
+  }
   getHttpClient().getConnectionManager().closeExpiredConnections();
   getHttpClient().getConnectionManager().closeIdleConnections(getStopIdleTimeout(),TimeUnit.MILLISECONDS);
   getHttpClient().getConnectionManager().shutdown();

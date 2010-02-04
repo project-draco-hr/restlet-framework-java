@@ -3,13 +3,13 @@
     startupLatch.countDown();
     while (!shutdown && !isInterrupted()) {
       try {
-        Thread.sleep(sleepBetweenChecksMillis);
+        Thread.sleep(idleCheckInterval);
       }
  catch (      InterruptedException interrupted) {
         continue;
       }
       httpClient.getConnectionManager().closeExpiredConnections();
-      httpClient.getConnectionManager().closeIdleConnections(reapConnectionIdleMillis,TimeUnit.MILLISECONDS);
+      httpClient.getConnectionManager().closeIdleConnections(idleTimeOut,TimeUnit.MILLISECONDS);
     }
   }
   finally {

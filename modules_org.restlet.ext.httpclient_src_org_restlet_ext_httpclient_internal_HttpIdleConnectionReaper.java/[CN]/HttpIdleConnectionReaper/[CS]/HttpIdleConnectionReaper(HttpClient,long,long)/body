@@ -3,9 +3,9 @@
     throw new IllegalArgumentException("HttpClient is a required parameter");
   }
   this.httpClient=httpClient;
-  this.sleepBetweenChecksMillis=sleepBetweenChecksMillis;
-  this.reapConnectionIdleMillis=reapConnectionIdleMillis;
-  this.reaperThread=sleepBetweenChecksMillis > 0L ? new ReaperThread() : null;
+  this.idleCheckInterval=idleCheckInterval;
+  this.idleTimeOut=idleTimeout;
+  this.reaperThread=idleCheckInterval > 0L ? new ReaperThread() : null;
   if (reaperThread != null) {
     reaperThread.start();
   }
