@@ -1,0 +1,49 @@
+{
+  if (getMetadata() == null || entity == null) {
+    return;
+  }
+  Metadata metadata=(Metadata)getMetadata();
+  EntityType type=metadata.getEntityType(entity.getClass());
+  AssociationEnd association=metadata.getAssociation(type,propertyName);
+  if (association != null) {
+    EntityType propertyEntityType=association.getType();
+    try {
+      Class<?> propertyClass=ReflectUtils.getSimpleClass(entity,propertyName);
+      if (propertyClass == null) {
+        propertyClass=Type.getJavaClass(propertyEntityType);
+      }
+      Iterator<?> iterator=createQuery(getSubpath(entity,propertyName),propertyClass).iterator();
+      ReflectUtils.setProperty(entity,propertyName,association.isToMany(),iterator,propertyClass);
+    }
+ catch (    Exception e) {
+      getLogger().log(Level.WARNING,"Can't set the property " + propertyName + " of "+ entity.getClass()+ " for the service"+ serviceRef,e);
+    }
+  }
+ else {
+    String ref=getServiceRef().toString() + getSubpath(entity,propertyName);
+    try {
+      ClientResource resource=new ClientResource(ref);
+      resource.setChallengeResponse(getCredentials());
+      Representation rep=resource.get();
+      if (resource.getStatus().isSuccess()) {
+        DomRepresentation xmlRep=new DomRepresentation(rep);
+        Node node=xmlRep.getNode("//" + propertyName);
+        if (node != null) {
+          Property property=metadata.getProperty(entity,propertyName);
+          try {
+            ReflectUtils.setProperty(entity,property,node.getTextContent());
+          }
+ catch (          Exception e) {
+            getLogger().log(Level.WARNING,"Can't set the property " + propertyName + " of "+ entity.getClass()+ " for the service"+ serviceRef,e);
+          }
+        }
+ else {
+          getLogger().log(Level.WARNING,"Can't set the property " + propertyName + " of "+ entity.getClass()+ " for the service"+ serviceRef);
+        }
+      }
+    }
+ catch (    ResourceException e) {
+      getLogger().log(Level.WARNING,"Can't get the following resource " + ref + " for the service"+ serviceRef,e);
+    }
+  }
+}

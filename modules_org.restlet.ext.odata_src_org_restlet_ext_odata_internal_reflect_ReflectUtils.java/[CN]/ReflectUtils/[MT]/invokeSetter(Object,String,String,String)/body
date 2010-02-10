@@ -1,0 +1,36 @@
+{
+  String setterName=null;
+  char firstLetter=propertyName.charAt(0);
+  if (Character.isLowerCase(firstLetter)) {
+    setterName="set" + Character.toUpperCase(firstLetter) + propertyName.substring(1);
+  }
+ else {
+    setterName="set" + propertyName;
+  }
+  Method setter=null;
+  Object setterParameter=null;
+  Method method;
+  for (int i=0; (setter == null) && (i < entity.getClass().getDeclaredMethods().length); i++) {
+    method=entity.getClass().getDeclaredMethods()[i];
+    if (method.getName().equals(setterName)) {
+      if ((method.getParameterTypes() != null) && (method.getParameterTypes().length == 1)) {
+        Class<?> parameterType=method.getParameterTypes()[0];
+        if (String.class.equals(parameterType)) {
+          setterParameter=propertyValue;
+          setter=method;
+        }
+ else         if (Integer.class.equals(parameterType)) {
+          setterParameter=Integer.valueOf(propertyValue);
+          setter=method;
+        }
+ else         if (int.class.equals(parameterType)) {
+          setterParameter=Integer.valueOf(propertyValue);
+          setter=method;
+        }
+      }
+    }
+  }
+  if (setter != null) {
+    setter.invoke(entity,setterParameter);
+  }
+}

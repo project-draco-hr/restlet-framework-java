@@ -1,0 +1,60 @@
+{
+  for (  Schema schema : currentMetadata.getSchemas()) {
+    for (    Association association : schema.getAssociations()) {
+      for (      AssociationEnd end : association.getEnds()) {
+        end.setType((EntityType)resolve(end.getType(),registeredEntityTypes));
+      }
+    }
+    for (    EntityType entityType : schema.getTypes()) {
+      if (entityType.getKeys() != null) {
+        List<Property> props=entityType.getKeys();
+        entityType.setKeys(new ArrayList<Property>());
+        for (        Property prop : props) {
+          for (          Property property : entityType.getProperties()) {
+            if (property.equals(prop)) {
+              entityType.getKeys().add(property);
+              break;
+            }
+          }
+        }
+      }
+      for (      NavigationProperty navigationProperty : entityType.getAssociations()) {
+        navigationProperty.setRelationship((Association)resolve(navigationProperty.getRelationship(),registeredAssociations));
+        if (navigationProperty.getRelationship() != null) {
+          for (          AssociationEnd end : navigationProperty.getRelationship().getEnds()) {
+            if (end.getRole().equals(navigationProperty.getFromRole().getRole())) {
+              navigationProperty.setFromRole(end);
+            }
+ else             if (end.getRole().equals(navigationProperty.getToRole().getRole())) {
+              navigationProperty.setToRole(end);
+            }
+          }
+        }
+ else {
+          navigationProperty.setFromRole(null);
+          navigationProperty.setToRole(null);
+        }
+      }
+      entityType.setBaseType((EntityType)resolve(entityType.getBaseType(),registeredEntityTypes));
+    }
+  }
+  for (  EntityContainer container : currentMetadata.getContainers()) {
+    if (container.getExtended() != null) {
+      container.setExtended(registeredContainers.get(container.getExtended().getName()));
+    }
+    for (    AssociationSet associationSet : container.getAssociations()) {
+      associationSet.setAssociation((Association)resolve(associationSet.getAssociation(),registeredAssociations));
+      for (      AssociationSetEnd end : associationSet.getEnds()) {
+        for (        EntitySet entitySet : container.getEntities()) {
+          if (entitySet.equals(end.getType())) {
+            end.setType(entitySet);
+            break;
+          }
+        }
+      }
+    }
+    for (    EntitySet entitySet : container.getEntities()) {
+      entitySet.setType((EntityType)resolve(entitySet.getType(),registeredEntityTypes));
+    }
+  }
+}
