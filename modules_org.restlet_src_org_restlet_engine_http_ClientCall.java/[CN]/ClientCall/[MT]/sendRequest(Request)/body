@@ -11,16 +11,12 @@
       java.nio.channels.WritableByteChannel requestChannel=getRequestEntityChannel();
       if (requestChannel != null) {
         entity.write(requestChannel);
+        requestChannel.close();
       }
  else       if (requestStream != null) {
         entity.write(requestStream);
         requestStream.flush();
-      }
-      if (requestStream != null) {
         requestStream.close();
-      }
- else       if (requestChannel != null) {
-        requestChannel.close();
       }
     }
     result=new Status(getStatusCode(),null,getReasonPhrase(),null);
