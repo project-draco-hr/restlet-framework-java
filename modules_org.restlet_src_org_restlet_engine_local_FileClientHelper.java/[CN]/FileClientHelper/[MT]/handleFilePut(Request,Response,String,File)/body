@@ -85,15 +85,11 @@
             tmp.delete();
           }
           if (!tmp.exists()) {
-            BufferedReader br=new BufferedReader(new FileReader(file));
-            BufferedWriter wr=new BufferedWriter(new FileWriter(tmp));
-            String s;
-            while ((s=br.readLine()) != null) {
-              wr.append(s);
-            }
-            br.close();
-            wr.flush();
-            wr.close();
+            InputStream in=new FileInputStream(file);
+            OutputStream out=new FileOutputStream(tmp);
+            BioUtils.write(in,out);
+            out.flush();
+            out.close();
           }
           raf=new RandomAccessFile(tmp,"rwd");
           if (range.getIndex() == Range.INDEX_LAST) {
@@ -177,15 +173,11 @@
  else {
           if (tmp.exists()) {
             try {
-              BufferedReader br=new BufferedReader(new FileReader(tmp));
-              BufferedWriter wr=new BufferedWriter(new FileWriter(file));
-              String s;
-              while ((s=br.readLine()) != null) {
-                wr.append(s);
-              }
-              br.close();
-              wr.flush();
-              wr.close();
+              InputStream in=new FileInputStream(tmp);
+              OutputStream out=new FileOutputStream(file);
+              BioUtils.write(in,out);
+              out.flush();
+              out.close();
               renameSuccessfull=true;
               tmp.delete();
             }
