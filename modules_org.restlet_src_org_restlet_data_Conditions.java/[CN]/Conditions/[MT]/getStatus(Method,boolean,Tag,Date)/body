@@ -3,11 +3,11 @@
   if ((this.match != null) && !this.match.isEmpty()) {
     boolean matched=false;
     boolean failed=false;
-    final boolean all=getMatch().get(0).equals(Tag.ALL);
+    boolean all=getMatch().get(0).equals(Tag.ALL);
     if (entityExists) {
       if (!all && (tag != null)) {
         Tag matchTag;
-        for (final Iterator<Tag> iter=getMatch().iterator(); !matched && iter.hasNext(); ) {
+        for (Iterator<Tag> iter=getMatch().iterator(); !matched && iter.hasNext(); ) {
           matchTag=iter.next();
           matched=matchTag.equals(tag,false);
         }
@@ -29,13 +29,13 @@
     if (entityExists) {
       if (tag != null) {
         Tag noneMatchTag;
-        for (final Iterator<Tag> iter=getNoneMatch().iterator(); !matched && iter.hasNext(); ) {
+        for (Iterator<Tag> iter=getNoneMatch().iterator(); !matched && iter.hasNext(); ) {
           noneMatchTag=iter.next();
           matched=noneMatchTag.equals(tag,(Method.GET.equals(method) || Method.HEAD.equals(method)));
         }
         if (matched) {
-          final Date modifiedSince=getModifiedSince();
-          final boolean isModifiedSince=(modifiedSince != null) && (DateUtils.after(new Date(),modifiedSince) || (modificationDate == null) || DateUtils.after(modifiedSince,modificationDate));
+          Date modifiedSince=getModifiedSince();
+          boolean isModifiedSince=(modifiedSince != null) && (DateUtils.after(new Date(),modifiedSince) || (modificationDate == null) || DateUtils.after(modifiedSince,modificationDate));
           matched=!isModifiedSince;
         }
       }
@@ -53,8 +53,8 @@
     }
   }
   if ((result == null) && (getModifiedSince() != null)) {
-    final Date modifiedSince=getModifiedSince();
-    final boolean isModifiedSince=(DateUtils.after(new Date(),modifiedSince) || (modificationDate == null) || DateUtils.after(modifiedSince,modificationDate));
+    Date modifiedSince=getModifiedSince();
+    boolean isModifiedSince=(DateUtils.after(new Date(),modifiedSince) || (modificationDate == null) || DateUtils.after(modifiedSince,modificationDate));
     if (!isModifiedSince) {
       if (Method.GET.equals(method) || Method.HEAD.equals(method)) {
         result=Status.REDIRECTION_NOT_MODIFIED;
@@ -65,8 +65,8 @@
     }
   }
   if ((result == null) && (getUnmodifiedSince() != null)) {
-    final Date unModifiedSince=getUnmodifiedSince();
-    final boolean isUnModifiedSince=((unModifiedSince == null) || (modificationDate == null) || DateUtils.after(modificationDate,unModifiedSince));
+    Date unModifiedSince=getUnmodifiedSince();
+    boolean isUnModifiedSince=((unModifiedSince == null) || (modificationDate == null) || !DateUtils.before(modificationDate,unModifiedSince));
     if (!isUnModifiedSince) {
       result=Status.CLIENT_ERROR_PRECONDITION_FAILED;
     }
