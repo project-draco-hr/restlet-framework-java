@@ -1,0 +1,20 @@
+{
+  for (int i=getRoutes().size() - 1; i >= 0; i--) {
+    Restlet target=getRoutes().get(i).getNext();
+    if (target != null && Finder.class.isAssignableFrom(target.getClass())) {
+      Finder finder=(Finder)target;
+      if (finder.getTargetClass().equals(targetClass)) {
+        getRoutes().remove(i);
+      }
+    }
+  }
+  if (getDefaultRoute() != null) {
+    Restlet target=getDefaultRoute().getNext();
+    if (target != null && Finder.class.isAssignableFrom(target.getClass())) {
+      Finder finder=(Finder)target;
+      if (finder.getTargetClass().equals(targetClass)) {
+        setDefaultRoute(null);
+      }
+    }
+  }
+}
