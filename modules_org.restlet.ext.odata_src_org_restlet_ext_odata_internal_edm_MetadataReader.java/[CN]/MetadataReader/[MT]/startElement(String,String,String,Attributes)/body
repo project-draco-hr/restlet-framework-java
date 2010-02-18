@@ -31,6 +31,7 @@
       currentEntityType.setBaseType(new EntityType(value));
     }
     this.currentSchema.getTypes().add(currentEntityType);
+    discoverMapping(currentEntityType,null,currentMetadata,attributes);
     registeredEntityTypes.put(currentSchema.getNamespace().getName() + "." + currentEntityType.getName(),currentEntityType);
   }
  else   if ("key".equalsIgnoreCase(localName)) {
@@ -59,6 +60,7 @@
       pushState(State.COMPLEX_TYPE_PROPERTY);
       this.currentComplexType.getProperties().add(property);
     }
+    discoverMapping(this.currentEntityType,property,currentMetadata,attributes);
   }
  else   if ("navigationProperty".equalsIgnoreCase(localName)) {
     pushState(State.NAVIGATION_PROPERTY);

@@ -1,6 +1,13 @@
 {
   this.service=service;
-  this.subpath=subpath;
+  Reference ref=new Reference(subpath);
+  if (ref.isAbsolute()) {
+    this.subpath=ref.getRelativeRef(service.getServiceRef()).toString(true,true);
+  }
+ else {
+    this.subpath=subpath;
+  }
   this.executed=false;
   this.entityClass=entityClass;
+  this.count=-1;
 }

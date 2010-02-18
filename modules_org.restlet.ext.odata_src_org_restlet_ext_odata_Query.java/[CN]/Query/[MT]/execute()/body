@@ -10,16 +10,19 @@
     if (resource.getStatus().isSuccess()) {
 switch (guessType(targetUri)) {
 case TYPE_ENTITY_SET:
-        setFeed(new Feed(result));
-      break;
+        FeedContentHandler feedContentHandler=new FeedContentHandler();
+      EntryContentHandler<T> entryContentHandler=new EntryContentHandler<T>((Metadata)service.getMetadata(),this.entityClass);
+    setFeed(new Feed(result,feedContentHandler,entryContentHandler));
+  this.count=feedContentHandler.getCount();
+break;
 case TYPE_ENTITY:
-    Feed feed=new Feed();
-  feed.getEntries().add(new Entry(result));
+Feed feed=new Feed();
+feed.getEntries().add(new Entry(result));
 setFeed(feed);
 break;
 case TYPE_UNKNOWN:
 Representation rep=new StringRepresentation(result.getText());
-String string=rep.getText().substring(0,100);
+String string=rep.getText().substring(0,Math.min(100,rep.getText().length()));
 if (string.contains("<feed")) {
 setFeed(new Feed(rep));
 }

@@ -1,0 +1,36 @@
+{
+  Object result=null;
+  if (propertyName != null && entity != null) {
+    propertyName=propertyName.replaceAll("/",".");
+    Object o=entity;
+    String pty=propertyName;
+    int index=propertyName.indexOf(".");
+    if (index != -1) {
+      o=invokeGetter(entity,propertyName.substring(0,index));
+      pty=propertyName.substring(index + 1);
+      result=invokeGetter(o,pty);
+    }
+ else {
+      String getterName=null;
+      char firstLetter=propertyName.charAt(0);
+      if (Character.isLowerCase(firstLetter)) {
+        getterName="get" + Character.toUpperCase(firstLetter) + pty.substring(1);
+      }
+ else {
+        getterName="get" + pty;
+      }
+      Method getter=null;
+      Method method;
+      for (int i=0; (getter == null) && (i < entity.getClass().getDeclaredMethods().length); i++) {
+        method=entity.getClass().getDeclaredMethods()[i];
+        if (method.getName().equals(getterName)) {
+          getter=method;
+        }
+      }
+      if (getter != null) {
+        result=getter.invoke(o);
+      }
+    }
+  }
+  return result;
+}

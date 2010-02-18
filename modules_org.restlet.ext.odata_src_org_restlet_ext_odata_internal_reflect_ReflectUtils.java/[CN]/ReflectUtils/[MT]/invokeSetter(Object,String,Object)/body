@@ -1,23 +1,46 @@
 {
-  String setterName=null;
-  char firstLetter=propertyName.charAt(0);
-  if (Character.isLowerCase(firstLetter)) {
-    setterName="set" + Character.toUpperCase(firstLetter) + propertyName.substring(1);
-  }
+  if (propertyName != null && entity != null) {
+    propertyName=propertyName.replaceAll("/",".");
+    Object o=entity;
+    String pty=propertyName;
+    String[] strings=propertyName.split("\\.");
+    if (strings.length > 1) {
+      for (int i=0; i < strings.length - 1; i++) {
+        String string=strings[i];
+        Object p=invokeGetter(o,string);
+        if (p == null) {
+          Field[] fields=o.getClass().getDeclaredFields();
+          for (          Field field : fields) {
+            if (field.getName().equalsIgnoreCase(string)) {
+              o=field.getClass().newInstance();
+              break;
+            }
+          }
+        }
+        o=p;
+      }
+      pty=strings[strings.length - 1];
+    }
+    String setterName=null;
+    char firstLetter=pty.charAt(0);
+    if (Character.isLowerCase(firstLetter)) {
+      setterName="set" + Character.toUpperCase(firstLetter) + pty.substring(1);
+    }
  else {
-    setterName="set" + propertyName;
-  }
-  Method setter=null;
-  Method method;
-  for (int i=0; (setter == null) && (i < entity.getClass().getDeclaredMethods().length); i++) {
-    method=entity.getClass().getDeclaredMethods()[i];
-    if (method.getName().equals(setterName)) {
-      if ((method.getParameterTypes() != null) && (method.getParameterTypes().length == 1)) {
-        setter=method;
+      setterName="set" + pty;
+    }
+    Method setter=null;
+    Method method;
+    for (int i=0; (setter == null) && (i < o.getClass().getDeclaredMethods().length); i++) {
+      method=o.getClass().getDeclaredMethods()[i];
+      if (method.getName().equals(setterName)) {
+        if ((method.getParameterTypes() != null) && (method.getParameterTypes().length == 1)) {
+          setter=method;
+        }
       }
     }
-  }
-  if (setter != null) {
-    setter.invoke(entity,propertyValue);
+    if (setter != null) {
+      setter.invoke(o,propertyValue);
+    }
   }
 }

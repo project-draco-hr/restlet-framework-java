@@ -1,0 +1,27 @@
+{
+  String atomContentKind=null;
+  String nsPrefix=null;
+  String nsUri=null;
+  String propertyPath=null;
+  String valuePath=null;
+  boolean keepInContent=false;
+  atomContentKind=attributes.getValue(Service.WCF_DATASERVICES_METADATA_NAMESPACE,"FC_ContentKind");
+  nsPrefix=attributes.getValue(Service.WCF_DATASERVICES_METADATA_NAMESPACE,"FC_NsPrefix");
+  nsUri=attributes.getValue(Service.WCF_DATASERVICES_METADATA_NAMESPACE,"FC_NsUri");
+  String str=attributes.getValue(Service.WCF_DATASERVICES_METADATA_NAMESPACE,"FC_KeepInContent");
+  if (str != null) {
+    keepInContent=Boolean.parseBoolean(str);
+  }
+  if (property == null) {
+    propertyPath=attributes.getValue(Service.WCF_DATASERVICES_METADATA_NAMESPACE,"FC_SourcePath");
+  }
+ else {
+    propertyPath=property.getName();
+  }
+  valuePath=attributes.getValue(Service.WCF_DATASERVICES_METADATA_NAMESPACE,"FC_TargetPath");
+  if (propertyPath != null && valuePath != null && !keepInContent) {
+    if ((atomContentKind != null && nsUri == null && nsPrefix == null) || (atomContentKind == null && nsUri != null && nsPrefix != null)) {
+      metadata.getMappings().add(new Mapping(type,nsPrefix,nsUri,propertyPath,valuePath));
+    }
+  }
+}

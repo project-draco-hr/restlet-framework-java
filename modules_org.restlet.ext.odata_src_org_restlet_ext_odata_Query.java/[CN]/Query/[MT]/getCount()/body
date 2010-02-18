@@ -1,0 +1,21 @@
+{
+  if (!isExecuted()) {
+    if (inlineCount) {
+      execute();
+    }
+ else {
+      String targetUri=createTargetUri();
+      if (guessType(targetUri) == TYPE_ENTITY) {
+        targetUri=targetUri.substring(0,targetUri.lastIndexOf("("));
+      }
+      targetUri+="/$count";
+      ClientResource resource=new ClientResource(targetUri);
+      resource.setChallengeResponse(service.getCredentials());
+      Representation result=resource.get();
+      if (resource.getStatus().isSuccess()) {
+        count=Integer.parseInt(result.getText());
+      }
+    }
+  }
+  return count;
+}
