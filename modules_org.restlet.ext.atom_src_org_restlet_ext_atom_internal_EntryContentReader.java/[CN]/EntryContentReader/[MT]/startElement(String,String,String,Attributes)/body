@@ -60,8 +60,9 @@
       this.currentLink=new Link();
       this.currentLink.setHref(new Reference(attrs.getValue("","href")));
       this.currentLink.setRel(Relation.valueOf(attrs.getValue("","rel")));
-      if ("".equals(attrs.getValue("","type"))) {
-        this.currentLink.setType(new MediaType(attrs.getValue("type")));
+      String type=attrs.getValue("","type");
+      if (type != null && type.length() > 0) {
+        this.currentLink.setType(new MediaType(type));
       }
       this.currentLink.setHrefLang(new Language(attrs.getValue("","hreflang")));
       this.currentLink.setTitle(attrs.getValue("","title"));
@@ -108,5 +109,9 @@
         this.state=State.FEED_ENTRY_CONTENT;
       }
     }
+  }
+ else   if (this.state == State.FEED_ENTRY) {
+    initiateInlineMixedContent();
+    this.currentContentWriter.startElement(uri,localName,qName,attrs);
   }
 }

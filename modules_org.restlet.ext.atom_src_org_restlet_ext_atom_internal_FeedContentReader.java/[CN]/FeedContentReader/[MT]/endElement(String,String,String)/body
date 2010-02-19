@@ -130,6 +130,7 @@
       if (this.state == State.FEED_ENTRY) {
         this.currentFeed.getEntries().add(this.currentEntry);
         this.state=State.FEED;
+        this.parsingEntry=false;
       }
     }
  else     if (localName.equals("category")) {
@@ -163,6 +164,30 @@
       this.currentContentWriter=null;
     }
   }
+ else   if (this.state == State.FEED_ENTRY) {
+    if (this.currentContentWriter != null) {
+      this.currentContentWriter.endElement(uri,localName,qName);
+      String content=this.currentContentWriter.getWriter().toString().trim();
+      contentDepth=-1;
+      if ("".equals(content)) {
+        this.currentEntry.setInlineContent(null);
+      }
+ else {
+        this.currentEntry.setInlineContent(new StringRepresentation(content));
+      }
+      this.currentContentWriter=null;
+    }
+  }
   this.currentText=null;
   this.currentDate=null;
+  if (parsingEntry) {
+    if (this.extraEntryHandler != null) {
+      this.extraEntryHandler.endElement(uri,localName,qName);
+    }
+  }
+ else {
+    if (this.extraFeedHandler != null) {
+      this.extraFeedHandler.endElement(uri,localName,qName);
+    }
+  }
 }

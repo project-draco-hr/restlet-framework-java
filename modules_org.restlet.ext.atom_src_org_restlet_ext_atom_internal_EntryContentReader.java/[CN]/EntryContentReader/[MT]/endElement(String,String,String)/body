@@ -130,6 +130,20 @@
       this.currentContentWriter=null;
     }
   }
+ else   if (this.state == State.FEED_ENTRY) {
+    if (this.currentContentWriter != null) {
+      this.currentContentWriter.endElement(uri,localName,qName);
+      String content=this.currentContentWriter.getWriter().toString().trim();
+      contentDepth=-1;
+      if ("".equals(content)) {
+        this.currentEntry.setInlineContent(null);
+      }
+ else {
+        this.currentEntry.setInlineContent(new StringRepresentation(content));
+      }
+      this.currentContentWriter=null;
+    }
+  }
   this.currentText=null;
   this.currentDate=null;
 }
