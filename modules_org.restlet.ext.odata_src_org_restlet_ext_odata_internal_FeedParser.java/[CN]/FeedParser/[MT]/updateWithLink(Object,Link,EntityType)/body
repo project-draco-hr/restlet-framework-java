@@ -1,0 +1,24 @@
+{
+  if (link.getContent() != null && link.getTitle() != null) {
+    String propertyName=ReflectUtils.normalize(link.getTitle());
+    AssociationEnd association=metadata.getAssociation(entityType,propertyName);
+    if (association != null) {
+      try {
+        Feed linkFeed=null;
+        if (association.isToMany()) {
+          linkFeed=new Feed(link.getContent().getInlineContent());
+        }
+ else {
+          linkFeed=new Feed();
+          linkFeed.getEntries().add(new Entry(link.getContent().getInlineContent()));
+        }
+        Class<?> linkClass=ReflectUtils.getEntryClass(linkFeed);
+        Iterator<?> iterator=createFeedParser(linkFeed,linkClass,metadata).parse();
+        ReflectUtils.setProperty(entity,propertyName,association.isToMany(),iterator,linkClass);
+      }
+ catch (      Exception e) {
+        getLogger().log(Level.WARNING,"Can't retrieve associated property " + propertyName,e);
+      }
+    }
+  }
+}

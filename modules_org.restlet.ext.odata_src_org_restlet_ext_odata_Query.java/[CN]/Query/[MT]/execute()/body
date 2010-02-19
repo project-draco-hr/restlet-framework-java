@@ -4,17 +4,17 @@
     ClientResource resource=new ClientResource(targetUri);
     resource.setChallengeResponse(service.getCredentials());
     Representation result=new StringRepresentation(resource.get(MediaType.APPLICATION_ATOM).getText());
-    getLogger().fine(result.getText());
+    System.out.println(targetUri);
+    System.out.println(result.getText());
     service.setLatestRequest(resource.getRequest());
     service.setLatestResponse(resource.getResponse());
     if (resource.getStatus().isSuccess()) {
 switch (guessType(targetUri)) {
 case TYPE_ENTITY_SET:
         FeedContentHandler feedContentHandler=new FeedContentHandler();
-      EntryContentHandler<T> entryContentHandler=new EntryContentHandler<T>((Metadata)service.getMetadata(),this.entityClass);
-    setFeed(new Feed(result,feedContentHandler,entryContentHandler));
-  this.count=feedContentHandler.getCount();
-break;
+      setFeed(new Feed(result,feedContentHandler,null));
+    this.count=feedContentHandler.getCount();
+  break;
 case TYPE_ENTITY:
 Feed feed=new Feed();
 feed.getEntries().add(new Entry(result));

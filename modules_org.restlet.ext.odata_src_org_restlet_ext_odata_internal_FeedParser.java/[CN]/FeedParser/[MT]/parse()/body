@@ -11,107 +11,12 @@
   for (  Entry entry : feed.getEntries()) {
     try {
       Object entity=entityClass.newInstance();
-      Representation content=entry.getContent().getInlineContent();
-      DomRepresentation dr=new DomRepresentation(content);
-      NodeSet propertyNodes=dr.getNodes("/properties/*");
-      for (      Node node : propertyNodes) {
-        String nodeName=node.getNodeName();
-        int index=nodeName.indexOf(":");
-        if (index != -1) {
-          nodeName=nodeName.substring(index + 1);
-        }
-        Property property=metadata.getProperty(entity,nodeName);
-        try {
-          ReflectUtils.setProperty(entity,property,node.getTextContent());
-        }
- catch (        Exception e) {
-          getLogger().log(Level.WARNING,"Can't set the property " + nodeName + " of "+ entity.getClass(),e);
-        }
-      }
+      updateWithContent(entity,entry.getContent());
       for (      Link link : entry.getLinks()) {
-        if (link.getContent() != null && link.getTitle() != null) {
-          String propertyName=ReflectUtils.normalize(link.getTitle());
-          AssociationEnd association=metadata.getAssociation(entityType,propertyName);
-          if (association != null) {
-            try {
-              Feed linkFeed=null;
-              if (association.isToMany()) {
-                linkFeed=new Feed(link.getContent().getInlineContent());
-              }
- else {
-                linkFeed=new Feed();
-                linkFeed.getEntries().add(new Entry(link.getContent().getInlineContent()));
-              }
-              Class<?> linkClass=ReflectUtils.getEntryClass(linkFeed);
-              Iterator<?> iterator=createFeedParser(linkFeed,linkClass,metadata).parse();
-              ReflectUtils.setProperty(entity,propertyName,association.isToMany(),iterator,linkClass);
-            }
- catch (            Exception e) {
-              getLogger().log(Level.WARNING,"Can't retrieve associated property " + propertyName,e);
-            }
-          }
-        }
+        updateWithLink(entity,link,entityType);
       }
-      if (!metadata.getMappings().isEmpty()) {
-        DomRepresentation inlineContent=null;
-        for (        Mapping mapping : metadata.getMappings()) {
-          if (entityType != null && entityType.equals(mapping.getType())) {
-            Object value=null;
-            if (mapping.getNsPrefix() == null && mapping.getNsUri() == null) {
-              Person author=(entry.getAuthors().isEmpty()) ? null : entry.getAuthors().get(0);
-              Person contributor=(entry.getContributors().isEmpty()) ? null : entry.getContributors().get(0);
-              if ("SyndicationAuthorEmail".equals(mapping.getValuePath())) {
-                value=(author != null) ? author.getEmail() : null;
-              }
- else               if ("SyndicationAuthorName".equals(mapping.getValuePath())) {
-                value=(author != null) ? author.getName() : null;
-              }
- else               if ("SyndicationAuthorUri".equals(mapping.getValuePath())) {
-                value=(author != null) ? author.getUri().toString() : null;
-              }
- else               if ("SyndicationContributorEmail".equals(mapping.getValuePath())) {
-                value=(contributor != null) ? contributor.getEmail() : null;
-              }
- else               if ("SyndicationContributorName".equals(mapping.getValuePath())) {
-                value=(contributor != null) ? contributor.getName() : null;
-              }
- else               if ("SyndicationContributorUri".equals(mapping.getValuePath())) {
-                value=(contributor != null) ? contributor.getUri().toString() : null;
-              }
- else               if ("SyndicationPublished".equals(mapping.getValuePath())) {
-                value=entry.getPublished();
-              }
- else               if ("SyndicationRights".equals(mapping.getValuePath())) {
-                value=(entry.getRights() != null) ? entry.getRights().getContent() : null;
-              }
- else               if ("SyndicationSummary".equals(mapping.getValuePath())) {
-                value=entry.getSummary();
-              }
- else               if ("SyndicationTitle".equals(mapping.getValuePath())) {
-                value=(entry.getTitle() != null) ? entry.getTitle().getContent() : null;
-              }
- else               if ("SyndicationUpdated".equals(mapping.getValuePath())) {
-                value=entry.getUpdated();
-              }
-            }
- else             if (entry.getInlineContent() != null) {
-              if (inlineContent == null) {
-                inlineContent=new DomRepresentation(entry.getInlineContent());
-              }
-              Node node=inlineContent.getNode(mapping.getValuePath());
-              if (node != null) {
-                value=node.getTextContent();
-              }
-            }
-            try {
-              if (value != null) {
-                ReflectUtils.invokeSetter(entity,mapping.getPropertyPath(),value);
-              }
-            }
- catch (            Exception e) {
-            }
-          }
-        }
+      for (      Mapping mapping : metadata.getMappings()) {
+        updateWithMapping(entity,mapping,entry,entityType);
       }
       list.add((T)entity);
     }

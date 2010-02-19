@@ -1,0 +1,20 @@
+{
+  if (content != null && content.getInlineContent() != null) {
+    DomRepresentation dr=new DomRepresentation(content.getInlineContent());
+    NodeSet propertyNodes=dr.getNodes("/properties/*");
+    for (    Node node : propertyNodes) {
+      String nodeName=node.getNodeName();
+      int index=nodeName.indexOf(":");
+      if (index != -1) {
+        nodeName=nodeName.substring(index + 1);
+      }
+      Property property=metadata.getProperty(entity,nodeName);
+      try {
+        ReflectUtils.setProperty(entity,property,node.getTextContent());
+      }
+ catch (      Exception e) {
+        getLogger().log(Level.WARNING,"Can't set the property " + nodeName + " of "+ entity.getClass(),e);
+      }
+    }
+  }
+}
