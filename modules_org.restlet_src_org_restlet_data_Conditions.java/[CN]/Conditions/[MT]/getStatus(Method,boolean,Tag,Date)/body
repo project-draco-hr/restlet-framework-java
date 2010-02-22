@@ -4,6 +4,7 @@
     boolean matched=false;
     boolean failed=false;
     boolean all=getMatch().get(0).equals(Tag.ALL);
+    String statusMessage=null;
     if (entityExists) {
       if (!all && (tag != null)) {
         Tag matchTag;
@@ -18,10 +19,14 @@
     }
  else {
       failed=all;
+      statusMessage="A non existing resource can't match any tag.";
     }
     failed=failed || !matched;
     if (failed) {
       result=Status.CLIENT_ERROR_PRECONDITION_FAILED;
+      if (statusMessage != null) {
+        result=new Status(result,statusMessage);
+      }
     }
   }
   if ((result == null) && (this.noneMatch != null) && !this.noneMatch.isEmpty()) {
@@ -39,9 +44,9 @@
           matched=!isModifiedSince;
         }
       }
-    }
  else {
-      matched=getNoneMatch().get(0).equals(Tag.ALL);
+        matched=getNoneMatch().get(0).equals(Tag.ALL);
+      }
     }
     if (matched) {
       if (Method.GET.equals(method) || Method.HEAD.equals(method)) {
