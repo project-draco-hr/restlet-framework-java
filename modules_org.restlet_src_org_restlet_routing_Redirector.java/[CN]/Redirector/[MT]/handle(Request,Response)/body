@@ -1,5 +1,5 @@
 {
-  final Reference targetRef=getTargetRef(request,response);
+  Reference targetRef=getTargetRef(request,response);
 switch (this.mode) {
 case MODE_CLIENT_PERMANENT:
     getLogger().log(Level.INFO,"Permanently redirecting client to: " + targetRef);
@@ -12,8 +12,7 @@ response.setStatus(Status.REDIRECTION_FOUND);
 break;
 case MODE_CLIENT_SEE_OTHER:
 getLogger().log(Level.INFO,"Redirecting client to another location: " + targetRef);
-response.setLocationRef(targetRef);
-response.setStatus(Status.REDIRECTION_SEE_OTHER);
+response.redirectSeeOther(targetRef);
 break;
 case MODE_CLIENT_TEMPORARY:
 getLogger().log(Level.INFO,"Temporarily redirecting client to: " + targetRef);
@@ -23,13 +22,13 @@ case MODE_DISPATCHER:
 getLogger().log(Level.INFO,"Redirecting via client connector to: " + targetRef);
 redirectDispatcher(targetRef,request,response);
 break;
-case MODE_CLIENT_DISPATCHER:
+case MODE_SERVER_OUTBOUND:
 getLogger().log(Level.INFO,"Redirecting via client dispatcher to: " + targetRef);
-redirectClientDispatcher(targetRef,request,response);
+outboundServerRedirect(targetRef,request,response);
 break;
-case MODE_SERVER_DISPATCHER:
+case MODE_SERVER_INBOUND:
 getLogger().log(Level.INFO,"Redirecting via server dispatcher to: " + targetRef);
-redirectServerDispatcher(targetRef,request,response);
+inboundServerRedirect(targetRef,request,response);
 break;
 }
 }
