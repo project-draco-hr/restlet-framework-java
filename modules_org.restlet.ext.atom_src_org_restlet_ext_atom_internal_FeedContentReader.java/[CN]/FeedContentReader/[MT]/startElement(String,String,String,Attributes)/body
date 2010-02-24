@@ -13,6 +13,7 @@
         this.currentFeed.setBaseReference(new Reference(attr));
       }
       this.state=State.FEED;
+      startFeed(this.currentFeed);
     }
  else     if (localName.equals("title")) {
       startTextElement(attrs);
@@ -102,13 +103,14 @@
       this.currentContent=new Content();
       initiateInlineMixedContent();
       this.currentLink.setContent(currentContent);
+      startLink(this.currentLink);
     }
  else     if (localName.equalsIgnoreCase("entry")) {
       if (this.state == State.FEED) {
         this.currentEntry=new Entry();
         this.state=State.FEED_ENTRY;
-        this.parsingEntry=true;
       }
+      startEntry(this.currentEntry);
     }
  else     if (localName.equals("category")) {
       this.currentCategory=new Category();
@@ -140,20 +142,8 @@
         this.currentEntry.setContent(currentContent);
         this.state=State.FEED_ENTRY_CONTENT;
       }
+      startContent(this.currentContent);
     }
   }
- else   if (this.state == State.FEED_ENTRY) {
-    initiateInlineMixedContent();
-    this.currentContentWriter.startElement(uri,localName,qName,attrs);
-  }
-  if (parsingEntry) {
-    if (this.extraEntryHandler != null) {
-      this.extraEntryHandler.startElement(uri,localName,qName,attrs);
-    }
-  }
- else {
-    if (this.extraFeedHandler != null) {
-      this.extraFeedHandler.startElement(uri,localName,qName,attrs);
-    }
-  }
+  super.startElement(uri,localName,qName,attrs);
 }

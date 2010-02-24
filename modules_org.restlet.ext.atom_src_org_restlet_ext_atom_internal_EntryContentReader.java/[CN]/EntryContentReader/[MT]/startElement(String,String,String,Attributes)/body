@@ -77,9 +77,11 @@
       this.currentContent=new Content();
       initiateInlineMixedContent();
       this.currentLink.setContent(currentContent);
+      startLink(this.currentLink);
     }
  else     if (localName.equalsIgnoreCase("entry")) {
       this.state=State.FEED_ENTRY;
+      startEntry(this.currentEntry);
     }
  else     if (localName.equals("category")) {
       this.currentCategory=new Category();
@@ -108,10 +110,8 @@
         this.currentEntry.setContent(currentContent);
         this.state=State.FEED_ENTRY_CONTENT;
       }
+      startContent(this.currentContent);
     }
   }
- else   if (this.state == State.FEED_ENTRY) {
-    initiateInlineMixedContent();
-    this.currentContentWriter.startElement(uri,localName,qName,attrs);
-  }
+  super.startElement(uri,localName,qName,attrs);
 }

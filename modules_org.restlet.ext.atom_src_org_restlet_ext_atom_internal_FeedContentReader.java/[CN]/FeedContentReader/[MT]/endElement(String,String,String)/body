@@ -21,6 +21,7 @@
  else   if (uri.equalsIgnoreCase(Feed.ATOM_NAMESPACE)) {
     if (localName.equals("feed")) {
       this.state=State.NONE;
+      endFeed(this.currentFeed);
     }
  else     if (localName.equals("title")) {
       if (this.state == State.FEED_TITLE) {
@@ -125,13 +126,14 @@
         }
         this.currentContentWriter=null;
       }
+      endLink(this.currentLink);
     }
  else     if (localName.equalsIgnoreCase("entry")) {
       if (this.state == State.FEED_ENTRY) {
         this.currentFeed.getEntries().add(this.currentEntry);
         this.state=State.FEED;
-        this.parsingEntry=false;
       }
+      endEntry(this.currentEntry);
     }
  else     if (localName.equals("category")) {
       if (this.state == State.FEED_CATEGORY) {
@@ -162,32 +164,10 @@
         this.state=State.FEED_ENTRY;
       }
       this.currentContentWriter=null;
-    }
-  }
- else   if (this.state == State.FEED_ENTRY) {
-    if (this.currentContentWriter != null) {
-      this.currentContentWriter.endElement(uri,localName,qName);
-      String content=this.currentContentWriter.getWriter().toString().trim();
-      contentDepth=-1;
-      if ("".equals(content)) {
-        this.currentEntry.setInlineContent(null);
-      }
- else {
-        this.currentEntry.setInlineContent(new StringRepresentation(content));
-      }
-      this.currentContentWriter=null;
+      endContent(this.currentContent);
     }
   }
   this.currentText=null;
   this.currentDate=null;
-  if (parsingEntry) {
-    if (this.extraEntryHandler != null) {
-      this.extraEntryHandler.endElement(uri,localName,qName);
-    }
-  }
- else {
-    if (this.extraFeedHandler != null) {
-      this.extraFeedHandler.endElement(uri,localName,qName);
-    }
-  }
+  super.endElement(uri,localName,qName);
 }

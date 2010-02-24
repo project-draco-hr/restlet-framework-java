@@ -102,6 +102,11 @@
         }
         this.currentContentWriter=null;
       }
+      endLink(this.currentLink);
+    }
+ else     if (localName.equalsIgnoreCase("entry")) {
+      this.state=State.NONE;
+      endEntry(this.currentEntry);
     }
  else     if (localName.equals("category")) {
       if (this.state == State.FEED_ENTRY_CATEGORY) {
@@ -128,22 +133,10 @@
         this.state=State.FEED_ENTRY;
       }
       this.currentContentWriter=null;
-    }
-  }
- else   if (this.state == State.FEED_ENTRY) {
-    if (this.currentContentWriter != null) {
-      this.currentContentWriter.endElement(uri,localName,qName);
-      String content=this.currentContentWriter.getWriter().toString().trim();
-      contentDepth=-1;
-      if ("".equals(content)) {
-        this.currentEntry.setInlineContent(null);
-      }
- else {
-        this.currentEntry.setInlineContent(new StringRepresentation(content));
-      }
-      this.currentContentWriter=null;
+      endContent(this.currentContent);
     }
   }
   this.currentText=null;
   this.currentDate=null;
+  super.endElement(uri,localName,qName);
 }
