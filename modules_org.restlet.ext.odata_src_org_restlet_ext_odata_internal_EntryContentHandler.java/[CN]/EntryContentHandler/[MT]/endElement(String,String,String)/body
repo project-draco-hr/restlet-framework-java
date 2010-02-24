@@ -1,0 +1,26 @@
+{
+  if (parseProperty) {
+    parseProperty=false;
+    Property property=metadata.getProperty(entity,localName);
+    try {
+      ReflectUtils.setProperty(entity,property,sb.toString());
+    }
+ catch (    Exception e) {
+      getLogger().warning("Cannot set " + localName + " property on "+ entity+ " with value "+ sb.toString());
+    }
+  }
+ else   if (mapping != null) {
+    if (sb != null) {
+      try {
+        ReflectUtils.invokeSetter(entity,mapping.getPropertyPath(),sb.toString());
+      }
+ catch (      Exception e) {
+        getLogger().warning("Cannot set " + mapping.getPropertyPath() + " property on "+ entity+ " with value "+ sb.toString());
+      }
+    }
+    mapping=null;
+  }
+  if (!eltPath.isEmpty()) {
+    eltPath.remove(eltPath.size() - 1);
+  }
+}

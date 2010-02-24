@@ -1,0 +1,51 @@
+{
+  parseEntry=false;
+  for (  Mapping m : metadata.getMappings()) {
+    if (entityType != null && entityType.equals(m.getType()) && m.getNsUri() == null && m.getNsPrefix() == null) {
+      Person author=(entry.getAuthors().isEmpty()) ? null : entry.getAuthors().get(0);
+      Person contributor=(entry.getContributors().isEmpty()) ? null : entry.getContributors().get(0);
+      Object value=null;
+      if ("SyndicationAuthorEmail".equals(m.getValuePath())) {
+        value=(author != null) ? author.getEmail() : null;
+      }
+ else       if ("SyndicationAuthorName".equals(m.getValuePath())) {
+        value=(author != null) ? author.getName() : null;
+      }
+ else       if ("SyndicationAuthorUri".equals(m.getValuePath())) {
+        value=(author != null) ? author.getUri().toString() : null;
+      }
+ else       if ("SyndicationContributorEmail".equals(m.getValuePath())) {
+        value=(contributor != null) ? contributor.getEmail() : null;
+      }
+ else       if ("SyndicationContributorName".equals(m.getValuePath())) {
+        value=(contributor != null) ? contributor.getName() : null;
+      }
+ else       if ("SyndicationContributorUri".equals(m.getValuePath())) {
+        value=(contributor != null) ? contributor.getUri().toString() : null;
+      }
+ else       if ("SyndicationPublished".equals(m.getValuePath())) {
+        value=entry.getPublished();
+      }
+ else       if ("SyndicationRights".equals(m.getValuePath())) {
+        value=(entry.getRights() != null) ? entry.getRights().getContent() : null;
+      }
+ else       if ("SyndicationSummary".equals(m.getValuePath())) {
+        value=entry.getSummary();
+      }
+ else       if ("SyndicationTitle".equals(m.getValuePath())) {
+        value=(entry.getTitle() != null) ? entry.getTitle().getContent() : null;
+      }
+ else       if ("SyndicationUpdated".equals(m.getValuePath())) {
+        value=entry.getUpdated();
+      }
+      try {
+        if (value != null) {
+          ReflectUtils.invokeSetter(entity,m.getPropertyPath(),value);
+        }
+      }
+ catch (      Exception e) {
+        getLogger().warning("Cannot set " + m.getPropertyPath() + " property on "+ entity+ " with value "+ value);
+      }
+    }
+  }
+}

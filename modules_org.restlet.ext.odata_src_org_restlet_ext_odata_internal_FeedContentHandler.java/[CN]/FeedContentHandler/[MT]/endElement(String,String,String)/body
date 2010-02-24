@@ -1,6 +1,64 @@
 {
-  if (bCount) {
+  if (parseAssociation) {
+    if (extraFeedHandler != null) {
+      extraFeedHandler.endElement(uri,localName,qName);
+    }
+ else {
+      extraEntryHandler.endElement(uri,localName,qName);
+    }
+    if (localName.equals("entry")) {
+      if (extraFeedHandler != null) {
+        extraFeedHandler.endEntry(null);
+      }
+ else {
+        extraEntryHandler.endEntry(null);
+      }
+    }
+ else     if (localName.equals("link")) {
+      if (extraFeedHandler != null) {
+        extraFeedHandler.endLink(null);
+      }
+ else {
+        extraEntryHandler.endLink(null);
+      }
+    }
+ else     if (localName.equals("content")) {
+      if (extraFeedHandler != null) {
+        extraFeedHandler.endContent(null);
+      }
+ else {
+        extraEntryHandler.endContent(null);
+      }
+    }
+  }
+ else   if (parseCount) {
     this.count=Integer.parseInt(sb.toString());
-    bCount=false;
+    parseCount=false;
+  }
+ else   if (parseProperty) {
+    parseProperty=false;
+    Property property=metadata.getProperty(entity,localName);
+    try {
+      ReflectUtils.setProperty(entity,property,sb.toString());
+    }
+ catch (    Exception e) {
+      getLogger().warning("Cannot set " + localName + " property on "+ entity+ " with value "+ sb.toString());
+    }
+  }
+ else   if (parseEntry) {
+    if (mapping != null) {
+      if (sb != null) {
+        try {
+          ReflectUtils.invokeSetter(entity,mapping.getPropertyPath(),sb.toString());
+        }
+ catch (        Exception e) {
+          getLogger().warning("Cannot set " + mapping.getPropertyPath() + " property on "+ entity+ " with value "+ sb.toString());
+        }
+      }
+      mapping=null;
+    }
+    if (!eltPath.isEmpty()) {
+      eltPath.remove(eltPath.size() - 1);
+    }
   }
 }

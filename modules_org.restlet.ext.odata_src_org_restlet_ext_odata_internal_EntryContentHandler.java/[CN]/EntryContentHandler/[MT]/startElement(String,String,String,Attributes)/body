@@ -1,0 +1,41 @@
+{
+  if (parseAssociation) {
+  }
+ else   if (parseContent) {
+    if (Service.WCF_DATASERVICES_NAMESPACE.equals(uri)) {
+      sb=new StringBuilder();
+      parseProperty=true;
+    }
+  }
+ else   if (parseEntry) {
+    eltPath.add(localName);
+    StringBuilder sb=new StringBuilder();
+    for (int i=0; i < eltPath.size(); i++) {
+      if (i > 0) {
+        sb.append("/");
+      }
+      sb.append(eltPath.get(i));
+    }
+    String str=sb.toString();
+    for (    Mapping m : metadata.getMappings()) {
+      if (entityType != null && entityType.equals(m.getType()) && m.getNsUri() != null && m.getNsUri().equals(uri) && str.equals(m.getValueNodePath())) {
+        if (m.isAttributeValue()) {
+          String value=attrs.getValue(m.getValueAttributeName());
+          if (value != null) {
+            try {
+              ReflectUtils.invokeSetter(entity,m.getPropertyPath(),value);
+            }
+ catch (            Exception e) {
+              getLogger().warning("Cannot set " + m.getPropertyPath() + " property on "+ entity+ " with value "+ value);
+            }
+          }
+        }
+ else {
+          this.sb=new StringBuilder();
+          mapping=m;
+        }
+        break;
+      }
+    }
+  }
+}
