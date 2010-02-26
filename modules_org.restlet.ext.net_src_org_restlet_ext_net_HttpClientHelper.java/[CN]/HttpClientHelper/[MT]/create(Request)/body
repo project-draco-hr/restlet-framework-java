@@ -1,7 +1,8 @@
 {
   ClientCall result=null;
   try {
-    result=new HttpUrlConnectionCall(this,request.getMethod().toString(),request.getResourceRef().toString(),request.isEntityAvailable());
+    Reference targetRef=request.getResourceRef().getBaseRef() == null ? request.getResourceRef() : request.getResourceRef().getTargetRef();
+    result=new HttpUrlConnectionCall(this,request.getMethod().toString(),targetRef.toString(),request.isEntityAvailable());
   }
  catch (  IOException ioe) {
     getLogger().log(Level.WARNING,"Unable to create the HTTP client call",ioe);
