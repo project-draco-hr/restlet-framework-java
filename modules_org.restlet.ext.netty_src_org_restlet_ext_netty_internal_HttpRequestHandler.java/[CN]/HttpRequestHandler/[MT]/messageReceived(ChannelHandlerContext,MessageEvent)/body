@@ -1,10 +1,10 @@
 {
   if (clientAddress == null) {
-    clientAddress=(InetSocketAddress)e.getRemoteAddress();
+    clientAddress=(InetSocketAddress)messageEvent.getRemoteAddress();
   }
   boolean isLastChunk=false;
   if (!readingChunks) {
-    request=(HttpRequest)e.getMessage();
+    request=(HttpRequest)messageEvent.getMessage();
     if (request.isChunked()) {
       readingChunks=true;
     }
@@ -13,7 +13,7 @@
     }
   }
  else {
-    HttpChunk chunk=(HttpChunk)e.getMessage();
+    HttpChunk chunk=(HttpChunk)messageEvent.getMessage();
     if (chunk.isLast()) {
       readingChunks=false;
       isLastChunk=true;
@@ -33,11 +33,11 @@
   if ((!request.isChunked()) || isLastChunk) {
     SslHandler sslHandler=ctx.getPipeline().get(SslHandler.class);
     SSLEngine sslEngine=sslHandler == null ? null : sslHandler.getEngine();
-    NettyServerCall httpCall=new NettyServerCall(this.helper.getHelped(),content,request,clientAddress,(this.helper instanceof HttpsServerHelper),sslEngine);
+    NettyServerCall httpCall=new NettyServerCall(this.helper.getHelped(),messageEvent,content,request,clientAddress,(this.helper instanceof HttpsServerHelper),sslEngine);
     this.helper.handle(httpCall);
     response=httpCall.getResponse();
   }
-  Channel ch=e.getChannel();
+  Channel ch=messageEvent.getChannel();
   if (request.isChunked()) {
     if (isLastChunk) {
       ChannelFuture future=ch.write(response);

@@ -87,7 +87,7 @@
           if (!tmp.exists()) {
             InputStream in=new FileInputStream(file);
             OutputStream out=new FileOutputStream(tmp);
-            BioUtils.write(in,out);
+            BioUtils.copy(in,out);
             out.flush();
             out.close();
           }
@@ -104,7 +104,7 @@
             raf.seek(range.getIndex());
           }
           if (request.isEntityAvailable()) {
-            BioUtils.write(request.getEntity().getStream(),raf);
+            BioUtils.copy(request.getEntity().getStream(),raf);
           }
         }
  catch (        IOException ioe) {
@@ -132,7 +132,7 @@
           tmp=File.createTempFile("restlet-upload","bin");
           if (request.isEntityAvailable()) {
             fos=new FileOutputStream(tmp);
-            BioUtils.write(request.getEntity().getStream(),fos);
+            BioUtils.copy(request.getEntity().getStream(),fos);
           }
         }
  catch (        IOException ioe) {
@@ -175,7 +175,7 @@
             try {
               InputStream in=new FileInputStream(tmp);
               OutputStream out=new FileOutputStream(file);
-              BioUtils.write(in,out);
+              BioUtils.copy(in,out);
               out.flush();
               out.close();
               renameSuccessfull=true;
@@ -224,7 +224,7 @@
             raf.seek(range.getIndex());
           }
           if (request.isEntityAvailable()) {
-            BioUtils.write(request.getEntity().getStream(),raf);
+            BioUtils.copy(request.getEntity().getStream(),raf);
           }
         }
  catch (        FileNotFoundException fnfe) {
@@ -257,7 +257,7 @@ catch (        IOException ioe) {
             }
  else {
               fos=new FileOutputStream(file);
-              BioUtils.write(request.getEntity().getStream(),fos);
+              BioUtils.copy(request.getEntity().getStream(),fos);
               response.setStatus(Status.SUCCESS_CREATED);
             }
           }
