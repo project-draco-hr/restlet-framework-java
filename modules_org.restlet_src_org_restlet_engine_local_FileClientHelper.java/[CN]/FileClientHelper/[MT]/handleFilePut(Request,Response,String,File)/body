@@ -82,7 +82,7 @@
           tmp=new File(file.getCanonicalPath() + "." + getTemporaryExtension());
           Range range=request.getRanges().get(0);
           if (tmp.exists() && !isResumeUpload()) {
-            tmp.delete();
+            BioUtils.delete(tmp);
           }
           if (!tmp.exists()) {
             InputStream in=new FileInputStream(file);
@@ -116,7 +116,6 @@
           try {
             if (raf != null) {
               raf.close();
-              System.gc();
             }
           }
  catch (          IOException ioe) {
@@ -155,12 +154,12 @@
       }
       if (error) {
         if (tmp.exists() && !isResumeUpload()) {
-          tmp.delete();
+          BioUtils.delete(tmp);
         }
         return;
       }
-      if (tmp.exists() && file.delete()) {
-        boolean renameSuccessfull=false;
+      if (tmp.exists() && BioUtils.delete(file)) {
+        boolean renameSuccessful=false;
         if (tmp.renameTo(file)) {
           if (request.getEntity() == null) {
             response.setStatus(Status.SUCCESS_NO_CONTENT);
@@ -168,7 +167,7 @@
  else {
             response.setStatus(Status.SUCCESS_OK);
           }
-          renameSuccessfull=true;
+          renameSuccessful=true;
         }
  else {
           if (tmp.exists()) {
@@ -176,16 +175,15 @@
               InputStream in=new FileInputStream(tmp);
               OutputStream out=new FileOutputStream(file);
               BioUtils.copy(in,out);
-              out.flush();
               out.close();
-              renameSuccessfull=true;
-              tmp.delete();
+              renameSuccessful=true;
+              BioUtils.delete(tmp);
             }
  catch (            Exception e) {
-              renameSuccessfull=false;
+              renameSuccessful=false;
             }
           }
-          if (!renameSuccessfull) {
+          if (!renameSuccessful) {
             getLogger().log(Level.WARNING,"Unable to move the temporary file to replace the existing file");
             response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to move the temporary file to replace the existing file"));
           }
@@ -195,7 +193,7 @@
         getLogger().log(Level.WARNING,"Unable to delete the existing file");
         response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to delete the existing file"));
         if (tmp.exists() && !isResumeUpload()) {
-          tmp.delete();
+          BioUtils.delete(tmp);
         }
       }
     }
@@ -239,7 +237,6 @@ catch (        IOException ioe) {
           try {
             if (raf != null) {
               raf.close();
-              System.gc();
             }
           }
  catch (          IOException ioe) {
