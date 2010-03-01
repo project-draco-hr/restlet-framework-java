@@ -1,0 +1,28 @@
+{
+  DomRepresentation mailRep=new DomRepresentation(representation);
+  Document doc;
+  try {
+    doc=mailRep.getDocument();
+    Element mailElt=doc.getDocumentElement();
+    Element statusElt=(Element)mailElt.getElementsByTagName("status").item(0);
+    Element subjectElt=(Element)mailElt.getElementsByTagName("subject").item(0);
+    Element contentElt=(Element)mailElt.getElementsByTagName("content").item(0);
+    Element accountRefElt=(Element)mailElt.getElementsByTagName("accountRef").item(0);
+    System.out.println("Status: " + statusElt.getTextContent());
+    System.out.println("Subject: " + subjectElt.getTextContent());
+    System.out.println("Content: " + contentElt.getTextContent());
+    System.out.println("Account URI: " + accountRefElt.getTextContent());
+  }
+ catch (  IOException e) {
+    throw new ResourceException(e);
+  }
+  Node statusElt=mailRep.getNode("/mail/status");
+  Node subjectElt=mailRep.getNode("/mail/subject");
+  Node contentElt=mailRep.getNode("/mail/content");
+  Node accountRefElt=mailRep.getNode("/mail/accountRef");
+  System.out.println("Status: " + statusElt.getTextContent());
+  System.out.println("Subject: " + subjectElt.getTextContent());
+  System.out.println("Content: " + contentElt.getTextContent());
+  System.out.println("Account URI: " + accountRefElt.getTextContent());
+  return null;
+}
