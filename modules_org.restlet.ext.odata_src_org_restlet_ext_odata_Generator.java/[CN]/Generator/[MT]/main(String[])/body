@@ -1,5 +1,5 @@
 {
-  boolean error=(args.length != 2);
+  boolean error=(args.length != 2 && args.length != 3);
   String step="step 1 - check parameters";
   File outputDir=null;
   Metadata metadata;
@@ -37,7 +37,13 @@
     }
  else {
       step="step 5 - generate source code";
-      Generator svcUtil=new Generator(new Reference(dataServiceUri),metadata);
+      Generator svcUtil=null;
+      if (args.length == 3) {
+        svcUtil=new Generator(new Reference(dataServiceUri),metadata,args[2]);
+      }
+ else {
+        svcUtil=new Generator(new Reference(dataServiceUri),metadata);
+      }
       try {
         svcUtil.generateSourceCode(outputDir);
       }
@@ -55,5 +61,6 @@
     System.out.println("Please check that you provide the following parameters:");
     System.out.println("   - a valid URI for the remote service");
     System.out.println("   - a valid directory path where to generate the files.");
+    System.out.println("   - a valid name for the generated service class (optional).");
   }
 }

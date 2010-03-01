@@ -1,12 +1,14 @@
 {
   if (parseProperty) {
     parseProperty=false;
-    Property property=metadata.getProperty(entity,localName);
-    try {
-      ReflectUtils.setProperty(entity,property,sb.toString());
-    }
- catch (    Exception e) {
-      getLogger().warning("Cannot set " + localName + " property on "+ entity+ " with value "+ sb.toString());
+    if (!parsePropertyNull) {
+      Property property=metadata.getProperty(entity,localName);
+      try {
+        ReflectUtils.setProperty(entity,property,sb.toString());
+      }
+ catch (      Exception e) {
+        getLogger().warning("Cannot set " + localName + " property on "+ entity+ " with value "+ sb.toString());
+      }
     }
   }
  else   if (mapping != null) {

@@ -2,9 +2,9 @@
   Representation r=new SaxRepresentation(MediaType.APPLICATION_XML){
     @Override public void write(    XmlWriter writer) throws IOException {
       try {
-        writer.forceNSDecl("http://schemas.microsoft.com/ado/2007/08/dataservices/metadata","m");
-        writer.forceNSDecl("http://schemas.microsoft.com/ado/2007/08/dataservices","ds");
-        writer.startElement("http://schemas.microsoft.com/ado/2007/08/dataservices/metadata","properties");
+        writer.forceNSDecl(WCF_DATASERVICES_METADATA_NAMESPACE,"m");
+        writer.forceNSDecl(WCF_DATASERVICES_NAMESPACE,"ds");
+        writer.startElement(WCF_DATASERVICES_METADATA_NAMESPACE,"properties");
         for (        Field field : entity.getClass().getDeclaredFields()) {
           String getter="get" + field.getName().substring(0,1).toUpperCase() + field.getName().substring(1);
           Property prop=((Metadata)getMetadata()).getProperty(entity,field.getName());
@@ -18,19 +18,19 @@
  catch (                Exception e) {
                 }
                 if (value != null) {
-                  writer.startElement("http://schemas.microsoft.com/ado/2007/08/dataservices",prop.getName());
+                  writer.startElement(WCF_DATASERVICES_NAMESPACE,prop.getName());
                   writer.characters(Type.toEdm(value,prop.getType()));
-                  writer.endElement("http://schemas.microsoft.com/ado/2007/08/dataservices",prop.getName());
+                  writer.endElement(WCF_DATASERVICES_NAMESPACE,prop.getName());
                 }
  else {
-                  writer.emptyElement("http://schemas.microsoft.com/ado/2007/08/dataservices",prop.getName());
+                  writer.emptyElement(WCF_DATASERVICES_NAMESPACE,prop.getName());
                 }
                 break;
               }
             }
           }
         }
-        writer.endElement("http://schemas.microsoft.com/ado/2007/08/dataservices/metadata","properties");
+        writer.endElement(WCF_DATASERVICES_METADATA_NAMESPACE,"properties");
       }
  catch (      SAXException e) {
         throw new IOException(e.getMessage());

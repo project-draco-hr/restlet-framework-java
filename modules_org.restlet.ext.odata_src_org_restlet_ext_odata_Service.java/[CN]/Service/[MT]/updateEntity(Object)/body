@@ -6,10 +6,14 @@
   entry.setContent(toContent(entity));
   ClientResource resource=new ClientResource(new Reference(serviceRef.toString() + getSubpath(entity)));
   resource.setChallengeResponse(getCredentials());
-  resource.put(entry);
-  this.latestRequest=resource.getRequest();
-  this.latestResponse=resource.getResponse();
-  if (!resource.getStatus().isSuccess()) {
-    throw new ResourceException(resource.getStatus(),"Can't update this entity " + resource.getReference());
+  try {
+    resource.put(entry);
+  }
+ catch (  ResourceException re) {
+    throw new ResourceException(re.getStatus(),"Can't update this entity " + resource.getReference());
+  }
+ finally {
+    this.latestRequest=resource.getRequest();
+    this.latestResponse=resource.getResponse();
   }
 }

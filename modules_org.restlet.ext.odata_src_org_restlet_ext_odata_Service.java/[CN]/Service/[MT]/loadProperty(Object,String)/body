@@ -25,20 +25,15 @@
       ClientResource resource=new ClientResource(ref);
       resource.setChallengeResponse(getCredentials());
       Representation rep=resource.get();
-      if (resource.getStatus().isSuccess()) {
-        DomRepresentation xmlRep=new DomRepresentation(rep);
-        Node node=xmlRep.getNode("//" + propertyName);
-        if (node != null) {
-          Property property=metadata.getProperty(entity,propertyName);
-          try {
-            ReflectUtils.setProperty(entity,property,node.getTextContent());
-          }
- catch (          Exception e) {
-            getLogger().log(Level.WARNING,"Can't set the property " + propertyName + " of "+ entity.getClass()+ " for the service"+ serviceRef,e);
-          }
+      DomRepresentation xmlRep=new DomRepresentation(rep);
+      Node node=xmlRep.getNode("//" + propertyName);
+      if (node != null) {
+        Property property=metadata.getProperty(entity,propertyName);
+        try {
+          ReflectUtils.setProperty(entity,property,node.getTextContent());
         }
- else {
-          getLogger().log(Level.WARNING,"Can't set the property " + propertyName + " of "+ entity.getClass()+ " for the service"+ serviceRef);
+ catch (        Exception e) {
+          getLogger().log(Level.WARNING,"Can't set the property " + propertyName + " of "+ entity.getClass()+ " for the service"+ serviceRef,e);
         }
       }
     }

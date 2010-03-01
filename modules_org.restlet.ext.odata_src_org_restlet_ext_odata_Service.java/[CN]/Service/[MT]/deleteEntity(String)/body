@@ -1,7 +1,14 @@
 {
   ClientResource resource=new ClientResource(new Reference(serviceRef.toString() + entitySubpath));
   resource.setChallengeResponse(getCredentials());
-  resource.delete();
-  this.latestRequest=resource.getRequest();
-  this.latestResponse=resource.getResponse();
+  try {
+    resource.delete();
+  }
+ catch (  ResourceException re) {
+    throw new ResourceException(re.getStatus(),"Can't delete this entity " + resource.getReference());
+  }
+ finally {
+    this.latestRequest=resource.getRequest();
+    this.latestResponse=resource.getResponse();
+  }
 }

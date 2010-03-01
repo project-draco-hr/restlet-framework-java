@@ -21,9 +21,14 @@
       templateRepresentation.write(new FileOutputStream(new File(packageDir,type.getClassName() + ".java")));
     }
     StringBuffer className=new StringBuffer();
-    className.append(schema.getNamespace().getNormalizedName().substring(0,1).toUpperCase());
-    className.append(schema.getNamespace().getNormalizedName().substring(1));
-    className.append("Service");
+    if (serviceClassName != null && metadata.getSchemas().size() == 1) {
+      className.append(serviceClassName);
+    }
+ else {
+      className.append(schema.getNamespace().getNormalizedName().substring(0,1).toUpperCase());
+      className.append(schema.getNamespace().getNormalizedName().substring(1));
+      className.append("Service");
+    }
     Map<String,Object> dataModel=new HashMap<String,Object>();
     dataModel.put("schema",schema);
     dataModel.put("metadata",metadata);
