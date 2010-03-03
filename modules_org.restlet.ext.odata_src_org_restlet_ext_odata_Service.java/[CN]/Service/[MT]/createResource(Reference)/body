@@ -1,5 +1,15 @@
 {
   ClientResource resource=new ClientResource(reference);
   resource.setChallengeResponse(getCredentials());
+  if (getDataServiceVersion() != null || getMaxDataServiceVersion() != null) {
+    Form form=new Form();
+    if (getDataServiceVersion() != null) {
+      form.add("DataServiceVersion",getDataServiceVersion());
+    }
+    if (getMaxDataServiceVersion() != null) {
+      form.add("MaxDataServiceVersion",getMaxDataServiceVersion());
+    }
+    resource.getRequestAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,form);
+  }
   return resource;
 }
