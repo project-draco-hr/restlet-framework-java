@@ -1,7 +1,7 @@
 {
   Component component=null;
   Client warClient=createWarClient(new Context(),getServletConfig());
-  Response response=warClient.get("war:///WEB-INF/restlet.xml");
+  Response response=warClient.handle(new Request(Method.GET,"war:///WEB-INF/restlet.xml"));
   if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
     component=new Component(response.getEntity());
   }

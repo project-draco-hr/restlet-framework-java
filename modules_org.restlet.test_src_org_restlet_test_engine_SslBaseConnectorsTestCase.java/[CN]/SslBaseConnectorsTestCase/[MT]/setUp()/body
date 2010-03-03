@@ -4,7 +4,7 @@
     if (!testKeystoreFile.exists()) {
       BioUtils.delete(this.testDir,true);
       this.testDir.mkdir();
-      Response response=new Client(Protocol.CLAP).get("clap://class/org/restlet/test/engine/dummy.jks");
+      Response response=new Client(Protocol.CLAP).handle(new Request(Method.GET,"clap://class/org/restlet/test/engine/dummy.jks"));
       if (response.getEntity() != null) {
         OutputStream outputStream=new FileOutputStream(testKeystoreFile);
         response.getEntity().write(outputStream);

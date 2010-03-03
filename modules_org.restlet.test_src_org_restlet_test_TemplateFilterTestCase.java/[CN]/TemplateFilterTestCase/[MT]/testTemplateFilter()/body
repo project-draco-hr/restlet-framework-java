@@ -30,20 +30,20 @@
     freemarkerApplication.getTunnelService().setExtensionsTunnel(true);
     velocityApplication.getTunnelService().setExtensionsTunnel(true);
     final Client client=new Client(Protocol.HTTP);
-    Response response=client.get("http://localhost:" + TEST_PORT + "/freemarker/"+ testFileFm1.getName());
+    Response response=client.handle(new Request(Method.GET,"http://localhost:" + TEST_PORT + "/freemarker/"+ testFileFm1.getName()));
     if (response.isEntityAvailable()) {
       assertEquals(response.getEntity().getText(),"Method=GET/Authority=localhost:" + TEST_PORT);
     }
-    response=client.get("http://localhost:" + TEST_PORT + "/freemarker/"+ testFileFm2.getName());
+    response=client.handle(new Request(Method.GET,"http://localhost:" + TEST_PORT + "/freemarker/"+ testFileFm2.getName()));
     assertTrue(response.getStatus().isSuccess());
     if (response.isEntityAvailable()) {
       assertEquals(response.getEntity().getText(),"Method=${m}/Authority=${ra}");
     }
-    response=client.get("http://localhost:" + TEST_PORT + "/velocity/"+ testFileVl1.getName());
+    response=client.handle(new Request(Method.GET,"http://localhost:" + TEST_PORT + "/velocity/"+ testFileVl1.getName()));
     if (response.isEntityAvailable()) {
       assertEquals(response.getEntity().getText(),"Method=GET/Path=/velocity/testVl1");
     }
-    response=client.get("http://localhost:" + TEST_PORT + "/velocity/"+ testFileVl2.getName());
+    response=client.handle(new Request(Method.GET,"http://localhost:" + TEST_PORT + "/velocity/"+ testFileVl2.getName()));
     assertTrue(response.getStatus().isSuccess());
     if (response.isEntityAvailable()) {
       assertEquals(response.getEntity().getText(),"Method=${m}/Path=${rp}");

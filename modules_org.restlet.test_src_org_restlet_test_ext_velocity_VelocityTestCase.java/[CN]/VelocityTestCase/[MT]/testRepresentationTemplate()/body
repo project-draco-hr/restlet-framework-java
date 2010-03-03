@@ -1,16 +1,16 @@
 {
-  final File testDir=new File(System.getProperty("java.io.tmpdir"),"VelocityTestCase");
+  File testDir=new File(System.getProperty("java.io.tmpdir"),"VelocityTestCase");
   testDir.mkdir();
-  final File testFile=File.createTempFile("test",".vm",testDir);
-  final FileWriter fw=new FileWriter(testFile);
+  File testFile=File.createTempFile("test",".vm",testDir);
+  FileWriter fw=new FileWriter(testFile);
   fw.write("Value=$value");
   fw.close();
-  final Map<String,Object> map=new TreeMap<String,Object>();
+  Map<String,Object> map=new TreeMap<String,Object>();
   map.put("value","myValue");
-  final Client client=new Client(Protocol.FILE);
-  final Reference ref=LocalReference.createFileReference(testFile);
-  final Representation templateFile=client.get(ref).getEntity();
-  final TemplateRepresentation tr=new TemplateRepresentation(templateFile,map,MediaType.TEXT_PLAIN);
+  Reference ref=LocalReference.createFileReference(testFile);
+  ClientResource r=new ClientResource(ref);
+  Representation templateFile=r.get();
+  TemplateRepresentation tr=new TemplateRepresentation(templateFile,map,MediaType.TEXT_PLAIN);
   final String result=tr.getText();
   assertEquals("Value=myValue",result);
   BioUtils.delete(testFile);

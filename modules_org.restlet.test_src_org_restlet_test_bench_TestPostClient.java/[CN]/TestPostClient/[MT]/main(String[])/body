@@ -1,10 +1,14 @@
 {
   long startTime=System.currentTimeMillis();
-  Client client=new Client(Protocol.HTTP);
+  ClientResource resource=new ClientResource("http://localhost:8554/");
   FileRepresentation fr=new FileRepresentation("file:///c:/test.mpg",MediaType.VIDEO_MPEG);
   System.out.println("Size sent: " + fr.getSize());
-  Response response=client.post("http://localhost:8554/",fr);
-  System.out.println("Status: " + response.getStatus());
+  try {
+    resource.post(fr);
+  }
+ catch (  ResourceException e) {
+  }
+  System.out.println("Status: " + resource.getStatus());
   long endTime=System.currentTimeMillis();
   System.out.println("Duration: " + (endTime - startTime) + " ms");
 }

@@ -3,7 +3,7 @@
     Representation config=null;
     PropertiesBeanDefinitionReader propReader=null;
     for (    final String ref : getPropertyConfigRefs()) {
-      config=getRestletContext().getClientDispatcher().get(ref).getEntity();
+      config=getRestletContext().getClientDispatcher().handle(new Request(Method.GET,ref)).getEntity();
       if (config != null) {
         propReader=new PropertiesBeanDefinitionReader(this);
         propReader.loadBeanDefinitions(new SpringResource(config));
@@ -11,7 +11,7 @@
     }
     XmlBeanDefinitionReader xmlReader=null;
     for (    final String ref : getXmlConfigRefs()) {
-      config=getRestletContext().getClientDispatcher().get(ref).getEntity();
+      config=getRestletContext().getClientDispatcher().handle(new Request(Method.GET,ref)).getEntity();
       if (config != null) {
         xmlReader=new XmlBeanDefinitionReader(this);
         xmlReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
