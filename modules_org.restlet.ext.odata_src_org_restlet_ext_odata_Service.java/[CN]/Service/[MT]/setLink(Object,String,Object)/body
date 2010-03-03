@@ -1,0 +1,30 @@
+{
+  if (getMetadata() == null || source == null) {
+    return;
+  }
+  if (target != null) {
+    Metadata metadata=(Metadata)getMetadata();
+    ClientResource resource=createResource(metadata.getSubpath(source) + "/$links/" + sourceProperty);
+    try {
+      StringBuilder sb=new StringBuilder("<uri xmlns=\"");
+      sb.append(WCF_DATASERVICES_NAMESPACE);
+      sb.append("\">");
+      sb.append(serviceRef.toString());
+      sb.append(metadata.getSubpath(target));
+      sb.append("</uri>");
+      StringRepresentation r=new StringRepresentation(sb.toString(),MediaType.APPLICATION_XML);
+      resource.put(r);
+    }
+ catch (    ResourceException re) {
+      throw new ResourceException(re.getStatus(),"Can't set entity to this entity set " + resource.getReference());
+    }
+ finally {
+      this.latestRequest=resource.getRequest();
+      this.latestResponse=resource.getResponse();
+    }
+  }
+ else {
+    ReflectUtils.invokeSetter(source,sourceProperty,null);
+    updateEntity(source);
+  }
+}
