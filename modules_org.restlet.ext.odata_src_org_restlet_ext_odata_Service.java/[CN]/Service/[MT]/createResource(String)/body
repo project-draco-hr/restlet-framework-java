@@ -1,0 +1,22 @@
+{
+  String ref=serviceRef.toString();
+  if (ref.endsWith("/")) {
+    if (relativePath.startsWith("/")) {
+      ref=ref + relativePath.substring(1);
+    }
+ else {
+      ref=ref + relativePath;
+    }
+  }
+ else {
+    if (relativePath.startsWith("/")) {
+      ref=ref + relativePath;
+    }
+ else {
+      ref=ref + "/" + relativePath;
+    }
+  }
+  ClientResource resource=new ClientResource(ref);
+  resource.setChallengeResponse(getCredentials());
+  return resource;
+}

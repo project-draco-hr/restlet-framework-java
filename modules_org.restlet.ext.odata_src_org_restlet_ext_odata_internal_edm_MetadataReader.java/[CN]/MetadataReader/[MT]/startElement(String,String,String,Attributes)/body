@@ -26,7 +26,7 @@
     currentEntityType=new EntityType(attr.get("Name"));
     currentEntityType.setSchema(this.currentSchema);
     currentEntityType.setAbstractType(Boolean.parseBoolean(attr.get("Abstract")));
-    currentEntityType.setBlob(Boolean.parseBoolean(attr.get("HasMedia")));
+    currentEntityType.setBlob(Boolean.parseBoolean(attr.get("HasStream")));
     String value=attr.get("BaseType");
     if (value != null) {
       currentEntityType.setBaseType(new EntityType(value));
@@ -50,6 +50,12 @@
     Property property=new Property(attr.get("Name"));
     property.setDefaultValue(attr.get("Default"));
     property.setNullable(Boolean.parseBoolean(attr.get("Nullable")));
+    if ("fixed".equalsIgnoreCase(attr.get("ConcurrencyMode"))) {
+      property.setConcurrent(true);
+    }
+ else {
+      property.setConcurrent(false);
+    }
     property.setType(new Type(attr.get("Type")));
     property.setGetterAccess(attr.get("GetterAccess"));
     property.setSetterAccess(attr.get("SetterAccess"));

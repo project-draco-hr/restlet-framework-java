@@ -20,10 +20,8 @@
     }
   }
  else {
-    String ref=getServiceRef().toString() + getSubpath(entity,propertyName);
+    ClientResource resource=createResource(getSubpath(entity,propertyName));
     try {
-      ClientResource resource=new ClientResource(ref);
-      resource.setChallengeResponse(getCredentials());
       Representation rep=resource.get();
       DomRepresentation xmlRep=new DomRepresentation(rep);
       Node node=xmlRep.getNode("//" + propertyName);
@@ -38,7 +36,7 @@
       }
     }
  catch (    ResourceException e) {
-      getLogger().log(Level.WARNING,"Can't get the following resource " + ref + " for the service"+ serviceRef,e);
+      getLogger().log(Level.WARNING,"Can't get the following resource " + resource.getReference() + " for the service"+ serviceRef,e);
     }
   }
 }

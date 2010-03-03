@@ -1,0 +1,18 @@
+{
+  if (entity != null) {
+    Metadata metadata=(Metadata)getMetadata();
+    EntityType type=metadata.getEntityType(entity.getClass());
+    if (type.isBlob() && type.getBlobValueRefProperty() != null) {
+      try {
+        return (Reference)ReflectUtils.invokeGetter(entity,type.getBlobValueRefProperty().getName());
+      }
+ catch (      Exception e) {
+        getLogger().warning("Cannot get the value of the property " + type.getBlobValueRefProperty().getName() + " on "+ entity);
+      }
+    }
+ else {
+      getLogger().warning("This entity is not a media resource " + entity);
+    }
+  }
+  return null;
+}

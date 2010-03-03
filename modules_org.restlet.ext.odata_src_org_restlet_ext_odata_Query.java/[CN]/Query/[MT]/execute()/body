@@ -1,9 +1,15 @@
 {
   if (!isExecuted()) {
     String targetUri=createTargetUri();
-    ClientResource resource=new ClientResource(targetUri);
-    resource.setChallengeResponse(service.getCredentials());
-    Representation result=resource.get(MediaType.APPLICATION_ATOM);
+    ClientResource resource=service.createResource(new Reference(targetUri));
+    Representation result=null;
+    try {
+      result=resource.get(MediaType.APPLICATION_ATOM);
+    }
+ catch (    ResourceException e) {
+      getLogger().warning("Can't execute the query for the following reference: " + targetUri + " due to "+ e.getMessage());
+      throw e;
+    }
     service.setLatestRequest(resource.getRequest());
     service.setLatestResponse(resource.getResponse());
     if (resource.getStatus().isSuccess()) {

@@ -1,11 +1,6 @@
 {
   if (metadata == null) {
-    String sRef=serviceRef.toString();
-    if (!sRef.endsWith("/")) {
-      sRef+="/";
-    }
-    ClientResource resource=new ClientResource(sRef + "$metadata");
-    resource.setChallengeResponse(getCredentials());
+    ClientResource resource=createResource("$metadata");
     try {
       getLogger().log(Level.INFO,"Get the metadata for " + serviceRef + " at "+ resource.getReference());
       Representation rep=resource.get(MediaType.APPLICATION_XML);
