@@ -7,7 +7,10 @@
   ClientResource resource=new ClientResource(new Reference(serviceRef.toString() + getSubpath(entity)));
   resource.setChallengeResponse(getCredentials());
   try {
-    resource.put(entry);
+    ByteArrayOutputStream o=new ByteArrayOutputStream();
+    entry.write(o);
+    StringRepresentation r=new StringRepresentation(o.toString(),MediaType.APPLICATION_ATOM);
+    resource.put(r);
   }
  catch (  ResourceException re) {
     throw new ResourceException(re.getStatus(),"Can't update this entity " + resource.getReference());

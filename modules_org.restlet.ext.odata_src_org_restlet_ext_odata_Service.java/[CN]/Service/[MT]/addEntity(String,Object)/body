@@ -4,8 +4,13 @@
   ClientResource resource=new ClientResource(new Reference(serviceRef.toString() + entitySetName));
   resource.setChallengeResponse(getCredentials());
   try {
-    entry.write(System.out);
-    resource.post(entry);
+    ByteArrayOutputStream o=new ByteArrayOutputStream();
+    entry.write(o);
+    StringRepresentation r=new StringRepresentation(o.toString(),MediaType.APPLICATION_ATOM);
+    Representation rep=resource.post(r);
+    EntryContentHandler<?> entryContentHandler=new EntryContentHandler<Object>(entity.getClass(),(Metadata)getMetadata(),getLogger());
+    Feed feed=new Feed();
+    feed.getEntries().add(new Entry(rep,entryContentHandler));
   }
  catch (  ResourceException re) {
     throw new ResourceException(re.getStatus(),"Can't add entity to this entity set " + resource.getReference());

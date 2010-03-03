@@ -2,8 +2,10 @@
   Representation r=new SaxRepresentation(MediaType.APPLICATION_XML){
     @Override public void write(    XmlWriter writer) throws IOException {
       try {
+        AttributesImpl nullAttrs=new AttributesImpl();
+        nullAttrs.addAttribute(WCF_DATASERVICES_METADATA_NAMESPACE,"null",null,"boolean","true");
         writer.forceNSDecl(WCF_DATASERVICES_METADATA_NAMESPACE,"m");
-        writer.forceNSDecl(WCF_DATASERVICES_NAMESPACE,"ds");
+        writer.forceNSDecl(WCF_DATASERVICES_NAMESPACE,"d");
         writer.startElement(WCF_DATASERVICES_METADATA_NAMESPACE,"properties");
         for (        Field field : entity.getClass().getDeclaredFields()) {
           String getter="get" + field.getName().substring(0,1).toUpperCase() + field.getName().substring(1);
@@ -23,7 +25,13 @@
                   writer.endElement(WCF_DATASERVICES_NAMESPACE,prop.getName());
                 }
  else {
-                  writer.emptyElement(WCF_DATASERVICES_NAMESPACE,prop.getName());
+                  if (prop.isNullable()) {
+                    writer.emptyElement(WCF_DATASERVICES_NAMESPACE,prop.getName(),prop.getName(),nullAttrs);
+                  }
+ else {
+                    getLogger().warning("The following property has a null value but is not marked as nullable: " + prop.getName());
+                    writer.emptyElement(WCF_DATASERVICES_NAMESPACE,prop.getName());
+                  }
                 }
                 break;
               }
