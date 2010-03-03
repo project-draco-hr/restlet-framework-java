@@ -9,6 +9,10 @@
     ByteArrayOutputStream o=new ByteArrayOutputStream();
     entry.write(o);
     StringRepresentation r=new StringRepresentation(o.toString(),MediaType.APPLICATION_ATOM);
+    String eTag=getETag(entity);
+    if (eTag != null) {
+      resource.getConditions().setMatch(Arrays.asList(new Tag(eTag)));
+    }
     resource.put(r);
   }
  catch (  ResourceException re) {

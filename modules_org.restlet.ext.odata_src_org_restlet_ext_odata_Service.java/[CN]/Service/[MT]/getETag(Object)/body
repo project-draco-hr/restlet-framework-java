@@ -1,0 +1,28 @@
+{
+  String result=null;
+  if (entity != null) {
+    Metadata metadata=(Metadata)getMetadata();
+    EntityType type=metadata.getEntityType(entity.getClass());
+    StringBuilder sb=new StringBuilder();
+    boolean found=false;
+    for (    Property property : type.getProperties()) {
+      if (property.isConcurrent()) {
+        found=true;
+        Object value=null;
+        try {
+          value=ReflectUtils.invokeGetter(entity,property.getName());
+          if (value != null) {
+            sb.append(value);
+          }
+        }
+ catch (        Exception e) {
+          getLogger().warning("Cannot get the value of the property " + property.getName() + " on "+ entity);
+        }
+      }
+    }
+    if (found) {
+      result=Reference.encode(sb.toString(),CharacterSet.US_ASCII);
+    }
+  }
+  return result;
+}
