@@ -1,21 +1,22 @@
 {
-  Entry entry=new Entry();
-  entry.setContent(toContent(entity));
-  ClientResource resource=createResource(entitySetName);
-  try {
-    ByteArrayOutputStream o=new ByteArrayOutputStream();
-    entry.write(o);
-    StringRepresentation r=new StringRepresentation(o.toString(),MediaType.APPLICATION_ATOM);
-    Representation rep=resource.post(r);
-    EntryContentHandler<?> entryContentHandler=new EntryContentHandler<Object>(entity.getClass(),(Metadata)getMetadata(),getLogger());
-    Feed feed=new Feed();
-    feed.getEntries().add(new Entry(rep,entryContentHandler));
-  }
- catch (  ResourceException re) {
-    throw new ResourceException(re.getStatus(),"Can't add entity to this entity set " + resource.getReference());
-  }
+  if (entity != null) {
+    Entry entry=toEntry(entity);
+    ClientResource resource=createResource(entitySetName);
+    try {
+      ByteArrayOutputStream o=new ByteArrayOutputStream();
+      entry.write(o);
+      StringRepresentation r=new StringRepresentation(o.toString(),MediaType.APPLICATION_ATOM);
+      Representation rep=resource.post(r);
+      EntryContentHandler<?> entryContentHandler=new EntryContentHandler<Object>(entity.getClass(),(Metadata)getMetadata(),getLogger());
+      Feed feed=new Feed();
+      feed.getEntries().add(new Entry(rep,entryContentHandler));
+    }
+ catch (    ResourceException re) {
+      throw new ResourceException(re.getStatus(),"Can't add entity to this entity set " + resource.getReference());
+    }
  finally {
-    this.latestRequest=resource.getRequest();
-    this.latestResponse=resource.getResponse();
+      this.latestRequest=resource.getRequest();
+      this.latestResponse=resource.getResponse();
+    }
   }
 }

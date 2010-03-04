@@ -44,11 +44,16 @@
       }
     }
   }
- else   if (parseContent) {
+ else   if (parseProperties) {
     if (Service.WCF_DATASERVICES_NAMESPACE.equals(uri)) {
       sb=new StringBuilder();
       parseProperty=true;
       parsePropertyNull=Boolean.parseBoolean(attrs.getValue(Service.WCF_DATASERVICES_METADATA_NAMESPACE,"null"));
+    }
+  }
+ else   if (parseContent) {
+    if (Service.WCF_DATASERVICES_METADATA_NAMESPACE.equals(uri) && "properties".equals(localName)) {
+      parseProperties=true;
     }
  else {
       if (entityType.isBlob() && entityType.getBlobValueRefProperty() != null) {
@@ -69,33 +74,38 @@
     parseCount=true;
   }
  else   if (parseEntry) {
-    eltPath.add(localName);
-    StringBuilder sb=new StringBuilder();
-    for (int i=0; i < eltPath.size(); i++) {
-      if (i > 0) {
-        sb.append("/");
-      }
-      sb.append(eltPath.get(i));
+    if (Service.WCF_DATASERVICES_METADATA_NAMESPACE.equals(uri) && "properties".equals(localName) && entityType.isBlob()) {
+      parseProperties=true;
     }
-    String str=sb.toString();
-    for (    Mapping m : metadata.getMappings()) {
-      if (entityType != null && entityType.equals(m.getType()) && m.getNsUri() != null && m.getNsUri().equals(uri) && str.equals(m.getValueNodePath())) {
-        if (m.isAttributeValue()) {
-          String value=attrs.getValue(uri,m.getValueAttributeName());
-          if (value != null) {
-            try {
-              ReflectUtils.invokeSetter(entity,m.getPropertyPath(),value);
-            }
- catch (            Exception e) {
-              getLogger().warning("Cannot set " + m.getPropertyPath() + " property on "+ entity+ " with value "+ value);
+ else {
+      eltPath.add(localName);
+      StringBuilder sb=new StringBuilder();
+      for (int i=0; i < eltPath.size(); i++) {
+        if (i > 0) {
+          sb.append("/");
+        }
+        sb.append(eltPath.get(i));
+      }
+      String str=sb.toString();
+      for (      Mapping m : metadata.getMappings()) {
+        if (entityType != null && entityType.equals(m.getType()) && m.getNsUri() != null && m.getNsUri().equals(uri) && str.equals(m.getValueNodePath())) {
+          if (m.isAttributeValue()) {
+            String value=attrs.getValue(uri,m.getValueAttributeName());
+            if (value != null) {
+              try {
+                ReflectUtils.invokeSetter(entity,m.getPropertyPath(),value);
+              }
+ catch (              Exception e) {
+                getLogger().warning("Cannot set " + m.getPropertyPath() + " property on "+ entity+ " with value "+ value);
+              }
             }
           }
-        }
  else {
-          this.sb=new StringBuilder();
-          mapping=m;
+            this.sb=new StringBuilder();
+            mapping=m;
+          }
+          break;
         }
-        break;
       }
     }
   }
