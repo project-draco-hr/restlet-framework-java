@@ -3,12 +3,12 @@
     System.err.println("You need to pass a term to search");
   }
  else {
-    final String term=Reference.encode(args[0]);
-    final String uri=BASE_URI + "?appid=restbook&query=" + term;
-    final Response response=new Client(Protocol.HTTP).get(uri);
-    final DomRepresentation document=new DomRepresentation(response.getEntity());
-    final String expr="/ResultSet/Result/Title";
-    for (    final Node node : document.getNodes(expr)) {
+    String term=Reference.encode(args[0]);
+    String uri=BASE_URI + "?appid=restbook&query=" + term;
+    Representation entity=new ClientResource(uri).get();
+    DomRepresentation document=new DomRepresentation(entity);
+    String expr="/ResultSet/Result/Title";
+    for (    Node node : document.getNodes(expr)) {
       System.out.println(node.getTextContent());
     }
   }

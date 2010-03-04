@@ -3,14 +3,14 @@
     System.err.println("You need to pass your del.icio.us user name and password");
   }
  else {
-    final Request request=new Request(Method.GET,"https://api.del.icio.us/v1/posts/recent");
-    request.setChallengeResponse(new ChallengeResponse(ChallengeScheme.HTTP_BASIC,args[0],args[1]));
-    final Response response=new Client(Protocol.HTTPS).handle(request);
-    final DomRepresentation document=new DomRepresentation(response.getEntity());
-    for (    final Node node : document.getNodes("/posts/post")) {
-      final NamedNodeMap attrs=node.getAttributes();
-      final String desc=attrs.getNamedItem("description").getNodeValue();
-      final String href=attrs.getNamedItem("href").getNodeValue();
+    ClientResource resource=new ClientResource("https://api.del.icio.us/v1/posts/recent");
+    resource.setChallengeResponse(new ChallengeResponse(ChallengeScheme.HTTP_BASIC,args[0],args[1]));
+    Representation entity=resource.get();
+    DomRepresentation document=new DomRepresentation(entity);
+    for (    Node node : document.getNodes("/posts/post")) {
+      NamedNodeMap attrs=node.getAttributes();
+      String desc=attrs.getNamedItem("description").getNodeValue();
+      String href=attrs.getNamedItem("href").getNodeValue();
       System.out.println(desc + ": " + href);
     }
   }

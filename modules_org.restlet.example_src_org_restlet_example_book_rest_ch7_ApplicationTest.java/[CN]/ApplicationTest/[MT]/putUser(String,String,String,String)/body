@@ -1,8 +1,9 @@
 {
-  final Form form=new Form();
+  Form form=new Form();
   form.add("user[password]",password);
   form.add("user[full_name]",fullName);
   form.add("user[email]",email);
-  final Response resp=new Client(Protocol.HTTP).put(getUserUri(userName),form.getWebRepresentation());
-  System.out.println(resp.getStatus());
+  ClientResource resource=new ClientResource(getUserUri(userName));
+  resource.put(form.getWebRepresentation());
+  System.out.println(resource.getStatus());
 }
