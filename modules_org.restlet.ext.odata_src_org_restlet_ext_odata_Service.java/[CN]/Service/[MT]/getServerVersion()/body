@@ -1,0 +1,16 @@
+{
+  if (serverVersion == null) {
+    if (this.latestResponse != null) {
+      Object o=this.latestResponse.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
+      if (o != null) {
+        Series<Parameter> headers=(Series<Parameter>)o;
+        String strHeader=headers.getFirstValue("DataServiceVersion");
+        if (strHeader != null) {
+          HeaderReader reader=new HeaderReader(strHeader);
+          this.serverVersion=reader.readToken();
+        }
+      }
+    }
+  }
+  return serverVersion;
+}
