@@ -1,0 +1,37 @@
+{
+  Query<Cafe> query1=service.createCafeQuery("/Cafes");
+  Query<Cafe> query2=query1.expand("Items");
+  Iterator<Cafe> iterator=query2.iterator();
+  assertTrue(iterator.hasNext());
+  Cafe cafe=iterator.next();
+  assertEquals("1",cafe.getId());
+  assertEquals("Le Caf?? Louis",cafe.getName());
+  assertEquals("Cafe corp.",cafe.getCompanyName());
+  assertEquals("Levallois-Perret",cafe.getCity());
+  assertEquals(92300,cafe.getZipCode());
+  Iterator<Item> iterator2=cafe.getItems().iterator();
+  assertTrue(iterator2.hasNext());
+  Item item=iterator2.next();
+  assertEquals("1",item.getId());
+  assertEquals("Poulet au curry",item.getDescription());
+  assertTrue(iterator2.hasNext());
+  item=iterator2.next();
+  assertEquals("2",item.getId());
+  assertEquals("P??t??",item.getDescription());
+  assertTrue(iterator.hasNext());
+  cafe=iterator.next();
+  assertEquals("2",cafe.getId());
+  assertEquals("Le Petit Marly",cafe.getName());
+  assertEquals("Cafe inc.",cafe.getCompanyName());
+  assertEquals("Marly Le Roi",cafe.getCity());
+  assertEquals(78310,cafe.getZipCode());
+  iterator2=cafe.getItems().iterator();
+  assertTrue(iterator2.hasNext());
+  item=iterator2.next();
+  assertEquals("3",item.getId());
+  assertEquals("Banana Split",item.getDescription());
+  assertTrue(iterator2.hasNext());
+  item=iterator2.next();
+  assertEquals("4",item.getId());
+  assertEquals("C??te du Rhone",item.getDescription());
+}

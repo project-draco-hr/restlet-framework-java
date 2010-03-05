@@ -1,0 +1,15 @@
+{
+  if (Method.GET.equals(request.getMethod())) {
+    Form form=request.getResourceRef().getQueryAsForm();
+    String uri="/" + this.getClass().getPackage().getName().replace(".","/") + "/"+ file;
+    if (form.getFirstValue("$expand") != null) {
+      uri+=form.getFirstValue("$expand");
+    }
+    Response r=getContext().getClientDispatcher().handle(new Request(Method.GET,LocalReference.createClapReference(LocalReference.CLAP_CLASS,uri + ".xml")));
+    response.setEntity(r.getEntity());
+    response.setStatus(r.getStatus());
+  }
+ else   if (!updatable) {
+    response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+  }
+}

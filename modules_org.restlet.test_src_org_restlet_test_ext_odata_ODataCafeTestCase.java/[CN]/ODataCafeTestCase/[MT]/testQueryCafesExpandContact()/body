@@ -1,0 +1,29 @@
+{
+  Query<Cafe> query1=service.createCafeQuery("/Cafes");
+  Query<Cafe> query2=query1.expand("Contact");
+  Iterator<Cafe> iterator=query2.iterator();
+  assertTrue(iterator.hasNext());
+  Cafe cafe=iterator.next();
+  assertEquals("1",cafe.getId());
+  assertEquals("Le Caf?? Louis",cafe.getName());
+  assertEquals("Cafe corp.",cafe.getCompanyName());
+  assertEquals("Levallois-Perret",cafe.getCity());
+  assertEquals(92300,cafe.getZipCode());
+  Contact contact=cafe.getContact();
+  assertNotNull(contact);
+  assertEquals("1",contact.getId());
+  assertEquals("Agathe Zeblues",contact.getName());
+  assertEquals("Chief",contact.getTitle());
+  assertTrue(iterator.hasNext());
+  cafe=iterator.next();
+  assertEquals("2",cafe.getId());
+  assertEquals("Le Petit Marly",cafe.getName());
+  assertEquals("Cafe inc.",cafe.getCompanyName());
+  assertEquals("Marly Le Roi",cafe.getCity());
+  assertEquals(78310,cafe.getZipCode());
+  contact=cafe.getContact();
+  assertNotNull(contact);
+  assertEquals("2",contact.getId());
+  assertEquals("Alphonse Denltas",contact.getName());
+  assertEquals("Boss",contact.getTitle());
+}
