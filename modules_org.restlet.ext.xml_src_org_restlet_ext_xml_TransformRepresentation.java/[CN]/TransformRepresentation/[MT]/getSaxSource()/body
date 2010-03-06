@@ -1,31 +1,3 @@
 {
-  SAXSource result=null;
-  if (getSourceRepresentation() instanceof XmlRepresentation) {
-    result=((XmlRepresentation)getSourceRepresentation()).getSaxSource();
-  }
- else   if (getSourceRepresentation() instanceof TransformRepresentation) {
-    XMLReader reader=new AbstractXmlReader(){
-      public void parse(      String systemId) throws IOException, SAXException {
-        throw new IllegalStateException("Not implemented");
-      }
-      public void parse(      InputSource input) throws IOException, SAXException {
-        try {
-          TransformRepresentation source=(TransformRepresentation)getSourceRepresentation();
-          source.getTransformer().transform(source.getSaxSource(),new SAXResult(getContentHandler()));
-        }
- catch (        TransformerException te) {
-          throw new IOException("Transformer exception. " + te.getMessage());
-        }
-      }
-    }
-;
-    result=new SAXSource(reader,null);
-  }
- else {
-    result=new SAXSource(new InputSource(getSourceRepresentation().getReader()));
-  }
-  if (getSourceRepresentation().getIdentifier() != null) {
-    result.setSystemId(getSourceRepresentation().getIdentifier().getTargetRef().toString());
-  }
-  return result;
+  return toSaxSource(getSourceRepresentation());
 }
