@@ -1,5 +1,19 @@
 {
   DomRepresentation mailRep=new DomRepresentation(representation);
+  Representation mailXsd=new ClientResource(LocalReference.createClapReference(getClass().getPackage()) + "/Mail.xsd").get();
+  mailRep.setSchema(mailXsd);
+  mailRep.setErrorHandler(new ErrorHandler(){
+    public void error(    SAXParseException exception) throws SAXException {
+      throw new ResourceException(exception);
+    }
+    public void fatalError(    SAXParseException exception) throws SAXException {
+      throw new ResourceException(exception);
+    }
+    public void warning(    SAXParseException exception) throws SAXException {
+      throw new ResourceException(exception);
+    }
+  }
+);
   String rmepNs="http://www.rmep.org/namespaces/1.0";
   mailRep.setNamespaceAware(true);
   mailRep.getNamespaces().put("",rmepNs);
