@@ -1,0 +1,28 @@
+{
+  DomRepresentation result;
+  try {
+    result=new DomRepresentation();
+    result.setIndenting(true);
+    String rmepNs="http://www.rmep.org/namespaces/1.0";
+    result.setNamespaceAware(true);
+    Document doc=result.getDocument();
+    Node mailElt=doc.createElementNS(rmepNs,"mail");
+    doc.appendChild(mailElt);
+    Node statusElt=doc.createElementNS(rmepNs,"status");
+    statusElt.setTextContent("received");
+    mailElt.appendChild(statusElt);
+    Node subjectElt=doc.createElementNS(rmepNs,"subject");
+    subjectElt.setTextContent("Message to self");
+    mailElt.appendChild(subjectElt);
+    Node contentElt=doc.createElementNS(rmepNs,"content");
+    contentElt.setTextContent("Doh!");
+    mailElt.appendChild(contentElt);
+    Node accountRefElt=doc.createElementNS(rmepNs,"accountRef");
+    accountRefElt.setTextContent(new Reference(getReference(),"..").getTargetRef().toString());
+    mailElt.appendChild(accountRefElt);
+  }
+ catch (  IOException e) {
+    throw new ResourceException(e);
+  }
+  return result;
+}
