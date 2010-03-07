@@ -2,13 +2,18 @@
   Client client=new Client(Protocol.HTTP);
   Request request=new Request(Method.PUT,"http://localhost:" + TEST_PORT + "/");
   StringRepresentation rep=new StringRepresentation("0123456789");
-  DigesterRepresentation digester=rep.getDigester();
-  digester.exhaust();
-  digester.setDigest(digester.computeDigest());
-  request.setEntity(digester);
-  Response response=client.handle(request);
-  assertEquals(Status.SUCCESS_OK,response.getStatus());
-  digester=response.getEntity().getDigester();
-  digester.exhaust();
-  assertTrue(digester.checkDigest());
+  try {
+    DigesterRepresentation digester=new DigesterRepresentation(rep);
+    digester.exhaust();
+    digester.setDigest(digester.computeDigest());
+    request.setEntity(digester);
+    Response response=client.handle(request);
+    assertEquals(Status.SUCCESS_OK,response.getStatus());
+    digester=new DigesterRepresentation(response.getEntity());
+    digester.exhaust();
+    assertTrue(digester.checkDigest());
+  }
+ catch (  Exception e) {
+    fail(e.getMessage());
+  }
 }
