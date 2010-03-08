@@ -11,26 +11,21 @@
   }
  else   if ("entityType".equalsIgnoreCase(localName)) {
     if (currentEntityType.isBlob()) {
-      String[] values={"blobReference","blobReferenceValue","_blobReference","_blobReferenceValue"};
-      int index=0;
-      for (int i=0; i < currentEntityType.getProperties().size() && (index < values.length); i++) {
-        Property property=currentEntityType.getProperties().get(i);
-        if (values[index].equals(property.getName())) {
-          index++;
-        }
-      }
-      for (int i=0; i < currentEntityType.getAssociations().size() && (index < values.length); i++) {
-        NavigationProperty property=currentEntityType.getAssociations().get(i);
-        if (values[index].equals(property.getName())) {
-          index++;
-        }
-      }
-      if (index == values.length) {
+      String memberName=chooseAttributeName(currentEntityType,blobRefValues);
+      if (memberName == null) {
         currentEntityType.setBlob(false);
       }
  else {
-        Property property=new Property(values[index]);
+        Property property=new Property(memberName);
         currentEntityType.setBlobValueRefProperty(property);
+      }
+      memberName=chooseAttributeName(currentEntityType,blobEditRefValues);
+      if (memberName == null) {
+        currentEntityType.setBlob(false);
+      }
+ else {
+        Property property=new Property(memberName);
+        currentEntityType.setBlobValueEditRefProperty(property);
       }
     }
     popState();

@@ -48,4 +48,16 @@
       }
     }
   }
+  if (entityType.isBlob() && entityType.getBlobValueEditRefProperty() != null) {
+    Link link=entry.getLink(new Relation("edit-media"));
+    String pty=entityType.getBlobValueEditRefProperty().getName();
+    if (link != null) {
+      try {
+        ReflectUtils.invokeSetter(entity,pty,link.getHref());
+      }
+ catch (      Exception e) {
+        getLogger().warning("Cannot set the property " + pty + " on "+ entity+ " with value "+ link.getHref());
+      }
+    }
+  }
 }
