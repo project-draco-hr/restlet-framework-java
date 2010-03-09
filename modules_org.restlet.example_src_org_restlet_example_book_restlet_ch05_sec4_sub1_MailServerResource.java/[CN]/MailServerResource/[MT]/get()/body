@@ -4,6 +4,7 @@
   mail.setSubject("Message to self");
   mail.setContent("Doh!");
   mail.setAccountRef(new Reference(getReference(),"..").getTargetRef().toString());
-  JacksonRepresentation<Mail> result=new JacksonRepresentation<Mail>(mail);
+  Representation mailFtl=new ClientResource(LocalReference.createClapReference(getClass().getPackage()) + "/Mail.ftl").get();
+  TemplateRepresentation result=new TemplateRepresentation(mailFtl,mail,MediaType.TEXT_HTML);
   return result;
 }
