@@ -1,0 +1,19 @@
+{
+  Mail mail=null;
+  if (MediaType.APPLICATION_XML.isCompatible(representation.getMediaType())) {
+    mail=new XstreamRepresentation<Mail>(representation).getObject();
+    System.out.println("XML representation received");
+  }
+ else   if (MediaType.APPLICATION_JSON.isCompatible(representation.getMediaType())) {
+    mail=new JacksonRepresentation<Mail>(representation,Mail.class).getObject();
+    System.out.println("JSON representation received");
+  }
+  if (mail != null) {
+    System.out.println("Status: " + mail.getStatus());
+    System.out.println("Subject: " + mail.getSubject());
+    System.out.println("Content: " + mail.getContent());
+    System.out.println("Account URI: " + mail.getAccountRef());
+    System.out.println();
+  }
+  return null;
+}
