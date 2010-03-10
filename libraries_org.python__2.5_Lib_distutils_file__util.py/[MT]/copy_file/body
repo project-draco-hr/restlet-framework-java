@@ -1,0 +1,45 @@
+def copy_file(src, dst, preserve_mode=1, preserve_times=1, update=0, link=None, verbose=0, dry_run=0):
+    'Copy a file \'src\' to \'dst\'.  If \'dst\' is a directory, then \'src\' is\n    copied there with the same name; otherwise, it must be a filename.  (If\n    the file exists, it will be ruthlessly clobbered.)  If \'preserve_mode\'\n    is true (the default), the file\'s mode (type and permission bits, or\n    whatever is analogous on the current platform) is copied.  If\n    \'preserve_times\' is true (the default), the last-modified and\n    last-access times are copied as well.  If \'update\' is true, \'src\' will\n    only be copied if \'dst\' does not exist, or if \'dst\' does exist but is\n    older than \'src\'.\n\n    \'link\' allows you to make hard links (os.link) or symbolic links\n    (os.symlink) instead of copying: set it to "hard" or "sym"; if it is\n    None (the default), files are copied.  Don\'t set \'link\' on systems that\n    don\'t support it: \'copy_file()\' doesn\'t check if hard or symbolic\n    linking is available.\n\n    Under Mac OS, uses the native file copy function in macostools; on\n    other systems, uses \'_copy_file_contents()\' to copy file contents.\n\n    Return a tuple (dest_name, copied): \'dest_name\' is the actual name of\n    the output file, and \'copied\' is true if the file was copied (or would\n    have been copied, if \'dry_run\' true).\n    '
+    from distutils.dep_util import newer
+    from stat import ST_ATIME, ST_MTIME, ST_MODE, S_IMODE
+    if (not os.path.isfile(src)):
+        raise DistutilsFileError, ("can't copy '%s': doesn't exist or not a regular file" % src)
+    if os.path.isdir(dst):
+        dir = dst
+        dst = os.path.join(dst, os.path.basename(src))
+    else:
+        dir = os.path.dirname(dst)
+    if (update and (not newer(src, dst))):
+        log.debug('not copying %s (output up-to-date)', src)
+        return (dst, 0)
+    try:
+        action = _copy_action[link]
+    except KeyError:
+        raise ValueError, ("invalid value '%s' for 'link' argument" % link)
+    if (os.path.basename(dst) == os.path.basename(src)):
+        log.info('%s %s -> %s', action, src, dir)
+    else:
+        log.info('%s %s -> %s', action, src, dst)
+    if dry_run:
+        return (dst, 1)
+    if (os.name == 'mac'):
+        import macostools
+        try:
+            macostools.copy(src, dst, 0, preserve_times)
+        except os.error as exc:
+            raise DistutilsFileError, ("could not copy '%s' to '%s': %s" % (src, dst, exc[(-1)]))
+    elif (link == 'hard'):
+        if (not (os.path.exists(dst) and os.path.samefile(src, dst))):
+            os.link(src, dst)
+    elif (link == 'sym'):
+        if (not (os.path.exists(dst) and os.path.samefile(src, dst))):
+            os.symlink(src, dst)
+    else:
+        _copy_file_contents(src, dst)
+        if (preserve_mode or preserve_times):
+            st = os.stat(src)
+            if preserve_times:
+                os.utime(dst, (st[ST_ATIME], st[ST_MTIME]))
+            if (preserve_mode and hasattr(os, 'chmod')):
+                os.chmod(dst, S_IMODE(st[ST_MODE]))
+    return (dst, 1)

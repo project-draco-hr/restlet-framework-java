@@ -1,0 +1,14 @@
+def visitSubscript(self, node, aug_flag=None):
+    self.visit(node.expr)
+    for sub in node.subs:
+        self.visit(sub)
+    if (len(node.subs) > 1):
+        self.emit('BUILD_TUPLE', len(node.subs))
+    if aug_flag:
+        self.emit('DUP_TOPX', 2)
+    if (node.flags == 'OP_APPLY'):
+        self.emit('BINARY_SUBSCR')
+    elif (node.flags == 'OP_ASSIGN'):
+        self.emit('STORE_SUBSCR')
+    elif (node.flags == 'OP_DELETE'):
+        self.emit('DELETE_SUBSCR')

@@ -1,0 +1,12 @@
+def test_parse_unicode(self):
+    foo = u'\u0105\n'
+    self.assertEqual(len(foo), 2, repr(foo))
+    self.assertEqual(repr(foo), "u'\\u0105\\n'")
+    self.assertEqual(ord(foo[0]), 261)
+    self.assertEqual(ord(foo[1]), 10)
+    bar = foo.encode('utf-8')
+    self.assertEqual(len(bar), 3)
+    self.assertEqual(repr(bar), "'\\xc4\\x85\\n'")
+    self.assertEqual(ord(bar[0]), 196)
+    self.assertEqual(ord(bar[1]), 133)
+    self.assertEqual(ord(bar[2]), 10)

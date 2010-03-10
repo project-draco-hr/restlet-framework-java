@@ -1,0 +1,15 @@
+def test_tb_across_threads(self):
+    if (not test_support.is_jython):
+        return
+
+
+    class PyRunnable(Runnable):
+
+        def run(self):
+            raise TypeError('this is only a test')
+    try:
+        EventQueue.invokeAndWait(PyRunnable())
+    except TypeError:
+        self.assertEqual(tb_info(), [('test_tb_across_threads', 'EventQueue.invokeAndWait(PyRunnable())'), ('run', "raise TypeError('this is only a test')")])
+    else:
+        self.fail('Expected TypeError')

@@ -1,0 +1,19 @@
+@bigmemtest(minsize=(_2G + 10), memuse=2)
+def test_format(self, size):
+    s = ('-' * size)
+    sf = ('%s' % (s,))
+    self.failUnless((s == sf))
+    del sf
+    sf = ('..%s..' % (s,))
+    self.assertEquals(len(sf), (len(s) + 4))
+    self.failUnless(sf.startswith('..-'))
+    self.failUnless(sf.endswith('-..'))
+    del s, sf
+    size //= 2
+    edge = ('-' * size)
+    s = ''.join([edge, '%s', edge])
+    del edge
+    s = (s % '...')
+    self.assertEquals(len(s), ((size * 2) + 3))
+    self.assertEquals(s.count('.'), 3)
+    self.assertEquals(s.count('-'), (size * 2))

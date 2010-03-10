@@ -1,0 +1,19 @@
+def test_old_dirtype(self):
+    'Test old style dirtype member (bug #1336623).\n        '
+    filename = tmpname()
+    tarinfo = tarfile.TarInfo('directory/')
+    tarinfo.type = tarfile.REGTYPE
+    fobj = open(filename, 'w')
+    fobj.write(tarinfo.tobuf())
+    fobj.close()
+    try:
+        tar = tarfile.open(filename)
+        tarinfo = tar.getmembers()[0]
+        tar.close()
+        self.assert_((tarinfo.type == tarfile.DIRTYPE))
+        self.assert_(tarinfo.name.endswith('/'))
+    finally:
+        try:
+            os.unlink(filename)
+        except:
+            pass

@@ -1,0 +1,9 @@
+def _encode(arg, encoding):
+    if isinstance(arg, unicode):
+        return arg.encode(encoding)
+    else:
+        if isinstance(arg, dict):
+            iterator = arg.iteritems()
+        else:
+            iterator = iter(arg)
+        return type(arg)((_encode(_arg, encoding) for _arg in iterator))

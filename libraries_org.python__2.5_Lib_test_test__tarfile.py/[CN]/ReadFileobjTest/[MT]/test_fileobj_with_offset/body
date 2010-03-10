@@ -1,0 +1,23 @@
+def test_fileobj_with_offset(self):
+    self.tar.next()
+    t = self.tar.next()
+    name = t.name
+    offset = t.offset
+    data = self.tar.extractfile(t).read()
+    self.tar.close()
+    if (self.comp == 'gz'):
+        _open = gzip.GzipFile
+    elif (self.comp == 'bz2'):
+        _open = bz2.BZ2File
+    else:
+        _open = open
+    fobj = _open(tarname(self.comp), 'rb')
+    fobj.seek(offset)
+    self.tar.close()
+    self.tar = tarfile.open(tarname(self.comp), 'r:', fileobj=fobj)
+    t = self.tar.next()
+    self.assertEqual(t.name, name)
+    self.tar.getmembers()
+    self.assertEqual(self.tar.extractfile(t).read(), data, 'seek back did not work')
+    self.tar.close()
+    fobj.close()

@@ -1,0 +1,24 @@
+def test_subbclassing(self):
+
+
+    class EditableString(array.array):
+
+        def __new__(cls, s, *args, **kwargs):
+            return array.array.__new__(cls, 'c', s)
+
+        def __init__(self, s, color='blue'):
+            array.array.__init__(self, 'c', s)
+            self.color = color
+
+        def strip(self):
+            self[:] = array.array('c', self.tostring().strip())
+
+        def __repr__(self):
+            return ('EditableString(%r)' % self.tostring())
+    s = EditableString('\ttest\r\n')
+    s.strip()
+    self.assertEqual(s.tostring(), 'test')
+    self.assertEqual(s.color, 'blue')
+    s.color = 'red'
+    self.assertEqual(s.color, 'red')
+    self.assertEqual(s.__dict__.keys(), ['color'])

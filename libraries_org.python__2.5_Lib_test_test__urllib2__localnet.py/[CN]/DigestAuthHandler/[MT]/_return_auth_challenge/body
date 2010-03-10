@@ -1,0 +1,7 @@
+def _return_auth_challenge(self, request_handler):
+    request_handler.send_response(407, 'Proxy Authentication Required')
+    request_handler.send_header('Content-Type', 'text/html')
+    request_handler.send_header('Proxy-Authenticate', ('Digest realm="%s", qop="%s",nonce="%s", ' % (self._realm_name, self._qop, self._generate_nonce())))
+    request_handler.end_headers()
+    request_handler.wfile.write('Proxy Authentication Required.')
+    return False

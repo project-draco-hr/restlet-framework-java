@@ -1,0 +1,14 @@
+def testAFakeZlib(self):
+    if ('zlib' in sys.builtin_module_names):
+        return
+    if ('zlib' in sys.modules):
+        del sys.modules['zlib']
+    files = {'zlib.py': (NOW, test_src), }
+    try:
+        self.doTest('.py', files, 'zlib')
+    except ImportError:
+        if (self.compression != ZIP_DEFLATED):
+            self.fail('expected test to not raise ImportError')
+    else:
+        if (self.compression != ZIP_STORED):
+            self.fail('expected test to raise ImportError')

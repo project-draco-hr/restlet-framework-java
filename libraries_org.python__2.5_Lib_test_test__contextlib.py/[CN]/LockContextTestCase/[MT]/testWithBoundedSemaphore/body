@@ -1,0 +1,10 @@
+def testWithBoundedSemaphore(self):
+    lock = threading.BoundedSemaphore()
+
+    def locked():
+        if lock.acquire(False):
+            lock.release()
+            return False
+        else:
+            return True
+    self.boilerPlate(lock, locked)

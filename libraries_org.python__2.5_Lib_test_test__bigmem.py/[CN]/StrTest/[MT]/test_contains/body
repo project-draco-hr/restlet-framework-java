@@ -1,0 +1,12 @@
+@bigmemtest(minsize=_2G, memuse=2)
+def test_contains(self, size):
+    SUBSTR = '0123456789'
+    edge = ('-' * (size // 2))
+    s = ''.join([edge, SUBSTR, edge])
+    del edge
+    self.failUnless((SUBSTR in s))
+    self.failIf(((SUBSTR * 2) in s))
+    self.failUnless(('-' in s))
+    self.failIf(('a' in s))
+    s += 'a'
+    self.failUnless(('a' in s))

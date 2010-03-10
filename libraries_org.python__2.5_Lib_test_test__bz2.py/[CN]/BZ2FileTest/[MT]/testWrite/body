@@ -1,0 +1,8 @@
+def testWrite(self):
+    bz2f = BZ2File(self.filename, 'w')
+    self.assertRaises(TypeError, bz2f.write)
+    bz2f.write(self.TEXT)
+    bz2f.close()
+    f = open(self.filename, 'rb')
+    self.assertEqual(self.decompress(f.read()), self.TEXT)
+    f.close()

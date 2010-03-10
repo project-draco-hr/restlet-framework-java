@@ -1,0 +1,19 @@
+def zipTest(self, f, compression):
+    zipfp = zipfile.ZipFile(f, 'w', compression, allowZip64=True)
+    filecount = ((6 * (1024 ** 3)) // len(self.data))
+    next_time = (time.time() + _PRINT_WORKING_MSG_INTERVAL)
+    for num in range(filecount):
+        zipfp.writestr(('testfn%d' % num), self.data)
+        if (next_time <= time.time()):
+            next_time = (time.time() + _PRINT_WORKING_MSG_INTERVAL)
+            print  >> sys.__stdout__, ('  zipTest still writing %d of %d, be patient...' % (num, filecount))
+            sys.__stdout__.flush()
+    zipfp.close()
+    zipfp = zipfile.ZipFile(f, 'r', compression)
+    for num in range(filecount):
+        self.assertEqual(zipfp.read(('testfn%d' % num)), self.data)
+        if (next_time <= time.time()):
+            next_time = (time.time() + _PRINT_WORKING_MSG_INTERVAL)
+            print  >> sys.__stdout__, ('  zipTest still reading %d of %d, be patient...' % (num, filecount))
+            sys.__stdout__.flush()
+    zipfp.close()

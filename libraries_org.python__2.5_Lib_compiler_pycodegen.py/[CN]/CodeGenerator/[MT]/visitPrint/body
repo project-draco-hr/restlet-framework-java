@@ -1,0 +1,15 @@
+def visitPrint(self, node, newline=0):
+    self.set_lineno(node)
+    if node.dest:
+        self.visit(node.dest)
+    for child in node.nodes:
+        if node.dest:
+            self.emit('DUP_TOP')
+        self.visit(child)
+        if node.dest:
+            self.emit('ROT_TWO')
+            self.emit('PRINT_ITEM_TO')
+        else:
+            self.emit('PRINT_ITEM')
+    if (node.dest and (not newline)):
+        self.emit('POP_TOP')

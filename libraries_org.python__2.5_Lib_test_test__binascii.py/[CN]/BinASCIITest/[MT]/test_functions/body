@@ -1,0 +1,13 @@
+def test_functions(self):
+    funcs = []
+    for suffix in ('base64', 'hqx', 'uu', 'hex'):
+        prefixes = ['a2b_', 'b2a_']
+        if (suffix == 'hqx'):
+            prefixes.extend(['crc_', 'rlecode_', 'rledecode_'])
+        for prefix in prefixes:
+            name = (prefix + suffix)
+            self.assert_(callable(getattr(binascii, name)))
+            self.assertRaises(TypeError, getattr(binascii, name))
+    for name in ('hexlify', 'unhexlify'):
+        self.assert_(callable(getattr(binascii, name)))
+        self.assertRaises(TypeError, getattr(binascii, name))

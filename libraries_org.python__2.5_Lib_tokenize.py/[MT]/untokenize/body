@@ -1,0 +1,30 @@
+def untokenize(iterable):
+    'Transform tokens back into Python source code.\n\n    Each element returned by the iterable must be a token sequence\n    with at least two elements, a token number and token value.\n\n    Round-trip invariant:\n        # Output text will tokenize the back to the input\n        t1 = [tok[:2] for tok in generate_tokens(f.readline)]\n        newcode = untokenize(t1)\n        readline = iter(newcode.splitlines(1)).next\n        t2 = [tok[:2] for tok in generate_tokens(readline)]\n        assert t1 == t2\n    '
+    startline = False
+    prevstring = False
+    indents = []
+    toks = []
+    toks_append = toks.append
+    for tok in iterable:
+        (toknum, tokval) = tok[:2]
+        if (toknum in (NAME, NUMBER)):
+            tokval += ' '
+        if (toknum == STRING):
+            if prevstring:
+                tokval = (' ' + tokval)
+            prevstring = True
+        else:
+            prevstring = False
+        if (toknum == INDENT):
+            indents.append(tokval)
+            continue
+        elif (toknum == DEDENT):
+            indents.pop()
+            continue
+        elif (toknum in (NEWLINE, COMMENT, NL)):
+            startline = True
+        elif (startline and indents):
+            toks_append(indents[(-1)])
+            startline = False
+        toks_append(tokval)
+    return ''.join(toks)

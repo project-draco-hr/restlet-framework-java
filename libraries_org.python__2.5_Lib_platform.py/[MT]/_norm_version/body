@@ -1,0 +1,13 @@
+def _norm_version(version, build=''):
+    ' Normalize the version and build strings and return a single\n        version string using the format major.minor.build (or patchlevel).\n    '
+    l = string.split(version, '.')
+    if build:
+        l.append(build)
+    try:
+        ints = map(int, l)
+    except ValueError:
+        strings = l
+    else:
+        strings = map(str, ints)
+    version = string.join(strings[:3], '.')
+    return version

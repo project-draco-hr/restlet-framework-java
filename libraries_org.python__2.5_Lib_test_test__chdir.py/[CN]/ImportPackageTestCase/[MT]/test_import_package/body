@@ -1,0 +1,7 @@
+def test_import_package(self):
+    __import__(self.package_name)
+    self.assert_((self.package_name in sys.modules))
+    package = sys.modules[self.package_name]
+    self.assertEqual(package.__path__, [self.package_name])
+    self.assertEqual(package.__file__, self.relative_source)
+    self.assert_(os.path.exists(self.bytecode))

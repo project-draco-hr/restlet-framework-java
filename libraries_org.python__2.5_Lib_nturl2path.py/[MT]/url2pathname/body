@@ -1,0 +1,20 @@
+def url2pathname(url):
+    "OS-specific conversion from a relative URL of the 'file' scheme\n    to a file system path; not recommended for general use."
+    import string, urllib
+    url = url.replace(':', '|')
+    if (not ('|' in url)):
+        if (url[:4] == '////'):
+            url = url[2:]
+        components = url.split('/')
+        return urllib.unquote('\\'.join(components))
+    comp = url.split('|')
+    if ((len(comp) != 2) or (comp[0][(-1)] not in string.ascii_letters)):
+        error = ('Bad URL: ' + url)
+        raise IOError, error
+    drive = comp[0][(-1)].upper()
+    components = comp[1].split('/')
+    path = (drive + ':')
+    for comp in components:
+        if comp:
+            path = ((path + '\\') + urllib.unquote(comp))
+    return path

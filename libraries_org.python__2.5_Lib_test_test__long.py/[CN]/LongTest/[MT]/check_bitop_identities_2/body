@@ -1,0 +1,11 @@
+def check_bitop_identities_2(self, x, y):
+    eq = self.assertEqual
+    eq((x & y), (y & x), Frm('x & y != y & x for x=%r, y=%r', (x, y)))
+    eq((x | y), (y | x), Frm('x | y != y | x for x=%r, y=%r', (x, y)))
+    eq((x ^ y), (y ^ x), Frm('x ^ y != y ^ x for x=%r, y=%r', (x, y)))
+    eq(((x ^ y) ^ x), y, Frm('x ^ y ^ x != y for x=%r, y=%r', (x, y)))
+    eq((x & y), (~ ((~ x) | (~ y))), Frm('x & y != ~(~x | ~y) for x=%r, y=%r', (x, y)))
+    eq((x | y), (~ ((~ x) & (~ y))), Frm('x | y != ~(~x & ~y) for x=%r, y=%r', (x, y)))
+    eq((x ^ y), ((x | y) & (~ (x & y))), Frm('x ^ y != (x | y) & ~(x & y) for x=%r, y=%r', (x, y)))
+    eq((x ^ y), ((x & (~ y)) | ((~ x) & y)), Frm('x ^ y == (x & ~y) | (~x & y) for x=%r, y=%r', (x, y)))
+    eq((x ^ y), ((x | y) & ((~ x) | (~ y))), Frm('x ^ y == (x | y) & (~x | ~y) for x=%r, y=%r', (x, y)))

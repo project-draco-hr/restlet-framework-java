@@ -1,0 +1,16 @@
+def nlargest(n, iterable):
+    'Find the n largest elements in a dataset.\n\n    Equivalent to:  sorted(iterable, reverse=True)[:n]\n    '
+    it = iter(iterable)
+    result = list(islice(it, n))
+    if (not result):
+        return result
+    heapify(result)
+    _heapreplace = heapreplace
+    sol = result[0]
+    for elem in it:
+        if (elem <= sol):
+            continue
+        _heapreplace(result, elem)
+        sol = result[0]
+    result.sort(reverse=True)
+    return result

@@ -1,0 +1,11 @@
+def test_reporthook(self):
+
+    def hooktester(count, block_size, total_size, count_holder=[0]):
+        self.assert_(isinstance(count, int))
+        self.assert_(isinstance(block_size, int))
+        self.assert_(isinstance(total_size, int))
+        self.assertEqual(count, count_holder[0])
+        count_holder[0] = (count_holder[0] + 1)
+    second_temp = ('%s.2' % test_support.TESTFN)
+    self.registerFileForCleanUp(second_temp)
+    urllib.urlretrieve(self.constructLocalFileUrl(test_support.TESTFN), second_temp, hooktester)

@@ -1,0 +1,21 @@
+def test_stream(self):
+    'Compare the normal tar and the stream tar.\n        '
+    stream = self.tar
+    tar = tarfile.open(tarname(), 'r')
+    while 1:
+        t1 = tar.next()
+        t2 = stream.next()
+        if (t1 is None):
+            break
+        self.assert_((t2 is not None), 'stream.next() failed.')
+        if (t2.islnk() or t2.issym()):
+            self.assertRaises(tarfile.StreamError, stream.extractfile, t2)
+            continue
+        v1 = tar.extractfile(t1)
+        v2 = stream.extractfile(t2)
+        if (v1 is None):
+            continue
+        self.assert_((v2 is not None), 'stream.extractfile() failed')
+        self.assert_((v1.read() == v2.read()), 'stream extraction failed')
+    tar.close()
+    stream.close()

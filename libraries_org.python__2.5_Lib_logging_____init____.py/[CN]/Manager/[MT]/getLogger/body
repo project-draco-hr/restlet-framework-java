@@ -1,0 +1,22 @@
+def getLogger(self, name):
+    '\n        Get a logger with the specified name (channel name), creating it\n        if it doesn\'t yet exist. This name is a dot-separated hierarchical\n        name, such as "a", "a.b", "a.b.c" or similar.\n\n        If a PlaceHolder existed for the specified name [i.e. the logger\n        didn\'t exist but a child of it did], replace it with the created\n        logger and fix up the parent/child references which pointed to the\n        placeholder to now point to the logger.\n        '
+    rv = None
+    _acquireLock()
+    try:
+        if self.loggerDict.has_key(name):
+            rv = self.loggerDict[name]
+            if isinstance(rv, PlaceHolder):
+                ph = rv
+                rv = _loggerClass(name)
+                rv.manager = self
+                self.loggerDict[name] = rv
+                self._fixupChildren(ph, rv)
+                self._fixupParents(rv)
+        else:
+            rv = _loggerClass(name)
+            rv.manager = self
+            self.loggerDict[name] = rv
+            self._fixupParents(rv)
+    finally:
+        _releaseLock()
+    return rv

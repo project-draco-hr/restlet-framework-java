@@ -1,0 +1,42 @@
+def test_decodehelper(self):
+    self.assertRaises(LookupError, '\xff'.decode, 'ascii', 'test.unknown')
+
+    def baddecodereturn1(exc):
+        return 42
+    codecs.register_error('test.baddecodereturn1', baddecodereturn1)
+    self.assertRaises(TypeError, '\xff'.decode, 'ascii', 'test.baddecodereturn1')
+    self.assertRaises(TypeError, '\\'.decode, 'unicode-escape', 'test.baddecodereturn1')
+    self.assertRaises(TypeError, '\\x0'.decode, 'unicode-escape', 'test.baddecodereturn1')
+    self.assertRaises(TypeError, '\\x0y'.decode, 'unicode-escape', 'test.baddecodereturn1')
+    self.assertRaises(TypeError, '\\Uffffeeee'.decode, 'unicode-escape', 'test.baddecodereturn1')
+    self.assertRaises(TypeError, '\\uyyyy'.decode, 'raw-unicode-escape', 'test.baddecodereturn1')
+
+    def baddecodereturn2(exc):
+        return (u'?', None)
+    codecs.register_error('test.baddecodereturn2', baddecodereturn2)
+    self.assertRaises(TypeError, '\xff'.decode, 'ascii', 'test.baddecodereturn2')
+    handler = PosReturn()
+    codecs.register_error('test.posreturn', handler.handle)
+    handler.pos = (-1)
+    self.assertEquals('\xff0'.decode('ascii', 'test.posreturn'), u'<?>0')
+    handler.pos = (-2)
+    self.assertEquals('\xff0'.decode('ascii', 'test.posreturn'), u'<?><?>')
+    handler.pos = (-3)
+    self.assertRaises(IndexError, '\xff0'.decode, 'ascii', 'test.posreturn')
+    handler.pos = 1
+    self.assertEquals('\xff0'.decode('ascii', 'test.posreturn'), u'<?>0')
+    handler.pos = 2
+    self.assertEquals('\xff0'.decode('ascii', 'test.posreturn'), u'<?>')
+    handler.pos = 3
+    self.assertRaises(IndexError, '\xff0'.decode, 'ascii', 'test.posreturn')
+    handler.pos = 6
+    self.assertEquals('\\uyyyy0'.decode('raw-unicode-escape', 'test.posreturn'), u'<?>0')
+
+
+    class D(dict):
+
+        def __getitem__(self, key):
+            raise ValueError
+    self.assertRaises(UnicodeError, codecs.charmap_decode, '\xff', 'strict', {255: None, })
+    self.assertRaises(ValueError, codecs.charmap_decode, '\xff', 'strict', D())
+    self.assertRaises(TypeError, codecs.charmap_decode, '\xff', 'strict', {255: (sys.maxunicode + 1), })

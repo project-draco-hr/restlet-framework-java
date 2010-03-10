@@ -1,0 +1,12 @@
+def dst(self, dt):
+    if ((dt is None) or (dt.tzinfo is None)):
+        return ZERO
+    assert (dt.tzinfo is self)
+    start = first_sunday_on_or_after(DSTSTART.replace(year=dt.year))
+    assert ((start.weekday() == 6) and (start.month == 4) and (start.day <= 7))
+    end = first_sunday_on_or_after(DSTEND.replace(year=dt.year))
+    assert ((end.weekday() == 6) and (end.month == 10) and (end.day >= 25))
+    if (start <= dt.replace(tzinfo=None) < end):
+        return HOUR
+    else:
+        return ZERO

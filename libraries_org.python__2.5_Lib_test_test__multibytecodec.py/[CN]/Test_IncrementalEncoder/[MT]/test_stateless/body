@@ -1,0 +1,9 @@
+def test_stateless(self):
+    encoder = codecs.getincrementalencoder('cp949')()
+    self.assertEqual(encoder.encode(u'\ud30c\uc774\uc36c \ub9c8\uc744'), '\xc6\xc4\xc0\xcc\xbd\xe3 \xb8\xb6\xc0\xbb')
+    self.assertEqual(encoder.reset(), None)
+    self.assertEqual(encoder.encode(u'\u2606\u223c\u2606', True), '\xa1\xd9\xa1\xad\xa1\xd9')
+    self.assertEqual(encoder.reset(), None)
+    self.assertEqual(encoder.encode(u'', True), '')
+    self.assertEqual(encoder.encode(u'', False), '')
+    self.assertEqual(encoder.reset(), None)

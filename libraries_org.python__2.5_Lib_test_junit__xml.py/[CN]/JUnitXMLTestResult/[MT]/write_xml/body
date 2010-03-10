@@ -1,0 +1,17 @@
+def write_xml(self):
+    if (not self.module_name):
+        return
+    took = (time.time() - self.start)
+    stdout = self.stdout.getvalue()
+    stderr = self.stderr.getvalue()
+    sys.stdout = self.old_stdout
+    sys.stderr = self.old_stderr
+    ensure_dir(self.xml_dir)
+    filename = os.path.join(self.xml_dir, ('TEST-%s.xml' % self.module_name))
+    stream = open(filename, 'w')
+    write_testsuite_xml(stream, len(self.tests), len(self.errors), len(self.failures), 0, self.module_name, took)
+    for info in self.tests:
+        info.write_xml(stream)
+    write_stdouterr_xml(stream, stdout, stderr)
+    stream.write('</testsuite>')
+    stream.close()

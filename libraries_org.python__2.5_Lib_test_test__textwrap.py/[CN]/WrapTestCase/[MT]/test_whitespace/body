@@ -1,0 +1,8 @@
+def test_whitespace(self):
+    text = 'This is a paragraph that already has\nline breaks.  But some of its lines are much longer than the others,\nso it needs to be wrapped.\nSome lines are \ttabbed too.\nWhat a mess!\n'
+    expect = ['This is a paragraph that already has line', 'breaks.  But some of its lines are much', 'longer than the others, so it needs to be', 'wrapped.  Some lines are  tabbed too.  What a', 'mess!']
+    wrapper = TextWrapper(45, fix_sentence_endings=True)
+    result = wrapper.wrap(text)
+    self.check(result, expect)
+    result = wrapper.fill(text)
+    self.check(result, '\n'.join(expect))

@@ -1,0 +1,7 @@
+def test_universal_newlines(self):
+    p = subprocess.Popen([sys.executable, '-c', (('import sys,os;' + SETBINARY) + 'sys.stdout.write("line1\\n");sys.stdout.flush();sys.stdout.write("line2\\r");sys.stdout.flush();sys.stdout.write("line3\\r\\n");sys.stdout.flush();sys.stdout.write("line4\\r");sys.stdout.flush();sys.stdout.write("\\nline5");sys.stdout.flush();sys.stdout.write("\\nline6");')], stdout=subprocess.PIPE, universal_newlines=1)
+    stdout = p.stdout.read()
+    if hasattr(file, 'newlines'):
+        self.assertEqual(stdout, 'line1\nline2\nline3\nline4\nline5\nline6')
+    else:
+        self.assertEqual(stdout, 'line1\nline2\rline3\r\nline4\r\nline5\nline6')

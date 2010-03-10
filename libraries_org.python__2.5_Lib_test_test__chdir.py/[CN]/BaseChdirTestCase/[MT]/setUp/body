@@ -1,0 +1,13 @@
+def setUp(self):
+    for i in max(1, range(self.TEST_DIRS)):
+        setattr(self, ('dir%i' % (i + 1)), tempfile.mkdtemp())
+    for i in range(self.TEST_FILES):
+        filename = safe_mktemp(dir=self.dir1, suffix=self.FILE_SUFFIX)
+        basename = os.path.basename(filename)
+        setattr(self, ('filename%i' % (i + 1)), filename)
+        setattr(self, ('basename%i' % (i + 1)), basename)
+    self.orig_cwd = os.getcwd()
+    self.orig_syspath = sys.path[:]
+    sys.path.extend([path for path in self.SYSPATH if (path not in sys.path)])
+    if self.FIXTURE_CHDIR:
+        os.chdir(self.dir1)

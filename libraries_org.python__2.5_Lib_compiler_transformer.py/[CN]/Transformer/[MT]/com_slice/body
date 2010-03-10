@@ -1,0 +1,11 @@
+def com_slice(self, primary, node, assigning):
+    lower = upper = None
+    if (len(node) == 3):
+        if (node[1][0] == token.COLON):
+            upper = self.com_node(node[2])
+        else:
+            lower = self.com_node(node[1])
+    elif (len(node) == 4):
+        lower = self.com_node(node[1])
+        upper = self.com_node(node[3])
+    return Slice(primary, assigning, lower, upper, lineno=extractLineNo(node))

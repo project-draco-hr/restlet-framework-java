@@ -1,0 +1,17 @@
+def raises(exc, expected, callable, *args):
+    'Ensure the specified call raises exc.\n\n    expected is compared against the exception message if not None. It\n    can be a str, an errno or a 2 item tuple of errno/filename. The\n    latter two being for comparison against EnvironmentErrors.\n    '
+    if expected:
+        if isinstance(expected, str):
+            msg = expected
+        else:
+            errno = (expected[0] if isinstance(expected, tuple) else expected)
+            msg = ('[Errno %d] %s' % (errno, os.strerror(errno)))
+            if isinstance(expected, tuple):
+                msg += (': %r' % expected[1])
+    try:
+        callable(*args)
+    except exc as val:
+        if (expected and (str(val) != msg)):
+            raise test_support.TestFailed(('Message %r, expected %r' % (str(value), msg)))
+    else:
+        raise test_support.TestFailed(('Expected %s' % exc))

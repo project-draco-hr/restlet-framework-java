@@ -1,0 +1,30 @@
+def setUp(self):
+    fp = openfile('PyBanner048.gif')
+    try:
+        data = fp.read()
+    finally:
+        fp.close()
+    container = MIMEBase('multipart', 'mixed', boundary='BOUNDARY')
+    image = MIMEImage(data, name='dingusfish.gif')
+    image.add_header('content-disposition', 'attachment', filename='dingusfish.gif')
+    intro = MIMEText('Hi there,\n\nThis is the dingus fish.\n')
+    container.attach(intro)
+    container.attach(image)
+    container['From'] = 'Barry <barry@digicool.com>'
+    container['To'] = 'Dingus Lovers <cravindogs@cravindogs.com>'
+    container['Subject'] = 'Here is your dingus fish'
+    now = 987809702.548486
+    timetuple = time.localtime(now)
+    if (timetuple[(-1)] == 0):
+        tzsecs = time.timezone
+    else:
+        tzsecs = time.altzone
+    if (tzsecs > 0):
+        sign = '-'
+    else:
+        sign = '+'
+    tzoffset = (' %s%04d' % (sign, (tzsecs / 36)))
+    container['Date'] = (time.strftime('%a, %d %b %Y %H:%M:%S', time.localtime(now)) + tzoffset)
+    self._msg = container
+    self._im = image
+    self._txt = intro

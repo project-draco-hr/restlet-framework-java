@@ -1,0 +1,10 @@
+def test_folding_of_binops_on_constants(self):
+    for (line, elem) in (('a = 2+3+4', '(9)'), ('"@"*4', "('@@@@')"), ('a="abc" + "def"', "('abcdef')"), ('a = 3**4', '(81)'), ('a = 3*4', '(12)'), ('a = 13//4', '(3)'), ('a = 14%4', '(2)'), ('a = 2+3', '(5)'), ('a = 13-4', '(9)'), ('a = (12,13)[1]', '(13)'), ('a = 13 << 2', '(52)'), ('a = 13 >> 2', '(3)'), ('a = 13 & 7', '(5)'), ('a = 13 ^ 7', '(10)'), ('a = 13 | 7', '(15)')):
+        asm = dis_single(line)
+        self.assert_((elem in asm), asm)
+        self.assert_(('BINARY_' not in asm))
+    asm = dis_single('a=2+"b"')
+    self.assert_(('(2)' in asm))
+    self.assert_(("('b')" in asm))
+    asm = dis_single('a="x"*1000')
+    self.assert_(('(1000)' in asm))

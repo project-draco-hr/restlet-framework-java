@@ -1,0 +1,11 @@
+def _compile(self, obj, src, ext, cc_args, extra_postargs, pp_opts):
+    if (ext == '.rc'):
+        try:
+            self.spawn(['rc', '-r', src])
+        except DistutilsExecError as msg:
+            raise CompileError, msg
+    else:
+        try:
+            self.spawn((((self.compiler_so + cc_args) + [src, '-o', obj]) + extra_postargs))
+        except DistutilsExecError as msg:
+            raise CompileError, msg

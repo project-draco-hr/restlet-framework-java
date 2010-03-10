@@ -1,0 +1,9 @@
+def _testUDPOption(self, level, option, values):
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._testSetAndGetOption(sock, level, option, values)
+        sock.bind((HOST, PORT))
+        self.failUnlessEqual(sock.getsockopt(level, option), values[(-1)], ("Option value '(%s, %s)'='%s' did not propagate to implementation socket" % (level, option, values[(-1)])))
+        self._testSetAndGetOption(sock, level, option, values)
+    finally:
+        sock.close()

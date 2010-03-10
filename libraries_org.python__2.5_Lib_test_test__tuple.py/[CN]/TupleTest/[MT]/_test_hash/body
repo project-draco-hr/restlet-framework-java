@@ -1,0 +1,10 @@
+def _test_hash(self):
+    N = 50
+    base = range(N)
+    xp = [(i, j) for i in base for j in base]
+    inps = ((((base + [(i, j) for i in base for j in xp]) + [(i, j) for i in xp for j in base]) + xp) + zip(base))
+    hashes = map(hash, inps)
+    unique = set(hashes)
+    unique_len = len(unique)
+    collisions = (len(inps) - unique_len)
+    self.assert_((collisions <= 15))

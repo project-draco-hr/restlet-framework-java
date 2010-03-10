@@ -1,0 +1,11 @@
+def test_expat_locator_withinfo():
+    result = StringIO()
+    xmlgen = LocatorTest(result)
+    parser = make_parser()
+    parser.setContentHandler(xmlgen)
+    testfile = findfile('test.xml')
+    parser.parse(testfile)
+    if is_jython:
+        testfile = testfile.replace('\\', '/')
+    expected = urllib.quote(testfile).replace('%3A', ':')
+    return (xmlgen.location.getSystemId().endswith(expected) and (xmlgen.location.getPublicId() is None))

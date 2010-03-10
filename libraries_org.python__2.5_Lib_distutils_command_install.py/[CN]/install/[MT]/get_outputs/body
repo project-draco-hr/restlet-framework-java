@@ -1,0 +1,10 @@
+def get_outputs(self):
+    outputs = []
+    for cmd_name in self.get_sub_commands():
+        cmd = self.get_finalized_command(cmd_name)
+        for filename in cmd.get_outputs():
+            if (filename not in outputs):
+                outputs.append(filename)
+    if (self.path_file and self.install_path_file):
+        outputs.append(os.path.join(self.install_libbase, (self.path_file + '.pth')))
+    return outputs

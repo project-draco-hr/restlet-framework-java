@@ -1,0 +1,18 @@
+def next_minus(self, context=None):
+    'Returns the largest representable number smaller than itself.'
+    if (context is None):
+        context = getcontext()
+    ans = self._check_nans(context=context)
+    if ans:
+        return ans
+    if (self._isinfinity() == (-1)):
+        return negInf
+    if (self._isinfinity() == 1):
+        return _dec_from_triple(0, ('9' * context.prec), context.Etop())
+    context = context.copy()
+    context._set_rounding(ROUND_FLOOR)
+    context._ignore_all_flags()
+    new_self = self._fix(context)
+    if (new_self != self):
+        return new_self
+    return self.__sub__(_dec_from_triple(0, '1', (context.Etiny() - 1)), context)

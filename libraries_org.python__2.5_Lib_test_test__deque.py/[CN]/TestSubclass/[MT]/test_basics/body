@@ -1,0 +1,18 @@
+def test_basics(self):
+    d = Deque(xrange(100))
+    d.__init__(xrange(100, 200))
+    for i in xrange(200, 400):
+        d.append(i)
+    for i in reversed(xrange((-200), 0)):
+        d.appendleft(i)
+    self.assertEqual(list(d), range((-200), 400))
+    self.assertEqual(len(d), 600)
+    left = [d.popleft() for i in xrange(250)]
+    self.assertEqual(left, range((-200), 50))
+    self.assertEqual(list(d), range(50, 400))
+    right = [d.pop() for i in xrange(250)]
+    right.reverse()
+    self.assertEqual(right, range(150, 400))
+    self.assertEqual(list(d), range(50, 150))
+    d.clear()
+    self.assertEqual(len(d), 0)

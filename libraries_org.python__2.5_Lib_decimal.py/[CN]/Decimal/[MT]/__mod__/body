@@ -1,0 +1,20 @@
+def __mod__(self, other, context=None):
+    '\n        self % other\n        '
+    other = _convert_other(other)
+    if (other is NotImplemented):
+        return other
+    if (context is None):
+        context = getcontext()
+    ans = self._check_nans(other, context)
+    if ans:
+        return ans
+    if self._isinfinity():
+        return context._raise_error(InvalidOperation, 'INF % x')
+    elif (not other):
+        if self:
+            return context._raise_error(InvalidOperation, 'x % 0')
+        else:
+            return context._raise_error(DivisionUndefined, '0 % 0')
+    remainder = self._divide(other, context)[1]
+    remainder = remainder._fix(context)
+    return remainder

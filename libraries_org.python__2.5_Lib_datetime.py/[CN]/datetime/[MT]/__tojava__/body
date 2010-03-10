@@ -1,0 +1,17 @@
+def __tojava__(self, java_class):
+    from java.lang import Object
+    from java.sql import Timestamp
+    from java.util import Calendar
+    from org.python.core import Py
+    if (java_class not in (Calendar, Timestamp, Object)):
+        return Py.NoConversion
+    calendar = Calendar.getInstance()
+    calendar.clear()
+    calendar.set(self.year, (self.month - 1), self.day, self.hour, self.minute, self.second)
+    if (java_class == Calendar):
+        calendar.set(Calendar.MILLISECOND, (self.microsecond // 1000))
+        return calendar
+    else:
+        timestamp = Timestamp(calendar.getTimeInMillis())
+        timestamp.setNanos((self.microsecond * 1000))
+        return timestamp

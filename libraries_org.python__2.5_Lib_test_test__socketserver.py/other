@@ -1,0 +1,42 @@
+from test import test_support
+from test.test_support import verbose, verify, TESTFN, TestSkipped, reap_children
+test_support.requires('network')
+from SocketServer import *
+import socket
+import errno
+import select
+import time
+import threading
+import os
+NREQ = 3
+DELAY = 0.5
+teststring = 'hello world\n'
+seed = 0
+host = 'localhost'
+testfiles = []
+tcpservers = [ForgivingTCPServer, ThreadingTCPServer]
+if (hasattr(os, 'fork') and (os.name not in ('os2',))):
+    tcpservers.append(ForkingTCPServer)
+udpservers = [UDPServer, ThreadingUDPServer]
+if (hasattr(os, 'fork') and (os.name not in ('os2',))):
+    udpservers.append(ForkingUDPServer)
+if (not hasattr(socket, 'AF_UNIX')):
+    streamservers = []
+    dgramservers = []
+else:
+
+
+    class ForkingUnixStreamServer(ForkingMixIn, UnixStreamServer):
+        pass
+    streamservers = [UnixStreamServer, ThreadingUnixStreamServer]
+    if (hasattr(os, 'fork') and (os.name not in ('os2',))):
+        streamservers.append(ForkingUnixStreamServer)
+
+
+    class ForkingUnixDatagramServer(ForkingMixIn, UnixDatagramServer):
+        pass
+    dgramservers = [UnixDatagramServer, ThreadingUnixDatagramServer]
+    if (hasattr(os, 'fork') and (os.name not in ('os2',))):
+        dgramservers.append(ForkingUnixDatagramServer)
+if (__name__ == '__main__'):
+    test_main()

@@ -1,0 +1,12 @@
+def reap_children():
+    'Use this function at the end of test_main() whenever sub-processes\n    are started.  This will help ensure that no extra children (zombies)\n    stick around to hog resources and create problems when looking\n    for refleaks.\n    '
+    import os
+    if hasattr(os, 'waitpid'):
+        any_process = (-1)
+        while True:
+            try:
+                (pid, status) = os.waitpid(any_process, os.WNOHANG)
+                if (pid == 0):
+                    break
+            except:
+                break

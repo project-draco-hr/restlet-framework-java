@@ -1,0 +1,18 @@
+def test_main():
+    global numtasks
+    numtasks = 10
+    global sema
+    sema = _threading.BoundedSemaphore(value=3)
+    global mutex
+    mutex = _threading.RLock()
+    global running
+    running = 0
+    global threads
+    threads = []
+    starttasks()
+    if verbose:
+        print 'waiting for all tasks to complete'
+    for t in threads:
+        t.join()
+    if verbose:
+        print 'all tasks done'

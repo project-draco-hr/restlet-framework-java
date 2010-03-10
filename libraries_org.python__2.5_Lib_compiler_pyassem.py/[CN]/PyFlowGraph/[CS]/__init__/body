@@ -1,0 +1,23 @@
+def __init__(self, name, filename, args=(), optimized=0, klass=None):
+    self.super_init()
+    self.name = name
+    self.filename = filename
+    self.docstring = None
+    self.args = args
+    self.argcount = getArgCount(args)
+    self.klass = klass
+    if optimized:
+        self.flags = (CO_OPTIMIZED | CO_NEWLOCALS)
+    else:
+        self.flags = 0
+    self.consts = []
+    self.names = []
+    self.freevars = []
+    self.cellvars = []
+    self.closure = []
+    self.varnames = (list(args) or [])
+    for i in range(len(self.varnames)):
+        var = self.varnames[i]
+        if isinstance(var, TupleArg):
+            self.varnames[i] = var.getName()
+    self.stage = RAW

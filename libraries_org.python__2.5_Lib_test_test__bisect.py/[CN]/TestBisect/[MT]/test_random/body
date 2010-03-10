@@ -1,0 +1,16 @@
+def test_random(self, n=25):
+    from random import randrange
+    for i in xrange(n):
+        data = [randrange(0, n, 2) for j in xrange(i)]
+        data.sort()
+        elem = randrange((-1), (n + 1))
+        ip = bisect_left(data, elem)
+        if (ip < len(data)):
+            self.failUnless((elem <= data[ip]))
+        if (ip > 0):
+            self.failUnless((data[(ip - 1)] < elem))
+        ip = bisect_right(data, elem)
+        if (ip < len(data)):
+            self.failUnless((elem < data[ip]))
+        if (ip > 0):
+            self.failUnless((data[(ip - 1)] <= elem))

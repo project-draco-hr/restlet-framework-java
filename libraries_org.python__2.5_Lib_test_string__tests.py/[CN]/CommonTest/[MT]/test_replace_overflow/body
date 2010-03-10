@@ -1,0 +1,7 @@
+def test_replace_overflow(self):
+    if ((sys.maxint != 2147483647) or test_support.is_jython or (struct.calcsize('P') > 4)):
+        return
+    A2_16 = ('A' * (2 ** 16))
+    self.checkraises(OverflowError, A2_16, 'replace', '', A2_16)
+    self.checkraises(OverflowError, A2_16, 'replace', 'A', A2_16)
+    self.checkraises(OverflowError, A2_16, 'replace', 'AA', (A2_16 + A2_16))

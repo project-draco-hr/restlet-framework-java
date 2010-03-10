@@ -1,0 +1,18 @@
+def __init__(self, value=0):
+    if (not isinstance(value, StringType)):
+        if (datetime and isinstance(value, datetime.datetime)):
+            self.value = value.strftime('%Y%m%dT%H:%M:%S')
+            return
+        if (datetime and isinstance(value, datetime.date)):
+            self.value = value.strftime('%Y%m%dT%H:%M:%S')
+            return
+        if (datetime and isinstance(value, datetime.time)):
+            today = datetime.datetime.now().strftime('%Y%m%d')
+            self.value = value.strftime((today + 'T%H:%M:%S'))
+            return
+        if (not isinstance(value, (TupleType, time.struct_time))):
+            if (value == 0):
+                value = time.time()
+            value = time.localtime(value)
+        value = time.strftime('%Y%m%dT%H:%M:%S', value)
+    self.value = value

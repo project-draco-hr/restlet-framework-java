@@ -1,0 +1,32 @@
+def dist(distname='', version='', id='', supported_dists=('SuSE', 'debian', 'fedora', 'redhat', 'mandrake')):
+    ' Tries to determine the name of the Linux OS distribution name.\n\n        The function first looks for a distribution release file in\n        /etc and then reverts to _dist_try_harder() in case no\n        suitable files are found.\n\n        Returns a tuple (distname,version,id) which default to the\n        args given as parameters.\n\n    '
+    try:
+        etc = os.listdir('/etc')
+    except os.error:
+        return (distname, version, id)
+    for file in etc:
+        m = _release_filename.match(file)
+        if m:
+            (_distname, dummy) = m.groups()
+            if (_distname in supported_dists):
+                distname = _distname
+                break
+    else:
+        return _dist_try_harder(distname, version, id)
+    f = open(('/etc/' + file), 'r')
+    firstline = f.readline()
+    f.close()
+    m = _release_version.search(firstline)
+    if m:
+        (_version, _id) = m.groups()
+        if _version:
+            version = _version
+        if _id:
+            id = _id
+    else:
+        l = string.split(string.strip(firstline))
+        if l:
+            version = l[0]
+            if (len(l) > 1):
+                id = l[1]
+    return (distname, version, id)

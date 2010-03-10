@@ -1,0 +1,14 @@
+def urlopen(url, data=None, proxies=None):
+    'urlopen(url [, data]) -> open file-like object'
+    global _urlopener
+    if (proxies is not None):
+        opener = FancyURLopener(proxies=proxies)
+    elif (not _urlopener):
+        opener = FancyURLopener()
+        _urlopener = opener
+    else:
+        opener = _urlopener
+    if (data is None):
+        return opener.open(url)
+    else:
+        return opener.open(url, data)

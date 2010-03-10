@@ -1,0 +1,9 @@
+def __init__(self, namespace=None):
+    'Create a new completer for the command line.\n\n        Completer([namespace]) -> completer instance.\n\n        If unspecified, the default namespace where completions are performed\n        is __main__ (technically, __main__.__dict__). Namespaces should be\n        given as dictionaries.\n\n        Completer instances should be used as the completion mechanism of\n        readline via the set_completer() call:\n\n        readline.set_completer(Completer(my_namespace).complete)\n        '
+    if (namespace and (not isinstance(namespace, dict))):
+        raise TypeError, 'namespace must be a dictionary'
+    if (namespace is None):
+        self.use_main_ns = 1
+    else:
+        self.use_main_ns = 0
+        self.namespace = namespace

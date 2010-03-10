@@ -1,0 +1,14 @@
+def read_manifest(self):
+    "Read the manifest file (named by 'self.manifest') and use it to\n        fill in 'self.filelist', the list of files to include in the source\n        distribution.\n        "
+    log.info("reading manifest file '%s'", self.manifest)
+    manifest = open(self.manifest)
+    try:
+        while 1:
+            line = manifest.readline()
+            if (line == ''):
+                break
+            if (line[(-1)] == '\n'):
+                line = line[0:(-1)]
+            self.filelist.append(line)
+    finally:
+        manifest.close()

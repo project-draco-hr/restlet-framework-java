@@ -1,0 +1,6 @@
+def test_lost_displayhook(self):
+    olddisplayhook = sys.displayhook
+    del sys.displayhook
+    code = compile('42', '<string>', 'single')
+    self.assertRaises(RuntimeError, eval, code)
+    sys.displayhook = olddisplayhook

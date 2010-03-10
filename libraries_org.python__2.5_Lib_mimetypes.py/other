@@ -1,0 +1,44 @@
+'Guess the MIME type of a file.\n\nThis module defines two useful functions:\n\nguess_type(url, strict=1) -- guess the MIME type and encoding of a URL.\n\nguess_extension(type, strict=1) -- guess the extension for a given MIME type.\n\nIt also contains the following, for tuning the behavior:\n\nData:\n\nknownfiles -- list of files to parse\ninited -- flag set when init() has been called\nsuffix_map -- dictionary mapping suffixes to suffixes\nencodings_map -- dictionary mapping suffixes to encodings\ntypes_map -- dictionary mapping suffixes to types\n\nFunctions:\n\ninit([files]) -- parse a list of files, default knownfiles\nread_mime_types(file) -- parse one file, return a dictionary or None\n'
+import os
+import posixpath
+import urllib
+__all__ = ['guess_type', 'guess_extension', 'guess_all_extensions', 'add_type', 'read_mime_types', 'init']
+knownfiles = ['/etc/mime.types', '/etc/httpd/mime.types', '/etc/httpd/conf/mime.types', '/etc/apache/mime.types', '/etc/apache2/mime.types', '/usr/local/etc/httpd/conf/mime.types', '/usr/local/lib/netscape/mime.types', '/usr/local/etc/httpd/conf/mime.types', '/usr/local/etc/mime.types']
+inited = False
+_default_mime_types()
+if (__name__ == '__main__'):
+    import sys
+    import getopt
+    USAGE = 'Usage: mimetypes.py [options] type\n\nOptions:\n    --help / -h       -- print this message and exit\n    --lenient / -l    -- additionally search of some common, but non-standard\n                         types.\n    --extension / -e  -- guess extension instead of type\n\nMore than one type argument may be given.\n'
+
+    def usage(code, msg=''):
+        print USAGE
+        if msg:
+            print msg
+        sys.exit(code)
+    try:
+        (opts, args) = getopt.getopt(sys.argv[1:], 'hle', ['help', 'lenient', 'extension'])
+    except getopt.error as msg:
+        usage(1, msg)
+    strict = 1
+    extension = 0
+    for (opt, arg) in opts:
+        if (opt in ('-h', '--help')):
+            usage(0)
+        elif (opt in ('-l', '--lenient')):
+            strict = 0
+        elif (opt in ('-e', '--extension')):
+            extension = 1
+    for gtype in args:
+        if extension:
+            guess = guess_extension(gtype, strict)
+            if (not guess):
+                print "I don't know anything about type", gtype
+            else:
+                print guess
+        else:
+            (guess, encoding) = guess_type(gtype, strict)
+            if (not guess):
+                print "I don't know anything about type", gtype
+            else:
+                print 'type:', guess, 'encoding:', encoding

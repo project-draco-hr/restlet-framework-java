@@ -1,0 +1,17 @@
+def test_uncond_acquire_blocking(self):
+
+    def delay_unlock(to_unlock, delay):
+        'Hold on to lock for a set amount of time before unlocking.'
+        time.sleep(delay)
+        to_unlock.release()
+    self.lock.acquire()
+    start_time = int(time.time())
+    _thread.start_new_thread(delay_unlock, (self.lock, DELAY))
+    if test_support.verbose:
+        print 
+        print ('*** Waiting for thread to release the lock (approx. %s sec.) ***' % DELAY)
+    self.lock.acquire()
+    end_time = int(time.time())
+    if test_support.verbose:
+        print 'done'
+    self.failUnless(((end_time - start_time) >= DELAY), 'Blocking by unconditional acquiring failed.')

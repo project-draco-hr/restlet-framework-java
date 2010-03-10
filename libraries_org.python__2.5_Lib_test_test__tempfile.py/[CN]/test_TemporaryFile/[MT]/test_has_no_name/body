@@ -1,0 +1,11 @@
+def test_has_no_name(self):
+    dir = tempfile.mkdtemp()
+    f = tempfile.TemporaryFile(dir=dir)
+    f.write('blat')
+    try:
+        os.rmdir(dir)
+    except:
+        ei = sys.exc_info()
+        f.close()
+        os.rmdir(dir)
+        self.failOnException('rmdir', ei)

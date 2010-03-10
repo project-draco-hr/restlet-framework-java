@@ -1,0 +1,20 @@
+def makelink(self, tarinfo, targetpath):
+    'Make a (symbolic) link called targetpath. If it cannot be created\n          (platform limitation), we try to make a copy of the referenced file\n          instead of a link.\n        '
+    linkpath = tarinfo.linkname
+    try:
+        if tarinfo.issym():
+            os.symlink(linkpath, targetpath)
+        else:
+            os.link(tarinfo._link_target, targetpath)
+    except AttributeError:
+        if tarinfo.issym():
+            linkpath = os.path.join(os.path.dirname(tarinfo.name), linkpath)
+            linkpath = normpath(linkpath)
+        try:
+            self._extract_member(self.getmember(linkpath), targetpath)
+        except (EnvironmentError, KeyError) as e:
+            linkpath = os.path.normpath(linkpath)
+            try:
+                shutil.copy2(linkpath, targetpath)
+            except EnvironmentError as e:
+                raise IOError('link could not be created')

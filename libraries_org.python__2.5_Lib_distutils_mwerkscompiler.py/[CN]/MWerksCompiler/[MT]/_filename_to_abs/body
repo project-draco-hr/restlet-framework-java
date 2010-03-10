@@ -1,0 +1,10 @@
+def _filename_to_abs(self, filename):
+    filename = distutils.util.convert_path(filename)
+    if (not os.path.isabs(filename)):
+        curdir = os.getcwd()
+        filename = os.path.join(curdir, filename)
+    components = string.split(filename, ':')
+    for i in range(1, len(components)):
+        if (components[i] == '..'):
+            components[i] = ''
+    return string.join(components, ':')

@@ -1,0 +1,9 @@
+def test_del_param(self):
+    eq = self.assertEqual
+    msg = self._msgobj('msg_05.txt')
+    eq(msg.get_params(), [('multipart/report', ''), ('report-type', 'delivery-status'), ('boundary', 'D1690A7AC1.996856090/mail.example.com')])
+    old_val = msg.get_param('report-type')
+    msg.del_param('report-type')
+    eq(msg.get_params(), [('multipart/report', ''), ('boundary', 'D1690A7AC1.996856090/mail.example.com')])
+    msg.set_param('report-type', old_val)
+    eq(msg.get_params(), [('multipart/report', ''), ('boundary', 'D1690A7AC1.996856090/mail.example.com'), ('report-type', old_val)])

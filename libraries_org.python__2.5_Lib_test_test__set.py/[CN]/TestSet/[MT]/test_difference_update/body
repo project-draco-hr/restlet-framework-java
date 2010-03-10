@@ -1,0 +1,16 @@
+def test_difference_update(self):
+    retval = self.s.difference_update(self.otherword)
+    self.assertEqual(retval, None)
+    for c in (self.word + self.otherword):
+        if ((c in self.word) and (c not in self.otherword)):
+            self.assert_((c in self.s))
+        else:
+            self.assert_((c not in self.s))
+    self.assertRaises(PassThru, self.s.difference_update, check_pass_thru())
+    self.assertRaises(TypeError, self.s.difference_update, [[]])
+    self.assertRaises(TypeError, self.s.symmetric_difference_update, [[]])
+    for (p, q) in (('cdc', 'ab'), ('efgfe', 'abc'), ('ccb', 'a'), ('ef', 'abc')):
+        for C in (set, frozenset, dict.fromkeys, str, unicode, list, tuple):
+            s = self.thetype('abcba')
+            self.assertEqual(s.difference_update(C(p)), None)
+            self.assertEqual(s, set(q))

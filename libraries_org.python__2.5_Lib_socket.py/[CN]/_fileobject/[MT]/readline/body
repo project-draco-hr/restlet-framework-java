@@ -1,0 +1,67 @@
+def readline(self, size=(-1)):
+    data = self._rbuf
+    if (size < 0):
+        if (self._rbufsize <= 1):
+            assert (data == '')
+            buffers = []
+            recv = self._sock.recv
+            while (data != '\n'):
+                data = recv(1)
+                if (not data):
+                    break
+                buffers.append(data)
+            return ''.join(buffers)
+        nl = data.find('\n')
+        if (nl >= 0):
+            nl += 1
+            self._rbuf = data[nl:]
+            return data[:nl]
+        buffers = []
+        if data:
+            buffers.append(data)
+        self._rbuf = ''
+        while True:
+            data = self._sock.recv(self._rbufsize)
+            if (not data):
+                break
+            buffers.append(data)
+            nl = data.find('\n')
+            if (nl >= 0):
+                nl += 1
+                self._rbuf = data[nl:]
+                buffers[(-1)] = data[:nl]
+                break
+        return ''.join(buffers)
+    else:
+        nl = data.find('\n', 0, size)
+        if (nl >= 0):
+            nl += 1
+            self._rbuf = data[nl:]
+            return data[:nl]
+        buf_len = len(data)
+        if (buf_len >= size):
+            self._rbuf = data[size:]
+            return data[:size]
+        buffers = []
+        if data:
+            buffers.append(data)
+        self._rbuf = ''
+        while True:
+            data = self._sock.recv(self._rbufsize)
+            if (not data):
+                break
+            buffers.append(data)
+            left = (size - buf_len)
+            nl = data.find('\n', 0, left)
+            if (nl >= 0):
+                nl += 1
+                self._rbuf = data[nl:]
+                buffers[(-1)] = data[:nl]
+                break
+            n = len(data)
+            if (n >= left):
+                self._rbuf = data[left:]
+                buffers[(-1)] = data[:left]
+                break
+            buf_len += n
+        return ''.join(buffers)

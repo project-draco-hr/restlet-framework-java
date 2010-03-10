@@ -1,0 +1,5 @@
+def test_communicate(self):
+    p = subprocess.Popen([sys.executable, '-c', 'import sys,os;sys.stderr.write("pineapple");sys.stdout.write(sys.stdin.read())'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    (stdout, stderr) = p.communicate('banana')
+    self.assertEqual(stdout, 'banana')
+    self.assertEqual(remove_stderr_debug_decorations(stderr), 'pineapple')

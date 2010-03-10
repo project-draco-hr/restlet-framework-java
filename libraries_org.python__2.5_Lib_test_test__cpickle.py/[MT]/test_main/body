@@ -1,0 +1,9 @@
+def test_main():
+    tests = [cPickleTests, cPicklePicklerTests, cPickleListPicklerTests, cPickleFastPicklerTests]
+    if test_support.is_jython:
+        tests.remove(cPickleListPicklerTests)
+        del cPickleFastPicklerTests.test_recursive_list
+        del cPickleFastPicklerTests.test_recursive_inst
+        del cPickleFastPicklerTests.test_recursive_dict
+        del cPickleFastPicklerTests.test_recursive_multi
+    test_support.run_unittest(*tests)

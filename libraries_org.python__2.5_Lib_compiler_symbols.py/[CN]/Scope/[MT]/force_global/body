@@ -1,0 +1,8 @@
+def force_global(self, name):
+    'Force name to be global in scope.\n\n        Some child of the current node had a free reference to name.\n        When the child was processed, it was labelled a free\n        variable.  Now that all its enclosing scope have been\n        processed, the name is known to be a global or builtin.  So\n        walk back down the child chain and set the name to be global\n        rather than free.\n\n        Be careful to stop if a child does not think the name is\n        free.\n        '
+    self.globals[name] = 1
+    if self.frees.has_key(name):
+        del self.frees[name]
+    for child in self.children:
+        if (child.check_name(name) == SC_FREE):
+            child.force_global(name)

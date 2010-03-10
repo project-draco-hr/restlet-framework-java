@@ -1,0 +1,10 @@
+def sort_cellvars(self):
+    'Sort cellvars in the order of varnames and prune from freevars.\n        '
+    cells = {}
+    for name in self.cellvars:
+        cells[name] = 1
+    self.cellvars = [name for name in self.varnames if cells.has_key(name)]
+    for name in self.cellvars:
+        del cells[name]
+    self.cellvars = (self.cellvars + cells.keys())
+    self.closure = (self.cellvars + self.freevars)

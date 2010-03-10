@@ -1,0 +1,11 @@
+def is_zipfile(filename):
+    'Quickly see if file is a ZIP file by checking the magic number.'
+    try:
+        fpin = open(filename, 'rb')
+        endrec = _EndRecData(fpin)
+        fpin.close()
+        if endrec:
+            return True
+    except IOError:
+        pass
+    return False

@@ -1,0 +1,11 @@
+def build_libraries(self, libraries):
+    for (lib_name, build_info) in libraries:
+        sources = build_info.get('sources')
+        if ((sources is None) or (type(sources) not in (ListType, TupleType))):
+            raise DistutilsSetupError, ((("in 'libraries' option (library '%s'), " + "'sources' must be present and must be ") + 'a list of source filenames') % lib_name)
+        sources = list(sources)
+        log.info("building '%s' library", lib_name)
+        macros = build_info.get('macros')
+        include_dirs = build_info.get('include_dirs')
+        objects = self.compiler.compile(sources, output_dir=self.build_temp, macros=macros, include_dirs=include_dirs, debug=self.debug)
+        self.compiler.create_static_lib(objects, lib_name, output_dir=self.build_clib, debug=self.debug)

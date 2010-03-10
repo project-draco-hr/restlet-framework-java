@@ -1,0 +1,9 @@
+def visitGenExpr(self, node):
+    gen = GenExprCodeGenerator(node, self.scopes, self.class_name, self.get_module())
+    walk(node.code, gen)
+    gen.finish()
+    self.set_lineno(node)
+    self._makeClosure(gen, 0)
+    self.visit(node.code.quals[0].iter)
+    self.emit('GET_ITER')
+    self.emit('CALL_FUNCTION', 1)

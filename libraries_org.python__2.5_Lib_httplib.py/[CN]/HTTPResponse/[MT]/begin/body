@@ -1,0 +1,53 @@
+def begin(self):
+    if (self.msg is not None):
+        return
+    while True:
+        (version, status, reason) = self._read_status()
+        if (status != CONTINUE):
+            break
+        while True:
+            skip = self.fp.readline().strip()
+            if (not skip):
+                break
+            if (self.debuglevel > 0):
+                print 'header:', skip
+    self.status = status
+    self.reason = reason.strip()
+    if (version == 'HTTP/1.0'):
+        self.version = 10
+    elif version.startswith('HTTP/1.'):
+        self.version = 11
+    elif (version == 'HTTP/0.9'):
+        self.version = 9
+    else:
+        raise UnknownProtocol(version)
+    if (self.version == 9):
+        self.length = None
+        self.chunked = 0
+        self.will_close = 1
+        self.msg = HTTPMessage(StringIO())
+        return
+    self.msg = HTTPMessage(self.fp, 0)
+    if (self.debuglevel > 0):
+        for hdr in self.msg.headers:
+            print 'header:', hdr,
+    self.msg.fp = None
+    tr_enc = self.msg.getheader('transfer-encoding')
+    if (tr_enc and (tr_enc.lower() == 'chunked')):
+        self.chunked = 1
+        self.chunk_left = None
+    else:
+        self.chunked = 0
+    self.will_close = self._check_close()
+    length = self.msg.getheader('content-length')
+    if (length and (not self.chunked)):
+        try:
+            self.length = int(length)
+        except ValueError:
+            self.length = None
+    else:
+        self.length = None
+    if ((status == NO_CONTENT) or (status == NOT_MODIFIED) or (100 <= status < 200) or (self._method == 'HEAD')):
+        self.length = 0
+    if ((not self.will_close) and (not self.chunked) and (self.length is None)):
+        self.will_close = 1

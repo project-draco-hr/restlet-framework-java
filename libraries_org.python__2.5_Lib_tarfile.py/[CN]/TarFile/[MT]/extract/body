@@ -1,0 +1,23 @@
+def extract(self, member, path=''):
+    "Extract a member from the archive to the current working directory,\n           using its full name. Its file information is extracted as accurately\n           as possible. `member' may be a filename or a TarInfo object. You can\n           specify a different directory using `path'.\n        "
+    self._check('r')
+    if isinstance(member, TarInfo):
+        tarinfo = member
+    else:
+        tarinfo = self.getmember(member)
+    if tarinfo.islnk():
+        tarinfo._link_target = os.path.join(path, tarinfo.linkname)
+    try:
+        self._extract_member(tarinfo, os.path.join(path, tarinfo.name))
+    except EnvironmentError as e:
+        if (self.errorlevel > 0):
+            raise
+        elif (e.filename is None):
+            self._dbg(1, ('tarfile: %s' % e.strerror))
+        else:
+            self._dbg(1, ('tarfile: %s %r' % (e.strerror, e.filename)))
+    except ExtractError as e:
+        if (self.errorlevel > 1):
+            raise
+        else:
+            self._dbg(1, ('tarfile: %s' % e))

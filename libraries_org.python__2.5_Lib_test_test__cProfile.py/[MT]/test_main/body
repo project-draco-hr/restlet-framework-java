@@ -1,0 +1,11 @@
+def test_main():
+    global ticks
+    ticks = 42000
+    prof = cProfile.Profile(timer, 0.001)
+    prof.runctx('testfunc()', globals(), locals())
+    assert (ticks == 43000), ticks
+    st = pstats.Stats(prof)
+    st.strip_dirs().sort_stats('stdname').print_stats()
+    st.print_callees()
+    st.print_callers()
+    test_bad_counter_during_dealloc()

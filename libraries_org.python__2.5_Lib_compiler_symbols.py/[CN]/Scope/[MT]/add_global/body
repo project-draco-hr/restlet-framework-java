@@ -1,0 +1,8 @@
+def add_global(self, name):
+    name = self.mangle(name)
+    if (self.uses.has_key(name) or self.defs.has_key(name)):
+        pass
+    if self.params.has_key(name):
+        raise SyntaxError, ('%s in %s is global and parameter' % (name, self.name))
+    self.globals[name] = 1
+    self.module.add_def(name)

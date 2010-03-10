@@ -1,0 +1,17 @@
+def import_from(self, nodelist):
+    assert (nodelist[0][1] == 'from')
+    idx = 1
+    while (nodelist[idx][1] == '.'):
+        idx += 1
+    level = (idx - 1)
+    if (nodelist[idx][0] == symbol.dotted_name):
+        fromname = self.com_dotted_name(nodelist[idx])
+        idx += 1
+    else:
+        fromname = ''
+    assert (nodelist[idx][1] == 'import')
+    if (nodelist[(idx + 1)][0] == token.STAR):
+        return From(fromname, [('*', None)], level, lineno=nodelist[0][2])
+    else:
+        node = nodelist[((idx + 1) + (nodelist[(idx + 1)][0] == token.LPAR))]
+        return From(fromname, self.com_import_as_names(node), level, lineno=nodelist[0][2])

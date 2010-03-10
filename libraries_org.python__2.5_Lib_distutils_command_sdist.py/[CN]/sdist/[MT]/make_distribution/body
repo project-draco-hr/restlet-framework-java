@@ -1,0 +1,13 @@
+def make_distribution(self):
+    "Create the source distribution(s).  First, we create the release\n        tree with 'make_release_tree()'; then, we create all required\n        archive files (according to 'self.formats') from the release tree.\n        Finally, we clean up by blowing away the release tree (unless\n        'self.keep_temp' is true).  The list of archive files created is\n        stored so it can be retrieved later by 'get_archive_files()'.\n        "
+    base_dir = self.distribution.get_fullname()
+    base_name = os.path.join(self.dist_dir, base_dir)
+    self.make_release_tree(base_dir, self.filelist.files)
+    archive_files = []
+    for fmt in self.formats:
+        file = self.make_archive(base_name, fmt, base_dir=base_dir)
+        archive_files.append(file)
+        self.distribution.dist_files.append(('sdist', '', file))
+    self.archive_files = archive_files
+    if (not self.keep_temp):
+        dir_util.remove_tree(base_dir, dry_run=self.dry_run)

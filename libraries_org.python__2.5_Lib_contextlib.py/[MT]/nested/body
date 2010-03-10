@@ -1,0 +1,26 @@
+@contextmanager
+def nested(*managers):
+    'Support multiple context managers in a single with-statement.\n\n    Code like this:\n\n        with nested(A, B, C) as (X, Y, Z):\n            <body>\n\n    is equivalent to this:\n\n        with A as X:\n            with B as Y:\n                with C as Z:\n                    <body>\n\n    '
+    exits = []
+    vars = []
+    exc = (None, None, None)
+    try:
+        try:
+            for mgr in managers:
+                exit = mgr.__exit__
+                enter = mgr.__enter__
+                vars.append(enter())
+                exits.append(exit)
+            yield vars
+        except:
+            exc = sys.exc_info()
+    finally:
+        while exits:
+            exit = exits.pop()
+            try:
+                if exit(*exc):
+                    exc = (None, None, None)
+            except:
+                exc = sys.exc_info()
+        if (exc != (None, None, None)):
+            raise exc[0], exc[1], exc[2]

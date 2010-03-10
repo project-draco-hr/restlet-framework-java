@@ -1,0 +1,12 @@
+def task_done(self):
+    'Indicate that a formerly enqueued task is complete.\n\n        Used by Queue consumer threads.  For each get() used to fetch a task,\n        a subsequent call to task_done() tells the queue that the processing\n        on the task is complete.\n\n        If a join() is currently blocking, it will resume when all items\n        have been processed (meaning that a task_done() call was received\n        for every item that had been put() into the queue).\n\n        Raises a ValueError if called more times than there were items\n        placed in the queue.\n        '
+    self.all_tasks_done.acquire()
+    try:
+        unfinished = (self.unfinished_tasks - 1)
+        if (unfinished <= 0):
+            if (unfinished < 0):
+                raise ValueError('task_done() called too many times')
+            self.all_tasks_done.notifyAll()
+        self.unfinished_tasks = unfinished
+    finally:
+        self.all_tasks_done.release()

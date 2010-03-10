@@ -1,0 +1,10 @@
+def _convert_value(self, name, value):
+    if self.param_types.has_key(name):
+        (typ, default) = self.param_types[name]
+        (typ_str, typ_func) = typ
+        if typ_func:
+            try:
+                return typ_func(value)
+            except ValueError:
+                raise BadParameter(("Illegal value for %s parameter '%s': %s" % (typ_str, name, value)))
+    return value

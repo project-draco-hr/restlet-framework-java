@@ -1,0 +1,23 @@
+def get_message(self, key):
+    'Return a Message representation or raise a KeyError.'
+    (start, stop) = self._lookup(key)
+    self._file.seek(start)
+    self._file.readline()
+    original_headers = StringIO.StringIO()
+    while True:
+        line = self._file.readline()
+        if ((line == ('*** EOOH ***' + os.linesep)) or (line == '')):
+            break
+        original_headers.write(line.replace(os.linesep, '\n'))
+    visible_headers = StringIO.StringIO()
+    while True:
+        line = self._file.readline()
+        if ((line == os.linesep) or (line == '')):
+            break
+        visible_headers.write(line.replace(os.linesep, '\n'))
+    body = self._file.read((stop - self._file.tell())).replace(os.linesep, '\n')
+    msg = BabylMessage((original_headers.getvalue() + body))
+    msg.set_visible(visible_headers.getvalue())
+    if (key in self._labels):
+        msg.set_labels(self._labels[key])
+    return msg

@@ -1,0 +1,34 @@
+def _test():
+    _cleanup()
+    assert (not _active), ('Active pipes when test starts ' + repr([c.cmd for c in _active]))
+    cmd = 'cat'
+    teststr = 'ab cd\n'
+    if (os.name in ('nt', 'java')):
+        cmd = 'more'
+    expected = teststr.strip()
+    print 'testing popen2...'
+    (r, w) = popen2(cmd)
+    w.write(teststr)
+    w.close()
+    got = r.read()
+    if (got.strip() != expected):
+        raise ValueError(('wrote %r read %r' % (teststr, got)))
+    print 'testing popen3...'
+    try:
+        (r, w, e) = popen3([cmd])
+    except:
+        (r, w, e) = popen3(cmd)
+    w.write(teststr)
+    w.close()
+    got = r.read()
+    if (got.strip() != expected):
+        raise ValueError(('wrote %r read %r' % (teststr, got)))
+    got = e.read()
+    if got:
+        raise ValueError(('unexpected %r on stderr' % (got,)))
+    for inst in _active[:]:
+        inst.wait()
+    _cleanup()
+    if _active:
+        raise ValueError('_active not empty')
+    print 'All OK'

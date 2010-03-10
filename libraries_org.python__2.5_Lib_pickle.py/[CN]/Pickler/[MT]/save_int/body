@@ -1,0 +1,14 @@
+def save_int(self, obj, pack=struct.pack):
+    if self.bin:
+        if (obj >= 0):
+            if (obj <= 255):
+                self.write((BININT1 + chr(obj)))
+                return
+            if (obj <= 65535):
+                self.write(('%c%c%c' % (BININT2, (obj & 255), (obj >> 8))))
+                return
+        high_bits = (obj >> 31)
+        if ((high_bits == 0) or (high_bits == (-1))):
+            self.write((BININT + pack('<i', obj)))
+            return
+    self.write(((INT + repr(obj)) + '\n'))

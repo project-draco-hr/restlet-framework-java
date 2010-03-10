@@ -1,0 +1,12 @@
+def test_open_close_open(self):
+    values = [(self._template % i) for i in xrange(3)]
+    for value in values:
+        self._box.add(value)
+    self._box.close()
+    mtime = os.path.getmtime(self._path)
+    self._box = self._factory(self._path)
+    self.assert_((len(self._box) == 3))
+    for key in self._box.iterkeys():
+        self.assert_((self._box.get_string(key) in values))
+    self._box.close()
+    self.assert_((mtime == os.path.getmtime(self._path)))

@@ -1,0 +1,13 @@
+def test_symmetric_difference(self):
+    i = self.s.symmetric_difference(self.otherword)
+    for c in self.letters:
+        self.assertEqual((c in i), ((c in self.d) ^ (c in self.otherword)))
+    self.assertEqual(self.s, self.thetype(self.word))
+    self.assertEqual(type(i), self.thetype)
+    self.assertRaises(PassThru, self.s.symmetric_difference, check_pass_thru())
+    self.assertRaises(TypeError, self.s.symmetric_difference, [[]])
+    for C in (set, frozenset, dict.fromkeys, str, unicode, list, tuple):
+        self.assertEqual(self.thetype('abcba').symmetric_difference(C('cdc')), set('abd'))
+        self.assertEqual(self.thetype('abcba').symmetric_difference(C('efgfe')), set('abcefg'))
+        self.assertEqual(self.thetype('abcba').symmetric_difference(C('ccb')), set('a'))
+        self.assertEqual(self.thetype('abcba').symmetric_difference(C('ef')), set('abcef'))

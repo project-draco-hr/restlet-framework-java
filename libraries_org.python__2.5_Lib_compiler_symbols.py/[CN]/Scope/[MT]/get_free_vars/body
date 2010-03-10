@@ -1,0 +1,9 @@
+def get_free_vars(self):
+    if (not self.nested):
+        return ()
+    free = {}
+    free.update(self.frees)
+    for name in self.uses.keys():
+        if (not (self.defs.has_key(name) or self.globals.has_key(name))):
+            free[name] = 1
+    return free.keys()

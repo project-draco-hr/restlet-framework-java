@@ -1,0 +1,8 @@
+def reload(self, module):
+    name = str(module.__name__)
+    if ('.' not in name):
+        return self.import_it(name, name, None, force_load=1)
+    i = name.rfind('.')
+    pname = name[:i]
+    parent = self.modules[pname]
+    return self.import_it(name[(i + 1):], name, parent, force_load=1)

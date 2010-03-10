@@ -1,0 +1,40 @@
+def exp(self, context=None):
+    'Returns e ** self.'
+    if (context is None):
+        context = getcontext()
+    ans = self._check_nans(context=context)
+    if ans:
+        return ans
+    if (self._isinfinity() == (-1)):
+        return Dec_0
+    if (not self):
+        return Dec_p1
+    if (self._isinfinity() == 1):
+        return Decimal(self)
+    p = context.prec
+    adj = self.adjusted()
+    if ((self._sign == 0) and (adj > len(str(((context.Emax + 1) * 3))))):
+        ans = _dec_from_triple(0, '1', (context.Emax + 1))
+    elif ((self._sign == 1) and (adj > len(str((((- context.Etiny()) + 1) * 3))))):
+        ans = _dec_from_triple(0, '1', (context.Etiny() - 1))
+    elif ((self._sign == 0) and (adj < (- p))):
+        ans = _dec_from_triple(0, (('1' + ('0' * (p - 1))) + '1'), (- p))
+    elif ((self._sign == 1) and (adj < ((- p) - 1))):
+        ans = _dec_from_triple(0, ('9' * (p + 1)), ((- p) - 1))
+    else:
+        op = _WorkRep(self)
+        (c, e) = (op.int, op.exp)
+        if (op.sign == 1):
+            c = (- c)
+        extra = 3
+        while True:
+            (coeff, exp) = _dexp(c, e, (p + extra))
+            if (coeff % (5 * (10 ** ((len(str(coeff)) - p) - 1)))):
+                break
+            extra += 3
+        ans = _dec_from_triple(0, str(coeff), exp)
+    context = context._shallow_copy()
+    rounding = context._set_rounding(ROUND_HALF_EVEN)
+    ans = ans._fix(context)
+    context.rounding = rounding
+    return ans

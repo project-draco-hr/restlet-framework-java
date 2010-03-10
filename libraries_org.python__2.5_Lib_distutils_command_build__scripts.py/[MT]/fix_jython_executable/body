@@ -1,0 +1,7 @@
+def fix_jython_executable(executable, options):
+    if (sys.platform.startswith('java') and is_sh(executable)):
+        if options:
+            log.warn('WARNING: Unable to adapt shebang line for Jython, the following script is NOT executable\n         see http://bugs.jython.org/issue1112 for more information.')
+        else:
+            return ('/usr/bin/env %s' % executable)
+    return executable

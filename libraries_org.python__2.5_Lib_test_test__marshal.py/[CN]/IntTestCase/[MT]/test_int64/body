@@ -1,0 +1,19 @@
+def test_int64(self):
+
+    def to_little_endian_string(value, nbytes):
+        bytes = []
+        for i in range(nbytes):
+            bytes.append(chr((value & 255)))
+            value >>= 8
+        return ''.join(bytes)
+    maxint64 = ((1L << 63) - 1)
+    minint64 = ((- maxint64) - 1)
+    for base in (maxint64, minint64, (- maxint64), (- (minint64 >> 1))):
+        while base:
+            s = ('I' + to_little_endian_string(base, 8))
+            got = marshal.loads(s)
+            self.assertEqual(base, got)
+            if (base == (-1)):
+                base = 0
+            else:
+                base >>= 1

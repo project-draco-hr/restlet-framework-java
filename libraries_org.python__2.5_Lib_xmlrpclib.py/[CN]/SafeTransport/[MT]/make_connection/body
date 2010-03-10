@@ -1,0 +1,9 @@
+def make_connection(self, host):
+    import httplib
+    (host, extra_headers, x509) = self.get_host_info(host)
+    try:
+        HTTPS = httplib.HTTPS
+    except AttributeError:
+        raise NotImplementedError("your version of httplib doesn't support HTTPS")
+    else:
+        return HTTPS(host, None, **(x509 or {}))

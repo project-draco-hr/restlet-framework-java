@@ -1,0 +1,13 @@
+def _syscmd_file(target, default=''):
+    " Interface to the system's file command.\n\n        The function uses the -b option of the file command to have it\n        ommit the filename in its output and if possible the -L option\n        to have the command follow symlinks. It returns default in\n        case the command should fail.\n\n    "
+    target = _follow_symlinks(target)
+    try:
+        f = os.popen(('file %s 2> /dev/null' % target))
+    except (AttributeError, os.error):
+        return default
+    output = string.strip(f.read())
+    rc = f.close()
+    if ((not output) or rc):
+        return default
+    else:
+        return output

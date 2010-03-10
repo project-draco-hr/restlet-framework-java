@@ -1,0 +1,6 @@
+def write(fd, string):
+    'write(fd, string) -> byteswritten\n\n    Write a string to a file descriptor.\n    '
+    from java.nio import ByteBuffer
+    from org.python.core.util import StringUtil
+    rawio = FileDescriptors.get(fd)
+    return _handle_oserror(rawio.write, ByteBuffer.wrap(StringUtil.toBytes(string)))

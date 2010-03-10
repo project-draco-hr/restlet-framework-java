@@ -1,0 +1,19 @@
+def test_basic(self):
+
+
+    class s(str):
+        pass
+
+
+    class u(unicode):
+        pass
+    for t1 in (str, unicode, s, u):
+        for t2 in (str, unicode, s, u):
+            a = t1('a')
+            b = t2('b')
+            resType = str
+            if (issubclass(t1, unicode) or issubclass(t2, unicode)):
+                resType = unicode
+            res = a.__add__(b)
+            self.assertEquals(type(res), resType, ('%r is a %s, not a %s' % (res, type(res), resType)))
+            self.assertEquals(res, 'ab', ('%r (%s) != %r (%s)' % (res, type(res), 'ab', str)))

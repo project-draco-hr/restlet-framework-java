@@ -1,0 +1,20 @@
+def proc_gnulong(self, tarinfo):
+    'Process the blocks that hold a GNU longname\n           or longlink member.\n        '
+    buf = ''
+    count = tarinfo.size
+    while (count > 0):
+        block = self.fileobj.read(BLOCKSIZE)
+        buf += block
+        self.offset += BLOCKSIZE
+        count -= BLOCKSIZE
+    b = self.fileobj.read(BLOCKSIZE)
+    t = TarInfo.frombuf(b)
+    t.offset = self.offset
+    self.offset += BLOCKSIZE
+    next = self.proc_member(t)
+    next.offset = tarinfo.offset
+    if (tarinfo.type == GNUTYPE_LONGNAME):
+        next.name = nts(buf)
+    elif (tarinfo.type == GNUTYPE_LONGLINK):
+        next.linkname = nts(buf)
+    return next

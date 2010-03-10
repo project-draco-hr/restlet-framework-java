@@ -1,0 +1,13 @@
+"FeedParser - An email feed parser.\n\nThe feed parser implements an interface for incrementally parsing an email\nmessage, line by line.  This has advantages for certain applications, such as\nthose reading email messages off a socket.\n\nFeedParser.feed() is the primary interface for pushing new data into the\nparser.  It returns when there's nothing more it can do with the available\ndata.  When you have no more data to push into the parser, call .close().\nThis completes the parsing and returns the root message object.\n\nThe other advantage of this parser is that it will never throw a parsing\nexception.  Instead, when it finds something unexpected, it adds a 'defect' to\nthe current message.  Defects are just instances that live on the message\nobject's .defects attribute.\n"
+__all__ = ['FeedParser']
+import re
+from email import errors
+from email import message
+NLCRE = re.compile('\r\n|\r|\n')
+NLCRE_bol = re.compile('(\r\n|\r|\n)')
+NLCRE_eol = re.compile('(\r\n|\r|\n)$')
+NLCRE_crack = re.compile('(\r\n|\r|\n)')
+headerRE = re.compile('^(From |[\\041-\\071\\073-\\176]{1,}:|[\\t ])')
+EMPTYSTRING = ''
+NL = '\n'
+NeedMoreData = object()

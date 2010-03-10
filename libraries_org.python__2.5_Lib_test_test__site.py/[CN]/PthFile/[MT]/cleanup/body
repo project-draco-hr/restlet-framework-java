@@ -1,0 +1,14 @@
+def cleanup(self, prep=False):
+    'Make sure that the .pth file is deleted, self.imported is not in\n        sys.modules, and that both self.good_dirname and self.bad_dirname are\n        not existing directories.'
+    if os.path.exists(self.file_path):
+        os.remove(self.file_path)
+    if prep:
+        self.imported_module = sys.modules.get(self.imported)
+        if self.imported_module:
+            del sys.modules[self.imported]
+    elif self.imported_module:
+        sys.modules[self.imported] = self.imported_module
+    if os.path.exists(self.good_dir_path):
+        os.rmdir(self.good_dir_path)
+    if os.path.exists(self.bad_dir_path):
+        os.rmdir(self.bad_dir_path)

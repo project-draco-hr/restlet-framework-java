@@ -1,0 +1,26 @@
+def test_main(arith=False, verbose=None, todo_tests=None, debug=None):
+    ' Execute the tests.\n\n    Runs all arithmetic tests if arith is True or if the "decimal" resource\n    is enabled in regrtest.py\n    '
+    init()
+    global TEST_ALL, DEBUG
+    TEST_ALL = (arith or is_resource_enabled('decimal'))
+    DEBUG = debug
+    if (todo_tests is None):
+        test_classes = [DecimalExplicitConstructionTest, DecimalImplicitConstructionTest, DecimalArithmeticOperatorsTest, DecimalUseOfContextTest, DecimalUsabilityTest, DecimalPythonAPItests, ContextAPItests, DecimalTest, WithStatementTest, ContextFlags]
+    else:
+        test_classes = [DecimalTest]
+    for filename in os.listdir(directory):
+        if (('.decTest' not in filename) or filename.startswith('.')):
+            continue
+        (head, tail) = filename.split('.')
+        if ((todo_tests is not None) and (head not in todo_tests)):
+            continue
+        tester = (lambda self, f=filename: self.eval_file((directory + f)))
+        setattr(DecimalTest, ('test_' + head), tester)
+        del filename, head, tail, tester
+    try:
+        run_unittest(*test_classes)
+        if (todo_tests is None):
+            import decimal as DecimalModule
+            run_doctest(DecimalModule, verbose)
+    finally:
+        setcontext(ORIGINAL_CONTEXT)

@@ -1,0 +1,5 @@
+def test_splitting_first_line_only_is_long(self):
+    eq = self.ndiffAssertEqual
+    hstr = 'from modemcable093.139-201-24.que.mc.videotron.ca ([24.201.139.93] helo=cthulhu.gerg.ca)\n\tby kronos.mems-exchange.org with esmtp (Exim 4.05)\n\tid 17k4h5-00034i-00\n\tfor test@mems-exchange.org; Wed, 28 Aug 2002 11:25:20 -0400'
+    h = Header(hstr, maxlinelen=78, header_name='Received', continuation_ws='\t')
+    eq(h.encode(), 'from modemcable093.139-201-24.que.mc.videotron.ca ([24.201.139.93]\n\thelo=cthulhu.gerg.ca)\n\tby kronos.mems-exchange.org with esmtp (Exim 4.05)\n\tid 17k4h5-00034i-00\n\tfor test@mems-exchange.org; Wed, 28 Aug 2002 11:25:20 -0400')

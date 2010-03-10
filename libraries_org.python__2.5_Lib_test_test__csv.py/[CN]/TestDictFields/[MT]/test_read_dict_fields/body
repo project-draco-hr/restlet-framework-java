@@ -1,0 +1,11 @@
+def test_read_dict_fields(self):
+    (fd, name) = tempfile.mkstemp()
+    fileobj = os.fdopen(fd, 'w+b')
+    try:
+        fileobj.write('1,2,abc\r\n')
+        fileobj.seek(0)
+        reader = csv.DictReader(fileobj, fieldnames=['f1', 'f2', 'f3'])
+        self.assertEqual(reader.next(), {'f1': '1', 'f2': '2', 'f3': 'abc', })
+    finally:
+        fileobj.close()
+        os.unlink(name)

@@ -1,0 +1,25 @@
+def readpipe_interrupted(self, cb):
+    (r, w) = os.pipe()
+    ppid = os.getpid()
+    pid = os.fork()
+    oldhandler = signal.signal(self.signum, (lambda x, y: None))
+    cb()
+    if (pid == 0):
+        try:
+            time.sleep(0.2)
+            os.kill(ppid, self.signum)
+            time.sleep(0.2)
+        finally:
+            exit_subprocess()
+    try:
+        os.close(w)
+        try:
+            d = os.read(r, 1)
+            return False
+        except OSError as err:
+            if (err.errno != errno.EINTR):
+                raise
+            return True
+    finally:
+        signal.signal(self.signum, oldhandler)
+        os.waitpid(pid, 0)

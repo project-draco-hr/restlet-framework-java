@@ -1,0 +1,12 @@
+def test_non_consuming(self):
+    self.assertEqual(re.match('(a(?=\\s[^a]))', 'a b').group(1), 'a')
+    self.assertEqual(re.match('(a(?=\\s[^a]*))', 'a b').group(1), 'a')
+    self.assertEqual(re.match('(a(?=\\s[abc]))', 'a b').group(1), 'a')
+    self.assertEqual(re.match('(a(?=\\s[abc]*))', 'a bc').group(1), 'a')
+    self.assertEqual(re.match('(a)(?=\\s\\1)', 'a a').group(1), 'a')
+    self.assertEqual(re.match('(a)(?=\\s\\1*)', 'a aa').group(1), 'a')
+    self.assertEqual(re.match('(a)(?=\\s(abc|a))', 'a a').group(1), 'a')
+    self.assertEqual(re.match('(a(?!\\s[^a]))', 'a a').group(1), 'a')
+    self.assertEqual(re.match('(a(?!\\s[abc]))', 'a d').group(1), 'a')
+    self.assertEqual(re.match('(a)(?!\\s\\1)', 'a b').group(1), 'a')
+    self.assertEqual(re.match('(a)(?!\\s(abc|a))', 'a b').group(1), 'a')

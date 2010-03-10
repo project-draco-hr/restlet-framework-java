@@ -1,0 +1,9 @@
+def run(self):
+    protocol = 'HTTP/1.0'
+    self._RequestHandlerClass.protocol_version = protocol
+    httpd = LoopbackHttpServer(self._server_address, self._RequestHandlerClass)
+    sa = httpd.socket.getsockname()
+    self.ready.set()
+    while (not self._stop):
+        httpd.handle_request()
+    httpd.server_close()

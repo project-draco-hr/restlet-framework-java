@@ -1,0 +1,6 @@
+def test_badandgoodignoreexceptions(self):
+    self.assertRaises(TypeError, codecs.ignore_errors, 42)
+    self.assertRaises(TypeError, codecs.ignore_errors, UnicodeError('ouch'))
+    self.assertEquals(codecs.ignore_errors(UnicodeEncodeError('ascii', u'\u3042', 0, 1, 'ouch')), (u'', 1))
+    self.assertEquals(codecs.ignore_errors(UnicodeDecodeError('ascii', '\xff', 0, 1, 'ouch')), (u'', 1))
+    self.assertEquals(codecs.ignore_errors(UnicodeTranslateError(u'\u3042', 0, 1, 'ouch')), (u'', 1))

@@ -1,0 +1,6 @@
+def test_add_hardlink(self):
+    os.link(self.foo, self.bar)
+    tarinfo = self.tar.gettarinfo(self.foo)
+    self.assertEqual(tarinfo.type, tarfile.LNKTYPE, 'add file as hardlink failed')
+    tarinfo = self.tar.gettarinfo(self.bar)
+    self.assertEqual(tarinfo.type, tarfile.LNKTYPE, 'add file as hardlink failed')

@@ -1,0 +1,30 @@
+def test_getitem(self):
+    TestMappingProtocol.test_getitem(self)
+
+
+    class Exc(Exception):
+        pass
+
+
+    class BadEq(object):
+
+        def __eq__(self, other):
+            raise Exc()
+    d = self._empty_mapping()
+    d[BadEq()] = 42
+    self.assertRaises(KeyError, d.__getitem__, 23)
+
+
+    class BadHash(object):
+        fail = False
+
+        def __hash__(self):
+            if self.fail:
+                raise Exc()
+            else:
+                return 42
+    d = self._empty_mapping()
+    x = BadHash()
+    d[x] = 42
+    x.fail = True
+    self.assertRaises(Exc, d.__getitem__, x)

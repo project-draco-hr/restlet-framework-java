@@ -1,0 +1,14 @@
+def createNewTempFile(self, data=''):
+    'Creates a new temporary file containing the specified data,\n        registers the file for deletion during the test fixture tear down, and\n        returns the absolute path of the file.'
+    (newFd, newFilePath) = tempfile.mkstemp()
+    try:
+        self.registerFileForCleanUp(newFilePath)
+        newFile = os.fdopen(newFd, 'wb')
+        newFile.write(data)
+        newFile.close()
+    finally:
+        try:
+            newFile.close()
+        except:
+            pass
+    return newFilePath

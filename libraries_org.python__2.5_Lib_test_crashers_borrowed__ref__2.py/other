@@ -1,0 +1,12 @@
+'\n_PyType_Lookup() returns a borrowed reference.\nThis attacks PyObject_GenericSetAttr().\n\nNB. on my machine this crashes in 2.5 debug but not release.\n'
+c = C()
+a = A()
+a.cycle = a
+a.other = B()
+lst = ([None] * 1000000)
+i = 0
+del a
+while 1:
+    c.d = 42
+    lst[i] = c.g
+    i += 1

@@ -1,0 +1,22 @@
+def getparser(use_datetime=0):
+    'getparser() -> parser, unmarshaller\n\n    Create an instance of the fastest available parser, and attach it\n    to an unmarshalling object.  Return both objects.\n    '
+    if (use_datetime and (not datetime)):
+        raise ValueError, 'the datetime module is not available'
+    if (FastParser and FastUnmarshaller):
+        if use_datetime:
+            mkdatetime = _datetime_type
+        else:
+            mkdatetime = _datetime
+        target = FastUnmarshaller(True, False, _binary, mkdatetime, Fault)
+        parser = FastParser(target)
+    else:
+        target = Unmarshaller(use_datetime=use_datetime)
+        if FastParser:
+            parser = FastParser(target)
+        elif SgmlopParser:
+            parser = SgmlopParser(target)
+        elif ExpatParser:
+            parser = ExpatParser(target)
+        else:
+            parser = SlowParser(target)
+    return (parser, target)

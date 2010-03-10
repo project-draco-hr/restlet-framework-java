@@ -1,0 +1,6 @@
+def test_stderr_fileobj(self):
+    tf = tempfile.TemporaryFile()
+    p = subprocess.Popen([sys.executable, '-c', 'import sys; sys.stderr.write("strawberry")'], stderr=tf)
+    p.wait()
+    tf.seek(0)
+    self.assertEqual(remove_stderr_debug_decorations(tf.read()), 'strawberry')

@@ -1,0 +1,16 @@
+def get(unichr, default, fn, getter):
+    codepoint = get_codepoint(unichr, fn)
+    data = _codepoints.get(codepoint, None)
+    if (data is None):
+        data = check_segments(codepoint, _segments)
+        if (data is None):
+            if (default is not Nonesuch):
+                return default
+            raise ValueError()
+    v = getter(data)
+    if (v is None):
+        if (default is not Nonesuch):
+            return default
+        raise ValueError()
+    else:
+        return v

@@ -1,0 +1,12 @@
+def test_k(self):
+    from _testcapi import getargs_k
+    self.assertRaises(TypeError, getargs_k, 3.14)
+    self.assertRaises(TypeError, getargs_k, Long())
+    self.assertRaises(TypeError, getargs_k, Int())
+    self.failUnlessEqual(ULONG_MAX, getargs_k((-1)))
+    self.failUnlessEqual(0, getargs_k(0))
+    self.failUnlessEqual(ULONG_MAX, getargs_k(ULONG_MAX))
+    self.failUnlessEqual(0, getargs_k((ULONG_MAX + 1)))
+    self.failUnlessEqual(42, getargs_k(42))
+    self.failUnlessEqual(42, getargs_k(42L))
+    self.failUnlessEqual((VERY_LARGE & ULONG_MAX), getargs_k(VERY_LARGE))

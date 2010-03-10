@@ -1,0 +1,7 @@
+def handleLogRecord(self, record):
+    logname = ('logrecv.tcp.' + record.name)
+    if (record.msg == FINISH_UP):
+        self.server.abort = 1
+    record.msg = (((record.msg + ' (via ') + logname) + ')')
+    logger = logging.getLogger(logname)
+    logger.handle(record)

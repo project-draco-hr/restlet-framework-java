@@ -1,0 +1,21 @@
+def import_it(self, partname, fqname, parent, force_load=0):
+    if (not partname):
+        raise ValueError, 'Empty module name'
+    if (not force_load):
+        try:
+            return self.modules[fqname]
+        except KeyError:
+            pass
+    try:
+        path = (parent and parent.__path__)
+    except AttributeError:
+        return None
+    partname = str(partname)
+    stuff = self.loader.find_module(partname, path)
+    if (not stuff):
+        return None
+    fqname = str(fqname)
+    m = self.loader.load_module(fqname, stuff)
+    if parent:
+        setattr(parent, partname, m)
+    return m

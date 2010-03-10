@@ -1,0 +1,14 @@
+def _siftup(heap, pos):
+    endpos = len(heap)
+    startpos = pos
+    newitem = heap[pos]
+    childpos = ((2 * pos) + 1)
+    while (childpos < endpos):
+        rightpos = (childpos + 1)
+        if ((rightpos < endpos) and (heap[rightpos] <= heap[childpos])):
+            childpos = rightpos
+        heap[pos] = heap[childpos]
+        pos = childpos
+        childpos = ((2 * pos) + 1)
+    heap[pos] = newitem
+    _siftdown(heap, startpos, pos)

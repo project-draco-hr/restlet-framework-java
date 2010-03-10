@@ -1,0 +1,6 @@
+def test_snippets(self):
+    for (input, output, kind) in ((exec_tests, exec_results, 'exec'), (single_tests, single_results, 'single'), (eval_tests, eval_results, 'eval')):
+        for (i, o) in itertools.izip(input, output):
+            ast_tree = compile(i, '?', kind, ast.PyCF_ONLY_AST)
+            self.assertEquals(to_tuple(ast_tree), o)
+            self._assert_order(ast_tree, (0, 0))

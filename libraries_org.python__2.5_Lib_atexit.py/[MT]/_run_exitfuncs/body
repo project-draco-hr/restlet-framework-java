@@ -1,0 +1,16 @@
+def _run_exitfuncs():
+    'run any registered exit functions\n\n    _exithandlers is traversed in reverse order so functions are executed\n    last in, first out.\n    '
+    exc_info = None
+    while _exithandlers:
+        (func, targs, kargs) = _exithandlers.pop()
+        try:
+            func(*targs, **kargs)
+        except SystemExit:
+            exc_info = sys.exc_info()
+        except:
+            import traceback
+            print  >> sys.stderr, 'Error in atexit._run_exitfuncs:'
+            traceback.print_exc()
+            exc_info = sys.exc_info()
+    if (exc_info is not None):
+        raise exc_info[0], exc_info[1], exc_info[2]

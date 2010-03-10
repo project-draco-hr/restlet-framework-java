@@ -1,0 +1,13 @@
+def checkfuncname(b, frame):
+    'Check whether we should break here because of `b.funcname`.'
+    if (not b.funcname):
+        if (b.line != frame.f_lineno):
+            return False
+        return True
+    if (frame.f_code.co_name != b.funcname):
+        return False
+    if (not b.func_first_executable_line):
+        b.func_first_executable_line = frame.f_lineno
+    if (b.func_first_executable_line != frame.f_lineno):
+        return False
+    return True

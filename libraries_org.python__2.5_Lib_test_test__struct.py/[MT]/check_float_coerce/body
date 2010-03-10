@@ -1,0 +1,17 @@
+def check_float_coerce(format, number):
+    if (PY_STRUCT_FLOAT_COERCE == 2):
+        packed = struct.pack(format, number)
+        floored = struct.unpack(format, packed)[0]
+        if (floored != int(number)):
+            raise TestFailed('did not correcly coerce float to int')
+        return
+    try:
+        func(*args)
+    except (struct.error, TypeError):
+        if PY_STRUCT_FLOAT_COERCE:
+            raise TestFailed('expected DeprecationWarning for float coerce')
+    except DeprecationWarning:
+        if (not PY_STRUCT_FLOAT_COERCE):
+            raise TestFailed('expected to raise struct.error for float coerce')
+    else:
+        raise TestFailed('did not raise error for float coerce')

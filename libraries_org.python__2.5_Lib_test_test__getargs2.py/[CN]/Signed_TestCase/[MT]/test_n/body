@@ -1,0 +1,12 @@
+def test_n(self):
+    from _testcapi import getargs_n
+    self.failUnlessEqual(3, getargs_n(3.14))
+    self.failUnlessEqual(99, getargs_n(Long()))
+    self.failUnlessEqual(99, getargs_n(Int()))
+    self.assertRaises(OverflowError, getargs_n, (PY_SSIZE_T_MIN - 1))
+    self.failUnlessEqual(PY_SSIZE_T_MIN, getargs_n(PY_SSIZE_T_MIN))
+    self.failUnlessEqual(PY_SSIZE_T_MAX, getargs_n(PY_SSIZE_T_MAX))
+    self.assertRaises(OverflowError, getargs_n, (PY_SSIZE_T_MAX + 1))
+    self.failUnlessEqual(42, getargs_n(42))
+    self.failUnlessEqual(42, getargs_n(42L))
+    self.assertRaises(OverflowError, getargs_n, VERY_LARGE)

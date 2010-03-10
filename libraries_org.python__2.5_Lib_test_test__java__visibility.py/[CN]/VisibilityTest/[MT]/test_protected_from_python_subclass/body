@@ -1,0 +1,50 @@
+def test_protected_from_python_subclass(self):
+
+
+    class PySubVisible(Visible):
+
+        def __init__(self, publicValue=None):
+            if (publicValue is not None):
+                Visible.__init__(self, publicValue)
+            else:
+                Visible.__init__(self)
+
+
+    class SubPySubVisible(PySubVisible):
+        pass
+    for cls in (PySubVisible, SubPySubVisible):
+        s = cls()
+        self.assertEquals(Results.PROTECTED_METHOD, s.protectedMethod(0))
+        self.assertEquals(Results.OVERLOADED_PROTECTED_METHOD, s.protectedMethod('foo'))
+        self.assertEquals(Results.UNUSED, PySubVisible(Results.UNUSED).visibleField)
+        self.assertRaises(TypeError, OnlySubclassable, 'Calling a Java class with protected constructors should raise a TypeError')
+
+
+    class SubSubclassable(OnlySubclassable):
+        pass
+    sub = SubSubclassable()
+    self.assert_((not (sub.filledInByConstructor == 0)), "Creating SubSubclassable should call OnlySubclassable's constructor to fill in\n                filledInByConstructor")
+
+
+    class TestObservable(Observable):
+
+        def __init__(self):
+            self.props = {}
+
+        def set(self, key, val):
+            self.props[key] = val
+            self.setChanged()
+            self.notifyObservers()
+    to = TestObservable()
+    self.updated = False
+
+
+    class TestObserver(Observer):
+
+        def update(observerself, observable, arg):
+            self.assertEquals(to, observable)
+            self.assertEquals(None, arg)
+            self.updated = True
+    to.addObserver(TestObserver())
+    to.set('k', 'v')
+    self.assert_(self.updated, 'Calling set should notify the added observer')

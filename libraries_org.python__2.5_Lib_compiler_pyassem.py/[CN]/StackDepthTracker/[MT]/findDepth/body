@@ -1,0 +1,25 @@
+def findDepth(self, insts, debug=0):
+    depth = 0
+    maxDepth = 0
+    for i in insts:
+        opname = i[0]
+        if debug:
+            print i,
+        delta = self.effect.get(opname, None)
+        if (delta is not None):
+            depth = (depth + delta)
+        else:
+            for (pat, pat_delta) in self.patterns:
+                if (opname[:len(pat)] == pat):
+                    delta = pat_delta
+                    depth = (depth + delta)
+                    break
+            if (delta is None):
+                meth = getattr(self, opname, None)
+                if (meth is not None):
+                    depth = (depth + meth(i[1]))
+        if (depth > maxDepth):
+            maxDepth = depth
+        if debug:
+            print depth, maxDepth
+    return maxDepth

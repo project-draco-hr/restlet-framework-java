@@ -1,0 +1,7 @@
+def read_long1(f):
+    '\n    >>> import StringIO\n    >>> read_long1(StringIO.StringIO("\\x00"))\n    0L\n    >>> read_long1(StringIO.StringIO("\\x02\\xff\\x00"))\n    255L\n    >>> read_long1(StringIO.StringIO("\\x02\\xff\\x7f"))\n    32767L\n    >>> read_long1(StringIO.StringIO("\\x02\\x00\\xff"))\n    -256L\n    >>> read_long1(StringIO.StringIO("\\x02\\x00\\x80"))\n    -32768L\n    '
+    n = read_uint1(f)
+    data = f.read(n)
+    if (len(data) != n):
+        raise ValueError('not enough data in stream to read long1')
+    return decode_long(data)

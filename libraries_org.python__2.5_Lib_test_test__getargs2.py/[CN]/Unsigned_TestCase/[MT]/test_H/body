@@ -1,0 +1,12 @@
+def test_H(self):
+    from _testcapi import getargs_H
+    self.failUnlessEqual(3, getargs_H(3.14))
+    self.failUnlessEqual(99, getargs_H(Long()))
+    self.failUnlessEqual(99, getargs_H(Int()))
+    self.failUnlessEqual(USHRT_MAX, getargs_H((-1)))
+    self.failUnlessEqual(0, getargs_H(0))
+    self.failUnlessEqual(USHRT_MAX, getargs_H(USHRT_MAX))
+    self.failUnlessEqual(0, getargs_H((USHRT_MAX + 1)))
+    self.failUnlessEqual(42, getargs_H(42))
+    self.failUnlessEqual(42, getargs_H(42L))
+    self.failUnlessEqual((VERY_LARGE & USHRT_MAX), getargs_H(VERY_LARGE))

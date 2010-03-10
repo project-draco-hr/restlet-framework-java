@@ -1,0 +1,18 @@
+def _from_module(self, module, object):
+    '\n        Return true if the given object is defined in the given\n        module.\n        '
+    if (module is None):
+        return True
+    elif inspect.isfunction(object):
+        return (module.__dict__ is object.func_globals)
+    elif inspect.isclass(object):
+        if (not hasattr(object, '__module__')):
+            return False
+        return (module.__name__ == object.__module__)
+    elif (inspect.getmodule(object) is not None):
+        return (module is inspect.getmodule(object))
+    elif hasattr(object, '__module__'):
+        return (module.__name__ == object.__module__)
+    elif isinstance(object, property):
+        return True
+    else:
+        raise ValueError('object must be a class or function')

@@ -1,0 +1,13 @@
+def test_key_with_mutating_del(self):
+    data = range(10)
+
+
+    class SortKiller(object):
+
+        def __init__(self, x):
+            pass
+
+        def __del__(self):
+            del data[:]
+            data[:] = range(20)
+    self.assertRaises(ValueError, data.sort, key=SortKiller)

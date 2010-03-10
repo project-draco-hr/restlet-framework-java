@@ -1,0 +1,18 @@
+def items(self, section, raw=False, vars=None):
+    "Return a list of tuples with (name, value) for each option\n        in the section.\n\n        All % interpolations are expanded in the return values, based on the\n        defaults passed into the constructor, unless the optional argument\n        `raw' is true.  Additional substitutions may be provided using the\n        `vars' argument, which must be a dictionary whose contents overrides\n        any pre-existing defaults.\n\n        The section DEFAULT is special.\n        "
+    d = self._defaults.copy()
+    try:
+        d.update(self._sections[section])
+    except KeyError:
+        if (section != DEFAULTSECT):
+            raise NoSectionError(section)
+    if vars:
+        for (key, value) in vars.items():
+            d[self.optionxform(key)] = value
+    options = d.keys()
+    if ('__name__' in options):
+        options.remove('__name__')
+    if raw:
+        return [(option, d[option]) for option in options]
+    else:
+        return [(option, self._interpolate(section, option, d[option], d)) for option in options]

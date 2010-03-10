@@ -1,0 +1,7 @@
+def _config(self):
+    assert (self.mode in _permitted_modes)
+    if self.sock_impl:
+        self.sock_impl.config(self.mode, self.timeout)
+        for (level, optname) in self.pending_options.keys():
+            if (optname != SO_REUSEADDR):
+                self.sock_impl.setsockopt(level, optname, self.pending_options[(level, optname)])

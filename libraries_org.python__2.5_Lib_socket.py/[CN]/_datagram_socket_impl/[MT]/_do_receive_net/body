@@ -1,0 +1,16 @@
+def _do_receive_net(self, return_source_address, num_bytes, flags):
+    byte_array = jarray.zeros(num_bytes, 'b')
+    packet = java.net.DatagramPacket(byte_array, num_bytes)
+    self.jsocket.receive(packet)
+    bytes_rcvd = packet.getLength()
+    if (bytes_rcvd < num_bytes):
+        byte_array = byte_array[:bytes_rcvd]
+    return_data = byte_array.tostring()
+    if return_source_address:
+        host = None
+        if packet.getAddress():
+            host = packet.getAddress().getHostAddress()
+        port = packet.getPort()
+        return (return_data, (host, port))
+    else:
+        return return_data

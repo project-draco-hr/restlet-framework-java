@@ -1,0 +1,26 @@
+def test_tmpfile(self):
+    if (not hasattr(os, 'tmpfile')):
+        return
+    if (sys.platform == 'win32'):
+        name = '\\python_test_os_test_tmpfile.txt'
+        if os.path.exists(name):
+            os.remove(name)
+        try:
+            fp = open(name, 'w')
+        except IOError as first:
+            try:
+                fp = os.tmpfile()
+            except OSError as second:
+                self.assertEqual(first.args, second.args)
+            else:
+                self.fail('expected os.tmpfile() to raise OSError')
+            return
+        else:
+            fp.close()
+            os.remove(name)
+    fp = os.tmpfile()
+    fp.write('foobar')
+    fp.seek(0, 0)
+    s = fp.read()
+    fp.close()
+    self.assert_((s == 'foobar'))

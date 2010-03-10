@@ -1,0 +1,9 @@
+def setUp(self):
+    FakeProxyHandler.digest_auth_handler.set_users({self.USER: self.PASSWD, })
+    FakeProxyHandler.digest_auth_handler.set_realm(self.REALM)
+    self.server = LoopbackHttpServerThread(self.PORT, FakeProxyHandler)
+    self.server.start()
+    self.server.ready.wait()
+    handler = urllib2.ProxyHandler({'http': self.PROXY_URL, })
+    self._digest_auth_handler = urllib2.ProxyDigestAuthHandler()
+    self.opener = urllib2.build_opener(handler, self._digest_auth_handler)

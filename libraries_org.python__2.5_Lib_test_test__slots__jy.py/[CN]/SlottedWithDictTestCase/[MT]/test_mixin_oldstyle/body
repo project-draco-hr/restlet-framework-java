@@ -1,0 +1,21 @@
+def test_mixin_oldstyle(self):
+
+
+    class OldBase:
+        pass
+
+
+    class NewBase(object):
+        pass
+
+
+    class Baz(NewBase, OldBase):
+        __slots__ = 'baz'
+    self.assert_(('__dict__' not in Baz.__dict__))
+    baz = Baz()
+    self.assert_(hasattr(baz, '__dict__'))
+    baz.baz = 'hello baz'
+    baz.bar = 'hello bar'
+    self.assertEqual(baz.baz, 'hello baz')
+    self.assertEqual(baz.bar, 'hello bar')
+    self.assertEqual(baz.__dict__, {'bar': 'hello bar', })

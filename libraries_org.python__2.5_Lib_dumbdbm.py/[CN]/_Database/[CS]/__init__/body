@@ -1,0 +1,12 @@
+def __init__(self, filebasename, mode):
+    self._mode = mode
+    self._dirfile = ((filebasename + _os.extsep) + 'dir')
+    self._datfile = ((filebasename + _os.extsep) + 'dat')
+    self._bakfile = ((filebasename + _os.extsep) + 'bak')
+    self._index = None
+    try:
+        f = _open(self._datfile, 'r')
+    except IOError:
+        f = _open(self._datfile, 'w', self._mode)
+    f.close()
+    self._update()

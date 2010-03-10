@@ -1,0 +1,15 @@
+def _marshaled_dispatch(self, data, dispatch_method=None):
+    'Dispatches an XML-RPC method from marshalled (XML) data.\n\n        XML-RPC methods are dispatched from the marshalled (XML) data\n        using the _dispatch method and the result is returned as\n        marshalled data. For backwards compatibility, a dispatch\n        function can be provided as an argument (see comment in\n        SimpleXMLRPCRequestHandler.do_POST) but overriding the\n        existing method through subclassing is the prefered means\n        of changing method dispatch behavior.\n        '
+    try:
+        (params, method) = xmlrpclib.loads(data)
+        if (dispatch_method is not None):
+            response = dispatch_method(method, params)
+        else:
+            response = self._dispatch(method, params)
+        response = (response,)
+        response = xmlrpclib.dumps(response, methodresponse=1, allow_none=self.allow_none, encoding=self.encoding)
+    except Fault as fault:
+        response = xmlrpclib.dumps(fault, allow_none=self.allow_none, encoding=self.encoding)
+    except:
+        response = xmlrpclib.dumps(xmlrpclib.Fault(1, ('%s:%s' % (sys.exc_type, sys.exc_value))), encoding=self.encoding, allow_none=self.allow_none)
+    return response

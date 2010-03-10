@@ -1,0 +1,6 @@
+def set_executables(self, **args):
+    "Define the executables (and options for them) that will be run\n        to perform the various stages of compilation.  The exact set of\n        executables that may be specified here depends on the compiler\n        class (via the 'executables' class attribute), but most will have:\n          compiler      the C/C++ compiler\n          linker_so     linker used to create shared objects and libraries\n          linker_exe    linker used to create binary executables\n          archiver      static library creator\n\n        On platforms with a command-line (Unix, DOS/Windows), each of these\n        is a string that will be split into executable name and (optional)\n        list of arguments.  (Splitting the string is done similarly to how\n        Unix shells operate: words are delimited by spaces, but quotes and\n        backslashes can override this.  See\n        'distutils.util.split_quoted()'.)\n        "
+    for key in args.keys():
+        if (not self.executables.has_key(key)):
+            raise ValueError, ("unknown executable '%s' for class %s" % (key, self.__class__.__name__))
+        self.set_executable(key, args[key])

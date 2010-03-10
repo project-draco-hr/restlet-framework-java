@@ -1,0 +1,9 @@
+def testSocketNotBound(self):
+    try:
+        result = self.s.recv(1024)
+    except socket.error as se:
+        self.failUnlessEqual(se[0], errno.ENOTCONN)
+    except Exception as x:
+        self.fail(('Receive on unbound socket raised wrong exception: %s' % x))
+    else:
+        self.fail('Receive on unbound socket raised exception')

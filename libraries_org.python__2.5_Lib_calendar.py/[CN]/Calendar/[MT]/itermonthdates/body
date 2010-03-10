@@ -1,0 +1,11 @@
+def itermonthdates(self, year, month):
+    '\n        Return an iterator for one month. The iterator will yield datetime.date\n        values and will always iterate through complete weeks, so it will yield\n        dates outside the specified month.\n        '
+    date = datetime.date(year, month, 1)
+    days = ((date.weekday() - self.firstweekday) % 7)
+    date -= datetime.timedelta(days=days)
+    oneday = datetime.timedelta(days=1)
+    while True:
+        yield date
+        date += oneday
+        if ((date.month != month) and (date.weekday() == self.firstweekday)):
+            break

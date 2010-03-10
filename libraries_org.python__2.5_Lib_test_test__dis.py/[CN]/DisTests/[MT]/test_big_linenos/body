@@ -1,0 +1,13 @@
+def test_big_linenos(self):
+
+    def func(count):
+        namespace = {}
+        func = ('def foo():\n ' + ''.join(((['\n '] * count) + ['spam\n'])))
+        exec func in namespace
+        return namespace['foo']
+    for i in xrange(1, 300):
+        expected = (_BIG_LINENO_FORMAT % (i + 2))
+        self.do_disassembly_test(func(i), expected)
+    for i in xrange(300, 5000, 10):
+        expected = (_BIG_LINENO_FORMAT % (i + 2))
+        self.do_disassembly_test(func(i), expected)

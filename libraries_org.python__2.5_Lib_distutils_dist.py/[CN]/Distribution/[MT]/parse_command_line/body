@@ -1,0 +1,26 @@
+def parse_command_line(self):
+    'Parse the setup script\'s command line, taken from the\n        \'script_args\' instance attribute (which defaults to \'sys.argv[1:]\'\n        -- see \'setup()\' in core.py).  This list is first processed for\n        "global options" -- options that set attributes of the Distribution\n        instance.  Then, it is alternately scanned for Distutils commands\n        and options for that command.  Each new command terminates the\n        options for the previous command.  The allowed options for a\n        command are determined by the \'user_options\' attribute of the\n        command class -- thus, we have to be able to load command classes\n        in order to parse the command line.  Any error in that \'options\'\n        attribute raises DistutilsGetoptError; any error on the\n        command-line raises DistutilsArgError.  If no Distutils commands\n        were found on the command line, raises DistutilsArgError.  Return\n        true if command-line was successfully parsed and we should carry\n        on with executing commands; false if no errors but we shouldn\'t\n        execute commands (currently, this only happens if user asks for\n        help).\n        '
+    toplevel_options = self._get_toplevel_options()
+    if (sys.platform == 'mac'):
+        import EasyDialogs
+        cmdlist = self.get_command_list()
+        self.script_args = EasyDialogs.GetArgv((toplevel_options + self.display_options), cmdlist)
+    self.commands = []
+    parser = FancyGetopt((toplevel_options + self.display_options))
+    parser.set_negative_aliases(self.negative_opt)
+    parser.set_aliases({'licence': 'license', })
+    args = parser.getopt(args=self.script_args, object=self)
+    option_order = parser.get_option_order()
+    log.set_verbosity(self.verbose)
+    if self.handle_display_options(option_order):
+        return
+    while args:
+        args = self._parse_command_opts(parser, args)
+        if (args is None):
+            return
+    if self.help:
+        self._show_help(parser, display_options=(len(self.commands) == 0), commands=self.commands)
+        return
+    if (not self.commands):
+        raise DistutilsArgError, 'no commands supplied'
+    return 1

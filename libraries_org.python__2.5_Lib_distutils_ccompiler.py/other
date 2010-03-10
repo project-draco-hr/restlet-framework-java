@@ -1,0 +1,14 @@
+'distutils.ccompiler\n\nContains CCompiler, an abstract base class that defines the interface\nfor the Distutils compiler abstraction model.'
+__revision__ = '$Id: ccompiler.py 46331 2006-05-26 14:07:23Z bob.ippolito $'
+import sys, os, re
+from types import *
+from copy import copy
+from distutils.errors import *
+from distutils.spawn import spawn
+from distutils.file_util import move_file
+from distutils.dir_util import mkpath
+from distutils.dep_util import newer_pairwise, newer_group
+from distutils.util import split_quoted, execute
+from distutils import log
+_default_compilers = (('cygwin.*', 'unix'), ('os2emx', 'emx'), ('java.*', 'jython'), ('posix', 'unix'), ('nt', 'msvc'), ('mac', 'mwerks'))
+compiler_class = {'unix': ('unixccompiler', 'UnixCCompiler', 'standard UNIX-style compiler'), 'msvc': ('msvccompiler', 'MSVCCompiler', 'Microsoft Visual C++'), 'cygwin': ('cygwinccompiler', 'CygwinCCompiler', 'Cygwin port of GNU C Compiler for Win32'), 'mingw32': ('cygwinccompiler', 'Mingw32CCompiler', 'Mingw32 port of GNU C Compiler for Win32'), 'bcpp': ('bcppcompiler', 'BCPPCompiler', 'Borland C++ Compiler'), 'mwerks': ('mwerkscompiler', 'MWerksCompiler', 'MetroWerks CodeWarrior'), 'emx': ('emxccompiler', 'EMXCCompiler', 'EMX port of GNU C Compiler for OS/2'), 'jython': ('jythoncompiler', 'JythonCompiler', 'Compiling is not supported on Jython'), }

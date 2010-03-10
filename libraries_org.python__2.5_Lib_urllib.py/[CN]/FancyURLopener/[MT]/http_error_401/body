@@ -1,0 +1,17 @@
+def http_error_401(self, url, fp, errcode, errmsg, headers, data=None):
+    'Error 401 -- authentication required.\n        This function supports Basic authentication only.'
+    if (not ('www-authenticate' in headers)):
+        URLopener.http_error_default(self, url, fp, errcode, errmsg, headers)
+    stuff = headers['www-authenticate']
+    import re
+    match = re.match('[ \t]*([^ \t]+)[ \t]+realm="([^"]*)"', stuff)
+    if (not match):
+        URLopener.http_error_default(self, url, fp, errcode, errmsg, headers)
+    (scheme, realm) = match.groups()
+    if (scheme.lower() != 'basic'):
+        URLopener.http_error_default(self, url, fp, errcode, errmsg, headers)
+    name = (('retry_' + self.type) + '_basic_auth')
+    if (data is None):
+        return getattr(self, name)(url, realm)
+    else:
+        return getattr(self, name)(url, realm, data)

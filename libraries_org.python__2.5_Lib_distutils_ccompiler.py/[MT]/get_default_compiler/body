@@ -1,0 +1,10 @@
+def get_default_compiler(osname=None, platform=None):
+    ' Determine the default compiler to use for the given platform.\n\n        osname should be one of the standard Python OS names (i.e. the\n        ones returned by os.name) and platform the common value\n        returned by sys.platform for the platform in question.\n\n        The default values are os.name and sys.platform in case the\n        parameters are not given.\n\n    '
+    if (osname is None):
+        osname = os.name
+    if (platform is None):
+        platform = sys.platform
+    for (pattern, compiler) in _default_compilers:
+        if ((re.match(pattern, platform) is not None) or (re.match(pattern, osname) is not None)):
+            return compiler
+    return 'unix'

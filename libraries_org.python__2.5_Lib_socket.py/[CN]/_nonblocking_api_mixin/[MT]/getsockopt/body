@@ -1,0 +1,8 @@
+def getsockopt(self, level, optname):
+    try:
+        if self.sock_impl:
+            return self.sock_impl.getsockopt(level, optname)
+        else:
+            return self.pending_options.get((level, optname), None)
+    except java.lang.Exception as jlx:
+        raise _map_exception(jlx)

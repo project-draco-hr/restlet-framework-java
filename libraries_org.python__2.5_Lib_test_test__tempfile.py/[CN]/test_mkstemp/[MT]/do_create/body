@@ -1,0 +1,15 @@
+def do_create(self, dir=None, pre='', suf=''):
+    if (dir is None):
+        dir = tempfile.gettempdir()
+    try:
+        (fd, name) = tempfile.mkstemp(dir=dir, prefix=pre, suffix=suf)
+        (ndir, nbase) = os.path.split(name)
+        adir = os.path.abspath(dir)
+        self.assertEqual(adir, ndir, ("Directory '%s' incorrectly returned as '%s'" % (adir, ndir)))
+    except:
+        self.failOnException('mkstemp')
+    try:
+        self.nameCheck(name, dir, pre, suf)
+    finally:
+        os.close(fd)
+        os.unlink(name)

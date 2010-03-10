@@ -1,0 +1,19 @@
+def test___hash__call(self):
+    hash_called = []
+
+
+    class Bar(object):
+
+        def __hash__(self):
+            hash = object.__hash__(self)
+            hash_called.append(hash)
+            return hash
+    bar = Bar()
+    ref = weakref.ref(bar)
+    self.assertFalse(hash_called)
+    hash(ref)
+    self.assertEqual(len(hash_called), 1)
+    hash(ref)
+    self.assertEqual(len(hash_called), 1)
+    self.assertEqual(hash(bar), hash(ref))
+    self.assertEqual(len(hash_called), 2)

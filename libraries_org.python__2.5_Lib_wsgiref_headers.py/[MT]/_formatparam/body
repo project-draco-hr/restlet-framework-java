@@ -1,0 +1,10 @@
+def _formatparam(param, value=None, quote=1):
+    'Convenience function to format and return a key=value pair.\n\n    This will quote the value if needed or if quote is true.\n    '
+    if ((value is not None) and (len(value) > 0)):
+        if (quote or tspecials.search(value)):
+            value = value.replace('\\', '\\\\').replace('"', '\\"')
+            return ('%s="%s"' % (param, value))
+        else:
+            return ('%s=%s' % (param, value))
+    else:
+        return param

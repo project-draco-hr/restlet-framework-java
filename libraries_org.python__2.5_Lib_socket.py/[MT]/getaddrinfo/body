@@ -1,0 +1,26 @@
+def getaddrinfo(host, port, family=AF_INET, socktype=None, proto=0, flags=None):
+    try:
+        if (not (family in [AF_INET, AF_INET6, AF_UNSPEC])):
+            raise gaierror(errno.EIO, 'ai_family not supported')
+        filter_fns = []
+        filter_fns.append({AF_INET: (lambda x: isinstance(x, java.net.Inet4Address)), AF_INET6: (lambda x: isinstance(x, java.net.Inet6Address)), AF_UNSPEC: (lambda x: isinstance(x, java.net.InetAddress)), }[family])
+        if (host == ''):
+            host = java.net.InetAddress.getLocalHost().getHostName()
+        passive_mode = ((flags is not None) and (flags & AI_PASSIVE))
+        canonname_mode = ((flags is not None) and (flags & AI_CANONNAME))
+        results = []
+        for a in java.net.InetAddress.getAllByName(host):
+            if len([f for f in filter_fns if f(a)]):
+                family = {java.net.Inet4Address: AF_INET, java.net.Inet6Address: AF_INET6, }[a.getClass()]
+                if (passive_mode and (not canonname_mode)):
+                    canonname = ''
+                else:
+                    canonname = asPyString(a.getCanonicalHostName())
+                if ((host is None) and passive_mode and (not canonname_mode)):
+                    sockname = INADDR_ANY
+                else:
+                    sockname = asPyString(a.getHostAddress())
+                results.append((family, socktype, proto, canonname, (sockname, port)))
+        return results
+    except java.lang.Exception as jlx:
+        raise _map_exception(jlx)

@@ -1,0 +1,23 @@
+def ToUnicode(label):
+    if isinstance(label, str):
+        pure_ascii = True
+    else:
+        try:
+            label = label.encode('ascii')
+            pure_ascii = True
+        except UnicodeError:
+            pure_ascii = False
+    if (not pure_ascii):
+        label = nameprep(label)
+        try:
+            label = label.encode('ascii')
+        except UnicodeError:
+            raise UnicodeError('Invalid character in IDN label')
+    if (not label.startswith(ace_prefix)):
+        return unicode(label, 'ascii')
+    label1 = label[len(ace_prefix):]
+    result = label1.decode('punycode')
+    label2 = ToASCII(result)
+    if (label.lower() != label2):
+        raise UnicodeError('IDNA does not round-trip', label, label2)
+    return result

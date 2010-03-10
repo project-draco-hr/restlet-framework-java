@@ -1,0 +1,11 @@
+def test_add_and_close(self):
+    self._box.add(_sample_message)
+    for i in xrange(3):
+        self._box.add((self._template % i))
+    self._box.add(_sample_message)
+    self._box._file.flush()
+    self._box._file.seek(0)
+    contents = self._box._file.read()
+    self._box.close()
+    self.assert_((contents == open(self._path, 'rb').read()))
+    self._box = self._factory(self._path)

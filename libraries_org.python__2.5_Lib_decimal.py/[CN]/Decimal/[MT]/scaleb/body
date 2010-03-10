@@ -1,0 +1,18 @@
+def scaleb(self, other, context=None):
+    'Returns self operand after adding the second value to its exp.'
+    if (context is None):
+        context = getcontext()
+    ans = self._check_nans(other, context)
+    if ans:
+        return ans
+    if (other._exp != 0):
+        return context._raise_error(InvalidOperation)
+    liminf = ((-2) * (context.Emax + context.prec))
+    limsup = (2 * (context.Emax + context.prec))
+    if (not (liminf <= int(other) <= limsup)):
+        return context._raise_error(InvalidOperation)
+    if self._isinfinity():
+        return Decimal(self)
+    d = _dec_from_triple(self._sign, self._int, (self._exp + int(other)))
+    d = d._fix(context)
+    return d

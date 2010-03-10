@@ -1,0 +1,29 @@
+def __init__(self, html=0, target=None):
+    try:
+        from xml.parsers import expat
+    except ImportError:
+        raise ImportError('No module named expat; use SimpleXMLTreeBuilder instead')
+    self._parser = parser = expat.ParserCreate(None, '}')
+    if (target is None):
+        target = TreeBuilder()
+    self._target = target
+    self._names = {}
+    parser.DefaultHandlerExpand = self._default
+    parser.StartElementHandler = self._start
+    parser.EndElementHandler = self._end
+    parser.CharacterDataHandler = self._data
+    try:
+        self._parser.buffer_text = 1
+    except AttributeError:
+        pass
+    try:
+        self._parser.ordered_attributes = 1
+        self._parser.specified_attributes = 1
+        parser.StartElementHandler = self._start_list
+    except AttributeError:
+        pass
+    encoding = None
+    if (not parser.returns_unicode):
+        encoding = 'utf-8'
+    self._doctype = None
+    self.entity = {}

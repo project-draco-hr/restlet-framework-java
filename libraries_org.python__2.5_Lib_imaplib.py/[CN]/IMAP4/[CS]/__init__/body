@@ -1,0 +1,39 @@
+def __init__(self, host='', port=IMAP4_PORT):
+    self.debug = Debug
+    self.state = 'LOGOUT'
+    self.literal = None
+    self.tagged_commands = {}
+    self.untagged_responses = {}
+    self.continuation_response = ''
+    self.is_readonly = False
+    self.tagnum = 0
+    self.open(host, port)
+    self.tagpre = Int2AP(random.randint(4096, 65535))
+    self.tagre = re.compile((('(?P<tag>' + self.tagpre) + '\\d+) (?P<type>[A-Z]+) (?P<data>.*)'))
+    if __debug__:
+        self._cmd_log_len = 10
+        self._cmd_log_idx = 0
+        self._cmd_log = {}
+        if (self.debug >= 1):
+            self._mesg(('imaplib version %s' % __version__))
+            self._mesg(('new IMAP4 connection, tag=%s' % self.tagpre))
+    self.welcome = self._get_response()
+    if ('PREAUTH' in self.untagged_responses):
+        self.state = 'AUTH'
+    elif ('OK' in self.untagged_responses):
+        self.state = 'NONAUTH'
+    else:
+        raise self.error(self.welcome)
+    (typ, dat) = self.capability()
+    if (dat == [None]):
+        raise self.error('no CAPABILITY response from server')
+    self.capabilities = tuple(dat[(-1)].upper().split())
+    if __debug__:
+        if (self.debug >= 3):
+            self._mesg(('CAPABILITIES: %r' % (self.capabilities,)))
+    for version in AllowedVersions:
+        if (not (version in self.capabilities)):
+            continue
+        self.PROTOCOL_VERSION = version
+        return
+    raise self.error('server not IMAP4 compliant')

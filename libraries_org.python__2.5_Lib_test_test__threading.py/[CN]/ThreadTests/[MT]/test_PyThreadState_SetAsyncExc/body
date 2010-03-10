@@ -1,0 +1,56 @@
+def test_PyThreadState_SetAsyncExc(self):
+    try:
+        import ctypes
+    except ImportError:
+        if verbose:
+            print "test_PyThreadState_SetAsyncExc can't import ctypes"
+        return
+    set_async_exc = ctypes.pythonapi.PyThreadState_SetAsyncExc
+
+
+    class AsyncExc(Exception):
+        pass
+    exception = ctypes.py_object(AsyncExc)
+    worker_started = threading.Event()
+    worker_saw_exception = threading.Event()
+
+
+    class Worker(threading.Thread):
+
+        def run(self):
+            self.id = thread.get_ident()
+            self.finished = False
+            try:
+                while True:
+                    worker_started.set()
+                    time.sleep(0.1)
+            except AsyncExc:
+                self.finished = True
+                worker_saw_exception.set()
+    t = Worker()
+    t.setDaemon(True)
+    t.start()
+    if verbose:
+        print '    started worker thread'
+    if verbose:
+        print '    trying nonsensical thread id'
+    result = set_async_exc(ctypes.c_long((-1)), exception)
+    self.assertEqual(result, 0)
+    if verbose:
+        print '    waiting for worker thread to get started'
+    worker_started.wait()
+    if verbose:
+        print "    verifying worker hasn't exited"
+    self.assert_((not t.finished))
+    if verbose:
+        print '    attempting to raise asynch exception in worker'
+    result = set_async_exc(ctypes.c_long(t.id), exception)
+    self.assertEqual(result, 1)
+    if verbose:
+        print '    waiting for worker to say it caught the exception'
+    worker_saw_exception.wait(timeout=10)
+    self.assert_(t.finished)
+    if verbose:
+        print '    all OK -- joining worker'
+    if t.finished:
+        t.join()

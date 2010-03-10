@@ -1,0 +1,20 @@
+def test_weak_valued_iters(self):
+    (dict, objects) = self.make_weak_valued_dict()
+    self.check_iters(dict)
+    refs = dict.valuerefs()
+    self.assertEqual(len(refs), len(objects))
+    objects2 = list(objects)
+    for wr in refs:
+        ob = wr()
+        self.assertEqual(ob, dict[ob.arg])
+        self.assertEqual(ob.arg, dict[ob.arg].arg)
+        objects2.remove(ob)
+    self.assertEqual(len(objects2), 0)
+    objects2 = list(objects)
+    self.assertEqual(len(list(dict.itervaluerefs())), len(objects))
+    for wr in dict.itervaluerefs():
+        ob = wr()
+        self.assertEqual(ob, dict[ob.arg])
+        self.assertEqual(ob.arg, dict[ob.arg].arg)
+        objects2.remove(ob)
+    self.assertEqual(len(objects2), 0)

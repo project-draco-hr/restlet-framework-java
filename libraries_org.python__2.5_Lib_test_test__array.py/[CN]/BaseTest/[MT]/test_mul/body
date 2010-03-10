@@ -1,0 +1,13 @@
+def test_mul(self):
+    a = (5 * array.array(self.typecode, self.example))
+    self.assertEqual(a, array.array(self.typecode, (5 * self.example)))
+    a = (array.array(self.typecode, self.example) * 5)
+    self.assertEqual(a, array.array(self.typecode, (self.example * 5)))
+    a = (0 * array.array(self.typecode, self.example))
+    self.assertEqual(a, array.array(self.typecode))
+    a = ((-1) * array.array(self.typecode, self.example))
+    self.assertEqual(a, array.array(self.typecode))
+    if test_support.is_jython:
+        self.assertRaises(TypeError, operator.mul, a, 'bad')
+    else:
+        self.assertRaises(TypeError, a.__mul__, 'bad')

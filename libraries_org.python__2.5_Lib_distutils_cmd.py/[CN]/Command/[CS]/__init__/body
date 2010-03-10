@@ -1,0 +1,14 @@
+def __init__(self, dist):
+    "Create and initialize a new Command object.  Most importantly,\n        invokes the 'initialize_options()' method, which is the real\n        initializer and depends on the actual command being\n        instantiated.\n        "
+    from distutils.dist import Distribution
+    if (not isinstance(dist, Distribution)):
+        raise TypeError, 'dist must be a Distribution instance'
+    if (self.__class__ is Command):
+        raise RuntimeError, 'Command is an abstract class'
+    self.distribution = dist
+    self.initialize_options()
+    self._dry_run = None
+    self.verbose = dist.verbose
+    self.force = None
+    self.help = 0
+    self.finalized = 0

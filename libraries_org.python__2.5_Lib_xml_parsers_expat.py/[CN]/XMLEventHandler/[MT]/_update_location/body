@@ -1,0 +1,12 @@
+def _update_location(self, event=None):
+    parser = self.parser
+    locator = self._locator
+    if ((event == 'startElement') and (self._previous_event == 'characters')):
+        parser._NextColumnNumber = max((parser._NextColumnNumber - 1), 0)
+    if ((event == 'endElement') and (self._previous_event == 'characters')):
+        parser._NextColumnNumber = max((parser._NextColumnNumber - 2), 0)
+    parser.CurrentLineNumber = parser._NextLineNumber
+    parser.CurrentColumnNumber = parser._NextColumnNumber
+    parser._NextLineNumber = locator.getLineNumber()
+    parser._NextColumnNumber = (locator.getColumnNumber() - 1)
+    self._previous_event = event

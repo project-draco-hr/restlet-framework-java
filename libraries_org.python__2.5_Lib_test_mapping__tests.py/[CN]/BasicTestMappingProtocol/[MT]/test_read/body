@@ -1,0 +1,41 @@
+def test_read(self):
+    p = self._empty_mapping()
+    p1 = dict(p)
+    d = self._full_mapping(self.reference)
+    if (d is p):
+        p = p1
+    for (key, value) in self.reference.items():
+        self.assertEqual(d[key], value)
+    knownkey = self.other.keys()[0]
+    self.failUnlessRaises(KeyError, (lambda : d[knownkey]))
+    self.assertEqual(len(p), 0)
+    self.assertEqual(len(d), len(self.reference))
+    for k in self.reference:
+        self.assert_(d.has_key(k))
+        self.assert_((k in d))
+    for k in self.other:
+        self.failIf(d.has_key(k))
+        self.failIf((k in d))
+    self.assertEqual(cmp(p, p), 0)
+    self.assertEqual(cmp(d, d), 0)
+    self.assertEqual(cmp(p, d), (-1))
+    self.assertEqual(cmp(d, p), 1)
+    if p:
+        self.fail('Empty mapping must compare to False')
+    if (not d):
+        self.fail('Full mapping must compare to True')
+
+    def check_iterandlist(iter, lst, ref):
+        self.assert_(hasattr(iter, 'next'))
+        self.assert_(hasattr(iter, '__iter__'))
+        x = list(iter)
+        self.assert_((set(x) == set(lst) == set(ref)))
+    check_iterandlist(d.iterkeys(), d.keys(), self.reference.keys())
+    check_iterandlist(iter(d), d.keys(), self.reference.keys())
+    check_iterandlist(d.itervalues(), d.values(), self.reference.values())
+    check_iterandlist(d.iteritems(), d.items(), self.reference.items())
+    (key, value) = d.iteritems().next()
+    (knownkey, knownvalue) = self.other.iteritems().next()
+    self.assertEqual(d.get(key, knownvalue), value)
+    self.assertEqual(d.get(knownkey, knownvalue), knownvalue)
+    self.failIf((knownkey in d))

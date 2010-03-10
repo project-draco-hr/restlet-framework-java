@@ -1,0 +1,9 @@
+def test_ioctl_mutate(self):
+    import array
+    buf = array.array('i', [0])
+    ids = (os.getpgrp(), os.getsid(0))
+    tty = open('/dev/tty', 'r')
+    r = fcntl.ioctl(tty, termios.TIOCGPGRP, buf, 1)
+    rpgrp = buf[0]
+    self.assertEquals(r, 0)
+    self.assert_((rpgrp in ids), ('%s not in %s' % (rpgrp, ids)))

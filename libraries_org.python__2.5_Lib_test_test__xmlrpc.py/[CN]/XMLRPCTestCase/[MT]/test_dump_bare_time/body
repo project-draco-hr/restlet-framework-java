@@ -1,0 +1,10 @@
+def test_dump_bare_time(self):
+    t = datetime.datetime(2005, 2, 10, 11, 41, 23).time()
+    s = xmlrpclib.dumps((t,))
+    ((newt,), m) = xmlrpclib.loads(s, use_datetime=1)
+    today = datetime.datetime.now().date().strftime('%Y%m%d')
+    self.assertEquals(newt.time(), t)
+    self.assertEquals(newt.date(), datetime.datetime.now().date())
+    self.assertEquals(m, None)
+    ((newdt,), m) = xmlrpclib.loads(s, use_datetime=0)
+    self.assertEquals(newdt, xmlrpclib.DateTime(('%sT11:41:23' % today)))

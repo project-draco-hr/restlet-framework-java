@@ -1,0 +1,18 @@
+def test_iter_while_modifying_values(self):
+    if (not hasattr(self.f, '__iter__')):
+        return
+    di = iter(self.d)
+    while 1:
+        try:
+            key = di.next()
+            self.d[key] = ('modified ' + key)
+        except StopIteration:
+            break
+    fi = iter(self.f)
+    while 1:
+        try:
+            key = fi.next()
+            self.f[key] = ('modified ' + key)
+        except StopIteration:
+            break
+    self.test_mapping_iteration_methods()

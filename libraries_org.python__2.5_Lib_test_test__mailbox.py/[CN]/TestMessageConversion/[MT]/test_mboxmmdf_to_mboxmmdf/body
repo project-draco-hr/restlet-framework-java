@@ -1,0 +1,9 @@
+def test_mboxmmdf_to_mboxmmdf(self):
+    for class_ in (mailbox.mboxMessage, mailbox.MMDFMessage):
+        msg_mboxMMDF = class_(_sample_message)
+        msg_mboxMMDF.set_flags('RODFA')
+        msg_mboxMMDF.set_from('foo@bar')
+        for class2_ in (mailbox.mboxMessage, mailbox.MMDFMessage):
+            msg2 = class2_(msg_mboxMMDF)
+            self.assert_((msg2.get_flags() == 'RODFA'))
+            self.assert_((msg2.get_from() == 'foo@bar'))

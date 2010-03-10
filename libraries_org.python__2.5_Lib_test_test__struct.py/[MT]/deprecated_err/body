@@ -1,0 +1,10 @@
+def deprecated_err(func, *args):
+    try:
+        func(*args)
+    except (struct.error, TypeError):
+        pass
+    except DeprecationWarning:
+        if (not PY_STRUCT_OVERFLOW_MASKING):
+            raise TestFailed, ('%s%s expected to raise struct.error' % (func.__name__, args))
+    else:
+        raise TestFailed, ('%s%s did not raise error' % (func.__name__, args))

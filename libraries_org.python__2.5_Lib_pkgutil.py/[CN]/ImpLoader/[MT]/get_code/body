@@ -1,0 +1,16 @@
+def get_code(self, fullname=None):
+    fullname = self._fix_name(fullname)
+    if (self.code is None):
+        mod_type = self.etc[2]
+        if (mod_type == imp.PY_SOURCE):
+            source = self.get_source(fullname)
+            self.code = compile(source, self.filename, 'exec')
+        elif (mod_type == imp.PY_COMPILED):
+            self._reopen()
+            try:
+                self.code = read_jython_code(fullname, self.file, self.filename)
+            finally:
+                self.file.close()
+        elif (mod_type == imp.PKG_DIRECTORY):
+            self.code = self._get_delegate().get_code()
+    return self.code

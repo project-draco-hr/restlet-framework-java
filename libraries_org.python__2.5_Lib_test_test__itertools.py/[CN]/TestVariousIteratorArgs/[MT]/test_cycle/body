@@ -1,0 +1,10 @@
+def test_cycle(self):
+    for s in ('123', '', range(1000), ('do', 1.2), xrange(2000, 2200, 5)):
+        for g in (G, I, Ig, S, L, R):
+            tgtlen = (len(s) * 3)
+            expected = (list(g(s)) * 3)
+            actual = list(islice(cycle(g(s)), tgtlen))
+            self.assertEqual(actual, expected)
+        self.assertRaises(TypeError, cycle, X(s))
+        self.assertRaises(TypeError, list, cycle(N(s)))
+        self.assertRaises(ZeroDivisionError, list, cycle(E(s)))

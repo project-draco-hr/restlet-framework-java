@@ -1,0 +1,8 @@
+def testSourceCodeEncodingsError(self):
+    sjis = "print '\x83p\x83C\x83\\\x83\x93', '\n"
+    ascii = "print '12345678', '\n"
+    encdef = '#! -*- coding: ShiftJIS -*-\n'
+    self._testErrEnc(ascii, ascii, 19)
+    self._testErrEnc((encdef + ascii), ascii, 19)
+    self._testErrEnc((encdef + sjis), sjis, 19)
+    self._testErrEnc(sjis, sjis, 19)

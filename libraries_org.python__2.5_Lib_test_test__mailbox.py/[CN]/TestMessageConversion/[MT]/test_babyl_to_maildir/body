@@ -1,0 +1,12 @@
+def test_babyl_to_maildir(self):
+    pairs = (('unseen', ''), ('deleted', 'ST'), ('filed', 'S'), ('answered', 'RS'), ('forwarded', 'PS'), ('edited', 'S'), ('resent', 'PS'))
+    for (setting, result) in pairs:
+        msg = mailbox.BabylMessage(_sample_message)
+        msg.add_label(setting)
+        self.assert_((mailbox.MaildirMessage(msg).get_flags() == result))
+        self.assert_((mailbox.MaildirMessage(msg).get_subdir() == 'cur'))
+    msg = mailbox.BabylMessage(_sample_message)
+    for label in ('unseen', 'deleted', 'filed', 'answered', 'forwarded', 'edited', 'resent'):
+        msg.add_label(label)
+    self.assert_((mailbox.MaildirMessage(msg).get_flags() == 'PRT'))
+    self.assert_((mailbox.MaildirMessage(msg).get_subdir() == 'cur'))

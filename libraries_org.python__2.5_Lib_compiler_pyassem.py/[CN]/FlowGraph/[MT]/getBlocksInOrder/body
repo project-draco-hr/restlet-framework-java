@@ -1,0 +1,13 @@
+def getBlocksInOrder(self):
+    'Return the blocks in reverse postorder\n\n        i.e. each node appears before all of its successors\n        '
+    for b in self.blocks.elements():
+        if (b is self.exit):
+            continue
+        if (not b.next):
+            b.addNext(self.exit)
+    order = dfs_postorder(self.entry, {})
+    order.reverse()
+    self.fixupOrder(order, self.exit)
+    if (not (self.exit in order)):
+        order.append(self.exit)
+    return order

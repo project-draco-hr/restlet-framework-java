@@ -1,0 +1,28 @@
+def test_class_coercion(self):
+    'Python type instances coerce to a corresponding Java wrapper type in Object.getClass'
+
+
+    class TableModel(AbstractTableModel):
+        columnNames = ('First Name', 'Last Name', 'Sport', '# of Years', 'Vegetarian')
+        data = [('Mary', 'Campione', 'Snowboarding', 5, False)]
+
+        def getColumnCount(self):
+            return len(self.columnNames)
+
+        def getRowCount(self):
+            return len(self.data)
+
+        def getColumnName(self, col):
+            return self.columnNames[col]
+
+        def getValueAt(self, row, col):
+            return self.data[row][col]
+
+        def getColumnClass(self, c):
+            return Object.getClass(self.getValueAt(0, c))
+
+        def isCellEditable(self, row, col):
+            return (col >= 2)
+    model = TableModel()
+    for (i, expectedClass) in enumerate([String, String, String, Integer, Boolean]):
+        self.assertEquals(expectedClass, model.getColumnClass(i))

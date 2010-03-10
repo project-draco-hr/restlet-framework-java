@@ -1,0 +1,17 @@
+def test_getweakrefs(self):
+    o = C()
+    ref1 = weakref.ref(o, self.callback)
+    ref2 = weakref.ref(o, self.callback)
+    del ref1
+    extra_collect()
+    self.assert_((weakref.getweakrefs(o) == [ref2]), 'list of refs does not match')
+    o = C()
+    ref1 = weakref.ref(o, self.callback)
+    ref2 = weakref.ref(o, self.callback)
+    del ref2
+    extra_collect()
+    self.assert_((weakref.getweakrefs(o) == [ref1]), 'list of refs does not match')
+    del ref1
+    extra_collect()
+    self.assert_((weakref.getweakrefs(o) == []), 'list of refs not cleared')
+    self.assert_((weakref.getweakrefs(1) == []), 'list of refs does not match for int')

@@ -1,0 +1,28 @@
+def test_list(self):
+
+
+    class Foo(list):
+
+        def __mul__(self, other):
+            return [1]
+    foo = Foo([2])
+    foo *= 3
+    if test_support.is_jython:
+        self.assertEqual(foo, [2, 2, 2])
+    else:
+        self.assertEqual(foo, [1])
+
+
+    class Bar(object):
+
+        def __radd__(self, other):
+            return 1
+
+        def __rmul__(self, other):
+            return 2
+    l = []
+    l += Bar()
+    self.assertEqual(l, 1)
+    l = []
+    l *= Bar()
+    self.assertEqual(l, 2)

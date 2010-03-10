@@ -1,0 +1,9 @@
+def test_folding_of_unaryops_on_constants(self):
+    for (line, elem) in (('`1`', "('1')"), ('-0.5', '(-0.5)'), ('~-2', '(1)')):
+        asm = dis_single(line)
+        self.assert_((elem in asm), asm)
+        self.assert_(('UNARY_' not in asm))
+    for (line, elem) in (('-"abc"', "('abc')"), ('~"abc"', "('abc')")):
+        asm = dis_single(line)
+        self.assert_((elem in asm), asm)
+        self.assert_(('UNARY_' in asm))

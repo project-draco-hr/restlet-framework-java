@@ -1,0 +1,15 @@
+'This test checks for correct wait3() behavior.\n'
+import os
+import time
+from test.fork_wait import ForkWait
+from test.test_support import TestSkipped, run_unittest, reap_children
+try:
+    os.fork
+except AttributeError:
+    raise TestSkipped, 'os.fork not defined -- skipping test_wait3'
+try:
+    os.wait3
+except AttributeError:
+    raise TestSkipped, 'os.wait3 not defined -- skipping test_wait3'
+if (__name__ == '__main__'):
+    test_main()

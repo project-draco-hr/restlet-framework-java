@@ -1,0 +1,13 @@
+def _check_error(self, code, errtext=None, filename='<testcase>', mode='exec', subclass=None):
+    'Check that compiling code raises SyntaxError with errtext.\n\n        errtest is a regular expression that must be present in the\n        test of the exception raised.  If subclass is specified it\n        is the expected subclass of SyntaxError (e.g. IndentationError).\n\n        XXX: Made errtext optional, since the exact wording of exceptions\n             is implementation dependant.\n        '
+    try:
+        compile(code, filename, mode)
+    except SyntaxError as err:
+        if (subclass and (not isinstance(err, subclass))):
+            self.fail(('SyntaxError is not a %s' % subclass.__name__))
+        if (errtext is not None):
+            mo = re.search(errtext, str(err))
+            if (mo is None):
+                self.fail(("SyntaxError did not contain '%r'" % (errtext,)))
+    else:
+        self.fail('compile() did not raise SyntaxError')

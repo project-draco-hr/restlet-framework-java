@@ -1,0 +1,7 @@
+def write_xml(self, stream):
+    stream.write(('  <testcase name="%s" time="%.3f"' % (self.name, self.took)))
+    if (not self.type):
+        stream.write('/>\n')
+        return
+    stream.write(('>\n    <%s type="%s" message=%s><![CDATA[%s]]></%s>\n' % (self.type, self.exc_name, saxutils.quoteattr(self.message), escape_cdata(self.traceback), self.type)))
+    stream.write('  </testcase>\n')

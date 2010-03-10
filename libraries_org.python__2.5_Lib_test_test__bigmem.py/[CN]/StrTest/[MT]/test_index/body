@@ -1,0 +1,13 @@
+@bigmemtest(minsize=_2G, memuse=2)
+def test_index(self, size):
+    SUBSTR = ' abc def ghi'
+    sublen = len(SUBSTR)
+    s = ''.join([SUBSTR, ('-' * size), SUBSTR])
+    self.assertEquals(s.index(' '), 0)
+    self.assertEquals(s.index(SUBSTR), 0)
+    self.assertEquals(s.index(' ', sublen), (sublen + size))
+    self.assertEquals(s.index(SUBSTR, sublen), (sublen + size))
+    self.assertEquals(s.index('i'), SUBSTR.index('i'))
+    self.assertEquals(s.index('i', sublen), ((sublen + size) + SUBSTR.index('i')))
+    self.assertEquals(s.index('i', size), ((sublen + size) + SUBSTR.index('i')))
+    self.assertRaises(ValueError, s.index, 'j')

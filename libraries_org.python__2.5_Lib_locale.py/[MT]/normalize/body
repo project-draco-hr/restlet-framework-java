@@ -1,0 +1,36 @@
+def normalize(localename):
+    ' Returns a normalized locale code for the given locale\n        name.\n\n        The returned locale code is formatted for use with\n        setlocale().\n\n        If normalization fails, the original name is returned\n        unchanged.\n\n        If the given encoding is not known, the function defaults to\n        the default encoding for the locale code just like setlocale()\n        does.\n\n    '
+    fullname = localename.lower()
+    if (':' in fullname):
+        fullname = fullname.replace(':', '.')
+    if ('.' in fullname):
+        (langname, encoding) = fullname.split('.')[:2]
+        fullname = ((langname + '.') + encoding)
+    else:
+        langname = fullname
+        encoding = ''
+    norm_encoding = encoding.replace('-', '')
+    norm_encoding = norm_encoding.replace('_', '')
+    lookup_name = ((langname + '.') + encoding)
+    code = locale_alias.get(lookup_name, None)
+    if (code is not None):
+        return code
+    code = locale_alias.get(langname, None)
+    if (code is not None):
+        if ('.' in code):
+            (langname, defenc) = code.split('.')
+        else:
+            langname = code
+            defenc = ''
+        if encoding:
+            norm_encoding = encodings.normalize_encoding(encoding)
+            norm_encoding = encodings.aliases.aliases.get(norm_encoding, norm_encoding)
+            encoding = locale_encoding_alias.get(norm_encoding, norm_encoding)
+        else:
+            encoding = defenc
+        if encoding:
+            return ((langname + '.') + encoding)
+        else:
+            return langname
+    else:
+        return localename

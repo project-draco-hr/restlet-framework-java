@@ -1,0 +1,22 @@
+def test_tzinfo_fromtimestamp(self):
+    import time
+    meth = self.theclass.fromtimestamp
+    ts = time.time()
+    base = meth(ts)
+    off42 = FixedOffset(42, '42')
+    another = meth(ts, off42)
+    again = meth(ts, tz=off42)
+    self.failUnless((another.tzinfo is again.tzinfo))
+    self.assertEqual(another.utcoffset(), timedelta(minutes=42))
+    self.assertRaises(TypeError, meth, ts, 16)
+    self.assertRaises(TypeError, meth, ts, tzinfo=16)
+    self.assertRaises(TypeError, meth, ts, tinfo=off42)
+    self.assertRaises(TypeError, meth, ts, off42, off42)
+    self.assertRaises(TypeError, meth)
+    timestamp = 1000000000
+    utcdatetime = datetime.utcfromtimestamp(timestamp)
+    utcoffset = timedelta(hours=(-15), minutes=39)
+    tz = FixedOffset(utcoffset, 'tz', 0)
+    expected = (utcdatetime + utcoffset)
+    got = datetime.fromtimestamp(timestamp, tz)
+    self.assertEqual(expected, got.replace(tzinfo=None))

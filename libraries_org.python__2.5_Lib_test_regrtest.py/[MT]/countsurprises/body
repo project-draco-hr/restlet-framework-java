@@ -1,0 +1,16 @@
+def countsurprises(expected, actual, action, antiaction, allran, resource_denieds):
+    "returns the number of items in actual that aren't in expected."
+    printlist(actual)
+    if (not expected.isvalid()):
+        print 'Ask someone to teach regrtest.py about which tests are'
+        print ('expected to %s on %s.' % (action, sys.platform))
+        return 1
+    good_surprise = (expected.getexpected() - set(actual))
+    if (allran and good_surprise):
+        print count(len(good_surprise), 'test'), antiaction, 'unexpectedly:'
+        printlist(good_surprise)
+    bad_surprise = ((set(actual) - expected.getexpected()) - set(resource_denieds))
+    if bad_surprise:
+        print count(len(bad_surprise), action), 'unexpected:'
+        printlist(bad_surprise)
+    return len(bad_surprise)

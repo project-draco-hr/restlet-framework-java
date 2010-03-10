@@ -1,0 +1,9 @@
+def nameCheck(self, name, dir, pre, suf):
+    (ndir, nbase) = os.path.split(name)
+    npre = nbase[:len(pre)]
+    nsuf = nbase[(len(nbase) - len(suf)):]
+    self.assertEqual(os.path.abspath(ndir), os.path.abspath(dir), ("file '%s' not in directory '%s'" % (name, dir)))
+    self.assertEqual(npre, pre, ("file '%s' does not begin with '%s'" % (nbase, pre)))
+    self.assertEqual(nsuf, suf, ("file '%s' does not end with '%s'" % (nbase, suf)))
+    nbase = nbase[len(pre):(len(nbase) - len(suf))]
+    self.assert_(self.str_check.match(nbase), ("random string '%s' does not match /^[a-zA-Z0-9_-]{6}$/" % nbase))

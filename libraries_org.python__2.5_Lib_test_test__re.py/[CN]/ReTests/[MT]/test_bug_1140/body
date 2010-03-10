@@ -1,0 +1,15 @@
+def test_bug_1140(self):
+    for x in ('x', u'x'):
+        for y in ('y', u'y'):
+            z = re.sub(x, y, u'')
+            self.assertEqual(z, u'')
+            self.assertEqual(type(z), unicode)
+            z = re.sub(x, y, '')
+            self.assertEqual(z, '')
+            self.assertEqual(type(z), str)
+            z = re.sub(x, y, unicode(x))
+            self.assertEqual(z, y)
+            self.assertEqual(type(z), unicode)
+            z = re.sub(x, y, str(x))
+            self.assertEqual(z, y)
+            self.assertEqual(type(z), type(y))

@@ -1,0 +1,11 @@
+def test_stateful(self):
+    encoder = codecs.getincrementalencoder('jisx0213')()
+    self.assertEqual(encoder.encode(u'\xe6\u0300'), '\xab\xc4')
+    self.assertEqual(encoder.encode(u'\xe6'), '')
+    self.assertEqual(encoder.encode(u'\u0300'), '\xab\xc4')
+    self.assertEqual(encoder.encode(u'\xe6', True), '\xa9\xdc')
+    self.assertEqual(encoder.reset(), None)
+    self.assertEqual(encoder.encode(u'\u0300'), '\xab\xdc')
+    self.assertEqual(encoder.encode(u'\xe6'), '')
+    self.assertEqual(encoder.encode('', True), '\xa9\xdc')
+    self.assertEqual(encoder.encode('', True), '')

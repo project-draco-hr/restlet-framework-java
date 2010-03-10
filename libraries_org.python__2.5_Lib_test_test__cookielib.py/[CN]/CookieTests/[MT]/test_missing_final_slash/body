@@ -1,0 +1,10 @@
+def test_missing_final_slash(self):
+    from cookielib import CookieJar, DefaultCookiePolicy
+    from urllib2 import Request
+    url = 'http://www.acme.com'
+    c = CookieJar(DefaultCookiePolicy(rfc2965=True))
+    interact_2965(c, url, 'foo=bar; Version=1')
+    req = Request(url)
+    self.assertEquals(len(c), 1)
+    c.add_cookie_header(req)
+    self.assert_(req.has_header('Cookie'))

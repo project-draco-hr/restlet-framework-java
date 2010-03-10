@@ -1,0 +1,13 @@
+def test_mh_to_maildir(self):
+    pairs = (('unseen', ''), ('replied', 'RS'), ('flagged', 'FS'))
+    for (setting, result) in pairs:
+        msg = mailbox.MHMessage(_sample_message)
+        msg.add_sequence(setting)
+        self.assert_((mailbox.MaildirMessage(msg).get_flags() == result))
+        self.assert_((mailbox.MaildirMessage(msg).get_subdir() == 'cur'))
+    msg = mailbox.MHMessage(_sample_message)
+    msg.add_sequence('unseen')
+    msg.add_sequence('replied')
+    msg.add_sequence('flagged')
+    self.assert_((mailbox.MaildirMessage(msg).get_flags() == 'FR'))
+    self.assert_((mailbox.MaildirMessage(msg).get_subdir() == 'cur'))

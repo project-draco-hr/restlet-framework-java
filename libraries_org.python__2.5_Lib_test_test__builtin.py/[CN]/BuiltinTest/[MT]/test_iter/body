@@ -1,0 +1,11 @@
+def test_iter(self):
+    self.assertRaises(TypeError, iter)
+    self.assertRaises(TypeError, iter, 42, 42)
+    lists = [('1', '2'), ['1', '2'], '12']
+    if have_unicode:
+        lists.append(unicode('12'))
+    for l in lists:
+        i = iter(l)
+        self.assertEqual(i.next(), '1')
+        self.assertEqual(i.next(), '2')
+        self.assertRaises(StopIteration, i.next)

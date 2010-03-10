@@ -1,0 +1,19 @@
+def __setitem__(self, key, message):
+    "Replace the keyed message; raise KeyError if it doesn't exist."
+    old_subpath = self._lookup(key)
+    temp_key = self.add(message)
+    temp_subpath = self._lookup(temp_key)
+    if isinstance(message, MaildirMessage):
+        dominant_subpath = temp_subpath
+    else:
+        dominant_subpath = old_subpath
+    subdir = os.path.dirname(dominant_subpath)
+    if (self.colon in dominant_subpath):
+        suffix = (self.colon + dominant_subpath.split(self.colon)[(-1)])
+    else:
+        suffix = ''
+    self.discard(key)
+    new_path = os.path.join(self._path, subdir, (key + suffix))
+    os.rename(os.path.join(self._path, temp_subpath), new_path)
+    if isinstance(message, MaildirMessage):
+        os.utime(new_path, (os.path.getatime(new_path), message.get_date()))

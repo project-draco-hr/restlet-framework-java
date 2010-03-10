@@ -1,0 +1,11 @@
+def runctx(statement, globals, locals, filename=None):
+    'Run statement under profiler, supplying your own globals and locals,\n    optionally saving results in filename.\n\n    statement and filename have the same semantics as profile.run\n    '
+    prof = Profile()
+    try:
+        prof = prof.runctx(statement, globals, locals)
+    except SystemExit:
+        pass
+    if (filename is not None):
+        prof.dump_stats(filename)
+    else:
+        return prof.print_stats()

@@ -1,0 +1,5 @@
+def test_fix_missing_locations(self):
+    src = ast.parse('write("spam")')
+    src.body.append(ast.Expr(ast.Call(ast.Name('spam', ast.Load()), [ast.Str('eggs')], [], None, None)))
+    self.assertEqual(src, ast.fix_missing_locations(src))
+    self.assertEqual(ast.dump(src, include_attributes=True), "Module(body=[Expr(value=Call(func=Name(id='write', ctx=Load(), lineno=1, col_offset=0), args=[Str(s='spam', lineno=1, col_offset=6)], keywords=[], starargs=None, kwargs=None, lineno=1, col_offset=0), lineno=1, col_offset=0), Expr(value=Call(func=Name(id='spam', ctx=Load(), lineno=1, col_offset=0), args=[Str(s='eggs', lineno=1, col_offset=0)], keywords=[], starargs=None, kwargs=None, lineno=1, col_offset=0), lineno=1, col_offset=0)])")

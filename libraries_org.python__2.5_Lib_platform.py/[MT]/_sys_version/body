@@ -1,0 +1,13 @@
+def _sys_version():
+    " Returns a parsed version of Python's sys.version as tuple\n        (version, buildno, builddate, compiler) referring to the Python\n        version, build number, build date/time as string and the compiler\n        identification string.\n\n        Note that unlike the Python sys.version, the returned value\n        for the Python version will always include the patchlevel (it\n        defaults to '.0').\n\n    "
+    global _sys_version_cache
+    if (_sys_version_cache is not None):
+        return _sys_version_cache
+    (version, buildno, builddate, buildtime, compiler) = _sys_version_parser.match(sys.version).groups()
+    builddate = ((builddate + ' ') + buildtime)
+    l = string.split(version, '.')
+    if (len(l) == 2):
+        l.append('0')
+        version = string.join(l, '.')
+    _sys_version_cache = (version, buildno, builddate, compiler)
+    return _sys_version_cache

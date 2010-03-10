@@ -1,0 +1,8 @@
+def test_year(self):
+    for directive in ('y', 'Y'):
+        self.helper(directive, 0)
+    for (century, bounds) in ((1900, ('69', '99')), (2000, ('00', '68'))):
+        for bound in bounds:
+            strp_output = _strptime.strptime(bound, '%y')
+            expected_result = (century + int(bound))
+            self.failUnless((strp_output[0] == expected_result), ("'y' test failed; passed in '%s' and returned '%s'" % (bound, strp_output[0])))

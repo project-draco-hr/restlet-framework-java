@@ -1,0 +1,8 @@
+def test_stdin_filedes(self):
+    tf = tempfile.TemporaryFile()
+    d = tf.fileno()
+    os.write(d, 'pear')
+    os.lseek(d, 0, 0)
+    p = subprocess.Popen([sys.executable, '-c', 'import sys; sys.exit(sys.stdin.read() == "pear")'], stdin=d)
+    p.wait()
+    self.assertEqual(p.returncode, 1)

@@ -1,0 +1,11 @@
+def _have_soundcard():
+    'Return True iff this computer has a soundcard.'
+    global __have_soundcard_cache
+    if (__have_soundcard_cache is None):
+        cscript_path = _get_cscript_path()
+        if (cscript_path is None):
+            return True
+        check_script = os.path.join(os.path.dirname(__file__), 'check_soundcard.vbs')
+        p = subprocess.Popen([cscript_path, check_script], stdout=subprocess.PIPE)
+        __have_soundcard_cache = (not p.wait())
+    return __have_soundcard_cache

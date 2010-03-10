@@ -1,0 +1,18 @@
+def run(self):
+
+
+    class svrcls(MyMixinServer, self.__svrcls):
+        pass
+    if verbose:
+        print 'thread: creating server'
+    svr = svrcls(self.__addr, self.__hdlrcls)
+    addr = svr.server_address
+    if addr:
+        self.__addr = addr
+        if (self.__addr != svr.socket.getsockname()):
+            raise RuntimeError(('server_address was %s, expected %s' % (self.__addr, svr.socket.getsockname())))
+    if verbose:
+        print 'thread: serving three times'
+    svr.serve_a_few()
+    if verbose:
+        print 'thread: done'

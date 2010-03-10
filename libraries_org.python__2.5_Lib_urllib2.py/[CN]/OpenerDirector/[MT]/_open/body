@@ -1,0 +1,9 @@
+def _open(self, req, data=None):
+    result = self._call_chain(self.handle_open, 'default', 'default_open', req)
+    if result:
+        return result
+    protocol = req.get_type()
+    result = self._call_chain(self.handle_open, protocol, (protocol + '_open'), req)
+    if result:
+        return result
+    return self._call_chain(self.handle_open, 'unknown', 'unknown_open', req)

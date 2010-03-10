@@ -1,0 +1,13 @@
+def test_contextmanager_plain(self):
+    state = []
+
+    @contextmanager
+    def woohoo():
+        state.append(1)
+        yield 42
+        state.append(999)
+    with woohoo() as x:
+        self.assertEqual(state, [1])
+        self.assertEqual(x, 42)
+        state.append(x)
+    self.assertEqual(state, [1, 42, 999])

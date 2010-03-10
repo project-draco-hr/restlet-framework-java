@@ -1,0 +1,7 @@
+def test_command_packages_cmdline(self):
+    sys.argv.extend(['--command-packages', 'foo.bar,distutils.tests', 'test_dist', '-Ssometext'])
+    d = self.create_distribution()
+    self.assertEqual(d.get_command_packages(), ['distutils.command', 'foo.bar', 'distutils.tests'])
+    cmd = d.get_command_obj('test_dist')
+    self.assert_(isinstance(cmd, test_dist))
+    self.assertEqual(cmd.sample_option, 'sometext')

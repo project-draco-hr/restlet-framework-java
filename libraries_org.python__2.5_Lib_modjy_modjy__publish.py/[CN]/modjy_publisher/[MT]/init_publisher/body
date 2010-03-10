@@ -1,0 +1,9 @@
+def init_publisher(self):
+    self.cache = None
+    if self.params['app_directory']:
+        self.app_directory = self.expand_relative_path(self.params['app_directory'])
+    else:
+        self.app_directory = self.servlet_context.getRealPath('/')
+    self.params['app_directory'] = self.app_directory
+    if (not (self.app_directory in sys.path)):
+        sys.path.append(self.app_directory)

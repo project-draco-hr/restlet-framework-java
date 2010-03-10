@@ -1,0 +1,10 @@
+def test_file(self):
+    TESTFN = test_support.TESTFN
+    f = open(TESTFN, 'w')
+    try:
+        f.write('hi there\n')
+        f.close()
+        urls = [('file:' + sanepathname2url(os.path.abspath(TESTFN))), ('file://nonsensename/etc/passwd', None, (EnvironmentError, socket.error))]
+        self._test_urls(urls, self._extra_handlers())
+    finally:
+        os.remove(TESTFN)

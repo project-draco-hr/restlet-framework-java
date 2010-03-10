@@ -1,0 +1,17 @@
+def test_delitem(self):
+    a = self.type2test([0, 1])
+    del a[1]
+    self.assertEqual(a, [0])
+    del a[0]
+    self.assertEqual(a, [])
+    a = self.type2test([0, 1])
+    del a[(-2)]
+    self.assertEqual(a, [1])
+    del a[(-1)]
+    self.assertEqual(a, [])
+    a = self.type2test([0, 1])
+    self.assertRaises(IndexError, a.__delitem__, (-3))
+    self.assertRaises(IndexError, a.__delitem__, 2)
+    a = self.type2test([])
+    self.assertRaises(IndexError, a.__delitem__, 0)
+    self.assertRaises(TypeError, a.__delitem__)

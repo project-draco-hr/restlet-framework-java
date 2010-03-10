@@ -1,0 +1,29 @@
+def testfile(filename, module_relative=True, name=None, package=None, globs=None, verbose=None, report=True, optionflags=0, extraglobs=None, raise_on_error=False, parser=DocTestParser(), encoding=None):
+    '\n    Test examples in the given file.  Return (#failures, #tests).\n\n    Optional keyword arg "module_relative" specifies how filenames\n    should be interpreted:\n\n      - If "module_relative" is True (the default), then "filename"\n         specifies a module-relative path.  By default, this path is\n         relative to the calling module\'s directory; but if the\n         "package" argument is specified, then it is relative to that\n         package.  To ensure os-independence, "filename" should use\n         "/" characters to separate path segments, and should not\n         be an absolute path (i.e., it may not begin with "/").\n\n      - If "module_relative" is False, then "filename" specifies an\n        os-specific path.  The path may be absolute or relative (to\n        the current working directory).\n\n    Optional keyword arg "name" gives the name of the test; by default\n    use the file\'s basename.\n\n    Optional keyword argument "package" is a Python package or the\n    name of a Python package whose directory should be used as the\n    base directory for a module relative filename.  If no package is\n    specified, then the calling module\'s directory is used as the base\n    directory for module relative filenames.  It is an error to\n    specify "package" if "module_relative" is False.\n\n    Optional keyword arg "globs" gives a dict to be used as the globals\n    when executing examples; by default, use {}.  A copy of this dict\n    is actually used for each docstring, so that each docstring\'s\n    examples start with a clean slate.\n\n    Optional keyword arg "extraglobs" gives a dictionary that should be\n    merged into the globals that are used to execute examples.  By\n    default, no extra globals are used.\n\n    Optional keyword arg "verbose" prints lots of stuff if true, prints\n    only failures if false; by default, it\'s true iff "-v" is in sys.argv.\n\n    Optional keyword arg "report" prints a summary at the end when true,\n    else prints nothing at the end.  In verbose mode, the summary is\n    detailed, else very brief (in fact, empty if all tests passed).\n\n    Optional keyword arg "optionflags" or\'s together module constants,\n    and defaults to 0.  Possible values (see the docs for details):\n\n        DONT_ACCEPT_TRUE_FOR_1\n        DONT_ACCEPT_BLANKLINE\n        NORMALIZE_WHITESPACE\n        ELLIPSIS\n        SKIP\n        IGNORE_EXCEPTION_DETAIL\n        REPORT_UDIFF\n        REPORT_CDIFF\n        REPORT_NDIFF\n        REPORT_ONLY_FIRST_FAILURE\n\n    Optional keyword arg "raise_on_error" raises an exception on the\n    first unexpected exception or failure. This allows failures to be\n    post-mortem debugged.\n\n    Optional keyword arg "parser" specifies a DocTestParser (or\n    subclass) that should be used to extract tests from the files.\n\n    Optional keyword arg "encoding" specifies an encoding that should\n    be used to convert the file to unicode.\n\n    Advanced tomfoolery:  testmod runs methods of a local instance of\n    class doctest.Tester, then merges the results into (or creates)\n    global Tester instance doctest.master.  Methods of doctest.master\n    can be called directly too, if you want to do something unusual.\n    Passing report=0 to testmod is especially useful then, to delay\n    displaying a summary.  Invoke doctest.master.summarize(verbose)\n    when you\'re done fiddling.\n    '
+    global master
+    if (package and (not module_relative)):
+        raise ValueError('Package may only be specified for module-relative paths.')
+    (text, filename) = _load_testfile(filename, package, module_relative)
+    if (name is None):
+        name = os.path.basename(filename)
+    if (globs is None):
+        globs = {}
+    else:
+        globs = globs.copy()
+    if (extraglobs is not None):
+        globs.update(extraglobs)
+    if raise_on_error:
+        runner = DebugRunner(verbose=verbose, optionflags=optionflags)
+    else:
+        runner = DocTestRunner(verbose=verbose, optionflags=optionflags)
+    if (encoding is not None):
+        text = text.decode(encoding)
+    test = parser.get_doctest(text, globs, name, filename, 0)
+    runner.run(test)
+    if report:
+        runner.summarize()
+    if (master is None):
+        master = runner
+    else:
+        master.merge(runner)
+    return (runner.failures, runner.tries)

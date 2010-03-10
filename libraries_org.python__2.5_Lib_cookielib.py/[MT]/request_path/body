@@ -1,0 +1,11 @@
+def request_path(request):
+    'request-URI, as defined by RFC 2965.'
+    url = request.get_full_url()
+    (path, parameters, query, frag) = urlparse.urlparse(url)[2:]
+    if parameters:
+        path = ('%s;%s' % (path, parameters))
+    path = escape_path(path)
+    req_path = urlparse.urlunparse(('', '', path, '', query, frag))
+    if (not req_path.startswith('/')):
+        req_path = ('/' + req_path)
+    return req_path

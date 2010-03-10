@@ -1,0 +1,24 @@
+def test_uuid1(self):
+    equal = self.assertEqual
+    for u in [uuid.uuid1() for i in range(10)]:
+        equal(u.variant, uuid.RFC_4122)
+        equal(u.version, 1)
+    uuids = {}
+    for u in [uuid.uuid1() for i in range(1000)]:
+        uuids[u] = 1
+    equal(len(uuids.keys()), 1000)
+    u = uuid.uuid1(0)
+    equal(u.node, 0)
+    u = uuid.uuid1(20015998343868)
+    equal(u.node, 20015998343868)
+    u = uuid.uuid1(281474976710655)
+    equal(u.node, 281474976710655)
+    u = uuid.uuid1(20015998343868, 0)
+    equal(u.node, 20015998343868)
+    equal((((u.clock_seq_hi_variant & 63) << 8) | u.clock_seq_low), 0)
+    u = uuid.uuid1(20015998343868, 4660)
+    equal(u.node, 20015998343868)
+    equal((((u.clock_seq_hi_variant & 63) << 8) | u.clock_seq_low), 4660)
+    u = uuid.uuid1(20015998343868, 16383)
+    equal(u.node, 20015998343868)
+    equal((((u.clock_seq_hi_variant & 63) << 8) | u.clock_seq_low), 16383)

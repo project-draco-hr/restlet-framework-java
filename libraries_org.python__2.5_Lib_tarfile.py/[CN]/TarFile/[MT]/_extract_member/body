@@ -1,0 +1,30 @@
+def _extract_member(self, tarinfo, targetpath):
+    'Extract the TarInfo object tarinfo to a physical\n           file called targetpath.\n        '
+    if (targetpath[(-1):] == '/'):
+        targetpath = targetpath[:(-1)]
+    targetpath = os.path.normpath(targetpath)
+    upperdirs = os.path.dirname(targetpath)
+    if (upperdirs and (not os.path.exists(upperdirs))):
+        os.makedirs(upperdirs)
+    if (tarinfo.islnk() or tarinfo.issym()):
+        self._dbg(1, ('%s -> %s' % (tarinfo.name, tarinfo.linkname)))
+    else:
+        self._dbg(1, tarinfo.name)
+    if tarinfo.isreg():
+        self.makefile(tarinfo, targetpath)
+    elif tarinfo.isdir():
+        self.makedir(tarinfo, targetpath)
+    elif tarinfo.isfifo():
+        self.makefifo(tarinfo, targetpath)
+    elif (tarinfo.ischr() or tarinfo.isblk()):
+        self.makedev(tarinfo, targetpath)
+    elif (tarinfo.islnk() or tarinfo.issym()):
+        self.makelink(tarinfo, targetpath)
+    elif (tarinfo.type not in SUPPORTED_TYPES):
+        self.makeunknown(tarinfo, targetpath)
+    else:
+        self.makefile(tarinfo, targetpath)
+    self.chown(tarinfo, targetpath)
+    if (not tarinfo.issym()):
+        self.chmod(tarinfo, targetpath)
+        self.utime(tarinfo, targetpath)

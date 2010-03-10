@@ -1,0 +1,9 @@
+def test_roundtrip(self):
+    for dt in (self.theclass(1, 2, 3, 4, 5, 6, 7), self.theclass.now()):
+        s = repr(dt)
+        self.failUnless(s.startswith('datetime.'))
+        s = s[9:]
+        dt2 = eval(s)
+        self.assertEqual(dt, dt2)
+        dt2 = self.theclass(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, dt.microsecond)
+        self.assertEqual(dt, dt2)

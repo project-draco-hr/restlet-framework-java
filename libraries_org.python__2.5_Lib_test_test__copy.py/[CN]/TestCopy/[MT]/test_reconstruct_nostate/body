@@ -1,0 +1,13 @@
+def test_reconstruct_nostate(self):
+
+
+    class C(object):
+
+        def __reduce__(self):
+            return (C, ())
+    x = C()
+    x.foo = 42
+    y = copy.copy(x)
+    self.assert_((y.__class__ is x.__class__))
+    y = copy.deepcopy(x)
+    self.assert_((y.__class__ is x.__class__))

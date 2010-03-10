@@ -1,0 +1,10 @@
+def test_tmpnam(self):
+    import sys
+    if (not hasattr(os, 'tmpnam')):
+        return
+    warnings.filterwarnings('ignore', 'tmpnam', RuntimeWarning, 'test_os$')
+    name = os.tmpnam()
+    if (sys.platform in ('win32',)):
+        self.failIf(os.path.exists(name), 'file already exists for temporary file')
+    else:
+        self.check_tempfile(name)

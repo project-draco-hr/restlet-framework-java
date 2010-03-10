@@ -1,0 +1,20 @@
+def setUp(self):
+    tmpdir = tempfile.gettempdir()
+    self.dir = os.path.join(tmpdir, 'dir')
+    self.dir_same = os.path.join(tmpdir, 'dir-same')
+    self.dir_diff = os.path.join(tmpdir, 'dir-diff')
+    self.caseinsensitive = (os.path.normcase('A') == os.path.normcase('a'))
+    data = 'Contents of file go here.\n'
+    for dir in [self.dir, self.dir_same, self.dir_diff]:
+        shutil.rmtree(dir, True)
+        os.mkdir(dir)
+        if (self.caseinsensitive and (dir is self.dir_same)):
+            fn = 'FiLe'
+        else:
+            fn = 'file'
+        output = open(os.path.join(dir, fn), 'w')
+        output.write(data)
+        output.close()
+    output = open(os.path.join(self.dir_diff, 'file2'), 'w')
+    output.write('An extra file.\n')
+    output.close()

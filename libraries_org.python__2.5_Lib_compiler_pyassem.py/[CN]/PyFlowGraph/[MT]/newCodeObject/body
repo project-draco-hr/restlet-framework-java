@@ -1,0 +1,10 @@
+def newCodeObject(self):
+    assert (self.stage == DONE)
+    if ((self.flags & CO_NEWLOCALS) == 0):
+        nlocals = 0
+    else:
+        nlocals = len(self.varnames)
+    argcount = self.argcount
+    if (self.flags & CO_VARKEYWORDS):
+        argcount = (argcount - 1)
+    return new.code(argcount, nlocals, self.stacksize, self.flags, self.lnotab.getCode(), self.getConsts(), tuple(self.names), tuple(self.varnames), self.filename, self.name, self.lnotab.firstline, self.lnotab.getTable(), tuple(self.freevars), tuple(self.cellvars))

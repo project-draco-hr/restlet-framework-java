@@ -1,0 +1,12 @@
+def run_threads(self, f, num=10):
+    threads = []
+    for i in xrange(num):
+        t = threading.Thread(target=f)
+        t.start()
+        threads.append(t)
+    timeout = 10.0
+    for t in threads:
+        t.join(timeout)
+        timeout = 0.0
+    for t in threads:
+        self.assertFalse(t.isAlive())

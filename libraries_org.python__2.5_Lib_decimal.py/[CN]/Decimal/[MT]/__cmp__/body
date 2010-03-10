@@ -1,0 +1,29 @@
+def __cmp__(self, other):
+    other = _convert_other(other)
+    if (other is NotImplemented):
+        return 1
+    if (self._is_special or other._is_special):
+        if (self._isnan() or other._isnan()):
+            return 1
+        return cmp(self._isinfinity(), other._isinfinity())
+    if (not self):
+        if (not other):
+            return 0
+        else:
+            return (- ((-1) ** other._sign))
+    if (not other):
+        return ((-1) ** self._sign)
+    if (other._sign < self._sign):
+        return (-1)
+    if (self._sign < other._sign):
+        return 1
+    self_adjusted = self.adjusted()
+    other_adjusted = other.adjusted()
+    if (self_adjusted == other_adjusted):
+        self_padded = (self._int + ('0' * (self._exp - other._exp)))
+        other_padded = (other._int + ('0' * (other._exp - self._exp)))
+        return (cmp(self_padded, other_padded) * ((-1) ** self._sign))
+    elif (self_adjusted > other_adjusted):
+        return ((-1) ** self._sign)
+    else:
+        return (- ((-1) ** self._sign))

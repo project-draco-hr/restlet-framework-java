@@ -1,0 +1,10 @@
+def update_visible(self):
+    'Update and/or sensibly generate a set of visible headers.'
+    for header in self._visible.keys():
+        if (header in self):
+            self._visible.replace_header(header, self[header])
+        else:
+            del self._visible[header]
+    for header in ('Date', 'From', 'Reply-To', 'To', 'CC', 'Subject'):
+        if ((header in self) and (header not in self._visible)):
+            self._visible[header] = self[header]

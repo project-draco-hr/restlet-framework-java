@@ -1,0 +1,12 @@
+def test_decodeunicodeinternal(self):
+    self.assertRaises(UnicodeDecodeError, '\x00\x00\x00\x00\x00'.decode, 'unicode-internal')
+    if (sys.maxunicode > 65535):
+
+        def handler_unicodeinternal(exc):
+            if (not isinstance(exc, UnicodeDecodeError)):
+                raise TypeError(("don't know how to handle %r" % exc))
+            return (u'\x01', 1)
+        self.assertEqual('\x00\x00\x00\x00\x00'.decode('unicode-internal', 'ignore'), u'\x00')
+        self.assertEqual('\x00\x00\x00\x00\x00'.decode('unicode-internal', 'replace'), u'\x00\ufffd')
+        codecs.register_error('test.hui', handler_unicodeinternal)
+        self.assertEqual('\x00\x00\x00\x00\x00'.decode('unicode-internal', 'test.hui'), u'\x00\x01\x00')

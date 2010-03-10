@@ -1,0 +1,98 @@
+def runtest_inner(test, generate, verbose, quiet, testdir=None, huntrleaks=False, junit_xml_dir=None):
+    test_support.unload(test)
+    if (not testdir):
+        testdir = findtestdir()
+    outputdir = os.path.join(testdir, 'output')
+    outputfile = os.path.join(outputdir, test)
+    if verbose:
+        cfp = None
+    else:
+        cfp = cStringIO.StringIO()
+    try:
+        save_stdout = sys.stdout
+        if junit_xml_dir:
+            from test.junit_xml import Tee, write_direct_test
+            indirect_test = None
+            save_stderr = sys.stderr
+            sys.stdout = stdout = Tee(sys.stdout)
+            sys.stderr = stderr = Tee(sys.stderr)
+        try:
+            if cfp:
+                sys.stdout = cfp
+                print test
+            if test.startswith('test.'):
+                abstest = test
+            else:
+                abstest = ('test.' + test)
+            start = time.time()
+            the_package = __import__(abstest, globals(), locals(), [])
+            the_module = getattr(the_package, test)
+            indirect_test = getattr(the_module, 'test_main', None)
+            if (indirect_test is not None):
+                indirect_test()
+            elif junit_xml_dir:
+                write_direct_test(junit_xml_dir, abstest, (time.time() - start), stdout=stdout.getvalue(), stderr=stderr.getvalue())
+            if huntrleaks:
+                dash_R(the_module, test, indirect_test, huntrleaks)
+        finally:
+            sys.stdout = save_stdout
+            if junit_xml_dir:
+                sys.stderr = save_stderr
+    except test_support.ResourceDenied as msg:
+        if (not quiet):
+            print test, 'skipped --', msg
+            sys.stdout.flush()
+        if junit_xml_dir:
+            write_direct_test(junit_xml_dir, abstest, (time.time() - start), 'skipped', sys.exc_info(), stdout=stdout.getvalue(), stderr=stderr.getvalue())
+        return (-2)
+    except (ImportError, test_support.TestSkipped) as msg:
+        if (not quiet):
+            print test, 'skipped --', msg
+            sys.stdout.flush()
+        if junit_xml_dir:
+            write_direct_test(junit_xml_dir, abstest, (time.time() - start), 'skipped', sys.exc_info(), stdout=stdout.getvalue(), stderr=stderr.getvalue())
+        return (-1)
+    except KeyboardInterrupt:
+        raise
+    except test_support.TestFailed as msg:
+        print 'test', test, 'failed --', msg
+        sys.stdout.flush()
+        if (junit_xml_dir and (indirect_test is None)):
+            write_direct_test(junit_xml_dir, abstest, (time.time() - start), 'failure', sys.exc_info(), stdout=stdout.getvalue(), stderr=stderr.getvalue())
+        return 0
+    except:
+        (type, value) = sys.exc_info()[:2]
+        print 'test', test, 'crashed --', (str(type) + ':'), value
+        sys.stdout.flush()
+        if verbose:
+            traceback.print_exc(file=sys.stdout)
+            sys.stdout.flush()
+        if (junit_xml_dir and (indirect_test is None)):
+            write_direct_test(junit_xml_dir, abstest, (time.time() - start), 'error', sys.exc_info(), stdout=stdout.getvalue(), stderr=stderr.getvalue())
+        return 0
+    else:
+        if (not cfp):
+            return 1
+        output = cfp.getvalue()
+        if generate:
+            if (output == (test + '\n')):
+                if os.path.exists(outputfile):
+                    print 'output file', outputfile, 'is no longer needed; consider removing it'
+                else:
+                    return 1
+            fp = open(outputfile, 'w')
+            fp.write(output)
+            fp.close()
+            return 1
+        if os.path.exists(outputfile):
+            fp = open(outputfile, 'r')
+            expected = fp.read()
+            fp.close()
+        else:
+            expected = (test + '\n')
+        if ((output == expected) or huntrleaks):
+            return 1
+        sys.stdout.flush()
+        reportdiff(expected, output)
+        sys.stdout.flush()
+        return 0

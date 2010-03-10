@@ -1,0 +1,25 @@
+def __init__(self, path):
+    tokens = xpath_tokenizer(path)
+    self.path = []
+    self.tag = None
+    if (tokens and (tokens[0][0] == '/')):
+        raise SyntaxError('cannot use absolute path on element')
+    while tokens:
+        (op, tag) = tokens.pop(0)
+        if (tag or (op == '*')):
+            self.path.append((tag or op))
+        elif (op == '.'):
+            pass
+        elif (op == '/'):
+            self.path.append(xpath_descendant_or_self())
+            continue
+        else:
+            raise SyntaxError(('unsupported path syntax (%s)' % op))
+        if tokens:
+            (op, tag) = tokens.pop(0)
+            if (op != '/'):
+                raise SyntaxError(('expected path separator (%s)' % (op or tag)))
+    if (self.path and isinstance(self.path[(-1)], xpath_descendant_or_self)):
+        raise SyntaxError('path cannot end with //')
+    if ((len(self.path) == 1) and isinstance(self.path[0], type(''))):
+        self.tag = self.path[0]

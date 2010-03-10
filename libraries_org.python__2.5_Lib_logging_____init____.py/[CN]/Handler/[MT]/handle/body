@@ -1,0 +1,10 @@
+def handle(self, record):
+    '\n        Conditionally emit the specified logging record.\n\n        Emission depends on filters which may have been added to the handler.\n        Wrap the actual emission of the record with acquisition/release of\n        the I/O thread lock. Returns whether the filter passed the record for\n        emission.\n        '
+    rv = self.filter(record)
+    if rv:
+        self.acquire()
+        try:
+            self.emit(record)
+        finally:
+            self.release()
+    return rv

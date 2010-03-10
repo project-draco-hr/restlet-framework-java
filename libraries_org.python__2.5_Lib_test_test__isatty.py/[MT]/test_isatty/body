@@ -1,0 +1,13 @@
+def test_isatty(label, thingy):
+    os_isatty = os.isatty(thingy.fileno())
+    thingy_isatty = thingy.isatty()
+    if ('in' in label):
+        expected = stdin_isatty
+    elif ('out' in label):
+        expected = stdout_isatty
+    elif ('err' in label):
+        expected = stderr_isatty
+    else:
+        expected = False
+    print ('%11s: os.isatty=%.1s | .isatty=%.1s | expected=%.1s' % (label, os_isatty, thingy_isatty, expected))
+    assert (expected == os_isatty == thingy_isatty), ('expected isatty would return %s on %s' % (expected, label))

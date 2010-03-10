@@ -1,0 +1,20 @@
+def test_setget_override(self):
+    if (not test_support.is_jython):
+        return
+
+
+    class GoofyListMapThing(ArrayList):
+
+        def __init__(self):
+            self.silly = 'Nothing'
+
+        def __setitem__(self, key, element):
+            self.silly = 'spam'
+
+        def __getitem__(self, key):
+            self.silly = 'eggs'
+    glmt = GoofyListMapThing()
+    glmt['my-key'] = String('el1')
+    self.assertEquals(glmt.silly, 'spam')
+    glmt['my-key']
+    self.assertEquals(glmt.silly, 'eggs')

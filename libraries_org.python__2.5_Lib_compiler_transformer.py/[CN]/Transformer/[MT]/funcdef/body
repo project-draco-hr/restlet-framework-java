@@ -1,0 +1,22 @@
+def funcdef(self, nodelist):
+    if (len(nodelist) == 6):
+        assert (nodelist[0][0] == symbol.decorators)
+        decorators = self.decorators(nodelist[0][1:])
+    else:
+        assert (len(nodelist) == 5)
+        decorators = None
+    lineno = nodelist[(-4)][2]
+    name = nodelist[(-4)][1]
+    args = nodelist[(-3)][2]
+    if (args[0] == symbol.varargslist):
+        (names, defaults, flags) = self.com_arglist(args[1:])
+    else:
+        names = defaults = ()
+        flags = 0
+    doc = self.get_docstring(nodelist[(-1)])
+    code = self.com_node(nodelist[(-1)])
+    if (doc is not None):
+        assert isinstance(code, Stmt)
+        assert isinstance(code.nodes[0], Discard)
+        del code.nodes[0]
+    return Function(decorators, name, names, defaults, flags, doc, code, lineno=lineno)

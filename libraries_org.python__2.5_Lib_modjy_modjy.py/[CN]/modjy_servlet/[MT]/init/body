@@ -1,0 +1,11 @@
+def init(self, delegator):
+    self.servlet = delegator
+    self.servlet_context = self.servlet.getServletContext()
+    self.servlet_config = self.servlet.getServletConfig()
+    self.log = modjy_logger(self.servlet_context)
+    self.params = modjy_param_mgr(modjy_servlet_params)
+    self.get_params()
+    self.init_impl()
+    self.init_publisher()
+    import modjy_exceptions
+    self.exc_handler = getattr(modjy_exceptions, ('%s_handler' % self.params['exc_handler']))()

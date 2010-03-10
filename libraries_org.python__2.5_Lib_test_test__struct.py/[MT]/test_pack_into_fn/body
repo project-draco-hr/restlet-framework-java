@@ -1,0 +1,14 @@
+def test_pack_into_fn():
+    test_string = 'Reykjavik rocks, eow!'
+    writable_buf = array.array('c', (' ' * 100))
+    fmt = '21s'
+    pack_into = (lambda *args: struct.pack_into(fmt, *args))
+    pack_into(writable_buf, 0, test_string)
+    from_buf = writable_buf.tostring()[:len(test_string)]
+    vereq(from_buf, test_string)
+    pack_into(writable_buf, 10, test_string)
+    from_buf = writable_buf.tostring()[:(len(test_string) + 10)]
+    vereq(from_buf, (test_string[:10] + test_string))
+    small_buf = array.array('c', (' ' * 10))
+    assertRaises(struct.error, pack_into, small_buf, 0, test_string)
+    assertRaises(struct.error, pack_into, small_buf, 2, test_string)

@@ -1,0 +1,8 @@
+def _map_exception(exc, circumstance=ALL):
+    mapped_exception = _exception_map.get((exc.__class__, circumstance))
+    if mapped_exception:
+        exception = mapped_exception()
+    else:
+        exception = error((-1), ('Unmapped exception: %s' % exc))
+    exception.java_exception = exc
+    return exception

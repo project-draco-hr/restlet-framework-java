@@ -1,0 +1,36 @@
+"HTTP cookie handling for web clients.\n\nThis module has (now fairly distant) origins in Gisle Aas' Perl module\nHTTP::Cookies, from the libwww-perl library.\n\nDocstrings, comments and debug strings in this code refer to the\nattributes of the HTTP cookie system as cookie-attributes, to distinguish\nthem clearly from Python attributes.\n\nClass diagram (note that BSDDBCookieJar and the MSIE* classes are not\ndistributed with the Python standard library, but are available from\nhttp://wwwsearch.sf.net/):\n\n                        CookieJar____\n                        /     \\                  FileCookieJar      \\                   /    |   \\         \\       MozillaCookieJar | LWPCookieJar \\                        |               |                        |   ---MSIEBase |                         |  /      |     |                          | /   MSIEDBCookieJar BSDDBCookieJar\n                  |/\n               MSIECookieJar\n\n"
+__all__ = ['Cookie', 'CookieJar', 'CookiePolicy', 'DefaultCookiePolicy', 'FileCookieJar', 'LWPCookieJar', 'LoadError', 'MozillaCookieJar']
+import re, urlparse, copy, time, urllib
+try:
+    import threading as _threading
+except ImportError:
+    import dummy_threading as _threading
+import httplib
+from calendar import timegm
+debug = False
+logger = None
+DEFAULT_HTTP_PORT = str(httplib.HTTP_PORT)
+MISSING_FILENAME_TEXT = 'a filename was not supplied (nor was the CookieJar instance initialised with one)'
+EPOCH_YEAR = 1970
+DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+MONTHS_LOWER = []
+for month in MONTHS:
+    MONTHS_LOWER.append(month.lower())
+UTC_ZONES = {'GMT': None, 'UTC': None, 'UT': None, 'Z': None, }
+TIMEZONE_RE = re.compile('^([-+])?(\\d\\d?):?(\\d\\d)?$')
+STRICT_DATE_RE = re.compile('^[SMTWF][a-z][a-z], (\\d\\d) ([JFMASOND][a-z][a-z]) (\\d\\d\\d\\d) (\\d\\d):(\\d\\d):(\\d\\d) GMT$')
+WEEKDAY_RE = re.compile('^(?:Sun|Mon|Tue|Wed|Thu|Fri|Sat)[a-z]*,?\\s*', re.I)
+LOOSE_HTTP_DATE_RE = re.compile('^\n    (\\d\\d?)            # day\n       (?:\\s+|[-\\/])\n    (\\w+)              # month\n        (?:\\s+|[-\\/])\n    (\\d+)              # year\n    (?:\n          (?:\\s+|:)    # separator before clock\n       (\\d\\d?):(\\d\\d)  # hour:min\n       (?::(\\d\\d))?    # optional seconds\n    )?                 # optional clock\n       \\s*\n    ([-+]?\\d{2,4}|(?![APap][Mm]\\b)[A-Za-z]+)? # timezone\n       \\s*\n    (?:\\(\\w+\\))?       # ASCII representation of timezone in parens.\n       \\s*$', re.X)
+ISO_DATE_RE = re.compile('^\n    (\\d{4})              # year\n       [-\\/]?\n    (\\d\\d?)              # numerical month\n       [-\\/]?\n    (\\d\\d?)              # day\n   (?:\n         (?:\\s+|[-:Tt])  # separator before clock\n      (\\d\\d?):?(\\d\\d)    # hour:min\n      (?::?(\\d\\d(?:\\.\\d*)?))?  # optional seconds (and fractional)\n   )?                    # optional clock\n      \\s*\n   ([-+]?\\d\\d?:?(:?\\d\\d)?\n    |Z|z)?               # timezone  (Z is "zero meridian", i.e. GMT)\n      \\s*$', re.X)
+HEADER_TOKEN_RE = re.compile('^\\s*([^=\\s;,]+)')
+HEADER_QUOTED_VALUE_RE = re.compile('^\\s*=\\s*\\"([^\\"\\\\]*(?:\\\\.[^\\"\\\\]*)*)\\"')
+HEADER_VALUE_RE = re.compile('^\\s*=\\s*([^\\s;,]*)')
+HEADER_ESCAPE_RE = re.compile('\\\\(.)')
+HEADER_JOIN_ESCAPE_RE = re.compile('([\\"\\\\])')
+IPV4_RE = re.compile('\\.\\d+$')
+cut_port_re = re.compile(':\\d+$')
+HTTP_PATH_SAFE = "%/;:@&=+$,!~*'()"
+ESCAPED_CHAR_RE = re.compile('%([0-9a-fA-F][0-9a-fA-F])')
+from _LWPCookieJar import LWPCookieJar, lwp_cookie_str
+from _MozillaCookieJar import MozillaCookieJar

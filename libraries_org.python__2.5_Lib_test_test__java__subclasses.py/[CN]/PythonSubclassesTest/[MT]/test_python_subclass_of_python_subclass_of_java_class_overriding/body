@@ -1,0 +1,13 @@
+def test_python_subclass_of_python_subclass_of_java_class_overriding(self):
+    'Test for http://bugs.jython.org/issue1297.\n\n        Checks that getValue on SecondSubclass is overriden correctly when called from Java.'
+
+
+    class FirstSubclass(OwnMethodCaller):
+        pass
+
+
+    class SecondSubclass(FirstSubclass):
+
+        def getValue(self):
+            return 10
+    self.assertEquals(10, SecondSubclass().callGetValue())

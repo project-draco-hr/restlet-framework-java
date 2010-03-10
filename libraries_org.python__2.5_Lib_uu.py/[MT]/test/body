@@ -1,0 +1,32 @@
+def test():
+    'uuencode/uudecode main program'
+    import optparse
+    parser = optparse.OptionParser(usage='usage: %prog [-d] [-t] [input [output]]')
+    parser.add_option('-d', '--decode', dest='decode', help='Decode (instead of encode)?', default=False, action='store_true')
+    parser.add_option('-t', '--text', dest='text', help='data is text, encoded format unix-compatible text?', default=False, action='store_true')
+    (options, args) = parser.parse_args()
+    if (len(args) > 2):
+        parser.error('incorrect number of arguments')
+        sys.exit(1)
+    input = sys.stdin
+    output = sys.stdout
+    if (len(args) > 0):
+        input = args[0]
+    if (len(args) > 1):
+        output = args[1]
+    if options.decode:
+        if options.text:
+            if isinstance(output, basestring):
+                output = open(output, 'w')
+            else:
+                print sys.argv[0], ': cannot do -t to stdout'
+                sys.exit(1)
+        decode(input, output)
+    else:
+        if options.text:
+            if isinstance(input, basestring):
+                input = open(input, 'r')
+            else:
+                print sys.argv[0], ': cannot do -t from stdin'
+                sys.exit(1)
+        encode(input, output)

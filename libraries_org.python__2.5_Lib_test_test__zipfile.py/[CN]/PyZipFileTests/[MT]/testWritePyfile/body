@@ -1,0 +1,29 @@
+def testWritePyfile(self):
+    zipfp = zipfile.PyZipFile(TemporaryFile(), 'w')
+    fn = __file__
+    if (fn.endswith('.pyc') or fn.endswith('.pyo')):
+        fn = fn[:(-1)]
+    elif fn.endswith('$py.class'):
+        fn = (fn[:(-9)] + '.py')
+    zipfp.writepy(fn)
+    bn = os.path.basename(fn)
+    self.assert_((bn not in zipfp.namelist()))
+    if (not is_jython):
+        self.assert_((((bn + 'o') in zipfp.namelist()) or ((bn + 'c') in zipfp.namelist())))
+    else:
+        self.assert_(((bn[:(-3)] + '$py.class') in zipfp.namelist()))
+    zipfp.close()
+    zipfp = zipfile.PyZipFile(TemporaryFile(), 'w')
+    fn = __file__
+    if (fn.endswith('.pyc') or fn.endswith('.pyo')):
+        fn = fn[:(-1)]
+    elif fn.endswith('$py.class'):
+        fn = (fn[:(-9)] + '.py')
+    zipfp.writepy(fn, 'testpackage')
+    bn = ('%s/%s' % ('testpackage', os.path.basename(fn)))
+    self.assert_((bn not in zipfp.namelist()))
+    if (not is_jython):
+        self.assert_((((bn + 'o') in zipfp.namelist()) or ((bn + 'c') in zipfp.namelist())))
+    else:
+        self.assert_(((bn[:(-3)] + '$py.class') in zipfp.namelist()))
+    zipfp.close()

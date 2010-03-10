@@ -1,0 +1,23 @@
+def nextLine(self, lineno):
+    if (self.firstline == 0):
+        self.firstline = lineno
+        self.lastline = lineno
+    else:
+        addr = (self.codeOffset - self.lastoff)
+        line = (lineno - self.lastline)
+        if (line >= 0):
+            push = self.lnotab.append
+            while (addr > 255):
+                push(255)
+                push(0)
+                addr -= 255
+            while (line > 255):
+                push(addr)
+                push(255)
+                line -= 255
+                addr = 0
+            if ((addr > 0) or (line > 0)):
+                push(addr)
+                push(line)
+            self.lastline = lineno
+            self.lastoff = self.codeOffset

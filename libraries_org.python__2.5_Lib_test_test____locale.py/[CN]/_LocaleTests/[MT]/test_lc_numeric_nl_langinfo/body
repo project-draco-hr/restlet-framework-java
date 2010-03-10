@@ -1,0 +1,8 @@
+def test_lc_numeric_nl_langinfo(self):
+    for loc in candidate_locales:
+        try:
+            setlocale(LC_NUMERIC, loc)
+        except Error:
+            continue
+        for (li, lc) in ((RADIXCHAR, 'decimal_point'), (THOUSEP, 'thousands_sep')):
+            self.numeric_tester('nl_langinfo', nl_langinfo(li), lc, loc)

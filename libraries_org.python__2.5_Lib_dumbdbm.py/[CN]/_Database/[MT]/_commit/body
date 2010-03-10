@@ -1,0 +1,15 @@
+def _commit(self):
+    if (self._index is None):
+        return
+    try:
+        self._os.unlink(self._bakfile)
+    except self._os.error:
+        pass
+    try:
+        self._os.rename(self._dirfile, self._bakfile)
+    except self._os.error:
+        pass
+    f = self._open(self._dirfile, 'w', self._mode)
+    for (key, pos_and_siz_pair) in self._index.iteritems():
+        f.write(('%r, %r\n' % (key, pos_and_siz_pair)))
+    f.close()

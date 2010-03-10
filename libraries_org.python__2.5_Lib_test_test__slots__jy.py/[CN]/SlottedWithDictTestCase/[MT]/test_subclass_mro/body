@@ -1,0 +1,39 @@
+def test_subclass_mro(self):
+
+
+    class Base(object):
+        pass
+
+
+    class Slotted(object):
+        __slots__ = 'baz'
+
+
+    class Foo(Slotted, Base):
+        __slots__ = 'bar'
+    if strict:
+        self.assert_(('__dict__' in Foo.__dict__))
+        self.assertEqual(Foo.__dict__['__dict__'].__objclass__, Foo)
+    foo = Foo()
+    self.assert_(hasattr(foo, '__dict__'))
+    foo.bar = 'hello bar'
+    foo.baz = 'hello baz'
+    foo.foo = 'hello foo'
+    self.assertEqual(foo.bar, 'hello bar')
+    self.assertEqual(foo.baz, 'hello baz')
+    self.assertEqual(foo.__dict__, {'foo': 'hello foo', })
+
+
+    class Bar(Slotted, Base):
+        pass
+    if strict:
+        self.assert_(('__dict__' in Bar.__dict__))
+        self.assertEqual(Bar.__dict__['__dict__'].__objclass__, Bar)
+    bar = Bar()
+    self.assert_(hasattr(bar, '__dict__'))
+    bar.bar = 'hello bar'
+    bar.baz = 'hello baz'
+    bar.foo = 'hello foo'
+    self.assertEqual(bar.bar, 'hello bar')
+    self.assertEqual(bar.baz, 'hello baz')
+    self.assertEqual(bar.__dict__, {'foo': 'hello foo', 'bar': 'hello bar', })

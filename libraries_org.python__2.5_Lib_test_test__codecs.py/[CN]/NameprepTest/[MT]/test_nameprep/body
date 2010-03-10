@@ -1,0 +1,14 @@
+def test_nameprep(self):
+    from encodings.idna import nameprep
+    for (pos, (orig, prepped)) in enumerate(nameprep_tests):
+        if (orig is None):
+            continue
+        orig = unicode(orig, 'utf-8')
+        if (prepped is None):
+            self.assertRaises(UnicodeError, nameprep, orig)
+        else:
+            prepped = unicode(prepped, 'utf-8')
+            try:
+                self.assertEquals(nameprep(orig), prepped)
+            except Exception as e:
+                raise test_support.TestFailed(('Test 3.%d: %s' % ((pos + 1), str(e))))

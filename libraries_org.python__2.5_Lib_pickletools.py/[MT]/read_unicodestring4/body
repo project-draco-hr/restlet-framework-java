@@ -1,0 +1,9 @@
+def read_unicodestring4(f):
+    "\n    >>> import StringIO\n    >>> s = u'abcd\\uabcd'\n    >>> enc = s.encode('utf-8')\n    >>> enc\n    'abcd\\xea\\xaf\\x8d'\n    >>> n = chr(len(enc)) + chr(0) * 3  # little-endian 4-byte length\n    >>> t = read_unicodestring4(StringIO.StringIO(n + enc + 'junk'))\n    >>> s == t\n    True\n\n    >>> read_unicodestring4(StringIO.StringIO(n + enc[:-1]))\n    Traceback (most recent call last):\n    ...\n    ValueError: expected 7 bytes in a unicodestring4, but only 6 remain\n    "
+    n = read_int4(f)
+    if (n < 0):
+        raise ValueError(('unicodestring4 byte count < 0: %d' % n))
+    data = f.read(n)
+    if (len(data) == n):
+        return unicode(data, 'utf-8')
+    raise ValueError(('expected %d bytes in a unicodestring4, but only %d remain' % (n, len(data))))

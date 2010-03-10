@@ -1,0 +1,6 @@
+def test_quote_cookie_value(self):
+    from cookielib import CookieJar, DefaultCookiePolicy
+    c = CookieJar(policy=DefaultCookiePolicy(rfc2965=True))
+    interact_2965(c, 'http://www.acme.com/', 'foo=\\b"a"r; Version=1')
+    h = interact_2965(c, 'http://www.acme.com/')
+    self.assertEquals(h, '$Version=1; foo=\\\\b\\"a\\"r')

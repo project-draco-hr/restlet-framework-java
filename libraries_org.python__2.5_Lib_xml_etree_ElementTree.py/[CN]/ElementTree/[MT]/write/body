@@ -1,0 +1,9 @@
+def write(self, file, encoding='us-ascii'):
+    assert (self._root is not None)
+    if (not hasattr(file, 'write')):
+        file = open(file, 'wb')
+    if (not encoding):
+        encoding = 'us-ascii'
+    elif ((encoding != 'utf-8') and (encoding != 'us-ascii')):
+        file.write(("<?xml version='1.0' encoding='%s'?>\n" % encoding))
+    self._write(file, self._root, encoding, {})

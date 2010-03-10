@@ -1,0 +1,14 @@
+def apropos(key):
+    'Print all the one-line module summaries that contain a substring.'
+
+    def callback(path, modname, desc):
+        if (modname[(-9):] == '.__init__'):
+            modname = (modname[:(-9)] + ' (package)')
+        print modname, (desc and ('- ' + desc))
+    try:
+        import warnings
+    except ImportError:
+        pass
+    else:
+        warnings.filterwarnings('ignore')
+    ModuleScanner().run(callback, key)

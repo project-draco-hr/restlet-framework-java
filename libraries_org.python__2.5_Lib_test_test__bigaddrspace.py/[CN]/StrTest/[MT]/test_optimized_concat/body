@@ -1,0 +1,16 @@
+@bigaddrspacetest
+def test_optimized_concat(self):
+    x = ('x' * MAX_Py_ssize_t)
+    try:
+        x = (x + '?')
+    except OverflowError:
+        pass
+    else:
+        self.fail('should have raised OverflowError')
+    try:
+        x += '?'
+    except OverflowError:
+        pass
+    else:
+        self.fail('should have raised OverflowError')
+    self.assertEquals(len(x), MAX_Py_ssize_t)

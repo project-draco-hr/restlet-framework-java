@@ -1,0 +1,34 @@
+def swig_sources(self, sources, extension):
+    "Walk the list of source files in 'sources', looking for SWIG\n        interface (.i) files.  Run SWIG on all that are found, and\n        return a modified 'sources' list with SWIG source files replaced\n        by the generated C (or C++) files.\n        "
+    new_sources = []
+    swig_sources = []
+    swig_targets = {}
+    if self.swig_cpp:
+        log.warn('--swig-cpp is deprecated - use --swig-opts=-c++')
+    if (self.swig_cpp or ('-c++' in self.swig_opts) or ('-c++' in extension.swig_opts)):
+        target_ext = '.cpp'
+    else:
+        target_ext = '.c'
+    for source in sources:
+        (base, ext) = os.path.splitext(source)
+        if (ext == '.i'):
+            new_sources.append(((base + '_wrap') + target_ext))
+            swig_sources.append(source)
+            swig_targets[source] = new_sources[(-1)]
+        else:
+            new_sources.append(source)
+    if (not swig_sources):
+        return new_sources
+    swig = (self.swig or self.find_swig())
+    swig_cmd = [swig, '-python']
+    swig_cmd.extend(self.swig_opts)
+    if self.swig_cpp:
+        swig_cmd.append('-c++')
+    if (not self.swig_opts):
+        for o in extension.swig_opts:
+            swig_cmd.append(o)
+    for source in swig_sources:
+        target = swig_targets[source]
+        log.info('swigging %s to %s', source, target)
+        self.spawn((swig_cmd + ['-o', target, source]))
+    return new_sources

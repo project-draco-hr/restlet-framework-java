@@ -1,0 +1,9 @@
+def test_get_MM(self):
+    msg = mailbox.MaildirMessage((self._template % 0))
+    msg.set_subdir('cur')
+    msg.set_flags('RF')
+    key = self._box.add(msg)
+    msg_returned = self._box.get_message(key)
+    self.assert_(isinstance(msg_returned, mailbox.MaildirMessage))
+    self.assert_((msg_returned.get_subdir() == 'cur'))
+    self.assert_((msg_returned.get_flags() == 'FR'))

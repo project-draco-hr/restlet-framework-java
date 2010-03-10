@@ -1,0 +1,8 @@
+def setUp(self):
+    import fcntl
+    self.alrm = signal.signal(signal.SIGALRM, (lambda x, y: None))
+    (self.read, self.write) = os.pipe()
+    flags = fcntl.fcntl(self.write, fcntl.F_GETFL, 0)
+    flags = (flags | os.O_NONBLOCK)
+    fcntl.fcntl(self.write, fcntl.F_SETFL, flags)
+    self.old_wakeup = signal.set_wakeup_fd(self.write)

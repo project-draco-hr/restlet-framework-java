@@ -1,0 +1,15 @@
+def test_charmapencode(self):
+    charmap = dict([(ord(c), (2 * c.upper())) for c in 'abcdefgh'])
+    sin = u'abc'
+    sout = 'AABBCC'
+    self.assertEquals(codecs.charmap_encode(sin, 'strict', charmap)[0], sout)
+    sin = u'abcA'
+    self.assertRaises(UnicodeError, codecs.charmap_encode, sin, 'strict', charmap)
+    charmap[ord('?')] = 'XYZ'
+    sin = u'abcDEF'
+    sout = 'AABBCCXYZXYZXYZ'
+    self.assertEquals(codecs.charmap_encode(sin, 'replace', charmap)[0], sout)
+    charmap[ord('?')] = u'XYZ'
+    self.assertRaises(TypeError, codecs.charmap_encode, sin, 'replace', charmap)
+    charmap[ord('?')] = u'XYZ'
+    self.assertRaises(TypeError, codecs.charmap_encode, sin, 'replace', charmap)

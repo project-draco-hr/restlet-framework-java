@@ -1,0 +1,27 @@
+def test_nested_cleanup(self):
+    state = []
+
+    @contextmanager
+    def a():
+        state.append(1)
+        try:
+            yield 2
+        finally:
+            state.append(3)
+
+    @contextmanager
+    def b():
+        state.append(4)
+        try:
+            yield 5
+        finally:
+            state.append(6)
+    try:
+        with nested(a(), b()) as (x, y):
+            state.append(x)
+            state.append(y)
+            (1 / 0)
+    except ZeroDivisionError:
+        self.assertEqual(state, [1, 4, 2, 5, 6, 3])
+    else:
+        self.fail("Didn't raise ZeroDivisionError")

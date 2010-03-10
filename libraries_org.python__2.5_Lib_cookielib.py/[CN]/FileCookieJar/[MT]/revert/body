@@ -1,0 +1,16 @@
+def revert(self, filename=None, ignore_discard=False, ignore_expires=False):
+    "Clear all cookies and reload cookies from a saved file.\n\n        Raises LoadError (or IOError) if reversion is not successful; the\n        object's state will not be altered if this happens.\n\n        "
+    if (filename is None):
+        if (self.filename is not None):
+            filename = self.filename
+        else:
+            raise ValueError(MISSING_FILENAME_TEXT)
+    self._cookies_lock.acquire()
+    old_state = copy.deepcopy(self._cookies)
+    self._cookies = {}
+    try:
+        self.load(filename, ignore_discard, ignore_expires)
+    except (LoadError, IOError):
+        self._cookies = old_state
+        raise
+    self._cookies_lock.release()

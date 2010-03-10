@@ -1,0 +1,11 @@
+def test_newobj_generic(self):
+    for proto in protocols:
+        for C in myclasses:
+            B = C.__base__
+            x = C(C.sample)
+            x.foo = 42
+            s = self.dumps(x, proto)
+            y = self.loads(s)
+            detail = (proto, C, B, x, y, type(y))
+            self.assertEqual(B(x), B(y), detail)
+            self.assertEqual(x.__dict__, y.__dict__, detail)

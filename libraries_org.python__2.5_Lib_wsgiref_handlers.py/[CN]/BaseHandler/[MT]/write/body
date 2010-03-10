@@ -1,0 +1,12 @@
+def write(self, data):
+    "'write()' callable as specified by PEP 333"
+    assert (type(data) is StringType), 'write() argument must be string'
+    if (not self.status):
+        raise AssertionError('write() before start_response()')
+    elif (not self.headers_sent):
+        self.bytes_sent = len(data)
+        self.send_headers()
+    else:
+        self.bytes_sent += len(data)
+    self._write(data)
+    self._flush()

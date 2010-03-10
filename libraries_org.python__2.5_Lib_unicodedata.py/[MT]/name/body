@@ -1,0 +1,12 @@
+def name(unichr, default=None):
+    codepoint = get_codepoint(unichr, 'name')
+    v = _codepoints.get(codepoint, None)
+    if (v is None):
+        v = check_segments(codepoint, _segments)
+        if (v is not None):
+            return ('%s-%X' % (v[8], codepoint))
+    if (v is None):
+        if (default is not Nonesuch):
+            return default
+        raise ValueError()
+    return v[8]

@@ -1,0 +1,12 @@
+def read_template(self):
+    'Read and parse manifest template file named by self.template.\n\n        (usually "MANIFEST.in") The parsing and processing is done by\n        \'self.filelist\', which updates itself accordingly.\n        '
+    log.info("reading manifest template '%s'", self.template)
+    template = TextFile(self.template, strip_comments=1, skip_blanks=1, join_lines=1, lstrip_ws=1, rstrip_ws=1, collapse_join=1)
+    while 1:
+        line = template.readline()
+        if (line is None):
+            break
+        try:
+            self.filelist.process_template_line(line)
+        except DistutilsTemplateError as msg:
+            self.warn(('%s, line %d: %s' % (template.filename, template.current_line, msg)))

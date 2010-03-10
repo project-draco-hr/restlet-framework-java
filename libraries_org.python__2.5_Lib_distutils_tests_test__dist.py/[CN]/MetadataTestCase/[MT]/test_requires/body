@@ -1,0 +1,11 @@
+def test_requires(self):
+    attrs = {'name': 'package', 'version': '1.0', 'requires': ['other', 'another (==1.0)'], }
+    dist = distutils.dist.Distribution(attrs)
+    self.assertEqual(dist.metadata.get_requires(), ['other', 'another (==1.0)'])
+    self.assertEqual(dist.get_requires(), ['other', 'another (==1.0)'])
+    meta = self.format_metadata(dist)
+    self.assert_(('Metadata-Version: 1.1' in meta))
+    self.assert_(('provides:' not in meta.lower()))
+    self.assert_(('Requires: other' in meta))
+    self.assert_(('Requires: another (==1.0)' in meta))
+    self.assert_(('obsoletes:' not in meta.lower()))

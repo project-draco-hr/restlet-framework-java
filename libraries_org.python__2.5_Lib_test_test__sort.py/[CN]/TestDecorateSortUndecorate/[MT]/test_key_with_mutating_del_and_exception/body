@@ -1,0 +1,14 @@
+def test_key_with_mutating_del_and_exception(self):
+    data = range(10)
+
+
+    class SortKiller(object):
+
+        def __init__(self, x):
+            if (x > 2):
+                raise RuntimeError
+
+        def __del__(self):
+            del data[:]
+            data[:] = range(20)
+    self.assertRaises(RuntimeError, data.sort, key=SortKiller)

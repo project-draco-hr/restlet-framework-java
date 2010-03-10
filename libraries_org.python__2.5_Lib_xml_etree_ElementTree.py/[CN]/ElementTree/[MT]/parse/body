@@ -1,0 +1,12 @@
+def parse(self, source, parser=None):
+    if (not hasattr(source, 'read')):
+        source = open(source, 'rb')
+    if (not parser):
+        parser = XMLTreeBuilder()
+    while 1:
+        data = source.read(32768)
+        if (not data):
+            break
+        parser.feed(data)
+    self._root = parser.close()
+    return self._root

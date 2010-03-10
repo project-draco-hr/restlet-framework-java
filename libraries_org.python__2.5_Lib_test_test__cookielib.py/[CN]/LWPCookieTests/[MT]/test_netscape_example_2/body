@@ -1,0 +1,18 @@
+def test_netscape_example_2(self):
+    from cookielib import CookieJar
+    from urllib2 import Request
+    c = CookieJar()
+    headers = []
+    req = Request('http://www.acme.com/')
+    headers.append('Set-Cookie: PART_NUMBER=ROCKET_LAUNCHER_0001; path=/')
+    res = FakeResponse(headers, 'http://www.acme.com/')
+    c.extract_cookies(res, req)
+    req = Request('http://www.acme.com/')
+    c.add_cookie_header(req)
+    self.assertEquals(req.get_header('Cookie'), 'PART_NUMBER=ROCKET_LAUNCHER_0001')
+    headers.append('Set-Cookie: PART_NUMBER=RIDING_ROCKET_0023; path=/ammo')
+    res = FakeResponse(headers, 'http://www.acme.com/')
+    c.extract_cookies(res, req)
+    req = Request('http://www.acme.com/ammo')
+    c.add_cookie_header(req)
+    self.assert_(re.search('PART_NUMBER=RIDING_ROCKET_0023;\\s*PART_NUMBER=ROCKET_LAUNCHER_0001', req.get_header('Cookie')))

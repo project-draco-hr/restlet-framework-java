@@ -1,0 +1,11 @@
+def test_append_remove(self):
+    lst = []
+
+    def tester():
+        ct = threading.currentThread()
+        for i in range(1000):
+            lst.append(ct)
+            time.sleep(0.0001)
+            lst.remove(ct)
+    self.run_threads(tester)
+    self.assertEqual(lst, [])

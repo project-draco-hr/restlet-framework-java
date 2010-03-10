@@ -1,0 +1,9 @@
+def wait(self, child):
+    'Wait for child to finish, ignoring EINTR.'
+    while True:
+        try:
+            child.wait()
+            return
+        except OSError as e:
+            if (e.errno != errno.EINTR):
+                raise

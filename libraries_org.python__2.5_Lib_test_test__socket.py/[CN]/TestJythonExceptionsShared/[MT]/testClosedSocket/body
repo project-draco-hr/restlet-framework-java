@@ -1,0 +1,17 @@
+def testClosedSocket(self):
+    self.s.close()
+    try:
+        self.s.send(MSG)
+    except socket.error as se:
+        self.failUnlessEqual(se[0], errno.EBADF)
+    dup = self.s.dup()
+    try:
+        dup.send(MSG)
+    except socket.error as se:
+        self.failUnlessEqual(se[0], errno.EBADF)
+    fp = self.s.makefile()
+    try:
+        fp.write(MSG)
+        fp.flush()
+    except socket.error as se:
+        self.failUnlessEqual(se[0], errno.EBADF)

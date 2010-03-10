@@ -1,0 +1,7 @@
+def tearDown(self):
+    Thread.currentThread().contextClassLoader = self.orig_context
+    sys.path = self.orig_path
+    shutil.rmtree(self.temp_dir)
+    for module in sys.modules.keys():
+        if (module not in self.modules):
+            del sys.modules[module]

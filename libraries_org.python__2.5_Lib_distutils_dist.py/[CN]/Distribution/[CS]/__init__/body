@@ -1,0 +1,61 @@
+def __init__(self, attrs=None):
+    'Construct a new Distribution instance: initialize all the\n        attributes of a Distribution, and then use \'attrs\' (a dictionary\n        mapping attribute names to values) to assign some of those\n        attributes their "real" values.  (Any attributes not mentioned in\n        \'attrs\' will be assigned to some null value: 0, None, an empty list\n        or dictionary, etc.)  Most importantly, initialize the\n        \'command_obj\' attribute to the empty dictionary; this will be\n        filled in with real command objects by \'parse_command_line()\'.\n        '
+    self.verbose = 1
+    self.dry_run = 0
+    self.help = 0
+    for attr in self.display_option_names:
+        setattr(self, attr, 0)
+    self.metadata = DistributionMetadata()
+    for basename in self.metadata._METHOD_BASENAMES:
+        method_name = ('get_' + basename)
+        setattr(self, method_name, getattr(self.metadata, method_name))
+    self.cmdclass = {}
+    self.command_packages = None
+    self.script_name = None
+    self.script_args = None
+    self.command_options = {}
+    self.dist_files = []
+    self.packages = None
+    self.package_data = {}
+    self.package_dir = None
+    self.py_modules = None
+    self.libraries = None
+    self.headers = None
+    self.ext_modules = None
+    self.ext_package = None
+    self.include_dirs = None
+    self.extra_path = None
+    self.scripts = None
+    self.data_files = None
+    self.command_obj = {}
+    self.have_run = {}
+    if attrs:
+        options = attrs.get('options')
+        if options:
+            del attrs['options']
+            for (command, cmd_options) in options.items():
+                opt_dict = self.get_option_dict(command)
+                for (opt, val) in cmd_options.items():
+                    opt_dict[opt] = ('setup script', val)
+        if attrs.has_key('licence'):
+            attrs['license'] = attrs['licence']
+            del attrs['licence']
+            msg = "'licence' distribution option is deprecated; use 'license'"
+            if (warnings is not None):
+                warnings.warn(msg)
+            else:
+                sys.stderr.write((msg + '\n'))
+        for (key, val) in attrs.items():
+            if hasattr(self.metadata, ('set_' + key)):
+                getattr(self.metadata, ('set_' + key))(val)
+            elif hasattr(self.metadata, key):
+                setattr(self.metadata, key, val)
+            elif hasattr(self, key):
+                setattr(self, key, val)
+            else:
+                msg = ('Unknown distribution option: %s' % repr(key))
+                if (warnings is not None):
+                    warnings.warn(msg)
+                else:
+                    sys.stderr.write((msg + '\n'))
+    self.finalize_options()

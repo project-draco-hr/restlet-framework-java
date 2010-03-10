@@ -1,0 +1,12 @@
+def checkFW(self, text, size, match):
+
+    def make_it(text=text, size=size):
+        return util.FileWrapper(StringIO(text), size)
+    compare_generic_iter(make_it, match)
+    it = make_it()
+    self.failIf(it.filelike.closed)
+    for item in it:
+        pass
+    self.failIf(it.filelike.closed)
+    it.close()
+    self.failUnless(it.filelike.closed)

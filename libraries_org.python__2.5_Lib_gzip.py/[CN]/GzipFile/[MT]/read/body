@@ -1,0 +1,27 @@
+def read(self, size=(-1)):
+    if (self.mode != READ):
+        import errno
+        raise IOError(errno.EBADF, 'read() on write-only GzipFile object')
+    if ((self.extrasize <= 0) and (self.fileobj is None)):
+        return ''
+    readsize = 1024
+    if (size < 0):
+        try:
+            while True:
+                self._read(readsize)
+                readsize = min(self.max_read_chunk, (readsize * 2))
+        except EOFError:
+            size = self.extrasize
+    else:
+        try:
+            while (size > self.extrasize):
+                self._read(readsize)
+                readsize = min(self.max_read_chunk, (readsize * 2))
+        except EOFError:
+            if (size > self.extrasize):
+                size = self.extrasize
+    chunk = self.extrabuf[:size]
+    self.extrabuf = self.extrabuf[size:]
+    self.extrasize = (self.extrasize - size)
+    self.offset += size
+    return chunk

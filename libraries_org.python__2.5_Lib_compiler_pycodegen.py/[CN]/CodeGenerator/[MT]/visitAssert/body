@@ -1,0 +1,17 @@
+def visitAssert(self, node):
+    if __debug__:
+        end = self.newBlock()
+        self.set_lineno(node)
+        self.nextBlock()
+        self.visit(node.test)
+        self.emit('JUMP_IF_TRUE', end)
+        self.nextBlock()
+        self.emit('POP_TOP')
+        self.emit('LOAD_GLOBAL', 'AssertionError')
+        if node.fail:
+            self.visit(node.fail)
+            self.emit('RAISE_VARARGS', 2)
+        else:
+            self.emit('RAISE_VARARGS', 1)
+        self.nextBlock(end)
+        self.emit('POP_TOP')

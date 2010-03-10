@@ -1,0 +1,17 @@
+def dumps(self, values):
+    out = []
+    write = out.append
+    dump = self.__dump
+    if isinstance(values, Fault):
+        write('<fault>\n')
+        dump({'faultCode': values.faultCode, 'faultString': values.faultString, }, write)
+        write('</fault>\n')
+    else:
+        write('<params>\n')
+        for v in values:
+            write('<param>\n')
+            dump(v, write)
+            write('</param>\n')
+        write('</params>\n')
+    result = string.join(out, '')
+    return result

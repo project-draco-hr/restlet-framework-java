@@ -1,0 +1,9 @@
+def emit(self, record):
+    '\n        Emit a record.\n\n        Pickles the record and writes it to the socket in binary format.\n        If there is an error with the socket, silently drop the packet.\n        If there was a problem with the socket, re-establishes the\n        socket.\n        '
+    try:
+        s = self.makePickle(record)
+        self.send(s)
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        self.handleError(record)

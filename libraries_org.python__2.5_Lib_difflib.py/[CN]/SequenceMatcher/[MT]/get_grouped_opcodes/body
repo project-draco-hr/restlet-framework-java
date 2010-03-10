@@ -1,0 +1,22 @@
+def get_grouped_opcodes(self, n=3):
+    " Isolate change clusters by eliminating ranges with no changes.\n\n        Return a generator of groups with upto n lines of context.\n        Each group is in the same format as returned by get_opcodes().\n\n        >>> from pprint import pprint\n        >>> a = map(str, range(1,40))\n        >>> b = a[:]\n        >>> b[8:8] = ['i']     # Make an insertion\n        >>> b[20] += 'x'       # Make a replacement\n        >>> b[23:28] = []      # Make a deletion\n        >>> b[30] += 'y'       # Make another replacement\n        >>> pprint(list(SequenceMatcher(None,a,b).get_grouped_opcodes()))\n        [[('equal', 5, 8, 5, 8), ('insert', 8, 8, 8, 9), ('equal', 8, 11, 9, 12)],\n         [('equal', 16, 19, 17, 20),\n          ('replace', 19, 20, 20, 21),\n          ('equal', 20, 22, 21, 23),\n          ('delete', 22, 27, 23, 23),\n          ('equal', 27, 30, 23, 26)],\n         [('equal', 31, 34, 27, 30),\n          ('replace', 34, 35, 30, 31),\n          ('equal', 35, 38, 31, 34)]]\n        "
+    codes = self.get_opcodes()
+    if (not codes):
+        codes = [('equal', 0, 1, 0, 1)]
+    if (codes[0][0] == 'equal'):
+        (tag, i1, i2, j1, j2) = codes[0]
+        codes[0] = (tag, max(i1, (i2 - n)), i2, max(j1, (j2 - n)), j2)
+    if (codes[(-1)][0] == 'equal'):
+        (tag, i1, i2, j1, j2) = codes[(-1)]
+        codes[(-1)] = (tag, i1, min(i2, (i1 + n)), j1, min(j2, (j1 + n)))
+    nn = (n + n)
+    group = []
+    for (tag, i1, i2, j1, j2) in codes:
+        if ((tag == 'equal') and ((i2 - i1) > nn)):
+            group.append((tag, i1, min(i2, (i1 + n)), j1, min(j2, (j1 + n))))
+            yield group
+            group = []
+            (i1, j1) = (max(i1, (i2 - n)), max(j1, (j2 - n)))
+        group.append((tag, i1, i2, j1, j2))
+    if (group and (not ((len(group) == 1) and (group[0][0] == 'equal')))):
+        yield group

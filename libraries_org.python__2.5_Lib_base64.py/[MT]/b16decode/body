@@ -1,0 +1,7 @@
+def b16decode(s, casefold=False):
+    'Decode a Base16 encoded string.\n\n    s is the string to decode.  Optional casefold is a flag specifying whether\n    a lowercase alphabet is acceptable as input.  For security purposes, the\n    default is False.\n\n    The decoded string is returned.  A TypeError is raised if s were\n    incorrectly padded or if there are non-alphabet characters present in the\n    string.\n    '
+    if casefold:
+        s = s.upper()
+    if re.search('[^0-9A-F]', s):
+        raise TypeError('Non-base16 digit found')
+    return binascii.unhexlify(s)

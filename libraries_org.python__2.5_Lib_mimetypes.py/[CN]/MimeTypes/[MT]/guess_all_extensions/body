@@ -1,0 +1,9 @@
+def guess_all_extensions(self, type, strict=True):
+    "Guess the extensions for a file based on its MIME type.\n\n        Return value is a list of strings giving the possible filename\n        extensions, including the leading dot ('.').  The extension is not\n        guaranteed to have been associated with any particular data stream,\n        but would be mapped to the MIME type `type' by guess_type().\n\n        Optional `strict' argument when false adds a bunch of commonly found,\n        but non-standard types.\n        "
+    type = type.lower()
+    extensions = self.types_map_inv[True].get(type, [])
+    if (not strict):
+        for ext in self.types_map_inv[False].get(type, []):
+            if (ext not in extensions):
+                extensions.append(ext)
+    return extensions

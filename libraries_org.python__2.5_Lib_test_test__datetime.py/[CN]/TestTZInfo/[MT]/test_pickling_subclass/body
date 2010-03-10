@@ -1,0 +1,14 @@
+def test_pickling_subclass(self):
+    offset = timedelta(minutes=(-300))
+    orig = PicklableFixedOffset(offset, 'cookie')
+    self.failUnless(isinstance(orig, tzinfo))
+    self.failUnless((type(orig) is PicklableFixedOffset))
+    self.assertEqual(orig.utcoffset(None), offset)
+    self.assertEqual(orig.tzname(None), 'cookie')
+    for (pickler, unpickler, proto) in pickle_choices:
+        green = pickler.dumps(orig, proto)
+        derived = unpickler.loads(green)
+        self.failUnless(isinstance(derived, tzinfo))
+        self.failUnless((type(derived) is PicklableFixedOffset))
+        self.assertEqual(derived.utcoffset(None), offset)
+        self.assertEqual(derived.tzname(None), 'cookie')

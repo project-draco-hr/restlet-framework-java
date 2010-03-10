@@ -1,0 +1,22 @@
+def findall(dir=os.curdir):
+    "Find all files under 'dir' and return the list of full filenames\n    (relative to 'dir').\n    "
+    from stat import ST_MODE, S_ISREG, S_ISDIR, S_ISLNK
+    list = []
+    stack = [dir]
+    pop = stack.pop
+    push = stack.append
+    while stack:
+        dir = pop()
+        names = os.listdir(dir)
+        for name in names:
+            if (dir != os.curdir):
+                fullname = os.path.join(dir, name)
+            else:
+                fullname = name
+            stat = os.stat(fullname)
+            mode = stat[ST_MODE]
+            if S_ISREG(mode):
+                list.append(fullname)
+            elif (S_ISDIR(mode) and (not S_ISLNK(mode))):
+                push(fullname)
+    return list

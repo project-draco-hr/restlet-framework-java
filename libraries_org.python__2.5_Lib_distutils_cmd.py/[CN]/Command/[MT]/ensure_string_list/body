@@ -1,0 +1,15 @@
+def ensure_string_list(self, option):
+    'Ensure that \'option\' is a list of strings.  If \'option\' is\n        currently a string, we split it either on /,\\s*/ or /\\s+/, so\n        "foo bar baz", "foo,bar,baz", and "foo,   bar baz" all become\n        ["foo", "bar", "baz"].\n        '
+    val = getattr(self, option)
+    if (val is None):
+        return
+    elif (type(val) is StringType):
+        setattr(self, option, re.split(',\\s*|\\s+', val))
+    else:
+        if (type(val) is ListType):
+            types = map(type, val)
+            ok = (types == ([StringType] * len(val)))
+        else:
+            ok = 0
+        if (not ok):
+            raise DistutilsOptionError, ("'%s' must be a list of strings (got %r)" % (option, val))

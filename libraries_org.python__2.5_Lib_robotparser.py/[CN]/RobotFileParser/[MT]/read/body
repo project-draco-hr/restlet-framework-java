@@ -1,0 +1,19 @@
+def read(self):
+    'Reads the robots.txt URL and feeds it to the parser.'
+    opener = URLopener()
+    f = opener.open(self.url)
+    lines = []
+    line = f.readline()
+    while line:
+        lines.append(line.strip())
+        line = f.readline()
+    self.errcode = opener.errcode
+    if ((self.errcode == 401) or (self.errcode == 403)):
+        self.disallow_all = True
+        _debug('disallow all')
+    elif (self.errcode >= 400):
+        self.allow_all = True
+        _debug('allow all')
+    elif ((self.errcode == 200) and lines):
+        _debug('parse lines')
+        self.parse(lines)

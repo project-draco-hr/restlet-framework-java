@@ -1,0 +1,14 @@
+def get_outputs(self, include_bytecode=1):
+    modules = self.find_all_modules()
+    outputs = []
+    for (package, module, module_file) in modules:
+        package = string.split(package, '.')
+        filename = self.get_module_outfile(self.build_lib, package, module)
+        outputs.append(filename)
+        if include_bytecode:
+            if self.compile:
+                outputs.append((filename + 'c'))
+            if (self.optimize > 0):
+                outputs.append((filename + 'o'))
+    outputs += [os.path.join(build_dir, filename) for (package, src_dir, build_dir, filenames) in self.data_files for filename in filenames]
+    return outputs

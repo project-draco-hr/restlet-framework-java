@@ -1,0 +1,50 @@
+def get_platform():
+    "Return a string that identifies the current platform.  This is used\n    mainly to distinguish platform-specific build directories and\n    platform-specific built distributions.  Typically includes the OS name\n    and version and the architecture (as supplied by 'os.uname()'),\n    although the exact information included depends on the OS; eg. for IRIX\n    the architecture isn't particularly important (IRIX only runs on SGI\n    hardware), but for Linux the kernel version isn't particularly\n    important.\n\n    Examples of returned values:\n       linux-i586\n       linux-alpha (?)\n       solaris-2.6-sun4u\n       irix-5.3\n       irix64-6.2\n\n    For non-POSIX platforms, currently just returns 'sys.platform'.\n    "
+    if ((os.name != 'posix') or (not hasattr(os, 'uname'))):
+        return sys.platform
+    (osname, host, release, version, machine) = os.uname()
+    osname = string.lower(osname)
+    osname = string.replace(osname, '/', '')
+    machine = string.replace(machine, ' ', '_')
+    machine = string.replace(machine, '/', '-')
+    if (osname[:5] == 'linux'):
+        return ('%s-%s' % (osname, machine))
+    elif (osname[:5] == 'sunos'):
+        if (release[0] >= '5'):
+            osname = 'solaris'
+            release = ('%d.%s' % ((int(release[0]) - 3), release[2:]))
+    elif (osname[:4] == 'irix'):
+        return ('%s-%s' % (osname, release))
+    elif (osname[:3] == 'aix'):
+        return ('%s-%s.%s' % (osname, version, release))
+    elif (osname[:6] == 'cygwin'):
+        osname = 'cygwin'
+        rel_re = re.compile('[\\d.]+')
+        m = rel_re.match(release)
+        if m:
+            release = m.group()
+    elif (osname[:6] == 'darwin'):
+        from distutils.sysconfig import get_config_vars
+        cfgvars = get_config_vars()
+        macver = os.environ.get('MACOSX_DEPLOYMENT_TARGET')
+        if (not macver):
+            macver = cfgvars.get('MACOSX_DEPLOYMENT_TARGET')
+        if (not macver):
+            try:
+                f = open('/System/Library/CoreServices/SystemVersion.plist')
+            except IOError:
+                pass
+            else:
+                m = re.search(('<key>ProductUserVisibleVersion</key>\\s*' + '<string>(.*?)</string>'), f.read())
+                f.close()
+                if (m is not None):
+                    macver = '.'.join(m.group(1).split('.')[:2])
+        if macver:
+            from distutils.sysconfig import get_config_vars
+            release = macver
+            osname = 'macosx'
+            if (((release + '.') >= '10.4.') and get_config_vars().get('UNIVERSALSDK', '').strip()):
+                machine = 'fat'
+            elif (machine in ('PowerPC', 'Power_Macintosh')):
+                machine = 'ppc'
+    return ('%s-%s-%s' % (osname, release, machine))

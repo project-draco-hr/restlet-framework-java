@@ -1,0 +1,17 @@
+def init_east_asian_width(data):
+    for row in data:
+        if row.startswith('#'):
+            continue
+        row = row.partition('#')[0]
+        cols = row.split(';')
+        if (len(cols) < 2):
+            continue
+        cr = cols[0].split('..')
+        width = cols[1].rstrip()
+        if (len(cr) == 1):
+            codepoint = int(cr[0], 16)
+            _eaw[codepoint] = width
+        else:
+            start = int(cr[0], 16)
+            end = int(cr[1], 16)
+            _eaw_segments.append((start, (start, end), width))

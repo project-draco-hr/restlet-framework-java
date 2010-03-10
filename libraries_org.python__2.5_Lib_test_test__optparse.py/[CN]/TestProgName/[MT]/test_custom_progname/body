@@ -1,0 +1,8 @@
+def test_custom_progname(self):
+    parser = OptionParser(prog='thingy', version='%prog 0.1', usage='%prog arg arg')
+    parser.remove_option('-h')
+    parser.remove_option('--version')
+    expected_usage = 'Usage: thingy arg arg\n'
+    self.assertUsage(parser, expected_usage)
+    self.assertVersion(parser, 'thingy 0.1')
+    self.assertHelp(parser, (expected_usage + '\n'))

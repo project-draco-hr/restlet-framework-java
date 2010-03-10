@@ -1,0 +1,11 @@
+def process_message(self, peer, mailfrom, rcpttos, data):
+    lines = data.split('\n')
+    i = 0
+    for line in lines:
+        if (not line):
+            break
+        i += 1
+    lines.insert(i, ('X-Peer: %s' % peer[0]))
+    data = NEWLINE.join(lines)
+    refused = self._deliver(mailfrom, rcpttos, data)
+    print  >> DEBUGSTREAM, 'we got some refusals:', refused

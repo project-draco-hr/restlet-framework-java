@@ -1,0 +1,30 @@
+'Class for profiling Python code.'
+import sys
+import os
+import time
+import marshal
+from optparse import OptionParser
+__all__ = ['run', 'runctx', 'help', 'Profile']
+if (os.name == 'mac'):
+    import MacOS
+
+    def _get_time_mac(timer=MacOS.GetTicks):
+        return (timer() / 60.0)
+if hasattr(os, 'times'):
+
+    def _get_time_times(timer=os.times):
+        t = timer()
+        return (t[0] + t[1])
+_has_res = 0
+try:
+    import resource
+    resgetrusage = (lambda : resource.getrusage(resource.RUSAGE_SELF))
+
+    def _get_time_resource(timer=resgetrusage):
+        t = timer()
+        return (t[0] + t[1])
+    _has_res = 1
+except ImportError:
+    pass
+if (__name__ == '__main__'):
+    main()

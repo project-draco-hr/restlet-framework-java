@@ -1,0 +1,35 @@
+def run_doctest(module, verbosity=None):
+    "Run doctest on the given module.  Return (#failures, #tests).\n\n    If optional argument verbosity is not specified (or is None), pass\n    test_support's belief about verbosity on to doctest.  Else doctest's\n    usual behavior is used (it searches sys.argv for -v).\n    "
+    import doctest
+    if (verbosity is None):
+        verbosity = verbose
+    else:
+        verbosity = None
+    save_stdout = sys.stdout
+    sys.stdout = get_original_stdout()
+    if junit_xml_dir:
+        from junit_xml import Tee, write_doctest
+        save_stderr = sys.stderr
+        sys.stdout = stdout = Tee(sys.stdout)
+        sys.stderr = stderr = Tee(sys.stderr)
+    try:
+        start = time.time()
+        try:
+            (f, t) = doctest.testmod(module, verbose=verbosity)
+        except:
+            took = (time.time() - start)
+            if junit_xml_dir:
+                write_doctest(junit_xml_dir, module.__name__, took, 'error', sys.exc_info(), stdout.getvalue(), stderr.getvalue())
+            raise
+        took = (time.time() - start)
+        if f:
+            if junit_xml_dir:
+                write_doctest(junit_xml_dir, module.__name__, took, 'failure', stdout=stdout.getvalue(), stderr=stderr.getvalue())
+            raise TestFailed(('%d of %d doctests failed' % (f, t)))
+    finally:
+        sys.stdout = save_stdout
+    if junit_xml_dir:
+        write_doctest(junit_xml_dir, module.__name__, took, stdout=stdout.getvalue(), stderr=stderr.getvalue())
+    if verbose:
+        print ('doctest (%s) ... %d tests with zero failures' % (module.__name__, t))
+    return (f, t)

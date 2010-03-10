@@ -1,0 +1,23 @@
+def readline(self, size=(-1)):
+    'Read one entire line from the file. If size is present\n           and non-negative, return a string with at most that\n           size, which may be an incomplete line.\n        '
+    if self.closed:
+        raise ValueError('I/O operation on closed file')
+    if ('\n' in self.buffer):
+        pos = (self.buffer.find('\n') + 1)
+    else:
+        buffers = [self.buffer]
+        while True:
+            buf = self.fileobj.read(self.blocksize)
+            buffers.append(buf)
+            if ((not buf) or ('\n' in buf)):
+                self.buffer = ''.join(buffers)
+                pos = (self.buffer.find('\n') + 1)
+                if (pos == 0):
+                    pos = len(self.buffer)
+                break
+    if (size != (-1)):
+        pos = min(size, pos)
+    buf = self.buffer[:pos]
+    self.buffer = self.buffer[pos:]
+    self.position += len(buf)
+    return buf

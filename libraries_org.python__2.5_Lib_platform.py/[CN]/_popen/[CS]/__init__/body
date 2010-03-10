@@ -1,0 +1,9 @@
+def __init__(self, cmd, mode='r', bufsize=None):
+    if (mode != 'r'):
+        raise ValueError, 'popen()-emulation only supports read mode'
+    import tempfile
+    self.tmpfile = tmpfile = tempfile.mktemp()
+    os.system((cmd + (' > %s' % tmpfile)))
+    self.pipe = open(tmpfile, 'rb')
+    self.bufsize = bufsize
+    self.mode = mode

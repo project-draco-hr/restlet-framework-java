@@ -1,0 +1,44 @@
+def test_tzset(self):
+    if (not hasattr(time, 'tzset')):
+        return
+    from os import environ
+    xmas2002 = 1040774400.0
+    eastern = 'EST+05EDT,M4.1.0,M10.5.0'
+    victoria = 'AEST-10AEDT-11,M10.5.0,M3.5.0'
+    utc = 'UTC+0'
+    org_TZ = environ.get('TZ', None)
+    try:
+        environ['TZ'] = eastern
+        time.tzset()
+        environ['TZ'] = utc
+        time.tzset()
+        self.failUnlessEqual(time.gmtime(xmas2002), time.localtime(xmas2002))
+        self.failUnlessEqual(time.daylight, 0)
+        self.failUnlessEqual(time.timezone, 0)
+        self.failUnlessEqual(time.localtime(xmas2002).tm_isdst, 0)
+        environ['TZ'] = eastern
+        time.tzset()
+        self.failIfEqual(time.gmtime(xmas2002), time.localtime(xmas2002))
+        self.failUnlessEqual(time.tzname, ('EST', 'EDT'))
+        self.failUnlessEqual(len(time.tzname), 2)
+        self.failUnlessEqual(time.daylight, 1)
+        self.failUnlessEqual(time.timezone, 18000)
+        self.failUnlessEqual(time.altzone, 14400)
+        self.failUnlessEqual(time.localtime(xmas2002).tm_isdst, 0)
+        self.failUnlessEqual(len(time.tzname), 2)
+        environ['TZ'] = victoria
+        time.tzset()
+        self.failIfEqual(time.gmtime(xmas2002), time.localtime(xmas2002))
+        self.failUnless((time.tzname[0] == 'AEST'), str(time.tzname[0]))
+        self.failUnless((time.tzname[1] == 'AEDT'), str(time.tzname[1]))
+        self.failUnlessEqual(len(time.tzname), 2)
+        self.failUnlessEqual(time.daylight, 1)
+        self.failUnlessEqual(time.timezone, (-36000))
+        self.failUnlessEqual(time.altzone, (-39600))
+        self.failUnlessEqual(time.localtime(xmas2002).tm_isdst, 1)
+    finally:
+        if (org_TZ is not None):
+            environ['TZ'] = org_TZ
+        elif environ.has_key('TZ'):
+            del environ['TZ']
+        time.tzset()

@@ -1,0 +1,9 @@
+def test_custom_displayhook(self):
+    olddisplayhook = sys.displayhook
+
+    def baddisplayhook(obj):
+        raise ValueError
+    sys.displayhook = baddisplayhook
+    code = compile('42', '<string>', 'single')
+    self.assertRaises(ValueError, eval, code)
+    sys.displayhook = olddisplayhook

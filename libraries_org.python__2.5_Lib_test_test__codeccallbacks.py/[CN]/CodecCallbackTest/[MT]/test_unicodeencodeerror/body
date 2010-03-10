@@ -1,0 +1,8 @@
+def test_unicodeencodeerror(self):
+    self.check_exceptionobjectargs(UnicodeEncodeError, ['ascii', u'g\xfcrk', 1, 2, 'ouch'], "'ascii' codec can't encode character u'\\xfc' in position 1: ouch")
+    self.check_exceptionobjectargs(UnicodeEncodeError, ['ascii', u'g\xfcrk', 1, 4, 'ouch'], "'ascii' codec can't encode characters in position 1-3: ouch")
+    self.check_exceptionobjectargs(UnicodeEncodeError, ['ascii', u'\xfcx', 0, 1, 'ouch'], "'ascii' codec can't encode character u'\\xfc' in position 0: ouch")
+    self.check_exceptionobjectargs(UnicodeEncodeError, ['ascii', u'\u0100x', 0, 1, 'ouch'], "'ascii' codec can't encode character u'\\u0100' in position 0: ouch")
+    self.check_exceptionobjectargs(UnicodeEncodeError, ['ascii', u'\uffffx', 0, 1, 'ouch'], "'ascii' codec can't encode character u'\\uffff' in position 0: ouch")
+    if (sys.maxunicode > 65535):
+        self.check_exceptionobjectargs(UnicodeEncodeError, ['ascii', u'\U00010000x', 0, 1, 'ouch'], "'ascii' codec can't encode character u'\\U00010000' in position 0: ouch")

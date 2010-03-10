@@ -1,0 +1,50 @@
+def test_misc(self):
+    import sys
+    hugepos = sys.maxint
+    hugeneg = ((- hugepos) - 1)
+    hugepos_aslong = long(hugepos)
+    hugeneg_aslong = long(hugeneg)
+    self.assertEqual(hugepos, hugepos_aslong, 'long(sys.maxint) != sys.maxint')
+    self.assertEqual(hugeneg, hugeneg_aslong, 'long(-sys.maxint-1) != -sys.maxint-1')
+    x = int(hugepos_aslong)
+    try:
+        self.assertEqual(x, hugepos, 'converting sys.maxint to long and back to int fails')
+    except OverflowError:
+        self.fail('int(long(sys.maxint)) overflowed!')
+    if (not isinstance(x, int)):
+        raise TestFailed('int(long(sys.maxint)) should have returned int')
+    x = int(hugeneg_aslong)
+    try:
+        self.assertEqual(x, hugeneg, 'converting -sys.maxint-1 to long and back to int fails')
+    except OverflowError:
+        self.fail('int(long(-sys.maxint-1)) overflowed!')
+    if (not isinstance(x, int)):
+        raise TestFailed('int(long(-sys.maxint-1)) should have returned int')
+    x = (hugepos_aslong + 1)
+    try:
+        y = int(x)
+    except OverflowError:
+        self.fail("int(long(sys.maxint) + 1) mustn't overflow")
+    self.assert_(isinstance(y, long), 'int(long(sys.maxint) + 1) should have returned long')
+    x = (hugeneg_aslong - 1)
+    try:
+        y = int(x)
+    except OverflowError:
+        self.fail("int(long(-sys.maxint-1) - 1) mustn't overflow")
+    self.assert_(isinstance(y, long), 'int(long(-sys.maxint-1) - 1) should have returned long')
+
+
+    class long2(long):
+        pass
+    x = long2((1L << 100))
+    y = int(x)
+    self.assert_((type(y) is long), 'overflowing int conversion must return long not long subtype')
+
+
+    class X(object):
+
+        def __getslice__(self, i, j):
+            return (i, j)
+    self.assertEqual(X()[(-5L):7L], ((-5), 7))
+    (slicemin, slicemax) = X()[(- (2L ** 100)):(2L ** 100)]
+    self.assertEqual(X()[slicemin:slicemax], (slicemin, slicemax))

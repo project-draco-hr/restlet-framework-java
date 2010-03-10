@@ -1,0 +1,55 @@
+def _fix(self, context):
+    'Round if it is necessary to keep self within prec precision.\n\n        Rounds and fixes the exponent.  Does not raise on a sNaN.\n\n        Arguments:\n        self - Decimal instance\n        context - context used.\n        '
+    if self._is_special:
+        if self._isnan():
+            return self._fix_nan(context)
+        else:
+            return Decimal(self)
+    Etiny = context.Etiny()
+    Etop = context.Etop()
+    if (not self):
+        exp_max = [context.Emax, Etop][context._clamp]
+        new_exp = min(max(self._exp, Etiny), exp_max)
+        if (new_exp != self._exp):
+            context._raise_error(Clamped)
+            return _dec_from_triple(self._sign, '0', new_exp)
+        else:
+            return Decimal(self)
+    exp_min = ((len(self._int) + self._exp) - context.prec)
+    if (exp_min > Etop):
+        context._raise_error(Inexact)
+        context._raise_error(Rounded)
+        return context._raise_error(Overflow, 'above Emax', self._sign)
+    self_is_subnormal = (exp_min < Etiny)
+    if self_is_subnormal:
+        context._raise_error(Subnormal)
+        exp_min = Etiny
+    if (self._exp < exp_min):
+        context._raise_error(Rounded)
+        digits = ((len(self._int) + self._exp) - exp_min)
+        if (digits < 0):
+            self = _dec_from_triple(self._sign, '1', (exp_min - 1))
+            digits = 0
+        this_function = getattr(self, self._pick_rounding_function[context.rounding])
+        changed = this_function(digits)
+        coeff = (self._int[:digits] or '0')
+        if (changed == 1):
+            coeff = str((int(coeff) + 1))
+        ans = _dec_from_triple(self._sign, coeff, exp_min)
+        if changed:
+            context._raise_error(Inexact)
+            if self_is_subnormal:
+                context._raise_error(Underflow)
+                if (not ans):
+                    context._raise_error(Clamped)
+            elif (len(ans._int) == (context.prec + 1)):
+                if (ans._exp < Etop):
+                    ans = _dec_from_triple(ans._sign, ans._int[:(-1)], (ans._exp + 1))
+                else:
+                    ans = context._raise_error(Overflow, 'above Emax', self._sign)
+        return ans
+    if ((context._clamp == 1) and (self._exp > Etop)):
+        context._raise_error(Clamped)
+        self_padded = (self._int + ('0' * (self._exp - Etop)))
+        return _dec_from_triple(self._sign, self_padded, Etop)
+    return Decimal(self)

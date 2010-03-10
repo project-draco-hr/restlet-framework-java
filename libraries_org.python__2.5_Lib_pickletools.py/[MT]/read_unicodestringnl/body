@@ -1,0 +1,7 @@
+def read_unicodestringnl(f):
+    '\n    >>> import StringIO\n    >>> read_unicodestringnl(StringIO.StringIO("abc\\uabcd\\njunk"))\n    u\'abc\\uabcd\'\n    '
+    data = f.readline()
+    if (not data.endswith('\n')):
+        raise ValueError('no newline found when trying to read unicodestringnl')
+    data = data[:(-1)]
+    return unicode(data, 'raw-unicode-escape')

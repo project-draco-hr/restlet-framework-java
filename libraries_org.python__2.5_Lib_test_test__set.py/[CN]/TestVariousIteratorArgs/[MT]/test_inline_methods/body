@@ -1,0 +1,11 @@
+def test_inline_methods(self):
+    s = set('november')
+    for data in ('123', '', range(1000), ('do', 1.2), xrange(2000, 2200, 5), 'december'):
+        for meth in (s.union, s.intersection, s.difference, s.symmetric_difference):
+            for g in (G, I, Ig, L, R):
+                expected = meth(data)
+                actual = meth(G(data))
+                self.assertEqual(sorted(actual), sorted(expected))
+            self.assertRaises(TypeError, meth, X(s))
+            self.assertRaises(TypeError, meth, N(s))
+            self.assertRaises(ZeroDivisionError, meth, E(s))

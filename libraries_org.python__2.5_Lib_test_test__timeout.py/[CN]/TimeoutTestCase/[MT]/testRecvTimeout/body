@@ -1,0 +1,9 @@
+def testRecvTimeout(self):
+    _timeout = 0.02
+    self.sock.connect(self.addr_remote)
+    self.sock.settimeout(_timeout)
+    _t1 = time.time()
+    self.failUnlessRaises(socket.error, self.sock.recv, 1024)
+    _t2 = time.time()
+    _delta = abs((_t1 - _t2))
+    self.assert_((_delta < (_timeout + self.fuzz)), ('timeout (%g) is %g seconds more than expected (%g)' % (_delta, self.fuzz, _timeout)))

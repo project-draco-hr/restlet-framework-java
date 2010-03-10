@@ -1,0 +1,15 @@
+def make_tarball(base_name, base_dir, compress='gzip', verbose=0, dry_run=0):
+    'Create a (possibly compressed) tar file from all the files under\n    \'base_dir\'.  \'compress\' must be "gzip" (the default), "compress",\n    "bzip2", or None.  Both "tar" and the compression utility named by\n    \'compress\' must be on the default program search path, so this is\n    probably Unix-specific.  The output tar file will be named \'base_dir\' +\n    ".tar", possibly plus the appropriate compression extension (".gz",\n    ".bz2" or ".Z").  Return the output filename.\n    '
+    compress_ext = {'gzip': '.gz', 'bzip2': '.bz2', 'compress': '.Z', }
+    compress_flags = {'gzip': ['-f9'], 'compress': ['-f'], 'bzip2': ['-f9'], }
+    if ((compress is not None) and (compress not in compress_ext.keys())):
+        raise ValueError, "bad value for 'compress': must be None, 'gzip', or 'compress'"
+    archive_name = (base_name + '.tar')
+    mkpath(os.path.dirname(archive_name), dry_run=dry_run)
+    cmd = ['tar', '-cf', archive_name, base_dir]
+    spawn(cmd, dry_run=dry_run)
+    if compress:
+        spawn((([compress] + compress_flags[compress]) + [archive_name]), dry_run=dry_run)
+        return (archive_name + compress_ext[compress])
+    else:
+        return archive_name

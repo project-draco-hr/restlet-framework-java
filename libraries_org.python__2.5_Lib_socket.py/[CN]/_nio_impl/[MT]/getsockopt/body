@@ -1,0 +1,12 @@
+def getsockopt(self, level, option):
+    if self.options.has_key((level, option)):
+        result = getattr(self.jsocket, ('get%s' % self.options[(level, option)]))()
+        if (option == SO_LINGER):
+            if (result == (-1)):
+                (enabled, linger_time) = (0, 0)
+            else:
+                (enabled, linger_time) = (1, result)
+            return struct.pack('ii', enabled, linger_time)
+        return result
+    else:
+        raise error(errno.ENOPROTOOPT, ("Socket option '%s' (level '%s') not supported on socket(%s)" % (_constant_to_name(option), _constant_to_name(level), str(self.jsocket))))

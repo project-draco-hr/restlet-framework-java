@@ -1,0 +1,8 @@
+def test_izip(self):
+    for s in ('123', '', range(1000), ('do', 1.2), xrange(2000, 2200, 5)):
+        for g in (G, I, Ig, S, L, R):
+            self.assertEqual(list(izip(g(s))), zip(g(s)))
+            self.assertEqual(list(izip(g(s), g(s))), zip(g(s), g(s)))
+        self.assertRaises(TypeError, izip, X(s))
+        self.assertRaises(TypeError, list, izip(N(s)))
+        self.assertRaises(ZeroDivisionError, list, izip(E(s)))

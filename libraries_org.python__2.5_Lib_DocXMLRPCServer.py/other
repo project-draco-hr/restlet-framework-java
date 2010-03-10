@@ -1,0 +1,19 @@
+'Self documenting XML-RPC Server.\n\nThis module can be used to create XML-RPC servers that\nserve pydoc-style documentation in response to HTTP\nGET requests. This documentation is dynamically generated\nbased on the functions and methods registered with the\nserver.\n\nThis module is built upon the pydoc and SimpleXMLRPCServer\nmodules.\n'
+import pydoc
+import inspect
+import re
+import sys
+from SimpleXMLRPCServer import SimpleXMLRPCServer, SimpleXMLRPCRequestHandler, CGIXMLRPCRequestHandler, resolve_dotted_attribute
+if (__name__ == '__main__'):
+
+    def deg_to_rad(deg):
+        'deg_to_rad(90) => 1.5707963267948966\n\n        Converts an angle in degrees to an angle in radians'
+        import math
+        return ((deg * math.pi) / 180)
+    server = DocXMLRPCServer(('localhost', 8000))
+    server.set_server_title('Math Server')
+    server.set_server_name('Math XML-RPC Server')
+    server.set_server_documentation('This server supports various mathematical functions.\n\nYou can use it from Python as follows:\n\n>>> from xmlrpclib import ServerProxy\n>>> s = ServerProxy("http://localhost:8000")\n>>> s.deg_to_rad(90.0)\n1.5707963267948966')
+    server.register_function(deg_to_rad)
+    server.register_introspection_functions()
+    server.serve_forever()

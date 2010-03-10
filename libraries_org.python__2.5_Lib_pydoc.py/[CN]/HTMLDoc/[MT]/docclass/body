@@ -1,0 +1,112 @@
+def docclass(self, object, name=None, mod=None, funcs={}, classes={}, *ignored):
+    'Produce HTML documentation for a class object.'
+    realname = object.__name__
+    name = (name or realname)
+    bases = object.__bases__
+    contents = []
+    push = contents.append
+
+
+    class HorizontalRule:
+
+        def __init__(self):
+            self.needone = 0
+
+        def maybe(self):
+            if self.needone:
+                push('<hr>\n')
+            self.needone = 1
+    hr = HorizontalRule()
+    mro = deque(inspect.getmro(object))
+    if (len(mro) > 2):
+        hr.maybe()
+        push('<dl><dt>Method resolution order:</dt>\n')
+        for base in mro:
+            push(('<dd>%s</dd>\n' % self.classlink(base, object.__module__)))
+        push('</dl>\n')
+
+    def spill(msg, attrs, predicate):
+        (ok, attrs) = _split_list(attrs, predicate)
+        if ok:
+            hr.maybe()
+            push(msg)
+            for (name, kind, homecls, value) in ok:
+                push(self.document(getattr(object, name), name, mod, funcs, classes, mdict, object))
+                push('\n')
+        return attrs
+
+    def spilldescriptors(msg, attrs, predicate):
+        (ok, attrs) = _split_list(attrs, predicate)
+        if ok:
+            hr.maybe()
+            push(msg)
+            for (name, kind, homecls, value) in ok:
+                push(self._docdescriptor(name, value, mod))
+        return attrs
+
+    def spilldata(msg, attrs, predicate):
+        (ok, attrs) = _split_list(attrs, predicate)
+        if ok:
+            hr.maybe()
+            push(msg)
+            for (name, kind, homecls, value) in ok:
+                base = self.docother(getattr(object, name), name, mod)
+                if (callable(value) or inspect.isdatadescriptor(value)):
+                    doc = getattr(value, '__doc__', None)
+                else:
+                    doc = None
+                if (doc is None):
+                    push(('<dl><dt>%s</dl>\n' % base))
+                else:
+                    doc = self.markup(getdoc(value), self.preformat, funcs, classes, mdict)
+                    doc = ('<dd><tt>%s</tt>' % doc)
+                    push(('<dl><dt>%s%s</dl>\n' % (base, doc)))
+                push('\n')
+        return attrs
+    attrs = filter((lambda (name, kind, cls, value): visiblename(name)), classify_class_attrs(object))
+    mdict = {}
+    for (key, kind, homecls, value) in attrs:
+        mdict[key] = anchor = ((('#' + name) + '-') + key)
+        value = getattr(object, key)
+        try:
+            mdict[value] = anchor
+        except TypeError:
+            pass
+    while attrs:
+        if mro:
+            thisclass = mro.popleft()
+        else:
+            thisclass = attrs[0][2]
+        (attrs, inherited) = _split_list(attrs, (lambda t: (t[2] is thisclass)))
+        if (thisclass is __builtin__.object):
+            attrs = inherited
+            continue
+        elif (thisclass is object):
+            tag = 'defined here'
+        else:
+            tag = ('inherited from %s' % self.classlink(thisclass, object.__module__))
+        tag += ':<br>\n'
+        try:
+            attrs.sort(key=(lambda t: t[0]))
+        except TypeError:
+            attrs.sort((lambda t1, t2: cmp(t1[0], t2[0])))
+        attrs = spill(('Methods %s' % tag), attrs, (lambda t: (t[1] == 'method')))
+        attrs = spill(('Class methods %s' % tag), attrs, (lambda t: (t[1] == 'class method')))
+        attrs = spill(('Static methods %s' % tag), attrs, (lambda t: (t[1] == 'static method')))
+        attrs = spilldescriptors(('Data descriptors %s' % tag), attrs, (lambda t: (t[1] == 'data descriptor')))
+        attrs = spilldata(('Data and other attributes %s' % tag), attrs, (lambda t: (t[1] == 'data')))
+        assert (attrs == [])
+        attrs = inherited
+    contents = ''.join(contents)
+    if (name == realname):
+        title = ('<a name="%s">class <strong>%s</strong></a>' % (name, realname))
+    else:
+        title = ('<strong>%s</strong> = <a name="%s">class %s</a>' % (name, name, realname))
+    if bases:
+        parents = []
+        for base in bases:
+            parents.append(self.classlink(base, object.__module__))
+        title = (title + ('(%s)' % join(parents, ', ')))
+    doc = self.markup(getdoc(object), self.preformat, funcs, classes, mdict)
+    doc = (doc and ('<tt>%s<br>&nbsp;</tt>' % doc))
+    return self.section(title, '#000000', '#ffc8d8', contents, 3, doc)

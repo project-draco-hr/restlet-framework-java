@@ -1,0 +1,9 @@
+def test_request_path(self):
+    from urllib2 import Request
+    from cookielib import request_path
+    req = Request('http://www.example.com/rheum/rhaponicum;foo=bar;sing=song?apples=pears&spam=eggs#ni')
+    self.assertEquals(request_path(req), '/rheum/rhaponicum;foo=bar;sing=song?apples=pears&spam=eggs#ni')
+    req = Request('http://www.example.com/rheum/rhaponicum?apples=pears&spam=eggs#ni')
+    self.assertEquals(request_path(req), '/rheum/rhaponicum?apples=pears&spam=eggs#ni')
+    req = Request('http://www.example.com')
+    self.assertEquals(request_path(req), '/')

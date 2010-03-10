@@ -1,0 +1,14 @@
+def testSetBufferSize(self):
+    for s in ((-1), 0, 1, 512):
+        try:
+            f = open(TESTFN, 'w', s)
+            f.write(str(s))
+            f.close()
+            f.close()
+            f = open(TESTFN, 'r', s)
+            d = int(f.read())
+            f.close()
+            f.close()
+        except IOError as msg:
+            self.fail(('error setting buffer size %d: %s' % (s, str(msg))))
+        self.assertEquals(d, s)

@@ -1,0 +1,9 @@
+def test_provides(self):
+    attrs = {'name': 'package', 'version': '1.0', 'provides': ['package', 'package.sub'], }
+    dist = distutils.dist.Distribution(attrs)
+    self.assertEqual(dist.metadata.get_provides(), ['package', 'package.sub'])
+    self.assertEqual(dist.get_provides(), ['package', 'package.sub'])
+    meta = self.format_metadata(dist)
+    self.assert_(('Metadata-Version: 1.1' in meta))
+    self.assert_(('requires:' not in meta.lower()))
+    self.assert_(('obsoletes:' not in meta.lower()))

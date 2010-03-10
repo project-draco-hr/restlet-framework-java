@@ -1,0 +1,14 @@
+def can_fetch(self, useragent, url):
+    'using the parsed robots.txt decide if useragent can fetch url'
+    _debug(('Checking robots.txt allowance for:\n  user agent: %s\n  url: %s' % (useragent, url)))
+    if self.disallow_all:
+        return False
+    if self.allow_all:
+        return True
+    url = (urllib.quote(urlparse.urlparse(urllib.unquote(url))[2]) or '/')
+    for entry in self.entries:
+        if entry.applies_to(useragent):
+            return entry.allowance(url)
+    if self.default_entry:
+        return self.default_entry.allowance(url)
+    return True

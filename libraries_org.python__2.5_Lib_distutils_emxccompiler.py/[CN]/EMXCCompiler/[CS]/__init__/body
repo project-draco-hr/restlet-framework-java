@@ -1,0 +1,10 @@
+def __init__(self, verbose=0, dry_run=0, force=0):
+    UnixCCompiler.__init__(self, verbose, dry_run, force)
+    (status, details) = check_config_h()
+    self.debug_print(("Python's GCC status: %s (details: %s)" % (status, details)))
+    if (status is not CONFIG_H_OK):
+        self.warn((("Python's pyconfig.h doesn't seem to support your compiler.  " + ('Reason: %s.' % details)) + 'Compiling may fail because of undefined preprocessor macros.'))
+    (self.gcc_version, self.ld_version) = get_versions()
+    self.debug_print((self.compiler_type + (': gcc %s, ld %s\n' % (self.gcc_version, self.ld_version))))
+    self.set_executables(compiler='gcc -Zomf -Zmt -O3 -fomit-frame-pointer -mprobe -Wall', compiler_so='gcc -Zomf -Zmt -O3 -fomit-frame-pointer -mprobe -Wall', linker_exe='gcc -Zomf -Zmt -Zcrtdll', linker_so='gcc -Zomf -Zmt -Zcrtdll -Zdll')
+    self.dll_libraries = ['gcc']

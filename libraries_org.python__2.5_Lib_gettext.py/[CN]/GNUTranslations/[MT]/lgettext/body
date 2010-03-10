@@ -1,0 +1,10 @@
+def lgettext(self, message):
+    missing = object()
+    tmsg = self._catalog.get(message, missing)
+    if (tmsg is missing):
+        if self._fallback:
+            return self._fallback.lgettext(message)
+        return message
+    if self._output_charset:
+        return tmsg.encode(self._output_charset)
+    return tmsg.encode(locale.getpreferredencoding())

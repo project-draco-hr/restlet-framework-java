@@ -1,0 +1,8 @@
+def test_getattr(self):
+    import _rawffi
+    libc = _rawffi.get_libc()
+    func = libc.ptr('rand', [], 'i')
+    assert (libc.ptr('rand', [], 'i') is func)
+    assert (libc.ptr('rand', [], 'l') is not func)
+    assert isinstance(func, _rawffi.FuncPtr)
+    self.assertRaises(AttributeError, getattr, libc, 'xxx')

@@ -1,0 +1,9 @@
+def do_GET(self):
+    (scm, netloc, path, params, query, fragment) = urlparse.urlparse(self.path, 'http')
+    self.short_path = path
+    if self.digest_auth_handler.handle_request(self):
+        self.send_response(200, 'OK')
+        self.send_header('Content-Type', 'text/html')
+        self.end_headers()
+        self.wfile.write(("You've reached %s!<BR>" % self.path))
+        self.wfile.write('Our apologies, but our server is down due to a sudden zombie invasion.')

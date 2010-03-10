@@ -1,0 +1,41 @@
+def platform(aliased=0, terse=0):
+    ' Returns a single string identifying the underlying platform\n        with as much useful information as possible (but no more :).\n\n        The output is intended to be human readable rather than\n        machine parseable. It may look different on different\n        platforms and this is intended.\n\n        If "aliased" is true, the function will use aliases for\n        various platforms that report system names which differ from\n        their common names, e.g. SunOS will be reported as\n        Solaris. The system_alias() function is used to implement\n        this.\n\n        Setting terse to true causes the function to return only the\n        absolute minimum information needed to identify the platform.\n\n    '
+    result = _platform_cache.get((aliased, terse), None)
+    if (result is not None):
+        return result
+    (system, node, release, version, machine, processor) = uname()
+    if (machine == processor):
+        processor = ''
+    if aliased:
+        (system, release, version) = system_alias(system, release, version)
+    if (system == 'Windows'):
+        (rel, vers, csd, ptype) = win32_ver(version)
+        if terse:
+            platform = _platform(system, release)
+        else:
+            platform = _platform(system, release, version, csd)
+    elif (system in ('Linux',)):
+        (distname, distversion, distid) = dist('')
+        if (distname and (not terse)):
+            platform = _platform(system, release, machine, processor, 'with', distname, distversion, distid)
+        else:
+            (libcname, libcversion) = libc_ver(sys.executable)
+            platform = _platform(system, release, machine, processor, 'with', (libcname + libcversion))
+    elif (system == 'Java'):
+        (r, v, vminfo, (os_name, os_version, os_arch)) = java_ver()
+        if terse:
+            platform = _platform(system, release, version)
+        else:
+            platform = _platform(system, release, version, 'on', os_name, os_version, os_arch)
+    elif (system == 'MacOS'):
+        if terse:
+            platform = _platform(system, release)
+        else:
+            platform = _platform(system, release, machine)
+    elif terse:
+        platform = _platform(system, release)
+    else:
+        (bits, linkage) = architecture(sys.executable)
+        platform = _platform(system, release, machine, processor, bits, linkage)
+    _platform_cache[(aliased, terse)] = platform
+    return platform

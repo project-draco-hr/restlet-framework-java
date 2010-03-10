@@ -1,0 +1,10 @@
+def serialize(o, special=False):
+    b = ByteArrayOutputStream()
+    objs = ObjectOutputStream(b)
+    objs.writeObject(o)
+    if (not special):
+        OIS = ObjectInputStream
+    else:
+        OIS = PythonObjectInputStream
+    objs = OIS(ByteArrayInputStream(b.toByteArray()))
+    return objs.readObject()

@@ -1,0 +1,9 @@
+def test_reverse_stability(self):
+    data = [(random.randrange(100), i) for i in xrange(200)]
+    copy1 = data[:]
+    copy2 = data[:]
+    data.sort(cmp=(lambda x, y: cmp(x[0], y[0])), reverse=True)
+    copy1.sort(cmp=(lambda x, y: cmp(y[0], x[0])))
+    self.assertEqual(data, copy1)
+    copy2.sort(key=(lambda x: x[0]), reverse=True)
+    self.assertEqual(data, copy2)

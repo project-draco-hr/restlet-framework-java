@@ -1,0 +1,11 @@
+def test(self):
+    'Test member extraction.\n        '
+    members = 0
+    for tarinfo in self.tar:
+        members += 1
+        if (not tarinfo.isreg()):
+            continue
+        f = self.tar.extractfile(tarinfo)
+        self.assert_((len(f.read()) == tarinfo.size), 'size read does not match expected size')
+        f.close()
+    self.assert_((members == membercount), 'could not find all members')

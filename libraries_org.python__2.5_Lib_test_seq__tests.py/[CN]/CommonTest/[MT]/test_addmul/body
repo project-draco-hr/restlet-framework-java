@@ -1,0 +1,28 @@
+def test_addmul(self):
+    u1 = self.type2test([0])
+    u2 = self.type2test([0, 1])
+    self.assertEqual(u1, (u1 + self.type2test()))
+    self.assertEqual(u1, (self.type2test() + u1))
+    self.assertEqual((u1 + self.type2test([1])), u2)
+    self.assertEqual((self.type2test([(-1)]) + u1), self.type2test([(-1), 0]))
+    self.assertEqual(self.type2test(), (u2 * 0))
+    self.assertEqual(self.type2test(), (0 * u2))
+    self.assertEqual(self.type2test(), (u2 * 0L))
+    self.assertEqual(self.type2test(), (0L * u2))
+    self.assertEqual(u2, (u2 * 1))
+    self.assertEqual(u2, (1 * u2))
+    self.assertEqual(u2, (u2 * 1L))
+    self.assertEqual(u2, (1L * u2))
+    self.assertEqual((u2 + u2), (u2 * 2))
+    self.assertEqual((u2 + u2), (2 * u2))
+    self.assertEqual((u2 + u2), (u2 * 2L))
+    self.assertEqual((u2 + u2), (2L * u2))
+    self.assertEqual(((u2 + u2) + u2), (u2 * 3))
+    self.assertEqual(((u2 + u2) + u2), (3 * u2))
+
+
+    class subclass(self.type2test):
+        pass
+    u3 = subclass([0, 1])
+    self.assertEqual(u3, (u3 * 1))
+    self.assert_((u3 is not (u3 * 1)))

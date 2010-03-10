@@ -1,0 +1,9 @@
+def build_module(self, module, module_file, package):
+    if (type(package) is StringType):
+        package = string.split(package, '.')
+    elif (type(package) not in (ListType, TupleType)):
+        raise TypeError, "'package' must be a string (dot-separated), list, or tuple"
+    outfile = self.get_module_outfile(self.build_lib, package, module)
+    dir = os.path.dirname(outfile)
+    self.mkpath(dir)
+    return self.copy_file(module_file, outfile, preserve_mode=0)

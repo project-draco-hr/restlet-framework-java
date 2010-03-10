@@ -1,0 +1,9 @@
+def log_exception(self, exc_info):
+    "Log the 'exc_info' tuple in the server log\n\n        Subclasses may override to retarget the output or change its format.\n        "
+    try:
+        from traceback import print_exception
+        stderr = self.get_stderr()
+        print_exception(exc_info[0], exc_info[1], exc_info[2], self.traceback_limit, stderr)
+        stderr.flush()
+    finally:
+        exc_info = None

@@ -1,0 +1,9 @@
+@classmethod
+def from_jnastat(cls, s):
+    results = []
+    for meth in (s.mode, s.ino, s.dev, s.nlink, s.uid, s.gid, s.st_size, s.atime, s.mtime, s.ctime):
+        try:
+            results.append(meth())
+        except NotImplementedError:
+            results.append(0)
+    return cls(results)

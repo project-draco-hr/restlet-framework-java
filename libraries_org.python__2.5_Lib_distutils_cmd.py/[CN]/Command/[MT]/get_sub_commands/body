@@ -1,0 +1,7 @@
+def get_sub_commands(self):
+    "Determine the sub-commands that are relevant in the current\n        distribution (ie., that need to be run).  This is based on the\n        'sub_commands' class attribute: each tuple in that list may include\n        a method that we call to determine if the subcommand needs to be\n        run for the current distribution.  Return a list of command names.\n        "
+    commands = []
+    for (cmd_name, method) in self.sub_commands:
+        if ((method is None) or method(self)):
+            commands.append(cmd_name)
+    return commands

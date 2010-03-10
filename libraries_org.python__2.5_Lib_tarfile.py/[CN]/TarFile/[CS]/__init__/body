@@ -1,0 +1,38 @@
+def __init__(self, name=None, mode='r', fileobj=None):
+    "Open an (uncompressed) tar archive `name'. `mode' is either 'r' to\n           read from an existing archive, 'a' to append data to an existing\n           file or 'w' to create a new file overwriting an existing one. `mode'\n           defaults to 'r'.\n           If `fileobj' is given, it is used for reading or writing data. If it\n           can be determined, `mode' is overridden by `fileobj's mode.\n           `fileobj' is not closed, when TarFile is closed.\n        "
+    if ((len(mode) > 1) or (mode not in 'raw')):
+        raise ValueError("mode must be 'r', 'a' or 'w'")
+    self._mode = mode
+    self.mode = {'r': 'rb', 'a': 'r+b', 'w': 'wb', }[mode]
+    if (not fileobj):
+        fileobj = file(name, self.mode)
+        self._extfileobj = False
+    else:
+        if ((name is None) and hasattr(fileobj, 'name')):
+            name = fileobj.name
+        if hasattr(fileobj, 'mode'):
+            self.mode = fileobj.mode
+        self._extfileobj = True
+    self.name = (os.path.abspath(name) if name else None)
+    self.fileobj = fileobj
+    self.closed = False
+    self.members = []
+    self._loaded = False
+    self.offset = self.fileobj.tell()
+    self.inodes = {}
+    if (self._mode == 'r'):
+        self.firstmember = None
+        self.firstmember = self.next()
+    if (self._mode == 'a'):
+        self.firstmember = None
+        while True:
+            try:
+                tarinfo = self.next()
+            except ReadError:
+                self.fileobj.seek(0)
+                break
+            if (tarinfo is None):
+                self.fileobj.seek((- BLOCKSIZE), 1)
+                break
+    if (self._mode in 'aw'):
+        self._loaded = True

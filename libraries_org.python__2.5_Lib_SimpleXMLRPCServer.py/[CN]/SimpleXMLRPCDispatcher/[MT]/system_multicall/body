@@ -1,0 +1,13 @@
+def system_multicall(self, call_list):
+    "system.multicall([{'methodName': 'add', 'params': [2, 2]}, ...]) => [[4], ...]\n\n        Allows the caller to package multiple XML-RPC calls into a single\n        request.\n\n        See http://www.xmlrpc.com/discuss/msgReader$1208\n        "
+    results = []
+    for call in call_list:
+        method_name = call['methodName']
+        params = call['params']
+        try:
+            results.append([self._dispatch(method_name, params)])
+        except Fault as fault:
+            results.append({'faultCode': fault.faultCode, 'faultString': fault.faultString, })
+        except:
+            results.append({'faultCode': 1, 'faultString': ('%s:%s' % (sys.exc_type, sys.exc_value)), })
+    return results

@@ -1,0 +1,23 @@
+def tokeneater(self, type, token, (srow, scol), (erow, ecol), line):
+    if (not self.started):
+        if (token in ('def', 'class', 'lambda')):
+            if (token == 'lambda'):
+                self.islambda = True
+            self.started = True
+        self.passline = True
+    elif (type == tokenize.NEWLINE):
+        self.passline = False
+        self.last = srow
+        if self.islambda:
+            raise EndOfBlock
+    elif self.passline:
+        pass
+    elif (type == tokenize.INDENT):
+        self.indent = (self.indent + 1)
+        self.passline = True
+    elif (type == tokenize.DEDENT):
+        self.indent = (self.indent - 1)
+        if (self.indent <= 0):
+            raise EndOfBlock
+    elif ((self.indent == 0) and (type not in (tokenize.COMMENT, tokenize.NL))):
+        raise EndOfBlock

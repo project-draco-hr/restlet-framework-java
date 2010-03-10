@@ -1,0 +1,19 @@
+def print_commands(self):
+    'Print out a help message listing all available commands with a\n        description of each.  The list is divided into "standard commands"\n        (listed in distutils.command.__all__) and "extra commands"\n        (mentioned in self.cmdclass, but not a standard command).  The\n        descriptions come from the command class attribute\n        \'description\'.\n        '
+    import distutils.command
+    std_commands = distutils.command.__all__
+    is_std = {}
+    for cmd in std_commands:
+        is_std[cmd] = 1
+    extra_commands = []
+    for cmd in self.cmdclass.keys():
+        if (not is_std.get(cmd)):
+            extra_commands.append(cmd)
+    max_length = 0
+    for cmd in (std_commands + extra_commands):
+        if (len(cmd) > max_length):
+            max_length = len(cmd)
+    self.print_command_list(std_commands, 'Standard commands', max_length)
+    if extra_commands:
+        print 
+        self.print_command_list(extra_commands, 'Extra commands', max_length)

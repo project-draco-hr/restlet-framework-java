@@ -1,0 +1,105 @@
+'\nTests for fileinput module.\nNick Mathewson\n'
+from test.test_support import verify, verbose, TESTFN, TestFailed
+import sys, os, re
+from StringIO import StringIO
+from fileinput import FileInput, hook_encoded
+pat = re.compile('LINE (\\d+) OF FILE (\\d+)')
+for (round, bs) in ((0, 0), (1, 30)):
+    try:
+        writeFiles()
+        runTests(t1, t2, t3, t4, bs, round)
+    finally:
+        remove_tempfiles(t1, t2, t3, t4)
+if verbose:
+    print '13. 0-byte files'
+try:
+    t1 = writeTmp(1, [''])
+    t2 = writeTmp(2, [''])
+    t3 = writeTmp(3, ['The only line there is.\n'])
+    t4 = writeTmp(4, [''])
+    fi = FileInput(files=(t1, t2, t3, t4))
+    line = fi.readline()
+    verify((line == 'The only line there is.\n'))
+    verify((fi.lineno() == 1))
+    verify((fi.filelineno() == 1))
+    verify((fi.filename() == t3))
+    line = fi.readline()
+    verify((not line))
+    verify((fi.lineno() == 1))
+    verify((fi.filelineno() == 0))
+    verify((fi.filename() == t4))
+    fi.close()
+finally:
+    remove_tempfiles(t1, t2, t3, t4)
+if verbose:
+    print "14. Files that don't end with newline"
+try:
+    t1 = writeTmp(1, ['A\nB\nC'])
+    t2 = writeTmp(2, ['D\nE\nF'])
+    fi = FileInput(files=(t1, t2))
+    lines = list(fi)
+    verify((lines == ['A\n', 'B\n', 'C', 'D\n', 'E\n', 'F']))
+    verify((fi.filelineno() == 3))
+    verify((fi.lineno() == 6))
+finally:
+    remove_tempfiles(t1, t2)
+if verbose:
+    print '15. Unicode filenames'
+try:
+    t1 = writeTmp(1, ['A\nB'])
+    encoding = sys.getfilesystemencoding()
+    if (encoding is None):
+        encoding = 'ascii'
+    fi = FileInput(files=unicode(t1, encoding))
+    lines = list(fi)
+    verify((lines == ['A\n', 'B']))
+finally:
+    remove_tempfiles(t1)
+if verbose:
+    print '16. fileno()'
+try:
+    t1 = writeTmp(1, ['A\nB'])
+    t2 = writeTmp(2, ['C\nD'])
+    fi = FileInput(files=(t1, t2))
+    verify((fi.fileno() == (-1)))
+    line = fi.next()
+    verify((fi.fileno() != (-1)))
+    fi.nextfile()
+    verify((fi.fileno() == (-1)))
+    line = list(fi)
+    verify((fi.fileno() == (-1)))
+finally:
+    remove_tempfiles(t1, t2)
+if verbose:
+    print '17. Specify opening mode'
+try:
+    fi = FileInput(mode='w')
+    raise TestFailed('FileInput should reject invalid mode argument')
+except ValueError:
+    pass
+try:
+    t1 = writeTmp(1, ['A\nB\r\nC\rD'], mode='wb')
+    fi = FileInput(files=t1, mode='U')
+    lines = list(fi)
+    verify((lines == ['A\n', 'B\n', 'C\n', 'D']))
+finally:
+    remove_tempfiles(t1)
+if verbose:
+    print '18. Test file opening hook'
+try:
+    fi = FileInput(inplace=1, openhook=(lambda f, m: None))
+    raise TestFailed('FileInput should raise if both inplace and openhook arguments are given')
+except ValueError:
+    pass
+try:
+    fi = FileInput(openhook=1)
+    raise TestFailed('FileInput should check openhook for being callable')
+except ValueError:
+    pass
+try:
+    t1 = writeTmp(1, ['A\nB'], mode='wb')
+    fi = FileInput(files=t1, openhook=hook_encoded('rot13'))
+    lines = list(fi)
+    verify((lines == ['N\n', 'O']))
+finally:
+    remove_tempfiles(t1)

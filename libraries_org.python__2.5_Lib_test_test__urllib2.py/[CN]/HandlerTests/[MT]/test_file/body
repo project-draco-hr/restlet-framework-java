@@ -1,0 +1,57 @@
+def test_file(self):
+    import time, rfc822, socket
+    h = urllib2.FileHandler()
+    o = h.parent = MockOpener()
+    TESTFN = test_support.TESTFN
+    urlpath = sanepathname2url(os.path.abspath(TESTFN))
+    towrite = 'hello, world\n'
+    urls = [('file://localhost%s' % urlpath), ('file://%s' % urlpath), ('file://%s%s' % (socket.gethostbyname('localhost'), urlpath))]
+    try:
+        localaddr = socket.gethostbyname(socket.gethostname())
+    except socket.gaierror:
+        localaddr = ''
+    if localaddr:
+        urls.append(('file://%s%s' % (localaddr, urlpath)))
+    for url in urls:
+        f = open(TESTFN, 'wb')
+        try:
+            try:
+                f.write(towrite)
+            finally:
+                f.close()
+            r = h.file_open(Request(url))
+            try:
+                data = r.read()
+                headers = r.info()
+                newurl = r.geturl()
+            finally:
+                r.close()
+            stats = os.stat(TESTFN)
+            modified = rfc822.formatdate(stats.st_mtime)
+        finally:
+            os.remove(TESTFN)
+        self.assertEqual(data, towrite)
+        self.assertEqual(headers['Content-type'], 'text/plain')
+        self.assertEqual(headers['Content-length'], '13')
+        self.assertEqual(headers['Last-modified'], modified)
+    for url in [('file://localhost:80%s' % urlpath)]:
+        try:
+            f = open(TESTFN, 'wb')
+            try:
+                f.write(towrite)
+            finally:
+                f.close()
+            self.assertRaises(urllib2.URLError, h.file_open, Request(url))
+        finally:
+            os.remove(TESTFN)
+    h = urllib2.FileHandler()
+    o = h.parent = MockOpener()
+    for (url, ftp) in [('file://ftp.example.com//foo.txt', True), ('file://ftp.example.com///foo.txt', False), ('file://ftp.example.com/foo.txt', False)]:
+        req = Request(url)
+        try:
+            h.file_open(req)
+        except (urllib2.URLError, OSError):
+            self.assert_((not ftp))
+        else:
+            self.assert_((o.req is req))
+            self.assertEqual(req.type, 'ftp')

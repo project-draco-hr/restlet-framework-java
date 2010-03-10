@@ -1,0 +1,49 @@
+def test__no_deadlock_first(self, debug=0):
+    sys.stdout.flush()
+    if debug:
+        print 'A'
+    (k, v) = self.f.first()
+    if debug:
+        print 'B', k
+    self.f[k] = 'deadlock.  do not pass go.  do not collect $200.'
+    if debug:
+        print 'C'
+    if hasattr(self.f, 'iteritems'):
+        if debug:
+            print 'D'
+        i = self.f.iteritems()
+        (k, v) = i.next()
+        if debug:
+            print 'E'
+        self.f[k] = "please don't deadlock"
+        if debug:
+            print 'F'
+        while 1:
+            try:
+                (k, v) = i.next()
+            except StopIteration:
+                break
+        if debug:
+            print 'F2'
+        i = iter(self.f)
+        if debug:
+            print 'G'
+        while i:
+            try:
+                if debug:
+                    print 'H'
+                k = i.next()
+                if debug:
+                    print 'I'
+                self.f[k] = 'deadlocks-r-us'
+                if debug:
+                    print 'J'
+            except StopIteration:
+                i = None
+        if debug:
+            print 'K'
+    self.assert_((self.f.first()[0] in self.d))
+    k = self.f.next()[0]
+    self.assert_((k in self.d))
+    self.f[k] = 'be gone with ye deadlocks'
+    self.assert_(self.f[k], 'be gone with ye deadlocks')

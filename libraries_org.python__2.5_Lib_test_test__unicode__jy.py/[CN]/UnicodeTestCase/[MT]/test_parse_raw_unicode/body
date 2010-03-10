@@ -1,0 +1,27 @@
+def test_parse_raw_unicode(self):
+    foo = u'\u0105\\n'
+    self.assertEqual(len(foo), 3, repr(foo))
+    self.assertEqual(repr(foo), "u'\\u0105\\\\n'")
+    self.assertEqual(ord(foo[0]), 261)
+    self.assertEqual(ord(foo[1]), 92)
+    self.assertEqual(ord(foo[2]), 110)
+    bar = foo.encode('utf-8')
+    self.assertEqual(len(bar), 4)
+    self.assertEqual(repr(bar), "'\\xc4\\x85\\\\n'")
+    self.assertEqual(ord(bar[0]), 196)
+    self.assertEqual(ord(bar[1]), 133)
+    self.assertEqual(ord(bar[2]), 92)
+    self.assertEqual(ord(bar[3]), 110)
+    for baz in (u'Hello World !', u'Hello World !'):
+        self.assertEqual(len(baz), 13, repr(baz))
+        self.assertEqual(repr(baz), "u'Hello World !'")
+        self.assertEqual(ord(baz[5]), 32)
+    quux = u'\U00100000'
+    self.assertEqual(repr(quux), "u'\\U00100000'")
+    if (sys.maxunicode == 65535):
+        self.assertEqual(len(quux), 2)
+        self.assertEqual(ord(quux[0]), 56256)
+        self.assertEqual(ord(quux[1]), 56320)
+    else:
+        self.assertEqual(len(quux), 1)
+        self.assertEqual(ord(quux), 1048576)

@@ -1,0 +1,14 @@
+def test_order(self):
+
+    def callnum(num):
+        "Decorator factory that returns a decorator that replaces the\n            passed-in function with one that returns the value of 'num'"
+
+        def deco(func):
+            return (lambda : num)
+        return deco
+
+    @callnum(2)
+    @callnum(1)
+    def foo():
+        return 42
+    self.assertEqual(foo(), 2, 'Application order of decorators is incorrect')

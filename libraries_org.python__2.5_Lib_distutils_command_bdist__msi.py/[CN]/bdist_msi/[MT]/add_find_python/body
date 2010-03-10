@@ -1,0 +1,8 @@
+def add_find_python(self):
+    'Adds code to the installer to compute the location of Python.\n        Properties PYTHON.MACHINE, PYTHON.USER, PYTHONDIR and PYTHON will be set\n        in both the execute and UI sequences; PYTHONDIR will be set from\n        PYTHON.USER if defined, else from PYTHON.MACHINE.\n        PYTHON is PYTHONDIR\\python.exe'
+    install_path = ('SOFTWARE\\Python\\PythonCore\\%s\\InstallPath' % self.target_version)
+    add_data(self.db, 'RegLocator', [('python.machine', 2, install_path, None, 2), ('python.user', 1, install_path, None, 2)])
+    add_data(self.db, 'AppSearch', [('PYTHON.MACHINE', 'python.machine'), ('PYTHON.USER', 'python.user')])
+    add_data(self.db, 'CustomAction', [('PythonFromMachine', (51 + 256), 'PYTHONDIR', '[PYTHON.MACHINE]'), ('PythonFromUser', (51 + 256), 'PYTHONDIR', '[PYTHON.USER]'), ('PythonExe', (51 + 256), 'PYTHON', '[PYTHONDIR]\\python.exe'), ('InitialTargetDir', (51 + 256), 'TARGETDIR', '[PYTHONDIR]')])
+    add_data(self.db, 'InstallExecuteSequence', [('PythonFromMachine', 'PYTHON.MACHINE', 401), ('PythonFromUser', 'PYTHON.USER', 402), ('PythonExe', None, 403), ('InitialTargetDir', 'TARGETDIR=""', 404)])
+    add_data(self.db, 'InstallUISequence', [('PythonFromMachine', 'PYTHON.MACHINE', 401), ('PythonFromUser', 'PYTHON.USER', 402), ('PythonExe', None, 403), ('InitialTargetDir', 'TARGETDIR=""', 404)])

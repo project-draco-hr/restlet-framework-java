@@ -1,0 +1,12 @@
+def test_hash_equality(self):
+    t1 = timedelta(days=100, weeks=(-7), hours=((-24) * (100 - 49)), minutes=(-3), seconds=12, microseconds=(((3 * 60) - 12) * 1000000))
+    t2 = timedelta()
+    self.assertEqual(hash(t1), hash(t2))
+    t1 += timedelta(weeks=7)
+    t2 += timedelta(days=(7 * 7))
+    self.assertEqual(t1, t2)
+    self.assertEqual(hash(t1), hash(t2))
+    d = {t1: 1, }
+    d[t2] = 2
+    self.assertEqual(len(d), 1)
+    self.assertEqual(d[t1], 2)

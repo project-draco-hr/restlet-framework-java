@@ -1,0 +1,8 @@
+def test_method_checksum(self):
+    h = hashlib.sha1()
+    for i in range(65536):
+        char = unichr(i)
+        data = [u'01'[char.isalnum()], u'01'[char.isalpha()], u'01'[char.isdecimal()], u'01'[char.isdigit()], u'01'[char.islower()], u'01'[char.isnumeric()], u'01'[char.isspace()], u'01'[char.istitle()], u'01'[char.isupper()], u'01'[(char + u'abc').isalnum()], u'01'[(char + u'abc').isalpha()], u'01'[(char + u'123').isdecimal()], u'01'[(char + u'123').isdigit()], u'01'[(char + u'abc').islower()], u'01'[(char + u'123').isnumeric()], u'01'[(char + u' \t').isspace()], u'01'[(char + u'abc').istitle()], u'01'[(char + u'ABC').isupper()], char.lower(), char.upper(), char.title(), (char + u'abc').lower(), (char + u'ABC').upper(), (char + u'abc').title(), (char + u'ABC').title()]
+        h.update(u''.join(data).encode(encoding))
+    result = h.hexdigest()
+    self.assertEqual(result, self.expectedchecksum)

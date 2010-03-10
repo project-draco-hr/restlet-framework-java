@@ -1,0 +1,12 @@
+def load_tail(self, q, tail):
+    m = q
+    while tail:
+        i = tail.find('.')
+        if (i < 0):
+            i = len(tail)
+        (head, tail) = (tail[:i], tail[(i + 1):])
+        mname = ('%s.%s' % (m.__name__, head))
+        m = self.import_it(head, mname, m)
+        if (not m):
+            raise ImportError, ('No module named ' + mname)
+    return m

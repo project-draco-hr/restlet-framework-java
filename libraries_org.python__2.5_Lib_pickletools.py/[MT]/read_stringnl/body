@@ -1,0 +1,18 @@
+def read_stringnl(f, decode=True, stripquotes=True):
+    '\n    >>> import StringIO\n    >>> read_stringnl(StringIO.StringIO("\'abcd\'\\nefg\\n"))\n    \'abcd\'\n\n    >>> read_stringnl(StringIO.StringIO("\\n"))\n    Traceback (most recent call last):\n    ...\n    ValueError: no string quotes around \'\'\n\n    >>> read_stringnl(StringIO.StringIO("\\n"), stripquotes=False)\n    \'\'\n\n    >>> read_stringnl(StringIO.StringIO("\'\'\\n"))\n    \'\'\n\n    >>> read_stringnl(StringIO.StringIO(\'"abcd"\'))\n    Traceback (most recent call last):\n    ...\n    ValueError: no newline found when trying to read stringnl\n\n    Embedded escapes are undone in the result.\n    >>> read_stringnl(StringIO.StringIO(r"\'a\\n\\\\b\\x00c\\td\'" + "\\n\'e\'"))\n    \'a\\n\\\\b\\x00c\\td\'\n    '
+    data = f.readline()
+    if (not data.endswith('\n')):
+        raise ValueError('no newline found when trying to read stringnl')
+    data = data[:(-1)]
+    if stripquotes:
+        for q in '\'"':
+            if data.startswith(q):
+                if (not data.endswith(q)):
+                    raise ValueError(('strinq quote %r not found at both ends of %r' % (q, data)))
+                data = data[1:(-1)]
+                break
+        else:
+            raise ValueError(('no string quotes around %r' % data))
+    if decode:
+        data = data.decode('string_escape')
+    return data

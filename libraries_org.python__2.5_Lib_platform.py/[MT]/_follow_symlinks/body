@@ -1,0 +1,6 @@
+def _follow_symlinks(filepath):
+    ' In case filepath is a symlink, follow it until a\n        real file is reached.\n    '
+    filepath = _abspath(filepath)
+    while os.path.islink(filepath):
+        filepath = os.path.normpath(os.path.join(os.path.dirname(filepath), os.readlink(filepath)))
+    return filepath

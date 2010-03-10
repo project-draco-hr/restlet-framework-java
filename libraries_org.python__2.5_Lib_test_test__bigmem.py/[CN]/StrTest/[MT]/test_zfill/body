@@ -1,0 +1,8 @@
+@bigmemtest(minsize=(_2G + 20), memuse=1)
+def test_zfill(self, size):
+    SUBSTR = '-568324723598234'
+    s = SUBSTR.zfill(size)
+    self.failUnless(s.endswith(('0' + SUBSTR[1:])))
+    self.failUnless(s.startswith('-0'))
+    self.assertEquals(len(s), size)
+    self.assertEquals(s.count('0'), (size - len(SUBSTR)))

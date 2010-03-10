@@ -1,0 +1,31 @@
+'Calendar printing functions\n\nNote when comparing these calendars to the ones printed by cal(1): By\ndefault, these calendars have Monday as the first day of the week, and\nSunday as the last (the European convention). Use setfirstweekday() to\nset the first day of the week (0=Monday, 6=Sunday).'
+from __future__ import with_statement
+import sys
+import datetime
+import locale as _locale
+__all__ = ['IllegalMonthError', 'IllegalWeekdayError', 'setfirstweekday', 'firstweekday', 'isleap', 'leapdays', 'weekday', 'monthrange', 'monthcalendar', 'prmonth', 'month', 'prcal', 'calendar', 'timegm', 'month_name', 'month_abbr', 'day_name', 'day_abbr']
+error = ValueError
+January = 1
+February = 2
+mdays = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+day_name = _localized_day('%A')
+day_abbr = _localized_day('%a')
+month_name = _localized_month('%B')
+month_abbr = _localized_month('%b')
+(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY) = range(7)
+c = TextCalendar()
+firstweekday = c.getfirstweekday
+monthcalendar = c.monthdayscalendar
+prweek = c.prweek
+week = c.formatweek
+weekheader = c.formatweekheader
+prmonth = c.prmonth
+month = c.formatmonth
+calendar = c.formatyear
+prcal = c.pryear
+_colwidth = ((7 * 3) - 1)
+_spacing = 6
+EPOCH = 1970
+_EPOCH_ORD = datetime.date(EPOCH, 1, 1).toordinal()
+if (__name__ == '__main__'):
+    main(sys.argv)

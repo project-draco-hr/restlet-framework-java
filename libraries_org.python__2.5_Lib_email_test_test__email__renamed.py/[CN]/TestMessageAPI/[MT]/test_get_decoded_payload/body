@@ -1,0 +1,8 @@
+def test_get_decoded_payload(self):
+    eq = self.assertEqual
+    msg = self._msgobj('msg_10.txt')
+    eq(msg.get_payload(decode=True), None)
+    eq(msg.get_payload(0).get_payload(decode=True), 'This is a 7bit encoded message.\n')
+    eq(msg.get_payload(1).get_payload(decode=True), '\xa1This is a Quoted Printable encoded message!\n')
+    eq(msg.get_payload(2).get_payload(decode=True), 'This is a Base64 encoded message.')
+    eq(msg.get_payload(3).get_payload(decode=True), 'This has no Content-Transfer-Encoding: header.\n')

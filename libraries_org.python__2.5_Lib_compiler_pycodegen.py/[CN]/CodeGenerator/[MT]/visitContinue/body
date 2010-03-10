@@ -1,0 +1,23 @@
+def visitContinue(self, node):
+    if (not self.setups):
+        raise SyntaxError, ("'continue' outside loop (%s, %d)" % (node.filename, node.lineno))
+    (kind, block) = self.setups.top()
+    if (kind == LOOP):
+        self.set_lineno(node)
+        self.emit('JUMP_ABSOLUTE', block)
+        self.nextBlock()
+    elif ((kind == EXCEPT) or (kind == TRY_FINALLY)):
+        self.set_lineno(node)
+        top = len(self.setups)
+        while (top > 0):
+            top = (top - 1)
+            (kind, loop_block) = self.setups[top]
+            if (kind == LOOP):
+                break
+        if (kind != LOOP):
+            raise SyntaxError, ("'continue' outside loop (%s, %d)" % (node.filename, node.lineno))
+        self.emit('CONTINUE_LOOP', loop_block)
+        self.nextBlock()
+    elif (kind == END_FINALLY):
+        msg = "'continue' not allowed inside 'finally' clause (%s, %d)"
+        raise SyntaxError, (msg % (node.filename, node.lineno))

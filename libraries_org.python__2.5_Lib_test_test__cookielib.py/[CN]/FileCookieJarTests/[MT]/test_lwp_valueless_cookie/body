@@ -1,0 +1,16 @@
+def test_lwp_valueless_cookie(self):
+    from cookielib import LWPCookieJar
+    filename = test_support.TESTFN
+    c = LWPCookieJar()
+    interact_netscape(c, 'http://www.acme.com/', 'boo')
+    self.assertEqual(c._cookies['www.acme.com']['/']['boo'].value, None)
+    try:
+        c.save(filename, ignore_discard=True)
+        c = LWPCookieJar()
+        c.load(filename, ignore_discard=True)
+    finally:
+        try:
+            os.unlink(filename)
+        except OSError:
+            pass
+    self.assertEqual(c._cookies['www.acme.com']['/']['boo'].value, None)

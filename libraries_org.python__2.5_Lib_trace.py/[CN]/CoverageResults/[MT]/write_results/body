@@ -1,0 +1,67 @@
+def write_results(self, show_missing=True, summary=False, coverdir=None):
+    '\n        @param coverdir\n        '
+    if self.calledfuncs:
+        print 
+        print 'functions called:'
+        calls = self.calledfuncs.keys()
+        calls.sort()
+        for (filename, modulename, funcname) in calls:
+            print ('filename: %s, modulename: %s, funcname: %s' % (filename, modulename, funcname))
+    if self.callers:
+        print 
+        print 'calling relationships:'
+        calls = self.callers.keys()
+        calls.sort()
+        lastfile = lastcfile = ''
+        for ((pfile, pmod, pfunc), (cfile, cmod, cfunc)) in calls:
+            if (pfile != lastfile):
+                print 
+                print '***', pfile, '***'
+                lastfile = pfile
+                lastcfile = ''
+            if ((cfile != pfile) and (lastcfile != cfile)):
+                print '  -->', cfile
+                lastcfile = cfile
+            print ('    %s.%s -> %s.%s' % (pmod, pfunc, cmod, cfunc))
+    per_file = {}
+    for (filename, lineno) in self.counts.keys():
+        lines_hit = per_file[filename] = per_file.get(filename, {})
+        lines_hit[lineno] = self.counts[(filename, lineno)]
+    sums = {}
+    for (filename, count) in per_file.iteritems():
+        if (filename == '<string>'):
+            continue
+        if filename.startswith('<doctest '):
+            continue
+        if filename.endswith(('.pyc', '.pyo')):
+            filename = filename[:(-1)]
+        if (coverdir is None):
+            dir = os.path.dirname(os.path.abspath(filename))
+            modulename = modname(filename)
+        else:
+            dir = coverdir
+            if (not os.path.exists(dir)):
+                os.makedirs(dir)
+            modulename = fullmodname(filename)
+        if show_missing:
+            lnotab = find_executable_linenos(filename)
+        else:
+            lnotab = {}
+        source = linecache.getlines(filename)
+        coverpath = os.path.join(dir, (modulename + '.cover'))
+        (n_hits, n_lines) = self.write_results_file(coverpath, source, lnotab, count)
+        if (summary and n_lines):
+            percent = int(((100 * n_hits) / n_lines))
+            sums[modulename] = (n_lines, percent, modulename, filename)
+    if (summary and sums):
+        mods = sums.keys()
+        mods.sort()
+        print 'lines   cov%   module   (path)'
+        for m in mods:
+            (n_lines, percent, modulename, filename) = sums[m]
+            print ('%5d   %3d%%   %s   (%s)' % sums[m])
+    if self.outfile:
+        try:
+            pickle.dump((self.counts, self.calledfuncs, self.callers), open(self.outfile, 'wb'), 1)
+        except IOError as err:
+            print  >> sys.stderr, ("Can't save counts files because %s" % err)

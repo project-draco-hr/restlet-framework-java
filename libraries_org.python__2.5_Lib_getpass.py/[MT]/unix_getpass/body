@@ -1,0 +1,18 @@
+def unix_getpass(prompt='Password: ', stream=None):
+    'Prompt for a password, with echo turned off.\n    The prompt is written on stream, by default stdout.\n\n    Restore terminal settings at end.\n    '
+    if (stream is None):
+        stream = sys.stdout
+    try:
+        fd = sys.stdin.fileno()
+    except:
+        return default_getpass(prompt)
+    old = termios.tcgetattr(fd)
+    new = old[:]
+    new[3] = (new[3] & (~ termios.ECHO))
+    try:
+        termios.tcsetattr(fd, termios.TCSADRAIN, new)
+        passwd = _raw_input(prompt, stream)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old)
+    stream.write('\n')
+    return passwd

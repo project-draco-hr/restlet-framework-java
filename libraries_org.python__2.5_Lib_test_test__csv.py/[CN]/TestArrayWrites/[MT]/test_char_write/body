@@ -1,0 +1,14 @@
+def test_char_write(self):
+    import array, string
+    a = array.array('c', string.letters)
+    (fd, name) = tempfile.mkstemp()
+    fileobj = os.fdopen(fd, 'w+b')
+    try:
+        writer = csv.writer(fileobj, dialect='excel')
+        writer.writerow(a)
+        expected = (','.join(a) + '\r\n')
+        fileobj.seek(0)
+        self.assertEqual(fileobj.read(), expected)
+    finally:
+        fileobj.close()
+        os.unlink(name)

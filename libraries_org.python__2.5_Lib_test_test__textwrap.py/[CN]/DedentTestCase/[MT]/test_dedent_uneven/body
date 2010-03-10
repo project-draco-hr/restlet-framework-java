@@ -1,0 +1,10 @@
+def test_dedent_uneven(self):
+    text = '        def foo():\n            while 1:\n                return foo\n        '
+    expect = 'def foo():\n    while 1:\n        return foo\n'
+    self.assertEquals(expect, dedent(text))
+    text = '  Foo\n    Bar\n\n   Baz\n'
+    expect = 'Foo\n  Bar\n\n Baz\n'
+    self.assertEquals(expect, dedent(text))
+    text = '  Foo\n    Bar\n \n   Baz\n'
+    expect = 'Foo\n  Bar\n\n Baz\n'
+    self.assertEquals(expect, dedent(text))

@@ -1,0 +1,21 @@
+def test_extractall(self):
+    if ((sys.platform == 'win32') or (test_support.is_jython and (os._name == 'nt'))):
+        return
+    fobj = StringIO.StringIO()
+    tar = tarfile.open(fileobj=fobj, mode='w:')
+    for name in ('foo', 'foo/bar'):
+        tarinfo = tarfile.TarInfo(name)
+        tarinfo.type = tarfile.DIRTYPE
+        tarinfo.mtime = 1041808783
+        tarinfo.mode = 493
+        tar.addfile(tarinfo)
+    tar.close()
+    fobj.seek(0)
+    TEMPDIR = os.path.join(dirname(), 'extract-test')
+    tar = tarfile.open(fileobj=fobj)
+    tar.extractall(TEMPDIR)
+    for tarinfo in tar.getmembers():
+        path = os.path.join(TEMPDIR, tarinfo.name)
+        self.assertEqual(tarinfo.mode, (os.stat(path).st_mode & 511))
+        self.assertEqual(tarinfo.mtime, os.path.getmtime(path))
+    tar.close()

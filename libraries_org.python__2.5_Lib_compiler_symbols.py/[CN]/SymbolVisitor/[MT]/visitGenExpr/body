@@ -1,0 +1,7 @@
+def visitGenExpr(self, node, parent):
+    scope = GenExprScope(self.module, self.klass)
+    if (parent.nested or isinstance(parent, FunctionScope) or isinstance(parent, GenExprScope)):
+        scope.nested = 1
+    self.scopes[node] = scope
+    self.visit(node.code, scope)
+    self.handle_free_vars(scope, parent)

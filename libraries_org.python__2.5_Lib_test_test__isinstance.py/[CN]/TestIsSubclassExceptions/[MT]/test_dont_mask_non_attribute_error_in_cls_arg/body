@@ -1,0 +1,13 @@
+def test_dont_mask_non_attribute_error_in_cls_arg(self):
+
+
+    class B:
+        pass
+
+
+    class C(object):
+
+        def getbases(self):
+            raise RuntimeError
+        __bases__ = property(getbases)
+    self.assertRaises(RuntimeError, issubclass, B, C())

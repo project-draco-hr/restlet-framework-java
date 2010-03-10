@@ -1,0 +1,12 @@
+def visitIfExp(self, node):
+    endblock = self.newBlock()
+    elseblock = self.newBlock()
+    self.visit(node.test)
+    self.emit('JUMP_IF_FALSE', elseblock)
+    self.emit('POP_TOP')
+    self.visit(node.then)
+    self.emit('JUMP_FORWARD', endblock)
+    self.nextBlock(elseblock)
+    self.emit('POP_TOP')
+    self.visit(node.else_)
+    self.nextBlock(endblock)

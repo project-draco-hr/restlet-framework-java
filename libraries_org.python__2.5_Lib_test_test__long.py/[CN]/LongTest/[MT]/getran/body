@@ -1,0 +1,20 @@
+def getran(self, ndigits):
+    self.assert_((ndigits > 0))
+    nbits_hi = (ndigits * SHIFT)
+    nbits_lo = ((nbits_hi - SHIFT) + 1)
+    answer = 0L
+    nbits = 0
+    r = (int((random.random() * (SHIFT * 2))) | 1)
+    while (nbits < nbits_lo):
+        bits = ((r >> 1) + 1)
+        bits = min(bits, (nbits_hi - nbits))
+        self.assert_((1 <= bits <= SHIFT))
+        nbits = (nbits + bits)
+        answer = (answer << bits)
+        if (r & 1):
+            answer = (answer | ((1 << bits) - 1))
+        r = int((random.random() * (SHIFT * 2)))
+    self.assert_((nbits_lo <= nbits <= nbits_hi))
+    if (random.random() < 0.5):
+        answer = (- answer)
+    return answer

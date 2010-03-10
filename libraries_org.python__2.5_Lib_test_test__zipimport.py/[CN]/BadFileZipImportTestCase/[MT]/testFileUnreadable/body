@@ -1,0 +1,9 @@
+def testFileUnreadable(self):
+    test_support.unlink(TESTMOD)
+    fd = os.open(TESTMOD, os.O_CREAT, 0)
+    try:
+        os.close(fd)
+        self.assertZipFailure(TESTMOD)
+    finally:
+        os.chmod(TESTMOD, 438)
+        test_support.unlink(TESTMOD)

@@ -1,0 +1,14 @@
+def memoize(func):
+    saved = {}
+
+    def call(*args):
+        try:
+            return saved[args]
+        except KeyError:
+            res = func(*args)
+            saved[args] = res
+            return res
+        except TypeError:
+            return func(*args)
+    call.func_name = func.func_name
+    return call

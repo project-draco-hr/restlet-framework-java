@@ -1,0 +1,6 @@
+def test_stdout_fileobj(self):
+    tf = tempfile.TemporaryFile()
+    p = subprocess.Popen([sys.executable, '-c', 'import sys; sys.stdout.write("orange")'], stdout=tf)
+    p.wait()
+    tf.seek(0)
+    self.assertEqual(tf.read(), 'orange')

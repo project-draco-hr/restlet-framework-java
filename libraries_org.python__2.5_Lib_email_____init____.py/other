@@ -1,0 +1,16 @@
+'A package for parsing, handling, and generating email messages.'
+__version__ = '4.0.2'
+__all__ = ['base64MIME', 'Charset', 'Encoders', 'Errors', 'Generator', 'Header', 'Iterators', 'Message', 'MIMEAudio', 'MIMEBase', 'MIMEImage', 'MIMEMessage', 'MIMEMultipart', 'MIMENonMultipart', 'MIMEText', 'Parser', 'quopriMIME', 'Utils', 'message_from_string', 'message_from_file', 'base64mime', 'charset', 'encoders', 'errors', 'generator', 'header', 'iterators', 'message', 'mime', 'parser', 'quoprimime', 'utils']
+import sys
+_LOWERNAMES = ['Charset', 'Encoders', 'Errors', 'FeedParser', 'Generator', 'Header', 'Iterators', 'Message', 'Parser', 'Utils', 'base64MIME', 'quopriMIME']
+_MIMENAMES = ['Audio', 'Base', 'Image', 'Message', 'Multipart', 'NonMultipart', 'Text']
+for _name in _LOWERNAMES:
+    importer = LazyImporter(_name.lower())
+    sys.modules[('email.' + _name)] = importer
+    setattr(sys.modules['email'], _name, importer)
+import email.mime
+for _name in _MIMENAMES:
+    importer = LazyImporter(('mime.' + _name.lower()))
+    sys.modules[('email.MIME' + _name)] = importer
+    setattr(sys.modules['email'], ('MIME' + _name), importer)
+    setattr(sys.modules['email.mime'], _name, importer)

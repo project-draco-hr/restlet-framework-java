@@ -1,0 +1,8 @@
+def close(self):
+    '\n        Tidy up any resources used by the handler.\n\n        This version does removes the handler from an internal list\n        of handlers which is closed when shutdown() is called. Subclasses\n        should ensure that this gets called from overridden close()\n        methods.\n        '
+    _acquireLock()
+    try:
+        del _handlers[self]
+        _handlerList.remove(self)
+    finally:
+        _releaseLock()

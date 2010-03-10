@@ -1,0 +1,8 @@
+def proc_member(self, tarinfo):
+    'Choose the right processing method for tarinfo depending\n           on its type and call it.\n        '
+    if (tarinfo.type in (GNUTYPE_LONGNAME, GNUTYPE_LONGLINK)):
+        return self.proc_gnulong(tarinfo)
+    elif (tarinfo.type == GNUTYPE_SPARSE):
+        return self.proc_sparse(tarinfo)
+    else:
+        return self.proc_builtin(tarinfo)

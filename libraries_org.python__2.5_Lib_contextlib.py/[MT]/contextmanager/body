@@ -1,0 +1,12 @@
+def contextmanager(func):
+    '@contextmanager decorator.\n\n    Typical usage:\n\n        @contextmanager\n        def some_generator(<arguments>):\n            <setup>\n            try:\n                yield <value>\n            finally:\n                <cleanup>\n\n    This makes this:\n\n        with some_generator(<arguments>) as <variable>:\n            <body>\n\n    equivalent to this:\n\n        <setup>\n        try:\n            <variable> = <value>\n            <body>\n        finally:\n            <cleanup>\n\n    '
+
+    def helper(*args, **kwds):
+        return GeneratorContextManager(func(*args, **kwds))
+    try:
+        helper.__name__ = func.__name__
+        helper.__doc__ = func.__doc__
+        helper.__dict__ = func.__dict__
+    except:
+        pass
+    return helper

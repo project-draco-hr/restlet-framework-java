@@ -1,0 +1,19 @@
+'program/module to trace Python program or function execution\n\nSample use, command line:\n  trace.py -c -f counts --ignore-dir \'$prefix\' spam.py eggs\n  trace.py -t --ignore-dir \'$prefix\' spam.py eggs\n  trace.py --trackcalls spam.py eggs\n\nSample use, programmatically\n  import sys\n\n  # create a Trace object, telling it what to ignore, and whether to\n  # do tracing or line-counting or both.\n  tracer = trace.Trace(ignoredirs=[sys.prefix, sys.exec_prefix,], trace=0,\n                    count=1)\n  # run the new command using the given tracer\n  tracer.run(\'main()\')\n  # make a report, placing output in /tmp\n  r = tracer.results()\n  r.write_results(show_missing=True, coverdir="/tmp")\n'
+import linecache
+import os
+import re
+import sys
+import threading
+import token
+import tokenize
+import types
+import gc
+try:
+    import cPickle
+    pickle = cPickle
+except ImportError:
+    import pickle
+PRAGMA_NOCOVER = '#pragma NO COVER'
+rx_blank = re.compile('^\\s*(#.*)?$')
+if (__name__ == '__main__'):
+    main()

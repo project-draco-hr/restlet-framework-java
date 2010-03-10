@@ -1,0 +1,14 @@
+def testGetData(self):
+    z = ZipFile(TEMP_ZIP, 'w')
+    z.compression = self.compression
+    try:
+        name = 'testdata.dat'
+        data = (''.join([chr(x) for x in range(256)]) * 500)
+        z.writestr(name, data)
+        z.close()
+        zi = zipimport.zipimporter(TEMP_ZIP)
+        self.assertEquals(data, zi.get_data(name))
+        self.assert_(('zipimporter object' in repr(zi)))
+    finally:
+        z.close()
+        os.remove(TEMP_ZIP)

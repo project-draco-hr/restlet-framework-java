@@ -1,0 +1,9 @@
+def parse(xml, *handlers):
+    parser = expat.ParserCreate()
+    for name in handlers:
+        if (name == 'ExternalEntityRefHandler'):
+            returns = 1
+        else:
+            returns = None
+        setattr(parser, name, handler(name, returns=returns))
+    parser.Parse(xml, True)

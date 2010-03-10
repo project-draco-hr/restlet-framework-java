@@ -1,0 +1,13 @@
+def set_memlimit(limit):
+    import re
+    global max_memuse
+    sizes = {'k': 1024, 'm': _1M, 'g': _1G, 't': (1024 * _1G), }
+    m = re.match('(\\d+(\\.\\d+)?) (K|M|G|T)b?$', limit, (re.IGNORECASE | re.VERBOSE))
+    if (m is None):
+        raise ValueError(('Invalid memory limit %r' % (limit,)))
+    memlimit = int((float(m.group(1)) * sizes[m.group(3).lower()]))
+    if (memlimit > MAX_Py_ssize_t):
+        memlimit = MAX_Py_ssize_t
+    if (memlimit < (_2G - 1)):
+        raise ValueError(('Memory limit %r too low to be useful' % (limit,)))
+    max_memuse = memlimit

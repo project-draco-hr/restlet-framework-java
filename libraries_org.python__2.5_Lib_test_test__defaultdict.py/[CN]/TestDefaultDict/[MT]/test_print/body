@@ -1,0 +1,19 @@
+def test_print(self):
+    d1 = defaultdict()
+
+    def foo():
+        return 42
+    d2 = defaultdict(foo, {1: 2, })
+    tfn = tempfile.mktemp()
+    try:
+        f = open(tfn, 'w+')
+        try:
+            print  >> f, d1
+            print  >> f, d2
+            f.seek(0)
+            self.assertEqual(f.readline(), (repr(d1) + '\n'))
+            self.assertEqual(f.readline(), (repr(d2) + '\n'))
+        finally:
+            f.close()
+    finally:
+        os.remove(tfn)

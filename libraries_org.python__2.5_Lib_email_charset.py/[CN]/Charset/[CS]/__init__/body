@@ -1,0 +1,18 @@
+def __init__(self, input_charset=DEFAULT_CHARSET):
+    try:
+        if isinstance(input_charset, unicode):
+            input_charset.encode('ascii')
+        else:
+            input_charset = unicode(input_charset, 'ascii')
+    except UnicodeError:
+        raise errors.CharsetError(input_charset)
+    input_charset = input_charset.lower()
+    self.input_charset = ALIASES.get(input_charset, input_charset)
+    (henc, benc, conv) = CHARSETS.get(self.input_charset, (SHORTEST, BASE64, None))
+    if (not conv):
+        conv = self.input_charset
+    self.header_encoding = henc
+    self.body_encoding = benc
+    self.output_charset = ALIASES.get(conv, conv)
+    self.input_codec = CODEC_MAP.get(self.input_charset, self.input_charset)
+    self.output_codec = CODEC_MAP.get(self.output_charset, self.output_charset)

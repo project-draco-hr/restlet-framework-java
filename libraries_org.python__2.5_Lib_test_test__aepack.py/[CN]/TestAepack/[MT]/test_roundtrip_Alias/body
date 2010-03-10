@@ -1,0 +1,9 @@
+def test_roundtrip_Alias(self):
+    try:
+        import Carbon.File
+    except:
+        return
+    o = Carbon.File.FSSpec(os.curdir).NewAliasMinimal()
+    packed = aepack.pack(o)
+    unpacked = aepack.unpack(packed)
+    self.assertEqual(o.FSResolveAlias(None)[0].as_pathname(), unpacked.FSResolveAlias(None)[0].as_pathname())

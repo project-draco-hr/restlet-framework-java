@@ -1,0 +1,26 @@
+def _prep_compile(self, sources, output_dir, depends=None):
+    "Decide which souce files must be recompiled.\n\n        Determine the list of object files corresponding to 'sources',\n        and figure out which ones really need to be recompiled.\n        Return a list of all object files and a dictionary telling\n        which source files can be skipped.\n        "
+    objects = self.object_filenames(sources, output_dir=output_dir)
+    assert (len(objects) == len(sources))
+    if self.force:
+        skip_source = {}
+        for source in sources:
+            skip_source[source] = 0
+    elif (depends is None):
+        skip_source = {}
+        for source in sources:
+            skip_source[source] = 1
+        (n_sources, n_objects) = newer_pairwise(sources, objects)
+        for source in n_sources:
+            skip_source[source] = 0
+    else:
+        skip_source = {}
+        L = (depends[:] + [None])
+        for i in range(len(objects)):
+            source = sources[i]
+            L[(-1)] = source
+            if newer_group(L, objects[i]):
+                skip_source[source] = 0
+            else:
+                skip_source[source] = 1
+    return (objects, skip_source)

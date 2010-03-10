@@ -1,0 +1,7 @@
+def test_compile(self):
+    py_compile.compile(self.basename1)
+    self.assert_(os.path.exists((self.filename1[:(-3)] + COMPILED_SUFFIX)))
+    __import__(self.mod_name)
+    self.assert_((self.mod_name in sys.modules))
+    mod = sys.modules[self.mod_name]
+    self.assertEqual(mod.__file__, (self.mod_name + COMPILED_SUFFIX))

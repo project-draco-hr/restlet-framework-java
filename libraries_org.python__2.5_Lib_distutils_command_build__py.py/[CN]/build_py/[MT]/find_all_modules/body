@@ -1,0 +1,11 @@
+def find_all_modules(self):
+    "Compute the list of all modules that will be built, whether\n        they are specified one-module-at-a-time ('self.py_modules') or\n        by whole packages ('self.packages').  Return a list of tuples\n        (package, module, module_file), just like 'find_modules()' and\n        'find_package_modules()' do."
+    modules = []
+    if self.py_modules:
+        modules.extend(self.find_modules())
+    if self.packages:
+        for package in self.packages:
+            package_dir = self.get_package_dir(package)
+            m = self.find_package_modules(package, package_dir)
+            modules.extend(m)
+    return modules

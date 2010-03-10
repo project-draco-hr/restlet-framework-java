@@ -1,0 +1,20 @@
+def test_local(self):
+    mydata = local()
+    mydata.number = 42
+    self.assertEqual(mydata.number, 42)
+    self.assertEqual(mydata.__dict__, {'number': 42, })
+    mydata.__dict__.setdefault('widgets', [])
+    self.assertEqual(mydata.widgets, [])
+    log = []
+
+    def f():
+        items = mydata.__dict__.items()
+        items.sort()
+        log.append(items)
+        mydata.number = 11
+        log.append(mydata.number)
+    thread = threading.Thread(target=f)
+    thread.start()
+    thread.join()
+    self.assertEqual(log, [[], 11])
+    self.assertEqual(mydata.number, 42)

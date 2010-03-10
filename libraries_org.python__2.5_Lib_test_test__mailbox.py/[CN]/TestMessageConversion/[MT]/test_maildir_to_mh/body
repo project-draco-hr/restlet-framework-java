@@ -1,0 +1,6 @@
+def test_maildir_to_mh(self):
+    msg_maildir = mailbox.MaildirMessage(_sample_message)
+    pairs = (('D', ['unseen']), ('F', ['unseen', 'flagged']), ('P', ['unseen']), ('R', ['unseen', 'replied']), ('S', []), ('T', ['unseen']), ('DFPRST', ['replied', 'flagged']))
+    for (setting, result) in pairs:
+        msg_maildir.set_flags(setting)
+        self.assert_((mailbox.MHMessage(msg_maildir).get_sequences() == result))

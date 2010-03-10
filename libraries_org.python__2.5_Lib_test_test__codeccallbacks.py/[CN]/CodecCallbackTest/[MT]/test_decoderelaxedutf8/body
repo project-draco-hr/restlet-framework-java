@@ -1,0 +1,15 @@
+def test_decoderelaxedutf8(self):
+
+    def relaxedutf8(exc):
+        if (not isinstance(exc, UnicodeDecodeError)):
+            raise TypeError(("don't know how to handle %r" % exc))
+        if exc.object[exc.start:exc.end].startswith('\xc0\x80'):
+            return (u'\x00', (exc.start + 2))
+        else:
+            raise exc
+    codecs.register_error('test.relaxedutf8', relaxedutf8)
+    sin = 'a\x00b\xc0\x80c\xc3\xbc\xc0\x80\xc0\x80'
+    sout = u'a\x00b\x00c\xfc\x00\x00'
+    self.assertEqual(sin.decode('utf-8', 'test.relaxedutf8'), sout)
+    sin = '\xc0\x80\xc0\x81'
+    self.assertRaises(UnicodeError, sin.decode, 'utf-8', 'test.relaxedutf8')

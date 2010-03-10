@@ -1,0 +1,5 @@
+def call_application(self, app_callable, environ, response_callable):
+    if self.params['multithread']:
+        return app_callable.__call__(environ, response_callable)
+    else:
+        return synchronize.apply_synchronized(app_callable, app_callable, (environ, response_callable))

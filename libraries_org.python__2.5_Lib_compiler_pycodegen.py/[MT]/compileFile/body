@@ -1,0 +1,13 @@
+def compileFile(filename, display=0):
+    f = open(filename, 'U')
+    buf = f.read()
+    f.close()
+    mod = Module(buf, filename)
+    try:
+        mod.compile(display)
+    except SyntaxError:
+        raise
+    else:
+        f = open((filename + 'c'), 'wb')
+        mod.dump(f)
+        f.close()

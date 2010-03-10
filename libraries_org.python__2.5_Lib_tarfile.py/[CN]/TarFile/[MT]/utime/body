@@ -1,0 +1,10 @@
+def utime(self, tarinfo, targetpath):
+    'Set modification time of targetpath according to tarinfo.\n        '
+    if (not hasattr(os, 'utime')):
+        return
+    if ((sys.platform == 'win32') and tarinfo.isdir()):
+        return
+    try:
+        os.utime(targetpath, (tarinfo.mtime, tarinfo.mtime))
+    except EnvironmentError as e:
+        raise ExtractError('could not change modification time')

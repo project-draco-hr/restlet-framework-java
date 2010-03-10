@@ -1,0 +1,37 @@
+def testDictDerivedCmp(self):
+
+
+    class derived_dict(dict):
+        pass
+    self.assertEqual(derived_dict(), {})
+    self.assertNotEqual(derived_dict(), '')
+    self.assertRaises(TypeError, derived_dict().__cmp__, '')
+
+
+    class non_comparable_dict(dict):
+
+        def __cmp__(self, other):
+            raise TypeError, 'I always raise TypeError'
+    self.assertRaises(TypeError, (lambda : (non_comparable_dict() == '')))
+    self.assertRaises(TypeError, non_comparable_dict().__cmp__, '')
+
+
+    class dummy_dict_with_cmp(dict):
+
+        def __cmp__(self, other):
+            return super(dummy_dict_with_cmp, self).__cmp__(other)
+    self.assertEqual(dummy_dict_with_cmp(), {})
+    self.assertRaises(TypeError, (lambda : (dummy_dict_with_cmp() == '')))
+    self.assertRaises(TypeError, dummy_dict_with_cmp().__cmp__, '')
+
+
+    class derived_dict_with_custom_cmp(dict):
+
+        def __cmp__(self, other):
+            return 0
+
+
+    class yet_another_dict(derived_dict_with_custom_cmp):
+        pass
+    self.assertEqual(derived_dict_with_custom_cmp(), '')
+    self.assertEqual(yet_another_dict(), '')

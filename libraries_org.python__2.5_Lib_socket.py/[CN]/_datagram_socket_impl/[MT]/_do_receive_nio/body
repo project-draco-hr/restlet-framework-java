@@ -1,0 +1,15 @@
+def _do_receive_nio(self, return_source_address, num_bytes, flags):
+    byte_array = jarray.zeros(num_bytes, 'b')
+    byte_buf = java.nio.ByteBuffer.wrap(byte_array)
+    source_address = self.jchannel.receive(byte_buf)
+    if ((source_address is None) and (not self.jchannel.isBlocking())):
+        raise would_block_error()
+    byte_buf.flip()
+    bytes_read = byte_buf.remaining()
+    if (bytes_read < num_bytes):
+        byte_array = byte_array[:bytes_read]
+    return_data = byte_array.tostring()
+    if return_source_address:
+        return (return_data, (source_address.getAddress().getHostAddress(), source_address.getPort()))
+    else:
+        return return_data

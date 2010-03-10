@@ -1,0 +1,11 @@
+def arith_expr(self, nodelist):
+    node = self.com_node(nodelist[0])
+    for i in range(2, len(nodelist), 2):
+        right = self.com_node(nodelist[i])
+        if (nodelist[(i - 1)][0] == token.PLUS):
+            node = Add([node, right], lineno=nodelist[1][2])
+        elif (nodelist[(i - 1)][0] == token.MINUS):
+            node = Sub([node, right], lineno=nodelist[1][2])
+        else:
+            raise ValueError, ('unexpected token: %s' % nodelist[(i - 1)][0])
+    return node

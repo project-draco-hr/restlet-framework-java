@@ -1,0 +1,10 @@
+def save_unicode(self, obj, pack=struct.pack):
+    if self.bin:
+        encoding = obj.encode('utf-8')
+        n = len(encoding)
+        self.write(((BINUNICODE + pack('<i', n)) + encoding))
+    else:
+        obj = obj.replace('\\', '\\u005c')
+        obj = obj.replace('\n', '\\u000a')
+        self.write(((UNICODE + obj.encode('raw-unicode-escape')) + '\n'))
+    self.memoize(obj)

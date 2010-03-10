@@ -1,0 +1,10 @@
+def testWeakRefs(self):
+    p = proxy(self.f)
+    p.write('teststring')
+    self.assertEquals(self.f.tell(), p.tell())
+    self.f.close()
+    self.f = None
+    if is_jython:
+        from test_weakref import extra_collect
+        extra_collect()
+    self.assertRaises(ReferenceError, getattr, p, 'tell')

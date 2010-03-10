@@ -1,0 +1,26 @@
+def shift(self, other, context=None):
+    'Returns a shifted copy of self, value-of-other times.'
+    if (context is None):
+        context = getcontext()
+    ans = self._check_nans(other, context)
+    if ans:
+        return ans
+    if (other._exp != 0):
+        return context._raise_error(InvalidOperation)
+    if (not ((- context.prec) <= int(other) <= context.prec)):
+        return context._raise_error(InvalidOperation)
+    if self._isinfinity():
+        return Decimal(self)
+    torot = int(other)
+    if (not torot):
+        return Decimal(self)
+    rotdig = self._int
+    topad = (context.prec - len(rotdig))
+    if topad:
+        rotdig = (('0' * topad) + rotdig)
+    if (torot < 0):
+        rotated = rotdig[:torot]
+    else:
+        rotated = (rotdig + ('0' * torot))
+        rotated = rotated[(- context.prec):]
+    return _dec_from_triple(self._sign, (rotated.lstrip('0') or '0'), self._exp)

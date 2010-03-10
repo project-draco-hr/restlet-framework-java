@@ -1,0 +1,19 @@
+def test_memoize(self):
+    counts = {}
+
+    @memoize
+    @countcalls(counts)
+    def double(x):
+        return (x * 2)
+    self.assertEqual(double.func_name, 'double')
+    self.assertEqual(counts, dict(double=0))
+    self.assertEqual(double(2), 4)
+    self.assertEqual(counts['double'], 1)
+    self.assertEqual(double(2), 4)
+    self.assertEqual(counts['double'], 1)
+    self.assertEqual(double(3), 6)
+    self.assertEqual(counts['double'], 2)
+    self.assertEqual(double([10]), [10, 10])
+    self.assertEqual(counts['double'], 3)
+    self.assertEqual(double([10]), [10, 10])
+    self.assertEqual(counts['double'], 4)

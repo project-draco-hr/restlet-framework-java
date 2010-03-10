@@ -1,0 +1,17 @@
+def test_arguments(self):
+
+    def one(a, b, c, d, *extra):
+        return reduce((lambda r, x: (r + x)), extra, (((a + b) + c) + d))
+    m = list(((x,) for x in xrange(100, 0, (-1)))).pop
+    value = one(m(), m(), m(), m())
+    assert (value == (1, 2, 3, 4)), ('simple call, got: %s ' % (value,))
+    value = one(m(), m(), d=m(), c=m())
+    assert (value == (5, 6, 8, 7)), ('call with keywords, got: %s' % (value,))
+    value = one(m(), m(), m(), m(), m(), m())
+    assert (value == (9, 10, 11, 12, 13, 14)), ('long call, got: %s' % (value,))
+    value = one(m(), m(), *[m(), m(), m(), m()])
+    assert (value == (15, 16, 17, 18, 19, 20)), ('varcalls, got: %s' % (value,))
+    value = one(m(), m(), **dict(c=m(), d=m()))
+    assert (value == (21, 22, 23, 24)), ('varkeywordcall, got: %s' % (value,))
+    value = one(*[m(), m()], **dict(c=m(), d=m()))
+    assert (value == (25, 26, 27, 28)), ('bothvarcalls, got: %s' % (value,))

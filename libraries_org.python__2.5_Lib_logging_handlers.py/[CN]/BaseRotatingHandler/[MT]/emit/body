@@ -1,0 +1,10 @@
+def emit(self, record):
+    '\n        Emit a record.\n\n        Output the record to the file, catering for rollover as described\n        in doRollover().\n        '
+    try:
+        if self.shouldRollover(record):
+            self.doRollover()
+        logging.FileHandler.emit(self, record)
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        self.handleError(record)

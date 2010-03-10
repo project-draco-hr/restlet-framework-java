@@ -1,0 +1,13 @@
+def move(src, dst):
+    'Recursively move a file or directory to another location.\n\n    If the destination is on our current filesystem, then simply use\n    rename.  Otherwise, copy src to the dst and then remove src.\n    A lot more could be done here...  A look at a mv.c shows a lot of\n    the issues this implementation glosses over.\n\n    '
+    try:
+        os.rename(src, dst)
+    except OSError:
+        if os.path.isdir(src):
+            if destinsrc(src, dst):
+                raise Error, ("Cannot move a directory '%s' into itself '%s'." % (src, dst))
+            copytree(src, dst, symlinks=True)
+            rmtree(src)
+        else:
+            copy2(src, dst)
+            os.unlink(src)

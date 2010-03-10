@@ -1,0 +1,20 @@
+def _testTCPClientOption(self, level, option, values):
+    sock = None
+    try:
+        server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_sock.bind((HOST, PORT))
+        server_sock.listen(50)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._testSetAndGetOption(sock, level, option, values)
+        sock.bind((HOST, (PORT + 1)))
+        sock.connect((HOST, PORT))
+        msg = ("Option value '%s'='%s' did not propagate to implementation socket" % (option, values[(-1)]))
+        if ((is_bsd or is_solaris) and (option in (socket.SO_RCVBUF, socket.SO_SNDBUF))):
+            self.assert_((sock.getsockopt(level, option) >= values[(-1)]), msg)
+        else:
+            self.failUnlessEqual(sock.getsockopt(level, option), values[(-1)], msg)
+        self._testSetAndGetOption(sock, level, option, values)
+    finally:
+        server_sock.close()
+        if sock:
+            sock.close()

@@ -1,0 +1,9 @@
+def read_string4(f):
+    '\n    >>> import StringIO\n    >>> read_string4(StringIO.StringIO("\\x00\\x00\\x00\\x00abc"))\n    \'\'\n    >>> read_string4(StringIO.StringIO("\\x03\\x00\\x00\\x00abcdef"))\n    \'abc\'\n    >>> read_string4(StringIO.StringIO("\\x00\\x00\\x00\\x03abcdef"))\n    Traceback (most recent call last):\n    ...\n    ValueError: expected 50331648 bytes in a string4, but only 6 remain\n    '
+    n = read_int4(f)
+    if (n < 0):
+        raise ValueError(('string4 byte count < 0: %d' % n))
+    data = f.read(n)
+    if (len(data) == n):
+        return data
+    raise ValueError(('expected %d bytes in a string4, but only %d remain' % (n, len(data))))

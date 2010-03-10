@@ -1,0 +1,6 @@
+def test_boolean(self):
+    cf = self.fromstring('[BOOLTEST]\nT1=1\nT2=TRUE\nT3=True\nT4=oN\nT5=yes\nF1=0\nF2=FALSE\nF3=False\nF4=oFF\nF5=nO\nE1=2\nE2=foo\nE3=-1\nE4=0.1\nE5=FALSE AND MORE')
+    for x in range(1, 5):
+        self.failUnless(cf.getboolean('BOOLTEST', ('t%d' % x)))
+        self.failIf(cf.getboolean('BOOLTEST', ('f%d' % x)))
+        self.assertRaises(ValueError, cf.getboolean, 'BOOLTEST', ('e%d' % x))

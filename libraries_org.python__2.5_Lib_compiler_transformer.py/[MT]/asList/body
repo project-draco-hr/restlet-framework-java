@@ -1,0 +1,12 @@
+def asList(nodes):
+    l = []
+    for item in nodes:
+        if hasattr(item, 'asList'):
+            l.append(item.asList())
+        elif (type(item) is type((None, None))):
+            l.append(tuple(asList(item)))
+        elif (type(item) is type([])):
+            l.append(asList(item))
+        else:
+            l.append(item)
+    return l

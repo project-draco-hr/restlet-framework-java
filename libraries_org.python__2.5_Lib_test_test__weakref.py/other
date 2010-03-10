@@ -1,0 +1,25 @@
+import gc
+import sys
+import unittest
+import UserList
+import weakref
+from test import test_support
+if test_support.is_jython:
+    import time
+
+    def extra_collect():
+        "Kick Java's GC into gear"
+        gc.collect()
+        time.sleep(0.1)
+        gc.collect()
+        gc.collect()
+else:
+
+    def extra_collect():
+        pass
+ref_from_del = None
+from test import mapping_tests
+libreftest = ' Doctest for examples in the library reference: libweakref.tex\n\n>>> import weakref\n>>> class Dict(dict):\n...     pass\n...\n>>> obj = Dict(red=1, green=2, blue=3)   # this object is weak referencable\n>>> r = weakref.ref(obj)\n>>> print r() is obj\nTrue\n\n>>> import weakref\n>>> class Object:\n...     pass\n...\n>>> o = Object()\n>>> r = weakref.ref(o)\n>>> o2 = r()\n>>> o is o2\nTrue\n>>> del o, o2\n>>> extra_collect()\n>>> print r()\nNone\n\n>>> import weakref\n>>> class ExtendedRef(weakref.ref):\n...     def __init__(self, ob, callback=None, **annotations):\n...         super(ExtendedRef, self).__init__(ob, callback)\n...         self.__counter = 0\n...         for k, v in annotations.iteritems():\n...             setattr(self, k, v)\n...     def __call__(self):\n...         \'\'\'Return a pair containing the referent and the number of\n...         times the reference has been called.\n...         \'\'\'\n...         ob = super(ExtendedRef, self).__call__()\n...         if ob is not None:\n...             self.__counter += 1\n...             ob = (ob, self.__counter)\n...         return ob\n...\n>>> class A:   # not in docs from here, just testing the ExtendedRef\n...     pass\n...\n>>> a = A()\n>>> r = ExtendedRef(a, foo=1, bar="baz")\n>>> r.foo\n1\n>>> r.bar\n\'baz\'\n>>> r()[1]\n1\n>>> r()[1]\n2\n>>> r()[0] is a\nTrue\n\n\n>>> import weakref\n>>> _id2obj_dict = weakref.WeakValueDictionary()\n>>> def remember(obj):\n...     oid = id(obj)\n...     _id2obj_dict[oid] = obj\n...     return oid\n...\n>>> def id2obj(oid):\n...     return _id2obj_dict[oid]\n...\n>>> a = A()             # from here, just testing\n>>> a_id = remember(a)\n>>> id2obj(a_id) is a\nTrue\n>>> del a\n>>> extra_collect()\n>>> try:\n...     id2obj(a_id)\n... except KeyError:\n...     print \'OK\'\n... else:\n...     print \'WeakValueDictionary error\'\nOK\n\n'
+__test__ = {'libreftest': libreftest, }
+if (__name__ == '__main__'):
+    test_main()

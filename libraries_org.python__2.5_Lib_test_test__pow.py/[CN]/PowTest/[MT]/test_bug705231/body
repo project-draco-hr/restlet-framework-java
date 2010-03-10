@@ -1,0 +1,13 @@
+def test_bug705231(self):
+    eq = self.assertEquals
+    a = (-1.0)
+    eq(pow(a, 1.23e+167), 1.0)
+    eq(pow(a, (-1.23e+167)), 1.0)
+    for b in range((-10), 11):
+        eq(pow(a, float(b)), (((b & 1) and (-1.0)) or 1.0))
+    for n in range(0, 100):
+        fiveto = float((5 ** n))
+        expected = (((fiveto % 2.0) and (-1.0)) or 1.0)
+        eq(pow(a, fiveto), expected)
+        eq(pow(a, (- fiveto)), expected)
+    eq(expected, 1.0)

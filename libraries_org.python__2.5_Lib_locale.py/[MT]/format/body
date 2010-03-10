@@ -1,0 +1,25 @@
+def format(percent, value, grouping=False, monetary=False, *additional):
+    "Returns the locale-aware substitution of a %? specifier\n    (percent).\n\n    additional is for format strings which contain one or more\n    '*' modifiers."
+    if (percent[0] != '%'):
+        raise ValueError('format() must be given exactly one %char format specifier')
+    if additional:
+        formatted = (percent % ((value,) + additional))
+    else:
+        formatted = (percent % value)
+    if (percent[(-1)] in 'eEfFgG'):
+        seps = 0
+        parts = formatted.split('.')
+        if grouping:
+            (parts[0], seps) = _group(parts[0], monetary=monetary)
+        decimal_point = localeconv()[((monetary and 'mon_decimal_point') or 'decimal_point')]
+        formatted = decimal_point.join(parts)
+        while seps:
+            sp = formatted.find(' ')
+            if (sp == (-1)):
+                break
+            formatted = (formatted[:sp] + formatted[(sp + 1):])
+            seps -= 1
+    elif (percent[(-1)] in 'diu'):
+        if grouping:
+            formatted = _group(formatted, monetary=monetary)[0]
+    return formatted

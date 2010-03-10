@@ -1,0 +1,11 @@
+def _mac_ver_lookup(selectors, default=None):
+    from gestalt import gestalt
+    import MacOS
+    l = []
+    append = l.append
+    for selector in selectors:
+        try:
+            append(gestalt(selector))
+        except (RuntimeError, MacOS.Error):
+            append(default)
+    return l

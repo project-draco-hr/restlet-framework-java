@@ -1,0 +1,19 @@
+def test_inheriting_from_python_and_java_interface(self):
+    calls = []
+
+
+    class Runner(Runnable):
+
+        def run(self):
+            calls.append('Runner.run')
+
+
+    class ComparableRunner(Comparable, Runner):
+
+        def compareTo(self, other):
+            calls.append('ComparableRunner.compareTo')
+            return 0
+    c = ComparableRunner()
+    c.compareTo(None)
+    c.run()
+    self.assertEquals(calls, ['ComparableRunner.compareTo', 'Runner.run'])

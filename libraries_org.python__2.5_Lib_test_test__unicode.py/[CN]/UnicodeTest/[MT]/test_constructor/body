@@ -1,0 +1,39 @@
+def test_constructor(self):
+    self.assertEqual(unicode(u'unicode remains unicode'), u'unicode remains unicode')
+
+
+    class UnicodeSubclass(unicode):
+        pass
+    self.assertEqual(unicode(UnicodeSubclass('unicode subclass becomes unicode')), u'unicode subclass becomes unicode')
+    self.assertEqual(unicode('strings are converted to unicode'), u'strings are converted to unicode')
+
+
+    class UnicodeCompat:
+
+        def __init__(self, x):
+            self.x = x
+
+        def __unicode__(self):
+            return self.x
+    self.assertEqual(unicode(UnicodeCompat('__unicode__ compatible objects are recognized')), u'__unicode__ compatible objects are recognized')
+
+
+    class StringCompat:
+
+        def __init__(self, x):
+            self.x = x
+
+        def __str__(self):
+            return self.x
+    self.assertEqual(unicode(StringCompat('__str__ compatible objects are recognized')), u'__str__ compatible objects are recognized')
+    o = StringCompat('unicode(obj) is compatible to str()')
+    self.assertEqual(unicode(o), u'unicode(obj) is compatible to str()')
+    self.assertEqual(str(o), 'unicode(obj) is compatible to str()')
+    for obj in (123, 123.45, 123L):
+        self.assertEqual(unicode(obj), unicode(str(obj)))
+    if (not sys.platform.startswith('java')):
+        self.assertRaises(TypeError, unicode, u'decoding unicode is not supported', 'utf-8', 'strict')
+    self.assertEqual(unicode('strings are decoded to unicode', 'utf-8', 'strict'), u'strings are decoded to unicode')
+    if (not sys.platform.startswith('java')):
+        self.assertEqual(unicode(buffer('character buffers are decoded to unicode'), 'utf-8', 'strict'), u'character buffers are decoded to unicode')
+    self.assertRaises(TypeError, unicode, 42, 42, 42)

@@ -1,0 +1,10 @@
+def visitAssign(self, node):
+    self.set_lineno(node)
+    self.visit(node.expr)
+    dups = (len(node.nodes) - 1)
+    for i in range(len(node.nodes)):
+        elt = node.nodes[i]
+        if (i < dups):
+            self.emit('DUP_TOP')
+        if isinstance(elt, ast.Node):
+            self.visit(elt)

@@ -1,0 +1,19 @@
+def test_file_encoding(self):
+    "Ensure file writing doesn't attempt to encode things by default and reading doesn't\n        decode things by default.  This was jython's behavior prior to 2.2.1"
+    EURO_SIGN = u'\u20ac'
+    try:
+        EURO_SIGN.encode()
+    except UnicodeEncodeError:
+        return
+    f = open(test_support.TESTFN, 'w')
+    self.assertRaises(UnicodeEncodeError, f, write, EURO_SIGN, "Shouldn't be able to write out a Euro sign without first encoding")
+    f.close()
+    f = open(test_support.TESTFN, 'w')
+    f.write(EURO_SIGN.encode('utf-8'))
+    f.close()
+    f = open(test_support.TESTFN, 'r')
+    encoded_euro = f.read()
+    f.close()
+    os.remove(test_support.TESTFN)
+    self.assertEquals('\xe2\x82\xac', encoded_euro)
+    self.assertEquals(EURO_SIGN, encoded_euro.decode('utf-8'))

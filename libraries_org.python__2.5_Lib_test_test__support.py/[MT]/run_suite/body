@@ -1,0 +1,15 @@
+def run_suite(suite, testclass=None):
+    'Run all TestCases in their own individual TestSuite'
+    if (not junit_xml_dir):
+        return _run_suite(suite, testclass)
+    failed = False
+    for test in suite:
+        suite = unittest.TestSuite()
+        suite.addTest(test)
+        try:
+            _run_suite(suite, testclass)
+        except TestFailed as e:
+            if (not failed):
+                failed = e
+    if failed:
+        raise failed

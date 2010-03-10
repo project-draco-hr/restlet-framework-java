@@ -1,0 +1,10 @@
+def import_hook(self, name, caller=None, fromlist=None):
+    self.msg(3, 'import_hook', name, caller, fromlist)
+    parent = self.determine_parent(caller)
+    (q, tail) = self.find_head_package(parent, name)
+    m = self.load_tail(q, tail)
+    if (not fromlist):
+        return q
+    if m.__path__:
+        self.ensure_fromlist(m, fromlist)
+    return None

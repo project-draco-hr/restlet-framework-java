@@ -1,0 +1,12 @@
+def test_deepcopy_list_subclass(self):
+
+
+    class C(list):
+        pass
+    x = C([[1, 2], 3])
+    x.foo = [4, 5]
+    y = copy.deepcopy(x)
+    self.assertEqual(list(x), list(y))
+    self.assertEqual(x.foo, y.foo)
+    self.assert_((x[0] is not y[0]))
+    self.assert_((x.foo is not y.foo))

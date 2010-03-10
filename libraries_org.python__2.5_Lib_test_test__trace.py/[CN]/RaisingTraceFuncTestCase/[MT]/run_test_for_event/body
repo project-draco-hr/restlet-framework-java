@@ -1,0 +1,14 @@
+def run_test_for_event(self, event):
+    'Tests that an exception raised in response to the given event is\n        handled OK.'
+    self.raiseOnEvent = event
+    try:
+        for i in xrange((sys.getrecursionlimit() + 1)):
+            sys.settrace(self.trace)
+            try:
+                self.f()
+            except ValueError:
+                pass
+            else:
+                self.fail('exception not thrown!')
+    except RuntimeError:
+        self.fail('recursion counter not reset')

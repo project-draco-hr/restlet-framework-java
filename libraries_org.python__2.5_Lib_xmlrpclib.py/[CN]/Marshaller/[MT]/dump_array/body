@@ -1,0 +1,11 @@
+def dump_array(self, value, write):
+    i = id(value)
+    if self.memo.has_key(i):
+        raise TypeError, 'cannot marshal recursive sequences'
+    self.memo[i] = None
+    dump = self.__dump
+    write('<value><array><data>\n')
+    for v in value:
+        dump(v, write)
+    write('</data></array></value>\n')
+    del self.memo[i]

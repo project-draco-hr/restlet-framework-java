@@ -1,0 +1,20 @@
+def finalize_options(self):
+    if (self.bdist_dir is None):
+        bdist_base = self.get_finalized_command('bdist').bdist_base
+        self.bdist_dir = os.path.join(bdist_base, 'msi')
+    short_version = get_python_version()
+    if self.target_version:
+        if ((not self.skip_build) and self.distribution.has_ext_modules() and (self.target_version != short_version)):
+            raise DistutilsOptionError, ("target version can only be %s, or the '--skip_build' option must be specified" % (short_version,))
+    else:
+        self.target_version = short_version
+    self.set_undefined_options('bdist', ('dist_dir', 'dist_dir'))
+    if self.pre_install_script:
+        raise DistutilsOptionError, 'the pre-install-script feature is not yet implemented'
+    if self.install_script:
+        for script in self.distribution.scripts:
+            if (self.install_script == os.path.basename(script)):
+                break
+        else:
+            raise DistutilsOptionError, ("install_script '%s' not found in scripts" % self.install_script)
+    self.install_script_key = None

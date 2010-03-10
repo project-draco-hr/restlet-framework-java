@@ -1,0 +1,12 @@
+def test_cookie_redirect(self):
+    from cookielib import CookieJar
+    from test.test_cookielib import interact_netscape
+    cj = CookieJar()
+    interact_netscape(cj, 'http://www.example.com/', 'spam=eggs')
+    hh = MockHTTPHandler(302, 'Location: http://www.cracker.com/\r\n\r\n')
+    hdeh = urllib2.HTTPDefaultErrorHandler()
+    hrh = urllib2.HTTPRedirectHandler()
+    cp = urllib2.HTTPCookieProcessor(cj)
+    o = build_test_opener(hh, hdeh, hrh, cp)
+    o.open('http://www.example.com/')
+    self.assert_((not hh.req.has_header('Cookie')))

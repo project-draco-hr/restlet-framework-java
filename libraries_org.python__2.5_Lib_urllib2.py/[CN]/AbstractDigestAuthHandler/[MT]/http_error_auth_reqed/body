@@ -1,0 +1,10 @@
+def http_error_auth_reqed(self, auth_header, host, req, headers):
+    authreq = headers.get(auth_header, None)
+    if (self.retried > 5):
+        raise HTTPError(req.get_full_url(), 401, 'digest auth failed', headers, None)
+    else:
+        self.retried += 1
+    if authreq:
+        scheme = authreq.split()[0]
+        if (scheme.lower() == 'digest'):
+            return self.retry_http_digest_auth(req, authreq)

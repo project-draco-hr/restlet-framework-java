@@ -1,0 +1,10 @@
+def getContainedGraphs(self):
+    'Return all graphs contained within this block.\n\n        For example, a MAKE_FUNCTION block will contain a reference to\n        the graph for the function body.\n        '
+    contained = []
+    for inst in self.insts:
+        if (len(inst) == 1):
+            continue
+        op = inst[1]
+        if hasattr(op, 'graph'):
+            contained.append(op.graph)
+    return contained

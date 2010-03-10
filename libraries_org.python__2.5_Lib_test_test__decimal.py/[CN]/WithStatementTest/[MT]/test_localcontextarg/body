@@ -1,0 +1,10 @@
+def test_localcontextarg(self):
+    orig_ctx = getcontext()
+    new_ctx = Context(prec=42)
+    with localcontext(new_ctx) as enter_ctx:
+        set_ctx = getcontext()
+    final_ctx = getcontext()
+    self.assert_((orig_ctx is final_ctx), 'did not restore context correctly')
+    self.assert_((set_ctx.prec == new_ctx.prec), 'did not set correct context')
+    self.assert_((new_ctx is not set_ctx), 'did not copy the context')
+    self.assert_((set_ctx is enter_ctx), '__enter__ returned wrong context')

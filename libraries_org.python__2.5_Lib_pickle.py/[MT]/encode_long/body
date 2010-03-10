@@ -1,0 +1,37 @@
+def encode_long(x):
+    "Encode a long to a two's complement little-endian binary string.\n    Note that 0L is a special case, returning an empty string, to save a\n    byte in the LONG1 pickling context.\n\n    >>> encode_long(0L)\n    ''\n    >>> encode_long(255L)\n    '\\xff\\x00'\n    >>> encode_long(32767L)\n    '\\xff\\x7f'\n    >>> encode_long(-256L)\n    '\\x00\\xff'\n    >>> encode_long(-32768L)\n    '\\x00\\x80'\n    >>> encode_long(-128L)\n    '\\x80'\n    >>> encode_long(127L)\n    '\\x7f'\n    >>>\n    "
+    if (x == 0):
+        return ''
+    if (x > 0):
+        ashex = hex(x)
+        assert ashex.startswith('0x')
+        njunkchars = (2 + ashex.endswith('L'))
+        nibbles = (len(ashex) - njunkchars)
+        if (nibbles & 1):
+            ashex = ('0x0' + ashex[2:])
+        elif (int(ashex[2], 16) >= 8):
+            ashex = ('0x00' + ashex[2:])
+    else:
+        ashex = hex((- x))
+        assert ashex.startswith('0x')
+        njunkchars = (2 + ashex.endswith('L'))
+        nibbles = (len(ashex) - njunkchars)
+        if (nibbles & 1):
+            nibbles += 1
+        nbits = (nibbles * 4)
+        x += (1L << nbits)
+        assert (x > 0)
+        ashex = hex(x)
+        njunkchars = (2 + ashex.endswith('L'))
+        newnibbles = (len(ashex) - njunkchars)
+        if (newnibbles < nibbles):
+            ashex = (('0x' + ('0' * (nibbles - newnibbles))) + ashex[2:])
+        if (int(ashex[2], 16) < 8):
+            ashex = ('0xff' + ashex[2:])
+    if ashex.endswith('L'):
+        ashex = ashex[2:(-1)]
+    else:
+        ashex = ashex[2:]
+    assert ((len(ashex) & 1) == 0), (x, ashex)
+    binary = _binascii.unhexlify(ashex)
+    return binary[::(-1)]

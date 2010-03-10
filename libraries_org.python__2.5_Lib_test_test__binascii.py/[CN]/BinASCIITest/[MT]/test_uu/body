@@ -1,0 +1,18 @@
+def test_uu(self):
+    MAX_UU = 45
+    lines = []
+    for i in range(0, len(self.data), MAX_UU):
+        b = self.data[i:(i + MAX_UU)]
+        a = binascii.b2a_uu(b)
+        lines.append(a)
+    res = ''
+    for line in lines:
+        b = binascii.a2b_uu(line)
+        res += b
+    self.assertEqual(res, self.data)
+    self.assertEqual(binascii.a2b_uu('\x7f'), ('\x00' * 31))
+    self.assertEqual(binascii.a2b_uu('\x80'), ('\x00' * 32))
+    self.assertEqual(binascii.a2b_uu('\xff'), ('\x00' * 31))
+    self.assertRaises(binascii.Error, binascii.a2b_uu, '\xff\x00')
+    self.assertRaises(binascii.Error, binascii.a2b_uu, '!!!!')
+    self.assertRaises(binascii.Error, binascii.b2a_uu, (46 * '!'))

@@ -1,0 +1,14 @@
+def test_incrementaldecoder(self):
+    UTF8Writer = codecs.getwriter('utf-8')
+    for sizehint in (([None, (-1)] + range(1, 33)) + [64, 128, 256, 512, 1024]):
+        istream = StringIO(self.tstring[0])
+        ostream = UTF8Writer(StringIO())
+        decoder = self.incrementaldecoder()
+        while 1:
+            data = istream.read(sizehint)
+            if (not data):
+                break
+            else:
+                u = decoder.decode(data)
+                ostream.write(u)
+        self.assertEqual(ostream.getvalue(), self.tstring[1])

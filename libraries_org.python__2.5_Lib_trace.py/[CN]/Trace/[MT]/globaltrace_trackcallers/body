@@ -1,0 +1,6 @@
+def globaltrace_trackcallers(self, frame, why, arg):
+    'Handler for call events.\n\n        Adds information about who called who to the self._callers dict.\n        '
+    if (why == 'call'):
+        this_func = self.file_module_function_of(frame)
+        parent_func = self.file_module_function_of(frame.f_back)
+        self._callers[(parent_func, this_func)] = 1

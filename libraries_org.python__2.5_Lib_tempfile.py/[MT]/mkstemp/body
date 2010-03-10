@@ -1,0 +1,9 @@
+def mkstemp(suffix='', prefix=template, dir=None, text=False):
+    "mkstemp([suffix, [prefix, [dir, [text]]]])\n    User-callable function to create and return a unique temporary\n    file.  The return value is a pair (fd, name) where fd is the\n    file descriptor returned by os.open, and name is the filename.\n\n    If 'suffix' is specified, the file name will end with that suffix,\n    otherwise there will be no suffix.\n\n    If 'prefix' is specified, the file name will begin with that prefix,\n    otherwise a default prefix is used.\n\n    If 'dir' is specified, the file will be created in that directory,\n    otherwise a default directory is used.\n\n    If 'text' is specified and true, the file is opened in text\n    mode.  Else (the default) the file is opened in binary mode.  On\n    some operating systems, this makes no difference.\n\n    The file is readable and writable only by the creating user ID.\n    If the operating system uses permission bits to indicate whether a\n    file is executable, the file is executable by no one. The file\n    descriptor is not inherited by children of this process.\n\n    Caller is responsible for deleting the file when done with it.\n    "
+    if (dir is None):
+        dir = gettempdir()
+    if text:
+        flags = _text_openflags
+    else:
+        flags = _bin_openflags
+    return _mkstemp_inner(dir, prefix, suffix, flags)

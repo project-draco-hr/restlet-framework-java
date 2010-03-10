@@ -1,0 +1,11 @@
+def dup(self):
+    'dup() -> socket object\n\n        Return a new socket object connected to the same system resource.'
+    _sock = self._sock
+    if (not isinstance(_sock, _nonblocking_api_mixin)):
+        return _socketobject(_sock=_sock)
+    _sock.close_lock.acquire()
+    try:
+        duped = _socketobject(_sock=_sock)
+    finally:
+        _sock.close_lock.release()
+    return duped

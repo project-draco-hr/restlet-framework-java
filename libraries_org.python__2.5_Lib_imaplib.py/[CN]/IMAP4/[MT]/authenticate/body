@@ -1,0 +1,9 @@
+def authenticate(self, mechanism, authobject):
+    "Authenticate command - requires response processing.\n\n        'mechanism' specifies which authentication mechanism is to\n        be used - it must appear in <instance>.capabilities in the\n        form AUTH=<mechanism>.\n\n        'authobject' must be a callable object:\n\n                data = authobject(response)\n\n        It will be called to process server continuation responses.\n        It should return data that will be encoded and sent to server.\n        It should return None if the client abort response '*' should\n        be sent instead.\n        "
+    mech = mechanism.upper()
+    self.literal = _Authenticator(authobject).process
+    (typ, dat) = self._simple_command('AUTHENTICATE', mech)
+    if (typ != 'OK'):
+        raise self.error(dat[(-1)])
+    self.state = 'AUTH'
+    return (typ, dat)

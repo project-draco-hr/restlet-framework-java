@@ -1,0 +1,7 @@
+def forget(modname):
+    '"Forget" a module was ever imported by removing it from sys.modules and\n    deleting any .pyc and .pyo files.'
+    unload(modname)
+    import os
+    for dirname in sys.path:
+        unlink(os.path.join(dirname, ((modname + os.extsep) + 'pyc')))
+        unlink(os.path.join(dirname, ((modname + os.extsep) + 'pyo')))

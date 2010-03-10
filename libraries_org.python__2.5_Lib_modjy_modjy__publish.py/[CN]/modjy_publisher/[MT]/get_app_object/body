@@ -1,0 +1,11 @@
+def get_app_object(self, req, environ):
+    environ['SCRIPT_NAME'] = ('%s%s' % (req.getContextPath(), req.getServletPath()))
+    path_info = (req.getPathInfo() or '')
+    environ['PATH_INFO'] = path_info
+    environ['PATH_TRANSLATED'] = File(self.app_directory, path_info).getPath()
+    if (self.params['app_import_name'] is not None):
+        return self.get_app_object_importable(self.params['app_import_name'])
+    else:
+        if (self.cache is None):
+            self.cache = {}
+        return self.get_app_object_old_style(req, environ)

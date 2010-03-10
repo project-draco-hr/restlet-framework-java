@@ -1,0 +1,15 @@
+def tearDown(self):
+    try:
+        try:
+            for i in range(self.TEST_DIRS):
+                dir = getattr(self, ('dir%i' % (i + 1)))
+                if os.path.exists(dir):
+                    shutil.rmtree(dir)
+        finally:
+            for i in range(self.TEST_FILES):
+                filename = getattr(self, ('filename%i' % (i + 1)))
+                if os.path.exists(filename):
+                    os.remove(filename)
+    finally:
+        sys.path = self.orig_syspath
+        os.chdir(self.orig_cwd)

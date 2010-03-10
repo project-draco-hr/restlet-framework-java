@@ -1,9 +1,0 @@
-def apop(self, user, secret):
-    "Authorisation\n\n        - only possible if server has supplied a timestamp in initial greeting.\n\n        Args:\n                user    - mailbox user;\n                secret  - secret shared between client and server.\n\n        NB: mailbox is locked by server from here to 'quit()'\n        "
-    m = self.timestamp.match(self.welcome)
-    if (not m):
-        raise error_proto('-ERR APOP not supported by server')
-    import md5
-    digest = md5.new((m.group(1) + secret)).digest()
-    digest = ''.join(map((lambda x: ('%02x' % ord(x))), digest))
-    return self._shortcmd(('APOP %s %s' % (user, digest)))

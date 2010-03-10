@@ -1,0 +1,23 @@
+def find_modules(self):
+    'Finds individually-specified Python modules, ie. those listed by\n        module name in \'self.py_modules\'.  Returns a list of tuples (package,\n        module_base, filename): \'package\' is a tuple of the path through\n        package-space to the module; \'module_base\' is the bare (no\n        packages, no dots) module name, and \'filename\' is the path to the\n        ".py" file (relative to the distribution root) that implements the\n        module.\n        '
+    packages = {}
+    modules = []
+    for module in self.py_modules:
+        path = string.split(module, '.')
+        package = string.join(path[0:(-1)], '.')
+        module_base = path[(-1)]
+        try:
+            (package_dir, checked) = packages[package]
+        except KeyError:
+            package_dir = self.get_package_dir(package)
+            checked = 0
+        if (not checked):
+            init_py = self.check_package(package, package_dir)
+            packages[package] = (package_dir, 1)
+            if init_py:
+                modules.append((package, '__init__', init_py))
+        module_file = os.path.join(package_dir, (module_base + '.py'))
+        if (not self.check_module(module, module_file)):
+            continue
+        modules.append((package, module_base, module_file))
+    return modules

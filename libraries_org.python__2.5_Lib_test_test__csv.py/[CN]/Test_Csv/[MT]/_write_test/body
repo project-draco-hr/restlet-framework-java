@@ -1,0 +1,11 @@
+def _write_test(self, fields, expect, **kwargs):
+    (fd, name) = tempfile.mkstemp()
+    fileobj = os.fdopen(fd, 'w+b')
+    try:
+        writer = csv.writer(fileobj, **kwargs)
+        writer.writerow(fields)
+        fileobj.seek(0)
+        self.assertEqual(fileobj.read(), (expect + writer.dialect.lineterminator))
+    finally:
+        fileobj.close()
+        os.unlink(name)

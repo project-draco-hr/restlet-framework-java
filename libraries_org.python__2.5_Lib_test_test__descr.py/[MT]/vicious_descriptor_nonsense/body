@@ -1,0 +1,31 @@
+def vicious_descriptor_nonsense():
+    if verbose:
+        print 'Testing vicious_descriptor_nonsense...'
+
+
+    class Evil(object):
+
+        def __hash__(self):
+            return hash('attr')
+
+        def __eq__(self, other):
+            del C.attr
+            return 0
+
+
+    class Descr(object):
+
+        def __get__(self, ob, type=None):
+            return 1
+
+
+    class C(object):
+        attr = Descr()
+    c = C()
+    if is_jython:
+        c.__dict__ = {}
+    c.__dict__[Evil()] = 0
+    vereq(c.attr, 1)
+    import gc
+    gc.collect()
+    vereq(hasattr(c, 'attr'), False)

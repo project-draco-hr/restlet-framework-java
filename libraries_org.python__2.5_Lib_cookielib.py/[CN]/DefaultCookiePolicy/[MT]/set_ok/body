@@ -1,0 +1,10 @@
+def set_ok(self, cookie, request):
+    '\n        If you override .set_ok(), be sure to call this method.  If it returns\n        false, so should your subclass (assuming your subclass wants to be more\n        strict about which cookies to accept).\n\n        '
+    _debug(' - checking cookie %s=%s', cookie.name, cookie.value)
+    assert (cookie.name is not None)
+    for n in ('version', 'verifiability', 'name', 'path', 'domain', 'port'):
+        fn_name = ('set_ok_' + n)
+        fn = getattr(self, fn_name)
+        if (not fn(cookie, request)):
+            return False
+    return True

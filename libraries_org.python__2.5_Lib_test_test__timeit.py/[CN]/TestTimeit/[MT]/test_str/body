@@ -1,0 +1,7 @@
+def test_str(self):
+    s = '            try:\n                str.__nonzero__\n            except AttributeError:\n                pass\n            '
+    t = timeit.Timer(stmt=s)
+    self.assertTrue((t.timeit(number=10000) > 0.0))
+    timing_vector = t.repeat(number=10000, repeat=10)
+    self.assertEqual(len(timing_vector), 10)
+    self.assertTrue((min(timing_vector) > 0.0))

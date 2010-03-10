@@ -1,0 +1,42 @@
+def test_exit(self):
+    self.assertRaises(TypeError, sys.exit, 42, 42)
+    try:
+        sys.exit(0)
+    except SystemExit as exc:
+        self.assertEquals(exc.code, 0)
+    except:
+        self.fail('wrong exception')
+    else:
+        self.fail('no exception')
+    try:
+        sys.exit(42)
+    except SystemExit as exc:
+        self.assertEquals(exc.code, 42)
+    except:
+        self.fail('wrong exception')
+    else:
+        self.fail('no exception')
+    try:
+        sys.exit((42,))
+    except SystemExit as exc:
+        self.assertEquals(exc.code, 42)
+    except:
+        self.fail('wrong exception')
+    else:
+        self.fail('no exception')
+    try:
+        sys.exit('exit')
+    except SystemExit as exc:
+        self.assertEquals(exc.code, 'exit')
+    except:
+        self.fail('wrong exception')
+    else:
+        self.fail('no exception')
+    try:
+        sys.exit((17, 23))
+    except SystemExit as exc:
+        self.assertEquals(exc.code, (17, 23))
+    except:
+        self.fail('wrong exception')
+    else:
+        self.fail('no exception')

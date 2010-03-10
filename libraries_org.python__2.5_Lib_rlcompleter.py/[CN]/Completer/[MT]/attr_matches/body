@@ -1,0 +1,18 @@
+def attr_matches(self, text):
+    'Compute matches when text contains a dot.\n\n        Assuming the text is of the form NAME.NAME....[NAME], and is\n        evaluatable in self.namespace, it will be evaluated and its attributes\n        (as revealed by dir()) are used as possible completions.  (For class\n        instances, class members are also considered.)\n\n        WARNING: this can still invoke arbitrary C code, if an object\n        with a __getattr__ hook is evaluated.\n\n        '
+    import re
+    m = re.match('(\\w+(\\.\\w+)*)\\.(\\w*)', text)
+    if (not m):
+        return []
+    (expr, attr) = m.group(1, 3)
+    object = eval(expr, self.namespace)
+    words = dir(object)
+    if hasattr(object, '__class__'):
+        words.append('__class__')
+        words = (words + get_class_members(object.__class__))
+    matches = []
+    n = len(attr)
+    for word in words:
+        if ((word[:n] == attr) and (word != '__builtins__')):
+            matches.append(('%s.%s' % (expr, word)))
+    return matches

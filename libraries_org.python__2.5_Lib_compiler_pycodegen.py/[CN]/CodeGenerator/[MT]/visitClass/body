@@ -1,0 +1,13 @@
+def visitClass(self, node):
+    gen = self.ClassGen(node, self.scopes, self.get_module())
+    walk(node.code, gen)
+    gen.finish()
+    self.set_lineno(node)
+    self.emit('LOAD_CONST', node.name)
+    for base in node.bases:
+        self.visit(base)
+    self.emit('BUILD_TUPLE', len(node.bases))
+    self._makeClosure(gen, 0)
+    self.emit('CALL_FUNCTION', 0)
+    self.emit('BUILD_CLASS')
+    self.storeName(node.name)

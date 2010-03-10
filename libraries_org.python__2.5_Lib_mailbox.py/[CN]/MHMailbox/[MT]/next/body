@@ -1,0 +1,11 @@
+def next(self):
+    if (not self.boxes):
+        return None
+    fn = self.boxes.pop()
+    fp = open(os.path.join(self.dirname, fn))
+    msg = self.factory(fp)
+    try:
+        msg._mh_msgno = fn
+    except (AttributeError, TypeError):
+        pass
+    return msg

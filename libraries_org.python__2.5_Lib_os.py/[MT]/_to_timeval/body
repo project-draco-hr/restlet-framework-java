@@ -1,0 +1,20 @@
+def _to_timeval(seconds):
+    'Convert seconds (with a fraction) from epoch to a 2 item tuple of\n    seconds, microseconds from epoch as longs\n    '
+    global _time_t
+    if (_time_t is None):
+        from java.lang import Integer, Long
+        try:
+            from org.python.posix.util import Platform
+        except ImportError:
+            from org.jruby.ext.posix.util import Platform
+        _time_t = (Integer if Platform.IS_32_BIT else Long)
+    try:
+        floor = long(seconds)
+    except TypeError:
+        raise TypeError('an integer is required')
+    if (not (_time_t.MIN_VALUE <= floor <= _time_t.MAX_VALUE)):
+        raise OverflowError('long int too large to convert to int')
+    usec = long(((seconds - floor) * 1000000.0))
+    if (usec < 0):
+        usec = 0
+    return (floor, usec)

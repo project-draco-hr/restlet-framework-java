@@ -1,0 +1,32 @@
+def test_join(self):
+    self.checkequal('a b c d', ' ', 'join', ['a', 'b', 'c', 'd'])
+    self.checkequal('abcd', '', 'join', ('a', 'b', 'c', 'd'))
+    self.checkequal('bd', '', 'join', ('', 'b', '', 'd'))
+    self.checkequal('ac', '', 'join', ('a', '', 'c', ''))
+    self.checkequal('w x y z', ' ', 'join', Sequence())
+    self.checkequal('abc', 'a', 'join', ('abc',))
+    self.checkequal('z', 'a', 'join', UserList(['z']))
+    if test_support.have_unicode:
+        self.checkequal(unicode('a.b.c'), unicode('.'), 'join', ['a', 'b', 'c'])
+        self.checkequal(unicode('a.b.c'), '.', 'join', [unicode('a'), 'b', 'c'])
+        self.checkequal(unicode('a.b.c'), '.', 'join', ['a', unicode('b'), 'c'])
+        self.checkequal(unicode('a.b.c'), '.', 'join', ['a', 'b', unicode('c')])
+        self.checkraises(TypeError, '.', 'join', ['a', unicode('b'), 3])
+    for i in [5, 25, 125]:
+        self.checkequal(((('a' * i) + '-') * i)[:(-1)], '-', 'join', ([('a' * i)] * i))
+        self.checkequal(((('a' * i) + '-') * i)[:(-1)], '-', 'join', ((('a' * i),) * i))
+    self.checkraises(TypeError, ' ', 'join', BadSeq1())
+    self.checkequal('a b c', ' ', 'join', BadSeq2())
+    self.checkraises(TypeError, ' ', 'join')
+    self.checkraises(TypeError, ' ', 'join', 7)
+    self.checkraises(TypeError, ' ', 'join', Sequence([7, 'hello', 123L]))
+    try:
+
+        def f():
+            yield (4 + '')
+        self.fixtype(' ').join(f())
+    except TypeError as e:
+        if ('+' not in str(e)):
+            self.fail('join() ate exception message')
+    else:
+        self.fail('exception not raised')

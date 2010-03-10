@@ -1,0 +1,19 @@
+def test_complex_args(self):
+
+    def comp_args((a, b)):
+        return (a, b)
+    self.assertEqual(comp_args((1, 2)), (1, 2))
+
+    def comp_args((a, b)=(3, 4)):
+        return (a, b)
+    self.assertEqual(comp_args((1, 2)), (1, 2))
+    self.assertEqual(comp_args(), (3, 4))
+
+    def comp_args(a, (b, c)):
+        return (a, b, c)
+    self.assertEqual(comp_args(1, (2, 3)), (1, 2, 3))
+
+    def comp_args(a=2, (b, c)=(3, 4)):
+        return (a, b, c)
+    self.assertEqual(comp_args(1, (2, 3)), (1, 2, 3))
+    self.assertEqual(comp_args(), (2, 3, 4))

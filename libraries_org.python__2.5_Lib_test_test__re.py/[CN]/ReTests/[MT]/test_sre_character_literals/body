@@ -1,0 +1,9 @@
+def test_sre_character_literals(self):
+    for i in [0, 8, 16, 32, 64, 127, 128, 255]:
+        self.assertNotEqual(re.match(('\\%03o' % i), chr(i)), None)
+        self.assertNotEqual(re.match(('\\%03o0' % i), (chr(i) + '0')), None)
+        self.assertNotEqual(re.match(('\\%03o8' % i), (chr(i) + '8')), None)
+        self.assertNotEqual(re.match(('\\x%02x' % i), chr(i)), None)
+        self.assertNotEqual(re.match(('\\x%02x0' % i), (chr(i) + '0')), None)
+        self.assertNotEqual(re.match(('\\x%02xz' % i), (chr(i) + 'z')), None)
+    self.assertRaises(re.error, re.match, '\\911', '')

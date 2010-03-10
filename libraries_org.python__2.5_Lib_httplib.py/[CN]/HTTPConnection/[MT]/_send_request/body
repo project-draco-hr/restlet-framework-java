@@ -1,0 +1,15 @@
+def _send_request(self, method, url, body, headers):
+    header_names = dict.fromkeys([k.lower() for k in headers])
+    skips = {}
+    if ('host' in header_names):
+        skips['skip_host'] = 1
+    if ('accept-encoding' in header_names):
+        skips['skip_accept_encoding'] = 1
+    self.putrequest(method, url, **skips)
+    if (body and ('content-length' not in header_names)):
+        self.putheader('Content-Length', str(len(body)))
+    for (hdr, value) in headers.iteritems():
+        self.putheader(hdr, value)
+    self.endheaders()
+    if body:
+        self.send(body)

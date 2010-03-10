@@ -1,0 +1,18 @@
+def test_replace(self):
+    cls = self.theclass
+    args = [1, 2, 3, 4]
+    base = cls(*args)
+    self.assertEqual(base, base.replace())
+    i = 0
+    for (name, newval) in (('hour', 5), ('minute', 6), ('second', 7), ('microsecond', 8)):
+        newargs = args[:]
+        newargs[i] = newval
+        expected = cls(*newargs)
+        got = base.replace(**{name: newval, })
+        self.assertEqual(expected, got)
+        i += 1
+    base = cls(1)
+    self.assertRaises(ValueError, base.replace, hour=24)
+    self.assertRaises(ValueError, base.replace, minute=(-1))
+    self.assertRaises(ValueError, base.replace, second=100)
+    self.assertRaises(ValueError, base.replace, microsecond=1000000)

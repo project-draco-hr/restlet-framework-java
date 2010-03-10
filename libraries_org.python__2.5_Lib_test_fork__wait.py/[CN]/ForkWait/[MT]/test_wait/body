@@ -1,0 +1,23 @@
+def test_wait(self):
+    for i in range(NUM_THREADS):
+        thread.start_new(self.f, (i,))
+    time.sleep(LONGSLEEP)
+    a = self.alive.keys()
+    a.sort()
+    self.assertEquals(a, range(NUM_THREADS))
+    prefork_lives = self.alive.copy()
+    if (sys.platform in ['unixware7']):
+        cpid = os.fork1()
+    else:
+        cpid = os.fork()
+    if (cpid == 0):
+        time.sleep(LONGSLEEP)
+        n = 0
+        for key in self.alive:
+            if (self.alive[key] != prefork_lives[key]):
+                n += 1
+        os._exit(n)
+    else:
+        self.wait_impl(cpid)
+        self.stop = 1
+        time.sleep((2 * SHORTSLEEP))

@@ -1,0 +1,9 @@
+def test_intranet_domains_2965(self):
+    from cookielib import CookieJar, DefaultCookiePolicy
+    c = CookieJar(DefaultCookiePolicy(rfc2965=True))
+    interact_2965(c, 'http://example/', 'foo1=bar; PORT; Discard; Version=1;')
+    cookie = interact_2965(c, 'http://example/', 'foo2=bar; domain=".local"; Version=1')
+    self.assert_(('foo1=bar' in cookie))
+    interact_2965(c, 'http://example/', 'foo3=bar; Version=1')
+    cookie = interact_2965(c, 'http://example/')
+    self.assert_((('foo2=bar' in cookie) and (len(c) == 3)))

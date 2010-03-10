@@ -1,0 +1,12 @@
+def test_close(self):
+    import socket, httplib, gc
+    response = urllib2.urlopen('http://www.python.org/')
+    abused_fileobject = response.fp
+    self.assert_((abused_fileobject.__class__ is socket._fileobject))
+    httpresponse = abused_fileobject._sock
+    self.assert_((httpresponse.__class__ is httplib.HTTPResponse))
+    fileobject = httpresponse.fp
+    self.assert_((fileobject.__class__ is socket._fileobject))
+    self.assert_((not fileobject.closed))
+    response.close()
+    self.assert_(fileobject.closed)

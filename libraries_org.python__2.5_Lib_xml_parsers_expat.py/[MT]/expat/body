@@ -1,0 +1,29 @@
+def expat(callback=None, guard=True, force=False, returns=None):
+
+    def _expat(method):
+        name = method.__name__
+        context = id(sys._getframe(1))
+        key = (name, context)
+        append = _register.setdefault(key, []).append
+        append((method, callback, guard, force, returns))
+
+        def new_method(*args):
+            self = args[0]
+            parser = self.parser
+            self._update_location(event=name)
+            for (method, callback, guard, force, returns) in _register[key]:
+                if (guard not in (True, False)):
+                    guard = getattr(self, guard)
+                _callback = (callback and guard and getattr(parser, callback, None))
+                if (_callback or force):
+                    results = method(*args)
+                    if _callback:
+                        if (not isinstance(results, tuple)):
+                            results = (results,)
+                        if (not parser.returns_unicode):
+                            results = _encode(results, 'utf-8')
+                        _callback(*results)
+                    return returns
+        new_method.__name__ = name
+        return new_method
+    return _expat

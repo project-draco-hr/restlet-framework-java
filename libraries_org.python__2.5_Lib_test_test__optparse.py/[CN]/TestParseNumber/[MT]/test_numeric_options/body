@@ -1,0 +1,6 @@
+def test_numeric_options(self):
+    self.assertParseOK(['-n', '42', '-l', '0x20'], {'n': 42, 'l': 32, }, [])
+    self.assertParseOK(['-n', '0b0101', '-l010'], {'n': 5, 'l': 8, }, [])
+    self.assertParseFail(['-n008'], "option -n: invalid integer value: '008'")
+    self.assertParseFail(['-l0b0123'], "option -l: invalid long integer value: '0b0123'")
+    self.assertParseFail(['-l', '0x12x'], "option -l: invalid long integer value: '0x12x'")

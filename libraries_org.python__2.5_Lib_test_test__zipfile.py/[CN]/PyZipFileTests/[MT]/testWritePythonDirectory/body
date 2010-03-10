@@ -1,0 +1,24 @@
+def testWritePythonDirectory(self):
+    os.mkdir(TESTFN2)
+    try:
+        fp = open(os.path.join(TESTFN2, 'mod1.py'), 'w')
+        fp.write('print 42\n')
+        fp.close()
+        fp = open(os.path.join(TESTFN2, 'mod2.py'), 'w')
+        fp.write('print 42 * 42\n')
+        fp.close()
+        fp = open(os.path.join(TESTFN2, 'mod2.txt'), 'w')
+        fp.write('bla bla bla\n')
+        fp.close()
+        zipfp = zipfile.PyZipFile(TemporaryFile(), 'w')
+        zipfp.writepy(TESTFN2)
+        names = zipfp.namelist()
+        if (not is_jython):
+            self.assert_((('mod1.pyc' in names) or ('mod1.pyo' in names)))
+            self.assert_((('mod2.pyc' in names) or ('mod2.pyo' in names)))
+        else:
+            self.assert_(('mod1$py.class' in names))
+            self.assert_(('mod2$py.class' in names))
+        self.assert_(('mod2.txt' not in names))
+    finally:
+        shutil.rmtree(TESTFN2)

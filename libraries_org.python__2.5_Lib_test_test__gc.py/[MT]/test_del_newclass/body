@@ -1,0 +1,14 @@
+def test_del_newclass():
+    thresholds = gc.get_threshold()
+    gc.enable()
+    gc.set_threshold(1)
+
+
+    class A(object):
+
+        def __del__(self):
+            dir(self)
+    a = A()
+    del a
+    gc.disable()
+    gc.set_threshold(*thresholds)

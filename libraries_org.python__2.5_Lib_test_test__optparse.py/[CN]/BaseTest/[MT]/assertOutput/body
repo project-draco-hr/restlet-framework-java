@@ -1,0 +1,21 @@
+def assertOutput(self, cmdline_args, expected_output, expected_status=0, expected_error=None):
+    'Assert the parser prints the expected output on stdout.'
+    save_stdout = sys.stdout
+    encoding = getattr(save_stdout, 'encoding', None)
+    try:
+        try:
+            sys.stdout = StringIO()
+            if encoding:
+                sys.stdout.encoding = encoding
+            self.parser.parse_args(cmdline_args)
+        finally:
+            output = sys.stdout.getvalue()
+            sys.stdout = save_stdout
+    except InterceptedError as err:
+        self.assert_((type(output) is types.StringType), ('expected output to be an ordinary string, not %r' % type(output)))
+        if (output != expected_output):
+            self.fail((((("expected: \n'''\n" + expected_output) + "'''\nbut got \n'''\n") + output) + "'''"))
+        self.assertEqual(err.exit_status, expected_status)
+        self.assertEqual(err.exit_message, expected_error)
+    else:
+        self.assertFalse('expected parser.exit()')

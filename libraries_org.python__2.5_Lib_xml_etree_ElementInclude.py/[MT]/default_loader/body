@@ -1,0 +1,10 @@
+def default_loader(href, parse, encoding=None):
+    file = open(href)
+    if (parse == 'xml'):
+        data = ElementTree.parse(file).getroot()
+    else:
+        data = file.read()
+        if encoding:
+            data = data.decode(encoding)
+    file.close()
+    return data

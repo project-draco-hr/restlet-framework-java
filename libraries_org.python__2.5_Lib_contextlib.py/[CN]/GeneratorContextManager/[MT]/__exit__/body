@@ -1,0 +1,19 @@
+def __exit__(self, type, value, traceback):
+    if (type is None):
+        try:
+            self.gen.next()
+        except StopIteration:
+            return
+        else:
+            raise RuntimeError("generator didn't stop")
+    else:
+        if (value is None):
+            value = type()
+        try:
+            self.gen.throw(type, value, traceback)
+            raise RuntimeError("generator didn't stop after throw()")
+        except StopIteration as exc:
+            return (exc is not value)
+        except:
+            if (sys.exc_info()[1] is not value):
+                raise

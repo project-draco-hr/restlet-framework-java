@@ -1,0 +1,9 @@
+def test_anydbm_create(self):
+    tmpdir = tempfile.mkdtemp()
+    try:
+        dbfile = os.path.join(tmpdir, 'foo.db')
+        anydbm.open(dbfile, 'c').close()
+        ftype = whichdb.whichdb(dbfile)
+        self.assertNotEqual(ftype, 'bsddb185')
+    finally:
+        shutil.rmtree(tmpdir)

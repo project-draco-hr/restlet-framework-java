@@ -1,0 +1,24 @@
+def stat(path):
+    'stat(path) -> stat result\n\n    Perform a stat system call on the given path.\n\n    The Java stat implementation only returns a small subset of\n    the standard fields: size, modification time and change time.\n    '
+    abs_path = sys.getPath(path)
+    try:
+        return stat_result.from_jnastat(_posix.stat(abs_path))
+    except NotImplementedError:
+        pass
+    except:
+        raise
+    f = File(abs_path)
+    if (not f.exists()):
+        raise OSError(errno.ENOENT, strerror(errno.ENOENT), path)
+    size = f.length()
+    mtime = (f.lastModified() / 1000.0)
+    mode = 0
+    if f.isDirectory():
+        mode = _stat.S_IFDIR
+    elif f.isFile():
+        mode = _stat.S_IFREG
+    if f.canRead():
+        mode = (mode | _stat.S_IREAD)
+    if f.canWrite():
+        mode = (mode | _stat.S_IWRITE)
+    return stat_result((mode, 0, 0, 0, 0, 0, size, mtime, mtime, 0))

@@ -1,0 +1,9 @@
+def test_osexlock(self):
+    if hasattr(posix, 'O_EXLOCK'):
+        fd = os.open(test_support.TESTFN, ((os.O_WRONLY | os.O_EXLOCK) | os.O_CREAT))
+        self.assertRaises(OSError, os.open, test_support.TESTFN, ((os.O_WRONLY | os.O_EXLOCK) | os.O_NONBLOCK))
+        os.close(fd)
+        if hasattr(posix, 'O_SHLOCK'):
+            fd = os.open(test_support.TESTFN, ((os.O_WRONLY | os.O_SHLOCK) | os.O_CREAT))
+            self.assertRaises(OSError, os.open, test_support.TESTFN, ((os.O_WRONLY | os.O_EXLOCK) | os.O_NONBLOCK))
+            os.close(fd)

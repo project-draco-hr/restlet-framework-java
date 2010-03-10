@@ -1,0 +1,15 @@
+def determine_parent(self, globals):
+    if ((not globals) or (not ('__name__' in globals))):
+        return None
+    pname = globals['__name__']
+    if ('__path__' in globals):
+        parent = self.modules[pname]
+        assert (globals is parent.__dict__)
+        return parent
+    if ('.' in pname):
+        i = pname.rfind('.')
+        pname = pname[:i]
+        parent = self.modules[pname]
+        assert (parent.__name__ == pname)
+        return parent
+    return None

@@ -1,0 +1,7 @@
+def __init__(self, filename, mode='a', maxBytes=0, backupCount=0, encoding=None):
+    '\n        Open the specified file and use it as the stream for logging.\n\n        By default, the file grows indefinitely. You can specify particular\n        values of maxBytes and backupCount to allow the file to rollover at\n        a predetermined size.\n\n        Rollover occurs whenever the current log file is nearly maxBytes in\n        length. If backupCount is >= 1, the system will successively create\n        new files with the same pathname as the base file, but with extensions\n        ".1", ".2" etc. appended to it. For example, with a backupCount of 5\n        and a base file name of "app.log", you would get "app.log",\n        "app.log.1", "app.log.2", ... through to "app.log.5". The file being\n        written to is always "app.log" - when it gets filled up, it is closed\n        and renamed to "app.log.1", and if files "app.log.1", "app.log.2" etc.\n        exist, then they are renamed to "app.log.2", "app.log.3" etc.\n        respectively.\n\n        If maxBytes is zero, rollover never occurs.\n        '
+    if (maxBytes > 0):
+        mode = 'a'
+    BaseRotatingHandler.__init__(self, filename, mode, encoding)
+    self.maxBytes = maxBytes
+    self.backupCount = backupCount

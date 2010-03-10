@@ -1,0 +1,35 @@
+def randrange(self, start, stop=None, step=1, int=int, default=None, maxwidth=(1L << BPF)):
+    "Choose a random item from range(start, stop[, step]).\n\n        This fixes the problem with randint() which includes the\n        endpoint; in Python this is usually not what you want.\n        Do not supply the 'int', 'default', and 'maxwidth' arguments.\n        "
+    istart = int(start)
+    if (istart != start):
+        raise ValueError, 'non-integer arg 1 for randrange()'
+    if (stop is default):
+        if (istart > 0):
+            if (istart >= maxwidth):
+                return self._randbelow(istart)
+            return int((self.random() * istart))
+        raise ValueError, 'empty range for randrange()'
+    istop = int(stop)
+    if (istop != stop):
+        raise ValueError, 'non-integer stop for randrange()'
+    width = (istop - istart)
+    if ((step == 1) and (width > 0)):
+        if (width >= maxwidth):
+            return int((istart + self._randbelow(width)))
+        return int((istart + int((self.random() * width))))
+    if (step == 1):
+        raise ValueError, ('empty range for randrange() (%d,%d, %d)' % (istart, istop, width))
+    istep = int(step)
+    if (istep != step):
+        raise ValueError, 'non-integer step for randrange()'
+    if (istep > 0):
+        n = (((width + istep) - 1) // istep)
+    elif (istep < 0):
+        n = (((width + istep) + 1) // istep)
+    else:
+        raise ValueError, 'zero step for randrange()'
+    if (n <= 0):
+        raise ValueError, 'empty range for randrange()'
+    if (n >= maxwidth):
+        return (istart + (istep * self._randbelow(n)))
+    return (istart + (istep * int((self.random() * n))))

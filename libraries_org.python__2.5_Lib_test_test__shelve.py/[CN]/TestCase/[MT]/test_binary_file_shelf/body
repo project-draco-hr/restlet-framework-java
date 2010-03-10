@@ -1,0 +1,9 @@
+def test_binary_file_shelf(self):
+    try:
+        s = shelve.open(self.fn, protocol=1)
+        s['key1'] = (1, 2, 3, 4)
+        self.assertEqual(s['key1'], (1, 2, 3, 4))
+        s.close()
+    finally:
+        for f in glob.glob((self.fn + '*')):
+            os.unlink(f)

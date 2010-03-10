@@ -1,0 +1,18 @@
+def test_failing_import_sticks():
+    source = ((TESTFN + os.extsep) + 'py')
+    f = open(source, 'w')
+    print  >> f, 'a = 1/0'
+    f.close()
+    sys.path.insert(0, os.curdir)
+    try:
+        for i in (1, 2, 3):
+            try:
+                mod = __import__(TESTFN)
+            except ZeroDivisionError:
+                if (TESTFN in sys.modules):
+                    raise TestFailed('damaged module in sys.modules', i)
+            else:
+                raise TestFailed('was able to import a damaged module', i)
+    finally:
+        sys.path.pop(0)
+        remove_files(TESTFN)

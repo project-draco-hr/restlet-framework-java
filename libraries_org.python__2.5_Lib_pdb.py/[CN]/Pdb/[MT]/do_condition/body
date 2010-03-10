@@ -1,0 +1,21 @@
+def do_condition(self, arg):
+    args = arg.split(' ', 1)
+    try:
+        bpnum = int(args[0].strip())
+    except ValueError:
+        print  >> self.stdout, ('Breakpoint index %r is not a number' % args[0])
+        return
+    try:
+        cond = args[1]
+    except:
+        cond = None
+    try:
+        bp = bdb.Breakpoint.bpbynumber[bpnum]
+    except IndexError:
+        print  >> self.stdout, ('Breakpoint index %r is not valid' % args[0])
+        return
+    if bp:
+        bp.cond = cond
+        if (not cond):
+            print  >> self.stdout, 'Breakpoint', bpnum,
+            print  >> self.stdout, 'is now unconditional.'

@@ -1,0 +1,17 @@
+def test_nested(self):
+    hit_finally = False
+    hit_inner_except = False
+    hit_inner_finally = False
+    try:
+        try:
+            try:
+                raise Exception, 'inner exception'
+            except:
+                hit_inner_except = True
+        finally:
+            hit_inner_finally = True
+    finally:
+        hit_finally = True
+    self.assertTrue(hit_inner_except)
+    self.assertTrue(hit_inner_finally)
+    self.assertTrue(hit_finally)

@@ -1,0 +1,13 @@
+def test_raise(self):
+    s = StringIO.StringIO()
+    sys.stdout = sys.stderr = s
+    save_handlers = atexit._exithandlers
+    atexit._exithandlers = []
+    try:
+        atexit.register(self.raise1)
+        atexit.register(self.raise2)
+        self.assertRaises(TypeError, atexit._run_exitfuncs)
+    finally:
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+        atexit._exithandlers = save_handlers

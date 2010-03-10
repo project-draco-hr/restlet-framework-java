@@ -1,0 +1,8 @@
+def write(self, s):
+    'Write string s to the stream.\n        '
+    if (self.comptype == 'gz'):
+        self.crc = self.zlib.crc32(s, self.crc)
+    self.pos += len(s)
+    if (self.comptype != 'tar'):
+        s = self.cmp.compress(s)
+    self.__write(s)

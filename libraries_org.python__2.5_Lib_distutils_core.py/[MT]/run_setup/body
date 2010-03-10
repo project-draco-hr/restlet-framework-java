@@ -1,0 +1,25 @@
+def run_setup(script_name, script_args=None, stop_after='run'):
+    "Run a setup script in a somewhat controlled environment, and\n    return the Distribution instance that drives things.  This is useful\n    if you need to find out the distribution meta-data (passed as\n    keyword args from 'script' to 'setup()', or the contents of the\n    config files or command-line.\n\n    'script_name' is a file that will be run with 'execfile()';\n    'sys.argv[0]' will be replaced with 'script' for the duration of the\n    call.  'script_args' is a list of strings; if supplied,\n    'sys.argv[1:]' will be replaced by 'script_args' for the duration of\n    the call.\n\n    'stop_after' tells 'setup()' when to stop processing; possible\n    values:\n      init\n        stop after the Distribution instance has been created and\n        populated with the keyword arguments to 'setup()'\n      config\n        stop after config files have been parsed (and their data\n        stored in the Distribution instance)\n      commandline\n        stop after the command-line ('sys.argv[1:]' or 'script_args')\n        have been parsed (and the data stored in the Distribution)\n      run [default]\n        stop after all commands have been run (the same as if 'setup()'\n        had been called in the usual way\n\n    Returns the Distribution instance, which provides all information\n    used to drive the Distutils.\n    "
+    if (stop_after not in ('init', 'config', 'commandline', 'run')):
+        raise ValueError, ("invalid value for 'stop_after': %r" % (stop_after,))
+    global _setup_stop_after, _setup_distribution
+    _setup_stop_after = stop_after
+    save_argv = sys.argv
+    g = {}
+    l = {}
+    try:
+        try:
+            sys.argv[0] = script_name
+            if (script_args is not None):
+                sys.argv[1:] = script_args
+            execfile(script_name, g, l)
+        finally:
+            sys.argv = save_argv
+            _setup_stop_after = None
+    except SystemExit:
+        pass
+    except:
+        raise
+    if (_setup_distribution is None):
+        raise RuntimeError, ("'distutils.core.setup()' was never called -- perhaps '%s' is not a Distutils setup script?" % script_name)
+    return _setup_distribution

@@ -1,0 +1,10 @@
+def global_matches(self, text):
+    'Compute matches when text is a simple name.\n\n        Return a list of all keywords, built-in functions and names currently\n        defined in self.namespace that match.\n\n        '
+    import keyword
+    matches = []
+    n = len(text)
+    for list in [keyword.kwlist, __builtin__.__dict__, self.namespace]:
+        for word in list:
+            if ((word[:n] == text) and (word != '__builtins__')):
+                matches.append(word)
+    return matches

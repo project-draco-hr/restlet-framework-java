@@ -1,0 +1,28 @@
+def _EndRecData(fpin):
+    'Return data from the "End of Central Directory" record, or None.\n\n    The data is a list of the nine items in the ZIP "End of central dir"\n    record followed by a tenth item, the file seek offset of this record.'
+    fpin.seek((-22), 2)
+    filesize = (fpin.tell() + 22)
+    data = fpin.read()
+    if ((data[0:4] == stringEndArchive) and (data[(-2):] == '\x00\x00')):
+        endrec = struct.unpack(structEndArchive, data)
+        endrec = list(endrec)
+        endrec.append('')
+        endrec.append((filesize - 22))
+        if ((endrec[(-4)] == (-1)) or (endrec[(-4)] == 4294967295)):
+            return _EndRecData64(fpin, (-22), endrec)
+        return endrec
+    END_BLOCK = min(filesize, (1024 * 4))
+    fpin.seek((filesize - END_BLOCK), 0)
+    data = fpin.read()
+    start = data.rfind(stringEndArchive)
+    if (start >= 0):
+        endrec = struct.unpack(structEndArchive, data[start:(start + 22)])
+        endrec = list(endrec)
+        comment = data[(start + 22):]
+        if (endrec[7] == len(comment)):
+            endrec.append(comment)
+            endrec.append(((filesize - END_BLOCK) + start))
+            if ((endrec[(-4)] == (-1)) or (endrec[(-4)] == 4294967295)):
+                return _EndRecData64(fpin, ((- END_BLOCK) + start), endrec)
+            return endrec
+    return

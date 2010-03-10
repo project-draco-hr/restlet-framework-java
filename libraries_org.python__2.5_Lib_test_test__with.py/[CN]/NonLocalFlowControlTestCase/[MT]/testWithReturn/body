@@ -1,0 +1,13 @@
+def testWithReturn(self):
+    mock = mock_contextmanager_generator()
+
+    def foo():
+        counter = 0
+        while True:
+            counter += 1
+            with mock:
+                counter += 10
+                return counter
+            counter += 100
+    self.assertEqual(foo(), 11)
+    self.assertAfterWithManagerInvariantsNoError(mock)

@@ -1,0 +1,40 @@
+def read(self, size=(-1)):
+    data = self._rbuf
+    if (size < 0):
+        buffers = []
+        if data:
+            buffers.append(data)
+        self._rbuf = ''
+        if (self._rbufsize <= 1):
+            recv_size = self.default_bufsize
+        else:
+            recv_size = self._rbufsize
+        while True:
+            data = self._sock.recv(recv_size)
+            if (not data):
+                break
+            buffers.append(data)
+        return ''.join(buffers)
+    else:
+        buf_len = len(data)
+        if (buf_len >= size):
+            self._rbuf = data[size:]
+            return data[:size]
+        buffers = []
+        if data:
+            buffers.append(data)
+        self._rbuf = ''
+        while True:
+            left = (size - buf_len)
+            recv_size = max(self._rbufsize, left)
+            data = self._sock.recv(recv_size)
+            if (not data):
+                break
+            buffers.append(data)
+            n = len(data)
+            if (n >= left):
+                self._rbuf = data[left:]
+                buffers[(-1)] = data[:left]
+                break
+            buf_len += n
+        return ''.join(buffers)

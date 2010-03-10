@@ -1,0 +1,8 @@
+def b64decode(s, altchars=None):
+    "Decode a Base64 encoded string.\n\n    s is the string to decode.  Optional altchars must be a string of at least\n    length 2 (additional characters are ignored) which specifies the\n    alternative alphabet used instead of the '+' and '/' characters.\n\n    The decoded string is returned.  A TypeError is raised if s were\n    incorrectly padded or if there are non-alphabet characters present in the\n    string.\n    "
+    if (altchars is not None):
+        s = _translate(s, {altchars[0]: '+', altchars[1]: '/', })
+    try:
+        return binascii.a2b_base64(s)
+    except binascii.Error as msg:
+        raise TypeError(msg)

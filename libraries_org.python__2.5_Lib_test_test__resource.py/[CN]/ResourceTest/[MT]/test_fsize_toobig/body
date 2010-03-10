@@ -1,0 +1,15 @@
+def test_fsize_toobig(self):
+    too_big = (10L ** 50)
+    try:
+        (cur, max) = resource.getrlimit(resource.RLIMIT_FSIZE)
+    except AttributeError:
+        pass
+    else:
+        try:
+            resource.setrlimit(resource.RLIMIT_FSIZE, (too_big, max))
+        except (OverflowError, ValueError):
+            pass
+        try:
+            resource.setrlimit(resource.RLIMIT_FSIZE, (max, too_big))
+        except (OverflowError, ValueError):
+            pass

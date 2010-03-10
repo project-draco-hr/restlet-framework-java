@@ -1,0 +1,15 @@
+def test_arg_passing(self):
+
+    def arg_tester(queue, arg1=False, arg2=False):
+        'Use to test _thread.start_new_thread() passes args properly.'
+        queue.put((arg1, arg2))
+    testing_queue = Queue.Queue(1)
+    _thread.start_new_thread(arg_tester, (testing_queue, True, True))
+    result = testing_queue.get()
+    self.failUnless((result[0] and result[1]), 'Argument passing for thread creation using tuple failed')
+    _thread.start_new_thread(arg_tester, tuple(), {'queue': testing_queue, 'arg1': True, 'arg2': True, })
+    result = testing_queue.get()
+    self.failUnless((result[0] and result[1]), 'Argument passing for thread creation using kwargs failed')
+    _thread.start_new_thread(arg_tester, (testing_queue, True), {'arg2': True, })
+    result = testing_queue.get()
+    self.failUnless((result[0] and result[1]), 'Argument passing for thread creation using both tuple and kwargs failed')

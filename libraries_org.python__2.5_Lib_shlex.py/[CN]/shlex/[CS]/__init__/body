@@ -1,0 +1,32 @@
+def __init__(self, instream=None, infile=None, posix=False):
+    if isinstance(instream, basestring):
+        instream = StringIO(instream)
+    if (instream is not None):
+        self.instream = instream
+        self.infile = infile
+    else:
+        self.instream = sys.stdin
+        self.infile = None
+    self.posix = posix
+    if posix:
+        self.eof = None
+    else:
+        self.eof = ''
+    self.commenters = '#'
+    self.wordchars = 'abcdfeghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_'
+    if self.posix:
+        self.wordchars += '\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd8\xd9\xda\xdb\xdc\xdd\xde'
+    self.whitespace = ' \t\r\n'
+    self.whitespace_split = False
+    self.quotes = '\'"'
+    self.escape = '\\'
+    self.escapedquotes = '"'
+    self.state = ' '
+    self.pushback = deque()
+    self.lineno = 1
+    self.debug = 0
+    self.token = ''
+    self.filestack = deque()
+    self.source = None
+    if self.debug:
+        print ('shlex: reading from %s, line %d' % (self.instream, self.lineno))

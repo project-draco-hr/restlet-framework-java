@@ -1,0 +1,9 @@
+def test_cwd(self):
+    tmpdir = tempfile.gettempdir()
+    cwd = os.getcwd()
+    os.chdir(tmpdir)
+    tmpdir = os.getcwd()
+    os.chdir(cwd)
+    p = subprocess.Popen([sys.executable, '-c', 'import sys,os;sys.stdout.write(os.getcwd())'], stdout=subprocess.PIPE, cwd=tmpdir)
+    normcase = os.path.normcase
+    self.assertEqual(normcase(p.stdout.read()), normcase(tmpdir))

@@ -1,0 +1,13 @@
+def NamedTemporaryFile(mode='w+b', bufsize=(-1), suffix='', prefix=template, dir=None):
+    'Create and return a temporary file.\n    Arguments:\n    \'prefix\', \'suffix\', \'dir\' -- as for mkstemp.\n    \'mode\' -- the mode argument to os.fdopen (default "w+b").\n    \'bufsize\' -- the buffer size argument to os.fdopen (default -1).\n    The file is created as mkstemp() would do it.\n\n    Returns an object with a file-like interface; the name of the file\n    is accessible as file.name.  The file will be automatically deleted\n    when it is closed.\n    '
+    if (dir is None):
+        dir = gettempdir()
+    if ('b' in mode):
+        flags = _bin_openflags
+    else:
+        flags = _text_openflags
+    if (_os.name == 'nt'):
+        flags |= _os.O_TEMPORARY
+    (fd, name) = _mkstemp_inner(dir, prefix, suffix, flags)
+    file = _os.fdopen(fd, mode, bufsize)
+    return _TemporaryFileWrapper(file, name)

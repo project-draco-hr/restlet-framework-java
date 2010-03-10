@@ -1,0 +1,41 @@
+def poll(timeout=0.0, map=None):
+    if (map is None):
+        map = socket_map
+    if map:
+        r = []
+        w = []
+        e = []
+        for (fd, obj) in map.items():
+            is_r = obj.readable()
+            is_w = obj.writable()
+            if is_r:
+                r.append(fd)
+            if is_w:
+                w.append(fd)
+            if (is_r or is_w):
+                e.append(fd)
+        if ([] == r == w == e):
+            time.sleep(timeout)
+        else:
+            try:
+                (r, w, e) = select.select(r, w, e, timeout)
+            except select.error as err:
+                if (err[0] != EINTR):
+                    raise
+                else:
+                    return
+        for fd in r:
+            obj = map.get(fd)
+            if (obj is None):
+                continue
+            read(obj)
+        for fd in w:
+            obj = map.get(fd)
+            if (obj is None):
+                continue
+            write(obj)
+        for fd in e:
+            obj = map.get(fd)
+            if (obj is None):
+                continue
+            _exception(obj)

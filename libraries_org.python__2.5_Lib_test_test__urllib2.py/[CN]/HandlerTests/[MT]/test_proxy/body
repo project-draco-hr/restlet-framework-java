@@ -1,0 +1,11 @@
+def test_proxy(self):
+    o = OpenerDirector()
+    ph = urllib2.ProxyHandler(dict(http='proxy.example.com:3128'))
+    o.add_handler(ph)
+    meth_spec = [[('http_open', 'return response')]]
+    handlers = add_ordered_mock_handlers(o, meth_spec)
+    req = Request('http://acme.example.com/')
+    self.assertEqual(req.get_host(), 'acme.example.com')
+    r = o.open(req)
+    self.assertEqual(req.get_host(), 'proxy.example.com:3128')
+    self.assertEqual([(handlers[0], 'http_open')], [tup[0:2] for tup in o.calls])

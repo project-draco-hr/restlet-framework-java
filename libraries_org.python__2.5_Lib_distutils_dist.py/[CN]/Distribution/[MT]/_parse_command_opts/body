@@ -1,0 +1,44 @@
+def _parse_command_opts(self, parser, args):
+    "Parse the command-line options for a single command.\n        'parser' must be a FancyGetopt instance; 'args' must be the list\n        of arguments, starting with the current command (whose options\n        we are about to parse).  Returns a new version of 'args' with\n        the next command at the front of the list; will be the empty\n        list if there are no more commands on the command line.  Returns\n        None if the user asked for help on this command.\n        "
+    from distutils.cmd import Command
+    command = args[0]
+    if (not command_re.match(command)):
+        raise SystemExit, ("invalid command name '%s'" % command)
+    self.commands.append(command)
+    try:
+        cmd_class = self.get_command_class(command)
+    except DistutilsModuleError as msg:
+        raise DistutilsArgError, msg
+    if (not issubclass(cmd_class, Command)):
+        raise DistutilsClassError, ('command class %s must subclass Command' % cmd_class)
+    if (not (hasattr(cmd_class, 'user_options') and (type(cmd_class.user_options) is ListType))):
+        raise DistutilsClassError, (('command class %s must provide ' + "'user_options' attribute (a list of tuples)") % cmd_class)
+    negative_opt = self.negative_opt
+    if hasattr(cmd_class, 'negative_opt'):
+        negative_opt = copy(negative_opt)
+        negative_opt.update(cmd_class.negative_opt)
+    if (hasattr(cmd_class, 'help_options') and (type(cmd_class.help_options) is ListType)):
+        help_options = fix_help_options(cmd_class.help_options)
+    else:
+        help_options = []
+    parser.set_option_table(((self.global_options + cmd_class.user_options) + help_options))
+    parser.set_negative_aliases(negative_opt)
+    (args, opts) = parser.getopt(args[1:])
+    if (hasattr(opts, 'help') and opts.help):
+        self._show_help(parser, display_options=0, commands=[cmd_class])
+        return
+    if (hasattr(cmd_class, 'help_options') and (type(cmd_class.help_options) is ListType)):
+        help_option_found = 0
+        for (help_option, short, desc, func) in cmd_class.help_options:
+            if hasattr(opts, parser.get_attr_name(help_option)):
+                help_option_found = 1
+                if callable(func):
+                    func()
+                else:
+                    raise DistutilsClassError(("invalid help function %r for help option '%s': must be a callable object (function, etc.)" % (func, help_option)))
+        if help_option_found:
+            return
+    opt_dict = self.get_option_dict(command)
+    for (name, value) in vars(opts).items():
+        opt_dict[name] = ('command line', value)
+    return args

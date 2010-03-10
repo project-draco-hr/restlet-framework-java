@@ -1,0 +1,77 @@
+'Temporary files.\n\nThis module provides generic, low- and high-level interfaces for\ncreating temporary files and directories.  The interfaces listed\nas "safe" just below can be used without fear of race conditions.\nThose listed as "unsafe" cannot, and are provided for backward\ncompatibility only.\n\nThis module also provides some data items to the user:\n\n  TMP_MAX  - maximum number of names that will be tried before\n             giving up.\n  template - the default prefix for all temporary names.\n             You may change this to control the default prefix.\n  tempdir  - If this is set to a string before the first use of\n             any routine from this module, it will be considered as\n             another candidate location to store temporary files.\n'
+__all__ = ['NamedTemporaryFile', 'TemporaryFile', 'mkstemp', 'mkdtemp', 'mktemp', 'TMP_MAX', 'gettempprefix', 'tempdir', 'gettempdir']
+import os as _os
+import errno as _errno
+from random import Random as _Random
+if (_os.name == 'mac'):
+    import Carbon.Folder as _Folder
+    import Carbon.Folders as _Folders
+try:
+    import fcntl as _fcntl
+except ImportError:
+
+    def _set_cloexec(fd):
+        pass
+else:
+
+    def _set_cloexec(fd):
+        try:
+            flags = _fcntl.fcntl(fd, _fcntl.F_GETFD, 0)
+        except IOError:
+            pass
+        else:
+            flags |= _fcntl.FD_CLOEXEC
+            _fcntl.fcntl(fd, _fcntl.F_SETFD, flags)
+try:
+    import thread as _thread
+except ImportError:
+    import dummy_thread as _thread
+_allocate_lock = _thread.allocate_lock
+_text_openflags = ((_os.O_RDWR | _os.O_CREAT) | _os.O_EXCL)
+if hasattr(_os, 'O_NOINHERIT'):
+    _text_openflags |= _os.O_NOINHERIT
+if hasattr(_os, 'O_NOFOLLOW'):
+    _text_openflags |= _os.O_NOFOLLOW
+_bin_openflags = _text_openflags
+if hasattr(_os, 'O_BINARY'):
+    _bin_openflags |= _os.O_BINARY
+if hasattr(_os, 'TMP_MAX'):
+    TMP_MAX = _os.TMP_MAX
+else:
+    TMP_MAX = 10000
+template = 'tmp'
+tempdir = None
+_once_lock = _allocate_lock()
+if hasattr(_os, 'lstat'):
+    _stat = _os.lstat
+elif hasattr(_os, 'stat'):
+    _stat = _os.stat
+else:
+
+    def _stat(fn):
+        try:
+            f = open(fn)
+        except IOError:
+            raise _os.error
+        f.close()
+_name_sequence = None
+tempdir = None
+if ((_os.name != 'posix') or (_os.sys.platform == 'cygwin')):
+    TemporaryFile = NamedTemporaryFile
+else:
+
+    def TemporaryFile(mode='w+b', bufsize=(-1), suffix='', prefix=template, dir=None):
+        'Create and return a temporary file.\n        Arguments:\n        \'prefix\', \'suffix\', \'dir\' -- as for mkstemp.\n        \'mode\' -- the mode argument to os.fdopen (default "w+b").\n        \'bufsize\' -- the buffer size argument to os.fdopen (default -1).\n        The file is created as mkstemp() would do it.\n\n        Returns an object with a file-like interface.  The file has no\n        name, and will cease to exist when it is closed.\n        '
+        if (dir is None):
+            dir = gettempdir()
+        if ('b' in mode):
+            flags = _bin_openflags
+        else:
+            flags = _text_openflags
+        (fd, name) = _mkstemp_inner(dir, prefix, suffix, flags)
+        try:
+            _os.unlink(name)
+            return _os.fdopen(fd, mode, bufsize)
+        except:
+            _os.close(fd)
+            raise

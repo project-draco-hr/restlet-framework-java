@@ -1,0 +1,9 @@
+def _raise_error(self, condition, explanation=None, *args):
+    'Handles an error\n\n        If the flag is in _ignored_flags, returns the default response.\n        Otherwise, it increments the flag, then, if the corresponding\n        trap_enabler is set, it reaises the exception.  Otherwise, it returns\n        the default value after incrementing the flag.\n        '
+    error = _condition_map.get(condition, condition)
+    if (error in self._ignored_flags):
+        return error().handle(self, *args)
+    self.flags[error] += 1
+    if (not self.traps[error]):
+        return condition().handle(self, *args)
+    raise error, explanation

@@ -1,0 +1,26 @@
+def get_message(self, key):
+    'Return a Message representation or raise a KeyError.'
+    try:
+        if self._locked:
+            f = open(os.path.join(self._path, str(key)), 'r+')
+        else:
+            f = open(os.path.join(self._path, str(key)), 'r')
+    except IOError as e:
+        if (e.errno == errno.ENOENT):
+            raise KeyError(('No message with key: %s' % key))
+        else:
+            raise
+    try:
+        if self._locked:
+            _lock_file(f)
+        try:
+            msg = MHMessage(f)
+        finally:
+            if self._locked:
+                _unlock_file(f)
+    finally:
+        f.close()
+    for (name, key_list) in self.get_sequences():
+        if (key in key_list):
+            msg.add_sequence(name)
+    return msg

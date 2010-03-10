@@ -1,0 +1,25 @@
+def iter_modules(self, prefix=''):
+    if ((self.path is None) or (not os.path.isdir(self.path))):
+        return
+    yielded = {}
+    import inspect
+    filenames = os.listdir(self.path)
+    filenames.sort()
+    for fn in filenames:
+        modname = inspect.getmodulename(fn)
+        if ((modname == '__init__') or (modname in yielded)):
+            continue
+        path = os.path.join(self.path, fn)
+        ispkg = False
+        if ((not modname) and os.path.isdir(path) and ('.' not in fn)):
+            modname = fn
+            for fn in os.listdir(path):
+                subname = inspect.getmodulename(fn)
+                if (subname == '__init__'):
+                    ispkg = True
+                    break
+            else:
+                continue
+        if (modname and ('.' not in modname)):
+            yielded[modname] = 1
+            yield ((prefix + modname), ispkg)

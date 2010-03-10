@@ -1,0 +1,9 @@
+def test_zipimport(self):
+    importer = zipimport.zipimporter((self.basename1 + '.zip'))
+    self.assertEqual(importer.archive, (self.basename1 + '.zip'))
+    self.assertEqual(importer.prefix, '')
+    self.assert_((self.basename1 in importer._files))
+    entry = importer._files[self.basename1]
+    self.assertEqual(entry[0], os.path.join((self.basename1 + '.zip'), self.basename1))
+    self.assertEqual(importer.find_module(self.mod_name), importer)
+    self.assertEqual(importer.get_source(self.mod_name), CODE1)

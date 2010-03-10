@@ -1,0 +1,5 @@
+def visitAssign(self, node, scope):
+    "Propagate assignment flag down to child nodes.\n\n        The Assign node doesn't itself contains the variables being\n        assigned to.  Instead, the children in node.nodes are visited\n        with the assign flag set to true.  When the names occur in\n        those nodes, they are marked as defs.\n\n        Some names that occur in an assignment target are not bound by\n        the assignment, e.g. a name occurring inside a slice.  The\n        visitor handles these nodes specially; they do not propagate\n        the assign flag to their children.\n        "
+    for n in node.nodes:
+        self.visit(n, scope, 1)
+    self.visit(node.expr, scope)

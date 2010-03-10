@@ -1,0 +1,27 @@
+def _batch_appends(self, items):
+    save = self.save
+    write = self.write
+    if (not self.bin):
+        for x in items:
+            save(x)
+            write(APPEND)
+        return
+    r = xrange(self._BATCHSIZE)
+    while (items is not None):
+        tmp = []
+        for i in r:
+            try:
+                x = items.next()
+                tmp.append(x)
+            except StopIteration:
+                items = None
+                break
+        n = len(tmp)
+        if (n > 1):
+            write(MARK)
+            for x in tmp:
+                save(x)
+            write(APPENDS)
+        elif n:
+            save(tmp[0])
+            write(APPEND)

@@ -1,0 +1,45 @@
+def zipTest(self, f, compression):
+    zipfp = zipfile.ZipFile(f, 'w', compression)
+    zipfp.write(TESTFN, (('another' + os.extsep) + 'name'))
+    zipfp.write(TESTFN, TESTFN)
+    zipfp.writestr('strfile', self.data)
+    zipfp.close()
+    zipfp = zipfile.ZipFile(f, 'r', compression)
+    self.assertEqual(zipfp.read(TESTFN), self.data)
+    self.assertEqual(zipfp.read((('another' + os.extsep) + 'name')), self.data)
+    self.assertEqual(zipfp.read('strfile'), self.data)
+    fp = StringIO()
+    stdout = sys.stdout
+    try:
+        sys.stdout = fp
+        zipfp.printdir()
+    finally:
+        sys.stdout = stdout
+    directory = fp.getvalue()
+    lines = directory.splitlines()
+    self.assertEquals(len(lines), 4)
+    self.assert_(('File Name' in lines[0]))
+    self.assert_(('Modified' in lines[0]))
+    self.assert_(('Size' in lines[0]))
+    (fn, date, time, size) = lines[1].split()
+    self.assertEquals(fn, 'another.name')
+    self.assertEquals(size, str(len(self.data)))
+    names = zipfp.namelist()
+    self.assertEquals(len(names), 3)
+    self.assert_((TESTFN in names))
+    self.assert_(((('another' + os.extsep) + 'name') in names))
+    self.assert_(('strfile' in names))
+    infos = zipfp.infolist()
+    names = [i.filename for i in infos]
+    self.assertEquals(len(names), 3)
+    self.assert_((TESTFN in names))
+    self.assert_(((('another' + os.extsep) + 'name') in names))
+    self.assert_(('strfile' in names))
+    for i in infos:
+        self.assertEquals(i.file_size, len(self.data))
+    for nm in (TESTFN, (('another' + os.extsep) + 'name'), 'strfile'):
+        info = zipfp.getinfo(nm)
+        self.assertEquals(info.filename, nm)
+        self.assertEquals(info.file_size, len(self.data))
+    zipfp.testzip()
+    zipfp.close()

@@ -1,0 +1,6 @@
+def create_decimal(self, num='0'):
+    'Creates a new Decimal instance but using self as context.'
+    d = Decimal(num, context=self)
+    if (d._isnan() and (len(d._int) > (self.prec - self._clamp))):
+        return self._raise_error(ConversionSyntax, 'diagnostic info too long in NaN')
+    return d._fix(self)

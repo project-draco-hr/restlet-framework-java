@@ -1,0 +1,14 @@
+def test_saveall():
+    gc.collect()
+    vereq(gc.garbage, [])
+    L = []
+    L.append(L)
+    id_L = id(L)
+    debug = gc.get_debug()
+    gc.set_debug((debug | gc.DEBUG_SAVEALL))
+    del L
+    gc.collect()
+    gc.set_debug(debug)
+    vereq(len(gc.garbage), 1)
+    obj = gc.garbage.pop()
+    vereq(id(obj), id_L)

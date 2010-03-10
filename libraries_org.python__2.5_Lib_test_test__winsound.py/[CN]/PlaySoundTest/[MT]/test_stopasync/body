@@ -1,0 +1,13 @@
+def test_stopasync(self):
+    if _have_soundcard():
+        winsound.PlaySound('SystemQuestion', ((winsound.SND_ALIAS | winsound.SND_ASYNC) | winsound.SND_LOOP))
+        time.sleep(0.5)
+        try:
+            winsound.PlaySound('SystemQuestion', (winsound.SND_ALIAS | winsound.SND_NOSTOP))
+        except RuntimeError:
+            pass
+        else:
+            pass
+        winsound.PlaySound(None, winsound.SND_PURGE)
+    else:
+        self.assertRaises(RuntimeError, winsound.PlaySound, None, winsound.SND_PURGE)

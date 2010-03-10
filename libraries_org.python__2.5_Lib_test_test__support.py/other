@@ -1,0 +1,71 @@
+'Supporting definitions for the Python regression tests.'
+if (__name__ != 'test.test_support'):
+    raise ImportError, 'test_support must be imported from the test package'
+import sys
+import time
+verbose = 1
+use_resources = None
+junit_xml_dir = None
+max_memuse = 0
+_original_stdout = None
+FUZZ = 1e-06
+try:
+    unicode
+    have_unicode = 1
+except NameError:
+    have_unicode = 0
+is_jython = sys.platform.startswith('java')
+if is_jython:
+
+    def make_jar_classloader(jar):
+        import os
+        from java.net import URL, URLClassLoader
+        url = URL(('jar:file:%s!/' % jar))
+        if (os._name == 'nt'):
+            conn = url.openConnection()
+            if conn.getDefaultUseCaches():
+                conn.setDefaultUseCaches(False)
+        return URLClassLoader([url])
+import os
+if (os.name == 'java'):
+    TESTFN = '$test'
+elif (os.name == 'riscos'):
+    TESTFN = 'testfile'
+else:
+    TESTFN = '@test'
+    if have_unicode:
+        if isinstance('', unicode):
+            TESTFN_UNICODE = '@test-\xe0\xf2'
+        else:
+            TESTFN_UNICODE = unicode('@test-\xe0\xf2', 'latin-1')
+        TESTFN_ENCODING = sys.getfilesystemencoding()
+        if ((not hasattr(sys, 'getwindowsversion')) or (sys.getwindowsversion()[3] < 2)):
+            TESTFN_UNICODE_UNENCODEABLE = None
+        else:
+            TESTFN_UNICODE_UNENCODEABLE = eval('u"@test-\\u5171\\u6709\\u3055\\u308c\\u308b"')
+            try:
+                TESTFN_UNICODE_UNENCODEABLE.encode('Latin1')
+            except UnicodeEncodeError:
+                pass
+            else:
+                print ('WARNING: The filename %r CAN be encoded by the filesystem.  Unicode filename tests may not be effective' % TESTFN_UNICODE_UNENCODEABLE)
+fp = None
+try:
+    fp = open(TESTFN, 'w+')
+except IOError:
+    TMP_TESTFN = os.path.join('/tmp', TESTFN)
+    try:
+        fp = open(TMP_TESTFN, 'w+')
+        TESTFN = TMP_TESTFN
+        del TMP_TESTFN
+    except IOError:
+        print ('WARNING: tests will fail, unable to write to: %s or %s' % (TESTFN, TMP_TESTFN))
+if (fp is not None):
+    fp.close()
+    unlink(TESTFN)
+del os, fp
+_1M = (1024 * 1024)
+_1G = (1024 * _1M)
+_2G = (2 * _1G)
+MAX_Py_ssize_t = _Dummy()[:]
+import unittest

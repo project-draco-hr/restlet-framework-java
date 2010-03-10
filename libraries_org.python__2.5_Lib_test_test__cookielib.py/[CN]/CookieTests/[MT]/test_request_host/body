@@ -1,0 +1,11 @@
+def test_request_host(self):
+    from urllib2 import Request
+    from cookielib import request_host
+    req = Request('http://1.1.1.1/', headers={'Host': 'www.acme.com:80', })
+    self.assertEquals(request_host(req), '1.1.1.1')
+    req = Request('http://www.acme.com/', headers={'Host': 'irrelevant.com', })
+    self.assertEquals(request_host(req), 'www.acme.com')
+    req = Request('/resource.html', headers={'Host': 'www.acme.com', })
+    self.assertEquals(request_host(req), 'www.acme.com')
+    req = Request('http://www.acme.com:2345/resource.html', headers={'Host': 'www.acme.com:5432', })
+    self.assertEquals(request_host(req), 'www.acme.com')

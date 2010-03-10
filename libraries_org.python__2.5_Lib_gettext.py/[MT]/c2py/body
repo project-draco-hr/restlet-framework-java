@@ -1,0 +1,36 @@
+def c2py(plural):
+    'Gets a C expression as used in PO files for plural forms and returns a\n    Python lambda function that implements an equivalent expression.\n    '
+    try:
+        from cStringIO import StringIO
+    except ImportError:
+        from StringIO import StringIO
+    import token, tokenize
+    tokens = tokenize.generate_tokens(StringIO(plural).readline)
+    try:
+        danger = [x for x in tokens if ((x[0] == token.NAME) and (x[1] != 'n'))]
+    except tokenize.TokenError:
+        raise ValueError, 'plural forms expression error, maybe unbalanced parenthesis'
+    else:
+        if danger:
+            raise ValueError, 'plural forms expression could be dangerous'
+    plural = plural.replace('&&', ' and ')
+    plural = plural.replace('||', ' or ')
+    expr = re.compile('\\!([^=])')
+    plural = expr.sub(' not \\1', plural)
+    expr = re.compile('(.*?)\\?(.*?):(.*)')
+
+    def repl(x):
+        return ('test(%s, %s, %s)' % (x.group(1), x.group(2), expr.sub(repl, x.group(3))))
+    stack = ['']
+    for c in plural:
+        if (c == '('):
+            stack.append('')
+        elif (c == ')'):
+            if (len(stack) == 1):
+                raise ValueError, 'unbalanced parenthesis in plural form'
+            s = expr.sub(repl, stack.pop())
+            stack[(-1)] += ('(%s)' % s)
+        else:
+            stack[(-1)] += c
+    plural = expr.sub(repl, stack.pop())
+    return eval(('lambda n: int(%s)' % plural))

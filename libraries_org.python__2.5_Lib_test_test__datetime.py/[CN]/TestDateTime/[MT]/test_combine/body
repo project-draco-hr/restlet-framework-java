@@ -1,0 +1,17 @@
+def test_combine(self):
+    d = date(2002, 3, 4)
+    t = time(18, 45, 3, 1234)
+    expected = self.theclass(2002, 3, 4, 18, 45, 3, 1234)
+    combine = self.theclass.combine
+    dt = combine(d, t)
+    self.assertEqual(dt, expected)
+    dt = combine(time=t, date=d)
+    self.assertEqual(dt, expected)
+    self.assertEqual(d, dt.date())
+    self.assertEqual(t, dt.time())
+    self.assertEqual(dt, combine(dt.date(), dt.time()))
+    self.assertRaises(TypeError, combine)
+    self.assertRaises(TypeError, combine, d)
+    self.assertRaises(TypeError, combine, t, d)
+    self.assertRaises(TypeError, combine, d, t, 1)
+    self.assertRaises(TypeError, combine, 'date', 'time')

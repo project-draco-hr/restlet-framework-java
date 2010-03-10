@@ -1,0 +1,70 @@
+def listen(port=DEFAULT_LOGGING_CONFIG_PORT):
+    '\n    Start up a socket server on the specified port, and listen for new\n    configurations.\n\n    These will be sent as a file suitable for processing by fileConfig().\n    Returns a Thread object on which you can call start() to start the server,\n    and which you can join() when appropriate. To stop the server, call\n    stopListening().\n    '
+    if (not thread):
+        raise NotImplementedError, 'listen() needs threading to work'
+
+
+    class ConfigStreamHandler(StreamRequestHandler):
+        '\n        Handler for a logging configuration request.\n\n        It expects a completely new logging configuration and uses fileConfig\n        to install it.\n        '
+
+        def handle(self):
+            '\n            Handle a request.\n\n            Each request is expected to be a 4-byte length, packed using\n            struct.pack(">L", n), followed by the config file.\n            Uses fileConfig() to do the grunt work.\n            '
+            import tempfile
+            try:
+                conn = self.connection
+                chunk = conn.recv(4)
+                if (len(chunk) == 4):
+                    slen = struct.unpack('>L', chunk)[0]
+                    chunk = self.connection.recv(slen)
+                    while (len(chunk) < slen):
+                        chunk = (chunk + conn.recv((slen - len(chunk))))
+                    file = tempfile.mktemp('.ini')
+                    f = open(file, 'w')
+                    f.write(chunk)
+                    f.close()
+                    try:
+                        fileConfig(file)
+                    except (KeyboardInterrupt, SystemExit):
+                        raise
+                    except:
+                        traceback.print_exc()
+                    os.remove(file)
+            except socket.error as e:
+                if (type(e.args) != types.TupleType):
+                    raise
+                else:
+                    errcode = e.args[0]
+                    if (errcode != RESET_ERROR):
+                        raise
+
+
+    class ConfigSocketReceiver(ThreadingTCPServer):
+        '\n        A simple TCP socket-based logging config receiver.\n        '
+        allow_reuse_address = 1
+
+        def __init__(self, host='localhost', port=DEFAULT_LOGGING_CONFIG_PORT, handler=None):
+            ThreadingTCPServer.__init__(self, (host, port), handler)
+            logging._acquireLock()
+            self.abort = 0
+            logging._releaseLock()
+            self.timeout = 1
+
+        def serve_until_stopped(self):
+            import select
+            abort = 0
+            while (not abort):
+                (rd, wr, ex) = select.select([self.socket.fileno()], [], [], self.timeout)
+                if rd:
+                    self.handle_request()
+                logging._acquireLock()
+                abort = self.abort
+                logging._releaseLock()
+
+    def serve(rcvr, hdlr, port):
+        server = rcvr(port=port, handler=hdlr)
+        global _listener
+        logging._acquireLock()
+        _listener = server
+        logging._releaseLock()
+        server.serve_until_stopped()
+    return threading.Thread(target=serve, args=(ConfigSocketReceiver, ConfigStreamHandler, port))

@@ -1,0 +1,15 @@
+def classdef(self, nodelist):
+    name = nodelist[1][1]
+    doc = self.get_docstring(nodelist[(-1)])
+    if (nodelist[2][0] == token.COLON):
+        bases = []
+    elif (nodelist[3][0] == token.RPAR):
+        bases = []
+    else:
+        bases = self.com_bases(nodelist[3])
+    code = self.com_node(nodelist[(-1)])
+    if (doc is not None):
+        assert isinstance(code, Stmt)
+        assert isinstance(code.nodes[0], Discard)
+        del code.nodes[0]
+    return Class(name, bases, doc, code, lineno=nodelist[1][2])

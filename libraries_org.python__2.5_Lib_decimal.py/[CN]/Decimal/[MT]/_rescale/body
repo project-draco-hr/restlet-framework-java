@@ -1,0 +1,18 @@
+def _rescale(self, exp, rounding):
+    'Rescale self so that the exponent is exp, either by padding with zeros\n        or by truncating digits, using the given rounding mode.\n\n        Specials are returned without change.  This operation is\n        quiet: it raises no flags, and uses no information from the\n        context.\n\n        exp = exp to scale to (an integer)\n        rounding = rounding mode\n        '
+    if self._is_special:
+        return Decimal(self)
+    if (not self):
+        return _dec_from_triple(self._sign, '0', exp)
+    if (self._exp >= exp):
+        return _dec_from_triple(self._sign, (self._int + ('0' * (self._exp - exp))), exp)
+    digits = ((len(self._int) + self._exp) - exp)
+    if (digits < 0):
+        self = _dec_from_triple(self._sign, '1', (exp - 1))
+        digits = 0
+    this_function = getattr(self, self._pick_rounding_function[rounding])
+    changed = this_function(digits)
+    coeff = (self._int[:digits] or '0')
+    if (changed == 1):
+        coeff = str((int(coeff) + 1))
+    return _dec_from_triple(self._sign, coeff, exp)

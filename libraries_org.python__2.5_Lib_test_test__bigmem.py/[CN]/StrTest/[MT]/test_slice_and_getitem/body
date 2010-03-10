@@ -1,0 +1,27 @@
+@bigmemtest(minsize=(_2G + 20), memuse=1)
+def test_slice_and_getitem(self, size):
+    SUBSTR = '0123456789'
+    sublen = len(SUBSTR)
+    s = (SUBSTR * (size // sublen))
+    stepsize = (len(s) // 100)
+    stepsize = (stepsize - (stepsize % sublen))
+    for i in range(0, (len(s) - stepsize), stepsize):
+        self.assertEquals(s[i], SUBSTR[0])
+        self.assertEquals(s[i:(i + sublen)], SUBSTR)
+        self.assertEquals(s[i:(i + sublen):2], SUBSTR[::2])
+        if (i > 0):
+            self.assertEquals(s[((i + sublen) - 1):(i - 1):(-3)], SUBSTR[sublen::(-3)])
+    self.assertEquals(s[(len(s) - 1)], SUBSTR[(-1)])
+    self.assertEquals(s[(-1)], SUBSTR[(-1)])
+    self.assertEquals(s[(len(s) - 10)], SUBSTR[0])
+    self.assertEquals(s[(- sublen)], SUBSTR[0])
+    self.assertEquals(s[len(s):], '')
+    self.assertEquals(s[(len(s) - 1):], SUBSTR[(-1)])
+    self.assertEquals(s[(-1):], SUBSTR[(-1)])
+    self.assertEquals(s[(len(s) - sublen):], SUBSTR)
+    self.assertEquals(s[(- sublen):], SUBSTR)
+    self.assertEquals(len(s[:]), len(s))
+    self.assertEquals(len(s[:(len(s) - 5)]), (len(s) - 5))
+    self.assertEquals(len(s[5:(-5)]), (len(s) - 10))
+    self.assertRaises(IndexError, operator.getitem, s, len(s))
+    self.assertRaises(IndexError, operator.getitem, s, (len(s) + 1))

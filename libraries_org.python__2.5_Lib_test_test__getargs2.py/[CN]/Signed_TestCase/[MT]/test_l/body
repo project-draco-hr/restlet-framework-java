@@ -1,0 +1,12 @@
+def test_l(self):
+    from _testcapi import getargs_l
+    self.failUnlessEqual(3, getargs_l(3.14))
+    self.failUnlessEqual(99, getargs_l(Long()))
+    self.failUnlessEqual(99, getargs_l(Int()))
+    self.assertRaises(OverflowError, getargs_l, (LONG_MIN - 1))
+    self.failUnlessEqual(LONG_MIN, getargs_l(LONG_MIN))
+    self.failUnlessEqual(LONG_MAX, getargs_l(LONG_MAX))
+    self.assertRaises(OverflowError, getargs_l, (LONG_MAX + 1))
+    self.failUnlessEqual(42, getargs_l(42))
+    self.failUnlessEqual(42, getargs_l(42L))
+    self.assertRaises(OverflowError, getargs_l, VERY_LARGE)

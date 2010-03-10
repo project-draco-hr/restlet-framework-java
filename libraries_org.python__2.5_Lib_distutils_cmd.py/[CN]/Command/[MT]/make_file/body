@@ -1,0 +1,14 @@
+def make_file(self, infiles, outfile, func, args, exec_msg=None, skip_msg=None, level=1):
+    "Special case of 'execute()' for operations that process one or\n        more input files and generate one output file.  Works just like\n        'execute()', except the operation is skipped and a different\n        message printed if 'outfile' already exists and is newer than all\n        files listed in 'infiles'.  If the command defined 'self.force',\n        and it is true, then the command is unconditionally run -- does no\n        timestamp checks.\n        "
+    if (exec_msg is None):
+        exec_msg = ('generating %s from %s' % (outfile, string.join(infiles, ', ')))
+    if (skip_msg is None):
+        skip_msg = ('skipping %s (inputs unchanged)' % outfile)
+    if (type(infiles) is StringType):
+        infiles = (infiles,)
+    elif (type(infiles) not in (ListType, TupleType)):
+        raise TypeError, "'infiles' must be a string, or a list or tuple of strings"
+    if (self.force or dep_util.newer_group(infiles, outfile)):
+        self.execute(func, args, exec_msg, level)
+    else:
+        log.debug(skip_msg)

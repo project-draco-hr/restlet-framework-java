@@ -1,0 +1,6 @@
+def __init__(self, cmd, capturestderr=False, bufsize=(-1)):
+    "The parameter 'cmd' is the shell command to execute in a\n        sub-process.  On UNIX, 'cmd' may be a sequence, in which case arguments\n        will be passed directly to the program without shell intervention (as\n        with os.spawnv()).  If 'cmd' is a string it will be passed to the shell\n        (as with os.system()).   The 'capturestderr' flag, if true, specifies\n        that the object should capture standard error output of the child\n        process.  The default is false.  If the 'bufsize' parameter is\n        specified, it specifies the size of the I/O buffers to/from the child\n        process."
+    stderr = (subprocess.PIPE if capturestderr else None)
+    PIPE = subprocess.PIPE
+    self._popen = subprocess.Popen(cmd, bufsize=bufsize, shell=isinstance(cmd, basestring), stdin=PIPE, stdout=PIPE, stderr=stderr)
+    self._setup(cmd)

@@ -1,0 +1,17 @@
+import unittest
+import macostools
+import Carbon.File
+import MacOS
+import os
+import sys
+from test import test_support
+import struct
+import applesingle
+AS_MAGIC = 333312
+AS_VERSION = 131072
+dataforkdata = 'hello\r\x00world\n'
+resourceforkdata = 'goodbye\ncruel\x00world\r'
+applesingledata = (((struct.pack('>ll16sh', AS_MAGIC, AS_VERSION, 'foo', 2) + struct.pack('>llllll', 1, 50, len(dataforkdata), 2, (50 + len(dataforkdata)), len(resourceforkdata))) + dataforkdata) + resourceforkdata)
+TESTFN2 = (test_support.TESTFN + '2')
+if (__name__ == '__main__'):
+    test_main()

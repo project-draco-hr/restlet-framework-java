@@ -1,0 +1,14 @@
+def testWithRaise(self):
+    mock = mock_contextmanager_generator()
+    counter = 0
+    try:
+        counter += 1
+        with mock:
+            counter += 10
+            raise RuntimeError
+        counter += 100
+    except RuntimeError:
+        self.assertEqual(counter, 11)
+        self.assertAfterWithManagerInvariants(mock, sys.exc_info())
+    else:
+        self.fail("Didn't raise RuntimeError")

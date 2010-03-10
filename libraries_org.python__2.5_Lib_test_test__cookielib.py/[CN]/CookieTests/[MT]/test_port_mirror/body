@@ -1,0 +1,23 @@
+def test_port_mirror(self):
+    from cookielib import CookieJar, DefaultCookiePolicy
+    pol = DefaultCookiePolicy(rfc2965=True)
+    c = CookieJar(pol)
+    url = 'http://foo.bar.com/'
+    interact_2965(c, url, 'spam=eggs; Version=1')
+    h = interact_2965(c, url)
+    self.assert_(('Port' not in h), 'absent port returned with port present')
+    c = CookieJar(pol)
+    url = 'http://foo.bar.com/'
+    interact_2965(c, url, 'spam=eggs; Version=1; Port')
+    h = interact_2965(c, url)
+    self.assert_(re.search('\\$Port([^=]|$)', h), 'port with no value not returned with no value')
+    c = CookieJar(pol)
+    url = 'http://foo.bar.com/'
+    interact_2965(c, url, 'spam=eggs; Version=1; Port="80"')
+    h = interact_2965(c, url)
+    self.assert_(('$Port="80"' in h), 'port with single value not returned with single value')
+    c = CookieJar(pol)
+    url = 'http://foo.bar.com/'
+    interact_2965(c, url, 'spam=eggs; Version=1; Port="80,8080"')
+    h = interact_2965(c, url)
+    self.assert_(('$Port="80,8080"' in h), 'port with multiple values not returned with multiple values')

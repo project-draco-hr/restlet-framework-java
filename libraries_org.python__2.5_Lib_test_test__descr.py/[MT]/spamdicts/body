@@ -1,0 +1,51 @@
+def spamdicts():
+    if verbose:
+        print 'Testing spamdict operations...'
+    import copy, xxsubtype as spam
+
+    def spamdict(d, memo=None):
+        import xxsubtype as spam
+        sd = spam.spamdict()
+        for (k, v) in d.items():
+            sd[k] = v
+        return sd
+    copy._deepcopy_dispatch[spam.spamdict] = spamdict
+    testbinop(spamdict({1: 2, }), spamdict({2: 1, }), (-1), 'cmp(a,b)', '__cmp__')
+    testbinop(spamdict({1: 2, 3: 4, }), 1, 1, 'b in a', '__contains__')
+    testbinop(spamdict({1: 2, 3: 4, }), 2, 0, 'b in a', '__contains__')
+    testbinop(spamdict({1: 2, 3: 4, }), 1, 2, 'a[b]', '__getitem__')
+    d = spamdict({1: 2, 3: 4, })
+    l1 = []
+    for i in d.keys():
+        l1.append(i)
+    l = []
+    for i in iter(d):
+        l.append(i)
+    vereq(l, l1)
+    l = []
+    for i in d.__iter__():
+        l.append(i)
+    vereq(l, l1)
+    l = []
+    for i in type(spamdict({})).__iter__(d):
+        l.append(i)
+    vereq(l, l1)
+    straightd = {1: 2, 3: 4, }
+    spamd = spamdict(straightd)
+    testunop(spamd, 2, 'len(a)', '__len__')
+    testunop(spamd, repr(straightd), 'repr(a)', '__repr__')
+    testset2op(spamdict({1: 2, 3: 4, }), 2, 3, spamdict({1: 2, 2: 3, 3: 4, }), 'a[b]=c', '__setitem__')
+
+
+    class C(spam.spamdict):
+
+        def foo(self):
+            return 1
+    a = C()
+    vereq(a.items(), [])
+    vereq(a.foo(), 1)
+    a['foo'] = 'bar'
+    vereq(a.items(), [('foo', 'bar')])
+    vereq(a.getstate(), 0)
+    a.setstate(100)
+    vereq(a.getstate(), 100)

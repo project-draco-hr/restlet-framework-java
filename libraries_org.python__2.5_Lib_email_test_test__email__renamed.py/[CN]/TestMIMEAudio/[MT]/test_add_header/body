@@ -1,0 +1,12 @@
+def test_add_header(self):
+    eq = self.assertEqual
+    unless = self.failUnless
+    self._au.add_header('Content-Disposition', 'attachment', filename='audiotest.au')
+    eq(self._au['content-disposition'], 'attachment; filename="audiotest.au"')
+    eq(self._au.get_params(header='content-disposition'), [('attachment', ''), ('filename', 'audiotest.au')])
+    eq(self._au.get_param('filename', header='content-disposition'), 'audiotest.au')
+    missing = []
+    eq(self._au.get_param('attachment', header='content-disposition'), '')
+    unless((self._au.get_param('foo', failobj=missing, header='content-disposition') is missing))
+    unless((self._au.get_param('foobar', missing) is missing))
+    unless((self._au.get_param('attachment', missing, header='foobar') is missing))

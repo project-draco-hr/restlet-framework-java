@@ -1,0 +1,16 @@
+def testSyntaxErrorMessage(self):
+
+    def ckmsg(src, msg):
+        try:
+            compile(src, '<fragment>', 'exec')
+        except SyntaxError as e:
+            if (e.msg != msg):
+                self.fail(('expected %s, got %s' % (msg, e.msg)))
+        else:
+            self.fail('failed to get expected SyntaxError')
+    s = 'while 1:\n            try:\n                pass\n            finally:\n                continue'
+    if (not sys.platform.startswith('java')):
+        ckmsg(s, "'continue' not supported inside 'finally' clause")
+    s = 'if 1:\n        try:\n            continue\n        except:\n            pass'
+    ckmsg(s, "'continue' not properly in loop")
+    ckmsg('continue\n', "'continue' not properly in loop")

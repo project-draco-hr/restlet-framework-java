@@ -1,0 +1,11 @@
+def check_format_1(self, x):
+    for (base, mapper) in ((8, oct), (10, repr), (16, hex)):
+        got = mapper(x)
+        expected = self.slow_format(x, base)
+        msg = Frm('%s returned %r but expected %r for %r', mapper.__name__, got, expected, x)
+        self.assertEqual(got, expected, msg)
+        self.assertEqual(long(got, 0), x, Frm('long("%s", 0) != %r', got, x))
+    got = str(x)
+    expected = self.slow_format(x, 10)[:(-1)]
+    msg = Frm('%s returned %r but expected %r for %r', mapper.__name__, got, expected, x)
+    self.assertEqual(got, expected, msg)

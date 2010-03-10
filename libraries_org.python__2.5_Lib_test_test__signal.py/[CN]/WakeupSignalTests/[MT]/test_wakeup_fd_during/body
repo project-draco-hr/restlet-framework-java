@@ -1,0 +1,7 @@
+def test_wakeup_fd_during(self):
+    import select
+    signal.alarm(1)
+    before_time = time.time()
+    self.assertRaises(select.error, select.select, [self.read], [], [], self.TIMEOUT_FULL)
+    after_time = time.time()
+    self.assert_(((after_time - before_time) < self.TIMEOUT_HALF))

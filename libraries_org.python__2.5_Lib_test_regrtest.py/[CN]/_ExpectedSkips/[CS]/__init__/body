@@ -1,0 +1,31 @@
+def __init__(self):
+    import os.path
+    from test import test_socket_ssl
+    from test import test_timeout
+    self.valid = False
+    if (_platform in _expectations):
+        s = _expectations[_platform]
+        self.expected = set(s.split())
+        if (not os.path.supports_unicode_filenames):
+            self.expected.add('test_pep277')
+        if test_socket_ssl.skip_expected:
+            self.expected.add('test_socket_ssl')
+        if test_timeout.skip_expected:
+            self.expected.add('test_timeout')
+        if (sys.maxint == 9223372036854775807L):
+            self.expected.add('test_rgbimg')
+            self.expected.add('test_imageop')
+        if (not (sys.platform in ('mac', 'darwin'))):
+            MAC_ONLY = ['test_macostools', 'test_macfs', 'test_aepack', 'test_plistlib', 'test_scriptpackages']
+            for skip in MAC_ONLY:
+                self.expected.add(skip)
+        if (sys.platform != 'win32'):
+            WIN_ONLY = ['test_unicode_file', 'test_winreg', 'test_winsound']
+            for skip in WIN_ONLY:
+                self.expected.add(skip)
+        if test_support.is_jython:
+            if (os._name != 'posix'):
+                self.expected.update(['test_grp', 'test_mhlib', 'test_posix', 'test_pwd', 'test_signal'])
+            if (os._name != 'nt'):
+                self.expected.add('test_nt_paths_jy')
+        self.valid = True

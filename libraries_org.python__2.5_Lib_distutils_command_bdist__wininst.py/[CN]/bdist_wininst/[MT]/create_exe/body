@@ -1,0 +1,32 @@
+def create_exe(self, arcname, fullname, bitmap=None):
+    import struct
+    self.mkpath(self.dist_dir)
+    cfgdata = self.get_inidata()
+    installer_name = self.get_installer_filename(fullname)
+    self.announce(('creating %s' % installer_name))
+    if bitmap:
+        bitmapdata = open(bitmap, 'rb').read()
+        bitmaplen = len(bitmapdata)
+    else:
+        bitmaplen = 0
+    file = open(installer_name, 'wb')
+    file.write(self.get_exe_bytes())
+    if bitmap:
+        file.write(bitmapdata)
+    try:
+        unicode
+    except NameError:
+        pass
+    else:
+        if isinstance(cfgdata, unicode):
+            cfgdata = cfgdata.encode('mbcs')
+    cfgdata = (cfgdata + '\x00')
+    if self.pre_install_script:
+        script_data = open(self.pre_install_script, 'r').read()
+        cfgdata = ((cfgdata + script_data) + '\n\x00')
+    else:
+        cfgdata = (cfgdata + '\x00')
+    file.write(cfgdata)
+    header = struct.pack('<iii', 305419899, len(cfgdata), bitmaplen)
+    file.write(header)
+    file.write(open(arcname, 'rb').read())

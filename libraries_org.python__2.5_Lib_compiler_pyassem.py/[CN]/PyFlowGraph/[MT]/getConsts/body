@@ -1,0 +1,8 @@
+def getConsts(self):
+    'Return a tuple for the const slot of the code object\n\n        Must convert references to code (MAKE_FUNCTION) to code\n        objects recursively.\n        '
+    l = []
+    for elt in self.consts:
+        if isinstance(elt, PyFlowGraph):
+            elt = elt.getCode()
+        l.append(elt)
+    return tuple(l)

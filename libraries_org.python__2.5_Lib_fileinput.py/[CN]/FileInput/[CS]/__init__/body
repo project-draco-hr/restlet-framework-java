@@ -1,0 +1,32 @@
+def __init__(self, files=None, inplace=0, backup='', bufsize=0, mode='r', openhook=None):
+    if isinstance(files, basestring):
+        files = (files,)
+    else:
+        if (files is None):
+            files = sys.argv[1:]
+        if (not files):
+            files = ('-',)
+        else:
+            files = tuple(files)
+    self._files = files
+    self._inplace = inplace
+    self._backup = backup
+    self._bufsize = (bufsize or DEFAULT_BUFSIZE)
+    self._savestdout = None
+    self._output = None
+    self._filename = None
+    self._lineno = 0
+    self._filelineno = 0
+    self._file = None
+    self._isstdin = False
+    self._backupfilename = None
+    self._buffer = []
+    self._bufindex = 0
+    if (mode not in ('r', 'rU', 'U', 'rb')):
+        raise ValueError("FileInput opening mode must be one of 'r', 'rU', 'U' and 'rb'")
+    self._mode = mode
+    if (inplace and openhook):
+        raise ValueError('FileInput cannot use an opening hook in inplace mode')
+    elif (openhook and (not callable(openhook))):
+        raise ValueError('FileInput openhook must be callable')
+    self._openhook = openhook

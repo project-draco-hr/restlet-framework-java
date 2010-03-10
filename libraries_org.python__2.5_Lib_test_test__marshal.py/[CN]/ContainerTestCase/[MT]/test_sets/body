@@ -1,0 +1,10 @@
+def test_sets(self):
+    for constructor in (set, frozenset):
+        t = constructor(self.d.keys())
+        new = marshal.loads(marshal.dumps(t))
+        self.assertEqual(t, new)
+        self.assert_(isinstance(new, constructor))
+        self.assertNotEqual(id(t), id(new))
+        new = roundtrip(t)
+        self.assertEqual(t, new)
+        os.unlink(test_support.TESTFN)

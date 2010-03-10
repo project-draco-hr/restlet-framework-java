@@ -1,0 +1,10 @@
+def testErrorAfterOutput(self):
+    MSG = 'Some output has been sent'
+
+    def error_app(e, s):
+        s('200 OK', [])(MSG)
+        raise AssertionError('This should be caught by handler')
+    h = ErrorHandler()
+    h.run(error_app)
+    self.assertEqual(h.stdout.getvalue(), ('Status: 200 OK\r\n\r\n' + MSG))
+    self.failUnless((h.stderr.getvalue().find('AssertionError') != (-1)))

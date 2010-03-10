@@ -1,0 +1,12 @@
+def decorator(self, nodelist):
+    assert (len(nodelist) in (3, 5, 6))
+    assert (nodelist[0][0] == token.AT)
+    assert (nodelist[(-1)][0] == token.NEWLINE)
+    assert (nodelist[1][0] == symbol.dotted_name)
+    funcname = self.decorator_name(nodelist[1][1:])
+    if (len(nodelist) > 3):
+        assert (nodelist[2][0] == token.LPAR)
+        expr = self.com_call_function(funcname, nodelist[3])
+    else:
+        expr = funcname
+    return expr

@@ -1,0 +1,14 @@
+def __tojava__(self, java_class):
+    from java.lang import Object
+    from java.sql import Date
+    from java.util import Calendar
+    from org.python.core import Py
+    if (java_class not in (Calendar, Date, Object)):
+        return Py.NoConversion
+    calendar = Calendar.getInstance()
+    calendar.clear()
+    calendar.set(self.year, (self.month - 1), self.day)
+    if (java_class == Calendar):
+        return calendar
+    else:
+        return Date(calendar.getTimeInMillis())

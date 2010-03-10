@@ -1,0 +1,11 @@
+def _flush(self):
+    if self._data:
+        if (self._last is not None):
+            text = string.join(self._data, '')
+            if self._tail:
+                assert (self._last.tail is None), 'internal error (tail)'
+                self._last.tail = text
+            else:
+                assert (self._last.text is None), 'internal error (text)'
+                self._last.text = text
+        self._data = []

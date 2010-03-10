@@ -1,0 +1,19 @@
+def createSocket(self):
+    '\n        Try to create a socket, using an exponential backoff with\n        a max retry time. Thanks to Robert Olson for the original patch\n        (SF #815911) which has been slightly refactored.\n        '
+    now = time.time()
+    if (self.retryTime is None):
+        attempt = 1
+    else:
+        attempt = (now >= self.retryTime)
+    if attempt:
+        try:
+            self.sock = self.makeSocket()
+            self.retryTime = None
+        except:
+            if (self.retryTime is None):
+                self.retryPeriod = self.retryStart
+            else:
+                self.retryPeriod = (self.retryPeriod * self.retryFactor)
+                if (self.retryPeriod > self.retryMax):
+                    self.retryPeriod = self.retryMax
+            self.retryTime = (now + self.retryPeriod)

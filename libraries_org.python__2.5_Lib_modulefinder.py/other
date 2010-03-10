@@ -1,0 +1,23 @@
+'Find modules used by a script, using introspection.'
+import dis
+import imp
+import marshal
+import os
+import sys
+import new
+if hasattr(sys.__stdout__, 'newlines'):
+    READ_MODE = 'U'
+else:
+    READ_MODE = 'r'
+LOAD_CONST = dis.opname.index('LOAD_CONST')
+IMPORT_NAME = dis.opname.index('IMPORT_NAME')
+STORE_NAME = dis.opname.index('STORE_NAME')
+STORE_GLOBAL = dis.opname.index('STORE_GLOBAL')
+STORE_OPS = [STORE_NAME, STORE_GLOBAL]
+packagePathMap = {}
+replacePackageMap = {}
+if (__name__ == '__main__'):
+    try:
+        mf = test()
+    except KeyboardInterrupt:
+        print '\n[interrupt]'

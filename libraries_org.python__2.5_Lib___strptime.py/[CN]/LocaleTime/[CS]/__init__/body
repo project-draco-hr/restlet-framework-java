@@ -1,0 +1,10 @@
+def __init__(self):
+    'Set all attributes.\n\n        Order of methods called matters for dependency reasons.\n\n        The locale language is set at the offset and then checked again before\n        exiting.  This is to make sure that the attributes were not set with a\n        mix of information from more than one locale.  This would most likely\n        happen when using threads where one thread calls a locale-dependent\n        function while another thread changes the locale while the function in\n        the other thread is still running.  Proper coding would call for\n        locks to prevent changing the locale while locale-dependent code is\n        running.  The check here is done in case someone does not think about\n        doing this.\n\n        Only other possible issue is if someone changed the timezone and did\n        not call tz.tzset .  That is an issue for the programmer, though,\n        since changing the timezone is worthless without that call.\n\n        '
+    self.lang = _getlang()
+    self.__calc_weekday()
+    self.__calc_month()
+    self.__calc_am_pm()
+    self.__calc_timezone()
+    self.__calc_date_time()
+    if (_getlang() != self.lang):
+        raise ValueError('locale changed during initialization')

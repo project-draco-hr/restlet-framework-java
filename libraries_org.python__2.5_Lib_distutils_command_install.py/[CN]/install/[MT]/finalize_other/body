@@ -1,0 +1,12 @@
+def finalize_other(self):
+    if (self.home is not None):
+        self.install_base = self.install_platbase = self.home
+        self.select_scheme('unix_home')
+    else:
+        if (self.prefix is None):
+            self.prefix = os.path.normpath(sys.prefix)
+        self.install_base = self.install_platbase = self.prefix
+        try:
+            self.select_scheme(os.name)
+        except KeyError:
+            raise DistutilsPlatformError, ("I don't know how to install stuff on '%s'" % os.name)

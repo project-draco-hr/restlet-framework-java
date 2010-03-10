@@ -1,0 +1,84 @@
+def test_filter(self):
+    self.assertEqual(filter((lambda c: ('a' <= c <= 'z')), 'Hello World'), 'elloorld')
+    self.assertEqual(filter(None, [1, 'hello', [], [3], '', None, 9, 0]), [1, 'hello', [3], 9])
+    self.assertEqual(filter((lambda x: (x > 0)), [1, (-3), 9, 0, 2]), [1, 9, 2])
+    self.assertEqual(filter(None, Squares(10)), [1, 4, 9, 16, 25, 36, 49, 64, 81])
+    self.assertEqual(filter((lambda x: (x % 2)), Squares(10)), [1, 9, 25, 49, 81])
+
+    def identity(item):
+        return 1
+    filter(identity, Squares(5))
+    self.assertRaises(TypeError, filter)
+
+
+    class BadSeq(object):
+
+        def __getitem__(self, index):
+            if (index < 4):
+                return 42
+            raise ValueError
+    self.assertRaises(ValueError, filter, (lambda x: x), BadSeq())
+
+    def badfunc():
+        pass
+    self.assertRaises(TypeError, filter, badfunc, range(5))
+    self.assertEqual(filter(None, (1, 2)), (1, 2))
+    self.assertEqual(filter((lambda x: (x >= 3)), (1, 2, 3, 4)), (3, 4))
+    self.assertRaises(TypeError, filter, 42, (1, 2))
+    self.assertEqual(filter(None, '12'), '12')
+    self.assertEqual(filter((lambda x: (x >= '3')), '1234'), '34')
+    self.assertRaises(TypeError, filter, 42, '12')
+
+
+    class badstr(str):
+
+        def __getitem__(self, index):
+            raise ValueError
+    self.assertRaises(ValueError, filter, (lambda x: (x >= '3')), badstr('1234'))
+
+
+    class badstr2(str):
+
+        def __getitem__(self, index):
+            return 42
+    self.assertRaises(TypeError, filter, (lambda x: (x >= 42)), badstr2('1234'))
+
+
+    class weirdstr(str):
+
+        def __getitem__(self, index):
+            return weirdstr((2 * str.__getitem__(self, index)))
+    self.assertEqual(filter((lambda x: (x >= '33')), weirdstr('1234')), '3344')
+
+
+    class shiftstr(str):
+
+        def __getitem__(self, index):
+            return chr((ord(str.__getitem__(self, index)) + 1))
+    self.assertEqual(filter((lambda x: (x >= '3')), shiftstr('1234')), '345')
+    if have_unicode:
+        self.assertEqual(filter(None, unicode('12')), unicode('12'))
+        self.assertEqual(filter((lambda x: (x >= '3')), unicode('1234')), unicode('34'))
+        self.assertRaises(TypeError, filter, 42, unicode('12'))
+        self.assertRaises(ValueError, filter, (lambda x: (x >= '3')), badstr(unicode('1234')))
+
+
+        class badunicode(unicode):
+
+            def __getitem__(self, index):
+                return 42
+        self.assertRaises(TypeError, filter, (lambda x: (x >= 42)), badunicode('1234'))
+
+
+        class weirdunicode(unicode):
+
+            def __getitem__(self, index):
+                return weirdunicode((2 * unicode.__getitem__(self, index)))
+        self.assertEqual(filter((lambda x: (x >= unicode('33'))), weirdunicode('1234')), unicode('3344'))
+
+
+        class shiftunicode(unicode):
+
+            def __getitem__(self, index):
+                return unichr((ord(unicode.__getitem__(self, index)) + 1))
+        self.assertEqual(filter((lambda x: (x >= unicode('3'))), shiftunicode('1234')), unicode('345'))

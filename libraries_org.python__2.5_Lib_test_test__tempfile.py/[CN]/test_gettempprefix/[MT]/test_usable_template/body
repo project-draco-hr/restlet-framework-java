@@ -1,0 +1,13 @@
+def test_usable_template(self):
+    p = (tempfile.gettempprefix() + 'xxxxxx.xxx')
+    d = tempfile.mkdtemp(prefix='')
+    try:
+        p = os.path.join(d, p)
+        try:
+            fd = os.open(p, (os.O_RDWR | os.O_CREAT))
+        except:
+            self.failOnException('os.open')
+        os.close(fd)
+        os.unlink(p)
+    finally:
+        os.rmdir(d)

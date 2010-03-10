@@ -1,0 +1,34 @@
+def _copy_file_contents(src, dst, buffer_size=(16 * 1024)):
+    "Copy the file 'src' to 'dst'; both must be filenames.  Any error\n    opening either file, reading from 'src', or writing to 'dst', raises\n    DistutilsFileError.  Data is read/written in chunks of 'buffer_size'\n    bytes (default 16k).  No attempt is made to handle anything apart from\n    regular files.\n    "
+    fsrc = None
+    fdst = None
+    try:
+        try:
+            fsrc = open(src, 'rb')
+        except os.error as (errno, errstr):
+            raise DistutilsFileError, ("could not open '%s': %s" % (src, errstr))
+        if os.path.exists(dst):
+            try:
+                os.unlink(dst)
+            except os.error as (errno, errstr):
+                raise DistutilsFileError, ("could not delete '%s': %s" % (dst, errstr))
+        try:
+            fdst = open(dst, 'wb')
+        except os.error as (errno, errstr):
+            raise DistutilsFileError, ("could not create '%s': %s" % (dst, errstr))
+        while 1:
+            try:
+                buf = fsrc.read(buffer_size)
+            except os.error as (errno, errstr):
+                raise DistutilsFileError, ("could not read from '%s': %s" % (src, errstr))
+            if (not buf):
+                break
+            try:
+                fdst.write(buf)
+            except os.error as (errno, errstr):
+                raise DistutilsFileError, ("could not write to '%s': %s" % (dst, errstr))
+    finally:
+        if fdst:
+            fdst.close()
+        if fsrc:
+            fsrc.close()

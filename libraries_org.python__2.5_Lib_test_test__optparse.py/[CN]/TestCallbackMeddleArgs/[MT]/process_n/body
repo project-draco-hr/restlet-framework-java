@@ -1,0 +1,9 @@
+def process_n(self, option, opt, value, parser_):
+    nargs = int(opt[1:])
+    rargs = parser_.rargs
+    if (len(rargs) < nargs):
+        self.fail(('Expected %d arguments for %s option.' % (nargs, opt)))
+    dest = parser_.values.ensure_value(option.dest, [])
+    dest.append(tuple(rargs[0:nargs]))
+    parser_.largs.append(nargs)
+    del rargs[0:nargs]

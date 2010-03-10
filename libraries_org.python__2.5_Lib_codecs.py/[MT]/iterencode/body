@@ -1,0 +1,10 @@
+def iterencode(iterator, encoding, errors='strict', **kwargs):
+    '\n    Encoding iterator.\n\n    Encodes the input strings from the iterator using a IncrementalEncoder.\n\n    errors and kwargs are passed through to the IncrementalEncoder\n    constructor.\n    '
+    encoder = getincrementalencoder(encoding)(errors, **kwargs)
+    for input in iterator:
+        output = encoder.encode(input)
+        if output:
+            yield output
+    output = encoder.encode('', True)
+    if output:
+        yield output

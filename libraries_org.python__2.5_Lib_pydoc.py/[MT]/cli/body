@@ -1,0 +1,57 @@
+def cli():
+    'Command-line interface (looks at sys.argv to decide what to do).'
+    import getopt
+
+
+    class BadUsage:
+        pass
+    scriptdir = os.path.dirname(sys.argv[0])
+    if (scriptdir in sys.path):
+        sys.path.remove(scriptdir)
+    sys.path.insert(0, '.')
+    try:
+        (opts, args) = getopt.getopt(sys.argv[1:], 'gk:p:w')
+        writing = 0
+        for (opt, val) in opts:
+            if (opt == '-g'):
+                gui()
+                return
+            if (opt == '-k'):
+                apropos(val)
+                return
+            if (opt == '-p'):
+                try:
+                    port = int(val)
+                except ValueError:
+                    raise BadUsage
+
+                def ready(server):
+                    print ('pydoc server ready at %s' % server.url)
+
+                def stopped():
+                    print 'pydoc server stopped'
+                serve(port, ready, stopped)
+                return
+            if (opt == '-w'):
+                writing = 1
+        if (not args):
+            raise BadUsage
+        for arg in args:
+            if (ispath(arg) and (not os.path.exists(arg))):
+                print ('file %r does not exist' % arg)
+                break
+            try:
+                if (ispath(arg) and os.path.isfile(arg)):
+                    arg = importfile(arg)
+                if writing:
+                    if (ispath(arg) and os.path.isdir(arg)):
+                        writedocs(arg)
+                    else:
+                        writedoc(arg)
+                else:
+                    help.help(arg)
+            except ErrorDuringImport as value:
+                print value
+    except (getopt.error, BadUsage):
+        cmd = os.path.basename(sys.argv[0])
+        print ("pydoc - the Python documentation tool\n\n%s <name> ...\n    Show text documentation on something.  <name> may be the name of a\n    Python keyword, topic, function, module, or package, or a dotted\n    reference to a class or function within a module or module in a\n    package.  If <name> contains a '%s', it is used as the path to a\n    Python source file to document. If name is 'keywords', 'topics',\n    or 'modules', a listing of these things is displayed.\n\n%s -k <keyword>\n    Search for a keyword in the synopsis lines of all available modules.\n\n%s -p <port>\n    Start an HTTP server on the given port on the local machine.\n\n%s -g\n    Pop up a graphical interface for finding and serving documentation.\n\n%s -w <name> ...\n    Write out the HTML documentation for a module to a file in the current\n    directory.  If <name> contains a '%s', it is treated as a filename; if\n    it names a directory, documentation is written for all the contents.\n" % (cmd, os.sep, cmd, cmd, cmd, cmd, os.sep))

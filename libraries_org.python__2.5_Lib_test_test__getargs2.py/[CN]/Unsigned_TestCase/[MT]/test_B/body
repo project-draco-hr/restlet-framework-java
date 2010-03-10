@@ -1,0 +1,13 @@
+def test_B(self):
+    from _testcapi import getargs_B
+    self.failUnlessEqual(3, getargs_B(3.14))
+    self.failUnlessEqual(99, getargs_B(Long()))
+    self.failUnlessEqual(99, getargs_B(Int()))
+    self.failUnlessEqual(UCHAR_MAX, getargs_B((-1)))
+    self.failUnlessEqual(UCHAR_MAX, getargs_B((-1L)))
+    self.failUnlessEqual(0, getargs_B(0))
+    self.failUnlessEqual(UCHAR_MAX, getargs_B(UCHAR_MAX))
+    self.failUnlessEqual(0, getargs_B((UCHAR_MAX + 1)))
+    self.failUnlessEqual(42, getargs_B(42))
+    self.failUnlessEqual(42, getargs_B(42L))
+    self.failUnlessEqual((UCHAR_MAX & VERY_LARGE), getargs_B(VERY_LARGE))

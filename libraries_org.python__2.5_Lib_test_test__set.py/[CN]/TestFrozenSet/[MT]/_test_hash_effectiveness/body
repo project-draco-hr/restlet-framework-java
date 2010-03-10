@@ -1,0 +1,8 @@
+def _test_hash_effectiveness(self):
+    n = 13
+    hashvalues = set()
+    addhashvalue = hashvalues.add
+    elemmasks = [((i + 1), (1 << i)) for i in range(n)]
+    for i in xrange((2 ** n)):
+        addhashvalue(hash(frozenset([e for (e, m) in elemmasks if (m & i)])))
+    self.assertEqual(len(hashvalues), (2 ** n))

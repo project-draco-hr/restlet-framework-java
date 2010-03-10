@@ -1,0 +1,12 @@
+def dbcheck(exprstr, globals=None, locals=None):
+    'Decorator to implement debugging assertions'
+
+    def decorate(func):
+        expr = compile(exprstr, ('dbcheck-%s' % func.func_name), 'eval')
+
+        def check(*args, **kwds):
+            if (not eval(expr, globals, locals)):
+                raise DbcheckError(exprstr, func, args, kwds)
+            return func(*args, **kwds)
+        return check
+    return decorate

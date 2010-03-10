@@ -1,0 +1,13 @@
+def worker(q):
+    global cum
+    while True:
+        x = q.get()
+        if (x is None):
+            q.task_done()
+            return
+        cumlock.acquire()
+        try:
+            cum += x
+        finally:
+            cumlock.release()
+        q.task_done()

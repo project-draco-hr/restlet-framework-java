@@ -1,0 +1,14 @@
+def test_bad_sys_path(self):
+    import sys
+    import os
+    orig_path = sys.path
+    coverage = hotshot._hotshot.coverage
+    try:
+        sys.path = 'abc'
+        self.assertRaises(RuntimeError, coverage, test_support.TESTFN)
+        del sys.path
+        self.assertRaises(RuntimeError, coverage, test_support.TESTFN)
+    finally:
+        sys.path = orig_path
+        if os.path.exists(test_support.TESTFN):
+            os.remove(test_support.TESTFN)

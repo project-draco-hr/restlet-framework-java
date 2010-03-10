@@ -1,0 +1,11 @@
+def com_binary(self, constructor, nodelist):
+    "Compile 'NODE (OP NODE)*' into (type, [ node1, ..., nodeN ])."
+    l = len(nodelist)
+    if (l == 1):
+        n = nodelist[0]
+        return self.lookup_node(n)(n[1:])
+    items = []
+    for i in range(0, l, 2):
+        n = nodelist[i]
+        items.append(self.lookup_node(n)(n[1:]))
+    return constructor(items, lineno=extractLineNo(nodelist))

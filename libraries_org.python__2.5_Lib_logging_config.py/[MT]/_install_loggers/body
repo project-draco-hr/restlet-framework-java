@@ -1,0 +1,46 @@
+def _install_loggers(cp, handlers):
+    'Create and install loggers'
+    llist = cp.get('loggers', 'keys')
+    llist = string.split(llist, ',')
+    llist = map((lambda x: string.strip(x)), llist)
+    llist.remove('root')
+    sectname = 'logger_root'
+    root = logging.root
+    log = root
+    opts = cp.options(sectname)
+    if ('level' in opts):
+        level = cp.get(sectname, 'level')
+        log.setLevel(logging._levelNames[level])
+    for h in root.handlers[:]:
+        root.removeHandler(h)
+    hlist = cp.get(sectname, 'handlers')
+    if len(hlist):
+        hlist = string.split(hlist, ',')
+        for hand in hlist:
+            log.addHandler(handlers[string.strip(hand)])
+    existing = root.manager.loggerDict.keys()
+    for log in llist:
+        sectname = ('logger_%s' % log)
+        qn = cp.get(sectname, 'qualname')
+        opts = cp.options(sectname)
+        if ('propagate' in opts):
+            propagate = cp.getint(sectname, 'propagate')
+        else:
+            propagate = 1
+        logger = logging.getLogger(qn)
+        if (qn in existing):
+            existing.remove(qn)
+        if ('level' in opts):
+            level = cp.get(sectname, 'level')
+            logger.setLevel(logging._levelNames[level])
+        for h in logger.handlers[:]:
+            logger.removeHandler(h)
+        logger.propagate = propagate
+        logger.disabled = 0
+        hlist = cp.get(sectname, 'handlers')
+        if len(hlist):
+            hlist = string.split(hlist, ',')
+            for hand in hlist:
+                logger.addHandler(handlers[string.strip(hand)])
+    for log in existing:
+        root.manager.loggerDict[log].disabled = 1

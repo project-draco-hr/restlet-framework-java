@@ -1,0 +1,27 @@
+def test_buffer_artefacts(self):
+    output = [('starttag', 'a', [('b', '<')])]
+    self._run_check(["<a b='<'>"], output)
+    self._run_check(['<a ', "b='<'>"], output)
+    self._run_check(['<a b', "='<'>"], output)
+    self._run_check(['<a b=', "'<'>"], output)
+    self._run_check(["<a b='<", "'>"], output)
+    self._run_check(["<a b='<'", '>'], output)
+    output = [('starttag', 'a', [('b', '>')])]
+    self._run_check(["<a b='>'>"], output)
+    self._run_check(['<a ', "b='>'>"], output)
+    self._run_check(['<a b', "='>'>"], output)
+    self._run_check(['<a b=', "'>'>"], output)
+    self._run_check(["<a b='>", "'>"], output)
+    self._run_check(["<a b='>'", '>'], output)
+    output = [('comment', 'abc')]
+    self._run_check(['', '<!--abc-->'], output)
+    self._run_check(['<', '!--abc-->'], output)
+    self._run_check(['<!', '--abc-->'], output)
+    self._run_check(['<!-', '-abc-->'], output)
+    self._run_check(['<!--', 'abc-->'], output)
+    self._run_check(['<!--a', 'bc-->'], output)
+    self._run_check(['<!--ab', 'c-->'], output)
+    self._run_check(['<!--abc', '-->'], output)
+    self._run_check(['<!--abc-', '->'], output)
+    self._run_check(['<!--abc--', '>'], output)
+    self._run_check(['<!--abc-->', ''], output)

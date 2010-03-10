@@ -1,0 +1,27 @@
+def fixupOrderHonorNext(self, blocks, default_next):
+    'Fix one problem with DFS.\n\n        The DFS uses child block, but doesn\'t know about the special\n        "next" block.  As a result, the DFS can order blocks so that a\n        block isn\'t next to the right block for implicit control\n        transfers.\n        '
+    index = {}
+    for i in range(len(blocks)):
+        index[blocks[i]] = i
+    for i in range(0, (len(blocks) - 1)):
+        b = blocks[i]
+        n = blocks[(i + 1)]
+        if ((not b.next) or (b.next[0] == default_next) or (b.next[0] == n)):
+            continue
+        cur = b
+        chain = []
+        elt = cur
+        while (elt.next and (elt.next[0] != default_next)):
+            chain.append(elt.next[0])
+            elt = elt.next[0]
+        l = []
+        for b in chain:
+            assert (index[b] > i)
+            l.append((index[b], b))
+        l.sort()
+        l.reverse()
+        for (j, b) in l:
+            del blocks[index[b]]
+        blocks[i:(i + 1)] = ([cur] + chain)
+        for i in range(len(blocks)):
+            index[blocks[i]] = i

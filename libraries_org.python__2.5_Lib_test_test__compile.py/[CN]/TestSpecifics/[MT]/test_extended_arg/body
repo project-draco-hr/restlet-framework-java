@@ -1,0 +1,6 @@
+def test_extended_arg(self):
+    longexpr = ('x = x or ' + ('-x' * 2500))
+    code = ('\ndef f(x):\n    %s\n    %s\n    %s\n    %s\n    %s\n    %s\n    %s\n    %s\n    %s\n    %s\n    # the expressions above have no effect, x == argument\n    while x:\n        x -= 1\n        # EXTENDED_ARG/JUMP_ABSOLUTE here\n    return x\n' % ((longexpr,) * 10))
+    if (not test_support.is_jython):
+        exec code
+        self.assertEqual(f(5), 0)

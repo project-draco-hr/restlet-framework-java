@@ -1,0 +1,19 @@
+def testMethods(self):
+    noarg = object()
+    methods = dict(fileno=noarg, flush=noarg, isatty=noarg, next=noarg, read=(-1), readinto=array('c', 'x'), readline=(-1), readlines=noarg, seek=0, tell=noarg, truncate=0, write='x', xreadlines=noarg, __iter__=noarg)
+    if sys.platform.startswith('atheos'):
+        methods.remove('truncate')
+    self.f.__exit__(None, None, None)
+    self.assert_(self.f.closed)
+    for (methodname, arg) in methods.iteritems():
+        method = getattr(self.f, methodname)
+        if (arg is noarg):
+            self.assertRaises(ValueError, method)
+        else:
+            self.assertRaises(ValueError, method, arg)
+    self.assertRaises(ValueError, self.f.writelines, [])
+    self.assertEquals(self.f.__exit__(None, None, None), None)
+    try:
+        (1 / 0)
+    except:
+        self.assertEquals(self.f.__exit__(*sys.exc_info()), None)

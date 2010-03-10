@@ -1,0 +1,11 @@
+def close(self, remove=os.unlink, error=os.error):
+    if self.pipe:
+        rc = self.pipe.close()
+    else:
+        rc = 255
+    if self.tmpfile:
+        try:
+            remove(self.tmpfile)
+        except error:
+            pass
+    return rc

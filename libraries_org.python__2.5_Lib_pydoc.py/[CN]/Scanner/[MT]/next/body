@@ -1,0 +1,14 @@
+def next(self):
+    if (not self.state):
+        if (not self.roots):
+            return None
+        root = self.roots.pop(0)
+        self.state = [(root, self.children(root))]
+    (node, children) = self.state[(-1)]
+    if (not children):
+        self.state.pop()
+        return self.next()
+    child = children.pop(0)
+    if self.descendp(child):
+        self.state.append((child, self.children(child)))
+    return child

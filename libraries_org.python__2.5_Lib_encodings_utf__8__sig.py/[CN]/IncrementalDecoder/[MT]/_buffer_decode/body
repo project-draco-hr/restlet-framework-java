@@ -1,0 +1,13 @@
+def _buffer_decode(self, input, errors, final):
+    if self.first:
+        if (len(input) < 3):
+            if codecs.BOM_UTF8.startswith(input):
+                return (u'', 0)
+            else:
+                self.first = None
+        else:
+            self.first = None
+            if (input[:3] == codecs.BOM_UTF8):
+                (output, consumed) = codecs.utf_8_decode(input[3:], errors, final)
+                return (output, (consumed + 3))
+    return codecs.utf_8_decode(input, errors, final)

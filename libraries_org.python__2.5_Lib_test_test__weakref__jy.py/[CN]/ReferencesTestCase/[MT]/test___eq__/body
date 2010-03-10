@@ -1,0 +1,14 @@
+def test___eq__(self):
+
+
+    class Foo(object):
+
+        def __eq__(self, other):
+            return True
+
+        def __hash__(self):
+            return hash('foo')
+    (foo1, foo2) = (Foo(), Foo())
+    (ref1, ref2) = (weakref.ref(foo1), weakref.ref(foo2))
+    self.assertTrue((ref1() is foo1))
+    self.assertTrue((ref2() is foo2))

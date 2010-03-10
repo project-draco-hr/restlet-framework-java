@@ -1,0 +1,11 @@
+def lookup(caps, MIMEtype, key=None):
+    entries = []
+    if (MIMEtype in caps):
+        entries = (entries + caps[MIMEtype])
+    MIMEtypes = MIMEtype.split('/')
+    MIMEtype = (MIMEtypes[0] + '/*')
+    if (MIMEtype in caps):
+        entries = (entries + caps[MIMEtype])
+    if (key is not None):
+        entries = filter((lambda e, key=key: (key in e)), entries)
+    return entries

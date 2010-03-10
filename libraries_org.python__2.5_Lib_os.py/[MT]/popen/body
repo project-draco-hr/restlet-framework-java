@@ -1,0 +1,11 @@
+def popen(command, mode='r', bufsize=(-1)):
+    "popen(command [, mode='r' [, bufsize]]) -> pipe\n\n    Open a pipe to/from a command returning a file object.\n    "
+    import subprocess
+    if (mode == 'r'):
+        proc = subprocess.Popen(command, bufsize=bufsize, shell=True, stdout=subprocess.PIPE)
+        return _wrap_close(proc.stdout, proc)
+    elif (mode == 'w'):
+        proc = subprocess.Popen(command, bufsize=bufsize, shell=True, stdin=subprocess.PIPE)
+        return _wrap_close(proc.stdin, proc)
+    else:
+        raise OSError(errno.EINVAL, strerror(errno.EINVAL))

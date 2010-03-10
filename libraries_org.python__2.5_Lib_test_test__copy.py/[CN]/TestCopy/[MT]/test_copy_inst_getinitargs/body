@@ -1,0 +1,15 @@
+def test_copy_inst_getinitargs(self):
+
+
+    class C:
+
+        def __init__(self, foo):
+            self.foo = foo
+
+        def __getinitargs__(self):
+            return (self.foo,)
+
+        def __cmp__(self, other):
+            return cmp(self.foo, other.foo)
+    x = C(42)
+    self.assertEqual(copy.copy(x), x)

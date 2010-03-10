@@ -1,0 +1,28 @@
+def test_execfile(self):
+    globals = {'a': 1, 'b': 2, }
+    locals = {'b': 200, 'c': 300, }
+
+
+    class M:
+        'Test mapping interface versus possible calls from execfile().'
+
+        def __init__(self):
+            self.z = 10
+
+        def __getitem__(self, key):
+            if (key == 'z'):
+                return self.z
+            raise KeyError
+
+        def __setitem__(self, key, value):
+            if (key == 'z'):
+                self.z = value
+                return
+            raise KeyError
+    locals = M()
+    locals['z'] = 0
+    execfile(TESTFN, globals, locals)
+    self.assertEqual(locals['z'], 2)
+    self.assertRaises(TypeError, execfile)
+    self.assertRaises(TypeError, execfile, TESTFN, {}, ())
+    unlink(TESTFN)

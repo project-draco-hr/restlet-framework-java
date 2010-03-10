@@ -1,0 +1,3 @@
+def test_convert_overrides(self):
+    self.collector = HTMLEntityCollector
+    self.check_events('<a title="&ldquo;test&#x201d;">foo</a>&foobar;&#42;', [('entityref', 'convert', 'ldquo'), ('charref', 'convert', 'x201d'), ('starttag', 'a', [('title', '&ldquo;test&#x201d;')]), ('data', 'foo'), ('endtag', 'a'), ('entityref', 'foobar'), ('entityref', 'convert', 'foobar'), ('charref', '42'), ('charref', 'convert', '42'), ('codepoint', 'convert', 42)])

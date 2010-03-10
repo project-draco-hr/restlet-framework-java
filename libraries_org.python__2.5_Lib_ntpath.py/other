@@ -1,0 +1,47 @@
+'Common pathname manipulations, WindowsNT/95 version.\n\nInstead of importing this module directly, import os and refer to this\nmodule as os.path.\n'
+import java.io.File
+import os
+import stat
+import sys
+from org.python.core.Py import newString
+__all__ = ['normcase', 'isabs', 'join', 'splitdrive', 'split', 'splitext', 'basename', 'dirname', 'commonprefix', 'getsize', 'getmtime', 'getatime', 'getctime', 'islink', 'exists', 'lexists', 'isdir', 'isfile', 'ismount', 'walk', 'expanduser', 'expandvars', 'normpath', 'abspath', 'splitunc', 'curdir', 'pardir', 'sep', 'pathsep', 'defpath', 'altsep', 'extsep', 'devnull', 'realpath', 'supports_unicode_filenames']
+curdir = '.'
+pardir = '..'
+extsep = '.'
+sep = '\\'
+pathsep = ';'
+altsep = '/'
+defpath = '.;C:\\bin'
+if ('ce' in sys.builtin_module_names):
+    defpath = '\\Windows'
+elif ('os2' in sys.builtin_module_names):
+    altsep = '/'
+devnull = 'nul'
+lexists = exists
+try:
+    from nt import _getfullpathname
+except ImportError:
+
+    def abspath(path):
+        'Return the absolute version of a path.'
+        if (not isabs(path)):
+            path = join(os.getcwd(), path)
+        if ((not splitunc(path)[0]) and (not splitdrive(path)[0])):
+            canon_path = newString(java.io.File(path).getCanonicalPath())
+            drive = splitdrive(canon_path)[0]
+            path = join(drive, path)
+        return normpath(path)
+else:
+
+    def abspath(path):
+        'Return the absolute version of a path.'
+        if path:
+            try:
+                path = _getfullpathname(path)
+            except WindowsError:
+                pass
+        else:
+            path = os.getcwd()
+        return normpath(path)
+realpath = abspath
+supports_unicode_filenames = (hasattr(sys, 'getwindowsversion') and (sys.getwindowsversion()[3] >= 2))

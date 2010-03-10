@@ -1,0 +1,13 @@
+def __init__(self, file, mode='r', compression=TAR_PLAIN):
+    if (compression == TAR_PLAIN):
+        self.tarfile = TarFile.taropen(file, mode)
+    elif (compression == TAR_GZIPPED):
+        self.tarfile = TarFile.gzopen(file, mode)
+    else:
+        raise ValueError('unknown compression constant')
+    if (mode[0:1] == 'r'):
+        members = self.tarfile.getmembers()
+        for m in members:
+            m.filename = m.name
+            m.file_size = m.size
+            m.date_time = time.gmtime(m.mtime)[:6]

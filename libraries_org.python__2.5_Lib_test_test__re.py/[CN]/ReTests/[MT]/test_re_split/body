@@ -1,0 +1,9 @@
+def test_re_split(self):
+    self.assertEqual(re.split(':', ':a:b::c'), ['', 'a', 'b', '', 'c'])
+    self.assertEqual(re.split(':*', ':a:b::c'), ['', 'a', 'b', 'c'])
+    self.assertEqual(re.split('(:*)', ':a:b::c'), ['', ':', 'a', ':', 'b', '::', 'c'])
+    self.assertEqual(re.split('(?::*)', ':a:b::c'), ['', 'a', 'b', 'c'])
+    self.assertEqual(re.split('(:)*', ':a:b::c'), ['', ':', 'a', ':', 'b', ':', 'c'])
+    self.assertEqual(re.split('([b:]+)', ':a:b::c'), ['', ':', 'a', ':b::', 'c'])
+    self.assertEqual(re.split('(b)|(:+)', ':a:b::c'), ['', None, ':', 'a', None, ':', '', 'b', None, '', None, '::', 'c'])
+    self.assertEqual(re.split('(?:b)|(?::+)', ':a:b::c'), ['', 'a', '', '', 'c'])

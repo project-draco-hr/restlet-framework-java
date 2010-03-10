@@ -1,0 +1,10 @@
+def test_process_default(self):
+    self.parser.option_class = DurationOption
+    self.parser.add_option('-d', type='duration', default=300)
+    self.parser.add_option('-e', type='duration', default='6m')
+    self.parser.set_defaults(n='42')
+    self.expected.update({'d': 300, 'e': 360, 'n': 42, })
+    self.assertEqual(self.parser.get_default_values(), self.expected)
+    self.parser.set_process_default_values(False)
+    self.expected.update({'d': 300, 'e': '6m', 'n': '42', })
+    self.assertEqual(self.parser.get_default_values(), self.expected)

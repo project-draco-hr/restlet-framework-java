@@ -1,0 +1,45 @@
+"Test handling of newlines via file's read and readline\n\nMade for Jython.\n"
+import os
+import sys
+import tempfile
+import test.test_support as test_support
+import unittest
+assert (not (os.linesep == '\r')), ('os.linesep of  %r is not supported' % os.linesep)
+LF = (os.linesep == '\n')
+CRLF = (os.linesep == '\r\n')
+CRLF_TEST = 'CR\rLF\nCRLF\r\nEOF'
+if sys.platform.startswith('java'):
+    from org.python.core.io import TextIOBase
+    READAHEAD_SIZE = TextIOBase.CHUNK_SIZE
+else:
+    READAHEAD_SIZE = 300
+if LF:
+
+
+    class ReadTextNewlinesTestCase(ReadBinaryNewlinesTestCase):
+        mode = 'r'
+else:
+
+
+    class ReadTextNewlinesTestCase(BaseTestCase):
+
+        def test_text_read(self):
+            read(self.fp, 'CR\rLF\nCRLF\nEOF')
+            self.fp.seek(0)
+            read(self.fp, 'CR\rLF\nCRLF\nEOF', len('CR\rLF\nCRLF\nEOF'))
+            self.fp.seek(0)
+            read(self.fp, 'CR\r', 3)
+            read(self.fp, 'LF\n', 3)
+            read(self.fp, 'CRLF\n', 5)
+            read(self.fp, 'EOF', 3)
+
+        def test_text_readline(self):
+            readline(self.fp, 'CR\rLF\n')
+            readline(self.fp, 'CRLF\n')
+            readline(self.fp, 'EOF')
+            self.fp.seek(0)
+            readline(self.fp, 'CR\rLF\n', 6)
+            readline(self.fp, 'CRLF\n', 5)
+            readline(self.fp, 'EOF', 3)
+if (__name__ == '__main__'):
+    test_main()

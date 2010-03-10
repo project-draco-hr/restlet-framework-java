@@ -1,0 +1,9 @@
+def _unpack_address_tuple(address_tuple):
+    error_message = 'Address must be a tuple of (hostname, port)'
+    if ((not isinstance(address_tuple, tuple)) or (not isinstance(address_tuple[0], basestring)) or (not isinstance(address_tuple[1], (int, long)))):
+        raise TypeError(error_message)
+    hostname = address_tuple[0]
+    if isinstance(hostname, unicode):
+        hostname = hostname.encode()
+    hostname = hostname.strip()
+    return (hostname, address_tuple[1])

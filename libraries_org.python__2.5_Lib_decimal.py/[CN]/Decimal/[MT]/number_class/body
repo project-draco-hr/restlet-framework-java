@@ -1,0 +1,27 @@
+def number_class(self, context=None):
+    'Returns an indication of the class of self.\n\n        The class is one of the following strings:\n          sNaN\n          NaN\n          -Infinity\n          -Normal\n          -Subnormal\n          -Zero\n          +Zero\n          +Subnormal\n          +Normal\n          +Infinity\n        '
+    if self.is_snan():
+        return 'sNaN'
+    if self.is_qnan():
+        return 'NaN'
+    inf = self._isinfinity()
+    if (inf == 1):
+        return '+Infinity'
+    if (inf == (-1)):
+        return '-Infinity'
+    if self.is_zero():
+        if self._sign:
+            return '-Zero'
+        else:
+            return '+Zero'
+    if (context is None):
+        context = getcontext()
+    if self.is_subnormal(context=context):
+        if self._sign:
+            return '-Subnormal'
+        else:
+            return '+Subnormal'
+    if self._sign:
+        return '-Normal'
+    else:
+        return '+Normal'

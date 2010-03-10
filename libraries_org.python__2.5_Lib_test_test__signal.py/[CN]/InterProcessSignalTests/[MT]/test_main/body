@@ -1,0 +1,29 @@
+def test_main(self):
+    (os_done_r, os_done_w) = os.pipe()
+    with nested(closing(os.fdopen(os_done_r)), closing(os.fdopen(os_done_w, 'w'))) as (done_r, done_w):
+        child = os.fork()
+        if (child == 0):
+            try:
+                try:
+                    done_r.close()
+                    with closing(done_w):
+                        try:
+                            self.run_test()
+                        except:
+                            pickle.dump(traceback.format_exc(), done_w)
+                        else:
+                            pickle.dump(None, done_w)
+                except:
+                    print 'Uh oh, raised from pickle.'
+                    traceback.print_exc()
+            finally:
+                exit_subprocess()
+        done_w.close()
+        (r, w, x) = select.select([done_r], [], [], self.MAX_DURATION)
+        if (done_r in r):
+            tb = pickle.load(done_r)
+            if tb:
+                self.fail(tb)
+        else:
+            os.kill(child, signal.SIGKILL)
+            self.fail(('Test deadlocked after %d seconds.' % self.MAX_DURATION))

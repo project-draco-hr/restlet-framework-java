@@ -1,0 +1,11 @@
+def _putline(self, line):
+    if (self._debugging > 1):
+        print '*put*', repr(line)
+    line += CRLF
+    bytes = len(line)
+    while (bytes > 0):
+        sent = self.sslobj.write(line)
+        if (sent == bytes):
+            break
+        line = line[sent:]
+        bytes = (bytes - sent)

@@ -1,0 +1,8 @@
+import unittest, operator, copy, pickle, random
+from sets import Set, ImmutableSet
+from test import test_support
+empty_set = Set()
+libreftest = "\nExample from the Library Reference:  Doc/lib/libsets.tex\n\n>>> from sets import Set as Base  # override _repr to get sorted output\n>>> class Set(Base):\n...     def _repr(self):\n...         return Base._repr(self, sorted=True)\n>>> engineers = Set(['John', 'Jane', 'Jack', 'Janice'])\n>>> programmers = Set(['Jack', 'Sam', 'Susan', 'Janice'])\n>>> managers = Set(['Jane', 'Jack', 'Susan', 'Zack'])\n>>> employees = engineers | programmers | managers           # union\n>>> engineering_management = engineers & managers            # intersection\n>>> fulltime_management = managers - engineers - programmers # difference\n>>> engineers.add('Marvin')\n>>> print engineers\nSet(['Jack', 'Jane', 'Janice', 'John', 'Marvin'])\n>>> employees.issuperset(engineers)           # superset test\nFalse\n>>> employees.union_update(engineers)         # update from another set\n>>> employees.issuperset(engineers)\nTrue\n>>> for group in [engineers, programmers, managers, employees]:\n...     group.discard('Susan')                # unconditionally remove element\n...     print group\n...\nSet(['Jack', 'Jane', 'Janice', 'John', 'Marvin'])\nSet(['Jack', 'Janice', 'Sam'])\nSet(['Jack', 'Jane', 'Zack'])\nSet(['Jack', 'Jane', 'Janice', 'John', 'Marvin', 'Sam', 'Zack'])\n"
+__test__ = {'libreftest': libreftest, }
+if (__name__ == '__main__'):
+    test_main(verbose=True)

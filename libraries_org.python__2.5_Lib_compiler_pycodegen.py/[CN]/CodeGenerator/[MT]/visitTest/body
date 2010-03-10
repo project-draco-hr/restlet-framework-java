@@ -1,0 +1,9 @@
+def visitTest(self, node, jump):
+    end = self.newBlock()
+    for child in node.nodes[:(-1)]:
+        self.visit(child)
+        self.emit(jump, end)
+        self.nextBlock()
+        self.emit('POP_TOP')
+    self.visit(node.nodes[(-1)])
+    self.nextBlock(end)

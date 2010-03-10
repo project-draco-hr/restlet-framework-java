@@ -1,0 +1,28 @@
+def _decodeExtra(self):
+    extra = self.extra
+    unpack = struct.unpack
+    while extra:
+        (tp, ln) = unpack('<hh', extra[:4])
+        if (tp == 1):
+            if (ln >= 24):
+                counts = unpack('<qqq', extra[4:28])
+            elif (ln == 16):
+                counts = unpack('<qq', extra[4:20])
+            elif (ln == 8):
+                counts = unpack('<q', extra[4:12])
+            elif (ln == 0):
+                counts = ()
+            else:
+                raise RuntimeError, ('Corrupt extra field %s' % (ln,))
+            idx = 0
+            if ((self.file_size == (-1)) or (self.file_size == 4294967295L)):
+                self.file_size = counts[idx]
+                idx += 1
+            if ((self.compress_size == (-1)) or (self.compress_size == 4294967295L)):
+                self.compress_size = counts[idx]
+                idx += 1
+            if ((self.header_offset == (-1)) or (self.header_offset == 4294967295L)):
+                old = self.header_offset
+                self.header_offset = counts[idx]
+                idx += 1
+        extra = extra[(ln + 4):]

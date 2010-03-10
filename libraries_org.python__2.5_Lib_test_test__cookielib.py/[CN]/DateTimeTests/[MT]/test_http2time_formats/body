@@ -1,0 +1,12 @@
+def test_http2time_formats(self):
+    from cookielib import http2time, time2isoz
+    tests = ['Thu, 03 Feb 1994 00:00:00 GMT', 'Thursday, 03-Feb-94 00:00:00 GMT', 'Thursday, 03-Feb-1994 00:00:00 GMT', '03 Feb 1994 00:00:00 GMT', '03-Feb-94 00:00:00 GMT', '03-Feb-1994 00:00:00 GMT', '03-Feb-1994 00:00 GMT', '03-Feb-1994 00:00', '03-Feb-94', '03-Feb-1994', '03 Feb 1994', '  03   Feb   1994  0:00  ', '  03-Feb-1994  ']
+    test_t = 760233600
+    result = time2isoz(test_t)
+    expected = '1994-02-03 00:00:00Z'
+    self.assertEquals(result, expected, ("%s  =>  '%s' (%s)" % (test_t, result, expected)))
+    for s in tests:
+        t = http2time(s)
+        t2 = http2time(s.lower())
+        t3 = http2time(s.upper())
+        self.assert_((t == t2 == t3 == test_t), ("'%s'  =>  %s, %s, %s (%s)" % (s, t, t2, t3, test_t)))

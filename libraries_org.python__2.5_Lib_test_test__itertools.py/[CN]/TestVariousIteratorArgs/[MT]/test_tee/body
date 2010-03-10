@@ -1,0 +1,9 @@
+def test_tee(self):
+    for s in ('123', '', range(1000), ('do', 1.2), xrange(2000, 2200, 5)):
+        for g in (G, I, Ig, S, L, R):
+            (it1, it2) = tee(g(s))
+            self.assertEqual(list(it1), list(g(s)))
+            self.assertEqual(list(it2), list(g(s)))
+        self.assertRaises(TypeError, tee, X(s))
+        self.assertRaises(TypeError, list, tee(N(s))[0])
+        self.assertRaises(ZeroDivisionError, list, tee(E(s))[0])

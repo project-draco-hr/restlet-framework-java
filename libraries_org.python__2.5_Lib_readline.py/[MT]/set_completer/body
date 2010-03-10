@@ -1,0 +1,12 @@
+def set_completer(completionfunction=None):
+    'Set or remove the completer instance. If an instance of ReadlineCompleter is specified, \n    it will be used as the new completer; if omitted or None, any completer already installed is removed.\n\n    The completer method is called as completerclass.completer(text, state), for state in 0, 1, 2, ..., \n    until it returns a non-string value. It should return the next possible completion starting with text. \n\n    '
+
+
+    class DerivedCompleter(ReadlineCompleter):
+
+        def __init__(self, method):
+            self.method = method
+
+        def completer(self, text, state):
+            return self.method(text, state)
+    Readline.setCompleter(DerivedCompleter(completionfunction))

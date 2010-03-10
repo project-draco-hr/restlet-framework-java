@@ -1,0 +1,32 @@
+def libc_ver(executable=sys.executable, lib='', version='', chunksize=2048):
+    ' Tries to determine the libc version that the file executable\n        (which defaults to the Python interpreter) is linked against.\n\n        Returns a tuple of strings (lib,version) which default to the\n        given parameters in case the lookup fails.\n\n        Note that the function has intimate knowledge of how different\n        libc versions add symbols to the executable and thus is probably\n        only useable for executables compiled using gcc.\n\n        The file is read and scanned in chunks of chunksize bytes.\n\n    '
+    f = open(executable, 'rb')
+    binary = f.read(chunksize)
+    pos = 0
+    while 1:
+        m = _libc_search.search(binary, pos)
+        if (not m):
+            binary = f.read(chunksize)
+            if (not binary):
+                break
+            pos = 0
+            continue
+        (libcinit, glibc, glibcversion, so, threads, soversion) = m.groups()
+        if (libcinit and (not lib)):
+            lib = 'libc'
+        elif glibc:
+            if (lib != 'glibc'):
+                lib = 'glibc'
+                version = glibcversion
+            elif (glibcversion > version):
+                version = glibcversion
+        elif so:
+            if (lib != 'glibc'):
+                lib = 'libc'
+                if (soversion > version):
+                    version = soversion
+                if (threads and (version[(- len(threads)):] != threads)):
+                    version = (version + threads)
+        pos = m.end()
+    f.close()
+    return (lib, version)

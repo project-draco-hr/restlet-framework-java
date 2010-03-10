@@ -1,0 +1,11 @@
+def set_other_cgi_environ(self, req, resp, dict):
+    if req.isSecure():
+        self.set_string_envvar(dict, 'HTTPS', 'on')
+    else:
+        self.set_string_envvar(dict, 'HTTPS', 'off')
+    self.set_string_envvar(dict, 'SERVER_PROTOCOL', req.getProtocol())
+    self.set_string_envvar(dict, 'REMOTE_HOST', req.getRemoteHost())
+    self.set_string_envvar(dict, 'REMOTE_ADDR', req.getRemoteAddr())
+    self.set_int_envvar(dict, 'REMOTE_PORT', req.getRemotePort(), (-1))
+    self.set_string_envvar_optional(dict, 'AUTH_TYPE', req.getAuthType(), None)
+    self.set_string_envvar_optional(dict, 'REMOTE_USER', req.getRemoteUser(), None)

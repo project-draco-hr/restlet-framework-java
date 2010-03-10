@@ -1,0 +1,16 @@
+def __init__(self, server, conn, addr):
+    asynchat.async_chat.__init__(self, conn)
+    self.__server = server
+    self.__conn = conn
+    self.__addr = addr
+    self.__line = []
+    self.__state = self.COMMAND
+    self.__greeting = 0
+    self.__mailfrom = None
+    self.__rcpttos = []
+    self.__data = ''
+    self.__fqdn = socket.getfqdn()
+    self.__peer = conn.getpeername()
+    print  >> DEBUGSTREAM, 'Peer:', repr(self.__peer)
+    self.push(('220 %s %s' % (self.__fqdn, __version__)))
+    self.set_terminator('\r\n')

@@ -1,0 +1,7 @@
+def __setitem__(self, key, value):
+    if self.writeback:
+        self.cache[key] = value
+    f = StringIO()
+    p = Pickler(f, self._protocol)
+    p.dump(value)
+    self.dict[key] = f.getvalue()

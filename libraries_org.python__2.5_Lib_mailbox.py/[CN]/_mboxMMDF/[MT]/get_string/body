@@ -1,0 +1,8 @@
+def get_string(self, key, from_=False):
+    'Return a string representation or raise a KeyError.'
+    (start, stop) = self._lookup(key)
+    self._file.seek(start)
+    if (not from_):
+        self._file.readline()
+    string = self._file.read((stop - self._file.tell()))
+    return string.replace(os.linesep, '\n')

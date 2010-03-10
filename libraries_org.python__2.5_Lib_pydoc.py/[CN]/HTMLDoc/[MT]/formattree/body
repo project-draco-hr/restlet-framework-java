@@ -1,0 +1,17 @@
+def formattree(self, tree, modname, parent=None):
+    'Produce HTML for a class tree as given by inspect.getclasstree().'
+    result = ''
+    for entry in tree:
+        if (type(entry) is type(())):
+            (c, bases) = entry
+            result = (result + '<dt><font face="helvetica, arial">')
+            result = (result + self.classlink(c, modname))
+            if (bases and (bases != (parent,))):
+                parents = []
+                for base in bases:
+                    parents.append(self.classlink(base, modname))
+                result = (((result + '(') + join(parents, ', ')) + ')')
+            result = (result + '\n</font></dt>')
+        elif (type(entry) is type([])):
+            result = (result + ('<dd>\n%s</dd>\n' % self.formattree(entry, modname, c)))
+    return ('<dl>\n%s</dl>\n' % result)

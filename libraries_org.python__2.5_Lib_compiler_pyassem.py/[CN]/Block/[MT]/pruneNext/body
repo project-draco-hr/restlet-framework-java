@@ -1,0 +1,8 @@
+def pruneNext(self):
+    "Remove bogus edge for unconditional transfers\n\n        Each block has a next edge that accounts for implicit control\n        transfers, e.g. from a JUMP_IF_FALSE to the block that will be\n        executed if the test is true.\n\n        These edges must remain for the current assembler code to\n        work. If they are removed, the dfs_postorder gets things in\n        weird orders.  However, they shouldn't be there for other\n        purposes, e.g. conversion to SSA form.  This method will\n        remove the next edge when it follows an unconditional control\n        transfer.\n        "
+    try:
+        (op, arg) = self.insts[(-1)]
+    except (IndexError, ValueError):
+        return
+    if (op in self._uncond_transfer):
+        self.next = []

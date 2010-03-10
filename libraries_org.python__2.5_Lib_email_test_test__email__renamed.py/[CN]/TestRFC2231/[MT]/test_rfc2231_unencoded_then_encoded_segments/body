@@ -1,0 +1,8 @@
+def test_rfc2231_unencoded_then_encoded_segments(self):
+    eq = self.assertEqual
+    m = 'Content-Type: application/x-foo;\n\tname*0="us-ascii\'en-us\'My";\n\tname*1*=" Document";\n\tname*2*=" For You"\n\n'
+    msg = email.message_from_string(m)
+    (charset, language, s) = msg.get_param('name')
+    eq(charset, 'us-ascii')
+    eq(language, 'en-us')
+    eq(s, 'My Document For You')

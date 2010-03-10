@@ -1,0 +1,18 @@
+def read(self, size=None):
+    'Read at most size bytes from the file. If size is not\n           present or None, read all data until EOF is reached.\n        '
+    if self.closed:
+        raise ValueError('I/O operation on closed file')
+    buf = ''
+    if self.buffer:
+        if (size is None):
+            buf = self.buffer
+            self.buffer = ''
+        else:
+            buf = self.buffer[:size]
+            self.buffer = self.buffer[size:]
+    if (size is None):
+        buf += self.fileobj.read()
+    else:
+        buf += self.fileobj.read((size - len(buf)))
+    self.position += len(buf)
+    return buf

@@ -1,0 +1,20 @@
+def do_commands(self, arg):
+    'Defines a list of commands associated to a breakpoint\n        Those commands will be executed whenever the breakpoint causes the program to stop execution.'
+    if (not arg):
+        bnum = (len(bdb.Breakpoint.bpbynumber) - 1)
+    else:
+        try:
+            bnum = int(arg)
+        except:
+            print  >> self.stdout, 'Usage : commands [bnum]\n        ...\n        end'
+            return
+    self.commands_bnum = bnum
+    self.commands[bnum] = []
+    self.commands_doprompt[bnum] = True
+    self.commands_silent[bnum] = False
+    prompt_back = self.prompt
+    self.prompt = '(com) '
+    self.commands_defining = True
+    self.cmdloop()
+    self.commands_defining = False
+    self.prompt = prompt_back

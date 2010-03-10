@@ -1,0 +1,7 @@
+def byte_compile(self, files):
+    from distutils.util import byte_compile
+    install_root = self.get_finalized_command('install').root
+    if self.compile:
+        byte_compile(files, optimize=0, force=self.force, prefix=install_root, dry_run=self.dry_run)
+    if (self.optimize > 0):
+        byte_compile(files, optimize=self.optimize, force=self.force, prefix=install_root, verbose=self.verbose, dry_run=self.dry_run)

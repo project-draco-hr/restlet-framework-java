@@ -1,0 +1,15 @@
+import doctest, sys
+from test import test_support
+SAMPLE_XML = '\n<body>\n  <tag>text</tag>\n  <tag />\n  <section>\n    <tag>subtext</tag>\n  </section>\n</body>\n'
+SAMPLE_XML_NS = '\n<body xmlns="http://effbot.org/ns">\n  <tag>text</tag>\n  <tag />\n  <section>\n    <tag>subtext</tag>\n  </section>\n</body>\n'
+XINCLUDE = {}
+XINCLUDE['C1.xml'] = '<?xml version=\'1.0\'?>\n<document xmlns:xi="http://www.w3.org/2001/XInclude">\n  <p>120 Mz is adequate for an average home user.</p>\n  <xi:include href="disclaimer.xml"/>\n</document>\n'
+XINCLUDE['disclaimer.xml'] = "<?xml version='1.0'?>\n<disclaimer>\n  <p>The opinions represented herein represent those of the individual\n  and should not be interpreted as official policy endorsed by this\n  organization.</p>\n</disclaimer>\n"
+XINCLUDE['C2.xml'] = '<?xml version=\'1.0\'?>\n<document xmlns:xi="http://www.w3.org/2001/XInclude">\n  <p>This document has been accessed\n  <xi:include href="count.txt" parse="text"/> times.</p>\n</document>\n'
+XINCLUDE['count.txt'] = '324387'
+XINCLUDE['C3.xml'] = '<?xml version=\'1.0\'?>\n<document xmlns:xi="http://www.w3.org/2001/XInclude">\n  <p>The following is the source of the "data.xml" resource:</p>\n  <example><xi:include href="data.xml" parse="text"/></example>\n</document>\n'
+XINCLUDE['data.xml'] = "<?xml version='1.0'?>\n<data>\n  <item><![CDATA[Brooks & Shields]]></item>\n</data>\n"
+XINCLUDE['C5.xml'] = '<?xml version=\'1.0\'?>\n<div xmlns:xi="http://www.w3.org/2001/XInclude">\n  <xi:include href="example.txt" parse="text">\n    <xi:fallback>\n      <xi:include href="fallback-example.txt" parse="text">\n        <xi:fallback><a href="mailto:bob@example.org">Report error</a></xi:fallback>\n      </xi:include>\n    </xi:fallback>\n  </xi:include>\n</div>\n'
+XINCLUDE['default.xml'] = '<?xml version=\'1.0\'?>\n<document xmlns:xi="http://www.w3.org/2001/XInclude">\n  <p>Example.</p>\n  <xi:include href="samples/simple.xml"/>\n</document>\n'
+if (__name__ == '__main__'):
+    test_main()

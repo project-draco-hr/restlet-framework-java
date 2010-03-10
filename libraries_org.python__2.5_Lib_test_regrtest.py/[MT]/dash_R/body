@@ -1,0 +1,34 @@
+def dash_R(the_module, test, indirect_test, huntrleaks):
+    import copy_reg
+    if (not hasattr(sys, 'gettotalrefcount')):
+        raise Exception('Tracking reference leaks requires a debug build of Python')
+    fs = warnings.filters[:]
+    ps = copy_reg.dispatch_table.copy()
+    pic = sys.path_importer_cache.copy()
+    if indirect_test:
+
+        def run_the_test():
+            indirect_test()
+    else:
+
+        def run_the_test():
+            reload(the_module)
+    deltas = []
+    (nwarmup, ntracked, fname) = huntrleaks
+    repcount = (nwarmup + ntracked)
+    print  >> sys.stderr, 'beginning', repcount, 'repetitions'
+    print  >> sys.stderr, ('1234567890' * ((repcount // 10) + 1))[:repcount]
+    dash_R_cleanup(fs, ps, pic)
+    for i in range(repcount):
+        rc = sys.gettotalrefcount()
+        run_the_test()
+        sys.stderr.write('.')
+        dash_R_cleanup(fs, ps, pic)
+        if (i >= nwarmup):
+            deltas.append(((sys.gettotalrefcount() - rc) - 2))
+    print  >> sys.stderr
+    if any(deltas):
+        print  >> sys.stderr, test, 'leaked', deltas, 'references'
+        refrep = open(fname, 'a')
+        print  >> refrep, test, 'leaked', deltas, 'references'
+        refrep.close()

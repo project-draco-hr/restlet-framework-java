@@ -1,0 +1,8 @@
+def setdefault(self, key, default=None):
+    try:
+        wr = self.data[key]
+    except KeyError:
+        self.data[key] = KeyedRef(default, self._remove, key)
+        return default
+    else:
+        return wr()

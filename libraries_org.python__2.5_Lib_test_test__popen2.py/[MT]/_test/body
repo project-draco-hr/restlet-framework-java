@@ -1,0 +1,36 @@
+def _test():
+    print 'Testing os module:'
+    import popen2
+    popen2._cleanup()
+    assert (not popen2._active), ('Active pipes when test starts ' + repr([c.cmd for c in popen2._active]))
+    cmd = 'cat'
+    teststr = 'ab cd\n'
+    if ((os.name == 'nt') or (is_jython and (os._name == 'nt'))):
+        cmd = 'more'
+    expected = teststr.strip()
+    print 'testing popen2...'
+    (w, r) = os.popen2(cmd)
+    w.write(teststr)
+    w.close()
+    got = r.read()
+    if (got.strip() != expected):
+        raise ValueError(('wrote %r read %r' % (teststr, got)))
+    print 'testing popen3...'
+    try:
+        (w, r, e) = os.popen3([cmd])
+    except:
+        (w, r, e) = os.popen3(cmd)
+    w.write(teststr)
+    w.close()
+    got = r.read()
+    if (got.strip() != expected):
+        raise ValueError(('wrote %r read %r' % (teststr, got)))
+    got = e.read()
+    if got:
+        raise ValueError(('unexpected %r on stderr' % (got,)))
+    for inst in popen2._active[:]:
+        inst.wait()
+    popen2._cleanup()
+    if popen2._active:
+        raise ValueError('_active not empty')
+    print 'All OK'

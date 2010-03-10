@@ -1,0 +1,12 @@
+def save(self, filename=None, ignore_discard=False, ignore_expires=False):
+    if (filename is None):
+        if (self.filename is not None):
+            filename = self.filename
+        else:
+            raise ValueError(MISSING_FILENAME_TEXT)
+    f = open(filename, 'w')
+    try:
+        f.write('#LWP-Cookies-2.0\n')
+        f.write(self.as_lwp_str(ignore_discard, ignore_expires))
+    finally:
+        f.close()

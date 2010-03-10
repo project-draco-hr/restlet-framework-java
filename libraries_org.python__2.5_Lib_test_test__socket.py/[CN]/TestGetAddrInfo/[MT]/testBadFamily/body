@@ -1,0 +1,9 @@
+def testBadFamily(self):
+    try:
+        socket.getaddrinfo(HOST, PORT, 9999)
+    except socket.gaierror as gaix:
+        self.failUnlessEqual(gaix[0], errno.EIO)
+    except Exception as x:
+        self.fail(('getaddrinfo with bad family raised wrong exception: %s' % x))
+    else:
+        self.fail('getaddrinfo with bad family should have raised exception')

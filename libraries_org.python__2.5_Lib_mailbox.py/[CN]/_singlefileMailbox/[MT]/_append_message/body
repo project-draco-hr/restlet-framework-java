@@ -1,0 +1,8 @@
+def _append_message(self, message):
+    'Append message to mailbox and return (start, stop) offsets.'
+    self._file.seek(0, 2)
+    self._pre_message_hook(self._file)
+    offsets = self._install_message(message)
+    self._post_message_hook(self._file)
+    self._file.flush()
+    return offsets

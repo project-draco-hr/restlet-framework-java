@@ -1,0 +1,14 @@
+def _create_auth_dict(self, auth_str):
+    first_space_index = auth_str.find(' ')
+    auth_str = auth_str[(first_space_index + 1):]
+    parts = auth_str.split(',')
+    auth_dict = {}
+    for part in parts:
+        (name, value) = part.split('=')
+        name = name.strip()
+        if ((value[0] == '"') and (value[(-1)] == '"')):
+            value = value[1:(-1)]
+        else:
+            value = value.strip()
+        auth_dict[name] = value
+    return auth_dict

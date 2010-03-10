@@ -1,0 +1,10 @@
+def find_executable_linenos(filename):
+    'Return dict where keys are line numbers in the line number table.'
+    try:
+        prog = open(filename, 'rU').read()
+    except IOError as err:
+        print  >> sys.stderr, ('Not printing coverage data for %r: %s' % (filename, err))
+        return {}
+    code = compile(prog, filename, 'exec')
+    strs = find_strings(filename)
+    return find_lines(code, strs)

@@ -1,0 +1,11 @@
+def _test_flush_or_close(self, method):
+    contents = [(self._template % i) for i in xrange(3)]
+    self._box.add(contents[0])
+    self._box.add(contents[1])
+    self._box.add(contents[2])
+    method()
+    self._box = self._factory(self._path)
+    keys = self._box.keys()
+    self.assert_((len(keys) == 3))
+    for key in keys:
+        self.assert_((self._box.get_string(key) in contents))

@@ -1,0 +1,11 @@
+def test_overflow(self):
+    tiny = timedelta.resolution
+    td = (timedelta.min + tiny)
+    td -= tiny
+    self.assertRaises(OverflowError, td.__sub__, tiny)
+    self.assertRaises(OverflowError, td.__add__, (- tiny))
+    td = (timedelta.max - tiny)
+    td += tiny
+    self.assertRaises(OverflowError, td.__add__, tiny)
+    self.assertRaises(OverflowError, td.__sub__, (- tiny))
+    self.assertRaises(OverflowError, (lambda : (- timedelta.max)))

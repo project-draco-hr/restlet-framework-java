@@ -1,0 +1,15 @@
+def test_replace(self):
+    cls = self.theclass
+    args = [1, 2, 3, 4, 5, 6, 7]
+    base = cls(*args)
+    self.assertEqual(base, base.replace())
+    i = 0
+    for (name, newval) in (('year', 2), ('month', 3), ('day', 4), ('hour', 5), ('minute', 6), ('second', 7), ('microsecond', 8)):
+        newargs = args[:]
+        newargs[i] = newval
+        expected = cls(*newargs)
+        got = base.replace(**{name: newval, })
+        self.assertEqual(expected, got)
+        i += 1
+    base = cls(2000, 2, 29)
+    self.assertRaises(ValueError, base.replace, year=2001)

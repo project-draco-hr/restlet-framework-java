@@ -1,0 +1,21 @@
+def test_strftime_bounds_checking(self):
+    if (not test_support.is_jython):
+        self.assertRaises(ValueError, time.strftime, '', (1899, 1, 1, 0, 0, 0, 0, 1, (-1)))
+    if time.accept2dyear:
+        self.assertRaises(ValueError, time.strftime, '', ((-1), 1, 1, 0, 0, 0, 0, 1, (-1)))
+        self.assertRaises(ValueError, time.strftime, '', (100, 1, 1, 0, 0, 0, 0, 1, (-1)))
+    self.assertRaises(ValueError, time.strftime, '', (1900, (-1), 1, 0, 0, 0, 0, 1, (-1)))
+    self.assertRaises(ValueError, time.strftime, '', (1900, 13, 1, 0, 0, 0, 0, 1, (-1)))
+    self.assertRaises(ValueError, time.strftime, '', (1900, 1, (-1), 0, 0, 0, 0, 1, (-1)))
+    self.assertRaises(ValueError, time.strftime, '', (1900, 1, 32, 0, 0, 0, 0, 1, (-1)))
+    self.assertRaises(ValueError, time.strftime, '', (1900, 1, 1, (-1), 0, 0, 0, 1, (-1)))
+    self.assertRaises(ValueError, time.strftime, '', (1900, 1, 1, 24, 0, 0, 0, 1, (-1)))
+    self.assertRaises(ValueError, time.strftime, '', (1900, 1, 1, 0, (-1), 0, 0, 1, (-1)))
+    self.assertRaises(ValueError, time.strftime, '', (1900, 1, 1, 0, 60, 0, 0, 1, (-1)))
+    self.assertRaises(ValueError, time.strftime, '', (1900, 1, 1, 0, 0, (-1), 0, 1, (-1)))
+    self.assertRaises(ValueError, time.strftime, '', (1900, 1, 1, 0, 0, 62, 0, 1, (-1)))
+    self.assertRaises(ValueError, time.strftime, '', (1900, 1, 1, 0, 0, 0, (-2), 1, (-1)))
+    self.assertRaises(ValueError, time.strftime, '', (1900, 1, 1, 0, 0, 0, 0, (-1), (-1)))
+    self.assertRaises(ValueError, time.strftime, '', (1900, 1, 1, 0, 0, 0, 0, 367, (-1)))
+    self.assertRaises(ValueError, time.strftime, '', (1900, 1, 1, 0, 0, 0, 0, 1, (-2)))
+    self.assertRaises(ValueError, time.strftime, '', (1900, 1, 1, 0, 0, 0, 0, 1, 2))

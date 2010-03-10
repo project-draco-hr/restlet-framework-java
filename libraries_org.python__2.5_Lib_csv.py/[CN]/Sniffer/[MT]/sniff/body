@@ -1,0 +1,18 @@
+def sniff(self, sample, delimiters=None):
+    '\n        Returns a dialect (or None) corresponding to the sample\n        '
+    (quotechar, delimiter, skipinitialspace) = self._guess_quote_and_delimiter(sample, delimiters)
+    if (not delimiter):
+        (delimiter, skipinitialspace) = self._guess_delimiter(sample, delimiters)
+    if (not delimiter):
+        raise Error, 'Could not determine delimiter'
+
+
+    class dialect(Dialect):
+        _name = 'sniffed'
+        lineterminator = '\r\n'
+        quoting = QUOTE_MINIMAL
+        doublequote = False
+    dialect.delimiter = delimiter
+    dialect.quotechar = (quotechar or '"')
+    dialect.skipinitialspace = skipinitialspace
+    return dialect

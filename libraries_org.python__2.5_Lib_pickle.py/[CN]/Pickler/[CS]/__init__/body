@@ -1,0 +1,13 @@
+def __init__(self, file, protocol=None):
+    'This takes a file-like object for writing a pickle data stream.\n\n        The optional protocol argument tells the pickler to use the\n        given protocol; supported protocols are 0, 1, 2.  The default\n        protocol is 0, to be backwards compatible.  (Protocol 0 is the\n        only protocol that can be written to a file opened in text\n        mode and read back successfully.  When using a protocol higher\n        than 0, make sure the file is opened in binary mode, both when\n        pickling and unpickling.)\n\n        Protocol 1 is more efficient than protocol 0; protocol 2 is\n        more efficient than protocol 1.\n\n        Specifying a negative protocol version selects the highest\n        protocol version supported.  The higher the protocol used, the\n        more recent the version of Python needed to read the pickle\n        produced.\n\n        The file parameter must have a write() method that accepts a single\n        string argument.  It can thus be an open file object, a StringIO\n        object, or any other custom object that meets this interface.\n\n        '
+    if (protocol is None):
+        protocol = 0
+    if (protocol < 0):
+        protocol = HIGHEST_PROTOCOL
+    elif (not (0 <= protocol <= HIGHEST_PROTOCOL)):
+        raise ValueError(('pickle protocol must be <= %d' % HIGHEST_PROTOCOL))
+    self.write = file.write
+    self.memo = {}
+    self.proto = int(protocol)
+    self.bin = (protocol >= 1)
+    self.fast = 0

@@ -1,0 +1,14 @@
+def visitImport(self, node):
+    self.set_lineno(node)
+    level = (0 if self.graph.checkFlag(CO_FUTURE_ABSIMPORT) else (-1))
+    for (name, alias) in node.names:
+        if (VERSION > 1):
+            self.emit('LOAD_CONST', level)
+            self.emit('LOAD_CONST', None)
+        self.emit('IMPORT_NAME', name)
+        mod = name.split('.')[0]
+        if alias:
+            self._resolveDots(name)
+            self.storeName(alias)
+        else:
+            self.storeName(mod)

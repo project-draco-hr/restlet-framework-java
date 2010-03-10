@@ -1,0 +1,11 @@
+def testBadMagic2(self):
+    m0 = ord(test_pyc[0])
+    m0 ^= 4
+    badmagic_pyc = (chr(m0) + test_pyc[1:])
+    files = {(TESTMOD + pyc_ext): (NOW, badmagic_pyc), }
+    try:
+        self.doTest('.py', files, TESTMOD)
+    except ImportError:
+        pass
+    else:
+        self.fail('expected ImportError; import from bad pyc')

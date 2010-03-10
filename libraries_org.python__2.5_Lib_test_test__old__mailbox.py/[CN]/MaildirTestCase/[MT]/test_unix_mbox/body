@@ -1,0 +1,10 @@
+def test_unix_mbox(self):
+    import email.Parser
+    fname = self.createMessage('cur', True)
+    n = 0
+    with open(fname) as fp:
+        for msg in mailbox.PortableUnixMailbox(fp, email.Parser.Parser().parse):
+            n += 1
+            self.assertEqual(msg['subject'], 'Simple Test')
+            self.assertEqual(len(str(msg)), (len(FROM_) + len(DUMMY_MESSAGE)))
+    self.assertEqual(n, 1)

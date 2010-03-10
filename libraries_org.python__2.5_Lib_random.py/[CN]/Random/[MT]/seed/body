@@ -1,0 +1,10 @@
+def seed(self, a=None):
+    'Initialize internal state from hashable object.\n\n        None or no argument seeds from current time or from an operating\n        system specific randomness source if available.\n\n        If a is not None or an int or long, hash(a) is used instead.\n        '
+    if (a is None):
+        try:
+            a = long(_hexlify(_urandom(16)), 16)
+        except NotImplementedError:
+            import time
+            a = long((time.time() * 256))
+    super(Random, self).seed(a)
+    self.gauss_next = None

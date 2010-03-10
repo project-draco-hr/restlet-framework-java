@@ -1,0 +1,15 @@
+def test_double_write(self):
+    import array
+    contents = [((20 - i) * 0.1) for i in range(20)]
+    a = array.array('d', contents)
+    (fd, name) = tempfile.mkstemp()
+    fileobj = os.fdopen(fd, 'w+b')
+    try:
+        writer = csv.writer(fileobj, dialect='excel')
+        writer.writerow(a)
+        expected = (','.join([str(i) for i in a]) + '\r\n')
+        fileobj.seek(0)
+        self.assertEqual(fileobj.read(), expected)
+    finally:
+        fileobj.close()
+        os.unlink(name)

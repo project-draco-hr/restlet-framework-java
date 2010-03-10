@@ -1,0 +1,6 @@
+def same_quantum(self, other):
+    'Return True if self and other have the same exponent; otherwise\n        return False.\n\n        If either operand is a special value, the following rules are used:\n           * return True if both operands are infinities\n           * return True if both operands are NaNs\n           * otherwise, return False.\n        '
+    other = _convert_other(other, raiseit=True)
+    if (self._is_special or other._is_special):
+        return ((self.is_nan() and other.is_nan()) or (self.is_infinite() and other.is_infinite()))
+    return (self._exp == other._exp)

@@ -1,0 +1,13 @@
+def setUp(self):
+    self.name = test_support.TESTFN
+    self.name_same = (test_support.TESTFN + '-same')
+    self.name_diff = (test_support.TESTFN + '-diff')
+    data = 'Contents of file go here.\n'
+    for name in [self.name, self.name_same, self.name_diff]:
+        output = open(name, 'w')
+        output.write(data)
+        output.close()
+    output = open(self.name_diff, 'a+')
+    output.write('An extra line.\n')
+    output.close()
+    self.dir = tempfile.gettempdir()

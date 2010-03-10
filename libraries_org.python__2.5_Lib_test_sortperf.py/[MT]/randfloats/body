@@ -1,0 +1,34 @@
+def randfloats(n):
+    'Return a list of n random floats in [0, 1).'
+    fn = os.path.join(td, ('rr%06d' % n))
+    try:
+        fp = open(fn, 'rb')
+    except IOError:
+        r = random.random
+        result = [r() for i in xrange(n)]
+        try:
+            try:
+                fp = open(fn, 'wb')
+                marshal.dump(result, fp)
+                fp.close()
+                fp = None
+            finally:
+                if fp:
+                    try:
+                        os.unlink(fn)
+                    except os.error:
+                        pass
+        except IOError as msg:
+            print "can't write", fn, ':', msg
+    else:
+        result = marshal.load(fp)
+        fp.close()
+        for i in range(10):
+            i = random.randrange(n)
+            temp = result[:i]
+            del result[:i]
+            temp.reverse()
+            result.extend(temp)
+            del temp
+    assert (len(result) == n)
+    return result

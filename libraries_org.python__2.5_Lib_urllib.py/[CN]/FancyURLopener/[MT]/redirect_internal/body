@@ -1,0 +1,11 @@
+def redirect_internal(self, url, fp, errcode, errmsg, headers, data):
+    if ('location' in headers):
+        newurl = headers['location']
+    elif ('uri' in headers):
+        newurl = headers['uri']
+    else:
+        return
+    void = fp.read()
+    fp.close()
+    newurl = basejoin(((self.type + ':') + url), newurl)
+    return self.open(newurl)

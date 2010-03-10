@@ -1,0 +1,8 @@
+def ugettext(self, message):
+    missing = object()
+    tmsg = self._catalog.get(message, missing)
+    if (tmsg is missing):
+        if self._fallback:
+            return self._fallback.ugettext(message)
+        return unicode(message)
+    return tmsg

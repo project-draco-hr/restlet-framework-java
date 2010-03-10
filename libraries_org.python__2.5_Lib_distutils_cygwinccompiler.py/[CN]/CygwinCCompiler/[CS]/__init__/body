@@ -1,0 +1,29 @@
+def __init__(self, verbose=0, dry_run=0, force=0):
+    UnixCCompiler.__init__(self, verbose, dry_run, force)
+    (status, details) = check_config_h()
+    self.debug_print(("Python's GCC status: %s (details: %s)" % (status, details)))
+    if (status is not CONFIG_H_OK):
+        self.warn(("Python's pyconfig.h doesn't seem to support your compiler. Reason: %s. Compiling may fail because of undefined preprocessor macros." % details))
+    (self.gcc_version, self.ld_version, self.dllwrap_version) = get_versions()
+    self.debug_print((self.compiler_type + (': gcc %s, ld %s, dllwrap %s\n' % (self.gcc_version, self.ld_version, self.dllwrap_version))))
+    if (self.ld_version >= '2.10.90'):
+        self.linker_dll = 'gcc'
+    else:
+        self.linker_dll = 'dllwrap'
+    if (self.ld_version >= '2.13'):
+        shared_option = '-shared'
+    else:
+        shared_option = '-mdll -static'
+    self.set_executables(compiler='gcc -mcygwin -O -Wall', compiler_so='gcc -mcygwin -mdll -O -Wall', compiler_cxx='g++ -mcygwin -O -Wall', linker_exe='gcc -mcygwin', linker_so=('%s -mcygwin %s' % (self.linker_dll, shared_option)))
+    if (self.gcc_version == '2.91.57'):
+        self.dll_libraries = ['msvcrt']
+        self.warn('Consider upgrading to a newer version of gcc')
+    else:
+        self.dll_libraries = []
+        msc_pos = sys.version.find('MSC v.')
+        if (msc_pos != (-1)):
+            msc_ver = sys.version[(msc_pos + 6):(msc_pos + 10)]
+            if (msc_ver == '1300'):
+                self.dll_libraries = ['msvcr70']
+            elif (msc_ver == '1310'):
+                self.dll_libraries = ['msvcr71']

@@ -1,0 +1,8 @@
+def handle(self):
+    'Handle a single HTTP request'
+    self.raw_requestline = self.rfile.readline()
+    if (not self.parse_request()):
+        return
+    handler = ServerHandler(self.rfile, self.wfile, self.get_stderr(), self.get_environ())
+    handler.request_handler = self
+    handler.run(self.server.get_app())

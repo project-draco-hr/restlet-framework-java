@@ -1,0 +1,24 @@
+def put(self, item, block=True, timeout=None):
+    "Put an item into the queue.\n\n        If optional args 'block' is true and 'timeout' is None (the default),\n        block if necessary until a free slot is available. If 'timeout' is\n        a positive number, it blocks at most 'timeout' seconds and raises\n        the Full exception if no free slot was available within that time.\n        Otherwise ('block' is false), put an item on the queue if a free slot\n        is immediately available, else raise the Full exception ('timeout'\n        is ignored in that case).\n        "
+    self.not_full.acquire()
+    try:
+        if (not block):
+            if self._full():
+                raise Full
+        elif (timeout is None):
+            while self._full():
+                self.not_full.wait()
+        else:
+            if (timeout < 0):
+                raise ValueError("'timeout' must be a positive number")
+            endtime = (_time() + timeout)
+            while self._full():
+                remaining = (endtime - _time())
+                if (remaining <= 0.0):
+                    raise Full
+                self.not_full.wait(remaining)
+        self._put(item)
+        self.unfinished_tasks += 1
+        self.not_empty.notify()
+    finally:
+        self.not_full.release()

@@ -1,0 +1,12 @@
+def test_decoded_generator(self):
+    eq = self.assertEqual
+    msg = self._msgobj('msg_07.txt')
+    fp = openfile('msg_17.txt')
+    try:
+        text = fp.read()
+    finally:
+        fp.close()
+    s = StringIO()
+    g = DecodedGenerator(s)
+    g.flatten(msg)
+    eq(s.getvalue(), text)

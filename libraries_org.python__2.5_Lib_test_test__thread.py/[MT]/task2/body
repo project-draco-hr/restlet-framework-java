@@ -1,0 +1,23 @@
+def task2(ident):
+    global running
+    for i in range(numtrips):
+        if (ident == 0):
+            delay = 0.001
+        else:
+            rmutex.acquire()
+            delay = (random.random() * numtasks)
+            rmutex.release()
+        if verbose:
+            print 'task', ident, 'will run for', round(delay, 1), 'sec'
+        time.sleep(delay)
+        if verbose:
+            print 'task', ident, 'entering barrier', i
+        bar.enter()
+        if verbose:
+            print 'task', ident, 'leaving barrier', i
+    mutex.acquire()
+    running -= 1
+    finished = (running == 0)
+    mutex.release()
+    if finished:
+        done.release()

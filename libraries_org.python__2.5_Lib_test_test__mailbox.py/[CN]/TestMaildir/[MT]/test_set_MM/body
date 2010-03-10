@@ -1,0 +1,21 @@
+def test_set_MM(self):
+    msg0 = mailbox.MaildirMessage((self._template % 0))
+    msg0.set_flags('TP')
+    key = self._box.add(msg0)
+    msg_returned = self._box.get_message(key)
+    self.assert_((msg_returned.get_subdir() == 'new'))
+    self.assert_((msg_returned.get_flags() == 'PT'))
+    msg1 = mailbox.MaildirMessage((self._template % 1))
+    self._box[key] = msg1
+    msg_returned = self._box.get_message(key)
+    self.assert_((msg_returned.get_subdir() == 'new'))
+    self.assert_((msg_returned.get_flags() == ''))
+    self.assert_((msg_returned.get_payload() == '1'))
+    msg2 = mailbox.MaildirMessage((self._template % 2))
+    msg2.set_info('2,S')
+    self._box[key] = msg2
+    self._box[key] = (self._template % 3)
+    msg_returned = self._box.get_message(key)
+    self.assert_((msg_returned.get_subdir() == 'new'))
+    self.assert_((msg_returned.get_flags() == 'S'))
+    self.assert_((msg_returned.get_payload() == '3'))

@@ -1,0 +1,38 @@
+def do_test(X, Y, name, impl):
+    x = X('x')
+    y = Y('y')
+    opname = ('__%s__' % name)
+    ropname = ('__r%s__' % name)
+    count = [0]
+    fail = []
+
+    def check(z1, z2):
+        ref = refop(z1, z2, opname, ropname)
+        try:
+            v = impl(z1, z2)
+        except TypeError:
+            v = 'TypeError'
+        if (v != ref):
+            fail.append(count[0])
+
+    def override_in_hier(n=6):
+        if (n == 0):
+            count[0] += 1
+            check(x, y)
+            check(y, x)
+            return
+        f = (lambda self, other: (n, self.name, other.name))
+        if ((n % 2) == 0):
+            name = opname
+        else:
+            name = ropname
+        for C in Y.__mro__:
+            if (name in C.__dict__):
+                continue
+            if (C is not object):
+                setattr(C, name, f)
+            override_in_hier((n - 1))
+            if (C is not object):
+                delattr(C, name)
+    override_in_hier()
+    return fail

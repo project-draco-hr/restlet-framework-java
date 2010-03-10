@@ -1,0 +1,31 @@
+def compare_generic_iter(make_it, match):
+    "Utility to compare a generic 2.1/2.2+ iterator with an iterable\n\n    If running under Python 2.2+, this tests the iterator using iter()/next(),\n    as well as __getitem__.  'make_it' must be a function returning a fresh\n    iterator to be tested (since this may test the iterator twice)."
+    it = make_it()
+    n = 0
+    for item in match:
+        if (not (it[n] == item)):
+            raise AssertionError
+        n += 1
+    try:
+        it[n]
+    except IndexError:
+        pass
+    else:
+        raise AssertionError('Too many items from __getitem__', it)
+    try:
+        (iter, StopIteration)
+    except NameError:
+        pass
+    else:
+        it = make_it()
+        if (not (iter(it) is it)):
+            raise AssertionError
+        for item in match:
+            if (not (it.next() == item)):
+                raise AssertionError
+        try:
+            it.next()
+        except StopIteration:
+            pass
+        else:
+            raise AssertionError('Too many items from .next()', it)

@@ -1,0 +1,15 @@
+def test_bug1055820b():
+    ouch = []
+
+    def callback(ignored):
+        ouch[:] = [wr() for wr in WRs]
+    Cs = [C1055820(i) for i in range(2)]
+    WRs = [weakref.ref(c, callback) for c in Cs]
+    c = None
+    gc.collect()
+    expect(len(ouch), 0, 'bug1055820b')
+    Cs = None
+    gc.collect()
+    expect(len(ouch), 2, 'bug1055820b')
+    for x in ouch:
+        expect(x, None, 'bug1055820b')

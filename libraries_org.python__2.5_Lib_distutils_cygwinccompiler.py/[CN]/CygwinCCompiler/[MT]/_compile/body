@@ -1,0 +1,11 @@
+def _compile(self, obj, src, ext, cc_args, extra_postargs, pp_opts):
+    if ((ext == '.rc') or (ext == '.res')):
+        try:
+            self.spawn(['windres', '-i', src, '-o', obj])
+        except DistutilsExecError as msg:
+            raise CompileError, msg
+    else:
+        try:
+            self.spawn((((self.compiler_so + cc_args) + [src, '-o', obj]) + extra_postargs))
+        except DistutilsExecError as msg:
+            raise CompileError, msg

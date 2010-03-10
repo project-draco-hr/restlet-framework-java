@@ -1,0 +1,17 @@
+def testLock():
+    LOOPS = 50
+    lock_held_at_start = imp.lock_held()
+    verify_lock_state(lock_held_at_start)
+    for i in range(LOOPS):
+        imp.acquire_lock()
+        verify_lock_state(True)
+    for i in range(LOOPS):
+        imp.release_lock()
+    verify_lock_state(lock_held_at_start)
+    if (not lock_held_at_start):
+        try:
+            imp.release_lock()
+        except RuntimeError:
+            pass
+        else:
+            raise TestFailed('release_lock() without lock should raise RuntimeError')

@@ -1,0 +1,13 @@
+def test_recursion_limit(self):
+    head = last = []
+    MAX_MARSHAL_STACK_DEPTH = 2000
+    for i in range((MAX_MARSHAL_STACK_DEPTH - 2)):
+        last.append([0])
+        last = last[(-1)]
+    data = marshal.dumps(head)
+    new_head = marshal.loads(data)
+    self.assertEqual(len(new_head), len(head))
+    self.assertEqual(len(new_head[0]), len(head[0]))
+    self.assertEqual(len(new_head[(-1)]), len(head[(-1)]))
+    last.append([0])
+    self.assertRaises(ValueError, marshal.dumps, head)

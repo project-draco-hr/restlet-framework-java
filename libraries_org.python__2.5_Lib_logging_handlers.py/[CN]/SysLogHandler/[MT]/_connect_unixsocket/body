@@ -1,0 +1,8 @@
+def _connect_unixsocket(self, address):
+    self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+    try:
+        self.socket.connect(address)
+    except socket.error:
+        self.socket.close()
+        self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        self.socket.connect(address)

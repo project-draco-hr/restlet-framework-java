@@ -1,0 +1,133 @@
+def _readmodule(module, path, inpackage=None):
+    'Do the hard work for readmodule[_ex].'
+    if inpackage:
+        fullmodule = ('%s.%s' % (inpackage, module))
+    else:
+        fullmodule = module
+    if (fullmodule in _modules):
+        return _modules[fullmodule]
+    dict = {}
+    if ((module in sys.builtin_module_names) and (not inpackage)):
+        _modules[module] = dict
+        return dict
+    i = module.rfind('.')
+    if (i >= 0):
+        package = module[:i]
+        submodule = module[(i + 1):]
+        parent = _readmodule(package, path, inpackage)
+        if inpackage:
+            package = ('%s.%s' % (inpackage, package))
+        return _readmodule(submodule, parent['__path__'], package)
+    f = None
+    if inpackage:
+        (f, file, (suff, mode, type)) = imp.find_module(module, path)
+    else:
+        (f, file, (suff, mode, type)) = imp.find_module(module, (path + sys.path))
+    if (type == imp.PKG_DIRECTORY):
+        dict['__path__'] = [file]
+        path = ([file] + path)
+        (f, file, (suff, mode, type)) = imp.find_module('__init__', [file])
+    _modules[fullmodule] = dict
+    if (type != imp.PY_SOURCE):
+        f.close()
+        return dict
+    stack = []
+    g = tokenize.generate_tokens(f.readline)
+    try:
+        for (tokentype, token, start, end, line) in g:
+            if (tokentype == DEDENT):
+                (lineno, thisindent) = start
+                while (stack and (stack[(-1)][1] >= thisindent)):
+                    del stack[(-1)]
+            elif (token == 'def'):
+                (lineno, thisindent) = start
+                while (stack and (stack[(-1)][1] >= thisindent)):
+                    del stack[(-1)]
+                (tokentype, meth_name, start, end, line) = g.next()
+                if (tokentype != NAME):
+                    continue
+                if stack:
+                    cur_class = stack[(-1)][0]
+                    if isinstance(cur_class, Class):
+                        cur_class._addmethod(meth_name, lineno)
+                else:
+                    dict[meth_name] = Function(fullmodule, meth_name, file, lineno)
+                stack.append((None, thisindent))
+            elif (token == 'class'):
+                (lineno, thisindent) = start
+                while (stack and (stack[(-1)][1] >= thisindent)):
+                    del stack[(-1)]
+                (tokentype, class_name, start, end, line) = g.next()
+                if (tokentype != NAME):
+                    continue
+                (tokentype, token, start, end, line) = g.next()
+                inherit = None
+                if (token == '('):
+                    names = []
+                    level = 1
+                    super = []
+                    while True:
+                        (tokentype, token, start, end, line) = g.next()
+                        if ((token in (')', ',')) and (level == 1)):
+                            n = ''.join(super)
+                            if (n in dict):
+                                n = dict[n]
+                            else:
+                                c = n.split('.')
+                                if (len(c) > 1):
+                                    m = c[(-2)]
+                                    c = c[(-1)]
+                                    if (m in _modules):
+                                        d = _modules[m]
+                                        if (c in d):
+                                            n = d[c]
+                            names.append(n)
+                            super = []
+                        if (token == '('):
+                            level += 1
+                        elif (token == ')'):
+                            level -= 1
+                            if (level == 0):
+                                break
+                        elif ((token == ',') and (level == 1)):
+                            pass
+                        elif ((tokentype in (NAME, OP)) and (level == 1)):
+                            super.append(token)
+                    inherit = names
+                cur_class = Class(fullmodule, class_name, inherit, file, lineno)
+                if (not stack):
+                    dict[class_name] = cur_class
+                stack.append((cur_class, thisindent))
+            elif ((token == 'import') and (start[1] == 0)):
+                modules = _getnamelist(g)
+                for (mod, mod2) in modules:
+                    try:
+                        if (not inpackage):
+                            _readmodule(mod, path)
+                        else:
+                            try:
+                                _readmodule(mod, path, inpackage)
+                            except ImportError:
+                                _readmodule(mod, [])
+                    except:
+                        pass
+            elif ((token == 'from') and (start[1] == 0)):
+                (mod, token) = _getname(g)
+                if ((not mod) or (token != 'import')):
+                    continue
+                names = _getnamelist(g)
+                try:
+                    d = _readmodule(mod, path, inpackage)
+                except:
+                    continue
+                for (n, n2) in names:
+                    if (n in d):
+                        dict[(n2 or n)] = d[n]
+                    elif (n == '*'):
+                        for n in d:
+                            if (n[0] != '_'):
+                                dict[n] = d[n]
+    except StopIteration:
+        pass
+    f.close()
+    return dict

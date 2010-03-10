@@ -1,0 +1,9 @@
+def visitDict(self, node):
+    self.set_lineno(node)
+    self.emit('BUILD_MAP', 0)
+    for (k, v) in node.items:
+        self.emit('DUP_TOP')
+        self.visit(k)
+        self.visit(v)
+        self.emit('ROT_THREE')
+        self.emit('STORE_SUBSCR')

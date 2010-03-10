@@ -1,0 +1,10 @@
+def test_fileno(self):
+    if ((sys.platform in ('win32',)) or (not hasattr(os, 'fdopen'))):
+        return
+    open_url = urllib.urlopen('http://www.python.org/')
+    fd = open_url.fileno()
+    FILE = os.fdopen(fd)
+    try:
+        self.assert_(FILE.read(), 'reading from file created using fd returned by fileno failed')
+    finally:
+        FILE.close()

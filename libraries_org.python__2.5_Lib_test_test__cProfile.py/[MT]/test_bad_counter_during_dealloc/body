@@ -1,0 +1,11 @@
+def test_bad_counter_during_dealloc():
+    import _lsprof
+    sys.stderr = open(test.test_support.TESTFN, 'w')
+    try:
+        obj = _lsprof.Profiler((lambda : int))
+        obj.enable()
+        obj = _lsprof.Profiler(1)
+        obj.disable()
+    finally:
+        sys.stderr = sys.__stderr__
+        test.test_support.unlink(test.test_support.TESTFN)

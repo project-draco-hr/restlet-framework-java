@@ -1,0 +1,43 @@
+def save(self, obj):
+    pid = self.persistent_id(obj)
+    if pid:
+        self.save_pers(pid)
+        return
+    x = self.memo.get(id(obj))
+    if x:
+        self.write(self.get(x[0]))
+        return
+    t = type(obj)
+    f = self.dispatch.get(t)
+    if f:
+        f(self, obj)
+        return
+    try:
+        issc = issubclass(t, TypeType)
+    except TypeError:
+        issc = 0
+    if issc:
+        self.save_global(obj)
+        return
+    reduce = dispatch_table.get(t)
+    if reduce:
+        rv = reduce(obj)
+    else:
+        reduce = getattr(obj, '__reduce_ex__', None)
+        if reduce:
+            rv = reduce(self.proto)
+        else:
+            reduce = getattr(obj, '__reduce__', None)
+            if reduce:
+                rv = reduce()
+            else:
+                raise PicklingError(("Can't pickle %r object: %r" % (t.__name__, obj)))
+    if (type(rv) is StringType):
+        self.save_global(obj, rv)
+        return
+    if (type(rv) is not TupleType):
+        raise PicklingError(('%s must return string or tuple' % reduce))
+    l = len(rv)
+    if (not (2 <= l <= 5)):
+        raise PicklingError(('Tuple returned by %s must have two to five elements' % reduce))
+    self.save_reduce(obj=obj, *rv)

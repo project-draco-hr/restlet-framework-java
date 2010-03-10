@@ -1,0 +1,95 @@
+def __pow__(self, other, modulo=None, context=None):
+    'Return self ** other [ % modulo].\n\n        With two arguments, compute self**other.\n\n        With three arguments, compute (self**other) % modulo.  For the\n        three argument form, the following restrictions on the\n        arguments hold:\n\n         - all three arguments must be integral\n         - other must be nonnegative\n         - either self or other (or both) must be nonzero\n         - modulo must be nonzero and must have at most p digits,\n           where p is the context precision.\n\n        If any of these restrictions is violated the InvalidOperation\n        flag is raised.\n\n        The result of pow(self, other, modulo) is identical to the\n        result that would be obtained by computing (self**other) %\n        modulo with unbounded precision, but is computed more\n        efficiently.  It is always exact.\n        '
+    if (modulo is not None):
+        return self._power_modulo(other, modulo, context)
+    other = _convert_other(other)
+    if (other is NotImplemented):
+        return other
+    if (context is None):
+        context = getcontext()
+    ans = self._check_nans(other, context)
+    if ans:
+        return ans
+    if (not other):
+        if (not self):
+            return context._raise_error(InvalidOperation, '0 ** 0')
+        else:
+            return Dec_p1
+    result_sign = 0
+    if (self._sign == 1):
+        if other._isinteger():
+            if (not other._iseven()):
+                result_sign = 1
+        elif self:
+            return context._raise_error(InvalidOperation, 'x ** y with x negative and y not an integer')
+        self = self.copy_negate()
+    if (not self):
+        if (other._sign == 0):
+            return _dec_from_triple(result_sign, '0', 0)
+        else:
+            return Infsign[result_sign]
+    if self._isinfinity():
+        if (other._sign == 0):
+            return Infsign[result_sign]
+        else:
+            return _dec_from_triple(result_sign, '0', 0)
+    if (self == Dec_p1):
+        if other._isinteger():
+            if (other._sign == 1):
+                multiplier = 0
+            elif (other > context.prec):
+                multiplier = context.prec
+            else:
+                multiplier = int(other)
+            exp = (self._exp * multiplier)
+            if (exp < (1 - context.prec)):
+                exp = (1 - context.prec)
+                context._raise_error(Rounded)
+        else:
+            context._raise_error(Inexact)
+            context._raise_error(Rounded)
+            exp = (1 - context.prec)
+        return _dec_from_triple(result_sign, ('1' + ('0' * (- exp))), exp)
+    self_adj = self.adjusted()
+    if other._isinfinity():
+        if ((other._sign == 0) == (self_adj < 0)):
+            return _dec_from_triple(result_sign, '0', 0)
+        else:
+            return Infsign[result_sign]
+    ans = None
+    bound = (self._log10_exp_bound() + other.adjusted())
+    if ((self_adj >= 0) == (other._sign == 0)):
+        if (bound >= len(str(context.Emax))):
+            ans = _dec_from_triple(result_sign, '1', (context.Emax + 1))
+    else:
+        Etiny = context.Etiny()
+        if (bound >= len(str((- Etiny)))):
+            ans = _dec_from_triple(result_sign, '1', (Etiny - 1))
+    if (ans is None):
+        ans = self._power_exact(other, (context.prec + 1))
+        if ((ans is not None) and (result_sign == 1)):
+            ans = _dec_from_triple(1, ans._int, ans._exp)
+    if (ans is None):
+        p = context.prec
+        x = _WorkRep(self)
+        (xc, xe) = (x.int, x.exp)
+        y = _WorkRep(other)
+        (yc, ye) = (y.int, y.exp)
+        if (y.sign == 1):
+            yc = (- yc)
+        extra = 3
+        while True:
+            (coeff, exp) = _dpower(xc, xe, yc, ye, (p + extra))
+            if (coeff % (5 * (10 ** ((len(str(coeff)) - p) - 1)))):
+                break
+            extra += 3
+        ans = _dec_from_triple(result_sign, str(coeff), exp)
+    if (not other._isinteger()):
+        context._raise_error(Inexact)
+        if (len(ans._int) <= context.prec):
+            expdiff = ((context.prec + 1) - len(ans._int))
+            ans = _dec_from_triple(ans._sign, (ans._int + ('0' * expdiff)), (ans._exp - expdiff))
+        if (ans.adjusted() < context.Emin):
+            context._raise_error(Underflow)
+    ans = ans._fix(context)
+    return ans

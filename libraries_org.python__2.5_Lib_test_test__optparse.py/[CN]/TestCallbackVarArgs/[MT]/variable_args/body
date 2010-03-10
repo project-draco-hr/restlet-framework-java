@@ -1,0 +1,13 @@
+def variable_args(self, option, opt, value, parser):
+    self.assert_((value is None))
+    done = 0
+    value = []
+    rargs = parser.rargs
+    while rargs:
+        arg = rargs[0]
+        if (((arg[:2] == '--') and (len(arg) > 2)) or ((arg[:1] == '-') and (len(arg) > 1) and (arg[1] != '-'))):
+            break
+        else:
+            value.append(arg)
+            del rargs[0]
+    setattr(parser.values, option.dest, value)

@@ -1,0 +1,26 @@
+def _slotnames(cls):
+    "Return a list of slot names for a given class.\n\n    This needs to find slots defined by the class and its bases, so we\n    can't simply return the __slots__ attribute.  We must walk down\n    the Method Resolution Order and concatenate the __slots__ of each\n    class found there.  (This assumes classes don't modify their\n    __slots__ attribute to misrepresent their slots after the class is\n    defined.)\n    "
+    names = cls.__dict__.get('__slotnames__')
+    if (names is not None):
+        return names
+    names = []
+    if (not hasattr(cls, '__slots__')):
+        pass
+    else:
+        for c in cls.__mro__:
+            if ('__slots__' in c.__dict__):
+                slots = c.__dict__['__slots__']
+                if isinstance(slots, basestring):
+                    slots = (slots,)
+                for name in slots:
+                    if (name in ('__dict__', '__weakref__')):
+                        continue
+                    elif (name.startswith('__') and (not name.endswith('__'))):
+                        names.append(('_%s%s' % (c.__name__, name)))
+                    else:
+                        names.append(name)
+    try:
+        cls.__slotnames__ = names
+    except:
+        pass
+    return names

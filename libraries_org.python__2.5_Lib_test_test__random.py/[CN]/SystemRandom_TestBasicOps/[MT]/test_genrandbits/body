@@ -1,0 +1,14 @@
+def test_genrandbits(self):
+    for k in xrange(1, 1000):
+        self.assert_((0 <= self.gen.getrandbits(k) < (2 ** k)))
+    getbits = self.gen.getrandbits
+    for span in [1, 2, 3, 4, 31, 32, 32, 52, 53, 54, 119, 127, 128, 129]:
+        cum = 0
+        for i in xrange(100):
+            cum |= getbits(span)
+        self.assertEqual(cum, ((2 ** span) - 1))
+    self.assertRaises(TypeError, self.gen.getrandbits)
+    self.assertRaises(TypeError, self.gen.getrandbits, 1, 2)
+    self.assertRaises(ValueError, self.gen.getrandbits, 0)
+    self.assertRaises(ValueError, self.gen.getrandbits, (-1))
+    self.assertRaises(TypeError, self.gen.getrandbits, 10.1)

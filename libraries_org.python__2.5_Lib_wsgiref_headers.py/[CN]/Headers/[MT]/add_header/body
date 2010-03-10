@@ -1,0 +1,11 @@
+def add_header(self, _name, _value, **_params):
+    'Extended header setting.\n\n        _name is the header field to add.  keyword arguments can be used to set\n        additional parameters for the header field, with underscores converted\n        to dashes.  Normally the parameter will be added as key="value" unless\n        value is None, in which case only the key will be added.\n\n        Example:\n\n        h.add_header(\'content-disposition\', \'attachment\', filename=\'bud.gif\')\n\n        Note that unlike the corresponding \'email.Message\' method, this does\n        *not* handle \'(charset, language, value)\' tuples: all values must be\n        strings or None.\n        '
+    parts = []
+    if (_value is not None):
+        parts.append(_value)
+    for (k, v) in _params.items():
+        if (v is None):
+            parts.append(k.replace('_', '-'))
+        else:
+            parts.append(_formatparam(k.replace('_', '-'), v))
+    self._headers.append((_name, '; '.join(parts)))

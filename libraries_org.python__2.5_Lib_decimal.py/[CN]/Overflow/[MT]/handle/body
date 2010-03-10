@@ -1,0 +1,11 @@
+def handle(self, context, sign, *args):
+    if (context.rounding in (ROUND_HALF_UP, ROUND_HALF_EVEN, ROUND_HALF_DOWN, ROUND_UP)):
+        return Infsign[sign]
+    if (sign == 0):
+        if (context.rounding == ROUND_CEILING):
+            return Infsign[sign]
+        return _dec_from_triple(sign, ('9' * context.prec), ((context.Emax - context.prec) + 1))
+    if (sign == 1):
+        if (context.rounding == ROUND_FLOOR):
+            return Infsign[sign]
+        return _dec_from_triple(sign, ('9' * context.prec), ((context.Emax - context.prec) + 1))

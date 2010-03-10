@@ -1,0 +1,45 @@
+def _parse_sub(source, state, nested=1):
+    items = []
+    itemsappend = items.append
+    sourcematch = source.match
+    while 1:
+        itemsappend(_parse(source, state))
+        if sourcematch('|'):
+            continue
+        if (not nested):
+            break
+        if ((not source.next) or sourcematch(')', 0)):
+            break
+        else:
+            raise error, 'pattern not properly closed'
+    if (len(items) == 1):
+        return items[0]
+    subpattern = SubPattern(state)
+    subpatternappend = subpattern.append
+    while 1:
+        prefix = None
+        for item in items:
+            if (not item):
+                break
+            if (prefix is None):
+                prefix = item[0]
+            elif (item[0] != prefix):
+                break
+        else:
+            for item in items:
+                del item[0]
+            subpatternappend(prefix)
+            continue
+        break
+    for item in items:
+        if ((len(item) != 1) or (item[0][0] != LITERAL)):
+            break
+    else:
+        set = []
+        setappend = set.append
+        for item in items:
+            setappend(item[0])
+        subpatternappend((IN, set))
+        return subpattern
+    subpattern.append((BRANCH, (None, items)))
+    return subpattern

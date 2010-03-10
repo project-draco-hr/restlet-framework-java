@@ -1,0 +1,12 @@
+import unittest
+from test import test_support
+import re
+import os
+import javashell
+from org.python.core.util import FileUtil
+testCmds = [('echo hello world', 'hello world')]
+javashell.__warn = (lambda *args: None)
+(key, value) = ('testKey', 'testValue')
+fullTestCmds = [('echo hello world', 'hello world'), ('echo PATH=%PATH%', '(PATH=.*;.*)|(PATH=%PATH%)'), (('echo %s=%%%s%%' % (key, key)), ('(%s=)' % (key,))), ('echo PATH=$PATH', 'PATH=.*'), (('echo %s=$%s' % (key, key)), ('(%s=$%s)|(%s=)|(%s=%s)' % (key, key, key, key, value))), ('echo "hello there"', '"?hello there"?'), ('jython -c "import sys;sys.stdout.write( \'why\\n\' )"', 'why'), ('jython -c "import sys;sys.stderr.write(\'why\\n\');print " ', '')]
+if (__name__ == '__main__'):
+    test_main()

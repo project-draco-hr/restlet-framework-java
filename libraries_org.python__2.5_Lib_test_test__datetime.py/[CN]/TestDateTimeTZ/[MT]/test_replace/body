@@ -1,0 +1,24 @@
+def test_replace(self):
+    cls = self.theclass
+    z100 = FixedOffset(100, '+100')
+    zm200 = FixedOffset(timedelta(minutes=(-200)), '-200')
+    args = [1, 2, 3, 4, 5, 6, 7, z100]
+    base = cls(*args)
+    self.assertEqual(base, base.replace())
+    i = 0
+    for (name, newval) in (('year', 2), ('month', 3), ('day', 4), ('hour', 5), ('minute', 6), ('second', 7), ('microsecond', 8), ('tzinfo', zm200)):
+        newargs = args[:]
+        newargs[i] = newval
+        expected = cls(*newargs)
+        got = base.replace(**{name: newval, })
+        self.assertEqual(expected, got)
+        i += 1
+    self.assertEqual(base.tzname(), '+100')
+    base2 = base.replace(tzinfo=None)
+    self.failUnless((base2.tzinfo is None))
+    self.failUnless((base2.tzname() is None))
+    base3 = base2.replace(tzinfo=z100)
+    self.assertEqual(base, base3)
+    self.failUnless((base.tzinfo is base3.tzinfo))
+    base = cls(2000, 2, 29)
+    self.assertRaises(ValueError, base.replace, year=2001)

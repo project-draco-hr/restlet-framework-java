@@ -1,0 +1,10 @@
+def readlines(self, size=None):
+    if self._line_consumed:
+        return self._file.readlines(size)
+    assert self._line_left
+    L = [self._line[self._line_offset:]]
+    self._done()
+    if (size is None):
+        return (L + self._file.readlines())
+    else:
+        return (L + self._file.readlines(size))

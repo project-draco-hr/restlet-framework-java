@@ -1,0 +1,18 @@
+def run(self):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    global PORT
+    PORT = test_support.bind_port(sock, HOST, PORT)
+    sock.listen(1)
+    (conn, client) = sock.accept()
+    buffer = ''
+    while ('\n' not in buffer):
+        data = conn.recv(1)
+        if (not data):
+            break
+        buffer = (buffer + data)
+    while buffer:
+        n = conn.send(buffer)
+        buffer = buffer[n:]
+    conn.close()
+    sock.close()

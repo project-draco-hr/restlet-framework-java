@@ -1,0 +1,16 @@
+def test_registry(self):
+
+
+    class myexceltsv(csv.excel):
+        delimiter = '\t'
+    name = 'myexceltsv'
+    expected_dialects = (csv.list_dialects() + [name])
+    expected_dialects.sort()
+    csv.register_dialect(name, myexceltsv)
+    try:
+        self.failUnless(csv.get_dialect(name).delimiter, '\t')
+        got_dialects = csv.list_dialects()
+        got_dialects.sort()
+        self.assertEqual(expected_dialects, got_dialects)
+    finally:
+        csv.unregister_dialect(name)

@@ -1,0 +1,33 @@
+def _group(s, monetary=False):
+    conv = localeconv()
+    thousands_sep = conv[((monetary and 'mon_thousands_sep') or 'thousands_sep')]
+    grouping = conv[((monetary and 'mon_grouping') or 'grouping')]
+    if (not grouping):
+        return (s, 0)
+    result = ''
+    seps = 0
+    spaces = ''
+    if (s[(-1)] == ' '):
+        sp = s.find(' ')
+        spaces = s[sp:]
+        s = s[:sp]
+    while (s and grouping):
+        if (grouping[0] == CHAR_MAX):
+            break
+        elif (grouping[0] != 0):
+            group = grouping[0]
+            grouping = grouping[1:]
+        if result:
+            result = ((s[(- group):] + thousands_sep) + result)
+            seps += 1
+        else:
+            result = s[(- group):]
+        s = s[:(- group)]
+        if (s and (s[(-1)] not in '0123456789')):
+            return (((s + result) + spaces), seps)
+    if (not result):
+        return ((s + spaces), seps)
+    if s:
+        result = ((s + thousands_sep) + result)
+        seps += 1
+    return ((result + spaces), seps)

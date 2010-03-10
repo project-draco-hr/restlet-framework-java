@@ -1,0 +1,28 @@
+def get_inidata(self):
+    lines = []
+    metadata = self.distribution.metadata
+    lines.append('[metadata]')
+    info = ((metadata.long_description or '') + '\n')
+
+    def escape(s):
+        return string.replace(s, '\n', '\\n')
+    for name in ['author', 'author_email', 'description', 'maintainer', 'maintainer_email', 'name', 'url', 'version']:
+        data = getattr(metadata, name, '')
+        if data:
+            info = (info + ('\n    %s: %s' % (string.capitalize(name), escape(data))))
+            lines.append(('%s=%s' % (name, escape(data))))
+    lines.append('\n[Setup]')
+    if self.install_script:
+        lines.append(('install_script=%s' % self.install_script))
+    lines.append(('info=%s' % escape(info)))
+    lines.append(('target_compile=%d' % (not self.no_target_compile)))
+    lines.append(('target_optimize=%d' % (not self.no_target_optimize)))
+    if self.target_version:
+        lines.append(('target_version=%s' % self.target_version))
+    title = (self.title or self.distribution.get_fullname())
+    lines.append(('title=%s' % escape(title)))
+    import time
+    import distutils
+    build_info = ('Built %s with distutils-%s' % (time.ctime(time.time()), distutils.__version__))
+    lines.append(('build_info=%s' % build_info))
+    return string.join(lines, '\n')

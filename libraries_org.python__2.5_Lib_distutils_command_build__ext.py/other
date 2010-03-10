@@ -1,0 +1,11 @@
+"distutils.command.build_ext\n\nImplements the Distutils 'build_ext' command, for building extension\nmodules (currently limited to C extensions, should accommodate C++\nextensions ASAP)."
+__revision__ = '$Id: build_ext.py 54942 2007-04-24 15:27:25Z georg.brandl $'
+import sys, os, string, re
+from types import *
+from distutils.core import Command
+from distutils.errors import *
+from distutils.sysconfig import customize_compiler, get_python_version
+from distutils.dep_util import newer_group
+from distutils.extension import Extension
+from distutils import log
+extension_name_re = re.compile('^[a-zA-Z_][a-zA-Z_0-9]*(\\.[a-zA-Z_][a-zA-Z_0-9]*)*$')

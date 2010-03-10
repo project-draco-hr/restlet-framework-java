@@ -1,0 +1,23 @@
+'\nRun all test cases.\n'
+import sys
+import unittest
+from test.test_support import requires, verbose, run_suite, unlink
+if (__name__ != '__main__'):
+    requires('bsddb')
+verbose = False
+if ('verbose' in sys.argv):
+    verbose = True
+    sys.argv.remove('verbose')
+if ('silent' in sys.argv):
+    verbose = False
+    sys.argv.remove('silent')
+if (__name__ == '__main__'):
+    from bsddb import db
+    print ('-=' * 38)
+    print db.DB_VERSION_STRING
+    print ('bsddb.db.version():   %s' % (db.version(),))
+    print ('bsddb.db.__version__: %s' % db.__version__)
+    print ('bsddb.db.cvsid:       %s' % db.cvsid)
+    print ('python version:        %s' % sys.version)
+    print ('-=' * 38)
+    unittest.main(defaultTest='suite')

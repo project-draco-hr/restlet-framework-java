@@ -1,0 +1,19 @@
+def test_module_with_large_stack(module):
+    filename = ((module + os.extsep) + 'py')
+    f = open(filename, 'w+')
+    f.write('d = [\n')
+    for i in range(65000):
+        f.write('"",\n')
+    f.write(']')
+    f.close()
+    f = open(filename, 'r')
+    py_compile.compile(filename)
+    f.close()
+    os.unlink(filename)
+    sys.path.append('')
+    exec ('import ' + module)
+    del sys.path[(-1)]
+    for ext in ('pyc', 'pyo'):
+        fname = ((module + os.extsep) + ext)
+        if os.path.exists(fname):
+            os.unlink(fname)

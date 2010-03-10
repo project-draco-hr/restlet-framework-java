@@ -1,0 +1,7 @@
+def test_interface_methods_merged(self):
+    "Checks that declaring an interface redundantly doesn't hide merged methods.\n\n        Bug #1381"
+    for impl in (Implementation, ExtraString, ExtraClass, ExtraStringAndClass, ExtraClassAndString):
+        instance = impl()
+        self.assertEquals('String', instance.call('string argument'))
+        self.assertEquals('int', instance.call(7))
+        self.assertEquals('Class', instance.call(LinkedList))

@@ -1,0 +1,24 @@
+def testZipImporterMethods(self):
+    packdir = (TESTPACK + os.sep)
+    packdir2 = ((packdir + TESTPACK2) + os.sep)
+    files = {((packdir + '__init__') + pyc_ext): (NOW, test_pyc), ((packdir2 + '__init__') + pyc_ext): (NOW, test_pyc), ((packdir2 + TESTMOD) + pyc_ext): (NOW, test_pyc), }
+    z = ZipFile(TEMP_ZIP, 'w')
+    try:
+        for (name, (mtime, data)) in files.items():
+            zinfo = ZipInfo(name, time.localtime(mtime))
+            zinfo.compress_type = self.compression
+            z.writestr(zinfo, data)
+        z.close()
+        zi = zipimport.zipimporter(TEMP_ZIP)
+        self.assertEquals(zi.is_package(TESTPACK), True)
+        zi.load_module(TESTPACK)
+        self.assertEquals(zi.is_package((packdir + '__init__')), False)
+        self.assertEquals(zi.is_package((packdir + TESTPACK2)), True)
+        self.assertEquals(zi.is_package((packdir2 + TESTMOD)), False)
+        mod_name = (packdir2 + TESTMOD)
+        mod = __import__(module_path_to_dotted_name(mod_name))
+        self.assertEquals(zi.get_source(TESTPACK), None)
+        self.assertEquals(zi.get_source(mod_name), None)
+    finally:
+        z.close()
+        os.remove(TEMP_ZIP)

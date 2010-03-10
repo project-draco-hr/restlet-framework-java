@@ -1,0 +1,30 @@
+def _set_command_options(self, command_obj, option_dict=None):
+    "Set the options for 'command_obj' from 'option_dict'.  Basically\n        this means copying elements of a dictionary ('option_dict') to\n        attributes of an instance ('command').\n\n        'command_obj' must be a Command instance.  If 'option_dict' is not\n        supplied, uses the standard option dictionary for this command\n        (from 'self.command_options').\n        "
+    command_name = command_obj.get_command_name()
+    if (option_dict is None):
+        option_dict = self.get_option_dict(command_name)
+    if DEBUG:
+        print ("  setting options for '%s' command:" % command_name)
+    for (option, (source, value)) in option_dict.items():
+        if DEBUG:
+            print ('    %s = %s (from %s)' % (option, value, source))
+        try:
+            bool_opts = map(translate_longopt, command_obj.boolean_options)
+        except AttributeError:
+            bool_opts = []
+        try:
+            neg_opt = command_obj.negative_opt
+        except AttributeError:
+            neg_opt = {}
+        try:
+            is_string = (type(value) is StringType)
+            if (neg_opt.has_key(option) and is_string):
+                setattr(command_obj, neg_opt[option], (not strtobool(value)))
+            elif ((option in bool_opts) and is_string):
+                setattr(command_obj, option, strtobool(value))
+            elif hasattr(command_obj, option):
+                setattr(command_obj, option, value)
+            else:
+                raise DistutilsOptionError, ("error in %s: command '%s' has no such option '%s'" % (source, command_name, option))
+        except ValueError as msg:
+            raise DistutilsOptionError, msg

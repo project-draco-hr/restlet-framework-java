@@ -1,0 +1,21 @@
+def test_pop(self):
+    TestMappingProtocol.test_pop(self)
+
+
+    class Exc(Exception):
+        pass
+
+
+    class BadHash(object):
+        fail = False
+
+        def __hash__(self):
+            if self.fail:
+                raise Exc()
+            else:
+                return 42
+    d = self._empty_mapping()
+    x = BadHash()
+    d[x] = 42
+    x.fail = True
+    self.assertRaises(Exc, d.pop, x)

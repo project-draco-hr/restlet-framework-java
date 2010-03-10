@@ -1,0 +1,21 @@
+def __init__(self, counts=None, calledfuncs=None, infile=None, callers=None, outfile=None):
+    self.counts = counts
+    if (self.counts is None):
+        self.counts = {}
+    self.counter = self.counts.copy()
+    self.calledfuncs = calledfuncs
+    if (self.calledfuncs is None):
+        self.calledfuncs = {}
+    self.calledfuncs = self.calledfuncs.copy()
+    self.callers = callers
+    if (self.callers is None):
+        self.callers = {}
+    self.callers = self.callers.copy()
+    self.infile = infile
+    self.outfile = outfile
+    if self.infile:
+        try:
+            (counts, calledfuncs, callers) = pickle.load(open(self.infile, 'rb'))
+            self.update(self.__class__(counts, calledfuncs, callers))
+        except (IOError, EOFError, ValueError) as err:
+            print  >> sys.stderr, ('Skipping counts file %r: %s' % (self.infile, err))

@@ -1,0 +1,20 @@
+def visitIf(self, node):
+    end = self.newBlock()
+    numtests = len(node.tests)
+    for i in range(numtests):
+        (test, suite) = node.tests[i]
+        if is_constant_false(test):
+            continue
+        self.set_lineno(test)
+        self.visit(test)
+        nextTest = self.newBlock()
+        self.emit('JUMP_IF_FALSE', nextTest)
+        self.nextBlock()
+        self.emit('POP_TOP')
+        self.visit(suite)
+        self.emit('JUMP_FORWARD', end)
+        self.startBlock(nextTest)
+        self.emit('POP_TOP')
+    if node.else_:
+        self.visit(node.else_)
+    self.nextBlock(end)

@@ -1,0 +1,19 @@
+def test_seq_item_equality(self):
+    eq_called = []
+
+
+    class Foo(object):
+
+        def __eq__(self, other):
+            eq_called.append(other)
+            return False
+    for type2test in self.types2test:
+        foo = Foo()
+        seq1 = type2test([foo])
+        self.assertEqual(seq1, seq1)
+        self.assertEqual(cmp(seq1, seq1), 0)
+        seq2 = type2test([foo])
+        self.assertEqual(seq1, seq2)
+        self.assertEqual(cmp(seq1, seq2), 0)
+        self.assertTrue((foo in seq1))
+        self.assertFalse(eq_called)

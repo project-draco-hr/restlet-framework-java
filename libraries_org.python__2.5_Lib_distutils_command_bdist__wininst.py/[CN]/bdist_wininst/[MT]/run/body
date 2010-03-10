@@ -1,0 +1,44 @@
+def run(self):
+    if ((sys.platform != 'win32') and (self.distribution.has_ext_modules() or self.distribution.has_c_libraries())):
+        raise DistutilsPlatformError('distribution contains extensions and/or C libraries; must be compiled on a Windows 32 platform')
+    if (not self.skip_build):
+        self.run_command('build')
+    install = self.reinitialize_command('install', reinit_subcommands=1)
+    install.root = self.bdist_dir
+    install.skip_build = self.skip_build
+    install.warn_dir = 0
+    install_lib = self.reinitialize_command('install_lib')
+    install_lib.compile = 0
+    install_lib.optimize = 0
+    if self.distribution.has_ext_modules():
+        target_version = self.target_version
+        if (not target_version):
+            assert self.skip_build, 'Should have already checked this'
+            target_version = sys.version[0:3]
+        plat_specifier = ('.%s-%s' % (get_platform(), target_version))
+        build = self.get_finalized_command('build')
+        build.build_lib = os.path.join(build.build_base, ('lib' + plat_specifier))
+    for key in ('purelib', 'platlib', 'headers', 'scripts', 'data'):
+        value = string.upper(key)
+        if (key == 'headers'):
+            value = (value + '/Include/$dist_name')
+        setattr(install, ('install_' + key), value)
+    log.info('installing to %s', self.bdist_dir)
+    install.ensure_finalized()
+    sys.path.insert(0, os.path.join(self.bdist_dir, 'PURELIB'))
+    install.run()
+    del sys.path[0]
+    from tempfile import mktemp
+    archive_basename = mktemp()
+    fullname = self.distribution.get_fullname()
+    arcname = self.make_archive(archive_basename, 'zip', root_dir=self.bdist_dir)
+    self.create_exe(arcname, fullname, self.bitmap)
+    if self.distribution.has_ext_modules():
+        pyversion = get_python_version()
+    else:
+        pyversion = 'any'
+    self.distribution.dist_files.append(('bdist_wininst', pyversion, self.get_installer_filename(fullname)))
+    log.debug("removing temporary file '%s'", arcname)
+    os.remove(arcname)
+    if (not self.keep_temp):
+        remove_tree(self.bdist_dir, dry_run=self.dry_run)

@@ -1,0 +1,8 @@
+def request_host(request):
+    'Return request-host, as defined by RFC 2965.\n\n    Variation from RFC: returned value is lowercased, for convenient\n    comparison.\n\n    '
+    url = request.get_full_url()
+    host = urlparse.urlparse(url)[1]
+    if (host == ''):
+        host = request.get_header('Host', '')
+    host = cut_port_re.sub('', host, 1)
+    return host.lower()

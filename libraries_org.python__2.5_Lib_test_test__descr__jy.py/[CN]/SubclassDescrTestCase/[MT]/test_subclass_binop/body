@@ -1,0 +1,38 @@
+def test_subclass_binop(self):
+
+    def raises(exc, expected, callable, *args):
+        try:
+            callable(*args)
+        except exc as msg:
+            if (str(msg) != expected):
+                self.assert_(False, ('Message %r, expected %r' % (str(msg), expected)))
+        else:
+            self.assert_(False, ('Expected %s' % exc))
+
+
+    class B(object):
+        pass
+
+
+    class C(object):
+
+        def __radd__(self, o):
+            return ('%r + C()' % (o,))
+
+        def __rmul__(self, o):
+            return ('%r * C()' % (o,))
+    mapping = []
+    mapping.append(((lambda o: ('foo' + o)), TypeError, "cannot concatenate 'str' and 'B' objects", "'foo' + C()"))
+    if test_support.is_jython:
+        mapping.append(((lambda o: (u'foo' + o)), TypeError, "cannot concatenate 'unicode' and 'B' objects", "u'foo' + C()"))
+    else:
+        mapping.append(((lambda o: (u'foo' + o)), TypeError, 'coercing to Unicode: need string or buffer, B found', "u'foo' + C()"))
+    mapping.append(((lambda o: ([1, 2] + o)), TypeError, 'can only concatenate list (not "B") to list', '[1, 2] + C()'))
+    mapping.append(((lambda o: (('foo', 'bar') + o)), TypeError, 'can only concatenate tuple (not "B") to tuple', "('foo', 'bar') + C()"))
+    mapping.append(((lambda o: ('foo' * o)), TypeError, "can't multiply sequence by non-int of type 'B'", "'foo' * C()"))
+    mapping.append(((lambda o: (u'foo' * o)), TypeError, "can't multiply sequence by non-int of type 'B'", "u'foo' * C()"))
+    mapping.append(((lambda o: ([1, 2] * o)), TypeError, "can't multiply sequence by non-int of type 'B'", '[1, 2] * C()'))
+    mapping.append(((lambda o: (('foo', 'bar') * o)), TypeError, "can't multiply sequence by non-int of type 'B'", "('foo', 'bar') * C()"))
+    for (func, bexc, bexc_msg, cresult) in mapping:
+        raises(bexc, bexc_msg, (lambda : func(B())))
+        self.assertEqual(func(C()), cresult)

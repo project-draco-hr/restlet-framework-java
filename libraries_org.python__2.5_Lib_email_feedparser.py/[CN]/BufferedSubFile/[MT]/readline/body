@@ -1,0 +1,11 @@
+def readline(self):
+    if (not self._lines):
+        if self._closed:
+            return ''
+        return NeedMoreData
+    line = self._lines.pop()
+    for ateof in self._eofstack[::(-1)]:
+        if ateof(line):
+            self._lines.append(line)
+            return ''
+    return line

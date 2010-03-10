@@ -1,0 +1,25 @@
+def walk_packages(path=None, prefix='', onerror=None):
+    "Yields (module_loader, name, ispkg) for all modules recursively\n    on path, or, if path is None, all accessible modules.\n\n    'path' should be either None or a list of paths to look for\n    modules in.\n\n    'prefix' is a string to output on the front of every module name\n    on output.\n\n    Note that this function must import all *packages* (NOT all\n    modules!) on the given path, in order to access the __path__\n    attribute to find submodules.\n\n    'onerror' is a function which gets called with one argument (the\n    name of the package which was being imported) if any exception\n    occurs while trying to import a package.  If no onerror function is\n    supplied, ImportErrors are caught and ignored, while all other\n    exceptions are propagated, terminating the search.\n\n    Examples:\n\n    # list all modules python can access\n    walk_packages()\n\n    # list all submodules of ctypes\n    walk_packages(ctypes.__path__, ctypes.__name__+'.')\n    "
+
+    def seen(p, m={}):
+        if (p in m):
+            return True
+        m[p] = True
+    for (importer, name, ispkg) in iter_modules(path, prefix):
+        yield (importer, name, ispkg)
+        if ispkg:
+            try:
+                __import__(name)
+            except ImportError:
+                if (onerror is not None):
+                    onerror(name)
+            except Exception:
+                if (onerror is not None):
+                    onerror(name)
+                else:
+                    raise
+            else:
+                path = (getattr(sys.modules[name], '__path__', None) or [])
+                path = [p for p in path if (not seen(p))]
+                for item in walk_packages(path, (name + '.'), onerror):
+                    yield item

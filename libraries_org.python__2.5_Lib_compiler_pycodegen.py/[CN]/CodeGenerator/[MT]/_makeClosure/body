@@ -1,0 +1,11 @@
+def _makeClosure(self, gen, args):
+    frees = gen.scope.get_free_vars()
+    if frees:
+        for name in frees:
+            self.emit('LOAD_CLOSURE', name)
+        self.emit('BUILD_TUPLE', len(frees))
+        self.emit('LOAD_CONST', gen)
+        self.emit('MAKE_CLOSURE', args)
+    else:
+        self.emit('LOAD_CONST', gen)
+        self.emit('MAKE_FUNCTION', args)

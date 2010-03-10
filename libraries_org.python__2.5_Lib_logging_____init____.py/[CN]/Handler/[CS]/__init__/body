@@ -1,0 +1,12 @@
+def __init__(self, level=NOTSET):
+    '\n        Initializes the instance - basically setting the formatter to None\n        and the filter list to empty.\n        '
+    Filterer.__init__(self)
+    self.level = level
+    self.formatter = None
+    _acquireLock()
+    try:
+        _handlers[self] = 1
+        _handlerList.insert(0, self)
+    finally:
+        _releaseLock()
+    self.createLock()

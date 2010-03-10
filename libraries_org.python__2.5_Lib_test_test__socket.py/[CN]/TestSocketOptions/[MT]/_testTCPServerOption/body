@@ -1,0 +1,14 @@
+def _testTCPServerOption(self, level, option, values):
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._testSetAndGetOption(sock, level, option, values)
+        sock.bind((HOST, PORT))
+        sock.listen(50)
+        msg = ("Option value '(%s,%s)'='%s' did not propagate to implementation socket" % (level, option, values[(-1)]))
+        if (is_solaris and (option == socket.SO_RCVBUF)):
+            self.assert_((sock.getsockopt(level, option) >= values[(-1)]), msg)
+        else:
+            self.failUnlessEqual(sock.getsockopt(level, option), values[(-1)], msg)
+        self._testSetAndGetOption(sock, level, option, values)
+    finally:
+        sock.close()

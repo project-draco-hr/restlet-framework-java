@@ -1,0 +1,20 @@
+def test_exceptions():
+    print 'exceptions'
+    try:
+        x = math.exp((-1000000000))
+    except:
+        raise TestFailed('underflowing exp() should not have raised an exception')
+    if (x != 0):
+        raise TestFailed('underflowing exp() should have returned 0')
+    try:
+        x = math.exp(1000000000)
+    except OverflowError:
+        pass
+    else:
+        raise TestFailed("overflowing exp() didn't trigger OverflowError")
+    try:
+        x = math.sqrt((-1.0))
+    except ValueError:
+        pass
+    else:
+        raise TestFailed("sqrt(-1) didn't raise ValueError")

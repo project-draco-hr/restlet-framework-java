@@ -1,0 +1,22 @@
+def test_missing_value(self):
+    from cookielib import MozillaCookieJar, lwp_cookie_str
+    filename = test_support.TESTFN
+    c = MozillaCookieJar(filename)
+    interact_netscape(c, 'http://www.acme.com/', 'eggs')
+    interact_netscape(c, 'http://www.acme.com/', '"spam"; path=/foo/')
+    cookie = c._cookies['www.acme.com']['/']['eggs']
+    self.assert_((cookie.value is None))
+    self.assertEquals(cookie.name, 'eggs')
+    cookie = c._cookies['www.acme.com']['/foo/']['"spam"']
+    self.assert_((cookie.value is None))
+    self.assertEquals(cookie.name, '"spam"')
+    self.assertEquals(lwp_cookie_str(cookie), '"spam"; path="/foo/"; domain="www.acme.com"; path_spec; discard; version=0')
+    old_str = repr(c)
+    c.save(ignore_expires=True, ignore_discard=True)
+    try:
+        c = MozillaCookieJar(filename)
+        c.revert(ignore_expires=True, ignore_discard=True)
+    finally:
+        os.unlink(c.filename)
+    self.assertEquals(repr(c), re.sub(('path_specified=%s' % True), ('path_specified=%s' % False), old_str))
+    self.assertEquals(interact_netscape(c, 'http://www.acme.com/foo/'), '"spam"; eggs')

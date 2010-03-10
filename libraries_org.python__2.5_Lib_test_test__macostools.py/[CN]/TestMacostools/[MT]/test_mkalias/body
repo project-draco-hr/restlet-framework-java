@@ -1,0 +1,8 @@
+def test_mkalias(self):
+    try:
+        os.unlink(TESTFN2)
+    except:
+        pass
+    macostools.mkalias(test_support.TESTFN, TESTFN2)
+    (fss, _, _) = Carbon.File.ResolveAliasFile(TESTFN2, 0)
+    self.assertEqual(fss.as_pathname(), os.path.realpath(test_support.TESTFN))

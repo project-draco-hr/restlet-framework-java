@@ -1,0 +1,46 @@
+def test_zip(self):
+    a = (1, 2, 3)
+    b = (4, 5, 6)
+    t = [(1, 4), (2, 5), (3, 6)]
+    self.assertEqual(zip(a, b), t)
+    b = [4, 5, 6]
+    self.assertEqual(zip(a, b), t)
+    b = (4, 5, 6, 7)
+    self.assertEqual(zip(a, b), t)
+
+
+    class I:
+
+        def __getitem__(self, i):
+            if ((i < 0) or (i > 2)):
+                raise IndexError
+            return (i + 4)
+    self.assertEqual(zip(a, I()), t)
+    self.assertEqual(zip(), [])
+    self.assertEqual(zip(*[]), [])
+    self.assertRaises(TypeError, zip, None)
+
+
+    class G:
+        pass
+    self.assertRaises(TypeError, zip, a, G())
+
+
+    class SequenceWithoutALength:
+
+        def __getitem__(self, i):
+            if (i == 5):
+                raise IndexError
+            else:
+                return i
+    self.assertEqual(zip(SequenceWithoutALength(), xrange((2 ** 30))), list(enumerate(range(5))))
+
+
+    class BadSeq:
+
+        def __getitem__(self, i):
+            if (i == 5):
+                raise ValueError
+            else:
+                return i
+    self.assertRaises(ValueError, zip, BadSeq(), BadSeq())

@@ -1,0 +1,40 @@
+def get_authorization(self, req, chal):
+    try:
+        realm = chal['realm']
+        nonce = chal['nonce']
+        qop = chal.get('qop')
+        algorithm = chal.get('algorithm', 'MD5')
+        opaque = chal.get('opaque', None)
+    except KeyError:
+        return None
+    (H, KD) = self.get_algorithm_impls(algorithm)
+    if (H is None):
+        return None
+    (user, pw) = self.passwd.find_user_password(realm, req.get_full_url())
+    if (user is None):
+        return None
+    if req.has_data():
+        entdig = self.get_entity_digest(req.get_data(), chal)
+    else:
+        entdig = None
+    A1 = ('%s:%s:%s' % (user, realm, pw))
+    A2 = ('%s:%s' % (req.get_method(), req.get_selector()))
+    if (qop == 'auth'):
+        self.nonce_count += 1
+        ncvalue = ('%08x' % self.nonce_count)
+        cnonce = self.get_cnonce(nonce)
+        noncebit = ('%s:%s:%s:%s:%s' % (nonce, ncvalue, cnonce, qop, H(A2)))
+        respdig = KD(H(A1), noncebit)
+    elif (qop is None):
+        respdig = KD(H(A1), ('%s:%s' % (nonce, H(A2))))
+    else:
+        raise URLError(("qop '%s' is not supported." % qop))
+    base = ('username="%s", realm="%s", nonce="%s", uri="%s", response="%s"' % (user, realm, nonce, req.get_selector(), respdig))
+    if opaque:
+        base += (', opaque="%s"' % opaque)
+    if entdig:
+        base += (', digest="%s"' % entdig)
+    base += (', algorithm="%s"' % algorithm)
+    if qop:
+        base += (', qop=auth, nc=%s, cnonce="%s"' % (ncvalue, cnonce))
+    return base

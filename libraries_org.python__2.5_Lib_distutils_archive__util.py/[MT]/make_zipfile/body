@@ -1,0 +1,31 @@
+def make_zipfile(base_name, base_dir, verbose=0, dry_run=0):
+    'Create a zip file from all the files under \'base_dir\'.  The output\n    zip file will be named \'base_dir\' + ".zip".  Uses either the "zipfile"\n    Python module (if available) or the InfoZIP "zip" utility (if installed\n    and found on the default search path).  If neither tool is available,\n    raises DistutilsExecError.  Returns the name of the output zip file.\n    '
+    try:
+        import zipfile
+    except ImportError:
+        zipfile = None
+    zip_filename = (base_name + '.zip')
+    mkpath(os.path.dirname(zip_filename), dry_run=dry_run)
+    if (zipfile is None):
+        if verbose:
+            zipoptions = '-r'
+        else:
+            zipoptions = '-rq'
+        try:
+            spawn(['zip', zipoptions, zip_filename, base_dir], dry_run=dry_run)
+        except DistutilsExecError:
+            raise DistutilsExecError, ("unable to create zip file '%s': could neither import the 'zipfile' module nor find a standalone zip utility" % zip_filename)
+    else:
+        log.info("creating '%s' and adding '%s' to it", zip_filename, base_dir)
+
+        def visit(z, dirname, names):
+            for name in names:
+                path = os.path.normpath(os.path.join(dirname, name))
+                if os.path.isfile(path):
+                    z.write(path, path)
+                    log.info(("adding '%s'" % path))
+        if (not dry_run):
+            z = zipfile.ZipFile(zip_filename, 'w', compression=zipfile.ZIP_DEFLATED)
+            os.path.walk(base_dir, visit, z)
+            z.close()
+    return zip_filename

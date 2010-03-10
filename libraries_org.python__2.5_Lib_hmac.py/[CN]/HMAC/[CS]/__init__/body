@@ -1,0 +1,29 @@
+def __init__(self, key, msg=None, digestmod=None):
+    'Create a new HMAC object.\n\n        key:       key for the keyed hash object.\n        msg:       Initial input for the hash, if provided.\n        digestmod: A module supporting PEP 247.  *OR*\n                   A hashlib constructor returning a new hash object.\n                   Defaults to hashlib.md5.\n        '
+    if (key is _secret_backdoor_key):
+        return
+    if (digestmod is None):
+        import hashlib
+        digestmod = hashlib.md5
+    if callable(digestmod):
+        self.digest_cons = digestmod
+    else:
+        self.digest_cons = (lambda d='': digestmod.new(d))
+    self.outer = self.digest_cons()
+    self.inner = self.digest_cons()
+    self.digest_size = self.inner.digest_size
+    if hasattr(self.inner, 'block_size'):
+        blocksize = self.inner.block_size
+        if (blocksize < 16):
+            blocksize = 64
+    else:
+        blocksize = 64
+    ipad = ('6' * blocksize)
+    opad = ('\\' * blocksize)
+    if (len(key) > blocksize):
+        key = self.digest_cons(key).digest()
+    key = (key + (chr(0) * (blocksize - len(key))))
+    self.outer.update(_strxor(key, opad))
+    self.inner.update(_strxor(key, ipad))
+    if (msg is not None):
+        self.update(msg)

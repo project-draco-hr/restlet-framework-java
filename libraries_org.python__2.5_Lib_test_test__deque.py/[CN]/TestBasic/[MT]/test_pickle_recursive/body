@@ -1,0 +1,7 @@
+def test_pickle_recursive(self):
+    d = deque('abc')
+    d.append(d)
+    for i in (0, 1, 2):
+        e = pickle.loads(pickle.dumps(d, i))
+        self.assertNotEqual(id(d), id(e))
+        self.assertEqual(id(e), id(e[(-1)]))

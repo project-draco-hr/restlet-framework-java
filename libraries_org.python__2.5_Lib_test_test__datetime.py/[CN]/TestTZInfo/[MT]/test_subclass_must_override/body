@@ -1,0 +1,15 @@
+def test_subclass_must_override(self):
+
+
+    class NotEnough(tzinfo):
+
+        def __init__(self, offset, name):
+            self.__offset = offset
+            self.__name = name
+    self.failUnless(issubclass(NotEnough, tzinfo))
+    ne = NotEnough(3, 'NotByALongShot')
+    self.failUnless(isinstance(ne, tzinfo))
+    dt = datetime.now()
+    self.assertRaises(NotImplementedError, ne.tzname, dt)
+    self.assertRaises(NotImplementedError, ne.utcoffset, dt)
+    self.assertRaises(NotImplementedError, ne.dst, dt)

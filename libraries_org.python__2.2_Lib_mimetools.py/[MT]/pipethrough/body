@@ -1,9 +1,0 @@
-def pipethrough(input, command, output):
-    tempname = tempfile.mktemp()
-    temp = open(tempname, 'w')
-    copyliteral(input, temp)
-    temp.close()
-    pipe = os.popen(((command + ' <') + tempname), 'r')
-    copybinary(pipe, output)
-    pipe.close()
-    os.unlink(tempname)

@@ -1,0 +1,16 @@
+def _getnamelist(g):
+    names = []
+    while True:
+        (name, token) = _getname(g)
+        if (not name):
+            break
+        if (token == 'as'):
+            (name2, token) = _getname(g)
+        else:
+            name2 = None
+        names.append((name, name2))
+        while ((token != ',') and ('\n' not in token)):
+            (tokentype, token, start, end, line) = g.next()
+        if (token != ','):
+            break
+    return names

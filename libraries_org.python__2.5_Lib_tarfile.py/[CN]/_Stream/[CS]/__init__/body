@@ -1,0 +1,38 @@
+def __init__(self, name, mode, comptype, fileobj, bufsize):
+    'Construct a _Stream object.\n        '
+    self._extfileobj = True
+    if (fileobj is None):
+        fileobj = _LowLevelFile(name, mode)
+        self._extfileobj = False
+    if (comptype == '*'):
+        fileobj = _StreamProxy(fileobj)
+        comptype = fileobj.getcomptype()
+    self.name = (name or '')
+    self.mode = mode
+    self.comptype = comptype
+    self.fileobj = fileobj
+    self.bufsize = bufsize
+    self.buf = ''
+    self.pos = 0L
+    self.closed = False
+    if (comptype == 'gz'):
+        try:
+            import zlib
+        except ImportError:
+            raise CompressionError('zlib module is not available')
+        self.zlib = zlib
+        self.crc = zlib.crc32('')
+        if (mode == 'r'):
+            self._init_read_gz()
+        else:
+            self._init_write_gz()
+    if (comptype == 'bz2'):
+        try:
+            import bz2
+        except ImportError:
+            raise CompressionError('bz2 module is not available')
+        if (mode == 'r'):
+            self.dbuf = ''
+            self.cmp = bz2.BZ2Decompressor()
+        else:
+            self.cmp = bz2.BZ2Compressor()

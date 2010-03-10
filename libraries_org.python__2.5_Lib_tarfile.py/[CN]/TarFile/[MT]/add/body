@@ -1,0 +1,31 @@
+def add(self, name, arcname=None, recursive=True):
+    "Add the file `name' to the archive. `name' may be any type of file\n           (directory, fifo, symbolic link, etc.). If given, `arcname'\n           specifies an alternative name for the file in the archive.\n           Directories are added recursively by default. This can be avoided by\n           setting `recursive' to False.\n        "
+    self._check('aw')
+    if (arcname is None):
+        arcname = name
+    if ((self.name is not None) and (os.path.abspath(name) == self.name)):
+        self._dbg(2, ('tarfile: Skipped %r' % name))
+        return
+    if (name == '.'):
+        if recursive:
+            if (arcname == '.'):
+                arcname = ''
+            for f in os.listdir('.'):
+                self.add(f, os.path.join(arcname, f))
+        return
+    self._dbg(1, name)
+    tarinfo = self.gettarinfo(name, arcname)
+    if (tarinfo is None):
+        self._dbg(1, ('tarfile: Unsupported type %r' % name))
+        return
+    if tarinfo.isreg():
+        f = file(name, 'rb')
+        self.addfile(tarinfo, f)
+        f.close()
+    elif tarinfo.isdir():
+        self.addfile(tarinfo)
+        if recursive:
+            for f in os.listdir(name):
+                self.add(os.path.join(name, f), os.path.join(arcname, f))
+    else:
+        self.addfile(tarinfo)

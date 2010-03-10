@@ -1,0 +1,34 @@
+def _test_concat(self, t1, t2):
+    tprecedent = str
+    if (issubclass(t1, unicode) or issubclass(t2, unicode)):
+        tprecedent = unicode
+
+
+    class SubclassB(t2):
+
+        def __add__(self, other):
+            return SubclassB((t2(self) + t2(other)))
+    self.check((SubclassB('py') + SubclassB('thon')), SubclassB('python'))
+    self.check((t1('python') + SubclassB('3')), tprecedent('python3'))
+    self.check((SubclassB('py') + t1('py')), SubclassB('pypy'))
+
+
+    class SubclassC(t2):
+
+        def __radd__(self, other):
+            return SubclassC((t2(other) + t2(self)))
+    self.check((SubclassC('stack') + SubclassC('less')), t2('stackless'))
+    self.check((t1('iron') + SubclassC('python')), SubclassC('ironpython'))
+    self.check((SubclassC('tiny') + t1('py')), tprecedent('tinypy'))
+
+
+    class SubclassD(t2):
+
+        def __add__(self, other):
+            return SubclassD((t2(self) + t2(other)))
+
+        def __radd__(self, other):
+            return SubclassD((t2(other) + t2(self)))
+    self.check((SubclassD('di') + SubclassD('ct')), SubclassD('dict'))
+    self.check((t1('list') + SubclassD(' comp')), SubclassD('list comp'))
+    self.check((SubclassD('dun') + t1('der')), SubclassD('dunder'))

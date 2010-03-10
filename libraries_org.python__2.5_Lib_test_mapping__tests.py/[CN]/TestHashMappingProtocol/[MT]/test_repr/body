@@ -1,0 +1,20 @@
+def test_repr(self):
+    d = self._empty_mapping()
+    self.assertEqual(repr(d), '{}')
+    d[1] = 2
+    self.assertEqual(repr(d), '{1: 2}')
+    d = self._empty_mapping()
+    d[1] = d
+    self.assertEqual(repr(d), '{1: {...}}')
+
+
+    class Exc(Exception):
+        pass
+
+
+    class BadRepr(object):
+
+        def __repr__(self):
+            raise Exc()
+    d = self._full_mapping({1: BadRepr(), })
+    self.assertRaises(Exc, repr, d)

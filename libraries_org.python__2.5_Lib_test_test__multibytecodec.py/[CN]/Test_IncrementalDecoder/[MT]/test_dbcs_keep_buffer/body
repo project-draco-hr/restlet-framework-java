@@ -1,0 +1,8 @@
+def test_dbcs_keep_buffer(self):
+    decoder = codecs.getincrementaldecoder('cp949')()
+    self.assertEqual(decoder.decode('\xc6\xc4\xc0'), u'\ud30c')
+    self.assertRaises(UnicodeDecodeError, decoder.decode, '', True)
+    self.assertEqual(decoder.decode('\xcc'), u'\uc774')
+    self.assertEqual(decoder.decode('\xc6\xc4\xc0'), u'\ud30c')
+    self.assertRaises(UnicodeDecodeError, decoder.decode, '\xcc\xbd', True)
+    self.assertEqual(decoder.decode('\xcc'), u'\uc774')

@@ -1,0 +1,19 @@
+import sys, codecs, os.path
+import unittest, re
+from test import test_support
+from StringIO import StringIO
+if (len(u'\U00012345') == 2):
+    _unichr = unichr
+
+    def unichr(v):
+        if (v >= 65536):
+            return (_unichr((55296 + ((v - 65536) >> 10))) + _unichr((56320 + ((v - 65536) & 1023))))
+        else:
+            return _unichr(v)
+    _ord = ord
+
+    def ord(c):
+        if (len(c) == 2):
+            return ((65536 + ((_ord(c[0]) - 55296) << 10)) + (ord(c[1]) - 56320))
+        else:
+            return _ord(c)

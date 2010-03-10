@@ -1,0 +1,18 @@
+def test_argument_passing(self):
+    cls = self.theclass
+
+
+    class introspective(tzinfo):
+
+        def tzname(self, dt):
+            return ((dt and 'real') or 'none')
+
+        def utcoffset(self, dt):
+            return timedelta(minutes=((dt and 42) or (-42)))
+        dst = utcoffset
+    obj = cls(1, 2, 3, tzinfo=introspective())
+    expected = (((cls is time) and 'none') or 'real')
+    self.assertEqual(obj.tzname(), expected)
+    expected = timedelta(minutes=(((cls is time) and (-42)) or 42))
+    self.assertEqual(obj.utcoffset(), expected)
+    self.assertEqual(obj.dst(), expected)

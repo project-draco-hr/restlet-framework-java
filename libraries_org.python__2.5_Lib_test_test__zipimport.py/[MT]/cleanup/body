@@ -1,0 +1,9 @@
+def cleanup():
+    global test_imported
+    if test_imported:
+        zipimport._zip_directory_cache.clear()
+        if hasattr(UncompressedZipImportTestCase, 'testAFakeZlib'):
+            delattr(UncompressedZipImportTestCase, 'testAFakeZlib')
+        if hasattr(CompressedZipImportTestCase, 'testAFakeZlib'):
+            delattr(CompressedZipImportTestCase, 'testAFakeZlib')
+    test_imported = True

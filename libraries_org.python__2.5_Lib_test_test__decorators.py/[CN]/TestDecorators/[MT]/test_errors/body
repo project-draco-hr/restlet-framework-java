@@ -1,0 +1,14 @@
+def test_errors(self):
+    for expr in ['1+2', 'x[3]', '(1, 2)']:
+        compile(expr, 'testexpr', 'exec')
+        codestr = ('@%s\ndef f(): pass' % expr)
+        self.assertRaises(SyntaxError, compile, codestr, 'test', 'exec')
+    self.assertRaises(SyntaxError, compile, '@f1 @f2\ndef f(): pass', 'test', 'exec')
+
+    def unimp(func):
+        raise NotImplementedError
+    context = dict(nullval=None, unimp=unimp)
+    for (expr, exc) in [('undef', NameError), ('nullval', TypeError), ('nullval.attr', AttributeError), ('unimp', NotImplementedError)]:
+        codestr = ('@%s\ndef f(): pass\nassert f() is None' % expr)
+        code = compile(codestr, 'test', 'exec')
+        self.assertRaises(exc, eval, code, context)

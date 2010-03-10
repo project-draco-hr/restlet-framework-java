@@ -1,0 +1,16 @@
+def _randbelow(self, n, _log=_log, int=int, _maxwidth=(1L << BPF), _Method=_MethodType, _BuiltinMethod=_BuiltinMethodType):
+    'Return a random int in the range [0,n)\n\n        Handles the case where n has more bits than returned\n        by a single call to the underlying generator.\n        '
+    try:
+        getrandbits = self.getrandbits
+    except AttributeError:
+        pass
+    else:
+        if ((type(self.random) is _BuiltinMethod) or (type(getrandbits) is _Method)):
+            k = int((1.00001 + _log((n - 1), 2.0)))
+            r = getrandbits(k)
+            while (r >= n):
+                r = getrandbits(k)
+            return r
+    if (n >= _maxwidth):
+        _warn('Underlying random() generator does not supply \nenough bits to choose from a population range this large')
+    return int((self.random() * n))

@@ -1,0 +1,9 @@
+def test_query_errors(self):
+    cf = self.newconfig()
+    self.assertEqual(cf.sections(), [], 'new ConfigParser should have no defined sections')
+    self.failIf(cf.has_section('Foo'), 'new ConfigParser should have no acknowledged sections')
+    self.assertRaises(ConfigParser.NoSectionError, cf.options, 'Foo')
+    self.assertRaises(ConfigParser.NoSectionError, cf.set, 'foo', 'bar', 'value')
+    self.get_error(ConfigParser.NoSectionError, 'foo', 'bar')
+    cf.add_section('foo')
+    self.get_error(ConfigParser.NoOptionError, 'foo', 'bar')

@@ -1,0 +1,13 @@
+def test_bad_setparameters(dsp):
+    fmt = AFMT_S16_NE
+    rate = 44100
+    channels = 2
+    for config in [(fmt, 300, rate), (fmt, (-5), rate), (fmt, channels, (-50))]:
+        (fmt, channels, rate) = config
+        result = dsp.setparameters(fmt, channels, rate, False)
+        _assert((result != config), 'setparameters: unexpectedly got requested configuration')
+        try:
+            result = dsp.setparameters(fmt, channels, rate, True)
+            raise AssertionError('setparameters: expected OSSAudioError')
+        except ossaudiodev.OSSAudioError as err:
+            print 'setparameters: got OSSAudioError as expected'

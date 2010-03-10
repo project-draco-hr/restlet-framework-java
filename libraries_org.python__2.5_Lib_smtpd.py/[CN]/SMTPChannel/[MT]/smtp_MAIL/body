@@ -1,0 +1,12 @@
+def smtp_MAIL(self, arg):
+    print  >> DEBUGSTREAM, '===> MAIL', arg
+    address = (self.__getaddr('FROM:', arg) if arg else None)
+    if (not address):
+        self.push('501 Syntax: MAIL FROM:<address>')
+        return
+    if self.__mailfrom:
+        self.push('503 Error: nested MAIL command')
+        return
+    self.__mailfrom = address
+    print  >> DEBUGSTREAM, 'sender:', self.__mailfrom
+    self.push('250 Ok')

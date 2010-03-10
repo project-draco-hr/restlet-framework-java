@@ -1,0 +1,4 @@
+def check_lib(self, library, library_dirs=None, headers=None, include_dirs=None, other_libraries=[]):
+    "Determine if 'library' is available to be linked against,\n        without actually checking that any particular symbols are provided\n        by it.  'headers' will be used in constructing the source file to\n        be compiled, but the only effect of this is to check if all the\n        header files listed are available.  Any libraries listed in\n        'other_libraries' will be included in the link, in case 'library'\n        has symbols that depend on other libraries.\n        "
+    self._check_compiler()
+    return self.try_link('int main (void) { }', headers, include_dirs, ([library] + other_libraries), library_dirs)

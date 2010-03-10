@@ -1,0 +1,6 @@
+def read_float8(f):
+    '\n    >>> import StringIO, struct\n    >>> raw = struct.pack(">d", -1.25)\n    >>> raw\n    \'\\xbf\\xf4\\x00\\x00\\x00\\x00\\x00\\x00\'\n    >>> read_float8(StringIO.StringIO(raw + "\\n"))\n    -1.25\n    '
+    data = f.read(8)
+    if (len(data) == 8):
+        return _unpack('>d', data)[0]
+    raise ValueError('not enough data in stream to read float8')

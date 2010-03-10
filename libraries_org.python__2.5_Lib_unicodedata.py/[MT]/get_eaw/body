@@ -1,0 +1,10 @@
+def get_eaw(unichr, default, fn):
+    codepoint = get_codepoint(unichr, fn)
+    v = _eaw.get(codepoint, None)
+    if (v is None):
+        v = check_segments(codepoint, _eaw_segments)
+    if (v is None):
+        if (default is not Nonesuch):
+            return default
+        raise ValueError()
+    return v

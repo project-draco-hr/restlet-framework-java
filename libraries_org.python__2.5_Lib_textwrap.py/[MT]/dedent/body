@@ -1,0 +1,21 @@
+def dedent(text):
+    'Remove any common leading whitespace from every line in `text`.\n\n    This can be used to make triple-quoted strings line up with the left\n    edge of the display, while still presenting them in the source code\n    in indented form.\n\n    Note that tabs and spaces are both treated as whitespace, but they\n    are not equal: the lines "  hello" and "\thello" are\n    considered to have no common leading whitespace.  (This behaviour is\n    new in Python 2.5; older versions of this module incorrectly\n    expanded tabs before searching for common leading whitespace.)\n    '
+    margin = None
+    text = _whitespace_only_re.sub('', text)
+    indents = _leading_whitespace_re.findall(text)
+    for indent in indents:
+        if (margin is None):
+            margin = indent
+        elif indent.startswith(margin):
+            pass
+        elif margin.startswith(indent):
+            margin = indent
+        else:
+            margin = ''
+            break
+    if (0 and margin):
+        for line in text.split('\n'):
+            assert ((not line) or line.startswith(margin)), ('line = %r, margin = %r' % (line, margin))
+    if margin:
+        text = re.sub(('(?m)^' + margin), '', text)
+    return text

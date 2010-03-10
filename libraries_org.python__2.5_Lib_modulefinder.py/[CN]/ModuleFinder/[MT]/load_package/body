@@ -1,0 +1,13 @@
+def load_package(self, fqname, pathname):
+    self.msgin(2, 'load_package', fqname, pathname)
+    newname = replacePackageMap.get(fqname)
+    if newname:
+        fqname = newname
+    m = self.add_module(fqname)
+    m.__file__ = pathname
+    m.__path__ = [pathname]
+    m.__path__ = (m.__path__ + packagePathMap.get(fqname, []))
+    (fp, buf, stuff) = self.find_module('__init__', m.__path__)
+    self.load_module(fqname, fp, buf, stuff)
+    self.msgout(2, 'load_package ->', m)
+    return m

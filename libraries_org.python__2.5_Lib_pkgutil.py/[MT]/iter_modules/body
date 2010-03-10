@@ -1,0 +1,12 @@
+def iter_modules(path=None, prefix=''):
+    "Yields (module_loader, name, ispkg) for all submodules on path,\n    or, if path is None, all top-level modules on sys.path.\n\n    'path' should be either None or a list of paths to look for\n    modules in.\n\n    'prefix' is a string to output on the front of every module name\n    on output.\n    "
+    if (path is None):
+        importers = iter_importers()
+    else:
+        importers = map(get_importer, path)
+    yielded = {}
+    for i in importers:
+        for (name, ispkg) in iter_importer_modules(i, prefix):
+            if (name not in yielded):
+                yielded[name] = 1
+                yield (i, name, ispkg)

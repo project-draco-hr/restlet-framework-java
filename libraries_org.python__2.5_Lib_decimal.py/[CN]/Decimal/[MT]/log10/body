@@ -1,0 +1,31 @@
+def log10(self, context=None):
+    'Returns the base 10 logarithm of self.'
+    if (context is None):
+        context = getcontext()
+    ans = self._check_nans(context=context)
+    if ans:
+        return ans
+    if (not self):
+        return negInf
+    if (self._isinfinity() == 1):
+        return Inf
+    if (self._sign == 1):
+        return context._raise_error(InvalidOperation, 'log10 of a negative value')
+    if ((self._int[0] == '1') and (self._int[1:] == ('0' * (len(self._int) - 1)))):
+        ans = Decimal(((self._exp + len(self._int)) - 1))
+    else:
+        op = _WorkRep(self)
+        (c, e) = (op.int, op.exp)
+        p = context.prec
+        places = ((p - self._log10_exp_bound()) + 2)
+        while True:
+            coeff = _dlog10(c, e, places)
+            if (coeff % (5 * (10 ** ((len(str(abs(coeff))) - p) - 1)))):
+                break
+            places += 3
+        ans = _dec_from_triple(int((coeff < 0)), str(abs(coeff)), (- places))
+    context = context._shallow_copy()
+    rounding = context._set_rounding(ROUND_HALF_EVEN)
+    ans = ans._fix(context)
+    context.rounding = rounding
+    return ans

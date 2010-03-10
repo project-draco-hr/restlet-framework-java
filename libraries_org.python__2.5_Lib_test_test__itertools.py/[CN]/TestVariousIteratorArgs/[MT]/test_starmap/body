@@ -1,0 +1,8 @@
+def test_starmap(self):
+    for s in (range(10), range(0), range(100), (7, 11), xrange(20, 50, 5)):
+        for g in (G, I, Ig, S, L, R):
+            ss = zip(s, s)
+            self.assertEqual(list(starmap(operator.pow, g(ss))), map(operator.pow, g(s), g(s)))
+        self.assertRaises(TypeError, starmap, operator.pow, X(ss))
+        self.assertRaises(TypeError, list, starmap(operator.pow, N(ss)))
+        self.assertRaises(ZeroDivisionError, list, starmap(operator.pow, E(ss)))

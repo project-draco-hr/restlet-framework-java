@@ -1,0 +1,7 @@
+def _do_test_commandline(cmdline, expected):
+    cmd = ('%s -c "import sys;print sys.argv" %s' % (python, cmdline))
+    data = popen(cmd).read()
+    got = eval(data)[1:]
+    if (got != expected):
+        print 'Error in popen commandline handling.'
+        print (" executed '%s', expected '%r', but got '%r'" % (cmdline, expected, got))

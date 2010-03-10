@@ -1,0 +1,12 @@
+def _check_sample(self, msg):
+    self.assert_(isinstance(msg, email.Message.Message))
+    self.assert_(isinstance(msg, mailbox.Message))
+    for (key, value) in _sample_headers.iteritems():
+        self.assert_((value in msg.get_all(key)))
+    self.assert_(msg.is_multipart())
+    self.assert_((len(msg.get_payload()) == len(_sample_payloads)))
+    for (i, payload) in enumerate(_sample_payloads):
+        part = msg.get_payload(i)
+        self.assert_(isinstance(part, email.Message.Message))
+        self.assert_((not isinstance(part, mailbox.Message)))
+        self.assert_((part.get_payload() == payload))

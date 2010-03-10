@@ -1,0 +1,45 @@
+def proc_sparse(self, tarinfo):
+    'Process a GNU sparse header plus extra headers.\n        '
+    buf = tarinfo.buf
+    sp = _ringbuffer()
+    pos = 386
+    lastpos = 0L
+    realpos = 0L
+    for i in xrange(4):
+        try:
+            offset = nti(buf[pos:(pos + 12)])
+            numbytes = nti(buf[(pos + 12):(pos + 24)])
+        except ValueError:
+            break
+        if (offset > lastpos):
+            sp.append(_hole(lastpos, (offset - lastpos)))
+        sp.append(_data(offset, numbytes, realpos))
+        realpos += numbytes
+        lastpos = (offset + numbytes)
+        pos += 24
+    isextended = ord(buf[482])
+    origsize = nti(buf[483:495])
+    while (isextended == 1):
+        buf = self.fileobj.read(BLOCKSIZE)
+        self.offset += BLOCKSIZE
+        pos = 0
+        for i in xrange(21):
+            try:
+                offset = nti(buf[pos:(pos + 12)])
+                numbytes = nti(buf[(pos + 12):(pos + 24)])
+            except ValueError:
+                break
+            if (offset > lastpos):
+                sp.append(_hole(lastpos, (offset - lastpos)))
+            sp.append(_data(offset, numbytes, realpos))
+            realpos += numbytes
+            lastpos = (offset + numbytes)
+            pos += 24
+        isextended = ord(buf[504])
+    if (lastpos < origsize):
+        sp.append(_hole(lastpos, (origsize - lastpos)))
+    tarinfo.sparse = sp
+    tarinfo.offset_data = self.offset
+    self.offset += self._block(tarinfo.size)
+    tarinfo.size = origsize
+    return tarinfo

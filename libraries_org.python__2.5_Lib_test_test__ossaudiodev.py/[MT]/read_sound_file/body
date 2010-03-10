@@ -1,0 +1,10 @@
+def read_sound_file(path):
+    fp = open(path, 'rb')
+    (size, enc, rate, nchannels, extra) = sunaudio.gethdr(fp)
+    data = fp.read()
+    fp.close()
+    if (enc != SND_FORMAT_MULAW_8):
+        print 'Expect .au file with 8-bit mu-law samples'
+        return
+    data = audioop.ulaw2lin(data, 2)
+    return (data, rate, 16, nchannels)

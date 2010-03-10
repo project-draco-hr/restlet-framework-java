@@ -1,0 +1,11 @@
+def test_bug1728403(self):
+    try:
+        open(TESTFN, 'w').write('\xa1')
+        f = codecs.open(TESTFN, encoding='cp949')
+        self.assertRaises(UnicodeDecodeError, f.read, 2)
+    finally:
+        try:
+            f.close()
+        except:
+            pass
+        os.unlink(TESTFN)

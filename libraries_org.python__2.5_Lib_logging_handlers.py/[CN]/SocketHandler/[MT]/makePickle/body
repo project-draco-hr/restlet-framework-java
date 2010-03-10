@@ -1,0 +1,11 @@
+def makePickle(self, record):
+    '\n        Pickles the record in binary format with a length prefix, and\n        returns it ready for transmission across the socket.\n        '
+    ei = record.exc_info
+    if ei:
+        dummy = self.format(record)
+        record.exc_info = None
+    s = cPickle.dumps(record.__dict__, 1)
+    if ei:
+        record.exc_info = ei
+    slen = struct.pack('>L', len(s))
+    return (slen + s)

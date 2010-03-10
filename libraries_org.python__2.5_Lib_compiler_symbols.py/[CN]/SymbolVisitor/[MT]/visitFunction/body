@@ -1,0 +1,13 @@
+def visitFunction(self, node, parent):
+    if node.decorators:
+        self.visit(node.decorators, parent)
+    parent.add_def(node.name)
+    for n in node.defaults:
+        self.visit(n, parent)
+    scope = FunctionScope(node.name, self.module, self.klass)
+    if (parent.nested or isinstance(parent, FunctionScope)):
+        scope.nested = 1
+    self.scopes[node] = scope
+    self._do_args(scope, node.argnames)
+    self.visit(node.code, scope)
+    self.handle_free_vars(scope, parent)

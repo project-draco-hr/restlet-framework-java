@@ -1,0 +1,18 @@
+def Parse(self, data, isfinal=False):
+    if isinstance(data, unicode):
+        data = data.encode(sys.getdefaultencoding())
+    self._data.append(data)
+    if isfinal:
+        bytes = StringUtil.toBytes(self._data.toString())
+        byte_stream = ByteArrayInputStream(bytes)
+        source = InputSource(byte_stream)
+        if (self.encoding is not None):
+            source.setEncoding(self.encoding)
+        try:
+            self._reader.parse(source)
+        except SAXParseException as sax_error:
+            self.ErrorLineNumber = self._NextLineNumber
+            self.ErrorColumnNumber = self._NextColumnNumber
+            self.ErrorCode = None
+            raise self._expat_error(sax_error)
+        return 1

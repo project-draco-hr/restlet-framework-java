@@ -1,0 +1,33 @@
+def findall(self, element):
+    nodeset = [element]
+    index = 0
+    while 1:
+        try:
+            path = self.path[index]
+            index = (index + 1)
+        except IndexError:
+            return nodeset
+        set = []
+        if isinstance(path, xpath_descendant_or_self):
+            try:
+                tag = self.path[index]
+                if (not isinstance(tag, type(''))):
+                    tag = None
+                else:
+                    index = (index + 1)
+            except IndexError:
+                tag = None
+            for node in nodeset:
+                new = list(node.getiterator(tag))
+                if (new and (new[0] is node)):
+                    set.extend(new[1:])
+                else:
+                    set.extend(new)
+        else:
+            for node in nodeset:
+                for node in node:
+                    if ((path == '*') or (node.tag == path)):
+                        set.append(node)
+        if (not set):
+            return []
+        nodeset = set

@@ -1,0 +1,9 @@
+def test_roundtrip(self):
+    for td in (timedelta(days=999999999, hours=23, minutes=59, seconds=59, microseconds=999999), timedelta(days=(-999999999)), timedelta(days=1, seconds=2, microseconds=3)):
+        s = repr(td)
+        self.failUnless(s.startswith('datetime.'))
+        s = s[9:]
+        td2 = eval(s)
+        self.assertEqual(td, td2)
+        td2 = timedelta(td.days, td.seconds, td.microseconds)
+        self.assertEqual(td, td2)

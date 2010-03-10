@@ -1,0 +1,23 @@
+def testmod(m=None, name=None, globs=None, verbose=None, report=True, optionflags=0, extraglobs=None, raise_on_error=False, exclude_empty=False):
+    'm=None, name=None, globs=None, verbose=None, report=True,\n       optionflags=0, extraglobs=None, raise_on_error=False,\n       exclude_empty=False\n\n    Test examples in docstrings in functions and classes reachable\n    from module m (or the current module if m is not supplied), starting\n    with m.__doc__.\n\n    Also test examples reachable from dict m.__test__ if it exists and is\n    not None.  m.__test__ maps names to functions, classes and strings;\n    function and class docstrings are tested even if the name is private;\n    strings are tested directly, as if they were docstrings.\n\n    Return (#failures, #tests).\n\n    See doctest.__doc__ for an overview.\n\n    Optional keyword arg "name" gives the name of the module; by default\n    use m.__name__.\n\n    Optional keyword arg "globs" gives a dict to be used as the globals\n    when executing examples; by default, use m.__dict__.  A copy of this\n    dict is actually used for each docstring, so that each docstring\'s\n    examples start with a clean slate.\n\n    Optional keyword arg "extraglobs" gives a dictionary that should be\n    merged into the globals that are used to execute examples.  By\n    default, no extra globals are used.  This is new in 2.4.\n\n    Optional keyword arg "verbose" prints lots of stuff if true, prints\n    only failures if false; by default, it\'s true iff "-v" is in sys.argv.\n\n    Optional keyword arg "report" prints a summary at the end when true,\n    else prints nothing at the end.  In verbose mode, the summary is\n    detailed, else very brief (in fact, empty if all tests passed).\n\n    Optional keyword arg "optionflags" or\'s together module constants,\n    and defaults to 0.  This is new in 2.3.  Possible values (see the\n    docs for details):\n\n        DONT_ACCEPT_TRUE_FOR_1\n        DONT_ACCEPT_BLANKLINE\n        NORMALIZE_WHITESPACE\n        ELLIPSIS\n        SKIP\n        IGNORE_EXCEPTION_DETAIL\n        REPORT_UDIFF\n        REPORT_CDIFF\n        REPORT_NDIFF\n        REPORT_ONLY_FIRST_FAILURE\n\n    Optional keyword arg "raise_on_error" raises an exception on the\n    first unexpected exception or failure. This allows failures to be\n    post-mortem debugged.\n\n    Advanced tomfoolery:  testmod runs methods of a local instance of\n    class doctest.Tester, then merges the results into (or creates)\n    global Tester instance doctest.master.  Methods of doctest.master\n    can be called directly too, if you want to do something unusual.\n    Passing report=0 to testmod is especially useful then, to delay\n    displaying a summary.  Invoke doctest.master.summarize(verbose)\n    when you\'re done fiddling.\n    '
+    global master
+    if (m is None):
+        m = sys.modules.get('__main__')
+    if (not inspect.ismodule(m)):
+        raise TypeError(('testmod: module required; %r' % (m,)))
+    if (name is None):
+        name = m.__name__
+    finder = DocTestFinder(exclude_empty=exclude_empty)
+    if raise_on_error:
+        runner = DebugRunner(verbose=verbose, optionflags=optionflags)
+    else:
+        runner = DocTestRunner(verbose=verbose, optionflags=optionflags)
+    for test in finder.find(m, name, globs=globs, extraglobs=extraglobs):
+        runner.run(test)
+    if report:
+        runner.summarize()
+    if (master is None):
+        master = runner
+    else:
+        master.merge(runner)
+    return (runner.failures, runner.tries)

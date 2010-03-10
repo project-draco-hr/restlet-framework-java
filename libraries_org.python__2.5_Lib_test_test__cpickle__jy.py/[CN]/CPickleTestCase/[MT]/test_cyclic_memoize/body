@@ -1,0 +1,12 @@
+def test_cyclic_memoize(self):
+    m = MyClass()
+    m2 = MyClass()
+    s = set([m])
+    m.foo = set([m2])
+    m2.foo = s
+    s2 = cPickle.loads(cPickle.dumps(s))
+    self.assertEqual(len(s2), 1)
+    m3 = iter(s2).next()
+    self.assertEqual(len(m3.foo), 1)
+    m4 = iter(m3.foo).next()
+    self.assertEqual(m4.foo, s2)

@@ -1,0 +1,10 @@
+def test_reporthook_8193_bytes(self):
+    report = []
+
+    def hooktester(count, block_size, total_size, _report=report):
+        _report.append((count, block_size, total_size))
+    srcFileName = self.createNewTempFile(('x' * 8193))
+    urllib.urlretrieve(self.constructLocalFileUrl(srcFileName), test_support.TESTFN, hooktester)
+    self.assertEqual(len(report), 3)
+    self.assertEqual(report[0][1], 8192)
+    self.assertEqual(report[0][2], 8193)

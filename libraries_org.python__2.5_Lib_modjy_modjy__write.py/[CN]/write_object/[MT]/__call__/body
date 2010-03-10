@@ -1,0 +1,9 @@
+def __call__(self, *args, **keywords):
+    if ((len(args) != 1) or (not isinstance(args[0], types.StringTypes))):
+        raise NonStringOutput('Invocation of write callable requires exactly one string argument')
+    try:
+        self.ostream.write(args[0])
+        self.ostream.flush()
+        self.num_writes += 1
+    except Exception as x:
+        raise ModjyIOException(x)

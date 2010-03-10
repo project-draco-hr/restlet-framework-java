@@ -1,0 +1,11 @@
+def visitListCompFor(self, node):
+    start = self.newBlock()
+    anchor = self.newBlock()
+    self.visit(node.list)
+    self.emit('GET_ITER')
+    self.nextBlock(start)
+    self.set_lineno(node, force=True)
+    self.emit('FOR_ITER', anchor)
+    self.nextBlock()
+    self.visit(node.assign)
+    return (start, anchor)

@@ -1,0 +1,17 @@
+def test_mutable_entry(self):
+    d1 = {}
+    s = shelve.Shelf(d1, protocol=2, writeback=False)
+    s['key1'] = [1, 2, 3, 4]
+    self.assertEqual(s['key1'], [1, 2, 3, 4])
+    s['key1'].append(5)
+    self.assertEqual(s['key1'], [1, 2, 3, 4])
+    s.close()
+    d2 = {}
+    s = shelve.Shelf(d2, protocol=2, writeback=True)
+    s['key1'] = [1, 2, 3, 4]
+    self.assertEqual(s['key1'], [1, 2, 3, 4])
+    s['key1'].append(5)
+    self.assertEqual(s['key1'], [1, 2, 3, 4, 5])
+    s.close()
+    self.assertEqual(len(d1), 1)
+    self.assertEqual(len(d2), 1)

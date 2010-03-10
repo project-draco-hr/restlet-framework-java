@@ -1,0 +1,12 @@
+def items(self, section):
+    try:
+        d2 = self._sections[section]
+    except KeyError:
+        if (section != DEFAULTSECT):
+            raise NoSectionError(section)
+        d2 = {}
+    d = self._defaults.copy()
+    d.update(d2)
+    if ('__name__' in d):
+        del d['__name__']
+    return d.items()

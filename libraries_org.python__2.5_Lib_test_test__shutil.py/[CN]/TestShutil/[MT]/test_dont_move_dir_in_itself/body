@@ -1,0 +1,10 @@
+def test_dont_move_dir_in_itself(self):
+    src_dir = tempfile.mkdtemp()
+    try:
+        dst = os.path.join(src_dir, 'foo')
+        self.assertRaises(shutil.Error, shutil.move, src_dir, dst)
+    finally:
+        try:
+            os.rmdir(src_dir)
+        except:
+            pass

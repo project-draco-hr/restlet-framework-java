@@ -1,0 +1,8 @@
+def test_version(self):
+    self.parser = InterceptingOptionParser(usage=SUPPRESS_USAGE, version='%prog 0.1')
+    save_argv = sys.argv[:]
+    try:
+        sys.argv[0] = os.path.join(os.curdir, 'foo', 'bar')
+        self.assertOutput(['--version'], 'bar 0.1\n')
+    finally:
+        sys.argv[:] = save_argv

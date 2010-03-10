@@ -1,0 +1,9 @@
+def test_initialize(self):
+    self._file.write('foo')
+    pos = self._file.tell()
+    proxy0 = mailbox._ProxyFile(self._file)
+    self.assert_((proxy0.tell() == pos))
+    self.assert_((self._file.tell() == pos))
+    proxy1 = mailbox._ProxyFile(self._file, 0)
+    self.assert_((proxy1.tell() == 0))
+    self.assert_((self._file.tell() == pos))

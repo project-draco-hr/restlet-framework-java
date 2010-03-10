@@ -1,0 +1,67 @@
+def test_tee(self):
+    n = 200
+
+    def irange(n):
+        for i in xrange(n):
+            yield i
+    (a, b) = tee([])
+    self.assertEqual(list(a), [])
+    self.assertEqual(list(b), [])
+    (a, b) = tee(irange(n))
+    self.assertEqual(zip(a, b), zip(range(n), range(n)))
+    (a, b) = tee(irange(n))
+    self.assertEqual(list(a), range(n))
+    self.assertEqual(list(b), range(n))
+    (a, b) = tee(irange(n))
+    for i in xrange(100):
+        self.assertEqual(a.next(), i)
+    del a
+    self.assertEqual(list(b), range(n))
+    (a, b) = tee(irange(n))
+    for i in xrange(100):
+        self.assertEqual(a.next(), i)
+    del b
+    self.assertEqual(list(a), range(100, n))
+    for j in xrange(5):
+        order = (([0] * n) + ([1] * n))
+        random.shuffle(order)
+        lists = ([], [])
+        its = tee(irange(n))
+        for i in order:
+            value = its[i].next()
+            lists[i].append(value)
+        self.assertEqual(lists[0], range(n))
+        self.assertEqual(lists[1], range(n))
+    self.assertRaises(TypeError, tee)
+    self.assertRaises(TypeError, tee, 3)
+    self.assertRaises(TypeError, tee, [1, 2], 'x')
+    self.assertRaises(TypeError, tee, [1, 2], 3, 'x')
+    (a, b) = tee('abc')
+    c = type(a)('def')
+    self.assertEqual(list(c), list('def'))
+    (a, b, c) = tee(xrange(2000), 3)
+    for i in xrange(100):
+        self.assertEqual(a.next(), i)
+    self.assertEqual(list(b), range(2000))
+    self.assertEqual([c.next(), c.next()], range(2))
+    self.assertEqual(list(a), range(100, 2000))
+    self.assertEqual(list(c), range(2, 2000))
+    self.assertRaises(TypeError, tee, 'abc', 'invalid')
+    self.assertRaises(ValueError, tee, [], (-1))
+    for n in xrange(5):
+        result = tee('abc', n)
+        self.assertEqual(type(result), tuple)
+        self.assertEqual(len(result), n)
+        self.assertEqual(map(list, result), ([list('abc')] * n))
+    (a, b) = tee('abc')
+    (c, d) = tee(a)
+    (t1, t2) = tee('abc')
+    tnew = type(t1)
+    self.assertRaises(TypeError, tnew)
+    self.assertRaises(TypeError, tnew, 10)
+    t3 = tnew(t1)
+    self.assert_((list(t3) == list(t2) == list('abc')))
+    (a, b) = tee(xrange(10))
+    p = proxy(a)
+    self.assertEqual(getattr(p, '__class__'), type(b))
+    del a

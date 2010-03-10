@@ -1,0 +1,14 @@
+'runpy.py - locating and running Python code using the module namespace\n\nProvides support for locating and running Python scripts using the Python\nmodule namespace instead of the native filesystem.\n\nThis allows Python code to play nicely with non-filesystem based PEP 302\nimporters when locating support scripts as well as when importing modules.\n'
+import sys
+import imp
+try:
+    from imp import get_loader
+except ImportError:
+    from pkgutil import get_loader
+__all__ = ['run_module']
+if (__name__ == '__main__'):
+    if (len(sys.argv) < 2):
+        print  >> sys.stderr, 'No module specified for execution'
+    else:
+        del sys.argv[0]
+        run_module(sys.argv[0], run_name='__main__', alter_sys=True)

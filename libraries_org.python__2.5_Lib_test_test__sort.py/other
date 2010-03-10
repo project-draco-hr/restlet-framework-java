@@ -1,0 +1,53 @@
+from test.test_support import verbose
+import random
+from UserList import UserList
+nerrors = 0
+sizes = [0]
+for power in range(1, 10):
+    n = (2 ** power)
+    sizes.extend(range((n - 1), (n + 2)))
+sizes.extend([10, 100, 1000])
+for n in sizes:
+    x = range(n)
+    if verbose:
+        print 'Testing size', n
+    s = x[:]
+    check('identity', x, s)
+    s = x[:]
+    s.reverse()
+    check('reversed', x, s)
+    s = x[:]
+    random.shuffle(s)
+    check('random permutation', x, s)
+    y = x[:]
+    y.reverse()
+    s = x[:]
+    check('reversed via function', y, s, (lambda a, b: cmp(b, a)))
+    if verbose:
+        print '    Checking against an insane comparison function.'
+        print "        If the implementation isn't careful, this may segfault."
+    s = x[:]
+    s.sort((lambda a, b: (int((random.random() * 3)) - 1)))
+    check('an insane function left some permutation', x, s)
+    x = [Complains(i) for i in x]
+    s = x[:]
+    random.shuffle(s)
+    Complains.maybe_complain = True
+    it_complained = False
+    try:
+        s.sort()
+    except RuntimeError:
+        it_complained = True
+    if it_complained:
+        Complains.maybe_complain = False
+        check('exception during sort left some permutation', x, s)
+    s = [Stable(random.randrange(10), i) for i in xrange(n)]
+    augmented = [(e, e.index) for e in s]
+    augmented.sort()
+    x = [e for (e, i) in augmented]
+    check('stability', x, s)
+import unittest
+from test import test_support
+import sys
+if (__name__ == '__main__'):
+    test_main(verbose=True)

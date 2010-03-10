@@ -1,0 +1,11 @@
+def setUp(self):
+    self.orig_context = Thread.currentThread().contextClassLoader
+
+
+    class AbstractLoader(ClassLoader):
+
+        def __init__(self):
+            ClassLoader.__init__(self)
+            c = self.super__defineClass('ContextAbstract', CONTEXT_ABSTRACT, 0, len(CONTEXT_ABSTRACT), ClassLoader.protectionDomain)
+            self.super__resolveClass(c)
+    Thread.currentThread().contextClassLoader = AbstractLoader()

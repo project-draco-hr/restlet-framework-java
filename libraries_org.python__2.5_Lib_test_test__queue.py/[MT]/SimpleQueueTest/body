@@ -1,0 +1,39 @@
+def SimpleQueueTest(q):
+    if (not q.empty()):
+        raise RuntimeError, 'Call this function with an empty queue'
+    q.put(111)
+    q.put(222)
+    verify(((q.get() == 111) and (q.get() == 222)), "Didn't seem to queue the correct data!")
+    for i in range((QUEUE_SIZE - 1)):
+        q.put(i)
+        verify((not q.empty()), 'Queue should not be empty')
+    verify((not q.full()), 'Queue should not be full')
+    q.put('last')
+    verify(q.full(), 'Queue should be full')
+    try:
+        q.put('full', block=0)
+        raise TestFailed("Didn't appear to block with a full queue")
+    except Queue.Full:
+        pass
+    try:
+        q.put('full', timeout=0.01)
+        raise TestFailed("Didn't appear to time-out with a full queue")
+    except Queue.Full:
+        pass
+    _doBlockingTest(q.put, ('full',), q.get, ())
+    _doBlockingTest(q.put, ('full', True, 10), q.get, ())
+    for i in range(QUEUE_SIZE):
+        q.get()
+    verify(q.empty(), 'Queue should be empty')
+    try:
+        q.get(block=0)
+        raise TestFailed("Didn't appear to block with an empty queue")
+    except Queue.Empty:
+        pass
+    try:
+        q.get(timeout=0.01)
+        raise TestFailed("Didn't appear to time-out with an empty queue")
+    except Queue.Empty:
+        pass
+    _doBlockingTest(q.get, (), q.put, ('empty',))
+    _doBlockingTest(q.get, (True, 10), q.put, ('empty',))

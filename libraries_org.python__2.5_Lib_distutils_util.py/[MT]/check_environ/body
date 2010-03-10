@@ -1,0 +1,11 @@
+def check_environ():
+    "Ensure that 'os.environ' has all the environment variables we\n    guarantee that users can use in config files, command-line options,\n    etc.  Currently this includes:\n      HOME - user's home directory (Unix only)\n      PLAT - description of the current platform, including hardware\n             and OS (see 'get_platform()')\n    "
+    global _environ_checked
+    if _environ_checked:
+        return
+    if ((os.name == 'posix') and (not os.environ.has_key('HOME'))):
+        import pwd
+        os.environ['HOME'] = pwd.getpwuid(os.getuid())[5]
+    if (not os.environ.has_key('PLAT')):
+        os.environ['PLAT'] = get_platform()
+    _environ_checked = 1

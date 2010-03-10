@@ -1,0 +1,14 @@
+def test_default_update(self):
+
+    def f():
+        'This is a test'
+        pass
+    f.attr = 'This is also a test'
+
+    def wrapper():
+        pass
+    functools.update_wrapper(wrapper, f)
+    self.check_wrapper(wrapper, f)
+    self.assertEqual(wrapper.__name__, 'f')
+    self.assertEqual(wrapper.__doc__, 'This is a test')
+    self.assertEqual(wrapper.attr, 'This is also a test')

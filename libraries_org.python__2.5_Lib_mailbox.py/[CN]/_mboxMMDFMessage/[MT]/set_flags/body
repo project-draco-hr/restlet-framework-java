@@ -1,0 +1,21 @@
+def set_flags(self, flags):
+    'Set the given flags and unset all others.'
+    flags = set(flags)
+    (status_flags, xstatus_flags) = ('', '')
+    for flag in ('R', 'O'):
+        if (flag in flags):
+            status_flags += flag
+            flags.remove(flag)
+    for flag in ('D', 'F', 'A'):
+        if (flag in flags):
+            xstatus_flags += flag
+            flags.remove(flag)
+    xstatus_flags += ''.join(sorted(flags))
+    try:
+        self.replace_header('Status', status_flags)
+    except KeyError:
+        self.add_header('Status', status_flags)
+    try:
+        self.replace_header('X-Status', xstatus_flags)
+    except KeyError:
+        self.add_header('X-Status', xstatus_flags)

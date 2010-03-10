@@ -1,0 +1,6 @@
+def set_required_wsgi_vars(self, req, resp, dict):
+    dict['wsgi.version'] = self.wsgi_version
+    dict['wsgi.url_scheme'] = req.getScheme()
+    dict['wsgi.multithread'] = (int(dict[('%s.cache_callables' % server_param_prefix)]) and int(dict[('%s.multithread' % server_param_prefix)]))
+    dict['wsgi.multiprocess'] = self.wsgi_multiprocess = 0
+    dict['wsgi.run_once'] = (not dict[('%s.cache_callables' % server_param_prefix)])

@@ -1,0 +1,19 @@
+def _check_module(self, depth):
+    (pkg_dir, mod_fname, mod_name) = self._make_pkg('x=1\n', depth)
+    try:
+        if verbose:
+            print 'Running from source:', mod_name
+        d1 = run_module(mod_name)
+        self.failUnless((d1['x'] == 1))
+        del d1
+        __import__(mod_name)
+        os.remove(mod_fname)
+        if verbose:
+            print 'Running from compiled:', mod_name
+        d2 = run_module(mod_name)
+        self.failUnless((d2['x'] == 1))
+        del d2
+    finally:
+        self._del_pkg(pkg_dir, depth, mod_name)
+    if verbose:
+        print 'Module executed successfully'

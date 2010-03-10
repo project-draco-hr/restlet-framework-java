@@ -1,0 +1,16 @@
+def expanduser(path):
+    'Expand ~ and ~user constructions.  If user or $HOME is unknown,\n    do nothing.'
+    if (not path.startswith('~')):
+        return path
+    i = path.find('/', 1)
+    if (i < 0):
+        i = len(path)
+    if (i == 1):
+        if ('HOME' not in os.environ):
+            return path
+        else:
+            userhome = os.environ['HOME']
+    else:
+        return path
+    userhome = userhome.rstrip('/')
+    return (userhome + path[i:])

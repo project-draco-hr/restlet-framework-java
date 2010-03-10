@@ -1,0 +1,23 @@
+def run(self, test, compileflags=None, out=None, clear_globs=True):
+    '\n        Run the examples in `test`, and display the results using the\n        writer function `out`.\n\n        The examples are run in the namespace `test.globs`.  If\n        `clear_globs` is true (the default), then this namespace will\n        be cleared after the test runs, to help with garbage\n        collection.  If you would like to examine the namespace after\n        the test completes, then use `clear_globs=False`.\n\n        `compileflags` gives the set of flags that should be used by\n        the Python compiler when running the examples.  If not\n        specified, then it will default to the set of future-import\n        flags that apply to `globs`.\n\n        The output of each example is checked using\n        `DocTestRunner.check_output`, and the results are formatted by\n        the `DocTestRunner.report_*` methods.\n        '
+    self.test = test
+    if (compileflags is None):
+        compileflags = _extract_future_flags(test.globs)
+    save_stdout = sys.stdout
+    if (out is None):
+        out = save_stdout.write
+    sys.stdout = self._fakeout
+    save_set_trace = pdb.set_trace
+    self.debugger = _OutputRedirectingPdb(save_stdout)
+    self.debugger.reset()
+    pdb.set_trace = self.debugger.set_trace
+    self.save_linecache_getlines = linecache.getlines
+    linecache.getlines = self.__patched_linecache_getlines
+    try:
+        return self.__run(test, compileflags, out)
+    finally:
+        sys.stdout = save_stdout
+        pdb.set_trace = save_set_trace
+        linecache.getlines = self.save_linecache_getlines
+        if clear_globs:
+            test.globs.clear()

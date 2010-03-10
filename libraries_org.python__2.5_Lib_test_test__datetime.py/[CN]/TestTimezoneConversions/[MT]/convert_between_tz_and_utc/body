@@ -1,0 +1,10 @@
+def convert_between_tz_and_utc(self, tz, utc):
+    dston = self.dston.replace(tzinfo=tz)
+    dstoff = self.dstoff.replace(tzinfo=tz)
+    for delta in (timedelta(weeks=13), DAY, HOUR, timedelta(minutes=1), timedelta(microseconds=1)):
+        self.checkinside(dston, tz, utc, dston, dstoff)
+        for during in ((dston + delta), (dstoff - delta)):
+            self.checkinside(during, tz, utc, dston, dstoff)
+        self.checkoutside(dstoff, tz, utc)
+        for outside in ((dston - delta), (dstoff + delta)):
+            self.checkoutside(outside, tz, utc)

@@ -1,0 +1,17 @@
+def script_from_examples(s):
+    "Extract script from text with examples.\n\n       Converts text with examples to a Python script.  Example input is\n       converted to regular code.  Example output and all other words\n       are converted to comments:\n\n       >>> text = '''\n       ...       Here are examples of simple math.\n       ...\n       ...           Python has super accurate integer addition\n       ...\n       ...           >>> 2 + 2\n       ...           5\n       ...\n       ...           And very friendly error messages:\n       ...\n       ...           >>> 1/0\n       ...           To Infinity\n       ...           And\n       ...           Beyond\n       ...\n       ...           You can use logic if you want:\n       ...\n       ...           >>> if 0:\n       ...           ...    blah\n       ...           ...    blah\n       ...           ...\n       ...\n       ...           Ho hum\n       ...           '''\n\n       >>> print script_from_examples(text)\n       # Here are examples of simple math.\n       #\n       #     Python has super accurate integer addition\n       #\n       2 + 2\n       # Expected:\n       ## 5\n       #\n       #     And very friendly error messages:\n       #\n       1/0\n       # Expected:\n       ## To Infinity\n       ## And\n       ## Beyond\n       #\n       #     You can use logic if you want:\n       #\n       if 0:\n          blah\n          blah\n       #\n       #     Ho hum\n       <BLANKLINE>\n       "
+    output = []
+    for piece in DocTestParser().parse(s):
+        if isinstance(piece, Example):
+            output.append(piece.source[:(-1)])
+            want = piece.want
+            if want:
+                output.append('# Expected:')
+                output += [('## ' + l) for l in want.split('\n')[:(-1)]]
+        else:
+            output += [_comment_line(l) for l in piece.split('\n')[:(-1)]]
+    while (output and (output[(-1)] == '#')):
+        output.pop()
+    while (output and (output[0] == '#')):
+        output.pop(0)
+    return ('\n'.join(output) + '\n')

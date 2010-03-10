@@ -1,0 +1,8 @@
+@bigmemtest(minsize=_2G, memuse=2.1)
+def test_splitlines(self, size):
+    chunksize = (int(((size ** 0.5) + 2)) // 2)
+    SUBSTR = ((((' ' * chunksize) + '\n') + (' ' * chunksize)) + '\r\n')
+    s = (SUBSTR * chunksize)
+    l = s.splitlines()
+    self.assertEquals(len(l), (chunksize * 2))
+    self.assertEquals(set(l), set([(' ' * chunksize)]))

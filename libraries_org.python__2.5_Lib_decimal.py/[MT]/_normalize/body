@@ -1,0 +1,17 @@
+def _normalize(op1, op2, prec=0):
+    'Normalizes op1, op2 to have the same exp and length of coefficient.\n\n    Done during addition.\n    '
+    if (op1.exp < op2.exp):
+        tmp = op2
+        other = op1
+    else:
+        tmp = op1
+        other = op2
+    tmp_len = len(str(tmp.int))
+    other_len = len(str(other.int))
+    exp = (tmp.exp + min((-1), ((tmp_len - prec) - 2)))
+    if (((other_len + other.exp) - 1) < exp):
+        other.int = 1
+        other.exp = exp
+    tmp.int *= (10 ** (tmp.exp - other.exp))
+    tmp.exp = other.exp
+    return (op1, op2)

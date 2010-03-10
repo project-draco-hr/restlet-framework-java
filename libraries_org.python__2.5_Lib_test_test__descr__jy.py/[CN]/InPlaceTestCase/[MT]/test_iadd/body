@@ -1,0 +1,29 @@
+def test_iadd(self):
+
+
+    class Foo(object):
+
+        def __add__(self, other):
+            return 1
+
+        def __radd__(self, other):
+            return 2
+
+
+    class Bar(object):
+        pass
+
+
+    class Baz(object):
+
+        def __iadd__(self, other):
+            return NotImplemented
+    foo = Foo()
+    foo += Bar()
+    self.assertEqual(foo, 1)
+    bar = Bar()
+    bar += Foo()
+    self.assertEqual(bar, 2)
+    baz = Baz()
+    baz += Foo()
+    self.assertEqual(baz, 2)

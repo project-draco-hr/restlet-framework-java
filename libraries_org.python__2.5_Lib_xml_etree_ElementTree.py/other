@@ -1,0 +1,17 @@
+__all__ = ['Comment', 'dump', 'Element', 'ElementTree', 'fromstring', 'iselement', 'iterparse', 'parse', 'PI', 'ProcessingInstruction', 'QName', 'SubElement', 'tostring', 'TreeBuilder', 'VERSION', 'XML', 'XMLParser', 'XMLTreeBuilder']
+import string, sys, re
+try:
+    import ElementPath
+except ImportError:
+    ElementPath = _SimpleElementPath()
+VERSION = '1.2.6'
+_Element = _ElementInterface
+PI = ProcessingInstruction
+if (sys.version[:3] == '1.5'):
+    _escape = re.compile('[&<>\\"\\x80-\\xff]+')
+else:
+    _escape = re.compile(eval('u"[&<>\\"\\u0080-\\uffff]+"'))
+_escape_map = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', }
+_namespace_map = {'http://www.w3.org/XML/1998/namespace': 'xml', 'http://www.w3.org/1999/xhtml': 'html', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#': 'rdf', 'http://schemas.xmlsoap.org/wsdl/': 'wsdl', }
+fromstring = XML
+XMLParser = XMLTreeBuilder

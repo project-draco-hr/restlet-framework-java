@@ -1,0 +1,22 @@
+def test_customreplace_encode(self):
+    if self.has_iso10646:
+        return
+    from htmlentitydefs import codepoint2name
+
+    def xmlcharnamereplace(exc):
+        if (not isinstance(exc, UnicodeEncodeError)):
+            raise TypeError(("don't know how to handle %r" % exc))
+        l = []
+        for c in exc.object[exc.start:exc.end]:
+            if (ord(c) in codepoint2name):
+                l.append((u'&%s;' % codepoint2name[ord(c)]))
+            else:
+                l.append((u'&#%d;' % ord(c)))
+        return (u''.join(l), exc.end)
+    codecs.register_error('test.xmlcharnamereplace', xmlcharnamereplace)
+    if self.xmlcharnametest:
+        (sin, sout) = self.xmlcharnametest
+    else:
+        sin = u'\xab\u211c\xbb = \u2329\u1234\u232a'
+        sout = '&laquo;&real;&raquo; = &lang;&#4660;&rang;'
+    self.assertEqual(self.encode(sin, 'test.xmlcharnamereplace')[0], sout)

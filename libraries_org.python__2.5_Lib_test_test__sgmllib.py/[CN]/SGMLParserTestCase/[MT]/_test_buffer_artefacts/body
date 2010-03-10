@@ -1,0 +1,27 @@
+def _test_buffer_artefacts(self):
+    output = [('starttag', 'a', [('b', '<')])]
+    self.check_events(["<a b='<'>"], output)
+    self.check_events(['<a ', "b='<'>"], output)
+    self.check_events(['<a b', "='<'>"], output)
+    self.check_events(['<a b=', "'<'>"], output)
+    self.check_events(["<a b='<", "'>"], output)
+    self.check_events(["<a b='<'", '>'], output)
+    output = [('starttag', 'a', [('b', '>')])]
+    self.check_events(["<a b='>'>"], output)
+    self.check_events(['<a ', "b='>'>"], output)
+    self.check_events(['<a b', "='>'>"], output)
+    self.check_events(['<a b=', "'>'>"], output)
+    self.check_events(["<a b='>", "'>"], output)
+    self.check_events(["<a b='>'", '>'], output)
+    output = [('comment', 'abc')]
+    self.check_events(['', '<!--abc-->'], output)
+    self.check_events(['<', '!--abc-->'], output)
+    self.check_events(['<!', '--abc-->'], output)
+    self.check_events(['<!-', '-abc-->'], output)
+    self.check_events(['<!--', 'abc-->'], output)
+    self.check_events(['<!--a', 'bc-->'], output)
+    self.check_events(['<!--ab', 'c-->'], output)
+    self.check_events(['<!--abc', '-->'], output)
+    self.check_events(['<!--abc-', '->'], output)
+    self.check_events(['<!--abc--', '>'], output)
+    self.check_events(['<!--abc-->', ''], output)

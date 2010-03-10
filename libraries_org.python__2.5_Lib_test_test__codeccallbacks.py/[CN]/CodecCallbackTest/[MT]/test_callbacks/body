@@ -1,0 +1,23 @@
+def test_callbacks(self):
+
+    def handler1(exc):
+        if ((not isinstance(exc, UnicodeEncodeError)) and (not isinstance(exc, UnicodeDecodeError))):
+            raise TypeError(("don't know how to handle %r" % exc))
+        l = [(u'<%d>' % ord(exc.object[pos])) for pos in xrange(exc.start, exc.end)]
+        return ((u'[%s]' % u''.join(l)), exc.end)
+    codecs.register_error('test.handler1', handler1)
+
+    def handler2(exc):
+        if (not isinstance(exc, UnicodeDecodeError)):
+            raise TypeError(("don't know how to handle %r" % exc))
+        l = [(u'<%d>' % ord(exc.object[pos])) for pos in xrange(exc.start, exc.end)]
+        return ((u'[%s]' % u''.join(l)), (exc.end + 1))
+    codecs.register_error('test.handler2', handler2)
+    s = '\x00\x81\x7f\x80\xff'
+    self.assertEqual(s.decode('ascii', 'test.handler1'), u'\x00[<129>]\x7f[<128>][<255>]')
+    self.assertEqual(s.decode('ascii', 'test.handler2'), u'\x00[<129>][<128>]')
+    self.assertEqual('\\u3042\\u3xxx'.decode('unicode-escape', 'test.handler1'), u'\u3042[<92><117><51><120>]xx')
+    self.assertEqual('\\u3042\\u3xx'.decode('unicode-escape', 'test.handler1'), u'\u3042[<92><117><51><120><120>]')
+    self.assertEqual(codecs.charmap_decode('abc', 'test.handler1', {ord('a'): u'z', })[0], u'z[<98>][<99>]')
+    self.assertEqual(u'g\xfc\xdfrk'.encode('ascii', 'test.handler1'), u'g[<252><223>]rk')
+    self.assertEqual(u'g\xfc\xdf'.encode('ascii', 'test.handler1'), u'g[<252><223>]')

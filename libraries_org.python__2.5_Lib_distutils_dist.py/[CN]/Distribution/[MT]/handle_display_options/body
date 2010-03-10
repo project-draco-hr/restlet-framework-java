@@ -1,0 +1,24 @@
+def handle_display_options(self, option_order):
+    'If there were any non-global "display-only" options\n        (--help-commands or the metadata display options) on the command\n        line, display the requested info and return true; else return\n        false.\n        '
+    from distutils.core import gen_usage
+    if self.help_commands:
+        self.print_commands()
+        print 
+        print gen_usage(self.script_name)
+        return 1
+    any_display_options = 0
+    is_display_option = {}
+    for option in self.display_options:
+        is_display_option[option[0]] = 1
+    for (opt, val) in option_order:
+        if (val and is_display_option.get(opt)):
+            opt = translate_longopt(opt)
+            value = getattr(self.metadata, ('get_' + opt))()
+            if (opt in ['keywords', 'platforms']):
+                print string.join(value, ',')
+            elif (opt in ('classifiers', 'provides', 'requires', 'obsoletes')):
+                print string.join(value, '\n')
+            else:
+                print value
+            any_display_options = 1
+    return any_display_options

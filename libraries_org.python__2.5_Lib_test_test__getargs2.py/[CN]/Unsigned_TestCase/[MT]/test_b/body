@@ -1,0 +1,12 @@
+def test_b(self):
+    from _testcapi import getargs_b
+    self.failUnlessEqual(3, getargs_b(3.14))
+    self.failUnlessEqual(99, getargs_b(Long()))
+    self.failUnlessEqual(99, getargs_b(Int()))
+    self.assertRaises(OverflowError, getargs_b, (-1))
+    self.failUnlessEqual(0, getargs_b(0))
+    self.failUnlessEqual(UCHAR_MAX, getargs_b(UCHAR_MAX))
+    self.assertRaises(OverflowError, getargs_b, (UCHAR_MAX + 1))
+    self.failUnlessEqual(42, getargs_b(42))
+    self.failUnlessEqual(42, getargs_b(42L))
+    self.assertRaises(OverflowError, getargs_b, VERY_LARGE)

@@ -1,0 +1,11 @@
+def check(self, code, word=None):
+    save = sys.stderr
+    sys.stderr = stream = StringIO.StringIO()
+    try:
+        compile(code, '<string>', 'exec', 0, True)
+    finally:
+        sys.stderr = save
+    if word:
+        self.assert_((('Warning: %r will become a reserved keyword in Python 2.6' % word) in stream.getvalue()))
+    else:
+        self.assertEqual(stream.getvalue(), '')

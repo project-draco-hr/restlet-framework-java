@@ -1,0 +1,9 @@
+def test_context_manager(self):
+    with tempfile.NamedTemporaryFile() as f:
+        self.failUnless(os.path.exists(f.name))
+    self.failIf(os.path.exists(f.name))
+
+    def use_closed():
+        with f:
+            pass
+    self.failUnlessRaises(ValueError, use_closed)

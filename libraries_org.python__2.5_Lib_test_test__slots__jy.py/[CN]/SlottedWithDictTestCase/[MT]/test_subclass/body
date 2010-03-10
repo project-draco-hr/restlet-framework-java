@@ -1,0 +1,16 @@
+def test_subclass(self):
+
+
+    class Base(object):
+        pass
+
+
+    class Foo(Base):
+        __slots__ = 'bar'
+    self.assert_(('__dict__' not in Foo.__dict__))
+    foo = Foo()
+    self.assert_(hasattr(foo, '__dict__'))
+    foo.bar = 'hello bar'
+    foo.foo = 'hello foo'
+    self.assertEqual(foo.bar, 'hello bar')
+    self.assertEqual(foo.__dict__, {'foo': 'hello foo', })

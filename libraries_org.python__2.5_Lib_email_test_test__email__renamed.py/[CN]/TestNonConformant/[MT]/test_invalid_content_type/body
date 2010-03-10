@@ -1,0 +1,17 @@
+def test_invalid_content_type(self):
+    eq = self.assertEqual
+    neq = self.ndiffAssertEqual
+    msg = Message()
+    msg['Content-Type'] = 'text'
+    eq(msg.get_content_maintype(), 'text')
+    eq(msg.get_content_subtype(), 'plain')
+    eq(msg.get_content_type(), 'text/plain')
+    del msg['content-type']
+    msg['Content-Type'] = 'foo'
+    eq(msg.get_content_maintype(), 'text')
+    eq(msg.get_content_subtype(), 'plain')
+    eq(msg.get_content_type(), 'text/plain')
+    s = StringIO()
+    g = Generator(s)
+    g.flatten(msg)
+    neq(s.getvalue(), 'Content-Type: foo\n\n')

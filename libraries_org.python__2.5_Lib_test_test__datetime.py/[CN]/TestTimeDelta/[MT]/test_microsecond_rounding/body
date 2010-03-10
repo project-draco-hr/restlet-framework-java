@@ -1,0 +1,15 @@
+def test_microsecond_rounding(self):
+    td = timedelta
+    eq = self.assertEqual
+    eq(td(milliseconds=(0.4 / 1000)), td(0))
+    eq(td(milliseconds=((-0.4) / 1000)), td(0))
+    eq(td(milliseconds=(0.6 / 1000)), td(microseconds=1))
+    eq(td(milliseconds=((-0.6) / 1000)), td(microseconds=(-1)))
+    us_per_hour = 3600000000.0
+    us_per_day = (us_per_hour * 24)
+    eq(td(days=(0.4 / us_per_day)), td(0))
+    eq(td(hours=(0.2 / us_per_hour)), td(0))
+    eq(td(days=(0.4 / us_per_day), hours=(0.2 / us_per_hour)), td(microseconds=1))
+    eq(td(days=((-0.4) / us_per_day)), td(0))
+    eq(td(hours=((-0.2) / us_per_hour)), td(0))
+    eq(td(days=((-0.4) / us_per_day), hours=((-0.2) / us_per_hour)), td(microseconds=(-1)))

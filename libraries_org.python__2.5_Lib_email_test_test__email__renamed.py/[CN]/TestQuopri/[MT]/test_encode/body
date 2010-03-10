@@ -1,0 +1,9 @@
+def test_encode(self):
+    eq = self.assertEqual
+    eq(quoprimime.encode(''), '')
+    eq(quoprimime.encode('hello'), 'hello')
+    eq(quoprimime.encode('hello\r\nworld'), 'hello\nworld')
+    eq(quoprimime.encode('hello\r\nworld', 0), 'hello\nworld')
+    eq(quoprimime.encode(('xxxx ' * 20), maxlinelen=40), 'xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx=\n xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxx=\nx xxxx xxxx xxxx xxxx=20')
+    eq(quoprimime.encode(('xxxx ' * 20), maxlinelen=40, eol='\r\n'), 'xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx=\r\n xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxx=\r\nx xxxx xxxx xxxx xxxx=20')
+    eq(quoprimime.encode('one line\n\ntwo line'), 'one line\n\ntwo line')

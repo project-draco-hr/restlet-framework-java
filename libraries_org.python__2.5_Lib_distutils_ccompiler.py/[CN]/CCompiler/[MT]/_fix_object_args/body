@@ -1,0 +1,10 @@
+def _fix_object_args(self, objects, output_dir):
+    "Typecheck and fix up some arguments supplied to various methods.\n        Specifically: ensure that 'objects' is a list; if output_dir is\n        None, replace with self.output_dir.  Return fixed versions of\n        'objects' and 'output_dir'.\n        "
+    if (type(objects) not in (ListType, TupleType)):
+        raise TypeError, "'objects' must be a list or tuple of strings"
+    objects = list(objects)
+    if (output_dir is None):
+        output_dir = self.output_dir
+    elif (type(output_dir) is not StringType):
+        raise TypeError, "'output_dir' must be a string or None"
+    return (objects, output_dir)

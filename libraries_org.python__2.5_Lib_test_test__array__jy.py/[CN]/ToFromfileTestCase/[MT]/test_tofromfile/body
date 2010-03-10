@@ -1,0 +1,12 @@
+def test_tofromfile(self):
+    x = array('i', range(5))
+    with open(test_support.TESTFN, 'wb') as f:
+        x.tofile(f)
+    x = array('i', [])
+    with open(test_support.TESTFN, 'r+b') as f:
+        x.fromfile(f, 5)
+        x *= 2
+        x.tofile(f)
+    with open(test_support.TESTFN, 'rb') as f:
+        x.fromfile(f, 10)
+        self.assertEqual(x, array('i', (range(5) * 4)))

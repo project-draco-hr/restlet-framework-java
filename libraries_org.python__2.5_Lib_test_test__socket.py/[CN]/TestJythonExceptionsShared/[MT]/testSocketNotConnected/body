@@ -1,0 +1,9 @@
+def testSocketNotConnected(self):
+    try:
+        self.s.send(MSG)
+    except socket.error as se:
+        self.failUnlessEqual(se[0], errno.ENOTCONN)
+    except Exception as x:
+        self.fail(('Send on unconnected socket raised wrong exception: %s' % x))
+    else:
+        self.fail('Send on unconnected socket raised exception')

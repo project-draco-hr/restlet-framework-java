@@ -1,0 +1,12 @@
+def test_nested_continue(self):
+
+    @contextmanager
+    def a():
+        yield
+    state = 0
+    while (state < 3):
+        state += 1
+        with nested(a(), a()):
+            continue
+        state += 10
+    self.assertEqual(state, 3)

@@ -1,0 +1,48 @@
+def visitTryExcept(self, node):
+    body = self.newBlock()
+    handlers = self.newBlock()
+    end = self.newBlock()
+    if node.else_:
+        lElse = self.newBlock()
+    else:
+        lElse = end
+    self.set_lineno(node)
+    self.emit('SETUP_EXCEPT', handlers)
+    self.nextBlock(body)
+    self.setups.push((EXCEPT, body))
+    self.visit(node.body)
+    self.emit('POP_BLOCK')
+    self.setups.pop()
+    self.emit('JUMP_FORWARD', lElse)
+    self.startBlock(handlers)
+    last = (len(node.handlers) - 1)
+    for i in range(len(node.handlers)):
+        (expr, target, body) = node.handlers[i]
+        self.set_lineno(expr)
+        if expr:
+            self.emit('DUP_TOP')
+            self.visit(expr)
+            self.emit('COMPARE_OP', 'exception match')
+            next = self.newBlock()
+            self.emit('JUMP_IF_FALSE', next)
+            self.nextBlock()
+            self.emit('POP_TOP')
+        self.emit('POP_TOP')
+        if target:
+            self.visit(target)
+        else:
+            self.emit('POP_TOP')
+        self.emit('POP_TOP')
+        self.visit(body)
+        self.emit('JUMP_FORWARD', end)
+        if expr:
+            self.nextBlock(next)
+        else:
+            self.nextBlock()
+        if expr:
+            self.emit('POP_TOP')
+    self.emit('END_FINALLY')
+    if node.else_:
+        self.nextBlock(lElse)
+        self.visit(node.else_)
+    self.nextBlock(end)

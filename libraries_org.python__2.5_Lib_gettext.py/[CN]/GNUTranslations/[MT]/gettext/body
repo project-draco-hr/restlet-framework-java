@@ -1,0 +1,12 @@
+def gettext(self, message):
+    missing = object()
+    tmsg = self._catalog.get(message, missing)
+    if (tmsg is missing):
+        if self._fallback:
+            return self._fallback.gettext(message)
+        return message
+    if self._output_charset:
+        return tmsg.encode(self._output_charset)
+    elif self._charset:
+        return tmsg.encode(self._charset)
+    return tmsg

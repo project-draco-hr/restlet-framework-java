@@ -1,0 +1,9 @@
+def close(self):
+    'Close the iterable (if needed) and reset all instance vars\n\n        Subclasses may want to also drop the client connection.\n        '
+    try:
+        if hasattr(self.result, 'close'):
+            self.result.close()
+    finally:
+        self.result = self.headers = self.status = self.environ = None
+        self.bytes_sent = 0
+        self.headers_sent = False

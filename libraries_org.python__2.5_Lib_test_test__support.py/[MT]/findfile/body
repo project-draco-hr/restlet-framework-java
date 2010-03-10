@@ -1,0 +1,12 @@
+def findfile(file, here=__file__):
+    'Try to find a file on sys.path and the working directory.  If it is not\n    found the argument passed to the function is returned (this does not\n    necessarily signal failure; could still be the legitimate path).'
+    import os
+    if os.path.isabs(file):
+        return file
+    path = sys.path
+    path = ([os.path.dirname(here)] + path)
+    for dn in path:
+        fn = os.path.join(dn, file)
+        if os.path.exists(fn):
+            return fn
+    return file

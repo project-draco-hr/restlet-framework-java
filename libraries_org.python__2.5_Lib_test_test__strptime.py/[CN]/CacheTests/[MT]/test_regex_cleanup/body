@@ -1,0 +1,11 @@
+def test_regex_cleanup(self):
+    try:
+        del _strptime._regex_cache['%d']
+    except KeyError:
+        pass
+    bogus_key = 0
+    while (len(_strptime._regex_cache) <= _strptime._CACHE_MAX_SIZE):
+        _strptime._regex_cache[bogus_key] = None
+        bogus_key += 1
+    _strptime.strptime('10', '%d')
+    self.failUnlessEqual(len(_strptime._regex_cache), 1)

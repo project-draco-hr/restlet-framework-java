@@ -1,0 +1,10 @@
+def test_guess_all_types(self):
+    eq = self.assertEqual
+    unless = self.failUnless
+    all = set(self.db.guess_all_extensions('text/plain', strict=True))
+    unless((all >= set(['.bat', '.c', '.h', '.ksh', '.pl', '.txt'])))
+    all = self.db.guess_all_extensions('image/jpg', strict=False)
+    all.sort()
+    eq(all, ['.jpg'])
+    all = self.db.guess_all_extensions('image/jpg', strict=True)
+    eq(all, [])

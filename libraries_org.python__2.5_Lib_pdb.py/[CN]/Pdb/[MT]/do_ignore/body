@@ -1,0 +1,29 @@
+def do_ignore(self, arg):
+    'arg is bp number followed by ignore count.'
+    args = arg.split()
+    try:
+        bpnum = int(args[0].strip())
+    except ValueError:
+        print  >> self.stdout, ('Breakpoint index %r is not a number' % args[0])
+        return
+    try:
+        count = int(args[1].strip())
+    except:
+        count = 0
+    try:
+        bp = bdb.Breakpoint.bpbynumber[bpnum]
+    except IndexError:
+        print  >> self.stdout, ('Breakpoint index %r is not valid' % args[0])
+        return
+    if bp:
+        bp.ignore = count
+        if (count > 0):
+            reply = 'Will ignore next '
+            if (count > 1):
+                reply = (reply + ('%d crossings' % count))
+            else:
+                reply = (reply + '1 crossing')
+            print  >> self.stdout, (reply + (' of breakpoint %d.' % bpnum))
+        else:
+            print  >> self.stdout, 'Will stop next time breakpoint',
+            print  >> self.stdout, bpnum, 'is reached.'

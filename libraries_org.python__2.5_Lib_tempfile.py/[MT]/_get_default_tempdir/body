@@ -1,0 +1,24 @@
+def _get_default_tempdir():
+    'Calculate the default directory to use for temporary files.\n    This routine should be called exactly once.\n\n    We determine whether or not a candidate temp dir is usable by\n    trying to create and write to a file in that directory.  If this\n    is successful, the test file is deleted.  To prevent denial of\n    service, the name of the test file must be randomized.'
+    namer = _RandomNameSequence()
+    dirlist = _candidate_tempdir_list()
+    flags = _text_openflags
+    for dir in dirlist:
+        if (dir != _os.curdir):
+            dir = _os.path.normcase(_os.path.abspath(dir))
+        for seq in xrange(100):
+            name = namer.next()
+            filename = _os.path.join(dir, name)
+            try:
+                fd = _os.open(filename, flags, 384)
+                fp = _os.fdopen(fd, 'w')
+                fp.write('blat')
+                fp.close()
+                _os.unlink(filename)
+                del fp, fd
+                return dir
+            except (OSError, IOError) as e:
+                if (e[0] != _errno.EEXIST):
+                    break
+                pass
+    raise IOError, (_errno.ENOENT, ('No usable temporary directory found in %s' % dirlist))

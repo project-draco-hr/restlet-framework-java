@@ -1,0 +1,5 @@
+def test_escape_path(self):
+    from cookielib import escape_path
+    cases = [('/foo%2f/bar', '/foo%2F/bar'), ('/foo%2F/bar', '/foo%2F/bar'), ('/foo%%/bar', '/foo%%/bar'), ('/fo%19o/bar', '/fo%19o/bar'), ('/fo%7do/bar', '/fo%7Do/bar'), ('/foo/bar&', '/foo/bar&'), ('/foo//bar', '/foo//bar'), ('~/foo/bar', '~/foo/bar'), ('/foo\x19/bar', '/foo%19/bar'), ('/}foo/bar', '/%7Dfoo/bar'), (u'/foo/bar\uabcd', '/foo/bar%EA%AF%8D')]
+    for (arg, result) in cases:
+        self.assertEquals(escape_path(arg), result)

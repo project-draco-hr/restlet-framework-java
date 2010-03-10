@@ -1,0 +1,37 @@
+def test_entryset(self):
+    self.maketestdict({'h': 'x', 'b': 'y', 'g': 'z', 'e': None, None: 'foo', 'd': 7, })
+    set = self.testmap.entrySet()
+    self.checksize(set.size())
+    for entry in set:
+        self.failUnless(self.testdict.has_key(entry.getKey()))
+        self.assertEquals(self.testdict[entry.getKey()], entry.getValue())
+        self.failUnless(set.contains(entry))
+    for entry in set:
+        if (entry.getKey() == 'h'):
+            hentry = entry
+        if (entry.getKey() == 'e'):
+            eentry = entry
+    self.failUnless(self.testmap.test_entry_set_nulls())
+    self.failUnless(set.remove(eentry))
+    self.failIf(set.contains(eentry))
+    self.failIf(('e' in self.testdict))
+    self.failUnless(set.remove(hentry))
+    self.failIf(set.contains(hentry))
+    self.failIf(('h' in self.testdict))
+    self.checksize(set.size())
+    oldlen = set.size()
+    self.failIf(set.remove(eentry))
+    self.checksize(oldlen)
+    oldlen = len(self.testdict)
+    elist = [entry for entry in set if (entry.key in ['b', 'g', 'd', None])]
+    self.assertEqual(len(elist), 4)
+    self.failUnless(set.removeAll(elist))
+    self.checkdoesntcontain('bdg')
+    self.failIf((None in self.testdict))
+    self.checksize((oldlen - 4))
+    itr = set.iterator()
+    while itr.hasNext():
+        val = itr.next()
+        itr.remove()
+    self.failUnless(set.isEmpty())
+    self.checksize(0)

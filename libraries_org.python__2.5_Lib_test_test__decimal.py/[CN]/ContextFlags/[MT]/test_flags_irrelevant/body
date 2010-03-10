@@ -1,0 +1,22 @@
+def test_flags_irrelevant(self):
+    context = Context(prec=9, Emin=(-999999999), Emax=999999999, rounding=ROUND_HALF_EVEN, traps=[], flags=[])
+    operations = [(context._apply, [Decimal('100E-1000000009')]), (context.sqrt, [Decimal(2)]), (context.add, [Decimal('1.23456789'), Decimal('9.87654321')]), (context.multiply, [Decimal('1.23456789'), Decimal('9.87654321')]), (context.subtract, [Decimal('1.23456789'), Decimal('9.87654321')])]
+    flagsets = [[Inexact], [Rounded], [Underflow], [Clamped], [Subnormal], [Inexact, Rounded, Underflow, Clamped, Subnormal]]
+    for (fn, args) in operations:
+        context.clear_flags()
+        ans = fn(*args)
+        flags = [k for (k, v) in context.flags.items() if v]
+        for extra_flags in flagsets:
+            context.clear_flags()
+            for flag in extra_flags:
+                context._raise_error(flag)
+            new_ans = fn(*args)
+            expected_flags = list(flags)
+            for flag in extra_flags:
+                if (flag not in expected_flags):
+                    expected_flags.append(flag)
+            expected_flags.sort()
+            new_flags = [k for (k, v) in context.flags.items() if v]
+            new_flags.sort()
+            self.assertEqual(ans, new_ans, ('operation produces different answers depending on flags set: ' + ('expected %s, got %s.' % (ans, new_ans))))
+            self.assertEqual(new_flags, expected_flags, ('operation raises different flags depending on flags set: ' + ('expected %s, got %s' % (expected_flags, new_flags))))

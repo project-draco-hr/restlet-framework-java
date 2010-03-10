@@ -1,0 +1,8 @@
+def test_parse_errors(self):
+    self.newconfig()
+    self.parse_error(ConfigParser.ParsingError, '[Foo]\n  extra-spaces: splat\n')
+    self.parse_error(ConfigParser.ParsingError, '[Foo]\n  extra-spaces= splat\n')
+    self.parse_error(ConfigParser.ParsingError, '[Foo]\noption-without-value\n')
+    self.parse_error(ConfigParser.ParsingError, '[Foo]\n:value-without-option-name\n')
+    self.parse_error(ConfigParser.ParsingError, '[Foo]\n=value-without-option-name\n')
+    self.parse_error(ConfigParser.MissingSectionHeaderError, 'No Section!\n')

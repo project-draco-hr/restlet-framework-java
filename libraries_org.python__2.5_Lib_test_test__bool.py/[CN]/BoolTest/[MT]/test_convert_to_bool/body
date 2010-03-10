@@ -1,0 +1,23 @@
+def test_convert_to_bool(self):
+    check = (lambda o: self.assertRaises(TypeError, bool, o))
+
+
+    class Foo(object):
+
+        def __nonzero__(self):
+            return self
+    check(Foo())
+
+
+    class Bar(object):
+
+        def __nonzero__(self):
+            return 'Yes'
+    check(Bar())
+
+
+    class Baz(int):
+
+        def __nonzero__(self):
+            return self
+    check(Baz())

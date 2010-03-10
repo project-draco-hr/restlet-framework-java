@@ -1,0 +1,17 @@
+def __del__(self):
+    import threading
+    key = object.__getattribute__(self, '_local__key')
+    try:
+        threads = list(threading.enumerate())
+    except:
+        return
+    for thread in threads:
+        try:
+            __dict__ = thread.__dict__
+        except AttributeError:
+            continue
+        if (key in __dict__):
+            try:
+                del __dict__[key]
+            except KeyError:
+                pass

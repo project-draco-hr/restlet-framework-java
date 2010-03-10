@@ -1,0 +1,6 @@
+def testClosedIteratorDeadlock(self):
+    self.createTempFile()
+    bz2f = BZ2File(self.filename)
+    bz2f.close()
+    self.assertRaises(ValueError, bz2f.next)
+    self.assertRaises(ValueError, bz2f.readlines)

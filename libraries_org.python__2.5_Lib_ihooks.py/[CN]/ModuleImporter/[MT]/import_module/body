@@ -1,0 +1,9 @@
+def import_module(self, name, globals=None, locals=None, fromlist=None):
+    parent = self.determine_parent(globals)
+    (q, tail) = self.find_head_package(parent, str(name))
+    m = self.load_tail(q, tail)
+    if (not fromlist):
+        return q
+    if hasattr(m, '__path__'):
+        self.ensure_fromlist(m, fromlist)
+    return m

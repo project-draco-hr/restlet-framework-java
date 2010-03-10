@@ -1,0 +1,8 @@
+def verify_acceptable(self):
+    start = time.time()
+    while True:
+        if self.select_acceptable():
+            return
+        elif ((time.time() - start) > READ_TIMEOUT):
+            raise Exception('Server socket did not accept in time')
+        time.sleep(0.1)

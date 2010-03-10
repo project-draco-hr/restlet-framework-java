@@ -1,0 +1,11 @@
+def test_stateful_keep_buffer(self):
+    encoder = codecs.getincrementalencoder('jisx0213')()
+    self.assertEqual(encoder.encode(u'\xe6'), '')
+    self.assertRaises(UnicodeEncodeError, encoder.encode, u'\u0123')
+    self.assertEqual(encoder.encode(u'\u0300\xe6'), '\xab\xc4')
+    self.assertRaises(UnicodeEncodeError, encoder.encode, u'\u0123')
+    self.assertEqual(encoder.reset(), None)
+    self.assertEqual(encoder.encode(u'\u0300'), '\xab\xdc')
+    self.assertEqual(encoder.encode(u'\xe6'), '')
+    self.assertRaises(UnicodeEncodeError, encoder.encode, u'\u0123')
+    self.assertEqual(encoder.encode(u'', True), '\xa9\xdc')

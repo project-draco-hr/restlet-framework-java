@@ -1,0 +1,22 @@
+def test_values(self):
+    self.maketestdict({})
+    self.testmap.put('foo', 'bar')
+    self.testmap.put('num', 'bar')
+    self.testmap.put(None, 3.2)
+    self.testmap.put(34, None)
+    values = self.testmap.values()
+    self.assertEquals(values.size(), len(self.testdict))
+    self.checksize(4)
+    self.failUnless(values.remove(None))
+    self.checksize(3)
+    self.assertEquals(values.size(), len(self.testdict))
+    itr = values.iterator()
+    while itr.hasNext():
+        val = itr.next()
+        if (val == 'bar'):
+            itr.remove()
+    self.checksize(1)
+    self.assertEquals(values.size(), len(self.testdict))
+    values.clear()
+    self.failUnless(values.isEmpty())
+    self.checksize(0)

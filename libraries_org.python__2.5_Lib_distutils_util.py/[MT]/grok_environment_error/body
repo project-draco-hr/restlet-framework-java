@@ -1,0 +1,10 @@
+def grok_environment_error(exc, prefix='error: '):
+    "Generate a useful error message from an EnvironmentError (IOError or\n    OSError) exception object.  Handles Python 1.5.1 and 1.5.2 styles, and\n    does what it can to deal with exception objects that don't have a\n    filename (which happens when the error is due to a two-file operation,\n    such as 'rename()' or 'link()'.  Returns the error message as a string\n    prefixed with 'prefix'.\n    "
+    if (hasattr(exc, 'filename') and hasattr(exc, 'strerror')):
+        if exc.filename:
+            error = (prefix + ('%s: %s' % (exc.filename, exc.strerror)))
+        else:
+            error = (prefix + ('%s' % exc.strerror))
+    else:
+        error = (prefix + str(exc[(-1)]))
+    return error

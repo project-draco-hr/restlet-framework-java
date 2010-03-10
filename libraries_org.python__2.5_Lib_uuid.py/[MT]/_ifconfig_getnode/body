@@ -1,0 +1,15 @@
+def _ifconfig_getnode():
+    'Get the hardware address on Unix by running ifconfig.'
+    for args in ('', '-a', '-av'):
+        mac = _find_mac('ifconfig', args, ['hwaddr', 'ether'], (lambda i: (i + 1)))
+        if mac:
+            return mac
+    import socket
+    ip_addr = socket.gethostbyname(socket.gethostname())
+    mac = _find_mac('arp', '-an', [ip_addr], (lambda i: (-1)))
+    if mac:
+        return mac
+    mac = _find_mac('lanscan', '-ai', ['lan0'], (lambda i: 0))
+    if mac:
+        return mac
+    return None

@@ -1,0 +1,19 @@
+def test_argument_handling(self):
+    self.assertRaises(SyntaxError, eval, 'lambda a,a:0')
+    self.assertRaises(SyntaxError, eval, 'lambda a,a=1:0')
+    self.assertRaises(SyntaxError, eval, 'lambda a=1,a=1:0')
+    try:
+        exec 'def f(a, a): pass'
+        self.fail('duplicate arguments')
+    except SyntaxError:
+        pass
+    try:
+        exec 'def f(a = 0, a = 1): pass'
+        self.fail('duplicate keyword arguments')
+    except SyntaxError:
+        pass
+    try:
+        exec 'def f(a): global a; a = 1'
+        self.fail('variable is global and local')
+    except SyntaxError:
+        pass

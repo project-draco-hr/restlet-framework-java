@@ -1,0 +1,19 @@
+def __init__(self, sock, mode='rb', bufsize=(-1), close=False):
+    self._sock = sock
+    if isinstance(sock, _nonblocking_api_mixin):
+        sock.reference_count += 1
+    self.mode = mode
+    if (bufsize < 0):
+        bufsize = self.default_bufsize
+    self.bufsize = bufsize
+    self.softspace = False
+    if (bufsize == 0):
+        self._rbufsize = 1
+    elif (bufsize == 1):
+        self._rbufsize = self.default_bufsize
+    else:
+        self._rbufsize = bufsize
+    self._wbufsize = bufsize
+    self._rbuf = ''
+    self._wbuf = []
+    self._close = close

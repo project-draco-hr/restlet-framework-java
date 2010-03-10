@@ -1,0 +1,21 @@
+def test_derived(self):
+    import threading
+    import time
+
+
+    class Local(threading.local):
+
+        def __init__(self):
+            time.sleep(0.01)
+    local = Local()
+
+    def f(i):
+        local.x = i
+        self.assertEqual(local.x, i)
+    threads = []
+    for i in range(10):
+        t = threading.Thread(target=f, args=(i,))
+        t.start()
+        threads.append(t)
+    for t in threads:
+        t.join()

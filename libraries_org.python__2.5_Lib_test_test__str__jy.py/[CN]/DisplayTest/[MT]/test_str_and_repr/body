@@ -1,0 +1,22 @@
+def test_str_and_repr(self):
+
+
+    class s(str):
+        pass
+
+
+    class u(str):
+        pass
+    for cls in (str, s, unicode, u):
+        foo = cls('foo')
+        for expr in ('str(foo)', 'foo.__str__()'):
+            result = eval(expr)
+            self.assert_((type(result) == str))
+            self.assertEqual(result, 'foo')
+        for expr in ('repr(foo)', 'foo.__repr__()'):
+            result = eval(expr)
+            self.assert_((type(result) == str))
+            if issubclass(cls, unicode):
+                self.assertEqual(result, "u'foo'")
+            else:
+                self.assertEqual(result, "'foo'")

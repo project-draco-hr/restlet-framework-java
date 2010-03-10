@@ -1,0 +1,17 @@
+def test_body_line_iterator(self):
+    eq = self.assertEqual
+    neq = self.ndiffAssertEqual
+    msg = self._msgobj('msg_01.txt')
+    it = iterators.body_line_iterator(msg)
+    lines = list(it)
+    eq(len(lines), 6)
+    neq(EMPTYSTRING.join(lines), msg.get_payload())
+    msg = self._msgobj('msg_02.txt')
+    it = iterators.body_line_iterator(msg)
+    lines = list(it)
+    eq(len(lines), 43)
+    fp = openfile('msg_19.txt')
+    try:
+        neq(EMPTYSTRING.join(lines), fp.read())
+    finally:
+        fp.close()

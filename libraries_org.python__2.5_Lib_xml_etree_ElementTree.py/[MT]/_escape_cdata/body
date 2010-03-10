@@ -1,0 +1,13 @@
+def _escape_cdata(text, encoding=None, replace=string.replace):
+    try:
+        if encoding:
+            try:
+                text = _encode(text, encoding)
+            except UnicodeError:
+                return _encode_entity(text)
+        text = replace(text, '&', '&amp;')
+        text = replace(text, '<', '&lt;')
+        text = replace(text, '>', '&gt;')
+        return text
+    except (TypeError, AttributeError):
+        _raise_serialization_error(text)

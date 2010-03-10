@@ -1,0 +1,9 @@
+def shutdown(handlerList=_handlerList):
+    '\n    Perform any cleanup actions in the logging system (e.g. flushing\n    buffers).\n\n    Should be called at application exit.\n    '
+    for h in handlerList[:]:
+        try:
+            h.flush()
+            h.close()
+        except:
+            if raiseExceptions:
+                raise

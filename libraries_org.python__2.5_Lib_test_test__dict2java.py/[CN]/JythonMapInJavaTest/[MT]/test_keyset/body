@@ -1,0 +1,20 @@
+def test_keyset(self):
+    self.maketestdict({})
+    self.testmap.put('foo', 'bar')
+    self.testmap.put('num', 5)
+    self.testmap.put(None, 4.3)
+    self.testmap.put(34, None)
+    keyset = self.testmap.keySet()
+    self.checksize(4)
+    self.failUnless(keyset.remove(None))
+    self.checksize(3)
+    self.failIf(keyset.contains(None))
+    self.failUnless(keyset.remove(34))
+    self.checksize(2)
+    self.failIf(keyset.contains(34))
+    itr = keyset.iterator()
+    while itr.hasNext():
+        key = itr.next()
+        if (key == 'num'):
+            itr.remove()
+    self.checksize(1)

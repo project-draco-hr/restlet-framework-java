@@ -1,0 +1,7 @@
+def find_loader(fullname):
+    'Find a PEP 302 "loader" object for fullname\n\n    If fullname contains dots, path must be the containing package\'s __path__.\n    Returns None if the module cannot be found or imported. This function uses\n    iter_importers(), and is thus subject to the same limitations regarding\n    platform-specific special import locations such as the Windows registry.\n    '
+    for importer in iter_importers(fullname):
+        loader = importer.find_module(fullname)
+        if (loader is not None):
+            return loader
+    return None

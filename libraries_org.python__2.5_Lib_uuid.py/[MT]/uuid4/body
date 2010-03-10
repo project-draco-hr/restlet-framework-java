@@ -1,0 +1,12 @@
+def uuid4():
+    'Generate a random UUID.'
+    if _uuid_generate_random:
+        _uuid_generate_random(_buffer)
+        return UUID(bytes=_buffer.raw)
+    try:
+        import os
+        return UUID(bytes=os.urandom(16), version=4)
+    except:
+        import random
+        bytes = [chr(random.randrange(256)) for i in range(16)]
+        return UUID(bytes=bytes, version=4)

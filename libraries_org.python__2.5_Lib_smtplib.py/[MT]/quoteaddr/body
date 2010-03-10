@@ -1,0 +1,13 @@
+def quoteaddr(addr):
+    'Quote a subset of the email addresses defined by RFC 821.\n\n    Should be able to handle anything rfc822.parseaddr can handle.\n    '
+    m = (None, None)
+    try:
+        m = email.Utils.parseaddr(addr)[1]
+    except AttributeError:
+        pass
+    if (m == (None, None)):
+        return ('<%s>' % addr)
+    elif (m is None):
+        return '<>'
+    else:
+        return ('<%s>' % m)

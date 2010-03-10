@@ -1,0 +1,9 @@
+def allmethods(cl):
+    methods = {}
+    for (key, value) in inspect.getmembers(cl, _is_some_method):
+        methods[key] = 1
+    for base in cl.__bases__:
+        methods.update(allmethods(base))
+    for key in methods.keys():
+        methods[key] = getattr(cl, key)
+    return methods

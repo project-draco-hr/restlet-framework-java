@@ -1,0 +1,36 @@
+def run(self, callback, key=None, completer=None):
+    if key:
+        key = lower(key)
+    self.quit = False
+    seen = {}
+    for modname in sys.builtin_module_names:
+        if (modname != '__main__'):
+            seen[modname] = 1
+            if (key is None):
+                callback(None, modname, '')
+            else:
+                desc = split((__import__(modname).__doc__ or ''), '\n')[0]
+                if (find(lower(((modname + ' - ') + desc)), key) >= 0):
+                    callback(None, modname, desc)
+    for (importer, modname, ispkg) in pkgutil.walk_packages():
+        if self.quit:
+            break
+        if (key is None):
+            callback(None, modname, '')
+        else:
+            loader = importer.find_module(modname)
+            if hasattr(loader, 'get_source'):
+                import StringIO
+                desc = (source_synopsis(StringIO.StringIO(loader.get_source(modname))) or '')
+                if hasattr(loader, 'get_filename'):
+                    path = loader.get_filename(modname)
+                else:
+                    path = None
+            else:
+                module = loader.load_module(modname)
+                desc = (module.__doc__ or '').splitlines()[0]
+                path = getattr(module, '__file__', None)
+            if (find(lower(((modname + ' - ') + desc)), key) >= 0):
+                callback(path, modname, desc)
+    if completer:
+        completer()

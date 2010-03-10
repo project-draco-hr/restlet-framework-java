@@ -1,0 +1,9 @@
+def stopTest(self, test):
+    took = (time.time() - self.start)
+    unittest.TestResult.stopTest(self, test)
+    args = [test, took]
+    if self.error:
+        args.extend(['error', self.error])
+    elif self.failure:
+        args.extend(['failure', self.failure])
+    self.tests.append(TestInfo.from_testcase(*args))

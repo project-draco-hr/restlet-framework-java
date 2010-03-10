@@ -1,0 +1,14 @@
+def recv(self, buffer_size):
+    try:
+        data = self.socket.recv(buffer_size)
+        if (not data):
+            self.handle_close()
+            return ''
+        else:
+            return data
+    except socket.error as why:
+        if (why[0] in [ECONNRESET, ENOTCONN, ESHUTDOWN]):
+            self.handle_close()
+            return ''
+        else:
+            raise

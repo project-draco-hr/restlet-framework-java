@@ -1,0 +1,23 @@
+'Generate Python documentation in HTML or text for interactive use.\n\nIn the Python interpreter, do "from pydoc import help" to provide online\nhelp.  Calling help(thing) on a Python object documents the object.\n\nOr, at the shell command line outside of Python:\n\nRun "pydoc <name>" to show documentation on something.  <name> may be\nthe name of a function, module, package, or a dotted reference to a\nclass or function within a module or module in a package.  If the\nargument contains a path segment delimiter (e.g. slash on Unix,\nbackslash on Windows) it is treated as the path to a Python source file.\n\nRun "pydoc -k <keyword>" to search for a keyword in the synopsis lines\nof all available modules.\n\nRun "pydoc -p <port>" to start an HTTP server on a given port on the\nlocal machine to generate documentation web pages.\n\nFor platforms without a command line, "pydoc -g" starts the HTTP server\nand also pops up a little window for controlling it.\n\nRun "pydoc -w <name>" to write out the HTML documentation for a module\nto a file named "<name>.html".\n\nModule docs for core modules are assumed to be in\n\n    http://www.python.org/doc/current/lib/\n\nThis can be overridden by setting the PYTHONDOCS environment variable\nto a different URL or to a local directory containing the Library\nReference Manual pages.\n'
+__author__ = 'Ka-Ping Yee <ping@lfw.org>'
+__date__ = '26 February 2001'
+__version__ = '$Revision: 54366 $'
+__credits__ = 'Guido van Rossum, for an excellent programming language.\nTommy Burnette, the original creator of manpy.\nPaul Prescod, for all his work on onlinehelp.\nRichard Chamberlain, for the first implementation of textdoc.\n'
+import sys, imp, os, re, types, inspect, __builtin__, pkgutil
+from repr import Repr
+from string import expandtabs, find, join, lower, split, strip, rfind, rstrip
+try:
+    from collections import deque
+except ImportError:
+
+
+    class deque(list):
+
+        def popleft(self):
+            return self.pop(0)
+_re_stripid = re.compile(' at 0x[0-9a-f]{6,16}(>+)$', re.IGNORECASE)
+text = TextDoc()
+html = HTMLDoc()
+help = Helper(sys.stdin, sys.stdout)
+if (__name__ == '__main__'):
+    cli()

@@ -1,0 +1,5 @@
+def testImporterAttr(self):
+    src = 'if 1:  # indent hack\n        def get_file():\n            return __file__\n        if __loader__.get_data("some.data") != "some data":\n            raise AssertionError, "bad data"\n'
+    pyc = make_pyc(compile(src, '<???>', 'exec'), NOW)
+    files = {(TESTMOD + pyc_ext): (NOW, pyc), 'some.data': (NOW, 'some data'), }
+    self.doTest(pyc_ext, files, TESTMOD)

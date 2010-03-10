@@ -1,0 +1,28 @@
+@classmethod
+def frombuf(cls, buf):
+    'Construct a TarInfo object from a 512 byte string buffer.\n        '
+    if (len(buf) != BLOCKSIZE):
+        raise ValueError('truncated header')
+    if (buf.count(NUL) == BLOCKSIZE):
+        raise ValueError('empty header')
+    tarinfo = cls()
+    tarinfo.buf = buf
+    tarinfo.name = nts(buf[0:100])
+    tarinfo.mode = nti(buf[100:108])
+    tarinfo.uid = nti(buf[108:116])
+    tarinfo.gid = nti(buf[116:124])
+    tarinfo.size = nti(buf[124:136])
+    tarinfo.mtime = nti(buf[136:148])
+    tarinfo.chksum = nti(buf[148:156])
+    tarinfo.type = buf[156:157]
+    tarinfo.linkname = nts(buf[157:257])
+    tarinfo.uname = nts(buf[265:297])
+    tarinfo.gname = nts(buf[297:329])
+    tarinfo.devmajor = nti(buf[329:337])
+    tarinfo.devminor = nti(buf[337:345])
+    prefix = nts(buf[345:500])
+    if (prefix and (not tarinfo.issparse())):
+        tarinfo.name = ((prefix + '/') + tarinfo.name)
+    if (tarinfo.chksum not in calc_chksums(buf)):
+        raise ValueError('invalid header')
+    return tarinfo

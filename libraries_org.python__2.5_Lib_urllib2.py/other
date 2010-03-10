@@ -1,0 +1,31 @@
+'An extensible library for opening URLs using a variety of protocols\n\nThe simplest way to use this module is to call the urlopen function,\nwhich accepts a string containing a URL or a Request object (described\nbelow).  It opens the URL and returns the results as file-like\nobject; the returned object has some extra methods described below.\n\nThe OpenerDirector manages a collection of Handler objects that do\nall the actual work.  Each Handler implements a particular protocol or\noption.  The OpenerDirector is a composite object that invokes the\nHandlers needed to open the requested URL.  For example, the\nHTTPHandler performs HTTP GET and POST requests and deals with\nnon-error returns.  The HTTPRedirectHandler automatically deals with\nHTTP 301, 302, 303 and 307 redirect errors, and the HTTPDigestAuthHandler\ndeals with digest authentication.\n\nurlopen(url, data=None) -- basic usage is the same as original\nurllib.  pass the url and optionally data to post to an HTTP URL, and\nget a file-like object back.  One difference is that you can also pass\na Request instance instead of URL.  Raises a URLError (subclass of\nIOError); for HTTP errors, raises an HTTPError, which can also be\ntreated as a valid response.\n\nbuild_opener -- function that creates a new OpenerDirector instance.\nwill install the default handlers.  accepts one or more Handlers as\narguments, either instances or Handler classes that it will\ninstantiate.  if one of the argument is a subclass of the default\nhandler, the argument will be installed instead of the default.\n\ninstall_opener -- installs a new opener as the default opener.\n\nobjects of interest:\nOpenerDirector --\n\nRequest -- an object that encapsulates the state of a request.  the\nstate can be a simple as the URL.  it can also include extra HTTP\nheaders, e.g. a User-Agent.\n\nBaseHandler --\n\nexceptions:\nURLError-- a subclass of IOError, individual protocols have their own\nspecific subclass\n\nHTTPError-- also a valid HTTP response, so you can treat an HTTP error\nas an exceptional event or valid response\n\ninternals:\nBaseHandler and parent\n_call_chain conventions\n\nExample usage:\n\nimport urllib2\n\n# set up authentication info\nauthinfo = urllib2.HTTPBasicAuthHandler()\nauthinfo.add_password(realm=\'PDQ Application\',\n                      uri=\'https://mahler:8092/site-updates.py\',\n                      user=\'klem\',\n                      passwd=\'geheim$parole\')\n\nproxy_support = urllib2.ProxyHandler({"http" : "http://ahad-haam:3128"})\n\n# build a new opener that adds authentication and caching FTP handlers\nopener = urllib2.build_opener(proxy_support, authinfo, urllib2.CacheFTPHandler)\n\n# install it\nurllib2.install_opener(opener)\n\nf = urllib2.urlopen(\'http://www.python.org/\')\n\n\n'
+import base64
+import hashlib
+import httplib
+import mimetools
+import os
+import posixpath
+import random
+import re
+import socket
+import sys
+import time
+import urlparse
+import bisect
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
+from urllib import unwrap, unquote, splittype, splithost, quote, addinfourl, splitport, splitgophertype, splitquery, splitattr, ftpwrapper, noheaders, splituser, splitpasswd, splitvalue
+from urllib import localhost, url2pathname, getproxies
+__version__ = sys.version[:3]
+_opener = None
+_cut_port_re = re.compile(':\\d+$')
+if hasattr(httplib, 'HTTPS'):
+
+
+    class HTTPSHandler(AbstractHTTPHandler):
+
+        def https_open(self, req):
+            return self.do_open(httplib.HTTPSConnection, req)
+        https_request = AbstractHTTPHandler.do_request_

@@ -1,0 +1,32 @@
+def test_fsize_enforced(self):
+    try:
+        (cur, max) = resource.getrlimit(resource.RLIMIT_FSIZE)
+    except AttributeError:
+        pass
+    else:
+        try:
+            try:
+                resource.setrlimit(resource.RLIMIT_FSIZE, (1024, max))
+                limit_set = True
+            except ValueError:
+                limit_set = False
+            f = open(test_support.TESTFN, 'wb')
+            try:
+                f.write(('X' * 1024))
+                try:
+                    f.write('Y')
+                    f.flush()
+                    for i in range(5):
+                        time.sleep(0.1)
+                        f.flush()
+                except IOError:
+                    if (not limit_set):
+                        raise
+                if limit_set:
+                    resource.setrlimit(resource.RLIMIT_FSIZE, (cur, max))
+            finally:
+                f.close()
+        finally:
+            if limit_set:
+                resource.setrlimit(resource.RLIMIT_FSIZE, (cur, max))
+            test_support.unlink(test_support.TESTFN)

@@ -1,0 +1,12 @@
+def _check_compiler(self):
+    "Check that 'self.compiler' really is a CCompiler object;\n        if not, make it one.\n        "
+    from distutils.ccompiler import CCompiler, new_compiler
+    if (not isinstance(self.compiler, CCompiler)):
+        self.compiler = new_compiler(compiler=self.compiler, dry_run=self.dry_run, force=1)
+        customize_compiler(self.compiler)
+        if self.include_dirs:
+            self.compiler.set_include_dirs(self.include_dirs)
+        if self.libraries:
+            self.compiler.set_libraries(self.libraries)
+        if self.library_dirs:
+            self.compiler.set_library_dirs(self.library_dirs)

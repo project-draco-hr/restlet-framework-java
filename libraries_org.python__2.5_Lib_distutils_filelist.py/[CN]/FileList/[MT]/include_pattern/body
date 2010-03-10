@@ -1,0 +1,13 @@
+def include_pattern(self, pattern, anchor=1, prefix=None, is_regex=0):
+    'Select strings (presumably filenames) from \'self.files\' that\n        match \'pattern\', a Unix-style wildcard (glob) pattern.  Patterns\n        are not quite the same as implemented by the \'fnmatch\' module: \'*\'\n        and \'?\'  match non-special characters, where "special" is platform-\n        dependent: slash on Unix; colon, slash, and backslash on\n        DOS/Windows; and colon on Mac OS.\n\n        If \'anchor\' is true (the default), then the pattern match is more\n        stringent: "*.py" will match "foo.py" but not "foo/bar.py".  If\n        \'anchor\' is false, both of these will match.\n\n        If \'prefix\' is supplied, then only filenames starting with \'prefix\'\n        (itself a pattern) and ending with \'pattern\', with anything in between\n        them, will match.  \'anchor\' is ignored in this case.\n\n        If \'is_regex\' is true, \'anchor\' and \'prefix\' are ignored, and\n        \'pattern\' is assumed to be either a string containing a regex or a\n        regex object -- no translation is done, the regex is just compiled\n        and used as-is.\n\n        Selected strings will be added to self.files.\n\n        Return 1 if files are found.\n        '
+    files_found = 0
+    pattern_re = translate_pattern(pattern, anchor, prefix, is_regex)
+    self.debug_print(("include_pattern: applying regex r'%s'" % pattern_re.pattern))
+    if (self.allfiles is None):
+        self.findall()
+    for name in self.allfiles:
+        if pattern_re.search(name):
+            self.debug_print((' adding ' + name))
+            self.files.append(name)
+            files_found = 1
+    return files_found

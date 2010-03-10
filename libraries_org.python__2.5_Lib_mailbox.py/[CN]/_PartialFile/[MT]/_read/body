@@ -1,0 +1,8 @@
+def _read(self, size, read_method):
+    'Read size bytes using read_method, honoring start and stop.'
+    remaining = (self._stop - self._pos)
+    if (remaining <= 0):
+        return ''
+    if ((size is None) or (size < 0) or (size > remaining)):
+        size = remaining
+    return _ProxyFile._read(self, size, read_method)

@@ -1,0 +1,9 @@
+def _testSetAndGetOption(self, sock, level, option, values):
+    for expected_value in values:
+        sock.setsockopt(level, option, expected_value)
+        retrieved_value = sock.getsockopt(level, option)
+        msg = ('Retrieved option(%s, %s) value %s != %s(value set)' % (level, option, retrieved_value, expected_value))
+        if (is_solaris and (option == socket.SO_RCVBUF)):
+            self.assert_((retrieved_value >= expected_value), msg)
+        else:
+            self.failUnlessEqual(retrieved_value, expected_value, msg)

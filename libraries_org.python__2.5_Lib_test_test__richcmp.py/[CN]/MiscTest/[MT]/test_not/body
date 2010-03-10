@@ -1,0 +1,17 @@
+def test_not(self):
+    import operator
+
+
+    class Exc(Exception):
+        pass
+
+
+    class Bad:
+
+        def __nonzero__(self):
+            raise Exc
+
+    def do(bad):
+        (not bad)
+    for func in (do, operator.not_):
+        self.assertRaises(Exc, func, Bad())

@@ -1,0 +1,8 @@
+def test_parse_str_eval(self):
+    foo = 'f\xc3\xb6\xc3\xb6'
+    for (code, expected) in ((("'%s'" % foo.decode('utf-8')), foo), (("# coding: utf-8\n'%s'" % foo), foo), (("%s'%s'" % (BOM_UTF8, foo)), foo), ("'\rfoo\r'", '\rfoo\r')):
+        mod = compile(code, 'test.py', 'eval')
+        result = eval(mod)
+        self.assertEqual(result, expected)
+        result = eval(code)
+        self.assertEqual(result, expected)

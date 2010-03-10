@@ -1,0 +1,13 @@
+def test_mask_attribute_error(self):
+
+
+    class C(object):
+
+        def getbases(self):
+            raise AttributeError
+        __bases__ = property(getbases)
+
+
+    class S(C):
+        pass
+    self.assertRaises(TypeError, issubclass, C(), S())

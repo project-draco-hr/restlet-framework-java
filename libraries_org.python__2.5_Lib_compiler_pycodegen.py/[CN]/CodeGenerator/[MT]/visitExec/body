@@ -1,0 +1,11 @@
+def visitExec(self, node):
+    self.visit(node.expr)
+    if (node.locals is None):
+        self.emit('LOAD_CONST', None)
+    else:
+        self.visit(node.locals)
+    if (node.globals is None):
+        self.emit('DUP_TOP')
+    else:
+        self.visit(node.globals)
+    self.emit('EXEC_STMT')

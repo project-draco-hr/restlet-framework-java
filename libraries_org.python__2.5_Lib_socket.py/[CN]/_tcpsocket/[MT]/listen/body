@@ -1,0 +1,13 @@
+def listen(self, backlog):
+    'This signifies a server socket'
+    try:
+        assert (not self.sock_impl)
+        self.server = 1
+        if self.local_addr:
+            (host, port) = _unpack_address_tuple(self.local_addr)
+        else:
+            (host, port) = ('', 0)
+        self.sock_impl = _server_socket_impl(host, port, backlog, self.pending_options[(SOL_SOCKET, SO_REUSEADDR)])
+        self._config()
+    except java.lang.Exception as jlx:
+        raise _map_exception(jlx)

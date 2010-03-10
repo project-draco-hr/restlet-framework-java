@@ -1,0 +1,12 @@
+def test_maildir_to_mboxmmdf(self):
+    pairs = (('D', ''), ('F', 'F'), ('P', ''), ('R', 'A'), ('S', 'R'), ('T', 'D'), ('DFPRST', 'RDFA'))
+    for class_ in (mailbox.mboxMessage, mailbox.MMDFMessage):
+        msg_maildir = mailbox.MaildirMessage(_sample_message)
+        msg_maildir.set_date(0.0)
+        for (setting, result) in pairs:
+            msg_maildir.set_flags(setting)
+            msg = class_(msg_maildir)
+            self.assert_((msg.get_flags() == result))
+            self.assert_((msg.get_from() == ('MAILER-DAEMON %s' % time.asctime(time.gmtime(0.0)))))
+        msg_maildir.set_subdir('cur')
+        self.assert_((class_(msg_maildir).get_flags() == 'RODFA'))

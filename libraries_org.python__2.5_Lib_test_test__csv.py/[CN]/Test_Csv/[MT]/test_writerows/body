@@ -1,0 +1,20 @@
+def test_writerows(self):
+
+
+    class BrokenFile:
+
+        def write(self, buf):
+            raise IOError
+    writer = csv.writer(BrokenFile())
+    self.assertRaises(IOError, writer.writerows, [['a']])
+    (fd, name) = tempfile.mkstemp()
+    fileobj = os.fdopen(fd, 'w+b')
+    try:
+        writer = csv.writer(fileobj)
+        self.assertRaises(TypeError, writer.writerows, None)
+        writer.writerows([['a', 'b'], ['c', 'd']])
+        fileobj.seek(0)
+        self.assertEqual(fileobj.read(), 'a,b\r\nc,d\r\n')
+    finally:
+        fileobj.close()
+        os.unlink(name)

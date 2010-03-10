@@ -1,0 +1,41 @@
+def _guess_quote_and_delimiter(self, data, delimiters):
+    "\n        Looks for text enclosed between two identical quotes\n        (the probable quotechar) which are preceded and followed\n        by the same character (the probable delimiter).\n        For example:\n                         ,'some text',\n        The quote with the most wins, same with the delimiter.\n        If there is no quotechar the delimiter can't be determined\n        this way.\n        "
+    matches = []
+    for restr in ('(?P<delim>[^\\w\n"\'])(?P<space> ?)(?P<quote>["\']).*?(?P=quote)(?P=delim)', '(?:^|\n)(?P<quote>["\']).*?(?P=quote)(?P<delim>[^\\w\n"\'])(?P<space> ?)', '(?P<delim>>[^\\w\n"\'])(?P<space> ?)(?P<quote>["\']).*?(?P=quote)(?:$|\n)', '(?:^|\n)(?P<quote>["\']).*?(?P=quote)(?:$|\n)'):
+        regexp = re.compile(restr, (re.DOTALL | re.MULTILINE))
+        matches = regexp.findall(data)
+        if matches:
+            break
+    if (not matches):
+        return ('', None, 0)
+    quotes = {}
+    delims = {}
+    spaces = 0
+    for m in matches:
+        n = (regexp.groupindex['quote'] - 1)
+        key = m[n]
+        if key:
+            quotes[key] = (quotes.get(key, 0) + 1)
+        try:
+            n = (regexp.groupindex['delim'] - 1)
+            key = m[n]
+        except KeyError:
+            continue
+        if (key and ((delimiters is None) or (key in delimiters))):
+            delims[key] = (delims.get(key, 0) + 1)
+        try:
+            n = (regexp.groupindex['space'] - 1)
+        except KeyError:
+            continue
+        if m[n]:
+            spaces += 1
+    quotechar = reduce((lambda a, b, quotes=quotes: (((quotes[a] > quotes[b]) and a) or b)), quotes.keys())
+    if delims:
+        delim = reduce((lambda a, b, delims=delims: (((delims[a] > delims[b]) and a) or b)), delims.keys())
+        skipinitialspace = (delims[delim] == spaces)
+        if (delim == '\n'):
+            delim = ''
+    else:
+        delim = ''
+        skipinitialspace = 0
+    return (quotechar, delim, skipinitialspace)

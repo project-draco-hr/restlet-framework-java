@@ -1,0 +1,16 @@
+def test_backslashescape(self):
+    sin = u'a\xac\u1234\u20ac\u8000'
+    if (sys.maxunicode > 65535):
+        sin += unichr(sys.maxunicode)
+    sout = 'a\\xac\\u1234\\u20ac\\u8000'
+    if (sys.maxunicode > 65535):
+        sout += ('\\U%08x' % sys.maxunicode)
+    self.assertEqual(sin.encode('ascii', 'backslashreplace'), sout)
+    sout = 'a\xac\\u1234\\u20ac\\u8000'
+    if (sys.maxunicode > 65535):
+        sout += ('\\U%08x' % sys.maxunicode)
+    self.assertEqual(sin.encode('latin-1', 'backslashreplace'), sout)
+    sout = 'a\xac\\u1234\xa4\\u8000'
+    if (sys.maxunicode > 65535):
+        sout += ('\\U%08x' % sys.maxunicode)
+    self.assertEqual(sin.encode('iso-8859-15', 'backslashreplace'), sout)

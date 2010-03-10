@@ -1,0 +1,17 @@
+def test_proxy_ref(self):
+    o = C()
+    o.bar = 1
+    ref1 = weakref.proxy(o, self.callback)
+    ref2 = weakref.proxy(o, self.callback)
+    del o
+
+    def check(proxy):
+        proxy.bar
+    extra_collect()
+    self.assertRaises(weakref.ReferenceError, check, ref1)
+    self.assertRaises(weakref.ReferenceError, check, ref2)
+    if test_support.is_jython:
+        self.assertRaises(weakref.ReferenceError, bool, ref1)
+    else:
+        self.assertRaises(weakref.ReferenceError, bool, weakref.proxy(C()))
+    self.assert_((self.cbcalled == 2))

@@ -1,0 +1,10 @@
+@bigmemtest(minsize=_2G, memuse=2)
+def test_swapcase(self, size):
+    SUBSTR = "aBcDeFG12.'\xa9\x00"
+    sublen = len(SUBSTR)
+    repeats = ((size // sublen) + 2)
+    s = (SUBSTR * repeats)
+    s = s.swapcase()
+    self.assertEquals(len(s), (sublen * repeats))
+    self.assertEquals(s[:(sublen * 3)], (SUBSTR.swapcase() * 3))
+    self.assertEquals(s[((- sublen) * 3):], (SUBSTR.swapcase() * 3))

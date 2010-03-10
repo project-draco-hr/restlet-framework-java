@@ -1,0 +1,28 @@
+def get_docstring(self, node, n=None):
+    if (n is None):
+        n = node[0]
+        node = node[1:]
+    if (n == symbol.suite):
+        if (len(node) == 1):
+            return self.get_docstring(node[0])
+        for sub in node:
+            if (sub[0] == symbol.stmt):
+                return self.get_docstring(sub)
+        return None
+    if (n == symbol.file_input):
+        for sub in node:
+            if (sub[0] == symbol.stmt):
+                return self.get_docstring(sub)
+        return None
+    if (n == symbol.atom):
+        if (node[0][0] == token.STRING):
+            s = ''
+            for t in node:
+                s = (s + eval(t[1]))
+            return s
+        return None
+    if ((n == symbol.stmt) or (n == symbol.simple_stmt) or (n == symbol.small_stmt)):
+        return self.get_docstring(node[0])
+    if ((n in _doc_nodes) and (len(node) == 1)):
+        return self.get_docstring(node[0])
+    return None

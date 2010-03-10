@@ -1,0 +1,31 @@
+def _find_lineno(self, obj, source_lines):
+    "\n        Return a line number of the given object's docstring.  Note:\n        this method assumes that the object has a docstring.\n        "
+    lineno = None
+    if inspect.ismodule(obj):
+        lineno = 0
+    if inspect.isclass(obj):
+        if (source_lines is None):
+            return None
+        pat = re.compile(('^\\s*class\\s*%s\\b' % getattr(obj, '__name__', '-')))
+        for (i, line) in enumerate(source_lines):
+            if pat.match(line):
+                lineno = i
+                break
+    if inspect.ismethod(obj):
+        obj = obj.im_func
+    if inspect.isfunction(obj):
+        obj = obj.func_code
+    if inspect.istraceback(obj):
+        obj = obj.tb_frame
+    if inspect.isframe(obj):
+        obj = obj.f_code
+    if inspect.iscode(obj):
+        lineno = (getattr(obj, 'co_firstlineno', None) - 1)
+    if (lineno is not None):
+        if (source_lines is None):
+            return (lineno + 1)
+        pat = re.compile('(^|.*:)\\s*\\w*("|\')')
+        for lineno in range(lineno, len(source_lines)):
+            if pat.match(source_lines[lineno]):
+                return lineno
+    return None

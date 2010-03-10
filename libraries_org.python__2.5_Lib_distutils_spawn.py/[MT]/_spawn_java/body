@@ -1,0 +1,12 @@
+def _spawn_java(cmd, search_path=1, verbose=0, dry_run=0):
+    executable = cmd[0]
+    cmd = ' '.join(_nt_quote_args(cmd))
+    log.info(cmd)
+    if (not dry_run):
+        try:
+            rc = (os.system(cmd) >> 8)
+        except OSError as exc:
+            raise DistutilsExecError, ("command '%s' failed: %s" % (executable, exc[(-1)]))
+        if (rc != 0):
+            print ("command '%s' failed with exit status %d" % (executable, rc))
+            raise DistutilsExecError, ("command '%s' failed with exit status %d" % (executable, rc))

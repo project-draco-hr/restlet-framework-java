@@ -1,0 +1,9 @@
+'distutils.command.config\n\nImplements the Distutils \'config\' command, a (mostly) empty command class\nthat exists mainly to be sub-classed by specific module distributions and\napplications.  The idea is that while every "config" command is different,\nat least they\'re all named the same, and users always see "config" in the\nlist of standard commands.  Also, this is a good place to put common\nconfigure-like tasks: "try to compile this C code", or "figure out where\nthis header file lives".\n'
+__revision__ = '$Id: config.py 37828 2004-11-10 22:23:15Z loewis $'
+import sys, os, string, re
+from types import *
+from distutils.core import Command
+from distutils.errors import DistutilsExecError
+from distutils.sysconfig import customize_compiler
+from distutils import log
+LANG_EXT = {'c': '.c', 'c++': '.cxx', }

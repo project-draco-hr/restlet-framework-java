@@ -1,0 +1,244 @@
+def _parse(source, state):
+    subpattern = SubPattern(state)
+    subpatternappend = subpattern.append
+    sourceget = source.get
+    sourcematch = source.match
+    _len = len
+    PATTERNENDERS = _PATTERNENDERS
+    ASSERTCHARS = _ASSERTCHARS
+    LOOKBEHINDASSERTCHARS = _LOOKBEHINDASSERTCHARS
+    REPEATCODES = _REPEATCODES
+    while 1:
+        if (source.next in PATTERNENDERS):
+            break
+        this = sourceget()
+        if (this is None):
+            break
+        if (state.flags & SRE_FLAG_VERBOSE):
+            if (this in WHITESPACE):
+                continue
+            if (this == '#'):
+                while 1:
+                    this = sourceget()
+                    if (this in (None, '\n')):
+                        break
+                continue
+        if (this and (this[0] not in SPECIAL_CHARS)):
+            subpatternappend((LITERAL, ord(this)))
+        elif (this == '['):
+            set = []
+            setappend = set.append
+            if sourcematch('^'):
+                setappend((NEGATE, None))
+            start = set[:]
+            while 1:
+                this = sourceget()
+                if ((this == ']') and (set != start)):
+                    break
+                elif (this and (this[0] == '\\')):
+                    code1 = _class_escape(source, this)
+                elif this:
+                    code1 = (LITERAL, ord(this))
+                else:
+                    raise error, 'unexpected end of regular expression'
+                if sourcematch('-'):
+                    this = sourceget()
+                    if (this == ']'):
+                        if (code1[0] is IN):
+                            code1 = code1[1][0]
+                        setappend(code1)
+                        setappend((LITERAL, ord('-')))
+                        break
+                    elif this:
+                        if (this[0] == '\\'):
+                            code2 = _class_escape(source, this)
+                        else:
+                            code2 = (LITERAL, ord(this))
+                        if ((code1[0] != LITERAL) or (code2[0] != LITERAL)):
+                            raise error, 'bad character range'
+                        lo = code1[1]
+                        hi = code2[1]
+                        if (hi < lo):
+                            raise error, 'bad character range'
+                        setappend((RANGE, (lo, hi)))
+                    else:
+                        raise error, 'unexpected end of regular expression'
+                else:
+                    if (code1[0] is IN):
+                        code1 = code1[1][0]
+                    setappend(code1)
+            if ((_len(set) == 1) and (set[0][0] is LITERAL)):
+                subpatternappend(set[0])
+            elif ((_len(set) == 2) and (set[0][0] is NEGATE) and (set[1][0] is LITERAL)):
+                subpatternappend((NOT_LITERAL, set[1][1]))
+            else:
+                subpatternappend((IN, set))
+        elif (this and (this[0] in REPEAT_CHARS)):
+            if (this == '?'):
+                (min, max) = (0, 1)
+            elif (this == '*'):
+                (min, max) = (0, MAXREPEAT)
+            elif (this == '+'):
+                (min, max) = (1, MAXREPEAT)
+            elif (this == '{'):
+                if (source.next == '}'):
+                    subpatternappend((LITERAL, ord(this)))
+                    continue
+                here = source.tell()
+                (min, max) = (0, MAXREPEAT)
+                lo = hi = ''
+                while (source.next in DIGITS):
+                    lo = (lo + source.get())
+                if sourcematch(','):
+                    while (source.next in DIGITS):
+                        hi = (hi + sourceget())
+                else:
+                    hi = lo
+                if (not sourcematch('}')):
+                    subpatternappend((LITERAL, ord(this)))
+                    source.seek(here)
+                    continue
+                if lo:
+                    min = int(lo)
+                if hi:
+                    max = int(hi)
+                if (max < min):
+                    raise error, 'bad repeat interval'
+            else:
+                raise error, 'not supported'
+            if subpattern:
+                item = subpattern[(-1):]
+            else:
+                item = None
+            if ((not item) or ((_len(item) == 1) and (item[0][0] == AT))):
+                raise error, 'nothing to repeat'
+            if (item[0][0] in REPEATCODES):
+                raise error, 'multiple repeat'
+            if sourcematch('?'):
+                subpattern[(-1)] = (MIN_REPEAT, (min, max, item))
+            else:
+                subpattern[(-1)] = (MAX_REPEAT, (min, max, item))
+        elif (this == '.'):
+            subpatternappend((ANY, None))
+        elif (this == '('):
+            group = 1
+            name = None
+            condgroup = None
+            if sourcematch('?'):
+                group = 0
+                if sourcematch('P'):
+                    if sourcematch('<'):
+                        name = ''
+                        while 1:
+                            char = sourceget()
+                            if (char is None):
+                                raise error, 'unterminated name'
+                            if (char == '>'):
+                                break
+                            name = (name + char)
+                        group = 1
+                        if (not isname(name)):
+                            raise error, 'bad character in group name'
+                    elif sourcematch('='):
+                        name = ''
+                        while 1:
+                            char = sourceget()
+                            if (char is None):
+                                raise error, 'unterminated name'
+                            if (char == ')'):
+                                break
+                            name = (name + char)
+                        if (not isname(name)):
+                            raise error, 'bad character in group name'
+                        gid = state.groupdict.get(name)
+                        if (gid is None):
+                            raise error, 'unknown group name'
+                        subpatternappend((GROUPREF, gid))
+                        continue
+                    else:
+                        char = sourceget()
+                        if (char is None):
+                            raise error, 'unexpected end of pattern'
+                        raise error, ('unknown specifier: ?P%s' % char)
+                elif sourcematch(':'):
+                    group = 2
+                elif sourcematch('#'):
+                    while 1:
+                        if ((source.next is None) or (source.next == ')')):
+                            break
+                        sourceget()
+                    if (not sourcematch(')')):
+                        raise error, 'unbalanced parenthesis'
+                    continue
+                elif (source.next in ASSERTCHARS):
+                    char = sourceget()
+                    dir = 1
+                    if (char == '<'):
+                        if (source.next not in LOOKBEHINDASSERTCHARS):
+                            raise error, 'syntax error'
+                        dir = (-1)
+                        char = sourceget()
+                    p = _parse_sub(source, state)
+                    if (not sourcematch(')')):
+                        raise error, 'unbalanced parenthesis'
+                    if (char == '='):
+                        subpatternappend((ASSERT, (dir, p)))
+                    else:
+                        subpatternappend((ASSERT_NOT, (dir, p)))
+                    continue
+                elif sourcematch('('):
+                    condname = ''
+                    while 1:
+                        char = sourceget()
+                        if (char is None):
+                            raise error, 'unterminated name'
+                        if (char == ')'):
+                            break
+                        condname = (condname + char)
+                    group = 2
+                    if isname(condname):
+                        condgroup = state.groupdict.get(condname)
+                        if (condgroup is None):
+                            raise error, 'unknown group name'
+                    else:
+                        try:
+                            condgroup = int(condname)
+                        except ValueError:
+                            raise error, 'bad character in group name'
+                else:
+                    if (not (source.next in FLAGS)):
+                        raise error, 'unexpected end of pattern'
+                    while (source.next in FLAGS):
+                        state.flags = (state.flags | FLAGS[sourceget()])
+            if group:
+                if (group == 2):
+                    group = None
+                else:
+                    group = state.opengroup(name)
+                if condgroup:
+                    p = _parse_sub_cond(source, state, condgroup)
+                else:
+                    p = _parse_sub(source, state)
+                if (not sourcematch(')')):
+                    raise error, 'unbalanced parenthesis'
+                if (group is not None):
+                    state.closegroup(group)
+                subpatternappend((SUBPATTERN, (group, p)))
+            else:
+                while 1:
+                    char = sourceget()
+                    if (char is None):
+                        raise error, 'unexpected end of pattern'
+                    if (char == ')'):
+                        break
+                    raise error, 'unknown extension'
+        elif (this == '^'):
+            subpatternappend((AT, AT_BEGINNING))
+        elif (this == '$'):
+            subpattern.append((AT, AT_END))
+        elif (this and (this[0] == '\\')):
+            code = _escape(source, this, state)
+            subpatternappend(code)
+        else:
+            raise error, 'parser error'
+    return subpattern

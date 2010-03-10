@@ -1,0 +1,25 @@
+'Test chdir\n\nMade for Jython.\n'
+import imp
+import os
+import py_compile
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
+import zipfile
+import zipimport
+from test import test_support
+COMPILED_SUFFIX = [suffix for (suffix, mode, type) in imp.get_suffixes() if (type == imp.PY_COMPILED)][0]
+WINDOWS = ((os._name if test_support.is_jython else os.name) == 'nt')
+CODE1 = "result = 'result is %r' % (100.0 * (3.0 / 5.0))"
+CODE1_RESULT = ('result is %r' % (100.0 * (3.0 / 5.0)))
+CODE2 = 'raise NotImplementedError()'
+'\npublic class ChdirFooTest {\n    public static String foo = "bar";\n}\n'
+CHDIR_FOO_CLASS = 'eJxdjr1uwjAUhc8F8ktaQspKJTZgAHUuYkFiQnQAdXeCoUYhlkzoe1UdKnXoA/BQFddR1VYs91wf\nfz4+5+/PLwAP6IRw0PIRB2ig7SHxcEeob7UmJIu9eBXjXBS78ao0qtg9EtyJKlQ5ZaY/eCY0Znoj\nCa2FKuTydEilWYs0Z8efZPkPGa70yWRyrqzfnr1slJlrvZbHcmQ/iOAj4LxUmAguPEL0nyHEfzWe\n0r3MSvS4rMP9CYF9wVuNd47hGfKpy0qszvAD9FaBTZ5uZVow+kXvK4/vkto76tesjb2p9PYCbxA0\nPQ==\n'.decode('base64').decode('zlib')
+'\npackage chdir_bar_test;\n\npublic class ChdirBarTest {\n    public static String bar = "foo";\n}\n'
+CHDIR_BAR_CLASS = 'eJxdj71Ow0AQhGfjf2NIYugQSHRAgUWdiIJIVBEUiWijs3OEi4wtHQ7vhSiQKHgAHgoxthAgmt29\nuW/n5j4+394BnGMvhod+iEEEF8MAaYBdgZMrK0ina/WkslJVq2zWWFOtRgJ/bCrTXJA5PrkVuJN6\nqQX9qan09eYh13au8pJKOC7KbzKe1Rtb6CvT6sPJ/dLYS2Xn+rE5ax9IECKi311dJ/ARCPaLllkw\nxKIhlf1dEQx+U93ka100OGJ2j98RRK0Bpx5nurLGPB2wC7t3+gp57sAtVr8THYLJD3rYabxLey9w\n/rMu63Znv/MFLEM6Hg==\n'.decode('base64').decode('zlib')
+'\npublic class ChdirJyTest {\n    public static String jy = "thon";\n}\n'
+CHDIR_JY_JAR = 'eJwL8GZmEWHgAMLaXf3mDEiAk4GFwdc1xFHX089N/98pBgZmhgBvdg6QFBNUSQBOzSJADNfs6+jn\n6eYaHKLn6/bZ98xpH29dvYu83rpa586c3xxkcMX4wdMiPS9fHU/fi6WrWDhnvJI8Ij1DO8NCTOTJ\nEi2L58/FpkxbIvZSo+KZ6uvMT0UfixjB7liq2l/iBrTFDcUdP3agukMQiJ0zUjKLvCpDUotL9JJz\nEouLY/v2eh1xEGk9fzavzvx38pbQDcHczV/1zBi5I7fcSJif0p7iNMdhDsfviCTFiB8MdlMq1E9o\nmX2/Y/n57uGff6r+MxS0LmYweyYnZnfMokBwp4VKxNc+gbWv31h2z/aZ+tGtPGiqd9PmSV6vsg+9\nePOn0cDv1lqFM9eDOnf/MxSPnfWU1/reqoy6EwmXv8Uq5i35KO65derdt3qi/r8uPWn/8KB4wroo\n0UON3jP+JP54tP1obVy30+Mpq2/dmfdgNvM9nXuWbekH1ieHJW3Vv+egz2zx8CXPMsbDtlVGFX/E\nI9dL/E33fVNy4aY5KHj+n9nN+QDoeUNGUPAwMokwoEYULApBsYwKUOIcXStyqIugaLPFEePIJoBi\nB9lhgigmHMUWVwHerGwgSWYg3AOknzCCeAAyK9gW\n'.decode('base64').decode('zlib')
+if (__name__ == '__main__'):
+    test_main()

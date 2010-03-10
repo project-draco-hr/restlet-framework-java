@@ -1,0 +1,9 @@
+def test_itimer_virtual(self):
+    self.itimer = signal.ITIMER_VIRTUAL
+    signal.signal(signal.SIGVTALRM, self.sig_vtalrm)
+    signal.setitimer(self.itimer, 0.3, 0.2)
+    for i in xrange(100000000):
+        if (signal.getitimer(self.itimer) == (0.0, 0.0)):
+            break
+    self.assertEquals(signal.getitimer(self.itimer), (0.0, 0.0))
+    self.assertEquals(self.hndl_called, True)

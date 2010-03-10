@@ -1,0 +1,16 @@
+def test_line_endings(self):
+    f = dumbdbm.open(_fname)
+    f['1'] = 'hello'
+    f['2'] = 'hello2'
+    f.close()
+    fp = open((_fname + '.dir'), 'r+')
+    data = fp.read()
+    data = data.replace('\n', '\r\n')
+    fp.seek(0)
+    fp.truncate()
+    fp.write(data)
+    fp.close()
+    f = dumbdbm.open(_fname)
+    self.assertEqual(f['1'], 'hello')
+    self.assertEqual(f['2'], 'hello2')
+    f.close()

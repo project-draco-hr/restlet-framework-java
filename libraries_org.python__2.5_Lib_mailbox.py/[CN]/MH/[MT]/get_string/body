@@ -1,0 +1,22 @@
+def get_string(self, key):
+    'Return a string representation or raise a KeyError.'
+    try:
+        if self._locked:
+            f = open(os.path.join(self._path, str(key)), 'r+')
+        else:
+            f = open(os.path.join(self._path, str(key)), 'r')
+    except IOError as e:
+        if (e.errno == errno.ENOENT):
+            raise KeyError(('No message with key: %s' % key))
+        else:
+            raise
+    try:
+        if self._locked:
+            _lock_file(f)
+        try:
+            return f.read()
+        finally:
+            if self._locked:
+                _unlock_file(f)
+    finally:
+        f.close()

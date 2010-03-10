@@ -1,0 +1,27 @@
+def setUp(self):
+    template = '\n                [default]\n                name=dbexts_test\n\n                [jdbc]\n                name=dbexts_test\n                url=%s\n                user=%s\n                pwd=%s\n                driver=%s\n        '
+    args = {}
+    for arg in self.factory.arguments:
+        args[arg[0]] = arg[1]
+    template = (template % (args['url'], args['usr'], args['pwd'], args['driver']))
+    if hasattr(self, 'datahandler'):
+        template += ('\tdatahandler=%s' % self.datahandler.__name__)
+    template = os.linesep.join(template.split())
+    try:
+        fp = open(tempfile.mktemp(), 'w')
+        fp.write(template)
+        fp.close()
+        self.db = dbexts.dbexts(cfg=fp.name)
+        self.db.verbose = 0
+        for table in ('one', 'two'):
+            try:
+                self.db.raw(('drop table %s' % table))
+            except:
+                pass
+        self.db.raw('create table one (a int, b int, c varchar(32))')
+        self.db.raw('create table two (a int, b int, c varchar(32))')
+    finally:
+        try:
+            os.remove(fp.name)
+        except:
+            pass

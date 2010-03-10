@@ -1,0 +1,58 @@
+def test_main_inner():
+    rootLogger = logging.getLogger('')
+    rootLogger.setLevel(logging.DEBUG)
+    hdlr = logging.StreamHandler(sys.stdout)
+    fmt = logging.Formatter(logging.BASIC_FORMAT)
+    hdlr.setFormatter(fmt)
+    rootLogger.addHandler(hdlr)
+    port = logging.handlers.DEFAULT_TCP_LOGGING_PORT
+    while (port < (logging.handlers.DEFAULT_TCP_LOGGING_PORT + 100)):
+        try:
+            tcpserver = LogRecordSocketReceiver(port=port)
+        except socket.error:
+            port += 1
+        else:
+            break
+    else:
+        raise ImportError, 'Could not find unused port'
+    shdlr = logging.handlers.SocketHandler('localhost', port)
+    sockOut = cStringIO.StringIO()
+    sockLogger = logging.getLogger('logrecv')
+    sockLogger.setLevel(logging.DEBUG)
+    sockhdlr = logging.StreamHandler(sockOut)
+    sockhdlr.setFormatter(logging.Formatter('%(name)s -> %(levelname)s: %(message)s'))
+    sockLogger.addHandler(sockhdlr)
+    sockLogger.propagate = 0
+    threads = []
+    threads.append(threading.Thread(target=runTCP, args=(tcpserver,)))
+    for thread in threads:
+        thread.start()
+    try:
+        banner('log_test0', 'begin')
+        rootLogger.addHandler(shdlr)
+        test0()
+        time.sleep(2.0)
+        shdlr.close()
+        rootLogger.removeHandler(shdlr)
+        banner('log_test0', 'end')
+        for t in range(1, 6):
+            banner(('log_test%d' % t), 'begin')
+            globals()[('test%d' % t)]()
+            banner(('log_test%d' % t), 'end')
+    finally:
+        socketDataProcessed.wait()
+        tcpserver.abort = 1
+        for thread in threads:
+            thread.join(2.0)
+        banner('logrecv output', 'begin')
+        sys.stdout.write(sockOut.getvalue())
+        sockOut.close()
+        sockLogger.removeHandler(sockhdlr)
+        sockhdlr.close()
+        banner('logrecv output', 'end')
+        sys.stdout.flush()
+        try:
+            hdlr.close()
+        except:
+            pass
+        rootLogger.removeHandler(hdlr)

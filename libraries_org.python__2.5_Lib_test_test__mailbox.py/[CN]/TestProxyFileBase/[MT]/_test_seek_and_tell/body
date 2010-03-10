@@ -1,0 +1,12 @@
+def _test_seek_and_tell(self, proxy):
+    proxy.seek(3)
+    self.assert_((proxy.tell() == 3))
+    self.assert_((proxy.read(len(os.linesep)) == os.linesep))
+    proxy.seek(2, 1)
+    self.assert_((proxy.read((1 + len(os.linesep))) == ('r' + os.linesep)))
+    proxy.seek(((-3) - len(os.linesep)), 2)
+    self.assert_((proxy.read(3) == 'bar'))
+    proxy.seek(2, 0)
+    self.assert_((proxy.read() == ((('o' + os.linesep) + 'bar') + os.linesep)))
+    proxy.seek(100)
+    self.assert_((proxy.read() == ''))

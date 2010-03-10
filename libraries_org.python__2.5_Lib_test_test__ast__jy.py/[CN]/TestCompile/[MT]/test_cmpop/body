@@ -1,0 +1,12 @@
+def test_cmpop(self):
+    expr = srcExprToTree('a < b < c', 'eval')
+    compare = expr.body
+    self.assert_(isinstance(compare.ops[0], ast.Lt))
+    self.assert_(isinstance(compare.comparators[0], ast.Name))
+    self.assert_(isinstance(compare.ops[1], ast.Lt))
+    self.assert_(isinstance(compare.comparators[1], ast.Name))
+    self.assert_(isinstance(compare.ops[1:][0], ast.Lt))
+    self.assert_(isinstance(compare.comparators[1:][0], ast.Name))
+    z = zip(compare.ops[1:], compare.comparators[1:])
+    self.assert_(isinstance(z[0][0], ast.Lt))
+    self.assert_(isinstance(z[0][1], ast.Name))

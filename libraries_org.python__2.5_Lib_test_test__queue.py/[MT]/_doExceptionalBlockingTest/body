@@ -1,0 +1,16 @@
+def _doExceptionalBlockingTest(block_func, block_args, trigger_func, trigger_args, expected_exception_class):
+    t = _TriggerThread(trigger_func, trigger_args)
+    t.start()
+    try:
+        try:
+            block_func(*block_args)
+        except expected_exception_class:
+            raise
+        else:
+            raise TestFailed(('expected exception of kind %r' % expected_exception_class))
+    finally:
+        t.join(10)
+        if t.isAlive():
+            raise TestFailed(("trigger function '%r' appeared to not return" % trigger_func))
+        if (not t.startedEvent.isSet()):
+            raise TestFailed('trigger thread ended but event never set')

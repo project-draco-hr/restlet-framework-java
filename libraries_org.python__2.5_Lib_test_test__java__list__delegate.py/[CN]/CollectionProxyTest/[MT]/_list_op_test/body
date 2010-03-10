@@ -1,0 +1,10 @@
+def _list_op_test(self, initial_value, op_func, check_value):
+    '\n        Tests a list operation\n\n        Ensures that performing an operation on:\n            - a python list\n            - a java.util.List instance\n\n        givens the same result in both cases\n        '
+    lists = [list(initial_value), ArrayList(initial_value), Vector(initial_value)]
+    results = [self._perform_op(l, op_func) for l in lists]
+    self.check_list(lists[0], lists[1:], initial_value)
+    if (check_value or (not isinstance(results[0], list))):
+        for r in results[1:]:
+            self.assertEquals(results[0], r)
+    else:
+        self.check_list(results[0], results[1:], initial_value)

@@ -1,0 +1,10 @@
+def section(self, title, fgcol, bgcol, contents, width=6, prelude='', marginalia=None, gap='&nbsp;'):
+    'Format a section with a heading.'
+    if (marginalia is None):
+        marginalia = (('<tt>' + ('&nbsp;' * width)) + '</tt>')
+    result = ('<p>\n<table width="100%%" cellspacing=0 cellpadding=2 border=0 summary="section">\n<tr bgcolor="%s">\n<td colspan=3 valign=bottom>&nbsp;<br>\n<font color="%s" face="helvetica, arial">%s</font></td></tr>\n    ' % (bgcol, fgcol, title))
+    if prelude:
+        result = (result + ('\n<tr bgcolor="%s"><td rowspan=2>%s</td>\n<td colspan=2>%s</td></tr>\n<tr><td>%s</td>' % (bgcol, marginalia, prelude, gap)))
+    else:
+        result = (result + ('\n<tr><td bgcolor="%s">%s</td><td>%s</td>' % (bgcol, marginalia, gap)))
+    return (result + ('\n<td width="100%%">%s</td></tr></table>' % contents))

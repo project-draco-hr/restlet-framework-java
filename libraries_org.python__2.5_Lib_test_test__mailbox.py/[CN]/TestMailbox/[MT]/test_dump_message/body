@@ -1,0 +1,7 @@
+def test_dump_message(self):
+    for input in (email.message_from_string(_sample_message), _sample_message, StringIO.StringIO(_sample_message)):
+        output = StringIO.StringIO()
+        self._box._dump_message(input, output)
+        self.assert_((output.getvalue() == _sample_message.replace('\n', os.linesep)))
+    output = StringIO.StringIO()
+    self.assertRaises(TypeError, (lambda : self._box._dump_message(None, output)))

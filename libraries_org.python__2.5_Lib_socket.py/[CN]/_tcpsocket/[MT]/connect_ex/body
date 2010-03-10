@@ -1,0 +1,10 @@
+def connect_ex(self, addr):
+    'This signifies a client socket'
+    if (not self.sock_impl):
+        self._do_connect(addr)
+    if self.sock_impl.finish_connect():
+        self._setup()
+        if (self.mode == MODE_NONBLOCKING):
+            return errno.EISCONN
+        return 0
+    return errno.EINPROGRESS

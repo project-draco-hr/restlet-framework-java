@@ -1,0 +1,9 @@
+def test_recursive_inst(self):
+    i = C()
+    i.attr = i
+    for proto in protocols:
+        s = self.dumps(i, 2)
+        x = self.loads(s)
+        self.assertEqual(x, i)
+        self.assertEqual(x.attr, x)
+        self.assertEqual(id(x.attr), id(x))

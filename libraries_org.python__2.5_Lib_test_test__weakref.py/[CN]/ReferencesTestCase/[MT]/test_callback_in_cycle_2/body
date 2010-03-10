@@ -1,0 +1,17 @@
+def test_callback_in_cycle_2(self):
+    import gc
+
+
+    class J(object):
+        pass
+
+
+    class II:
+
+        def acallback(self, ignore):
+            self.J
+    I = II()
+    I.J = J
+    I.wr = weakref.ref(J, I.acallback)
+    del I, J, II
+    gc.collect()

@@ -1,0 +1,7 @@
+def test_no_return_comment(self):
+    from cookielib import CookieJar, DefaultCookiePolicy
+    c = CookieJar(DefaultCookiePolicy(rfc2965=True))
+    url = 'http://foo.bar.com/'
+    interact_2965(c, url, 'spam=eggs; Version=1; Comment="does anybody read these?"; CommentURL="http://foo.bar.net/comment.html"')
+    h = interact_2965(c, url)
+    self.assert_(('Comment' not in h), 'Comment or CommentURL cookie-attributes returned to server')

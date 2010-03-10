@@ -1,0 +1,16 @@
+def test_streamreader(self):
+    UTF8Writer = codecs.getwriter('utf-8')
+    for name in ['read', 'readline', 'readlines']:
+        for sizehint in (([None, (-1)] + range(1, 33)) + [64, 128, 256, 512, 1024]):
+            istream = self.reader(StringIO(self.tstring[0]))
+            ostream = UTF8Writer(StringIO())
+            func = getattr(istream, name)
+            while 1:
+                data = func(sizehint)
+                if (not data):
+                    break
+                if (name == 'readlines'):
+                    ostream.writelines(data)
+                else:
+                    ostream.write(data)
+            self.assertEqual(ostream.getvalue(), self.tstring[1])

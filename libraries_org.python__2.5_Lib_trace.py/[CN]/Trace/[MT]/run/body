@@ -1,0 +1,12 @@
+def run(self, cmd):
+    import __main__
+    dict = __main__.__dict__
+    if (not self.donothing):
+        sys.settrace(self.globaltrace)
+        threading.settrace(self.globaltrace)
+    try:
+        exec cmd in dict, dict
+    finally:
+        if (not self.donothing):
+            sys.settrace(None)
+            threading.settrace(None)

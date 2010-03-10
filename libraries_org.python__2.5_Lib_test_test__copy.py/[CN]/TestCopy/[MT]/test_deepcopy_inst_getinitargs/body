@@ -1,0 +1,18 @@
+def test_deepcopy_inst_getinitargs(self):
+
+
+    class C:
+
+        def __init__(self, foo):
+            self.foo = foo
+
+        def __getinitargs__(self):
+            return (self.foo,)
+
+        def __cmp__(self, other):
+            return cmp(self.foo, other.foo)
+    x = C([42])
+    y = copy.deepcopy(x)
+    self.assertEqual(y, x)
+    self.assert_((y is not x))
+    self.assert_((y.foo is not x.foo))

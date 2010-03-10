@@ -1,0 +1,16 @@
+def realpath(filename):
+    'Return the canonical path of the specified filename, eliminating any\nsymbolic links encountered in the path.'
+    if isabs(filename):
+        bits = (['/'] + filename.split('/')[1:])
+    else:
+        bits = ([''] + filename.split('/'))
+    for i in range(2, (len(bits) + 1)):
+        component = join(*bits[0:i])
+        if islink(component):
+            resolved = _resolve_link(component)
+            if (resolved is None):
+                return abspath(join(*([component] + bits[i:])))
+            else:
+                newpath = join(*([resolved] + bits[i:]))
+                return realpath(newpath)
+    return abspath(filename)

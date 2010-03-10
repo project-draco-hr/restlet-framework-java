@@ -1,0 +1,37 @@
+def test_aware_compare(self):
+    cls = self.theclass
+
+
+    class OperandDependentOffset(tzinfo):
+
+        def utcoffset(self, t):
+            if (t.minute < 10):
+                return timedelta(minutes=t.minute)
+            else:
+                return timedelta(minutes=59)
+    base = cls(8, 9, 10, tzinfo=OperandDependentOffset())
+    d0 = base.replace(minute=3)
+    d1 = base.replace(minute=9)
+    d2 = base.replace(minute=11)
+    for x in (d0, d1, d2):
+        for y in (d0, d1, d2):
+            got = cmp(x, y)
+            expected = cmp(x.minute, y.minute)
+            self.assertEqual(got, expected)
+    if (cls is not time):
+        d0 = base.replace(minute=3, tzinfo=OperandDependentOffset())
+        d1 = base.replace(minute=9, tzinfo=OperandDependentOffset())
+        d2 = base.replace(minute=11, tzinfo=OperandDependentOffset())
+        for x in (d0, d1, d2):
+            for y in (d0, d1, d2):
+                got = cmp(x, y)
+                if (((x is d0) or (x is d1)) and ((y is d0) or (y is d1))):
+                    expected = 0
+                elif (x is y is d2):
+                    expected = 0
+                elif (x is d2):
+                    expected = (-1)
+                else:
+                    assert (y is d2)
+                    expected = 1
+                self.assertEqual(got, expected)

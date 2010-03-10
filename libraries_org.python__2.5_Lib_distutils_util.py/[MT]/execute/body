@@ -1,0 +1,9 @@
+def execute(func, args, msg=None, verbose=0, dry_run=0):
+    'Perform some action that affects the outside world (eg.  by\n    writing to the filesystem).  Such actions are special because they\n    are disabled by the \'dry_run\' flag.  This method takes care of all\n    that bureaucracy for you; all you have to do is supply the\n    function to call and an argument tuple for it (to embody the\n    "external action" being performed), and an optional message to\n    print.\n    '
+    if (msg is None):
+        msg = ('%s%r' % (func.__name__, args))
+        if (msg[(-2):] == ',)'):
+            msg = (msg[0:(-2)] + ')')
+    log.info(msg)
+    if (not dry_run):
+        apply(func, args)

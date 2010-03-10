@@ -1,0 +1,38 @@
+def split_header_words(header_values):
+    'Parse header values into a list of lists containing key,value pairs.\n\n    The function knows how to deal with ",", ";" and "=" as well as quoted\n    values after "=".  A list of space separated tokens are parsed as if they\n    were separated by ";".\n\n    If the header_values passed as argument contains multiple values, then they\n    are treated as if they were a single value separated by comma ",".\n\n    This means that this function is useful for parsing header fields that\n    follow this syntax (BNF as from the HTTP/1.1 specification, but we relax\n    the requirement for tokens).\n\n      headers           = #header\n      header            = (token | parameter) *( [";"] (token | parameter))\n\n      token             = 1*<any CHAR except CTLs or separators>\n      separators        = "(" | ")" | "<" | ">" | "@"\n                        | "," | ";" | ":" | "\\" | <">\n                        | "/" | "[" | "]" | "?" | "="\n                        | "{" | "}" | SP | HT\n\n      quoted-string     = ( <"> *(qdtext | quoted-pair ) <"> )\n      qdtext            = <any TEXT except <">>\n      quoted-pair       = "\\" CHAR\n\n      parameter         = attribute "=" value\n      attribute         = token\n      value             = token | quoted-string\n\n    Each header is represented by a list of key/value pairs.  The value for a\n    simple token (not part of a parameter) is None.  Syntactically incorrect\n    headers will not necessarily be parsed as you would want.\n\n    This is easier to describe with some examples:\n\n    >>> split_header_words([\'foo="bar"; port="80,81"; discard, bar=baz\'])\n    [[(\'foo\', \'bar\'), (\'port\', \'80,81\'), (\'discard\', None)], [(\'bar\', \'baz\')]]\n    >>> split_header_words([\'text/html; charset="iso-8859-1"\'])\n    [[(\'text/html\', None), (\'charset\', \'iso-8859-1\')]]\n    >>> split_header_words([r\'Basic realm="\\"foo\\bar\\""\'])\n    [[(\'Basic\', None), (\'realm\', \'"foobar"\')]]\n\n    '
+    assert (not isinstance(header_values, basestring))
+    result = []
+    for text in header_values:
+        orig_text = text
+        pairs = []
+        while text:
+            m = HEADER_TOKEN_RE.search(text)
+            if m:
+                text = unmatched(m)
+                name = m.group(1)
+                m = HEADER_QUOTED_VALUE_RE.search(text)
+                if m:
+                    text = unmatched(m)
+                    value = m.group(1)
+                    value = HEADER_ESCAPE_RE.sub('\\1', value)
+                else:
+                    m = HEADER_VALUE_RE.search(text)
+                    if m:
+                        text = unmatched(m)
+                        value = m.group(1)
+                        value = value.rstrip()
+                    else:
+                        value = None
+                pairs.append((name, value))
+            elif text.lstrip().startswith(','):
+                text = text.lstrip()[1:]
+                if pairs:
+                    result.append(pairs)
+                pairs = []
+            else:
+                (non_junk, nr_junk_chars) = re.subn('^[=\\s;]*', '', text)
+                assert (nr_junk_chars > 0), ("split_header_words bug: '%s', '%s', %s" % (orig_text, text, pairs))
+                text = non_junk
+        if pairs:
+            result.append(pairs)
+    return result

@@ -1,0 +1,27 @@
+def test_attrgetter(self):
+
+
+    class A:
+        pass
+    a = A()
+    a.name = 'arthur'
+    f = operator.attrgetter('name')
+    self.assertEqual(f(a), 'arthur')
+    f = operator.attrgetter('rank')
+    self.assertRaises(AttributeError, f, a)
+    f = operator.attrgetter(2)
+    self.assertRaises(TypeError, f, a)
+    self.assertRaises(TypeError, operator.attrgetter)
+    record = A()
+    record.x = 'X'
+    record.y = 'Y'
+    record.z = 'Z'
+    self.assertEqual(operator.attrgetter('x', 'z', 'y')(record), ('X', 'Z', 'Y'))
+    self.assertRaises(TypeError, operator.attrgetter('x', (), 'y'), record)
+
+
+    class C(object):
+
+        def __getattr(self, name):
+            raise SyntaxError
+    self.failUnlessRaises(AttributeError, operator.attrgetter('foo'), C())

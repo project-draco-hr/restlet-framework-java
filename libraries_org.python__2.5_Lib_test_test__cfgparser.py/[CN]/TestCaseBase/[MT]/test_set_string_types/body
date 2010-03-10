@@ -1,0 +1,17 @@
+def test_set_string_types(self):
+    cf = self.fromstring('[sect]\noption1=foo\n')
+
+
+    class mystr(str):
+        pass
+    cf.set('sect', 'option1', 'splat')
+    cf.set('sect', 'option1', mystr('splat'))
+    cf.set('sect', 'option2', 'splat')
+    cf.set('sect', 'option2', mystr('splat'))
+    try:
+        unicode
+    except NameError:
+        pass
+    else:
+        cf.set('sect', 'option1', unicode('splat'))
+        cf.set('sect', 'option2', unicode('splat'))

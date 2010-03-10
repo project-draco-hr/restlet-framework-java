@@ -1,0 +1,17 @@
+def test_long(self):
+    for proto in protocols:
+        for nbits in (1, 8, (8 * 254), (8 * 255), (8 * 256), (8 * 257)):
+            nbase = (1L << nbits)
+            for npos in ((nbase - 1), nbase, (nbase + 1)):
+                for n in (npos, (- npos)):
+                    pickle = self.dumps(n, proto)
+                    got = self.loads(pickle)
+                    self.assertEqual(n, got)
+    if is_jython:
+        return
+    nbase = long('deadbeeffeedface', 16)
+    nbase += (nbase << 1000000)
+    for n in (nbase, (- nbase)):
+        p = self.dumps(n, 2)
+        got = self.loads(p)
+        self.assertEqual(n, got)

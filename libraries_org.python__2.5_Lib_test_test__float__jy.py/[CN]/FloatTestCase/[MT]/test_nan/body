@@ -1,0 +1,13 @@
+def test_nan(self):
+    nan = float('nan')
+    self.assert_(type(nan), float)
+    if jython:
+        self.assert_(type(float('NaN')), float)
+    self.assertEqual(long(nan), 0)
+    self.assertNotEqual(nan, float('nan'))
+    self.assertNotEqual(nan, nan)
+    self.assertEqual(cmp(nan, float('nan')), 1)
+    self.assertEqual(cmp(nan, nan), 0)
+    for i in ((-1), 1, (-1.0), 1.0):
+        self.assertEqual(cmp(nan, i), (-1))
+        self.assertEqual(cmp(i, nan), 1)

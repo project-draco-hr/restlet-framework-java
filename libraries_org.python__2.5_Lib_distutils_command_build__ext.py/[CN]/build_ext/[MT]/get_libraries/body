@@ -1,0 +1,41 @@
+def get_libraries(self, ext):
+    "Return the list of libraries to link against when building a\n        shared extension.  On most platforms, this is just 'ext.libraries';\n        on Windows and OS/2, we add the Python library (eg. python20.dll).\n        "
+    if (sys.platform == 'win32'):
+        from distutils.msvccompiler import MSVCCompiler
+        if (not isinstance(self.compiler, MSVCCompiler)):
+            template = 'python%d%d'
+            if self.debug:
+                template = (template + '_d')
+            pythonlib = (template % ((sys.hexversion >> 24), ((sys.hexversion >> 16) & 255)))
+            return (ext.libraries + [pythonlib])
+        else:
+            return ext.libraries
+    elif (sys.platform == 'os2emx'):
+        template = 'python%d%d'
+        pythonlib = (template % ((sys.hexversion >> 24), ((sys.hexversion >> 16) & 255)))
+        return (ext.libraries + [pythonlib])
+    elif (sys.platform[:6] == 'cygwin'):
+        template = 'python%d.%d'
+        pythonlib = (template % ((sys.hexversion >> 24), ((sys.hexversion >> 16) & 255)))
+        return (ext.libraries + [pythonlib])
+    elif (sys.platform[:6] == 'atheos'):
+        from distutils import sysconfig
+        template = 'python%d.%d'
+        pythonlib = (template % ((sys.hexversion >> 24), ((sys.hexversion >> 16) & 255)))
+        extra = []
+        for lib in sysconfig.get_config_var('SHLIBS').split():
+            if lib.startswith('-l'):
+                extra.append(lib[2:])
+            else:
+                extra.append(lib)
+        return ((ext.libraries + [pythonlib, 'm']) + extra)
+    elif (sys.platform == 'darwin'):
+        return ext.libraries
+    else:
+        from distutils import sysconfig
+        if sysconfig.get_config_var('Py_ENABLE_SHARED'):
+            template = 'python%d.%d'
+            pythonlib = (template % ((sys.hexversion >> 24), ((sys.hexversion >> 16) & 255)))
+            return (ext.libraries + [pythonlib])
+        else:
+            return ext.libraries

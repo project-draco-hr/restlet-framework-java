@@ -1,0 +1,14 @@
+def test_iso2022(self):
+    decoder = codecs.getincrementaldecoder('iso2022-jp')()
+    ESC = '\x1b'
+    self.assertEqual(decoder.decode((ESC + '(')), u'')
+    self.assertEqual(decoder.decode('B', True), u'')
+    self.assertEqual(decoder.decode((ESC + '$')), u'')
+    self.assertEqual(decoder.decode('B@$'), u'\u4e16')
+    self.assertEqual(decoder.decode('@$@'), u'\u4e16')
+    self.assertEqual(decoder.decode('$', True), u'\u4e16')
+    self.assertEqual(decoder.reset(), None)
+    self.assertEqual(decoder.decode('@$'), u'@$')
+    self.assertEqual(decoder.decode((ESC + '$')), u'')
+    self.assertRaises(UnicodeDecodeError, decoder.decode, '', True)
+    self.assertEqual(decoder.decode('B@$'), u'\u4e16')

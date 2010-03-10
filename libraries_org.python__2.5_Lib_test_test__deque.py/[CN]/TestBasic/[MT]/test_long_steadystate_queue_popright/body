@@ -1,0 +1,10 @@
+def test_long_steadystate_queue_popright(self):
+    for size in (0, 1, 2, 100, 1000):
+        d = deque(reversed(xrange(size)))
+        (append, pop) = (d.appendleft, d.pop)
+        for i in xrange(size, BIG):
+            append(i)
+            x = pop()
+            if (x != (i - size)):
+                self.assertEqual(x, (i - size))
+        self.assertEqual(list(reversed(list(d))), range((BIG - size), BIG))

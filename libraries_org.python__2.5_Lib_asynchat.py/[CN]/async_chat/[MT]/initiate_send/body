@@ -1,0 +1,12 @@
+def initiate_send(self):
+    obs = self.ac_out_buffer_size
+    if (len(self.ac_out_buffer) < obs):
+        self.refill_buffer()
+    if (self.ac_out_buffer and self.connected):
+        try:
+            num_sent = self.send(self.ac_out_buffer[:obs])
+            if num_sent:
+                self.ac_out_buffer = self.ac_out_buffer[num_sent:]
+        except socket.error as why:
+            self.handle_error()
+            return

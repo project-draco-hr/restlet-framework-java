@@ -1,0 +1,7 @@
+def mkstemp(self):
+    'wrapper for mkstemp, calling mktemp if mkstemp is not available'
+    if hasattr(tempfile, 'mkstemp'):
+        return tempfile.mkstemp()
+    else:
+        fname = tempfile.mktemp()
+        return (os.open(fname, (os.O_RDWR | os.O_CREAT)), fname)

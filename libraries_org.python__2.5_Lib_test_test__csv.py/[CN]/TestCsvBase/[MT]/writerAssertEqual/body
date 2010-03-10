@@ -1,0 +1,11 @@
+def writerAssertEqual(self, input, expected_result):
+    (fd, name) = tempfile.mkstemp()
+    fileobj = os.fdopen(fd, 'w+b')
+    try:
+        writer = csv.writer(fileobj, dialect=self.dialect)
+        writer.writerows(input)
+        fileobj.seek(0)
+        self.assertEqual(fileobj.read(), expected_result)
+    finally:
+        fileobj.close()
+        os.unlink(name)

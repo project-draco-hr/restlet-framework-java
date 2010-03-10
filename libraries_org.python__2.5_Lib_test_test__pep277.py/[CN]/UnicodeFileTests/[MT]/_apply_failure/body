@@ -1,0 +1,7 @@
+def _apply_failure(self, fn, filename, expected_exception, check_fn_in_exception=True):
+    try:
+        fn(filename)
+        raise test_support.TestFailed(("Expected to fail calling '%s(%r)'" % (fn.__name__, filename)))
+    except expected_exception as details:
+        if (check_fn_in_exception and (details.filename != filename)):
+            raise test_support.TestFailed(("Function '%s(%r) failed with bad filename in the exception: %r" % (fn.__name__, filename, details.filename)))

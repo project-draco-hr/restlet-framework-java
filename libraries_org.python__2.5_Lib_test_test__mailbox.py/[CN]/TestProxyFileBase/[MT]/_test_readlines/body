@@ -1,0 +1,9 @@
+def _test_readlines(self, proxy):
+    proxy.seek(0)
+    self.assert_((proxy.readlines() == [('foo' + os.linesep), ('bar' + os.linesep), ('fred' + os.linesep), 'bob']))
+    proxy.seek(0)
+    self.assert_((proxy.readlines(2) == [('foo' + os.linesep)]))
+    proxy.seek((3 + len(os.linesep)))
+    self.assert_((proxy.readlines((4 + len(os.linesep))) == [('bar' + os.linesep), ('fred' + os.linesep)]))
+    proxy.seek(3)
+    self.assert_((proxy.readlines(1000) == [os.linesep, ('bar' + os.linesep), ('fred' + os.linesep), 'bob']))

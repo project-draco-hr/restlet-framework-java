@@ -1,0 +1,16 @@
+def _read(self, size):
+    'Return size bytes from the stream.\n        '
+    if (self.comptype == 'tar'):
+        return self.__read(size)
+    c = len(self.dbuf)
+    t = [self.dbuf]
+    while (c < size):
+        buf = self.__read(self.bufsize)
+        if (not buf):
+            break
+        buf = self.cmp.decompress(buf)
+        t.append(buf)
+        c += len(buf)
+    t = ''.join(t)
+    self.dbuf = t[size:]
+    return t[:size]

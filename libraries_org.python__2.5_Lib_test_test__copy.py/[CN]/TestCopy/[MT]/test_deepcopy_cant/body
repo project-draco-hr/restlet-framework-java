@@ -1,0 +1,11 @@
+def test_deepcopy_cant(self):
+
+
+    class C(object):
+
+        def __getattribute__(self, name):
+            if name.startswith('__reduce'):
+                raise AttributeError, name
+            return object.__getattribute__(self, name)
+    x = C()
+    self.assertRaises(copy.Error, copy.deepcopy, x)

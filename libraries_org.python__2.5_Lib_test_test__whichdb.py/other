@@ -1,0 +1,26 @@
+'Test script for the whichdb module\n   based on test_anydbm.py\n'
+import os
+import test.test_support
+import unittest
+import whichdb
+import anydbm
+import tempfile
+import glob
+_fname = test.test_support.TESTFN
+for name in anydbm._names:
+    try:
+        mod = __import__(name)
+    except ImportError:
+        continue
+
+    def test_whichdb_name(self, name=name, mod=mod):
+        f = mod.open(_fname, 'c')
+        f.close()
+        self.assertEqual(name, whichdb.whichdb(_fname))
+        f = mod.open(_fname, 'w')
+        f['1'] = '1'
+        f.close()
+        self.assertEqual(name, whichdb.whichdb(_fname))
+    setattr(WhichDBTestCase, ('test_whichdb_%s' % name), test_whichdb_name)
+if (__name__ == '__main__'):
+    test_main()

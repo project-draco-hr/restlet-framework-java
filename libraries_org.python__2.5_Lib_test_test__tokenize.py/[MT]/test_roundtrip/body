@@ -1,0 +1,12 @@
+def test_roundtrip(f):
+    fobj = open(f)
+    try:
+        fulltok = list(generate_tokens(fobj.readline))
+    finally:
+        fobj.close()
+    t1 = [tok[:2] for tok in fulltok]
+    newtext = untokenize(t1)
+    readline = iter(newtext.splitlines(1)).next
+    t2 = [tok[:2] for tok in generate_tokens(readline)]
+    if (t1 != t2):
+        raise TestFailed(('untokenize() roundtrip failed for %r' % f))

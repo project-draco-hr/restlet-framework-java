@@ -1,0 +1,25 @@
+def ToASCII(label):
+    try:
+        label = label.encode('ascii')
+    except UnicodeError:
+        pass
+    else:
+        if (0 < len(label) < 64):
+            return label
+        raise UnicodeError('label empty or too long')
+    label = nameprep(label)
+    try:
+        label = label.encode('ascii')
+    except UnicodeError:
+        pass
+    else:
+        if (0 < len(label) < 64):
+            return label
+        raise UnicodeError('label empty or too long')
+    if label.startswith(uace_prefix):
+        raise UnicodeError('Label starts with ACE prefix')
+    label = label.encode('punycode')
+    label = (ace_prefix + label)
+    if (0 < len(label) < 64):
+        return label
+    raise UnicodeError('label empty or too long')

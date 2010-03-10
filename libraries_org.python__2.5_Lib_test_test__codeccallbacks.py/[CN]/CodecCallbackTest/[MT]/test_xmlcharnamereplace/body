@@ -1,0 +1,20 @@
+def test_xmlcharnamereplace(self):
+
+    def xmlcharnamereplace(exc):
+        if (not isinstance(exc, UnicodeEncodeError)):
+            raise TypeError(("don't know how to handle %r" % exc))
+        l = []
+        for c in exc.object[exc.start:exc.end]:
+            try:
+                l.append((u'&%s;' % htmlentitydefs.codepoint2name[ord(c)]))
+            except KeyError:
+                l.append((u'&#%d;' % ord(c)))
+        return (u''.join(l), exc.end)
+    codecs.register_error('test.xmlcharnamereplace', xmlcharnamereplace)
+    sin = u'\xab\u211c\xbb = \u2329\u1234\u20ac\u232a'
+    sout = '&laquo;&real;&raquo; = &lang;&#4660;&euro;&rang;'
+    self.assertEqual(sin.encode('ascii', 'test.xmlcharnamereplace'), sout)
+    sout = '\xab&real;\xbb = &lang;&#4660;&euro;&rang;'
+    self.assertEqual(sin.encode('latin-1', 'test.xmlcharnamereplace'), sout)
+    sout = '\xab&real;\xbb = &lang;&#4660;\xa4&rang;'
+    self.assertEqual(sin.encode('iso-8859-15', 'test.xmlcharnamereplace'), sout)

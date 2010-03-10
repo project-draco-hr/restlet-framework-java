@@ -1,0 +1,12 @@
+def test_mboxmmdf_to_maildir(self):
+    for class_ in (mailbox.mboxMessage, mailbox.MMDFMessage):
+        msg_mboxMMDF = class_(_sample_message)
+        msg_mboxMMDF.set_from('foo@bar', time.gmtime(0.0))
+        pairs = (('R', 'S'), ('O', ''), ('D', 'T'), ('F', 'F'), ('A', 'R'), ('RODFA', 'FRST'))
+        for (setting, result) in pairs:
+            msg_mboxMMDF.set_flags(setting)
+            msg = mailbox.MaildirMessage(msg_mboxMMDF)
+            self.assert_((msg.get_flags() == result))
+            self.assert_((msg.get_date() == 0.0), msg.get_date())
+        msg_mboxMMDF.set_flags('O')
+        self.assert_((mailbox.MaildirMessage(msg_mboxMMDF).get_subdir() == 'cur'))

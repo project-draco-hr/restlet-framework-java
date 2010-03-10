@@ -1,0 +1,22 @@
+def test_weak_keyed_iters(self):
+    (dict, objects) = self.make_weak_keyed_dict()
+    self.check_iters(dict)
+    refs = dict.keyrefs()
+    self.assertEqual(len(refs), len(objects))
+    objects2 = list(objects)
+    for wr in refs:
+        ob = wr()
+        self.assert_(dict.has_key(ob))
+        self.assert_((ob in dict))
+        self.assertEqual(ob.arg, dict[ob])
+        objects2.remove(ob)
+    self.assertEqual(len(objects2), 0)
+    objects2 = list(objects)
+    self.assertEqual(len(list(dict.iterkeyrefs())), len(objects))
+    for wr in dict.iterkeyrefs():
+        ob = wr()
+        self.assert_(dict.has_key(ob))
+        self.assert_((ob in dict))
+        self.assertEqual(ob.arg, dict[ob])
+        objects2.remove(ob)
+    self.assertEqual(len(objects2), 0)

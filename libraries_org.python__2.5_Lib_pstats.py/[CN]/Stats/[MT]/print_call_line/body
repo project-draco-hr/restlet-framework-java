@@ -1,0 +1,24 @@
+def print_call_line(self, name_size, source, call_dict, arrow='->'):
+    print  >> self.stream, (func_std_string(source).ljust(name_size) + arrow),
+    if (not call_dict):
+        print  >> self.stream
+        return
+    clist = call_dict.keys()
+    clist.sort()
+    indent = ''
+    for func in clist:
+        name = func_std_string(func)
+        value = call_dict[func]
+        if isinstance(value, tuple):
+            (nc, cc, tt, ct) = value
+            if (nc != cc):
+                substats = ('%d/%d' % (nc, cc))
+            else:
+                substats = ('%d' % (nc,))
+            substats = ('%s %s %s  %s' % (substats.rjust((7 + (2 * len(indent)))), f8(tt), f8(ct), name))
+            left_width = (name_size + 1)
+        else:
+            substats = ('%s(%r) %s' % (name, value, f8(self.stats[func][3])))
+            left_width = (name_size + 3)
+        print  >> self.stream, ((indent * left_width) + substats)
+        indent = ' '

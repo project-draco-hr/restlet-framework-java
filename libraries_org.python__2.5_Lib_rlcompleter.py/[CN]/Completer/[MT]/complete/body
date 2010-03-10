@@ -1,0 +1,13 @@
+def complete(self, text, state):
+    "Return the next possible completion for 'text'.\n\n        This is called successively with state == 0, 1, 2, ... until it\n        returns None.  The completion should begin with 'text'.\n\n        "
+    if self.use_main_ns:
+        self.namespace = __main__.__dict__
+    if (state == 0):
+        if ('.' in text):
+            self.matches = self.attr_matches(text)
+        else:
+            self.matches = self.global_matches(text)
+    try:
+        return self.matches[state]
+    except IndexError:
+        return None

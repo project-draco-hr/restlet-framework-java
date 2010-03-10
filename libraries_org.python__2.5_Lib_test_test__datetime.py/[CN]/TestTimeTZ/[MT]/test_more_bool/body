@@ -1,0 +1,16 @@
+def test_more_bool(self):
+    cls = self.theclass
+    t = cls(0, tzinfo=FixedOffset((-300), ''))
+    self.failUnless(t)
+    t = cls(5, tzinfo=FixedOffset((-300), ''))
+    self.failUnless(t)
+    t = cls(5, tzinfo=FixedOffset(300, ''))
+    self.failUnless((not t))
+    t = cls(23, 59, tzinfo=FixedOffset(((23 * 60) + 59), ''))
+    self.failUnless((not t))
+    t = cls(0, tzinfo=FixedOffset(((23 * 60) + 59), ''))
+    self.failUnless(t)
+    t = cls(0, tzinfo=FixedOffset((24 * 60), ''))
+    self.assertRaises(ValueError, (lambda : bool(t)))
+    t = cls(0, tzinfo=FixedOffset(((-24) * 60), ''))
+    self.assertRaises(ValueError, (lambda : bool(t)))

@@ -1,0 +1,7 @@
+def assertParseOK(self, args, expected_opts, expected_positional_args):
+    'Assert the options are what we expected when parsing arguments.\n\n        Otherwise, fail with a nicely formatted message.\n\n        Keyword arguments:\n        args -- A list of arguments to parse with OptionParser.\n        expected_opts -- The options expected.\n        expected_positional_args -- The positional arguments expected.\n\n        Returns the options and positional args for further testing.\n        '
+    (options, positional_args) = self.parser.parse_args(args)
+    optdict = vars(options)
+    self.assertEqual(optdict, expected_opts, ('\nOptions are %(optdict)s.\nShould be %(expected_opts)s.\nArgs were %(args)s.' % locals()))
+    self.assertEqual(positional_args, expected_positional_args, ('\nPositional arguments are %(positional_args)s.\nShould be %(expected_positional_args)s.\nArgs were %(args)s.' % locals()))
+    return (options, positional_args)

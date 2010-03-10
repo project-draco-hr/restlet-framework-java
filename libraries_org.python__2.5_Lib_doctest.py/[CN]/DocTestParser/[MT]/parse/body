@@ -1,0 +1,18 @@
+def parse(self, string, name='<string>'):
+    '\n        Divide the given string into examples and intervening text,\n        and return them as a list of alternating Examples and strings.\n        Line numbers for the Examples are 0-based.  The optional\n        argument `name` is a name identifying this string, and is only\n        used for error messages.\n        '
+    string = string.expandtabs()
+    min_indent = self._min_indent(string)
+    if (min_indent > 0):
+        string = '\n'.join([l[min_indent:] for l in string.split('\n')])
+    output = []
+    (charno, lineno) = (0, 0)
+    for m in self._EXAMPLE_RE.finditer(string):
+        output.append(string[charno:m.start()])
+        lineno += string.count('\n', charno, m.start())
+        (source, options, want, exc_msg) = self._parse_example(m, name, lineno)
+        if (not self._IS_BLANK_OR_COMMENT(source)):
+            output.append(Example(source, want, exc_msg, lineno=lineno, indent=(min_indent + len(m.group('indent'))), options=options))
+        lineno += string.count('\n', m.start(), m.end())
+        charno = m.end()
+    output.append(string[charno:])
+    return output

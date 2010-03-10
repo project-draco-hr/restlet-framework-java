@@ -1,0 +1,18 @@
+def testEnterThrows(self):
+
+
+    class EnterThrows(object):
+
+        def __enter__(self):
+            raise RuntimeError('Enter threw')
+
+        def __exit__(self, *args):
+            pass
+
+    def shouldThrow():
+        ct = EnterThrows()
+        self.foo = None
+        with ct as self.foo:
+            pass
+    self.assertRaises(RuntimeError, shouldThrow)
+    self.assertEqual(self.foo, None)
