@@ -16,7 +16,7 @@
         getMetadata().set(HttpHeaders.LAST_MODIFIED,DateUtils.format(this.representation.getModificationDate()));
       }
       Parser parser=(getTikaParser() != null) ? getTikaParser() : (getTikaConfig() != null) ? new AutoDetectParser(getTikaConfig()) : new AutoDetectParser();
-      parser.parse(this.representation.getStream(),contentHandler,getMetadata());
+      parser.parse(this.representation.getStream(),contentHandler,getMetadata(),new ParseContext());
     }
  catch (    SAXException e) {
       throw new IOException("SAX exception: " + e.getLocalizedMessage());
