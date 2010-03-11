@@ -1,13 +1,13 @@
 {
   if (this.agentAttributes == null) {
-    this.agentAttributes=new HashMap<String,String>();
-    final Map<String,Object> map=new HashMap<String,Object>();
+    this.agentAttributes=new ConcurrentHashMap<String,String>();
+    Map<String,Object> map=new ConcurrentHashMap<String,Object>();
     org.restlet.routing.Template template=null;
-    final org.restlet.routing.Variable agentName=new org.restlet.routing.Variable(org.restlet.routing.Variable.TYPE_TOKEN);
-    final org.restlet.routing.Variable agentVersion=new org.restlet.routing.Variable(org.restlet.routing.Variable.TYPE_TOKEN);
-    final org.restlet.routing.Variable agentComment=new org.restlet.routing.Variable(org.restlet.routing.Variable.TYPE_COMMENT);
-    final org.restlet.routing.Variable agentCommentAttribute=new org.restlet.routing.Variable(org.restlet.routing.Variable.TYPE_COMMENT_ATTRIBUTE);
-    final org.restlet.routing.Variable facultativeData=new org.restlet.routing.Variable(org.restlet.routing.Variable.TYPE_ALL,null,false,false);
+    org.restlet.routing.Variable agentName=new org.restlet.routing.Variable(org.restlet.routing.Variable.TYPE_TOKEN);
+    org.restlet.routing.Variable agentVersion=new org.restlet.routing.Variable(org.restlet.routing.Variable.TYPE_TOKEN);
+    org.restlet.routing.Variable agentComment=new org.restlet.routing.Variable(org.restlet.routing.Variable.TYPE_COMMENT);
+    org.restlet.routing.Variable agentCommentAttribute=new org.restlet.routing.Variable(org.restlet.routing.Variable.TYPE_COMMENT_ATTRIBUTE);
+    org.restlet.routing.Variable facultativeData=new org.restlet.routing.Variable(org.restlet.routing.Variable.TYPE_ALL,null,false,false);
     for (    String string : ClientInfo.getUserAgentTemplates()) {
       template=new org.restlet.routing.Template(string,org.restlet.routing.Template.MODE_EQUALS);
       template.getVariables().put("agentName",agentName);
@@ -17,7 +17,7 @@
       template.getVariables().put("commentAttribute",agentCommentAttribute);
       template.getVariables().put("facultativeData",facultativeData);
       if (template.parse(getAgent(),map) > -1) {
-        for (        final String key : map.keySet()) {
+        for (        String key : map.keySet()) {
           this.agentAttributes.put(key,(String)map.get(key));
         }
         break;

@@ -1,0 +1,12 @@
+{
+  List<org.restlet.data.Expectation> a=this.expectations;
+  if (a == null) {
+synchronized (this) {
+      a=this.expectations;
+      if (a == null) {
+        this.expectations=a=new CopyOnWriteArrayList<org.restlet.data.Expectation>();
+      }
+    }
+  }
+  return a;
+}
