@@ -1,6 +1,12 @@
 {
-  if (this.attributes == null) {
-    this.attributes=new TreeMap<String,Object>();
+  Map<String,Object> r=this.attributes;
+  if (r == null) {
+synchronized (this) {
+      r=this.attributes;
+      if (r == null) {
+        this.attributes=r=new ConcurrentHashMap<String,Object>();
+      }
+    }
   }
   return this.attributes;
 }
