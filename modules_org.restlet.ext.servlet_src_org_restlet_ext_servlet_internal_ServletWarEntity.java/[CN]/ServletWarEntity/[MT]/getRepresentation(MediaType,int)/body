@@ -1,4 +1,15 @@
 {
-  final InputStream ris=getServletContext().getResourceAsStream(path);
-  return (ris == null) ? null : new InputRepresentation(ris,defaultMediaType);
+  Representation result=null;
+  InputStream ris=getServletContext().getResourceAsStream(path);
+  if (ris != null) {
+    result=new InputRepresentation(ris,defaultMediaType);
+    String realPath=getServletContext().getRealPath(path);
+    if (realPath != null) {
+      File file=new File(realPath);
+      if (file != null) {
+        result.setModificationDate(new Date(file.lastModified()));
+      }
+    }
+  }
+  return result;
 }
