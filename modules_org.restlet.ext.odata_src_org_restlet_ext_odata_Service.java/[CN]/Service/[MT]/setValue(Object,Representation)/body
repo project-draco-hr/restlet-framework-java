@@ -1,18 +1,5 @@
 {
-  Reference ref=null;
-  Metadata metadata=(Metadata)getMetadata();
-  EntityType type=metadata.getEntityType(entity.getClass());
-  if (type.isBlob() && type.getBlobValueRefProperty() != null) {
-    try {
-      ref=(Reference)ReflectUtils.invokeGetter(entity,type.getBlobValueEditRefProperty().getName());
-    }
- catch (    Exception e) {
-      getLogger().warning("Cannot get the value of the property " + type.getBlobValueEditRefProperty().getName() + " on "+ entity);
-    }
-  }
- else {
-    getLogger().warning("This entity is not a media resource " + entity);
-  }
+  Reference ref=getValueEditRef(entity);
   if (ref != null) {
     ClientResource cr=createResource(ref);
     cr.put(blob);

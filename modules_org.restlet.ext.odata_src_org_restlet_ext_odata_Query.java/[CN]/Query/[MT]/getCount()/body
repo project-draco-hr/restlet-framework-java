@@ -1,6 +1,6 @@
 {
-  if (!isExecuted()) {
-    if (inlineCount) {
+  if (inlineCount) {
+    if (!isExecuted()) {
       try {
         execute();
       }
@@ -8,20 +8,20 @@
         getLogger().warning("Cannot retrieve inline count value due to: " + e.getMessage());
       }
     }
+  }
  else {
-      String targetUri=createTargetUri();
-      if (guessType(targetUri) == TYPE_ENTITY) {
-        targetUri=targetUri.substring(0,targetUri.lastIndexOf("("));
-      }
-      targetUri+="/$count";
-      ClientResource resource=service.createResource(new Reference(targetUri));
-      try {
-        Representation result=resource.get();
-        count=Integer.parseInt(result.getText());
-      }
- catch (      Exception e) {
-        getLogger().warning("Cannot parse count value due to: " + e.getMessage());
-      }
+    String targetUri=createTargetUri();
+    if (guessType(targetUri) == TYPE_ENTITY) {
+      targetUri=targetUri.substring(0,targetUri.lastIndexOf("("));
+    }
+    targetUri+="/$count";
+    ClientResource resource=service.createResource(new Reference(targetUri));
+    try {
+      Representation result=resource.get();
+      count=Integer.parseInt(result.getText());
+    }
+ catch (    Exception e) {
+      getLogger().warning("Cannot parse count value due to: " + e.getMessage());
     }
   }
   return count;

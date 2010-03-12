@@ -2,10 +2,10 @@
   for (  Schema schema : currentMetadata.getSchemas()) {
     for (    Association association : schema.getAssociations()) {
       for (      AssociationEnd end : association.getEnds()) {
-        end.setType((EntityType)resolve(end.getType(),registeredEntityTypes));
+        end.setType((EntityType)resolve(end.getType(),registeredEntityTypes,schema));
       }
     }
-    for (    EntityType entityType : schema.getTypes()) {
+    for (    EntityType entityType : schema.getEntityTypes()) {
       if (entityType.getKeys() != null) {
         List<Property> props=entityType.getKeys();
         entityType.setKeys(new ArrayList<Property>());
@@ -19,7 +19,7 @@
         }
       }
       for (      NavigationProperty navigationProperty : entityType.getAssociations()) {
-        navigationProperty.setRelationship((Association)resolve(navigationProperty.getRelationship(),registeredAssociations));
+        navigationProperty.setRelationship((Association)resolve(navigationProperty.getRelationship(),registeredAssociations,schema));
         if (navigationProperty.getRelationship() != null) {
           for (          AssociationEnd end : navigationProperty.getRelationship().getEnds()) {
             if (end.getRole().equals(navigationProperty.getFromRole().getRole())) {
@@ -35,7 +35,10 @@
           navigationProperty.setToRole(null);
         }
       }
-      entityType.setBaseType((EntityType)resolve(entityType.getBaseType(),registeredEntityTypes));
+      entityType.setBaseType((EntityType)resolve(entityType.getBaseType(),registeredEntityTypes,schema));
+    }
+    for (    ComplexType complexType : schema.getComplexTypes()) {
+      complexType.setBaseType((EntityType)resolve(complexType.getBaseType(),registeredComplexTypes,schema));
     }
   }
   for (  EntityContainer container : currentMetadata.getContainers()) {
@@ -43,7 +46,7 @@
       container.setExtended(registeredContainers.get(container.getExtended().getName()));
     }
     for (    AssociationSet associationSet : container.getAssociations()) {
-      associationSet.setAssociation((Association)resolve(associationSet.getAssociation(),registeredAssociations));
+      associationSet.setAssociation((Association)resolve(associationSet.getAssociation(),registeredAssociations,container.getSchema()));
       for (      AssociationSetEnd end : associationSet.getEnds()) {
         for (        EntitySet entitySet : container.getEntities()) {
           if (entitySet.equals(end.getType())) {
@@ -54,7 +57,10 @@
       }
     }
     for (    EntitySet entitySet : container.getEntities()) {
-      entitySet.setType((EntityType)resolve(entitySet.getType(),registeredEntityTypes));
+      entitySet.setType((EntityType)resolve(entitySet.getType(),registeredEntityTypes,container.getSchema()));
+    }
+    for (    FunctionImport functionImport : container.getFunctionImports()) {
+      functionImport.setEntitySet((EntitySet)resolve(functionImport.getEntitySet(),registeredEntitySets,container.getSchema()));
     }
   }
 }

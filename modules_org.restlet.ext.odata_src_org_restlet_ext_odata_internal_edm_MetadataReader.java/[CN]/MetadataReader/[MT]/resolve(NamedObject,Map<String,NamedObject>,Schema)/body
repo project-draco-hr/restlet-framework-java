@@ -1,0 +1,21 @@
+{
+  NamedObject result=null;
+  if (namedObject != null && namedObject.getName() != null) {
+    String key=null;
+    int index=namedObject.getName().lastIndexOf(".");
+    if (index != -1) {
+      String nsName=namedObject.getName().substring(0,index);
+      for (      Namespace namespace : registeredNamespaces) {
+        if (nsName.equals(namespace.getAlias()) || nsName.equals(namespace.getName())) {
+          key=namespace.getName() + namedObject.getName().substring(index);
+          break;
+        }
+      }
+    }
+ else {
+      key=currentSchema.getNamespace().getName() + "." + namedObject.getName();
+    }
+    result=register.get(key);
+  }
+  return result;
+}
