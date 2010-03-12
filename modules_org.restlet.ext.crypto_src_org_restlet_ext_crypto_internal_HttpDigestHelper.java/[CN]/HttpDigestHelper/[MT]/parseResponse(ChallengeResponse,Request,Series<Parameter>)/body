@@ -1,6 +1,6 @@
 {
   if (challenge.getCredentials() != null) {
-    HeaderReader hr=new HeaderReader(challenge.getCredentials());
+    HeaderReader<Object> hr=new HeaderReader<Object>(challenge.getCredentials());
     try {
       Parameter param=hr.readParameter();
       while (param != null) {
@@ -38,7 +38,12 @@
  else {
             challenge.getParameters().add(param);
           }
-          param=hr.readParameter();
+          if (hr.skipValueSeparator()) {
+            param=hr.readParameter();
+          }
+ else {
+            param=null;
+          }
         }
  catch (        Exception e) {
           Context.getCurrentLogger().log(Level.WARNING,"Unable to parse the challenge request header parameter",e);

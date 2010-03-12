@@ -1,5 +1,29 @@
 {
-  final StringBuilder sb=new StringBuilder();
-  readQuotedString(sb);
-  return sb.toString();
+  String result=null;
+  int nextChar=read();
+  if (isDoubleQuote(nextChar)) {
+    StringBuilder buffer=new StringBuilder();
+    while (result == null) {
+      nextChar=read();
+      if (isQuotedText(nextChar)) {
+        buffer.append((char)nextChar);
+      }
+ else       if (isQuoteCharacter(nextChar)) {
+        buffer.append((char)read());
+      }
+ else       if (isDoubleQuote(nextChar)) {
+        result=buffer.toString();
+      }
+ else       if (nextChar == -1) {
+        throw new IOException("Unexpected end of quoted string. Please check your value");
+      }
+ else {
+        throw new IOException("Invalid character \"" + nextChar + "\" detected in quoted string. Please check your value");
+      }
+    }
+  }
+ else {
+    throw new IOException("A quoted string must start with a double quote");
+  }
+  return result;
 }

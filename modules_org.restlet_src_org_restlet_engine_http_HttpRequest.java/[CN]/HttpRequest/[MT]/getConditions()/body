@@ -24,8 +24,8 @@
     Tag current=null;
     if (ifMatchHeader != null) {
       try {
-        final HeaderReader hr=new HeaderReader(ifMatchHeader);
-        String value=hr.readValue();
+        HeaderReader<Object> hr=new HeaderReader<Object>(ifMatchHeader);
+        String value=hr.readRawValue();
         while (value != null) {
           current=Tag.parse(value);
           if (match == null) {
@@ -33,7 +33,7 @@
             result.setMatch(match);
           }
           match.add(current);
-          value=hr.readValue();
+          value=hr.readRawValue();
         }
       }
  catch (      Exception e) {
@@ -43,8 +43,8 @@
     List<Tag> noneMatch=null;
     if (ifNoneMatchHeader != null) {
       try {
-        final HeaderReader hr=new HeaderReader(ifNoneMatchHeader);
-        String value=hr.readValue();
+        HeaderReader<Object> hr=new HeaderReader<Object>(ifNoneMatchHeader);
+        String value=hr.readRawValue();
         while (value != null) {
           current=Tag.parse(value);
           if (noneMatch == null) {
@@ -52,7 +52,7 @@
             result.setNoneMatch(noneMatch);
           }
           noneMatch.add(current);
-          value=hr.readValue();
+          value=hr.readRawValue();
         }
       }
  catch (      Exception e) {

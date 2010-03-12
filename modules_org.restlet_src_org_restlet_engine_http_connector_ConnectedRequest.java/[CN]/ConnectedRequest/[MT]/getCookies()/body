@@ -1,20 +1,9 @@
 {
-  final Series<Cookie> result=super.getCookies();
+  Series<Cookie> result=super.getCookies();
   if (!this.cookiesAdded) {
     if (getHeaders() != null) {
-      final String cookiesValue=getHeaders().getValues(HeaderConstants.HEADER_COOKIE);
-      if (cookiesValue != null) {
-        try {
-          final CookieReader cr=new CookieReader(cookiesValue);
-          Cookie current=cr.readCookie();
-          while (current != null) {
-            result.add(current);
-            current=cr.readCookie();
-          }
-        }
- catch (        Exception e) {
-          this.context.getLogger().log(Level.WARNING,"An exception occurred during cookies parsing. Headers value: " + cookiesValue,e);
-        }
+      for (      String cookieValue : getHeaders().getValuesArray(HeaderConstants.HEADER_COOKIE)) {
+        new CookieReader(cookieValue).addValues(result);
       }
     }
     this.cookiesAdded=true;

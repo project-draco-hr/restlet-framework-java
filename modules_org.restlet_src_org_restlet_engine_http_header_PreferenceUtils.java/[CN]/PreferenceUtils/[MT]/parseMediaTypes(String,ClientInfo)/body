@@ -1,16 +1,7 @@
 {
   if (acceptMediaTypeHeader != null) {
-    try {
-      final PreferenceReader pr=new PreferenceReader(PreferenceReader.TYPE_MEDIA_TYPE,acceptMediaTypeHeader);
-      Preference currentPref=pr.readPreference();
-      while (currentPref != null) {
-        preference.getAcceptedMediaTypes().add(currentPref);
-        currentPref=pr.readPreference();
-      }
-    }
- catch (    IOException ioe) {
-      throw new IllegalArgumentException("An exception occurred during media type preferences parsing. Header: " + acceptMediaTypeHeader + ". Ignoring header.");
-    }
+    AcceptReader pr=new AcceptReader(AcceptReader.TYPE_MEDIA_TYPE,acceptMediaTypeHeader);
+    pr.addValues(preference.getAcceptedMediaTypes());
   }
  else {
     preference.getAcceptedMediaTypes().add(new Preference(MediaType.ALL));

@@ -1,13 +1,13 @@
 {
-  final Conditions result=super.getConditions();
+  Conditions result=super.getConditions();
   if (!this.conditionAdded) {
     if (getHeaders() != null) {
-      final String ifMatchHeader=getHeaders().getValues(HeaderConstants.HEADER_IF_MATCH);
-      final String ifNoneMatchHeader=getHeaders().getValues(HeaderConstants.HEADER_IF_NONE_MATCH);
+      String ifMatchHeader=getHeaders().getValues(HeaderConstants.HEADER_IF_MATCH);
+      String ifNoneMatchHeader=getHeaders().getValues(HeaderConstants.HEADER_IF_NONE_MATCH);
       Date ifModifiedSince=null;
       Date ifUnmodifiedSince=null;
       String ifRangeHeader=getHeaders().getFirstValue(HeaderConstants.HEADER_IF_RANGE);
-      for (      final Parameter header : getHeaders()) {
+      for (      Parameter header : getHeaders()) {
         if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_IF_MODIFIED_SINCE)) {
           ifModifiedSince=HeaderUtils.parseDate(header.getValue(),false);
         }
@@ -25,8 +25,8 @@
       Tag current=null;
       if (ifMatchHeader != null) {
         try {
-          final HeaderReader hr=new HeaderReader(ifMatchHeader);
-          String value=hr.readValue();
+          HeaderReader<Object> hr=new HeaderReader<Object>(ifMatchHeader);
+          String value=hr.readRawValue();
           while (value != null) {
             current=Tag.parse(value);
             if (match == null) {
@@ -34,7 +34,7 @@
               result.setMatch(match);
             }
             match.add(current);
-            value=hr.readValue();
+            value=hr.readRawValue();
           }
         }
  catch (        Exception e) {
@@ -44,8 +44,8 @@
       List<Tag> noneMatch=null;
       if (ifNoneMatchHeader != null) {
         try {
-          final HeaderReader hr=new HeaderReader(ifNoneMatchHeader);
-          String value=hr.readValue();
+          HeaderReader<Object> hr=new HeaderReader<Object>(ifNoneMatchHeader);
+          String value=hr.readRawValue();
           while (value != null) {
             current=Tag.parse(value);
             if (noneMatch == null) {
@@ -53,7 +53,7 @@
               result.setNoneMatch(noneMatch);
             }
             noneMatch.add(current);
-            value=hr.readValue();
+            value=hr.readRawValue();
           }
         }
  catch (        Exception e) {

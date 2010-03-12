@@ -1,0 +1,134 @@
+{
+  ContentType result=null;
+  boolean readingMediaType=true;
+  boolean readingParamName=false;
+  boolean readingParamValue=false;
+  StringBuilder mediaTypeBuffer=new StringBuilder();
+  StringBuilder paramNameBuffer=null;
+  StringBuilder paramValueBuffer=null;
+  Series<Parameter> parameters=null;
+  String nextValue=readRawValue();
+  int nextIndex=0;
+  if (nextValue != null) {
+    int nextChar=nextValue.charAt(nextIndex++);
+    while (result == null) {
+      if (readingMediaType) {
+        if (nextChar == -1) {
+          if (mediaTypeBuffer.length() > 0) {
+            result=createContentType(mediaTypeBuffer,null);
+            paramNameBuffer=new StringBuilder();
+          }
+ else {
+          }
+        }
+ else         if (nextChar == ';') {
+          if (mediaTypeBuffer.length() > 0) {
+            readingMediaType=false;
+            readingParamName=true;
+            paramNameBuffer=new StringBuilder();
+            parameters=new Form();
+          }
+ else {
+            throw new IOException("Empty mediaType name detected.");
+          }
+        }
+ else         if (HeaderUtils.isSpace(nextChar)) {
+        }
+ else         if (HeaderUtils.isText(nextChar)) {
+          mediaTypeBuffer.append((char)nextChar);
+        }
+ else {
+          throw new IOException("The " + (char)nextChar + " character isn't allowed in a media type name.");
+        }
+      }
+ else       if (readingParamName) {
+        if (nextChar == '=') {
+          if (paramNameBuffer.length() > 0) {
+            readingParamName=false;
+            readingParamValue=true;
+            paramValueBuffer=new StringBuilder();
+          }
+ else {
+            throw new IOException("Empty parameter name detected.");
+          }
+        }
+ else         if (nextChar == -1) {
+          if (paramNameBuffer.length() > 0) {
+            parameters.add(Parameter.create(paramNameBuffer,null));
+            result=createContentType(mediaTypeBuffer,parameters);
+          }
+ else {
+            throw new IOException("Empty parameter name detected.");
+          }
+        }
+ else         if (nextChar == ';') {
+          parameters.add(Parameter.create(paramNameBuffer,null));
+          paramNameBuffer=new StringBuilder();
+          readingParamName=true;
+          readingParamValue=false;
+        }
+ else         if (HeaderUtils.isSpace(nextChar) && (paramNameBuffer.length() == 0)) {
+        }
+ else         if (HeaderUtils.isTokenChar(nextChar)) {
+          paramNameBuffer.append((char)nextChar);
+        }
+ else {
+          throw new IOException("The \"" + (char)nextChar + "\" character isn't allowed in a media type parameter name.");
+        }
+      }
+ else       if (readingParamValue) {
+        if (nextChar == -1) {
+          if (paramValueBuffer.length() > 0) {
+            parameters.add(Parameter.create(paramNameBuffer,paramValueBuffer));
+            result=createContentType(mediaTypeBuffer,parameters);
+          }
+ else {
+            throw new IOException("Empty parameter value detected");
+          }
+        }
+ else         if (nextChar == ';') {
+          parameters.add(Parameter.create(paramNameBuffer,paramValueBuffer));
+          paramNameBuffer=new StringBuilder();
+          readingParamName=true;
+          readingParamValue=false;
+        }
+ else         if ((nextChar == '"') && (paramValueBuffer.length() == 0)) {
+          boolean done=false;
+          boolean quotedPair=false;
+          while ((!done) && (nextChar != -1)) {
+            nextChar=(nextIndex < nextValue.length()) ? nextValue.charAt(nextIndex++) : -1;
+            if (quotedPair) {
+              if (HeaderUtils.isText(nextChar)) {
+                paramValueBuffer.append((char)nextChar);
+                quotedPair=false;
+              }
+ else {
+                throw new IOException("Invalid character \"" + (char)nextChar + "\" detected in quoted string. Please check your value");
+              }
+            }
+ else             if (HeaderUtils.isDoubleQuote(nextChar)) {
+              done=true;
+            }
+ else             if (nextChar == '\\') {
+              quotedPair=true;
+            }
+ else             if (HeaderUtils.isText(nextChar)) {
+              paramValueBuffer.append((char)nextChar);
+            }
+ else {
+              throw new IOException("Invalid character \"" + (char)nextChar + "\" detected in quoted string. Please check your value");
+            }
+          }
+        }
+ else         if (HeaderUtils.isTokenChar(nextChar)) {
+          paramValueBuffer.append((char)nextChar);
+        }
+ else {
+          throw new IOException("The \"" + (char)nextChar + "\" character isn't allowed in a media type parameter value.");
+        }
+      }
+      nextChar=(nextIndex < nextValue.length()) ? nextValue.charAt(nextIndex++) : -1;
+    }
+  }
+  return result;
+}

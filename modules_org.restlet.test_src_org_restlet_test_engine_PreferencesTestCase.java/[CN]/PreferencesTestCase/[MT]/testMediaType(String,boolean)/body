@@ -1,10 +1,10 @@
 {
-  final PreferenceReader<MediaType> pr=new PreferenceReader<MediaType>(PreferenceReader.TYPE_MEDIA_TYPE,headerValue);
+  final AcceptReader<MediaType> pr=new AcceptReader<MediaType>(AcceptReader.TYPE_MEDIA_TYPE,headerValue);
   final List<Preference<MediaType>> prefs=new ArrayList<Preference<MediaType>>();
-  Preference<MediaType> pref=pr.readPreference();
+  Preference<MediaType> pref=pr.readValue();
   while (pref != null) {
     prefs.add(pref);
-    pref=pr.readPreference();
+    pref=pr.readValue();
   }
   final String newHeaderValue=PreferenceUtils.format(prefs);
   if (testEquals) {

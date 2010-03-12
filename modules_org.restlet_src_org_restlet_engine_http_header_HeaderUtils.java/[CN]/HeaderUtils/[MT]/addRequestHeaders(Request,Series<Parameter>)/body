@@ -104,8 +104,16 @@
  else {
     headers.add(HeaderConstants.HEADER_USER_AGENT,Engine.VERSION_HEADER);
   }
+  if (client.getExpectations().size() > 0) {
+    try {
+      headers.add(HeaderConstants.HEADER_ACCEPT_ENCODING,PreferenceUtils.format(client.getAcceptedEncodings()));
+    }
+ catch (    IOException ioe) {
+      Context.getCurrentLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
+    }
+  }
   if (request.getCookies().size() > 0) {
-    String cookies=CookieUtils.format(request.getCookies());
+    String cookies=CookieWriter.format(request.getCookies());
     headers.add(HeaderConstants.HEADER_COOKIE,cookies);
   }
   Series<Parameter> additionalHeaders=(Series<Parameter>)request.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);

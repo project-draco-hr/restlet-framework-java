@@ -18,24 +18,13 @@
       entityHeaderFound=true;
     }
  else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_CONTENT_ENCODING)) {
-      HeaderReader hr=new HeaderReader(header.getValue());
-      String value=hr.readValue();
-      while (value != null) {
-        Encoding encoding=new Encoding(value);
-        if (!encoding.equals(Encoding.IDENTITY)) {
-          result.getEncodings().add(encoding);
-        }
-        value=hr.readValue();
-      }
+      ContentEncodingReader hr=new ContentEncodingReader(header.getValue());
+      hr.addValues(result.getEncodings());
       entityHeaderFound=true;
     }
  else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_CONTENT_LANGUAGE)) {
-      HeaderReader hr=new HeaderReader(header.getValue());
-      String value=hr.readValue();
-      while (value != null) {
-        result.getLanguages().add(new Language(value));
-        value=hr.readValue();
-      }
+      ContentLanguageReader hr=new ContentLanguageReader(header.getValue());
+      hr.addValues(result.getLanguages());
       entityHeaderFound=true;
     }
  else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_LAST_MODIFIED)) {
@@ -52,8 +41,8 @@
     }
  else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_CONTENT_DISPOSITION)) {
       try {
-        DispositionReader r=new DispositionReader(header.getValue());
-        result.setDisposition(r.readDisposition());
+        ContentDispositionReader r=new ContentDispositionReader(header.getValue());
+        result.setDisposition(r.readValue());
         entityHeaderFound=true;
       }
  catch (      IOException ioe) {

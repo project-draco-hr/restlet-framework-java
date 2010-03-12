@@ -1,13 +1,13 @@
 {
   AuthenticationInfo result=null;
-  HeaderReader hr=new HeaderReader(header);
+  AuthenticationInfoReader hr=new AuthenticationInfoReader(header);
   try {
     String nextNonce=null;
     String qop=null;
     String responseAuth=null;
     String cnonce=null;
     int nonceCount=0;
-    Parameter param=hr.readParameter();
+    Parameter param=hr.readValue();
     while (param != null) {
       try {
         if ("nextnonce".equals(param.getName())) {
@@ -25,7 +25,12 @@
  else         if ("nc".equals(param.getName())) {
           nonceCount=Integer.parseInt(param.getValue(),16);
         }
-        param=hr.readParameter();
+        if (hr.skipValueSeparator()) {
+          param=hr.readValue();
+        }
+ else {
+          param=null;
+        }
       }
  catch (      Exception e) {
         Context.getCurrentLogger().log(Level.WARNING,"Unable to parse the authentication info header parameter",e);
