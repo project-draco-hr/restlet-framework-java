@@ -9,10 +9,10 @@
       String ifRangeHeader=getHeaders().getFirstValue(HeaderConstants.HEADER_IF_RANGE);
       for (      Parameter header : getHeaders()) {
         if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_IF_MODIFIED_SINCE)) {
-          ifModifiedSince=HeaderUtils.parseDate(header.getValue(),false);
+          ifModifiedSince=HeaderReader.readDate(header.getValue(),false);
         }
  else         if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_IF_UNMODIFIED_SINCE)) {
-          ifUnmodifiedSince=HeaderUtils.parseDate(header.getValue(),false);
+          ifUnmodifiedSince=HeaderReader.readDate(header.getValue(),false);
         }
       }
       if ((ifModifiedSince != null) && (ifModifiedSince.getTime() != -1)) {
@@ -66,7 +66,7 @@
           result.setRangeTag(tag);
         }
  else {
-          Date date=HeaderUtils.parseDate(ifRangeHeader,false);
+          Date date=HeaderReader.readDate(ifRangeHeader,false);
           result.setRangeDate(date);
         }
       }
