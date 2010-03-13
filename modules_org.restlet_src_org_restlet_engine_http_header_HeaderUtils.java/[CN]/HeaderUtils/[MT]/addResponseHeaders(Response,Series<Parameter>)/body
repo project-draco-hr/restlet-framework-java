@@ -38,11 +38,7 @@
     addHeader(HeaderConstants.HEADER_SERVER,Engine.VERSION_HEADER,headers);
   }
   if (!((response.getRequest().getClientInfo().getAgent() != null) && response.getRequest().getClientInfo().getAgent().contains("MSIE"))) {
-    Set<Dimension> dimensions=response.getDimensions();
-    String vary=DimensionWriter.writer(dimensions);
-    if (vary != null) {
-      addHeader(HeaderConstants.HEADER_VARY,vary,headers);
-    }
+    addHeader(HeaderConstants.HEADER_VARY,DimensionWriter.writer(response.getDimensions()),headers);
   }
   if (response.getChallengeRequests() != null) {
     for (    ChallengeRequest challengeRequest : response.getChallengeRequests()) {
