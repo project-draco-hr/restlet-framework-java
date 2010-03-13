@@ -1,15 +1,15 @@
 {
   addGeneralHeaders(response,headers);
   if (response.getServerInfo().isAcceptingRanges()) {
-    headers.add(HeaderConstants.HEADER_ACCEPT_RANGES,"bytes");
+    addHeader(HeaderConstants.HEADER_ACCEPT_RANGES,"bytes",headers);
   }
   if (response.getAge() > 0) {
-    headers.add(HeaderConstants.HEADER_AGE,Integer.toString(response.getAge()));
+    addHeader(HeaderConstants.HEADER_AGE,Integer.toString(response.getAge()),headers);
   }
   if (response.getStatus().equals(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED) || Method.OPTIONS.equals(response.getRequest().getMethod())) {
     StringBuilder sb=new StringBuilder();
     boolean first=true;
-    for (    final Method method : response.getAllowedMethods()) {
+    for (    Method method : response.getAllowedMethods()) {
       if (first) {
         first=false;
       }
@@ -18,48 +18,43 @@
       }
       sb.append(method.getName());
     }
-    headers.add(HeaderConstants.HEADER_ALLOW,sb.toString());
+    addHeader(HeaderConstants.HEADER_ALLOW,sb.toString(),headers);
   }
   if (response.getLocationRef() != null) {
-    headers.add(HeaderConstants.HEADER_LOCATION,response.getLocationRef().getTargetRef().toString());
+    addHeader(HeaderConstants.HEADER_LOCATION,response.getLocationRef().getTargetRef().toString(),headers);
   }
   if (response.getProxyChallengeRequests() != null) {
-    for (    final ChallengeRequest challengeRequest : response.getProxyChallengeRequests()) {
-      headers.add(HeaderConstants.HEADER_PROXY_AUTHENTICATE,org.restlet.engine.security.AuthenticatorUtils.formatRequest(challengeRequest,response,headers));
+    for (    ChallengeRequest challengeRequest : response.getProxyChallengeRequests()) {
+      addHeader(HeaderConstants.HEADER_PROXY_AUTHENTICATE,org.restlet.engine.security.AuthenticatorUtils.formatRequest(challengeRequest,response,headers),headers);
     }
   }
   if (response.getRetryAfter() != null) {
-    headers.add(HeaderConstants.HEADER_RETRY_AFTER,DateUtils.format(response.getRetryAfter()));
+    addHeader(HeaderConstants.HEADER_RETRY_AFTER,DateUtils.format(response.getRetryAfter()),headers);
   }
   if ((response.getServerInfo() != null) && (response.getServerInfo().getAgent() != null)) {
-    headers.add(HeaderConstants.HEADER_SERVER,response.getServerInfo().getAgent());
+    addHeader(HeaderConstants.HEADER_SERVER,response.getServerInfo().getAgent(),headers);
   }
  else {
-    headers.add(HeaderConstants.HEADER_SERVER,Engine.VERSION_HEADER);
+    addHeader(HeaderConstants.HEADER_SERVER,Engine.VERSION_HEADER,headers);
   }
   if (!((response.getRequest().getClientInfo().getAgent() != null) && response.getRequest().getClientInfo().getAgent().contains("MSIE"))) {
     Set<Dimension> dimensions=response.getDimensions();
     String vary=DimensionWriter.writer(dimensions);
     if (vary != null) {
-      headers.add(HeaderConstants.HEADER_VARY,vary);
+      addHeader(HeaderConstants.HEADER_VARY,vary,headers);
     }
   }
   if (response.getChallengeRequests() != null) {
-    for (    final ChallengeRequest challengeRequest : response.getChallengeRequests()) {
-      headers.add(HeaderConstants.HEADER_WWW_AUTHENTICATE,org.restlet.engine.security.AuthenticatorUtils.formatRequest(challengeRequest,response,headers));
+    for (    ChallengeRequest challengeRequest : response.getChallengeRequests()) {
+      addHeader(HeaderConstants.HEADER_WWW_AUTHENTICATE,org.restlet.engine.security.AuthenticatorUtils.formatRequest(challengeRequest,response,headers),headers);
     }
   }
   if (response.getAuthenticationInfo() != null) {
-    try {
-      headers.add(HeaderConstants.HEADER_AUTHENTICATION_INFO,org.restlet.engine.security.AuthenticatorUtils.formatAuthenticationInfo(response.getAuthenticationInfo()));
-    }
- catch (    IOException e) {
-      Context.getCurrentLogger().log(Level.WARNING,"Unable to write the Authentication-Info header",e);
-    }
+    addHeader(HeaderConstants.HEADER_AUTHENTICATION_INFO,org.restlet.engine.security.AuthenticatorUtils.formatAuthenticationInfo(response.getAuthenticationInfo()),headers);
   }
   List<CookieSetting> cookies=response.getCookieSettings();
   for (int i=0; i < cookies.size(); i++) {
-    headers.add(HeaderConstants.HEADER_SET_COOKIE,CookieWriter.write(cookies.get(i)));
+    addHeader(HeaderConstants.HEADER_SET_COOKIE,CookieWriter.write(cookies.get(i)),headers);
   }
   Series<Parameter> additionalHeaders=(Series<Parameter>)response.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
   addExtensionHeaders(headers,additionalHeaders);

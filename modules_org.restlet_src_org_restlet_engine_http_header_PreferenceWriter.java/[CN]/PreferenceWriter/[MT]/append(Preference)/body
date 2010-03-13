@@ -1,0 +1,35 @@
+{
+  append(pref.getMetadata().getName());
+  if (pref.getMetadata() instanceof MediaType) {
+    MediaType mediaType=(MediaType)pref.getMetadata();
+    if (mediaType.getParameters() != null) {
+      Parameter param;
+      for (Iterator<Parameter> iter=mediaType.getParameters().iterator(); iter.hasNext(); ) {
+        param=iter.next();
+        if (param.getName() != null) {
+          append(';').append(param.getName());
+          if ((param.getValue() != null) && (param.getValue().length() > 0)) {
+            append('=').append(param.getValue());
+          }
+        }
+      }
+    }
+  }
+  if (pref.getQuality() < 1F) {
+    append(";q=");
+    appendQuality(pref.getQuality());
+  }
+  if (pref.getParameters() != null) {
+    Parameter param;
+    for (Iterator<Parameter> iter=pref.getParameters().iterator(); iter.hasNext(); ) {
+      param=iter.next();
+      if (param.getName() != null) {
+        append(';').append(param.getName());
+        if ((param.getValue() != null) && (param.getValue().length() > 0)) {
+          append('=').append(param.getValue());
+        }
+      }
+    }
+  }
+  return this;
+}

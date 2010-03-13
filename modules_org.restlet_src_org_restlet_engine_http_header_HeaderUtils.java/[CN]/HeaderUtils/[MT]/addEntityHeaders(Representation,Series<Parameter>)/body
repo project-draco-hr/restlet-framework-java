@@ -1,11 +1,11 @@
 {
   if (entity == null || !entity.isAvailable()) {
-    headers.add(HeaderConstants.HEADER_CONTENT_LENGTH,"0");
+    addHeader(HeaderConstants.HEADER_CONTENT_LENGTH,"0",headers);
   }
  else {
     if (!entity.getEncodings().isEmpty()) {
       if (entity.getEncodings().size() == 1) {
-        headers.add(HeaderConstants.HEADER_CONTENT_ENCODING,entity.getEncodings().get(0).getName());
+        addHeader(HeaderConstants.HEADER_CONTENT_ENCODING,entity.getEncodings().get(0).getName(),headers);
       }
  else {
         StringBuilder value=new StringBuilder();
@@ -18,13 +18,13 @@
           }
         }
         if (value.length() > 0) {
-          headers.add(HeaderConstants.HEADER_CONTENT_ENCODING,value.toString());
+          addHeader(HeaderConstants.HEADER_CONTENT_ENCODING,value.toString(),headers);
         }
       }
     }
     if (!entity.getLanguages().isEmpty()) {
       if (entity.getLanguages().size() == 1) {
-        headers.add(HeaderConstants.HEADER_CONTENT_LANGUAGE,entity.getLanguages().get(0).toString());
+        addHeader(HeaderConstants.HEADER_CONTENT_LANGUAGE,entity.getLanguages().get(0).toString(),headers);
       }
  else {
         StringBuilder value=new StringBuilder();
@@ -34,22 +34,22 @@
           }
           value.append(language.getName());
         }
-        headers.add(HeaderConstants.HEADER_CONTENT_LANGUAGE,value.toString());
+        addHeader(HeaderConstants.HEADER_CONTENT_LANGUAGE,value.toString(),headers);
       }
     }
     long size=entity.getAvailableSize();
     if (size != Representation.UNKNOWN_SIZE) {
-      headers.add(HeaderConstants.HEADER_CONTENT_LENGTH,Long.toString(size));
+      addHeader(HeaderConstants.HEADER_CONTENT_LENGTH,Long.toString(size),headers);
     }
     if (entity.getLocationRef() != null) {
-      headers.add(HeaderConstants.HEADER_CONTENT_LOCATION,entity.getLocationRef().getTargetRef().toString());
+      addHeader(HeaderConstants.HEADER_CONTENT_LOCATION,entity.getLocationRef().getTargetRef().toString(),headers);
     }
     if (entity.getDigest() != null && Digest.ALGORITHM_MD5.equals(entity.getDigest().getAlgorithm())) {
-      headers.add(HeaderConstants.HEADER_CONTENT_MD5,new String(org.restlet.engine.util.Base64.encode(entity.getDigest().getValue(),false)));
+      addHeader(HeaderConstants.HEADER_CONTENT_MD5,new String(org.restlet.engine.util.Base64.encode(entity.getDigest().getValue(),false)),headers);
     }
     if (entity.getRange() != null) {
       try {
-        headers.add(HeaderConstants.HEADER_CONTENT_RANGE,RangeWriter.write(entity.getRange(),entity.getSize()));
+        addHeader(HeaderConstants.HEADER_CONTENT_RANGE,RangeWriter.write(entity.getRange(),entity.getSize()),headers);
       }
  catch (      Exception e) {
         Context.getCurrentLogger().log(Level.WARNING,"Unable to format the HTTP Content-Range header",e);
@@ -60,19 +60,19 @@
       if ((entity.getMediaType().getParameters().getFirstValue("charset") == null) && (entity.getCharacterSet() != null)) {
         contentType=contentType + "; charset=" + entity.getCharacterSet().getName();
       }
-      headers.add(HeaderConstants.HEADER_CONTENT_TYPE,contentType);
+      addHeader(HeaderConstants.HEADER_CONTENT_TYPE,contentType,headers);
     }
     if (entity.getExpirationDate() != null) {
-      headers.add(HeaderConstants.HEADER_EXPIRES,DateUtils.format(entity.getExpirationDate()));
+      addHeader(HeaderConstants.HEADER_EXPIRES,DateUtils.format(entity.getExpirationDate()),headers);
     }
     if (entity.getModificationDate() != null) {
-      headers.add(HeaderConstants.HEADER_LAST_MODIFIED,HeaderWriter.write(entity.getModificationDate(),false));
+      addHeader(HeaderConstants.HEADER_LAST_MODIFIED,HeaderWriter.write(entity.getModificationDate(),false),headers);
     }
     if (entity.getTag() != null) {
-      headers.add(HeaderConstants.HEADER_ETAG,entity.getTag().format());
+      addHeader(HeaderConstants.HEADER_ETAG,entity.getTag().format(),headers);
     }
     if (entity.getDisposition() != null && !Disposition.TYPE_NONE.equals(entity.getDisposition().getType())) {
-      headers.add(HeaderConstants.HEADER_CONTENT_DISPOSITION,DispositionWriter.write(entity.getDisposition()));
+      addHeader(HeaderConstants.HEADER_CONTENT_DISPOSITION,DispositionWriter.write(entity.getDisposition()),headers);
     }
   }
 }
