@@ -1,0 +1,18 @@
+{
+  if (Disposition.TYPE_NONE.equals(disposition.getType()) || disposition.getType() == null) {
+    return this;
+  }
+  append(disposition.getType());
+  for (  Parameter parameter : disposition.getParameters()) {
+    append("; ");
+    append(parameter.getName());
+    append("=");
+    if (HeaderUtils.isToken(parameter.getValue())) {
+      append(parameter.getValue());
+    }
+ else {
+      appendQuotedString(parameter.getValue());
+    }
+  }
+  return this;
+}
