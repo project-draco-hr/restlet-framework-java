@@ -1,35 +1,18 @@
 {
   if ((dimensions != null) && !dimensions.isEmpty()) {
-    boolean first=true;
     if (dimensions.contains(Dimension.CLIENT_ADDRESS) || dimensions.contains(Dimension.TIME) || dimensions.contains(Dimension.UNSPECIFIED)) {
       append("*");
     }
  else {
-      for (      Dimension dim : dimensions) {
+      boolean first=true;
+      for (      Dimension dimension : dimensions) {
         if (first) {
           first=false;
         }
  else {
           append(", ");
         }
-        if (dim == Dimension.CHARACTER_SET) {
-          append(HeaderConstants.HEADER_ACCEPT_CHARSET);
-        }
- else         if (dim == Dimension.CLIENT_AGENT) {
-          append(HeaderConstants.HEADER_USER_AGENT);
-        }
- else         if (dim == Dimension.ENCODING) {
-          append(HeaderConstants.HEADER_ACCEPT_ENCODING);
-        }
- else         if (dim == Dimension.LANGUAGE) {
-          append(HeaderConstants.HEADER_ACCEPT_LANGUAGE);
-        }
- else         if (dim == Dimension.MEDIA_TYPE) {
-          append(HeaderConstants.HEADER_ACCEPT);
-        }
- else         if (dim == Dimension.AUTHORIZATION) {
-          append(HeaderConstants.HEADER_AUTHORIZATION);
-        }
+        append(dimension);
       }
     }
   }

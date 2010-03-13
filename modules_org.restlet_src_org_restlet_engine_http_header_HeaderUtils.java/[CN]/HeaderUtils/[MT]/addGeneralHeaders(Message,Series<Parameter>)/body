@@ -1,14 +1,8 @@
 {
-  if (!message.getCacheDirectives().isEmpty()) {
-    addHeader(HeaderConstants.HEADER_CACHE_CONTROL,CacheDirectiveWriter.write(message.getCacheDirectives()),headers);
-  }
+  addHeader(HeaderConstants.HEADER_CACHE_CONTROL,CacheDirectiveWriter.write(message.getCacheDirectives()),headers);
   if (message.getDate() == null) {
     message.setDate(new Date());
   }
   addHeader(HeaderConstants.HEADER_DATE,DateUtils.format(message.getDate()),headers);
-  if (!message.getWarnings().isEmpty()) {
-    for (    Warning warning : message.getWarnings()) {
-      addHeader(HeaderConstants.HEADER_WARNING,WarningWriter.write(warning),headers);
-    }
-  }
+  addHeader(HeaderConstants.HEADER_WARNING,WarningWriter.write(message.getWarnings()),headers);
 }

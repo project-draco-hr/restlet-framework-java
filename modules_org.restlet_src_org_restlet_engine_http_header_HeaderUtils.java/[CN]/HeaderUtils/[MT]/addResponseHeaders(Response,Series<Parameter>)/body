@@ -7,18 +7,7 @@
     addHeader(HeaderConstants.HEADER_AGE,Integer.toString(response.getAge()),headers);
   }
   if (response.getStatus().equals(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED) || Method.OPTIONS.equals(response.getRequest().getMethod())) {
-    StringBuilder sb=new StringBuilder();
-    boolean first=true;
-    for (    Method method : response.getAllowedMethods()) {
-      if (first) {
-        first=false;
-      }
- else {
-        sb.append(", ");
-      }
-      sb.append(method.getName());
-    }
-    addHeader(HeaderConstants.HEADER_ALLOW,sb.toString(),headers);
+    addHeader(HeaderConstants.HEADER_ALLOW,MethodWriter.write(response.getAllowedMethods()),headers);
   }
   if (response.getLocationRef() != null) {
     addHeader(HeaderConstants.HEADER_LOCATION,response.getLocationRef().getTargetRef().toString(),headers);
@@ -38,7 +27,7 @@
     addHeader(HeaderConstants.HEADER_SERVER,Engine.VERSION_HEADER,headers);
   }
   if (!((response.getRequest().getClientInfo().getAgent() != null) && response.getRequest().getClientInfo().getAgent().contains("MSIE"))) {
-    addHeader(HeaderConstants.HEADER_VARY,DimensionWriter.writer(response.getDimensions()),headers);
+    addHeader(HeaderConstants.HEADER_VARY,DimensionWriter.write(response.getDimensions()),headers);
   }
   if (response.getChallengeRequests() != null) {
     for (    ChallengeRequest challengeRequest : response.getChallengeRequests()) {
