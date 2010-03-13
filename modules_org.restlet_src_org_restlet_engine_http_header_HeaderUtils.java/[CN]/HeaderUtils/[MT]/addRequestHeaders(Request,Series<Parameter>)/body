@@ -3,7 +3,7 @@
   ClientInfo client=request.getClientInfo();
   if (client.getAcceptedMediaTypes().size() > 0) {
     try {
-      headers.add(HeaderConstants.HEADER_ACCEPT,PreferenceWriter.format(client.getAcceptedMediaTypes()));
+      headers.add(HeaderConstants.HEADER_ACCEPT,PreferenceWriter.write(client.getAcceptedMediaTypes()));
     }
  catch (    IOException ioe) {
       Context.getCurrentLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
@@ -14,7 +14,7 @@
   }
   if (client.getAcceptedCharacterSets().size() > 0) {
     try {
-      headers.add(HeaderConstants.HEADER_ACCEPT_CHARSET,PreferenceWriter.format(client.getAcceptedCharacterSets()));
+      headers.add(HeaderConstants.HEADER_ACCEPT_CHARSET,PreferenceWriter.write(client.getAcceptedCharacterSets()));
     }
  catch (    IOException ioe) {
       Context.getCurrentLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
@@ -22,7 +22,7 @@
   }
   if (client.getAcceptedEncodings().size() > 0) {
     try {
-      headers.add(HeaderConstants.HEADER_ACCEPT_ENCODING,PreferenceWriter.format(client.getAcceptedEncodings()));
+      headers.add(HeaderConstants.HEADER_ACCEPT_ENCODING,PreferenceWriter.write(client.getAcceptedEncodings()));
     }
  catch (    IOException ioe) {
       Context.getCurrentLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
@@ -30,7 +30,7 @@
   }
   if (client.getAcceptedLanguages().size() > 0) {
     try {
-      headers.add(HeaderConstants.HEADER_ACCEPT_LANGUAGE,PreferenceWriter.format(client.getAcceptedLanguages()));
+      headers.add(HeaderConstants.HEADER_ACCEPT_LANGUAGE,PreferenceWriter.write(client.getAcceptedLanguages()));
     }
  catch (    IOException ioe) {
       Context.getCurrentLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
@@ -93,7 +93,7 @@
     headers.add(HeaderConstants.HEADER_MAX_FORWARDS,Integer.toString(request.getMaxForwards()));
   }
   if (!request.getRanges().isEmpty()) {
-    headers.add(HeaderConstants.HEADER_RANGE,org.restlet.engine.http.header.RangeUtils.formatRanges(request.getRanges()));
+    headers.add(HeaderConstants.HEADER_RANGE,org.restlet.engine.http.header.RangeUtils.write(request.getRanges()));
   }
   if (request.getReferrerRef() != null) {
     headers.add(HeaderConstants.HEADER_REFERRER,request.getReferrerRef().toString());
@@ -106,14 +106,14 @@
   }
   if (client.getExpectations().size() > 0) {
     try {
-      headers.add(HeaderConstants.HEADER_ACCEPT_ENCODING,PreferenceWriter.format(client.getAcceptedEncodings()));
+      headers.add(HeaderConstants.HEADER_ACCEPT_ENCODING,PreferenceWriter.write(client.getAcceptedEncodings()));
     }
  catch (    IOException ioe) {
       Context.getCurrentLogger().log(Level.WARNING,"Unable to format the HTTP Accept header",ioe);
     }
   }
   if (request.getCookies().size() > 0) {
-    String cookies=CookieWriter.format(request.getCookies());
+    String cookies=CookieWriter.write(request.getCookies());
     headers.add(HeaderConstants.HEADER_COOKIE,cookies);
   }
   Series<Parameter> additionalHeaders=(Series<Parameter>)request.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);

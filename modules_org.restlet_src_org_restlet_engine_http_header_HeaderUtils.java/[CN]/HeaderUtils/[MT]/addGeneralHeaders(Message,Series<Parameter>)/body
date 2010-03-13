@@ -1,6 +1,6 @@
 {
   if (!message.getCacheDirectives().isEmpty()) {
-    headers.add(HeaderConstants.HEADER_CACHE_CONTROL,CacheDirectiveWriter.format(message.getCacheDirectives()));
+    headers.add(HeaderConstants.HEADER_CACHE_CONTROL,CacheDirectiveWriter.write(message.getCacheDirectives()));
   }
   if (message.getDate() == null) {
     message.setDate(new Date());
@@ -8,7 +8,7 @@
   headers.add(HeaderConstants.HEADER_DATE,DateUtils.format(message.getDate()));
   if (!message.getWarnings().isEmpty()) {
     for (    Warning warning : message.getWarnings()) {
-      headers.add(HeaderConstants.HEADER_WARNING,WarningWriter.format(warning));
+      headers.add(HeaderConstants.HEADER_WARNING,WarningWriter.write(warning));
     }
   }
 }
