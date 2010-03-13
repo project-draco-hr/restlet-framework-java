@@ -1,0 +1,45 @@
+{
+  if (challenge.getRealm() != null) {
+    cw.appendQuotedChallengeParameter("realm",challenge.getRealm());
+  }
+  if (!challenge.getDomainRefs().isEmpty()) {
+    cw.append(", domain=\"");
+    for (int i=0; i < challenge.getDomainRefs().size(); i++) {
+      if (i > 0) {
+        cw.append(' ');
+      }
+      cw.append(challenge.getDomainRefs().get(i).toString());
+    }
+    cw.append('"');
+  }
+  if (challenge.getServerNonce() != null) {
+    cw.appendQuotedChallengeParameter("nonce",challenge.getServerNonce());
+  }
+  if (challenge.getOpaque() != null) {
+    cw.appendQuotedChallengeParameter("opaque",challenge.getOpaque());
+  }
+  if (challenge.isStale()) {
+    cw.appendChallengeParameter("stale","true");
+  }
+  if (challenge.getDigestAlgorithm() != null) {
+    cw.appendChallengeParameter("algorithm",challenge.getDigestAlgorithm());
+  }
+  if (!challenge.getQualityOptions().isEmpty()) {
+    cw.append(", qop=\"");
+    for (int i=0; i < challenge.getQualityOptions().size(); i++) {
+      if (i > 0) {
+        cw.append(',');
+      }
+      cw.appendToken(challenge.getQualityOptions().get(i).toString());
+    }
+    cw.append('"');
+  }
+  for (  Parameter param : challenge.getParameters()) {
+    if (HeaderUtils.isToken(param.getValue())) {
+      cw.appendChallengeParameter(param);
+    }
+ else {
+      cw.appendQuotedChallengeParameter(param);
+    }
+  }
+}

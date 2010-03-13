@@ -1,0 +1,40 @@
+{
+  if (challenge.getIdentifier() != null) {
+    cw.appendQuotedChallengeParameter("username",challenge.getIdentifier());
+  }
+  if (challenge.getRealm() != null) {
+    cw.appendQuotedChallengeParameter("realm",challenge.getRealm());
+  }
+  if (challenge.getServerNonce() != null) {
+    cw.appendQuotedChallengeParameter("nonce",challenge.getServerNonce());
+  }
+  if (challenge.getDigestRef() != null) {
+    cw.appendQuotedChallengeParameter("uri",challenge.getDigestRef().toString());
+  }
+  if (challenge.getSecret() != null) {
+    cw.appendQuotedChallengeParameter("response",new String(challenge.getSecret()));
+  }
+  if ((challenge.getDigestAlgorithm() != null) && !Digest.ALGORITHM_MD5.equals(challenge.getDigestAlgorithm())) {
+    cw.appendChallengeParameter("algorithm",challenge.getDigestAlgorithm());
+  }
+  if (challenge.getClientNonce() != null) {
+    cw.appendQuotedChallengeParameter("cnonce",challenge.getClientNonce());
+  }
+  if (challenge.getOpaque() != null) {
+    cw.appendQuotedChallengeParameter("opaque",challenge.getOpaque());
+  }
+  if (challenge.getQuality() != null) {
+    cw.appendChallengeParameter("qop",challenge.getQuality());
+  }
+  if ((challenge.getQuality() != null) && (challenge.getServerNounceCount() > 0)) {
+    cw.appendChallengeParameter("nc",challenge.getServerNounceCountAsHex());
+  }
+  for (  Parameter param : challenge.getParameters()) {
+    if (HeaderUtils.isToken(param.getValue())) {
+      cw.appendChallengeParameter(param);
+    }
+ else {
+      cw.appendQuotedChallengeParameter(param);
+    }
+  }
+}
