@@ -1,20 +1,20 @@
 {
   addGeneralHeaders(request,headers);
-  ClientInfo client=request.getClientInfo();
-  if (client.getAcceptedMediaTypes().size() > 0) {
-    addHeader(HeaderConstants.HEADER_ACCEPT,PreferenceWriter.write(client.getAcceptedMediaTypes()),headers);
+  ClientInfo clientInfo=request.getClientInfo();
+  if (clientInfo.getAcceptedMediaTypes().size() > 0) {
+    addHeader(HeaderConstants.HEADER_ACCEPT,PreferenceWriter.write(clientInfo.getAcceptedMediaTypes()),headers);
   }
  else {
     addHeader(HeaderConstants.HEADER_ACCEPT,MediaType.ALL.getName(),headers);
   }
-  if (client.getAcceptedCharacterSets().size() > 0) {
-    addHeader(HeaderConstants.HEADER_ACCEPT_CHARSET,PreferenceWriter.write(client.getAcceptedCharacterSets()),headers);
+  if (clientInfo.getAcceptedCharacterSets().size() > 0) {
+    addHeader(HeaderConstants.HEADER_ACCEPT_CHARSET,PreferenceWriter.write(clientInfo.getAcceptedCharacterSets()),headers);
   }
-  if (client.getAcceptedEncodings().size() > 0) {
-    addHeader(HeaderConstants.HEADER_ACCEPT_ENCODING,PreferenceWriter.write(client.getAcceptedEncodings()),headers);
+  if (clientInfo.getAcceptedEncodings().size() > 0) {
+    addHeader(HeaderConstants.HEADER_ACCEPT_ENCODING,PreferenceWriter.write(clientInfo.getAcceptedEncodings()),headers);
   }
-  if (client.getAcceptedLanguages().size() > 0) {
-    addHeader(HeaderConstants.HEADER_ACCEPT_LANGUAGE,PreferenceWriter.write(client.getAcceptedLanguages()),headers);
+  if (clientInfo.getAcceptedLanguages().size() > 0) {
+    addHeader(HeaderConstants.HEADER_ACCEPT_LANGUAGE,PreferenceWriter.write(clientInfo.getAcceptedLanguages()),headers);
   }
   if (request.getClientInfo().getFrom() != null) {
     addHeader(HeaderConstants.HEADER_FROM,request.getClientInfo().getFrom(),headers);
@@ -28,52 +28,29 @@
     }
     addHeader(HeaderConstants.HEADER_HOST,host,headers);
   }
-  Conditions condition=request.getConditions();
-  if (!condition.getMatch().isEmpty()) {
-    StringBuilder value=new StringBuilder();
-    for (int i=0; i < condition.getMatch().size(); i++) {
-      if (i > 0) {
-        value.append(", ");
-      }
-      value.append(condition.getMatch().get(i).format());
-    }
-    addHeader(HeaderConstants.HEADER_IF_MATCH,value.toString(),headers);
+  Conditions conditions=request.getConditions();
+  addHeader(HeaderConstants.HEADER_IF_MATCH,TagWriter.write(conditions.getMatch()),headers);
+  addHeader(HeaderConstants.HEADER_IF_NONE_MATCH,TagWriter.write(conditions.getNoneMatch()),headers);
+  if (conditions.getModifiedSince() != null) {
+    addHeader(HeaderConstants.HEADER_IF_MODIFIED_SINCE,DateWriter.write(conditions.getModifiedSince()),headers);
   }
-  if (condition.getModifiedSince() != null) {
-    String imsDate=DateUtils.format(condition.getModifiedSince());
-    addHeader(HeaderConstants.HEADER_IF_MODIFIED_SINCE,imsDate,headers);
-  }
-  if (!condition.getNoneMatch().isEmpty()) {
-    StringBuilder value=new StringBuilder();
-    for (int i=0; i < condition.getNoneMatch().size(); i++) {
-      if (i > 0) {
-        value.append(", ");
-      }
-      value.append(condition.getNoneMatch().get(i).format());
-    }
-    addHeader(HeaderConstants.HEADER_IF_NONE_MATCH,value.toString(),headers);
-  }
-  if (condition.getRangeTag() != null && condition.getRangeDate() != null) {
+  if (conditions.getRangeTag() != null && conditions.getRangeDate() != null) {
     Context.getCurrentLogger().log(Level.WARNING,"Unable to format the HTTP If-Range header due to the presence of both entity tag and modification date.");
   }
- else {
-    if (condition.getRangeTag() != null) {
-      addHeader(HeaderConstants.HEADER_IF_RANGE,condition.getRangeTag().format(),headers);
-    }
- else     if (condition.getRangeDate() != null) {
-      String rDate=DateUtils.format(condition.getRangeDate(),DateUtils.FORMAT_RFC_1123.get(0));
-      addHeader(HeaderConstants.HEADER_IF_RANGE,rDate,headers);
-    }
+ else   if (conditions.getRangeTag() != null) {
+    addHeader(HeaderConstants.HEADER_IF_RANGE,TagWriter.write(conditions.getRangeTag()),headers);
   }
-  if (condition.getUnmodifiedSince() != null) {
-    String iusDate=DateUtils.format(condition.getUnmodifiedSince(),DateUtils.FORMAT_RFC_1123.get(0));
-    addHeader(HeaderConstants.HEADER_IF_UNMODIFIED_SINCE,iusDate,headers);
+ else   if (conditions.getRangeDate() != null) {
+    addHeader(HeaderConstants.HEADER_IF_RANGE,DateWriter.write(conditions.getRangeDate()),headers);
+  }
+  if (conditions.getUnmodifiedSince() != null) {
+    addHeader(HeaderConstants.HEADER_IF_UNMODIFIED_SINCE,DateWriter.write(conditions.getUnmodifiedSince()),headers);
   }
   if (request.getMaxForwards() > -1) {
     addHeader(HeaderConstants.HEADER_MAX_FORWARDS,Integer.toString(request.getMaxForwards()),headers);
   }
   if (!request.getRanges().isEmpty()) {
-    addHeader(HeaderConstants.HEADER_RANGE,org.restlet.engine.http.header.RangeWriter.write(request.getRanges()),headers);
+    addHeader(HeaderConstants.HEADER_RANGE,RangeWriter.write(request.getRanges()),headers);
   }
   if (request.getReferrerRef() != null) {
     addHeader(HeaderConstants.HEADER_REFERRER,request.getReferrerRef().toString(),headers);
@@ -84,8 +61,8 @@
  else {
     addHeader(HeaderConstants.HEADER_USER_AGENT,Engine.VERSION_HEADER,headers);
   }
-  if (client.getExpectations().size() > 0) {
-    addHeader(HeaderConstants.HEADER_ACCEPT_ENCODING,PreferenceWriter.write(client.getAcceptedEncodings()),headers);
+  if (clientInfo.getExpectations().size() > 0) {
+    addHeader(HeaderConstants.HEADER_ACCEPT_ENCODING,PreferenceWriter.write(clientInfo.getAcceptedEncodings()),headers);
   }
   if (request.getCookies().size() > 0) {
     addHeader(HeaderConstants.HEADER_COOKIE,CookieWriter.write(request.getCookies()),headers);

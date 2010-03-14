@@ -3,43 +3,10 @@
     addHeader(HeaderConstants.HEADER_CONTENT_LENGTH,"0",headers);
   }
  else {
-    if (!entity.getEncodings().isEmpty()) {
-      if (entity.getEncodings().size() == 1) {
-        addHeader(HeaderConstants.HEADER_CONTENT_ENCODING,entity.getEncodings().get(0).getName(),headers);
-      }
- else {
-        StringBuilder value=new StringBuilder();
-        for (        Encoding encoding : entity.getEncodings()) {
-          if (!encoding.equals(Encoding.IDENTITY)) {
-            if (value.length() > 0) {
-              value.append(", ");
-            }
-            value.append(encoding.getName());
-          }
-        }
-        if (value.length() > 0) {
-          addHeader(HeaderConstants.HEADER_CONTENT_ENCODING,value.toString(),headers);
-        }
-      }
-    }
-    if (!entity.getLanguages().isEmpty()) {
-      if (entity.getLanguages().size() == 1) {
-        addHeader(HeaderConstants.HEADER_CONTENT_LANGUAGE,entity.getLanguages().get(0).toString(),headers);
-      }
- else {
-        StringBuilder value=new StringBuilder();
-        for (        Language language : entity.getLanguages()) {
-          if (value.length() > 0) {
-            value.append(", ");
-          }
-          value.append(language.getName());
-        }
-        addHeader(HeaderConstants.HEADER_CONTENT_LANGUAGE,value.toString(),headers);
-      }
-    }
-    long size=entity.getAvailableSize();
-    if (size != Representation.UNKNOWN_SIZE) {
-      addHeader(HeaderConstants.HEADER_CONTENT_LENGTH,Long.toString(size),headers);
+    addHeader(HeaderConstants.HEADER_CONTENT_ENCODING,EncodingWriter.write(entity.getEncodings()),headers);
+    addHeader(HeaderConstants.HEADER_CONTENT_LANGUAGE,LanguageWriter.write(entity.getLanguages()),headers);
+    if (entity.getAvailableSize() != Representation.UNKNOWN_SIZE) {
+      addHeader(HeaderConstants.HEADER_CONTENT_LENGTH,Long.toString(entity.getAvailableSize()),headers);
     }
     if (entity.getLocationRef() != null) {
       addHeader(HeaderConstants.HEADER_CONTENT_LOCATION,entity.getLocationRef().getTargetRef().toString(),headers);
@@ -48,12 +15,7 @@
       addHeader(HeaderConstants.HEADER_CONTENT_MD5,new String(org.restlet.engine.util.Base64.encode(entity.getDigest().getValue(),false)),headers);
     }
     if (entity.getRange() != null) {
-      try {
-        addHeader(HeaderConstants.HEADER_CONTENT_RANGE,RangeWriter.write(entity.getRange(),entity.getSize()),headers);
-      }
- catch (      Exception e) {
-        Context.getCurrentLogger().log(Level.WARNING,"Unable to format the HTTP Content-Range header",e);
-      }
+      addHeader(HeaderConstants.HEADER_CONTENT_RANGE,RangeWriter.write(entity.getRange(),entity.getSize()),headers);
     }
     if (entity.getMediaType() != null) {
       String contentType=entity.getMediaType().toString();
@@ -63,13 +25,13 @@
       addHeader(HeaderConstants.HEADER_CONTENT_TYPE,contentType,headers);
     }
     if (entity.getExpirationDate() != null) {
-      addHeader(HeaderConstants.HEADER_EXPIRES,DateUtils.format(entity.getExpirationDate()),headers);
+      addHeader(HeaderConstants.HEADER_EXPIRES,DateWriter.write(entity.getExpirationDate()),headers);
     }
     if (entity.getModificationDate() != null) {
-      addHeader(HeaderConstants.HEADER_LAST_MODIFIED,HeaderWriter.write(entity.getModificationDate(),false),headers);
+      addHeader(HeaderConstants.HEADER_LAST_MODIFIED,DateWriter.write(entity.getModificationDate()),headers);
     }
     if (entity.getTag() != null) {
-      addHeader(HeaderConstants.HEADER_ETAG,entity.getTag().format(),headers);
+      addHeader(HeaderConstants.HEADER_ETAG,TagWriter.write(entity.getTag()),headers);
     }
     if (entity.getDisposition() != null && !Disposition.TYPE_NONE.equals(entity.getDisposition().getType())) {
       addHeader(HeaderConstants.HEADER_CONTENT_DISPOSITION,DispositionWriter.write(entity.getDisposition()),headers);

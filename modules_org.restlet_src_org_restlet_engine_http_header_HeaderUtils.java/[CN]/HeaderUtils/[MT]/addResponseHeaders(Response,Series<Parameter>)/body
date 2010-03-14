@@ -18,7 +18,7 @@
     }
   }
   if (response.getRetryAfter() != null) {
-    addHeader(HeaderConstants.HEADER_RETRY_AFTER,DateUtils.format(response.getRetryAfter()),headers);
+    addHeader(HeaderConstants.HEADER_RETRY_AFTER,DateWriter.write(response.getRetryAfter()),headers);
   }
   if ((response.getServerInfo() != null) && (response.getServerInfo().getAgent() != null)) {
     addHeader(HeaderConstants.HEADER_SERVER,response.getServerInfo().getAgent(),headers);
@@ -37,10 +37,7 @@
   if (response.getAuthenticationInfo() != null) {
     addHeader(HeaderConstants.HEADER_AUTHENTICATION_INFO,org.restlet.engine.security.AuthenticatorUtils.formatAuthenticationInfo(response.getAuthenticationInfo()),headers);
   }
-  List<CookieSetting> cookies=response.getCookieSettings();
-  for (int i=0; i < cookies.size(); i++) {
-    addHeader(HeaderConstants.HEADER_SET_COOKIE,CookieWriter.write(cookies.get(i)),headers);
-  }
+  addHeader(HeaderConstants.HEADER_SET_COOKIE,CookieSettingWriter.write(response.getCookieSettings()),headers);
   Series<Parameter> additionalHeaders=(Series<Parameter>)response.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
   addExtensionHeaders(headers,additionalHeaders);
 }
