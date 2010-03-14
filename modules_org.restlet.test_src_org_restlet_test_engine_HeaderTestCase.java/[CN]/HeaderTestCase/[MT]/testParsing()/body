@@ -17,7 +17,7 @@
   testValues(header2,values);
   header1="gzip;q=1.0, identity;q=0.5 , *;q=0";
   ClientInfo clientInfo=new ClientInfo();
-  PreferenceReader.readEncodings(header1,clientInfo);
+  PreferenceReader.addEncodings(header1,clientInfo);
   assertEquals(clientInfo.getAcceptedEncodings().get(0).getMetadata(),Encoding.GZIP);
   assertEquals(clientInfo.getAcceptedEncodings().get(0).getQuality(),1.0F);
   assertEquals(clientInfo.getAcceptedEncodings().get(1).getMetadata(),Encoding.IDENTITY);
@@ -26,7 +26,7 @@
   assertEquals(clientInfo.getAcceptedEncodings().get(2).getQuality(),0F);
   header1="text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2";
   clientInfo=new ClientInfo();
-  PreferenceReader.readMediaTypes(header1,clientInfo);
+  PreferenceReader.addMediaTypes(header1,clientInfo);
   assertEquals(clientInfo.getAcceptedMediaTypes().get(0).getMetadata(),MediaType.TEXT_HTML);
   assertEquals(clientInfo.getAcceptedMediaTypes().get(0).getQuality(),1.0F);
   assertEquals(clientInfo.getAcceptedMediaTypes().get(1).getMetadata(),MediaType.IMAGE_GIF);
@@ -39,7 +39,7 @@
   assertEquals(clientInfo.getAcceptedMediaTypes().get(4).getQuality(),0.2F);
   header1="text/html, application/vnd.wap.xhtml+xml, " + "application/xhtml+xml; profile=\"http://www.wapforum.org/xhtml\", " + "image/gif, image/jpeg, image/pjpeg, audio/amr, */*";
   clientInfo=new ClientInfo();
-  PreferenceReader.readMediaTypes(header1,clientInfo);
+  PreferenceReader.addMediaTypes(header1,clientInfo);
   assertEquals(clientInfo.getAcceptedMediaTypes().get(0).getMetadata(),MediaType.TEXT_HTML);
   assertEquals(clientInfo.getAcceptedMediaTypes().get(0).getQuality(),1.0F);
 }

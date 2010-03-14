@@ -1,0 +1,14 @@
+{
+  if (acceptCharsetHeader != null) {
+    if (acceptCharsetHeader.length() == 0) {
+      clientInfo.getAcceptedCharacterSets().add(new Preference<CharacterSet>(CharacterSet.ISO_8859_1));
+    }
+ else {
+      PreferenceReader pr=new PreferenceReader(PreferenceReader.TYPE_CHARACTER_SET,acceptCharsetHeader);
+      pr.addValues(clientInfo.getAcceptedCharacterSets());
+    }
+  }
+ else {
+    clientInfo.getAcceptedCharacterSets().add(new Preference(CharacterSet.ALL));
+  }
+}

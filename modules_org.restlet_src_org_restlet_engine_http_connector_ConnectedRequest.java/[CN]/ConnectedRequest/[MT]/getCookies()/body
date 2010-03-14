@@ -2,8 +2,9 @@
   Series<Cookie> result=super.getCookies();
   if (!this.cookiesAdded) {
     if (getHeaders() != null) {
-      for (      String cookieValue : getHeaders().getValuesArray(HeaderConstants.HEADER_COOKIE)) {
-        new CookieReader(cookieValue).addValues(result);
+      String cookieValues=getHeaders().getValues(HeaderConstants.HEADER_COOKIE);
+      if (cookieValues != null) {
+        new CookieReader(cookieValues).addValues(result);
       }
     }
     this.cookiesAdded=true;

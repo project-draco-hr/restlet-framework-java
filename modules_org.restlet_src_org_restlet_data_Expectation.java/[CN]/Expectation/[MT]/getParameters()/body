@@ -1,0 +1,12 @@
+{
+  List<Parameter> r=this.parameters;
+  if (r == null) {
+synchronized (this) {
+      r=this.parameters;
+      if (r == null) {
+        this.parameters=r=new CopyOnWriteArrayList<Parameter>();
+      }
+    }
+  }
+  return r;
+}

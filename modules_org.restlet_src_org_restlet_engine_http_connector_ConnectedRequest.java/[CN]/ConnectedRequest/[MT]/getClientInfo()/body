@@ -2,36 +2,43 @@
   final ClientInfo result=super.getClientInfo();
   if (!this.clientAdded) {
     if (getHeaders() != null) {
-      final String acceptCharset=getHeaders().getValues(HeaderConstants.HEADER_ACCEPT_CHARSET);
-      final String acceptEncoding=getHeaders().getValues(HeaderConstants.HEADER_ACCEPT_ENCODING);
-      final String acceptLanguage=getHeaders().getValues(HeaderConstants.HEADER_ACCEPT_LANGUAGE);
-      final String acceptMediaType=getHeaders().getValues(HeaderConstants.HEADER_ACCEPT);
+      String acceptMediaType=getHeaders().getValues(HeaderConstants.HEADER_ACCEPT);
+      String acceptCharset=getHeaders().getValues(HeaderConstants.HEADER_ACCEPT_CHARSET);
+      String acceptEncoding=getHeaders().getValues(HeaderConstants.HEADER_ACCEPT_ENCODING);
+      String acceptLanguage=getHeaders().getValues(HeaderConstants.HEADER_ACCEPT_LANGUAGE);
+      String expect=getHeaders().getValues(HeaderConstants.HEADER_EXPECT);
       try {
-        PreferenceReader.readCharacterSets(acceptCharset,result);
+        PreferenceReader.addCharacterSets(acceptCharset,result);
       }
  catch (      Exception e) {
         this.context.getLogger().log(Level.INFO,e.getMessage());
       }
       try {
-        PreferenceReader.readEncodings(acceptEncoding,result);
+        PreferenceReader.addEncodings(acceptEncoding,result);
       }
  catch (      Exception e) {
         this.context.getLogger().log(Level.INFO,e.getMessage());
       }
       try {
-        PreferenceReader.readLanguages(acceptLanguage,result);
+        PreferenceReader.addLanguages(acceptLanguage,result);
       }
  catch (      Exception e) {
         this.context.getLogger().log(Level.INFO,e.getMessage());
       }
       try {
-        PreferenceReader.readMediaTypes(acceptMediaType,result);
+        PreferenceReader.addMediaTypes(acceptMediaType,result);
+      }
+ catch (      Exception e) {
+        this.context.getLogger().log(Level.INFO,e.getMessage());
+      }
+      try {
+        ExpectationReader.addValues(expect,result);
       }
  catch (      Exception e) {
         this.context.getLogger().log(Level.INFO,e.getMessage());
       }
       result.setAgent(getHeaders().getValues(HeaderConstants.HEADER_USER_AGENT));
-      result.setFrom(getHeaders().getValues(HeaderConstants.HEADER_FROM));
+      result.setFrom(getHeaders().getFirstValue(HeaderConstants.HEADER_FROM));
       result.setAddress(getConnection().getAddress());
       result.setPort(getConnection().getPort());
       if (userPrincipal != null) {

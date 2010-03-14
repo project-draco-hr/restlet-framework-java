@@ -1,36 +1,43 @@
 {
   final ClientInfo result=super.getClientInfo();
   if (!this.clientAdded) {
+    String acceptMediaType=getHttpCall().getRequestHeaders().getValues(HeaderConstants.HEADER_ACCEPT);
     String acceptCharset=getHttpCall().getRequestHeaders().getValues(HeaderConstants.HEADER_ACCEPT_CHARSET);
     String acceptEncoding=getHttpCall().getRequestHeaders().getValues(HeaderConstants.HEADER_ACCEPT_ENCODING);
     String acceptLanguage=getHttpCall().getRequestHeaders().getValues(HeaderConstants.HEADER_ACCEPT_LANGUAGE);
-    String acceptMediaType=getHttpCall().getRequestHeaders().getValues(HeaderConstants.HEADER_ACCEPT);
+    String expect=getHttpCall().getRequestHeaders().getValues(HeaderConstants.HEADER_EXPECT);
     try {
-      PreferenceReader.readCharacterSets(acceptCharset,result);
+      PreferenceReader.addCharacterSets(acceptCharset,result);
     }
  catch (    Exception e) {
       this.context.getLogger().log(Level.INFO,e.getMessage());
     }
     try {
-      PreferenceReader.readEncodings(acceptEncoding,result);
+      PreferenceReader.addEncodings(acceptEncoding,result);
     }
  catch (    Exception e) {
       this.context.getLogger().log(Level.INFO,e.getMessage());
     }
     try {
-      PreferenceReader.readLanguages(acceptLanguage,result);
+      PreferenceReader.addLanguages(acceptLanguage,result);
     }
  catch (    Exception e) {
       this.context.getLogger().log(Level.INFO,e.getMessage());
     }
     try {
-      PreferenceReader.readMediaTypes(acceptMediaType,result);
+      PreferenceReader.addMediaTypes(acceptMediaType,result);
+    }
+ catch (    Exception e) {
+      this.context.getLogger().log(Level.INFO,e.getMessage());
+    }
+    try {
+      ExpectationReader.addValues(expect,result);
     }
  catch (    Exception e) {
       this.context.getLogger().log(Level.INFO,e.getMessage());
     }
     result.setAgent(getHttpCall().getRequestHeaders().getValues(HeaderConstants.HEADER_USER_AGENT));
-    result.setFrom(getHttpCall().getRequestHeaders().getValues(HeaderConstants.HEADER_FROM));
+    result.setFrom(getHttpCall().getRequestHeaders().getFirstValue(HeaderConstants.HEADER_FROM));
     result.setAddress(getHttpCall().getClientAddress());
     result.setPort(getHttpCall().getClientPort());
     if (getHttpCall().getUserPrincipal() != null) {

@@ -1,6 +1,12 @@
 {
-  append(expectation.getName());
-  if ((expectation.getValue() != null) && (expectation.getValue().length() > 0)) {
+  if ((expectation.getName() != null) && (expectation.getName().length() > 0)) {
+    appendExtension(expectation);
+    if (!expectation.getParameters().isEmpty()) {
+      for (      Parameter param : expectation.getParameters()) {
+        appendParameterSeparator();
+        appendExtension(param);
+      }
+    }
   }
   return this;
 }

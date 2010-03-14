@@ -2,8 +2,8 @@
   List<CacheDirective> result=super.getCacheDirectives();
   if (!this.cacheDirectivesAdded) {
     if (getHeaders() != null) {
-      for (      String directive : getHeaders().getValuesArray(HeaderConstants.HEADER_CACHE_CONTROL)) {
-        new CacheDirectiveReader(directive).addValues(result);
+      for (      Parameter header : getHeaders().subList(HeaderConstants.HEADER_CACHE_CONTROL)) {
+        CacheDirectiveReader.addValues(header,result);
       }
     }
     this.cacheDirectivesAdded=true;

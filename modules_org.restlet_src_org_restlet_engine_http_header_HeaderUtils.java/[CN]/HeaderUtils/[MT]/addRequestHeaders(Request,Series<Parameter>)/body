@@ -1,21 +1,24 @@
 {
   ClientInfo clientInfo=request.getClientInfo();
-  if (clientInfo.getAcceptedMediaTypes().size() > 0) {
+  if (!clientInfo.getAcceptedMediaTypes().isEmpty()) {
     addHeader(HeaderConstants.HEADER_ACCEPT,PreferenceWriter.write(clientInfo.getAcceptedMediaTypes()),headers);
   }
  else {
     addHeader(HeaderConstants.HEADER_ACCEPT,MediaType.ALL.getName(),headers);
   }
-  if (clientInfo.getAcceptedCharacterSets().size() > 0) {
+  if (!clientInfo.getAcceptedCharacterSets().isEmpty()) {
     addHeader(HeaderConstants.HEADER_ACCEPT_CHARSET,PreferenceWriter.write(clientInfo.getAcceptedCharacterSets()),headers);
   }
-  if (clientInfo.getAcceptedEncodings().size() > 0) {
+  if (!clientInfo.getAcceptedEncodings().isEmpty()) {
     addHeader(HeaderConstants.HEADER_ACCEPT_ENCODING,PreferenceWriter.write(clientInfo.getAcceptedEncodings()),headers);
   }
-  if (clientInfo.getAcceptedLanguages().size() > 0) {
+  if (!clientInfo.getAcceptedLanguages().isEmpty()) {
     addHeader(HeaderConstants.HEADER_ACCEPT_LANGUAGE,PreferenceWriter.write(clientInfo.getAcceptedLanguages()),headers);
   }
-  if (request.getClientInfo().getFrom() != null) {
+  if (!clientInfo.getExpectations().isEmpty()) {
+    addHeader(HeaderConstants.HEADER_EXPECT,ExpectationWriter.write(clientInfo.getExpectations()),headers);
+  }
+  if (clientInfo.getFrom() != null) {
     addHeader(HeaderConstants.HEADER_FROM,request.getClientInfo().getFrom(),headers);
   }
   Reference hostRef=(request.getResourceRef().getBaseRef() != null) ? request.getResourceRef().getBaseRef() : request.getResourceRef();
