@@ -1,0 +1,18 @@
+{
+  RecipientInfo result=new RecipientInfo();
+  String protocolToken=readToken();
+  if (peek() == '/') {
+    read();
+    result.setProtocol(new Protocol(protocolToken,protocolToken,null,-1,readToken()));
+  }
+ else {
+    result.setProtocol(new Protocol("HTTP","HTTP",null,-1,protocolToken));
+  }
+  if (skipSpaces()) {
+    result.setName(readRawText());
+    if (skipSpaces()) {
+      result.setComment(readComment());
+    }
+  }
+  return result;
+}

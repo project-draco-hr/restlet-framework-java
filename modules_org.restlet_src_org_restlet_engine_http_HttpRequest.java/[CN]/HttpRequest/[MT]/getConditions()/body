@@ -1,12 +1,12 @@
 {
   final Conditions result=super.getConditions();
   if (!this.conditionAdded) {
-    final String ifMatchHeader=getHttpCall().getRequestHeaders().getValues(HeaderConstants.HEADER_IF_MATCH);
-    final String ifNoneMatchHeader=getHttpCall().getRequestHeaders().getValues(HeaderConstants.HEADER_IF_NONE_MATCH);
+    String ifMatchHeader=getHttpCall().getRequestHeaders().getValues(HeaderConstants.HEADER_IF_MATCH);
+    String ifNoneMatchHeader=getHttpCall().getRequestHeaders().getValues(HeaderConstants.HEADER_IF_NONE_MATCH);
     Date ifModifiedSince=null;
     Date ifUnmodifiedSince=null;
     String ifRangeHeader=getHttpCall().getRequestHeaders().getFirstValue(HeaderConstants.HEADER_IF_RANGE);
-    for (    final Parameter header : getHttpCall().getRequestHeaders()) {
+    for (    Parameter header : getHttpCall().getRequestHeaders()) {
       if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_IF_MODIFIED_SINCE)) {
         ifModifiedSince=HeaderReader.readDate(header.getValue(),false);
       }

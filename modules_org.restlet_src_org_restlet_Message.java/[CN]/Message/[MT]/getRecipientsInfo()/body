@@ -1,0 +1,12 @@
+{
+  List<RecipientInfo> r=this.recipientsInfo;
+  if (r == null) {
+synchronized (this) {
+      r=this.recipientsInfo;
+      if (r == null) {
+        this.recipientsInfo=r=new CopyOnWriteArrayList<RecipientInfo>();
+      }
+    }
+  }
+  return r;
+}

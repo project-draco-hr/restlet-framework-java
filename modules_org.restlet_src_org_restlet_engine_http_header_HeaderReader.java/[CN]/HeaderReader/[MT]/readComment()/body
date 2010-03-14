@@ -1,0 +1,32 @@
+{
+  String result=null;
+  int next=read();
+  if (next == '(') {
+    StringBuilder buffer=new StringBuilder();
+    while (result == null) {
+      next=read();
+      if (isCommentText(next)) {
+        buffer.append((char)next);
+      }
+ else       if (isQuoteCharacter(next)) {
+        buffer.append((char)read());
+      }
+ else       if (next == '(') {
+        buffer.append('(').append(readComment()).append(')');
+      }
+ else       if (next == ')') {
+        result=buffer.toString();
+      }
+ else       if (next == -1) {
+        throw new IOException("Unexpected end of comment. Please check your value");
+      }
+ else {
+        throw new IOException("Invalid character \"" + next + "\" detected in comment. Please check your value");
+      }
+    }
+  }
+ else {
+    throw new IOException("A comment must start with a parenthesis");
+  }
+  return result;
+}
