@@ -37,19 +37,13 @@
       }
     }
  else {
+      addGeneralHeaders(response,headers);
+      addResponseHeaders(response,headers);
       addEntityHeaders(response.getEntity(),headers);
       if ((response.getEntity() != null) && !response.getEntity().isAvailable()) {
         getLogger().warning("A response with an unavailable entity was returned. Ignoring the entity for resource \"" + request.getResourceRef() + "\".");
         response.setEntity(null);
       }
-    }
-    try {
-      addTransportHeaders(headers,response.getEntity());
-      addResponseHeaders(response,headers);
-    }
- catch (    Exception e) {
-      getLogger().log(Level.INFO,"Exception intercepted while adding the response headers",e);
-      response.setStatus(Status.SERVER_ERROR_INTERNAL);
     }
     writeMessage(response,headers);
     if (!response.getStatus().isInformational() && (request.getEntity() != null)) {
@@ -65,8 +59,8 @@
     }
   }
  catch (  Exception e) {
-    getLogger().log(Level.INFO,"An exception occured writing the response entity",e);
-    response.setStatus(Status.SERVER_ERROR_INTERNAL,"An exception occured writing the response entity");
+    getLogger().log(Level.INFO,"An exception occured writing the response",e);
+    response.setStatus(Status.SERVER_ERROR_INTERNAL,"An exception occured writing the response");
     response.setEntity(null);
     try {
       writeMessage(response,headers);

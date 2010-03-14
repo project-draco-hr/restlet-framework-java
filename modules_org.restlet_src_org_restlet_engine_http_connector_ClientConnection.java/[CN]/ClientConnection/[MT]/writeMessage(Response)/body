@@ -2,26 +2,20 @@
   Series<Parameter> headers=new Form();
   Request request=response.getRequest();
   try {
-    try {
-      addEntityHeaders(request.getEntity(),headers);
-      addTransportHeaders(headers,request.getEntity());
-      addRequestHeaders(request,headers);
-    }
- catch (    Exception e) {
-      getLogger().log(Level.INFO,"Exception intercepted while adding the response headers",e);
-      response.setStatus(Status.SERVER_ERROR_INTERNAL);
-    }
+    addGeneralHeaders(request,headers);
+    addRequestHeaders(request,headers);
+    addEntityHeaders(request.getEntity(),headers);
     writeMessage(response,headers);
   }
  catch (  Exception e) {
-    getLogger().log(Level.INFO,"An exception occured writing the request entity",e);
-    response.setStatus(Status.CONNECTOR_ERROR_COMMUNICATION,"An exception occured writing the request entity");
+    getLogger().log(Level.INFO,"An exception occured writing the request",e);
+    response.setStatus(Status.CONNECTOR_ERROR_COMMUNICATION,"An exception occured writing the request");
     response.setEntity(null);
     try {
       writeMessage(response,headers);
     }
- catch (    IOException ioe) {
-      getLogger().log(Level.WARNING,"Unable to send error response",ioe);
+ catch (    Exception ee) {
+      getLogger().log(Level.WARNING,"Unable to send error request",ee);
     }
   }
  finally {
