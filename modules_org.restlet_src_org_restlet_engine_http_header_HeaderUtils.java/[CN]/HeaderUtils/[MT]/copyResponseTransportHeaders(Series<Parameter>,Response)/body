@@ -1,80 +1,82 @@
 {
-  for (  Parameter header : headers) {
-    if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_LOCATION)) {
-      response.setLocationRef(header.getValue());
-    }
- else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_AGE)) {
-      try {
-        response.setAge(Integer.parseInt(header.getValue()));
+  if (headers != null) {
+    for (    Parameter header : headers) {
+      if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_LOCATION)) {
+        response.setLocationRef(header.getValue());
       }
- catch (      NumberFormatException nfe) {
-        Context.getCurrentLogger().log(Level.WARNING,"Error during Age header parsing. Header: " + header.getValue(),nfe);
-      }
-    }
- else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_DATE)) {
-      Date date=DateUtils.parse(header.getValue());
-      if (date == null) {
-        date=new Date();
-      }
-      response.setDate(date);
-    }
- else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_RETRY_AFTER)) {
-      Date retryAfter=DateUtils.parse(header.getValue());
-      if (retryAfter == null) {
+ else       if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_AGE)) {
         try {
-          int retryAfterSecs=Integer.parseInt(header.getValue());
-          java.util.Calendar calendar=java.util.Calendar.getInstance();
-          calendar.add(java.util.Calendar.SECOND,retryAfterSecs);
-          retryAfter=calendar.getTime();
+          response.setAge(Integer.parseInt(header.getValue()));
         }
  catch (        NumberFormatException nfe) {
-          Context.getCurrentLogger().log(Level.WARNING,"Error during Retry-After header parsing. Header: " + header.getValue(),nfe);
+          Context.getCurrentLogger().log(Level.WARNING,"Error during Age header parsing. Header: " + header.getValue(),nfe);
         }
       }
-      response.setRetryAfter(retryAfter);
-    }
- else     if ((header.getName().equalsIgnoreCase(HeaderConstants.HEADER_SET_COOKIE)) || (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_SET_COOKIE2))) {
-      try {
-        CookieSettingReader cr=new CookieSettingReader(header.getValue());
-        response.getCookieSettings().add(cr.readValue());
+ else       if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_DATE)) {
+        Date date=DateUtils.parse(header.getValue());
+        if (date == null) {
+          date=new Date();
+        }
+        response.setDate(date);
       }
- catch (      Exception e) {
-        Context.getCurrentLogger().log(Level.WARNING,"Error during cookie setting parsing. Header: " + header.getValue(),e);
+ else       if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_RETRY_AFTER)) {
+        Date retryAfter=DateUtils.parse(header.getValue());
+        if (retryAfter == null) {
+          try {
+            int retryAfterSecs=Integer.parseInt(header.getValue());
+            java.util.Calendar calendar=java.util.Calendar.getInstance();
+            calendar.add(java.util.Calendar.SECOND,retryAfterSecs);
+            retryAfter=calendar.getTime();
+          }
+ catch (          NumberFormatException nfe) {
+            Context.getCurrentLogger().log(Level.WARNING,"Error during Retry-After header parsing. Header: " + header.getValue(),nfe);
+          }
+        }
+        response.setRetryAfter(retryAfter);
       }
-    }
- else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_WWW_AUTHENTICATE)) {
-      ChallengeRequest request=org.restlet.engine.security.AuthenticatorUtils.parseRequest(response,header.getValue(),headers);
-      response.getChallengeRequests().add(request);
-    }
- else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_PROXY_AUTHENTICATE)) {
-      ChallengeRequest request=org.restlet.engine.security.AuthenticatorUtils.parseRequest(response,header.getValue(),headers);
-      response.getProxyChallengeRequests().add(request);
-    }
- else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_AUTHENTICATION_INFO)) {
-      AuthenticationInfo authenticationInfo=org.restlet.engine.security.AuthenticatorUtils.parseAuthenticationInfo(header.getValue());
-      response.setAuthenticationInfo(authenticationInfo);
-    }
- else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_SERVER)) {
-      response.getServerInfo().setAgent(header.getValue());
-    }
- else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_ALLOW)) {
-      MethodReader.addValues(header,response.getAllowedMethods());
-    }
- else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_VARY)) {
-      DimensionReader.addValues(header,response.getDimensions());
-    }
- else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_VIA)) {
-      RecipientInfoReader.addValues(header,response.getRecipientsInfo());
-    }
- else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_WARNING)) {
-      WarningReader.addValues(header,response.getWarnings());
-    }
- else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_CACHE_CONTROL)) {
-      CacheDirectiveReader.addValues(header,response.getCacheDirectives());
-    }
- else     if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_ACCEPT_RANGES)) {
-      TokenReader tr=new TokenReader(header.getValue());
-      response.getServerInfo().setAcceptingRanges(tr.readValues().contains("bytes"));
+ else       if ((header.getName().equalsIgnoreCase(HeaderConstants.HEADER_SET_COOKIE)) || (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_SET_COOKIE2))) {
+        try {
+          CookieSettingReader cr=new CookieSettingReader(header.getValue());
+          response.getCookieSettings().add(cr.readValue());
+        }
+ catch (        Exception e) {
+          Context.getCurrentLogger().log(Level.WARNING,"Error during cookie setting parsing. Header: " + header.getValue(),e);
+        }
+      }
+ else       if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_WWW_AUTHENTICATE)) {
+        ChallengeRequest request=org.restlet.engine.security.AuthenticatorUtils.parseRequest(response,header.getValue(),headers);
+        response.getChallengeRequests().add(request);
+      }
+ else       if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_PROXY_AUTHENTICATE)) {
+        ChallengeRequest request=org.restlet.engine.security.AuthenticatorUtils.parseRequest(response,header.getValue(),headers);
+        response.getProxyChallengeRequests().add(request);
+      }
+ else       if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_AUTHENTICATION_INFO)) {
+        AuthenticationInfo authenticationInfo=org.restlet.engine.security.AuthenticatorUtils.parseAuthenticationInfo(header.getValue());
+        response.setAuthenticationInfo(authenticationInfo);
+      }
+ else       if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_SERVER)) {
+        response.getServerInfo().setAgent(header.getValue());
+      }
+ else       if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_ALLOW)) {
+        MethodReader.addValues(header,response.getAllowedMethods());
+      }
+ else       if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_VARY)) {
+        DimensionReader.addValues(header,response.getDimensions());
+      }
+ else       if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_VIA)) {
+        RecipientInfoReader.addValues(header,response.getRecipientsInfo());
+      }
+ else       if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_WARNING)) {
+        WarningReader.addValues(header,response.getWarnings());
+      }
+ else       if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_CACHE_CONTROL)) {
+        CacheDirectiveReader.addValues(header,response.getCacheDirectives());
+      }
+ else       if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_ACCEPT_RANGES)) {
+        TokenReader tr=new TokenReader(header.getValue());
+        response.getServerInfo().setAcceptingRanges(tr.readValues().contains("bytes"));
+      }
     }
   }
 }
