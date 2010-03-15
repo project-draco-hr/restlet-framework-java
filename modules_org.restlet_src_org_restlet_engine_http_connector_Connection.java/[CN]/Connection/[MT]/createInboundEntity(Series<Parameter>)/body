@@ -47,7 +47,12 @@ synchronized (System.out) {
     setInboundBusy(false);
   }
   if (headers != null) {
-    result=HeaderUtils.copyResponseEntityHeaders(headers,result);
+    try {
+      result=HeaderUtils.copyResponseEntityHeaders(headers,result);
+    }
+ catch (    Throwable t) {
+      getLogger().log(Level.WARNING,"Error while parsing entity headers",t);
+    }
   }
   return result;
 }
