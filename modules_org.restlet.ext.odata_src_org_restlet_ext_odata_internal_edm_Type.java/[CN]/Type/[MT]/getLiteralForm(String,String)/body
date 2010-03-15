@@ -1,0 +1,30 @@
+{
+  if (value == null) {
+    return null;
+  }
+  String result=null;
+  try {
+    if (adoNetType.endsWith("Binary")) {
+      result="'" + value + "'";
+    }
+ else     if (adoNetType.endsWith("DateTime")) {
+      result="datetime'" + value + "'";
+    }
+ else     if (adoNetType.endsWith("DateTimeOffset")) {
+      result="datetimeoffset'" + value + "'";
+    }
+ else     if (adoNetType.endsWith("Time")) {
+      result="time'" + value + "'";
+    }
+ else     if (adoNetType.endsWith("Guid")) {
+      result="guid'" + value + "'";
+    }
+ else     if (adoNetType.endsWith("String")) {
+      result="'" + value + "'";
+    }
+  }
+ catch (  Exception e) {
+    Context.getCurrentLogger().warning("Cannot convert " + value + " from this EDM type "+ adoNetType);
+  }
+  return result;
+}

@@ -23,16 +23,13 @@
     ClientResource resource=createResource(getSubpath(entity,propertyName));
     try {
       Representation rep=resource.get();
-      DomRepresentation xmlRep=new DomRepresentation(rep);
-      Node node=xmlRep.getNode("//" + propertyName);
-      if (node != null) {
+      try {
+        String value=getSimpleValue(rep,propertyName);
         Property property=metadata.getProperty(entity,propertyName);
-        try {
-          ReflectUtils.setProperty(entity,property,node.getTextContent());
-        }
- catch (        Exception e) {
-          getLogger().log(Level.WARNING,"Can't set the property " + propertyName + " of "+ entity.getClass()+ " for the service"+ serviceRef,e);
-        }
+        ReflectUtils.setProperty(entity,property,value);
+      }
+ catch (      Exception e) {
+        getLogger().log(Level.WARNING,"Can't set the property " + propertyName + " of "+ entity.getClass()+ " for the service"+ serviceRef,e);
       }
     }
  catch (    ResourceException e) {

@@ -1,0 +1,17 @@
+{
+  String result=null;
+  if (representation == null) {
+    return result;
+  }
+  if (MediaType.APPLICATION_ALL_XML.isCompatible(representation.getMediaType()) || MediaType.TEXT_XML.isCompatible(representation.getMediaType())) {
+    DomRepresentation xmlRep=new DomRepresentation(representation);
+    Node node=xmlRep.getNode("//" + tagName);
+    if (node != null) {
+      result=node.getTextContent();
+    }
+  }
+ else {
+    result=representation.getText();
+  }
+  return result;
+}

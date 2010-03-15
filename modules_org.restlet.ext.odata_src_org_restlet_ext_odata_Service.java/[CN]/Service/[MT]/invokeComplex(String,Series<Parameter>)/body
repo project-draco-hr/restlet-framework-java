@@ -1,0 +1,32 @@
+{
+  Representation result=null;
+  Metadata metadata=(Metadata)getMetadata();
+  if (metadata != null && service != null) {
+    FunctionImport function=null;
+    for (    EntityContainer container : metadata.getContainers()) {
+      for (      FunctionImport f : container.getFunctionImports()) {
+        if (service.equals(f.getName())) {
+          function=f;
+          break;
+        }
+      }
+      if (function != null) {
+        break;
+      }
+    }
+    if (function != null) {
+      ClientResource resource=createResource(service);
+      resource.setMethod(function.getMethod());
+      if (parameters != null) {
+        for (        org.restlet.ext.odata.internal.edm.Parameter parameter : function.getParameters()) {
+          resource.getReference().addQueryParameter(parameter.getName(),Type.getLiteralForm(parameters.getFirstValue(parameter.getName()),parameter.getType()));
+        }
+      }
+      result=resource.handle();
+      if (resource.getStatus().isError()) {
+        throw new ResourceException(resource.getStatus());
+      }
+    }
+  }
+  return result;
+}
