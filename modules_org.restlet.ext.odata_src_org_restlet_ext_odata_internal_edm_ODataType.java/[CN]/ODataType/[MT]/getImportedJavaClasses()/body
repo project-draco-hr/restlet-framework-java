@@ -1,12 +1,7 @@
 {
   Set<String> result=new TreeSet<String>();
   for (  Property property : getProperties()) {
-    if (property.getType().getAdoNetType().endsWith("DateTime")) {
-      result.add(property.getType().getJavaClass().getName());
-    }
- else     if (property.getType().getAdoNetType().endsWith("DateTimeOffset")) {
-      result.add(property.getType().getJavaClass().getName());
-    }
+    result.addAll(property.getType().getImportedJavaClasses());
   }
   return result;
 }

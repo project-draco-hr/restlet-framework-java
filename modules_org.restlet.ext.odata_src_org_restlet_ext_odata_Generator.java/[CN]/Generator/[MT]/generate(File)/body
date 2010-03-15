@@ -7,7 +7,7 @@
   Representation serviceTmpl=new StringRepresentation(new ClientResource(rootTemplates + "/service.ftl").get().getText());
   for (  Schema schema : metadata.getSchemas()) {
     if ((schema.getEntityTypes() != null && !schema.getEntityTypes().isEmpty()) || (schema.getComplexTypes() != null && !schema.getComplexTypes().isEmpty())) {
-      String packageName=Type.getPackageName(schema);
+      String packageName=TypeUtils.getPackageName(schema);
       File packageDir=new File(outputDir,packageName.replace(".",System.getProperty("file.separator")));
       packageDir.mkdirs();
       for (      EntityType type : schema.getEntityTypes()) {
