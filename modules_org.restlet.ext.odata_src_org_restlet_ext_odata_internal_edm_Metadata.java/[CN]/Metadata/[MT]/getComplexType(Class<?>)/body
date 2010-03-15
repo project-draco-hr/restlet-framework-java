@@ -1,0 +1,18 @@
+{
+  ComplexType result=null;
+  String className=entityClass.getName();
+  int index=className.lastIndexOf(".");
+  if (index != -1) {
+    className=className.substring(index + 1);
+  }
+  for (Iterator<Schema> iec=getSchemas().iterator(); result == null && iec.hasNext(); ) {
+    Schema schema=iec.next();
+    for (Iterator<ComplexType> ies=schema.getComplexTypes().iterator(); result == null && ies.hasNext(); ) {
+      ComplexType type=ies.next();
+      if (type.getClassName().equals(className)) {
+        result=type;
+      }
+    }
+  }
+  return result;
+}

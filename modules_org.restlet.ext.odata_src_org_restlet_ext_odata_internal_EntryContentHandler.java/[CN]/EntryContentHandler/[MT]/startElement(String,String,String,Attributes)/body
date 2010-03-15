@@ -1,52 +1,75 @@
 {
-  if (parseContent) {
+  if (parseProperties) {
     if (Service.WCF_DATASERVICES_NAMESPACE.equals(uri)) {
       sb=new StringBuilder();
+      propertyPathDeep++;
+      propertyPath.add(localName);
       parseProperty=true;
       parsePropertyNull=Boolean.parseBoolean(attrs.getValue(Service.WCF_DATASERVICES_METADATA_NAMESPACE,"null"));
     }
+  }
+  if (parseContent) {
+    if (Service.WCF_DATASERVICES_NAMESPACE.equals(uri)) {
+      sb=new StringBuilder();
+      parseProperties=true;
+      propertyPathDeep=0;
+      propertyPath=new ArrayList<String>();
+    }
  else {
-      if (entityType.isBlob() && entityType.getBlobValueRefProperty() != null) {
-        String str=attrs.getValue("src");
-        if (str != null) {
-          try {
-            ReflectUtils.invokeSetter(entity,entityType.getBlobValueRefProperty().getName(),new Reference(str));
-          }
- catch (          Exception e) {
-            getLogger().warning("Cannot set " + entityType.getBlobValueRefProperty().getName() + " property on "+ entity+ " with value "+ str);
+      if (Service.WCF_DATASERVICES_METADATA_NAMESPACE.equals(uri) && "properties".equals(localName)) {
+        propertyPathDeep=0;
+        propertyPath=new ArrayList<String>();
+      }
+ else {
+        if (entityType.isBlob() && entityType.getBlobValueRefProperty() != null) {
+          String str=attrs.getValue("src");
+          if (str != null) {
+            try {
+              ReflectUtils.invokeSetter(entity,entityType.getBlobValueRefProperty().getName(),new Reference(str));
+            }
+ catch (            Exception e) {
+              getLogger().warning("Cannot set " + entityType.getBlobValueRefProperty().getName() + " property on "+ entity+ " with value "+ str);
+            }
           }
         }
       }
     }
   }
  else   if (parseEntry) {
-    eltPath.add(localName);
-    StringBuilder sb=new StringBuilder();
-    for (int i=0; i < eltPath.size(); i++) {
-      if (i > 0) {
-        sb.append("/");
-      }
-      sb.append(eltPath.get(i));
+    if (Service.WCF_DATASERVICES_METADATA_NAMESPACE.equals(uri) && "properties".equals(localName) && entityType.isBlob()) {
+      parseProperties=true;
+      propertyPathDeep=0;
+      propertyPath=new ArrayList<String>();
     }
-    String str=sb.toString();
-    for (    Mapping m : metadata.getMappings()) {
-      if (entityType != null && entityType.equals(m.getType()) && m.getNsUri() != null && m.getNsUri().equals(uri) && str.equals(m.getValueNodePath())) {
-        if (m.isAttributeValue()) {
-          String value=attrs.getValue(m.getValueAttributeName());
-          if (value != null) {
-            try {
-              ReflectUtils.invokeSetter(entity,m.getPropertyPath(),value);
-            }
- catch (            Exception e) {
-              getLogger().warning("Cannot set " + m.getPropertyPath() + " property on "+ entity+ " with value "+ value);
+ else {
+      eltPath.add(localName);
+      StringBuilder sb=new StringBuilder();
+      for (int i=0; i < eltPath.size(); i++) {
+        if (i > 0) {
+          sb.append("/");
+        }
+        sb.append(eltPath.get(i));
+      }
+      String str=sb.toString();
+      for (      Mapping m : metadata.getMappings()) {
+        if (entityType != null && entityType.equals(m.getType()) && m.getNsUri() != null && m.getNsUri().equals(uri) && str.equals(m.getValueNodePath())) {
+          if (m.isAttributeValue()) {
+            String value=attrs.getValue(m.getValueAttributeName());
+            if (value != null) {
+              try {
+                ReflectUtils.invokeSetter(entity,m.getPropertyPath(),value);
+              }
+ catch (              Exception e) {
+                getLogger().warning("Cannot set " + m.getPropertyPath() + " property on "+ entity+ " with value "+ value);
+              }
             }
           }
-        }
  else {
-          this.sb=new StringBuilder();
-          mapping=m;
+            this.sb=new StringBuilder();
+            mapping=m;
+          }
+          break;
         }
-        break;
       }
     }
   }

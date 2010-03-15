@@ -38,7 +38,7 @@
       entityType.setBaseType((EntityType)resolve(entityType.getBaseType(),registeredEntityTypes,schema));
     }
     for (    ComplexType complexType : schema.getComplexTypes()) {
-      complexType.setBaseType((EntityType)resolve(complexType.getBaseType(),registeredComplexTypes,schema));
+      complexType.setBaseType((ComplexType)resolve(complexType.getBaseType(),registeredComplexTypes,schema));
     }
   }
   for (  EntityContainer container : currentMetadata.getContainers()) {
@@ -61,6 +61,16 @@
     }
     for (    FunctionImport functionImport : container.getFunctionImports()) {
       functionImport.setEntitySet((EntitySet)resolve(functionImport.getEntitySet(),registeredEntitySets,container.getSchema()));
+    }
+  }
+  for (  Schema schema : currentMetadata.getSchemas()) {
+    for (    EntityType entityType : schema.getEntityTypes()) {
+      for (      ComplexProperty property : entityType.getComplexProperties()) {
+        ComplexType type=(ComplexType)resolve(property.getComplexType(),registeredComplexTypes,schema);
+        if (type != null) {
+          property.setComplexType(type);
+        }
+      }
     }
   }
 }

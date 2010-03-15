@@ -1,12 +1,23 @@
 {
   Property result=null;
   if (entity != null) {
-    EntityType type=getEntityType(entity.getClass());
-    if (type != null) {
-      for (      Property property : type.getProperties()) {
+    EntityType et=getEntityType(entity.getClass());
+    if (et != null) {
+      for (      Property property : et.getProperties()) {
         if (property.getName().equals(propertyName) || property.getNormalizedName().equals(propertyName)) {
           result=property;
           break;
+        }
+      }
+    }
+ else {
+      ComplexType ct=getComplexType(entity.getClass());
+      if (ct != null) {
+        for (        Property property : ct.getProperties()) {
+          if (property.getName().equals(propertyName) || property.getNormalizedName().equals(propertyName)) {
+            result=property;
+            break;
+          }
         }
       }
     }
