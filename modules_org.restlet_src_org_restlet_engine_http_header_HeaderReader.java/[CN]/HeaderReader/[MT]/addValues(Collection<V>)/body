@@ -2,11 +2,12 @@
   try {
     skipSpaces();
     V nextValue=readValue();
-    while (canAdd(nextValue,values)) {
-      values.add(nextValue);
-      if (skipValueSeparator()) {
-        nextValue=readValue();
+    while (nextValue != null) {
+      if (canAdd(nextValue,values)) {
+        values.add(nextValue);
       }
+      skipValueSeparator();
+      nextValue=readValue();
     }
   }
  catch (  IOException ioe) {
