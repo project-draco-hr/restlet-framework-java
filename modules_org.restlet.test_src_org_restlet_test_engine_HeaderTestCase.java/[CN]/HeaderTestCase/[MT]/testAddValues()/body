@@ -15,4 +15,20 @@
   list=new ArrayList<Encoding>();
   new EncodingReader("identity,").addValues(list);
   assertTrue(list.isEmpty());
+  list=new ArrayList<Encoding>();
+  new EncodingReader("").addValues(list);
+  assertTrue(list.isEmpty());
+  list=new ArrayList<Encoding>();
+  new EncodingReader(null).addValues(list);
+  assertTrue(list.isEmpty());
+  TokenReader tr=new TokenReader("bytes");
+  List<String> l=tr.readValues();
+  assertTrue(l.contains("bytes"));
+  tr=new TokenReader("bytes,");
+  l=tr.readValues();
+  assertTrue(l.contains("bytes"));
+  assertEquals(l.size(),1);
+  tr=new TokenReader("");
+  l=tr.readValues();
+  assertEquals(l.size(),1);
 }
