@@ -1,14 +1,14 @@
 {
   try {
     skipSpaces();
-    V nextValue=readValue();
-    while (nextValue != null) {
+    do {
+      V nextValue=readValue();
       if (canAdd(nextValue,values)) {
         values.add(nextValue);
       }
       skipValueSeparator();
-      nextValue=readValue();
     }
+ while (peek() != -1);
   }
  catch (  IOException ioe) {
     Context.getCurrentLogger().log(Level.INFO,"Unable to read a header",ioe);
