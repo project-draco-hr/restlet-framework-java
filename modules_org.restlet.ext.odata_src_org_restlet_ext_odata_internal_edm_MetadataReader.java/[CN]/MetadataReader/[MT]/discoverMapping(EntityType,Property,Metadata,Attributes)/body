@@ -1,11 +1,14 @@
 {
-  String atomContentKind=null;
+  String contentKind=null;
   String nsPrefix=null;
   String nsUri=null;
   String propertyPath=null;
   String valuePath=null;
   boolean keepInContent=true;
-  atomContentKind=attributes.getValue(Service.WCF_DATASERVICES_METADATA_NAMESPACE,"FC_ContentKind");
+  contentKind=attributes.getValue(Service.WCF_DATASERVICES_METADATA_NAMESPACE,"FC_ContentKind");
+  if (contentKind == null) {
+    contentKind="text";
+  }
   nsPrefix=attributes.getValue(Service.WCF_DATASERVICES_METADATA_NAMESPACE,"FC_NsPrefix");
   nsUri=attributes.getValue(Service.WCF_DATASERVICES_METADATA_NAMESPACE,"FC_NsUri");
   String str=attributes.getValue(Service.WCF_DATASERVICES_METADATA_NAMESPACE,"FC_KeepInContent");
@@ -20,8 +23,8 @@
   }
   valuePath=attributes.getValue(Service.WCF_DATASERVICES_METADATA_NAMESPACE,"FC_TargetPath");
   if (propertyPath != null && valuePath != null && !keepInContent) {
-    if ((atomContentKind != null && nsUri == null && nsPrefix == null) || (atomContentKind == null && nsUri != null && nsPrefix != null)) {
-      metadata.getMappings().add(new Mapping(type,nsPrefix,nsUri,propertyPath,valuePath));
+    if ((nsUri == null && nsPrefix == null) || (nsUri != null && nsPrefix != null)) {
+      metadata.getMappings().add(new Mapping(type,nsPrefix,nsUri,propertyPath,valuePath,contentKind));
     }
   }
 }
