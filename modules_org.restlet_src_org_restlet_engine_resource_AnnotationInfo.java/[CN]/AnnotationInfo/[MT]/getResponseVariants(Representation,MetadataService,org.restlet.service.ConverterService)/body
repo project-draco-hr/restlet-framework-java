@@ -8,7 +8,6 @@
       value=getValue().substring(colonIndex + 1);
     }
     if (value != null) {
-      String[] extensions=value.split("\\|");
       if (requestEntity != null) {
         List<Variant> requestVariants=getRequestVariants(metadataService);
         if ((requestVariants != null) && !requestVariants.isEmpty()) {
@@ -19,16 +18,15 @@
         }
       }
       if (compatibleRequestEntity) {
-        if (extensions != null) {
-          for (          String extension : extensions) {
-            List<MediaType> mediaTypes=metadataService.getAllMediaTypes(extension);
-            if (mediaTypes != null) {
-              if (result == null) {
-                result=new ArrayList<Variant>();
-              }
-              for (              MediaType mediaType : mediaTypes) {
-                result.add(new Variant(mediaType));
-              }
+        String[] extensions=value.split("\\|");
+        for (        String extension : extensions) {
+          List<MediaType> mediaTypes=metadataService.getAllMediaTypes(extension);
+          if (mediaTypes != null) {
+            if (result == null) {
+              result=new ArrayList<Variant>();
+            }
+            for (            MediaType mediaType : mediaTypes) {
+              result.add(new Variant(mediaType));
             }
           }
         }
