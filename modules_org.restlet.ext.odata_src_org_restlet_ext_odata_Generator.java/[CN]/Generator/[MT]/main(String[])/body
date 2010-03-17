@@ -8,7 +8,6 @@
     errorMessage="Wrong number of arguments.";
   }
   File outputDir=null;
-  Metadata metadata;
   if (errorMessage == null) {
     outputDir=new File(args[1]);
     if (outputDir.exists()) {
@@ -40,17 +39,17 @@
       dataServiceUri=args[0];
     }
     Service service=new Service(dataServiceUri);
-    if ((metadata=((Metadata)service.getMetadata())) == null) {
+    if (service.getMetadata() == null) {
       errorMessage="Cannot retrieve the metadata.";
     }
  else {
       System.out.println("step 4 - generate source code");
       Generator svcUtil=null;
       if (args.length == 3) {
-        svcUtil=new Generator(new Reference(dataServiceUri),metadata,args[2]);
+        svcUtil=new Generator(new Reference(dataServiceUri),args[2]);
       }
  else {
-        svcUtil=new Generator(new Reference(dataServiceUri),metadata);
+        svcUtil=new Generator(new Reference(dataServiceUri));
       }
       try {
         svcUtil.generate(outputDir);

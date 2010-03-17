@@ -1,4 +1,9 @@
 {
+  Service service=new Service(serviceRef);
+  Metadata metadata=(Metadata)service.getMetadata();
+  if (metadata == null) {
+    throw new Exception("Can't get the metadata for this service: " + serviceRef);
+  }
   Configuration fmc=new Configuration();
   fmc.setDefaultEncoding(CharacterSet.UTF_8.getName());
   String rootTemplates="clap://class/org/restlet/ext/odata/internal/templates";
@@ -62,7 +67,7 @@
       dataModel.put("schema",schema);
       dataModel.put("metadata",metadata);
       dataModel.put("className",className);
-      dataModel.put("dataServiceUri",this.dataServiceRef.getTargetRef());
+      dataModel.put("dataServiceUri",this.serviceRef.getTargetRef());
       dataModel.put("entityContainer",entityContainer);
       TemplateRepresentation templateRepresentation=new TemplateRepresentation(serviceTmpl,fmc,dataModel,MediaType.TEXT_PLAIN);
       templateRepresentation.setCharacterSet(CharacterSet.UTF_8);
