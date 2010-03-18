@@ -10,8 +10,6 @@
       getLogger().warning("Can't execute the query for the following reference: " + targetUri + " due to "+ e.getMessage());
       throw e;
     }
-    service.setLatestRequest(resource.getRequest());
-    service.setLatestResponse(resource.getResponse());
     if (resource.getStatus().isSuccess()) {
 switch (guessType(targetUri)) {
 case TYPE_ENTITY_SET:
@@ -53,6 +51,8 @@ default :
 break;
 }
 }
+service.setLatestRequest(resource.getRequest());
+service.setLatestResponse(resource.getResponse());
 setExecuted(true);
 }
 }
