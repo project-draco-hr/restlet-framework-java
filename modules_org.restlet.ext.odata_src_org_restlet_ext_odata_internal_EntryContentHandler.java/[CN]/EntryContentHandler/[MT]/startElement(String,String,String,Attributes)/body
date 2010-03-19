@@ -1,46 +1,83 @@
 {
-  if (parseProperties) {
-    if (Service.WCF_DATASERVICES_NAMESPACE.equals(uri)) {
-      sb=new StringBuilder();
-      propertyPathDeep++;
-      propertyPath.add(localName);
-      parseProperty=true;
-      parsePropertyNull=Boolean.parseBoolean(attrs.getValue(Service.WCF_DATASERVICES_METADATA_NAMESPACE,"null"));
-    }
-  }
-  if (parseContent) {
-    if (Service.WCF_DATASERVICES_NAMESPACE.equals(uri)) {
-      sb=new StringBuilder();
-      parseProperties=true;
-      propertyPathDeep=0;
-      propertyPath=new ArrayList<String>();
-    }
- else {
-      if (Service.WCF_DATASERVICES_METADATA_NAMESPACE.equals(uri) && "properties".equals(localName)) {
-        parseProperties=true;
-        propertyPathDeep=0;
-        propertyPath=new ArrayList<String>();
+  if (State.ASSOCIATION == getState()) {
+    if (uri.equalsIgnoreCase(Feed.ATOM_NAMESPACE)) {
+      if (localName.equals("feed")) {
+        Feed feed=new Feed();
+        String attr=attrs.getValue("xml:base");
+        if (attr != null) {
+          feed.setBaseReference(new Reference(attr));
+        }
+        this.extraFeedHandler.startFeed(feed);
       }
+ else       if (localName.equals("link")) {
+        Link link=new Link();
+        link.setHref(new Reference(attrs.getValue("","href")));
+        link.setRel(Relation.valueOf(attrs.getValue("","rel")));
+        String type=attrs.getValue("","type");
+        if (type != null && type.length() > 0) {
+          link.setType(new MediaType(type));
+        }
+        link.setHrefLang(new Language(attrs.getValue("","hreflang")));
+        link.setTitle(attrs.getValue("","title"));
+        String attr=attrs.getValue("","length");
+        link.setLength((attr == null) ? -1L : Long.parseLong(attr));
+        if (association.isToMany()) {
+          extraFeedHandler.startLink(link);
+        }
  else {
-        if (entityType.isBlob() && entityType.getBlobValueRefProperty() != null) {
-          String str=attrs.getValue("src");
-          if (str != null) {
-            try {
-              ReflectUtils.invokeSetter(entity,entityType.getBlobValueRefProperty().getName(),new Reference(str));
-            }
- catch (            Exception e) {
-              getLogger().warning("Cannot set " + entityType.getBlobValueRefProperty().getName() + " property on "+ entity+ " with value "+ str);
-            }
-          }
+          extraEntryHandler.startLink(link);
+        }
+      }
+ else       if (localName.equalsIgnoreCase("entry")) {
+        Entry entry=new Entry();
+        if (association.isToMany()) {
+          extraFeedHandler.startEntry(entry);
+        }
+ else {
+          extraEntryHandler.startEntry(entry);
+        }
+      }
+ else       if (localName.equalsIgnoreCase("content")) {
+        Content content=new Content();
+        MediaType type=getMediaType(attrs.getValue("","type"));
+        String srcAttr=attrs.getValue("","src");
+        if (srcAttr != null)         content.setExternalRef(new Reference(srcAttr));
+        content.setExternalType(type);
+        if (association.isToMany()) {
+          extraFeedHandler.startContent(content);
+        }
+ else {
+          extraEntryHandler.startContent(content);
         }
       }
     }
+    if (association.isToMany()) {
+      extraFeedHandler.startElement(uri,localName,qName,attrs);
+    }
+ else {
+      extraEntryHandler.startElement(uri,localName,qName,attrs);
+    }
   }
- else   if (parseEntry) {
-    if (Service.WCF_DATASERVICES_METADATA_NAMESPACE.equals(uri) && "properties".equals(localName) && entityType.isBlob()) {
-      parseProperties=true;
-      propertyPathDeep=0;
-      propertyPath=new ArrayList<String>();
+ else   if (Service.WCF_DATASERVICES_METADATA_NAMESPACE.equals(uri) && "properties".equals(localName)) {
+    pushState(State.PROPERTIES);
+    propertyPath=new ArrayList<String>();
+  }
+ else   if (State.PROPERTIES == getState()) {
+    pushState(State.PROPERTY);
+    if (Boolean.parseBoolean(attrs.getValue(Service.WCF_DATASERVICES_METADATA_NAMESPACE,"null"))) {
+      parsePropertyNull=true;
+    }
+ else {
+      sb=new StringBuilder();
+      propertyPath.add(localName);
+    }
+  }
+ else   if (State.PROPERTY == getState()) {
+    propertyPath.add(localName);
+  }
+ else   if (State.ENTRY == getState()) {
+    if (localName.equalsIgnoreCase("link") && association != null) {
+      pushState(State.ASSOCIATION);
     }
  else {
       eltPath.add(localName);

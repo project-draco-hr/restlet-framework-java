@@ -1,23 +1,5 @@
 {
-  if (parseAssociation) {
-    parseAssociation=false;
-    String propertyName=ReflectUtils.normalize(link.getTitle());
-    if (extraFeedHandler != null) {
-      try {
-        ReflectUtils.setProperty(entity,propertyName,association.isToMany(),extraFeedHandler.getEntities().iterator(),ReflectUtils.getSimpleClass(entity,propertyName));
-      }
- catch (      Exception e) {
-        getLogger().warning("Cannot set " + propertyName + " property on "+ entity+ " from link");
-      }
-    }
- else {
-      try {
-        ReflectUtils.invokeSetter(entity,propertyName,extraEntryHandler.getEntity());
-      }
- catch (      Exception e) {
-        getLogger().warning("Cannot set " + propertyName + " property on "+ entity+ " from link");
-      }
-    }
+  if (parseEntry) {
+    entryHandler.endLink(link);
   }
-  association=null;
 }

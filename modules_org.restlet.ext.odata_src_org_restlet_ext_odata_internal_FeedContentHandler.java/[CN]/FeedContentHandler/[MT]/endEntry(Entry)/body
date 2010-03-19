@@ -1,64 +1,11 @@
 {
   parseEntry=false;
-  for (  Mapping m : metadata.getMappings()) {
-    if (entityType != null && entityType.equals(m.getType()) && m.getNsUri() == null && m.getNsPrefix() == null) {
-      Person author=(entry.getAuthors().isEmpty()) ? null : entry.getAuthors().get(0);
-      Person contributor=(entry.getContributors().isEmpty()) ? null : entry.getContributors().get(0);
-      Object value=null;
-      if ("SyndicationAuthorEmail".equals(m.getValuePath())) {
-        value=(author != null) ? author.getEmail() : null;
-      }
- else       if ("SyndicationAuthorName".equals(m.getValuePath())) {
-        value=(author != null) ? author.getName() : null;
-      }
- else       if ("SyndicationAuthorUri".equals(m.getValuePath())) {
-        value=(author != null) ? author.getUri().toString() : null;
-      }
- else       if ("SyndicationContributorEmail".equals(m.getValuePath())) {
-        value=(contributor != null) ? contributor.getEmail() : null;
-      }
- else       if ("SyndicationContributorName".equals(m.getValuePath())) {
-        value=(contributor != null) ? contributor.getName() : null;
-      }
- else       if ("SyndicationContributorUri".equals(m.getValuePath())) {
-        value=(contributor != null) ? contributor.getUri().toString() : null;
-      }
- else       if ("SyndicationPublished".equals(m.getValuePath())) {
-        value=entry.getPublished();
-      }
- else       if ("SyndicationRights".equals(m.getValuePath())) {
-        value=(entry.getRights() != null) ? entry.getRights().getContent() : null;
-      }
- else       if ("SyndicationSummary".equals(m.getValuePath())) {
-        value=entry.getSummary();
-      }
- else       if ("SyndicationTitle".equals(m.getValuePath())) {
-        value=(entry.getTitle() != null) ? entry.getTitle().getContent() : null;
-      }
- else       if ("SyndicationUpdated".equals(m.getValuePath())) {
-        value=entry.getUpdated();
-      }
-      try {
-        if (value != null) {
-          ReflectUtils.invokeSetter(entity,m.getPropertyPath(),value);
-        }
-      }
- catch (      Exception e) {
-        getLogger().warning("Cannot set the mapped property " + m.getPropertyPath() + " on "+ entity+ " with value "+ value);
-      }
-    }
+  entryHandler.endEntry(entry);
+  T entity=entryHandler.getEntity();
+  if (entity != null) {
+    entities.add(entity);
   }
-  if (entityType.isBlob() && entityType.getBlobValueEditRefProperty() != null) {
-    Link link=entry.getLink(Relation.EDIT_MEDIA);
-    String pty=entityType.getBlobValueEditRefProperty().getName();
-    if (link != null) {
-      try {
-        ReflectUtils.invokeSetter(entity,pty,link.getHref());
-      }
- catch (      Exception e) {
-        getLogger().warning("Cannot set the property " + pty + " on "+ entity+ " with value "+ link.getHref());
-      }
-    }
+ else {
+    getLogger().warning("Can't add a null entity.");
   }
-  entity=null;
 }

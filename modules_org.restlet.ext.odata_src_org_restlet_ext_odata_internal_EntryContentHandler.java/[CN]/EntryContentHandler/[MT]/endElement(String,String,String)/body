@@ -1,6 +1,47 @@
 {
-  if (parseProperty) {
-    if (!parsePropertyNull) {
+  if (State.ASSOCIATION == getState()) {
+    if (uri.equalsIgnoreCase(Feed.ATOM_NAMESPACE)) {
+      if (localName.equals("feed")) {
+        extraFeedHandler.endFeed(null);
+      }
+ else       if (localName.equals("link")) {
+        if (association.isToMany()) {
+          extraFeedHandler.endLink(null);
+        }
+ else {
+          extraEntryHandler.endLink(null);
+        }
+      }
+ else       if (localName.equalsIgnoreCase("entry")) {
+        if (association.isToMany()) {
+          extraFeedHandler.endEntry(null);
+        }
+ else {
+          extraEntryHandler.endEntry(null);
+        }
+      }
+ else       if (localName.equalsIgnoreCase("content")) {
+        if (association.isToMany()) {
+          extraFeedHandler.endContent(null);
+        }
+ else {
+          extraEntryHandler.endContent(null);
+        }
+      }
+    }
+    if (association.isToMany()) {
+      extraFeedHandler.endElement(uri,localName,qName);
+    }
+ else {
+      extraEntryHandler.endElement(uri,localName,qName);
+    }
+  }
+ else   if (State.PROPERTY == getState()) {
+    if (parsePropertyNull) {
+      popState();
+      parsePropertyNull=false;
+    }
+ else {
       Object obj=entity;
       if (propertyPath.size() > 1) {
         for (int i=0; i < propertyPath.size() - 1; i++) {
@@ -30,12 +71,17 @@
  catch (      Exception e) {
         getLogger().warning("Cannot set " + localName + " property on "+ obj+ " with value "+ sb.toString());
       }
+      popState();
+      if (!propertyPath.isEmpty()) {
+        propertyPath.remove(propertyPath.size() - 1);
+      }
     }
-    propertyPathDeep--;
-    parseProperty=propertyPathDeep > 0;
-    if (propertyPath.size() > 0) {
-      propertyPath.remove(propertyPath.size() - 1);
-    }
+  }
+ else   if (State.PROPERTIES == getState()) {
+    popState();
+  }
+ else   if (State.CONTENT == getState()) {
+    popState();
   }
  else   if (mapping != null) {
     if (sb != null) {
@@ -48,12 +94,9 @@
     }
     mapping=null;
   }
- else   if (parseProperties) {
-    if (Service.WCF_DATASERVICES_METADATA_NAMESPACE.equals(uri) && "properties".equals(localName)) {
-      parseProperties=false;
+ else   if (State.ENTRY == getState()) {
+    if (!eltPath.isEmpty()) {
+      eltPath.remove(eltPath.size() - 1);
     }
-  }
-  if (!eltPath.isEmpty()) {
-    eltPath.remove(eltPath.size() - 1);
   }
 }

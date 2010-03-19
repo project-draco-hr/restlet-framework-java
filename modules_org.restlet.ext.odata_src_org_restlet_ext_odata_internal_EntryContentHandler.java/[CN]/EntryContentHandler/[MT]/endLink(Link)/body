@@ -1,0 +1,27 @@
+{
+  if (State.ASSOCIATION == getState()) {
+    String propertyName=ReflectUtils.normalize(link.getTitle());
+    if (association.isToMany()) {
+      extraFeedHandler.endLink(link);
+      try {
+        ReflectUtils.setProperty(entity,propertyName,association.isToMany(),extraFeedHandler.getEntities().iterator(),ReflectUtils.getSimpleClass(entity,propertyName));
+      }
+ catch (      Exception e) {
+        getLogger().warning("Cannot set " + propertyName + " property on "+ entity+ " from link");
+      }
+      extraFeedHandler=null;
+    }
+ else {
+      extraEntryHandler.endLink(link);
+      try {
+        ReflectUtils.invokeSetter(entity,propertyName,extraEntryHandler.getEntity());
+      }
+ catch (      Exception e) {
+        getLogger().warning("Cannot set " + propertyName + " property on "+ entity+ " from link");
+      }
+      extraEntryHandler=null;
+    }
+    popState();
+    association=null;
+  }
+}

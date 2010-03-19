@@ -1,5 +1,13 @@
 {
-  if (parseProperty || mapping != null) {
+  if (State.ASSOCIATION == getState()) {
+    if (association.isToMany()) {
+      extraFeedHandler.characters(ch,start,length);
+    }
+ else {
+      extraEntryHandler.characters(ch,start,length);
+    }
+  }
+ else   if (State.PROPERTY == getState() || mapping != null) {
     sb.append(ch,start,length);
   }
 }

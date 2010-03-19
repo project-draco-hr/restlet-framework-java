@@ -1,3 +1,16 @@
 {
-  this.parseContent=true;
+  if (State.ENTRY == getState()) {
+    pushState(State.CONTENT);
+    if (entityType.isBlob() && entityType.getBlobValueRefProperty() != null) {
+      Reference ref=content.getExternalRef();
+      if (ref != null) {
+        try {
+          ReflectUtils.invokeSetter(entity,entityType.getBlobValueRefProperty().getName(),ref);
+        }
+ catch (        Exception e) {
+          getLogger().warning("Cannot set " + entityType.getBlobValueRefProperty().getName() + " property on "+ entity+ " with value "+ ref);
+        }
+      }
+    }
+  }
 }
