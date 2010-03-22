@@ -1,24 +1,6 @@
 {
   final SslContextFactory sslContextFactory=SslUtils.getSslContextFactory(this);
-  SSLContext sslContext;
-  if (sslContextFactory == null) {
-    final KeyStore keyStore=KeyStore.getInstance(getKeystoreType());
-    final FileInputStream fis=getKeystorePath() == null ? null : new FileInputStream(getKeystorePath());
-    final char[] password=getKeystorePassword() == null ? null : getKeystorePassword().toCharArray();
-    keyStore.load(fis,password);
-    if (fis != null) {
-      fis.close();
-    }
-    final KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(getCertAlgorithm());
-    keyManagerFactory.init(keyStore,getKeyPassword().toCharArray());
-    final TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance(getCertAlgorithm());
-    trustManagerFactory.init(keyStore);
-    sslContext=SSLContext.getInstance(getSslProtocol());
-    sslContext.init(keyManagerFactory.getKeyManagers(),trustManagerFactory.getTrustManagers(),null);
-  }
- else {
-    sslContext=sslContextFactory.createSslContext();
-  }
+  SSLContext sslContext=sslContextFactory.createSslContext();
   final String addr=getHelped().getAddress();
   if (addr != null) {
     final InetAddress iaddr=InetAddress.getByName(addr);
