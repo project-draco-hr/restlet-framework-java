@@ -2,38 +2,38 @@
   if (State.ASSOCIATION == getState()) {
     if (uri.equalsIgnoreCase(Feed.ATOM_NAMESPACE)) {
       if (localName.equals("feed")) {
-        extraFeedHandler.endFeed(null);
+        inlineFeedHandler.endFeed(inlineFeed);
       }
  else       if (localName.equals("link")) {
         if (association.isToMany()) {
-          extraFeedHandler.endLink(null);
+          inlineFeedHandler.endLink(inlineLink);
         }
  else {
-          extraEntryHandler.endLink(null);
+          inlineEntryHandler.endLink(inlineLink);
         }
       }
  else       if (localName.equalsIgnoreCase("entry")) {
         if (association.isToMany()) {
-          extraFeedHandler.endEntry(null);
+          inlineFeedHandler.endEntry(inlineEntry);
         }
  else {
-          extraEntryHandler.endEntry(null);
+          inlineEntryHandler.endEntry(inlineEntry);
         }
       }
  else       if (localName.equalsIgnoreCase("content")) {
         if (association.isToMany()) {
-          extraFeedHandler.endContent(null);
+          inlineFeedHandler.endContent(inlineContent);
         }
  else {
-          extraEntryHandler.endContent(null);
+          inlineEntryHandler.endContent(inlineContent);
         }
       }
     }
     if (association.isToMany()) {
-      extraFeedHandler.endElement(uri,localName,qName);
+      inlineFeedHandler.endElement(uri,localName,qName);
     }
  else {
-      extraEntryHandler.endElement(uri,localName,qName);
+      inlineEntryHandler.endElement(uri,localName,qName);
     }
   }
  else   if (State.PROPERTY == getState()) {

@@ -7,7 +7,8 @@
         if (attr != null) {
           feed.setBaseReference(new Reference(attr));
         }
-        this.extraFeedHandler.startFeed(feed);
+        inlineFeed=feed;
+        this.inlineFeedHandler.startFeed(feed);
       }
  else       if (localName.equals("link")) {
         Link link=new Link();
@@ -21,21 +22,23 @@
         link.setTitle(attrs.getValue("","title"));
         String attr=attrs.getValue("","length");
         link.setLength((attr == null) ? -1L : Long.parseLong(attr));
+        inlineLink=link;
         if (association.isToMany()) {
-          extraFeedHandler.startLink(link);
+          inlineFeedHandler.startLink(link);
         }
  else {
-          extraEntryHandler.startLink(link);
+          inlineEntryHandler.startLink(link);
         }
       }
  else       if (localName.equalsIgnoreCase("entry")) {
         Entry entry=new Entry();
         if (association.isToMany()) {
-          extraFeedHandler.startEntry(entry);
+          inlineFeedHandler.startEntry(entry);
         }
  else {
-          extraEntryHandler.startEntry(entry);
+          inlineEntryHandler.startEntry(entry);
         }
+        inlineEntry=entry;
       }
  else       if (localName.equalsIgnoreCase("content")) {
         Content content=new Content();
@@ -44,18 +47,19 @@
         if (srcAttr != null)         content.setExternalRef(new Reference(srcAttr));
         content.setExternalType(type);
         if (association.isToMany()) {
-          extraFeedHandler.startContent(content);
+          inlineFeedHandler.startContent(content);
         }
  else {
-          extraEntryHandler.startContent(content);
+          inlineEntryHandler.startContent(content);
         }
+        inlineContent=content;
       }
     }
     if (association.isToMany()) {
-      extraFeedHandler.startElement(uri,localName,qName,attrs);
+      inlineFeedHandler.startElement(uri,localName,qName,attrs);
     }
  else {
-      extraEntryHandler.startElement(uri,localName,qName,attrs);
+      inlineEntryHandler.startElement(uri,localName,qName,attrs);
     }
   }
  else   if (Service.WCF_DATASERVICES_METADATA_NAMESPACE.equals(uri) && "properties".equals(localName)) {

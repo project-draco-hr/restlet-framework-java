@@ -1,10 +1,10 @@
 {
   if (State.ASSOCIATION == getState()) {
     if (association.isToMany()) {
-      extraFeedHandler.startLink(link);
+      inlineFeedHandler.startLink(link);
     }
  else {
-      extraEntryHandler.startLink(link);
+      inlineEntryHandler.startLink(link);
     }
   }
  else {
@@ -13,10 +13,10 @@
       association=metadata.getAssociation(entityType,propertyName);
       if (association != null) {
         if (association.isToMany()) {
-          extraFeedHandler=new FeedContentHandler<T>(ReflectUtils.getSimpleClass(entity,propertyName),metadata,getLogger());
+          inlineFeedHandler=new FeedContentHandler<T>(ReflectUtils.getSimpleClass(entity,propertyName),metadata,getLogger());
         }
  else {
-          extraEntryHandler=new EntryContentHandler<T>(ReflectUtils.getSimpleClass(entity,propertyName),metadata,getLogger());
+          inlineEntryHandler=new EntryContentHandler<T>(ReflectUtils.getSimpleClass(entity,propertyName),metadata,getLogger());
         }
       }
     }
