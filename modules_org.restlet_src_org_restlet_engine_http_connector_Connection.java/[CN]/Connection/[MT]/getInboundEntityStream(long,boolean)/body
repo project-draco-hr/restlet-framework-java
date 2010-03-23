@@ -1,13 +1,13 @@
 {
   InputStream result=null;
   if (chunked) {
-    result=new ChunkedInputStream(this);
+    result=new ChunkedInputStream(this,getInboundStream());
   }
  else   if (size >= 0) {
-    result=new SizedInputStream(this,size);
+    result=new SizedInputStream(this,getInboundStream(),size);
   }
  else {
-    result=new ClosingInputStream(this);
+    result=new ClosingInputStream(this,getInboundStream());
   }
   return result;
 }
