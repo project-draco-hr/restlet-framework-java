@@ -1,10 +1,20 @@
 {
   Object result=null;
-  if (ObjectRepresentation.class.isAssignableFrom(target)) {
-    ObjectRepresentation.class.isAssignableFrom(target);
+  if (target != null) {
+    if (ObjectRepresentation.class.isAssignableFrom(target)) {
+      if (source instanceof ObjectRepresentation<?>) {
+        result=(ObjectRepresentation<?>)source;
+      }
+ else {
+        result=new ObjectRepresentation(source.getText(),target);
+      }
+    }
+ else     if (Serializable.class.isAssignableFrom(target)) {
+      result=new ObjectRepresentation(source.getText(),target).getObject();
+    }
   }
- else   if (Serializable.class.isAssignableFrom(target)) {
-    result=new ObjectRepresentation(source.getText(),target).getObject();
+ else   if (source instanceof ObjectRepresentation<?>) {
+    result=((ObjectRepresentation<?>)source).getObject();
   }
   return (T)result;
 }

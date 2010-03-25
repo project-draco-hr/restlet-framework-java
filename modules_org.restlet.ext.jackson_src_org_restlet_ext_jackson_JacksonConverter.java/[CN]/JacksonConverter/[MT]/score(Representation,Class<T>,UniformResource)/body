@@ -1,12 +1,13 @@
 {
   float result=-1.0F;
-  if (target != null) {
-    if (JacksonRepresentation.class.isAssignableFrom(target)) {
-      result=1.0F;
-    }
- else     if (VARIANT_JSON.isCompatible(source)) {
-      result=0.8F;
-    }
+  if (source instanceof JacksonRepresentation<?>) {
+    result=1.0F;
+  }
+ else   if ((target != null) && JacksonRepresentation.class.isAssignableFrom(target)) {
+    result=1.0F;
+  }
+ else   if (VARIANT_JSON.isCompatible(source)) {
+    result=0.8F;
   }
   return result;
 }
