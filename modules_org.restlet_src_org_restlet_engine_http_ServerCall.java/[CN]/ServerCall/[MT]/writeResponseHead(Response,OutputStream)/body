@@ -1,14 +1,14 @@
 {
   String version=(getVersion() == null) ? "1.1" : getVersion();
-  headStream.write(version.getBytes());
+  headStream.write(StringUtils.getAsciiBytes(version));
   headStream.write(' ');
-  headStream.write(Integer.toString(getStatusCode()).getBytes());
+  headStream.write(StringUtils.getAsciiBytes(Integer.toString(getStatusCode())));
   headStream.write(' ');
   if (getReasonPhrase() != null) {
-    headStream.write(getReasonPhrase().getBytes());
+    headStream.write(StringUtils.getLatin1Bytes(getReasonPhrase()));
   }
  else {
-    headStream.write(("Status " + getStatusCode()).getBytes());
+    headStream.write(StringUtils.getAsciiBytes(("Status " + getStatusCode())));
   }
   headStream.write(13);
   headStream.write(10);

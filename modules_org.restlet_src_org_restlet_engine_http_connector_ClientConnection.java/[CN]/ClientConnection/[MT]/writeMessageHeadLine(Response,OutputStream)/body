@@ -1,11 +1,11 @@
 {
   Request request=message.getRequest();
-  headStream.write(request.getMethod().getName().getBytes());
+  headStream.write(StringUtils.getAsciiBytes(request.getMethod().getName()));
   headStream.write(' ');
-  headStream.write(getRequestUri(request.getResourceRef()).getBytes());
+  headStream.write(StringUtils.getAsciiBytes(getRequestUri(request.getResourceRef())));
   headStream.write(' ');
-  headStream.write(request.getProtocol().getName().getBytes());
+  headStream.write(StringUtils.getAsciiBytes(request.getProtocol().getName()));
   headStream.write('/');
-  headStream.write(request.getProtocol().getVersion().getBytes());
+  headStream.write(StringUtils.getAsciiBytes(request.getProtocol().getVersion()));
   HeaderUtils.writeCRLF(getOutboundStream());
 }
