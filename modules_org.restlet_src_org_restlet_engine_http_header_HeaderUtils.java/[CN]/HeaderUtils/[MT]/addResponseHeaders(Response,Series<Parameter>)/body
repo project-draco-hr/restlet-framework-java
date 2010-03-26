@@ -36,7 +36,9 @@
   if (response.getAuthenticationInfo() != null) {
     addHeader(HeaderConstants.HEADER_AUTHENTICATION_INFO,org.restlet.engine.security.AuthenticatorUtils.formatAuthenticationInfo(response.getAuthenticationInfo()),headers);
   }
-  addHeader(HeaderConstants.HEADER_SET_COOKIE,CookieSettingWriter.write(response.getCookieSettings()),headers);
+  for (  CookieSetting cookieSetting : response.getCookieSettings()) {
+    addHeader(HeaderConstants.HEADER_SET_COOKIE,CookieSettingWriter.write(cookieSetting),headers);
+  }
   Series<Parameter> additionalHeaders=(Series<Parameter>)response.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
   addExtensionHeaders(headers,additionalHeaders);
 }
