@@ -1,0 +1,22 @@
+{
+  CookieReader cr=new CookieReader(headerValue);
+  List<Cookie> cookies=new ArrayList<Cookie>();
+  Cookie cookie=cr.readValue();
+  while (cookie != null) {
+    cookies.add(cookie);
+    cookie=cr.readValue();
+  }
+  String newHeaderValue=CookieWriter.write(cookies);
+  List<Cookie> cookies2=new ArrayList<Cookie>();
+  cr=new CookieReader(newHeaderValue);
+  cookie=cr.readValue();
+  while (cookie != null) {
+    cookies2.add(cookie);
+    cookie=cr.readValue();
+  }
+  assertEquals(cookies.size(),cookies2.size());
+  for (int i=0; i < cookies.size(); i++) {
+    assertEquals(cookies.get(i).getName(),cookies2.get(i).getName());
+    assertEquals(cookies.get(i).getValue(),cookies2.get(i).getValue());
+  }
+}

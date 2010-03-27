@@ -1,6 +1,6 @@
 {
   Cookie result=null;
-  Parameter pair=readPair();
+  Parameter pair=readPair(false);
   if (this.globalVersion == -1) {
     if (pair.getName().equalsIgnoreCase(NAME_VERSION)) {
       if (pair.getValue() != null) {
@@ -15,11 +15,11 @@
     }
   }
   while ((pair != null) && (pair.getName().charAt(0) == '$')) {
-    pair=readPair();
+    pair=readPair(false);
   }
   if (pair != null) {
     result=new Cookie(this.globalVersion,pair.getName(),pair.getValue());
-    pair=readPair();
+    pair=readPair(true);
   }
   while ((pair != null) && (pair.getName().charAt(0) == '$')) {
     if (pair.getName().equalsIgnoreCase(NAME_PATH)) {
@@ -30,10 +30,7 @@
     }
  else {
     }
-    pair=readPair();
-  }
-  if (pair != null) {
-    this.cachedPair=pair;
+    pair=readPair(true);
   }
   return result;
 }

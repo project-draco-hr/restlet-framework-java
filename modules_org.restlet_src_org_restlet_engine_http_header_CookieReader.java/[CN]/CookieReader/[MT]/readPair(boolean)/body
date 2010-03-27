@@ -1,0 +1,59 @@
+{
+  Parameter result=null;
+  boolean readingName=true;
+  boolean readingValue=false;
+  StringBuilder nameBuffer=new StringBuilder();
+  StringBuilder valueBuffer=new StringBuilder();
+  int nextChar=0;
+  while ((result == null) && (nextChar != -1)) {
+    nextChar=read();
+    if (readingName) {
+      if ((HeaderUtils.isSpace(nextChar)) && (nameBuffer.length() == 0)) {
+      }
+ else       if ((nextChar == -1) || (nextChar == ';') || (nextChar == ',')) {
+        if (nameBuffer.length() > 0) {
+          result=Parameter.create(nameBuffer,null);
+        }
+ else         if (nextChar == -1) {
+        }
+ else {
+          throw new IOException("Empty cookie name detected. Please check your cookies");
+        }
+      }
+ else       if (nextChar == '=') {
+        readingName=false;
+        readingValue=true;
+      }
+ else       if (HeaderUtils.isTokenChar(nextChar) || (this.globalVersion < 1)) {
+        if (readAttribute && nextChar != '$' && (nameBuffer.length() == 0)) {
+          unread();
+          nextChar=-1;
+        }
+ else {
+          nameBuffer.append((char)nextChar);
+        }
+      }
+ else {
+        throw new IOException("Separator and control characters are not allowed within a token. Please check your cookie header");
+      }
+    }
+ else     if (readingValue) {
+      if ((HeaderUtils.isSpace(nextChar)) && (valueBuffer.length() == 0)) {
+      }
+ else       if ((nextChar == -1) || (nextChar == ';')) {
+        result=Parameter.create(nameBuffer,valueBuffer);
+      }
+ else       if ((nextChar == '"') && (valueBuffer.length() == 0)) {
+        unread();
+        valueBuffer.append(readQuotedString());
+      }
+ else       if (HeaderUtils.isTokenChar(nextChar) || (this.globalVersion < 1)) {
+        valueBuffer.append((char)nextChar);
+      }
+ else {
+        throw new IOException("Separator and control characters are not allowed within a token. Please check your cookie header");
+      }
+    }
+  }
+  return result;
+}
