@@ -1,0 +1,12 @@
+{
+  List<Address> ci=this.callerInfo;
+  if (ci == null) {
+synchronized (this) {
+      ci=this.callerInfo;
+      if (ci == null) {
+        this.callerInfo=ci=new CopyOnWriteArrayList<Address>();
+      }
+    }
+  }
+  return ci;
+}

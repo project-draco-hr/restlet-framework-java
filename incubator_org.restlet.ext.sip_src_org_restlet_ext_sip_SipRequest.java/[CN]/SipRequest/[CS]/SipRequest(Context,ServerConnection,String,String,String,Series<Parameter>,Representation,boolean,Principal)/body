@@ -14,10 +14,20 @@
   }
   String toHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_TO);
   if (toHeader != null) {
-    setTo(toHeader);
+    try {
+      setTo(new AddressReader(toHeader).readValue());
+    }
+ catch (    IOException e) {
+      e.printStackTrace();
+    }
   }
   String fromHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(HeaderConstants.HEADER_FROM);
   if (fromHeader != null) {
-    setFrom(fromHeader);
+    try {
+      setFrom(new AddressReader(fromHeader).readValue());
+    }
+ catch (    IOException e) {
+      e.printStackTrace();
+    }
   }
 }
