@@ -8,5 +8,15 @@ synchronized (this) {
       }
     }
   }
+  if (!inReplyToAdded) {
+    String header=getHeaders().getValues(SipConstants.HEADER_ALLOW_EVENTS);
+    try {
+      this.inReplyTo.addAll(new HeaderReader<String>(header).readValues());
+      inReplyToAdded=true;
+    }
+ catch (    Exception e) {
+      Context.getCurrentLogger().info(e.getMessage());
+    }
+  }
   return irt;
 }

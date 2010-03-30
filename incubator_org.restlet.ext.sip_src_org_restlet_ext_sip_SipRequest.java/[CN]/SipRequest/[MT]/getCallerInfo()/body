@@ -8,5 +8,15 @@ synchronized (this) {
       }
     }
   }
+  if (!callerInfoAdded) {
+    String header=getHeaders().getValues(SipConstants.HEADER_CALL_INFO);
+    try {
+      this.callerInfo.addAll(new AddressReader(header).readValues());
+      callerInfoAdded=true;
+    }
+ catch (    Exception e) {
+      Context.getCurrentLogger().info(e.getMessage());
+    }
+  }
   return ci;
 }

@@ -8,5 +8,15 @@ synchronized (this) {
       }
     }
   }
+  if (!requiresAdded) {
+    String header=getHeaders().getValues(SipConstants.HEADER_REQUIRE);
+    try {
+      this.requires.addAll(new OptionTagReader(header).readValues());
+      requiresAdded=true;
+    }
+ catch (    Exception e) {
+      Context.getCurrentLogger().info(e.getMessage());
+    }
+  }
   return r;
 }

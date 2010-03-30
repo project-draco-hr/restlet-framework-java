@@ -8,5 +8,15 @@ synchronized (this) {
       }
     }
   }
+  if (!contactAdded) {
+    String header=getHeaders().getValues(SipConstants.HEADER_CONTACT);
+    try {
+      this.contact.addAll(new ContactInfoReader(header).readValues());
+      contactAdded=true;
+    }
+ catch (    Exception e) {
+      Context.getCurrentLogger().info(e.getMessage());
+    }
+  }
   return c;
 }

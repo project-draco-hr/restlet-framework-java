@@ -8,5 +8,15 @@ synchronized (this) {
       }
     }
   }
+  if (!routesAdded) {
+    String header=getHeaders().getValues(SipConstants.HEADER_ROUTE);
+    try {
+      this.routes.addAll(new AddressReader(header).readValues());
+      routesAdded=true;
+    }
+ catch (    Exception e) {
+      Context.getCurrentLogger().info(e.getMessage());
+    }
+  }
   return r;
 }

@@ -1,0 +1,22 @@
+{
+  List<SipRecipientInfo> sri=this.recipientsInfo;
+  if (sri == null) {
+synchronized (this) {
+      sri=this.recipientsInfo;
+      if (sri == null) {
+        this.recipientsInfo=sri=new CopyOnWriteArrayList<SipRecipientInfo>();
+      }
+    }
+  }
+  if (!recipientsInfoAdded) {
+    String header=getHeaders().getValues(HeaderConstants.HEADER_VIA);
+    try {
+      this.recipientsInfo.addAll(new SipRecipientInfoReader(header).readValues());
+      recipientsInfoAdded=true;
+    }
+ catch (    Exception e) {
+      Context.getCurrentLogger().info(e.getMessage());
+    }
+  }
+  return sri;
+}

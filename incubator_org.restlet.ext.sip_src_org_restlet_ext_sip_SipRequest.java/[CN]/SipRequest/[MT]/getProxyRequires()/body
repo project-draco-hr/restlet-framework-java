@@ -8,5 +8,15 @@ synchronized (this) {
       }
     }
   }
+  if (!proxyRequiresAdded) {
+    String header=getHeaders().getValues(SipConstants.HEADER_PROXY_REQUIRE);
+    try {
+      this.proxyRequires.addAll(new OptionTagReader(header).readValues());
+      proxyRequiresAdded=true;
+    }
+ catch (    Exception e) {
+      Context.getCurrentLogger().info(e.getMessage());
+    }
+  }
   return pr;
 }

@@ -1,16 +1,12 @@
 {
   super(context,connection,methodName,resourceUri,version,headers,entity,confidential,userPrincipal);
-  String viaHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(HeaderConstants.HEADER_VIA);
-  if (viaHeader != null) {
-    setVia(viaHeader);
-  }
   String callIdHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_CALL_ID);
   if (callIdHeader != null) {
     setCallId(callIdHeader);
   }
   String callSeqHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_CALL_SEQ);
   if (callSeqHeader != null) {
-    setCallSeq(callSeqHeader);
+    setCallSequence(callSeqHeader);
   }
   String toHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_TO);
   if (toHeader != null) {
@@ -30,4 +26,10 @@
       e.printStackTrace();
     }
   }
+  String mimeVersionHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_MIME_VERSION);
+  setMimeVersion(mimeVersionHeader);
+  String organizationHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_ORGANIZATION);
+  setOrganization(organizationHeader);
+  String subjectHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_SUBJECT);
+  setSubject(subjectHeader);
 }
