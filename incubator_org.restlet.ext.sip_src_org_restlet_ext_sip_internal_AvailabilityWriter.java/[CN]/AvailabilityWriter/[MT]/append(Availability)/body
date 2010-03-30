@@ -1,0 +1,20 @@
+{
+  if (availability != null) {
+    append(availability.getDelay());
+    if (availability.getComment() != null) {
+      appendSpace();
+      appendComment(availability.getComment());
+      appendSpace();
+    }
+    if (availability.getDuration() > 0) {
+      appendParameterSeparator();
+      append("duration=");
+      append(availability.getDuration());
+    }
+    for (    Parameter param : availability.getParameters()) {
+      appendParameterSeparator();
+      appendExtension(param);
+    }
+  }
+  return this;
+}

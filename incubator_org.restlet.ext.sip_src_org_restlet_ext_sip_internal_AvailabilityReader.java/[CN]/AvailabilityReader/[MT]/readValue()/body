@@ -1,0 +1,31 @@
+{
+  Availability result=null;
+  skipSpaces();
+  if (peek() != -1) {
+    String delay=readToken();
+    result=new Availability(Integer.parseInt(delay));
+    skipSpaces();
+    if (peek() == '(') {
+      result.setComment(readComment());
+    }
+    skipSpaces();
+  }
+  if (skipParameterSeparator()) {
+    Parameter param=readParameter();
+    while (param != null) {
+      if ("duration".equals(param.getName())) {
+        result.setDuration(Integer.parseInt(param.getValue()));
+      }
+ else {
+        result.getParameters().add(param);
+      }
+      if (skipParameterSeparator()) {
+        param=readParameter();
+      }
+ else {
+        param=null;
+      }
+    }
+  }
+  return result;
+}
