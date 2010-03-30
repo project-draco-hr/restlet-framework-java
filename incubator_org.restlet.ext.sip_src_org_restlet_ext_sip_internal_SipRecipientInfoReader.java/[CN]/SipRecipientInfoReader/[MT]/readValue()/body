@@ -14,7 +14,12 @@
     result.setProtocol(new Protocol("HTTP","HTTP",null,-1,protocolToken));
   }
   if (skipSpaces()) {
-    result.setName(readRawText());
+    StringBuilder sb=new StringBuilder(readToken());
+    if (read() == ':') {
+      sb.append(":");
+      sb.append(readToken());
+    }
+    result.setName(sb.toString());
     if (skipParameterSeparator()) {
       Parameter param=readParameter();
       while (param != null) {
