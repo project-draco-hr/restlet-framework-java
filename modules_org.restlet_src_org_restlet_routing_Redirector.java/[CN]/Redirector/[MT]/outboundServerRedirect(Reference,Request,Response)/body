@@ -4,4 +4,7 @@
     next=getContext().getClientDispatcher();
   }
   serverRedirect(next,targetRef,request,response);
+  if (response.getEntity() != null && !request.getResourceRef().getScheme().equalsIgnoreCase(targetRef.getScheme())) {
+    response.getEntity().setLocationRef((Reference)null);
+  }
 }

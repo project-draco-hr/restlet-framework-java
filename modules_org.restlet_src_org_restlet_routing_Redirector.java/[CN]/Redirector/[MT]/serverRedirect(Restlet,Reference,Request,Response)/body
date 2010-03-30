@@ -1,11 +1,13 @@
 {
-  Reference baseRef=request.getResourceRef().getBaseRef();
+  Reference resourceRef=request.getResourceRef();
+  Reference baseRef=resourceRef.getBaseRef();
   request.setProtocol(null);
   request.setResourceRef(targetRef);
   request.getAttributes().remove(HeaderConstants.ATTRIBUTE_HEADERS);
   next.handle(request,response);
   response.setEntity(rewrite(response.getEntity()));
   response.getAttributes().remove(HeaderConstants.ATTRIBUTE_HEADERS);
+  request.setResourceRef(resourceRef);
   if (response.getLocationRef() != null) {
     Template rt=new Template(this.targetTemplate);
     rt.setLogger(getLogger());
