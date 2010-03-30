@@ -6,11 +6,13 @@
   sleep();
   provisionalResponse=new Response(getRequest());
   provisionalResponse.setStatus(SipStatus.INFO_RINGING);
+  provisionalResponse.commit();
   sleep();
   provisionalResponse=new Response(getRequest());
   provisionalResponse.setStatus(SipStatus.INFO_SESSION_PROGRESS);
+  provisionalResponse.commit();
   sleep();
   Address to=getTo();
-  to.getParameters().add("tag","restlet1");
+  to.getParameters().add("tag","restlet" + TAG.incrementAndGet());
   setStatus(SipStatus.SUCCESS_OK);
 }
