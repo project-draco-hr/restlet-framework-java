@@ -1,0 +1,9 @@
+{
+  String authenticate0="Basic realm=\"Restlet tutorial\"";
+  String authenticate1="Digest realm=realm, domain=\"/protected/ /alsoProtected/\", qop=auth, algorithm=MD5, nonce=\"MTE3NzEwMzIwMjg0Mjo2NzFjODQyMjAyOWRlNWQ1YjFjNmEzYzJmOWRlZmE2Mw==\"";
+  String authenticate=authenticate0 + "," + authenticate1;
+  List<ChallengeRequest> creq=AuthenticatorUtils.parseRequest(null,authenticate,null);
+  assertEquals(creq.size(),2);
+  assertEquals(authenticate0,AuthenticatorUtils.formatRequest(creq.get(0),null,null));
+  assertEquals(authenticate1,AuthenticatorUtils.formatRequest(creq.get(1),null,null));
+}

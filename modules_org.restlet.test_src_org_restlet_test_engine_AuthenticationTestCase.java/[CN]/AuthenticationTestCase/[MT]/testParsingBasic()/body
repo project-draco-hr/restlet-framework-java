@@ -1,6 +1,8 @@
 {
-  final String authenticate1="Basic realm=\"Restlet tutorial\"";
-  final String authorization1="Basic c2NvdHQ6dGlnZXI=";
+  String authenticate1="Basic realm=\"Restlet tutorial\"";
+  String authorization1="Basic c2NvdHQ6dGlnZXI=";
   assertEquals(authorization1,AuthenticatorUtils.formatResponse(AuthenticatorUtils.parseResponse(null,authorization1,null),null,null));
-  assertEquals(authenticate1,AuthenticatorUtils.formatRequest(AuthenticatorUtils.parseRequest(null,authenticate1,null),null,null));
+  List<ChallengeRequest> creq=AuthenticatorUtils.parseRequest(null,authenticate1,null);
+  assertEquals(creq.size(),1);
+  assertEquals(authenticate1,AuthenticatorUtils.formatRequest(creq.get(0),null,null));
 }

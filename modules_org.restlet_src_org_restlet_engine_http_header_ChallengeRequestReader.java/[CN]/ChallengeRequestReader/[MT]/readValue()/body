@@ -1,0 +1,35 @@
+{
+  ChallengeRequest result=null;
+  skipSpaces();
+  if (peek() != -1) {
+    String scheme=readToken();
+    result=new ChallengeRequest(new ChallengeScheme("HTTP_" + scheme,scheme));
+    skipSpaces();
+    HeaderWriter<Parameter> w=new HeaderWriter<Parameter>(){
+      @Override public HeaderWriter<Parameter> append(      Parameter value){
+        appendExtension(value);
+        return this;
+      }
+    }
+;
+    boolean stop=false;
+    while (peek() != -1 && !stop) {
+      boolean sepSkipped=skipValueSeparator();
+      mark();
+      readToken();
+      int nextChar=read();
+      reset();
+      if (isSpace(nextChar)) {
+        stop=true;
+      }
+ else {
+        if (sepSkipped) {
+          w.appendValueSeparator();
+        }
+        w.append(readParameter());
+      }
+    }
+    result.setRawValue(w.toString());
+  }
+  return result;
+}

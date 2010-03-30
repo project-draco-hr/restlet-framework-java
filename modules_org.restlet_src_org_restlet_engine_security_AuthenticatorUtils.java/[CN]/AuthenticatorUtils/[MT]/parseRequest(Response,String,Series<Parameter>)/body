@@ -1,3 +1,16 @@
 {
-  return (ChallengeRequest)parseMessage(false,null,response,header,httpHeaders);
+  List<ChallengeRequest> result=new ArrayList<ChallengeRequest>();
+  if (header != null) {
+    result=new ChallengeRequestReader(header).readValues();
+    for (    ChallengeRequest cr : result) {
+      AuthenticatorHelper helper=Engine.getInstance().findHelper(cr.getScheme(),true,false);
+      if (helper != null) {
+        helper.parseRequest(cr,response,httpHeaders);
+      }
+ else {
+        Context.getCurrentLogger().warning("Couldn't find any helper support the " + cr.getScheme() + " challenge scheme.");
+      }
+    }
+  }
+  return result;
 }
