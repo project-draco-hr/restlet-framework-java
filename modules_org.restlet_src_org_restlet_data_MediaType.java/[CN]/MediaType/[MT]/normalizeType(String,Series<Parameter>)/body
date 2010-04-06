@@ -1,0 +1,33 @@
+{
+  int slashIndex;
+  int colonIndex;
+  String mainType;
+  String subType;
+  StringBuilder params=null;
+  if (name == null)   return null;
+  if ((colonIndex=name.indexOf(';')) != -1) {
+    params=new StringBuilder(name.substring(colonIndex));
+    name=name.substring(0,colonIndex);
+  }
+  if ((slashIndex=name.indexOf('/')) == -1) {
+    mainType=normalizeToken(name);
+    subType="*";
+  }
+ else {
+    mainType=normalizeToken(name.substring(0,slashIndex));
+    subType=normalizeToken(name.substring(slashIndex + 1));
+  }
+  if (parameters != null && !parameters.isEmpty()) {
+    if (params == null) {
+      params=new StringBuilder();
+    }
+    for (int i=0; i < parameters.size(); i++) {
+      Parameter p=parameters.get(i);
+      params.append(";");
+      params.append(p.getName());
+      params.append("=");
+      params.append(p.getValue());
+    }
+  }
+  return (params == null) ? mainType + '/' + subType : mainType + '/' + subType+ params.toString();
+}
