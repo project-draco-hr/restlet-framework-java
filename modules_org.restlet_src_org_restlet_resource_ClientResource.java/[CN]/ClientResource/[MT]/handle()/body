@@ -1,20 +1,4 @@
 {
-  Representation result=null;
-  if (!hasNext()) {
-    Protocol protocol=(getProtocol() != null) ? getProtocol() : (getReference() != null) ? getReference().getSchemeProtocol() : null;
-    if (protocol != null) {
-      setNext(new Client(protocol));
-    }
-  }
-  if (hasNext()) {
-    Request request=new Request(getRequest());
-    Response response=new Response(request);
-    handle(request,response,null,0);
-    setResponse(response);
-    result=getResponse().getEntity();
-  }
- else {
-    getLogger().warning("Unable to process the call for a client resource. No next Restlet has been provided.");
-  }
-  return result;
+  Response response=handle(new Request(getRequest()));
+  return (response == null) ? null : response.getEntity();
 }

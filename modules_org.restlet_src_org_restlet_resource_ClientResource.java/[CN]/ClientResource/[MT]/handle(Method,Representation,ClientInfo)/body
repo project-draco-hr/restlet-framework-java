@@ -1,0 +1,15 @@
+{
+  Representation result=null;
+  Request request=new Request(getRequest());
+  request.setMethod(method);
+  request.setEntity(entity);
+  request.setClientInfo(clientInfo);
+  Response response=handle(request);
+  if (response.getStatus().isError()) {
+    throw new ResourceException(response.getStatus());
+  }
+ else {
+    result=(response == null) ? null : response.getEntity();
+  }
+  return result;
+}

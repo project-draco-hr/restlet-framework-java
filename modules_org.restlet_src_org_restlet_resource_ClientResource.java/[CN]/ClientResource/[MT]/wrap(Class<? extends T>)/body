@@ -12,66 +12,61 @@
         result=clientResource;
       }
  else {
-        final org.restlet.engine.resource.AnnotationInfo annotation=org.restlet.engine.resource.AnnotationUtils.getAnnotation(annotations,javaMethod);
+        org.restlet.engine.resource.AnnotationInfo annotation=org.restlet.engine.resource.AnnotationUtils.getAnnotation(annotations,javaMethod);
         if (annotation != null) {
-          ClientInfo currentClientInfo=getClientInfo();
-          try {
-            Representation requestEntity=null;
-            boolean isSynchronous=true;
-            if ((args != null) && args.length > 0) {
-              for (int i=0; i < args.length; i++) {
-                Object o=args[i];
-                if (o == null) {
-                  requestEntity=null;
-                }
- else                 if (Result.class.isAssignableFrom(o.getClass())) {
-                  isSynchronous=false;
-                  final Result rCallback=(Result)o;
-                  java.lang.reflect.Type[] genericParameterTypes=javaMethod.getGenericParameterTypes();
-                  java.lang.reflect.Type genericParameterType=genericParameterTypes[i];
-                  java.lang.reflect.ParameterizedType parameterizedType=(genericParameterType instanceof java.lang.reflect.ParameterizedType) ? (java.lang.reflect.ParameterizedType)genericParameterType : null;
-                  final Class<?> actualType=(parameterizedType.getActualTypeArguments()[0] instanceof Class<?>) ? (Class<?>)parameterizedType.getActualTypeArguments()[0] : null;
-                  Uniform callback=new Uniform(){
-                    public void handle(                    Request request,                    Response response){
-                      if (response.getStatus().isError()) {
-                        rCallback.onFailure(new ResourceException(response.getStatus()));
+          Representation requestEntity=null;
+          boolean isSynchronous=true;
+          if ((args != null) && args.length > 0) {
+            for (int i=0; i < args.length; i++) {
+              Object o=args[i];
+              if (o == null) {
+                requestEntity=null;
+              }
+ else               if (Result.class.isAssignableFrom(o.getClass())) {
+                isSynchronous=false;
+                final Result rCallback=(Result)o;
+                java.lang.reflect.Type[] genericParameterTypes=javaMethod.getGenericParameterTypes();
+                java.lang.reflect.Type genericParameterType=genericParameterTypes[i];
+                java.lang.reflect.ParameterizedType parameterizedType=(genericParameterType instanceof java.lang.reflect.ParameterizedType) ? (java.lang.reflect.ParameterizedType)genericParameterType : null;
+                final Class<?> actualType=(parameterizedType.getActualTypeArguments()[0] instanceof Class<?>) ? (Class<?>)parameterizedType.getActualTypeArguments()[0] : null;
+                Uniform callback=new Uniform(){
+                  public void handle(                  Request request,                  Response response){
+                    if (response.getStatus().isError()) {
+                      rCallback.onFailure(new ResourceException(response.getStatus()));
+                    }
+ else {
+                      if (actualType != null) {
+                        rCallback.onSuccess(toObject(response.getEntity(),actualType.getClass()));
                       }
  else {
-                        if (actualType != null) {
-                          rCallback.onSuccess(toObject(response.getEntity(),actualType.getClass()));
-                        }
- else {
-                          rCallback.onSuccess(null);
-                        }
+                        rCallback.onSuccess(null);
                       }
                     }
                   }
+                }
 ;
-                  setOnResponse(callback);
-                }
+                setOnResponse(callback);
+              }
  else {
-                  requestEntity=toRepresentation(args[i]);
-                }
-              }
-            }
-            getRequest().setEntity(requestEntity);
-            List<org.restlet.representation.Variant> responseVariants=annotation.getResponseVariants(requestEntity,getMetadataService(),getConverterService());
-            if (responseVariants != null) {
-              updateClientInfo(responseVariants);
-            }
-            setMethod(annotation.getRestletMethod());
-            handle();
-            if (isSynchronous) {
-              if (getStatus().isError()) {
-                throw new ResourceException(getStatus());
-              }
-              if (annotation.getJavaOutputType() != null) {
-                result=toObject(getResponseEntity(),annotation.getJavaOutputType());
+                requestEntity=toRepresentation(args[i]);
               }
             }
           }
-  finally {
-            setClientInfo(currentClientInfo);
+          Request request=new Request(getRequest());
+          request.setMethod(annotation.getRestletMethod());
+          request.setEntity(requestEntity);
+          List<org.restlet.representation.Variant> responseVariants=annotation.getResponseVariants(requestEntity,getMetadataService(),getConverterService());
+          if (responseVariants != null) {
+            request.setClientInfo(new ClientInfo(responseVariants));
+          }
+          Response response=handle(request);
+          if (isSynchronous) {
+            if (response.getStatus().isError()) {
+              throw new ResourceException(response.getStatus());
+            }
+            if (annotation.getJavaOutputType() != null) {
+              result=toObject((response == null ? null : response.getEntity()),annotation.getJavaOutputType());
+            }
           }
         }
       }

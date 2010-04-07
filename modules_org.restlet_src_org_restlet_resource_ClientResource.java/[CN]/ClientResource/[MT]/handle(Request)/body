@@ -1,0 +1,21 @@
+{
+  Response response=new Response(request);
+  Uniform next=getNext();
+  if (next == null) {
+    Protocol rProtocol=request.getProtocol();
+    Reference rReference=request.getResourceRef();
+    Protocol protocol=(rProtocol != null) ? rProtocol : (rReference != null) ? rReference.getSchemeProtocol() : null;
+    if (protocol != null) {
+      next=new Client(protocol);
+      setNext(next);
+    }
+  }
+  if (next != null) {
+    handle(request,response,null,0,next);
+    setResponse(response);
+  }
+ else {
+    getLogger().warning("Unable to process the call for a client resource. No next Restlet has been provided.");
+  }
+  return response;
+}
