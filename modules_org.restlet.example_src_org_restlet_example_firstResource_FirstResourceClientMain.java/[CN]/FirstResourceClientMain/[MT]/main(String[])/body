@@ -2,10 +2,15 @@
   ClientResource itemsResource=new ClientResource("http://localhost:8182/firstResource/items");
   ClientResource itemResource=null;
   Item item=new Item("item1","this is an item.");
-  Representation r=itemsResource.post(getRepresentation(item));
-  if (itemsResource.getStatus().isSuccess()) {
+  try {
+    Representation r=itemsResource.post(getRepresentation(item));
     itemResource=new ClientResource(r.getLocationRef());
   }
+ catch (  ResourceException e) {
+    System.out.println("Error  status: " + e.getStatus());
+    System.out.println("Error message: " + e.getMessage());
+  }
+  itemsResource.getResponseEntity().exhaust();
   if (itemResource != null) {
     get(itemResource);
     get(itemsResource);

@@ -1,6 +1,10 @@
 {
-  clientResource.get();
-  if (clientResource.getStatus().isSuccess() && clientResource.getResponseEntity().isAvailable()) {
-    clientResource.getResponseEntity().write(System.out);
+  try {
+    clientResource.get().write(System.out);
+  }
+ catch (  ResourceException e) {
+    System.out.println("Error  status: " + e.getStatus());
+    System.out.println("Error message: " + e.getMessage());
+    clientResource.getResponseEntity().exhaust();
   }
 }
