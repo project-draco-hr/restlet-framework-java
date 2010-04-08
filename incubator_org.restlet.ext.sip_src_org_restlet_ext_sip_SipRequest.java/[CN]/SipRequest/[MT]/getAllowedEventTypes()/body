@@ -10,13 +10,16 @@ synchronized (this) {
   }
   if (!allowedEventTypesAdded) {
     String header=getHeaders().getValues(SipConstants.HEADER_ALLOW_EVENTS);
-    try {
-      this.allowedEventTypes.addAll(new EventTypeReader(header).readValues());
-      allowedEventTypesAdded=true;
+    if (header != null) {
+      try {
+        this.allowedEventTypes.addAll(new EventTypeReader(header).readValues());
+        allowedEventTypesAdded=true;
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().info(e.getMessage());
+      }
     }
- catch (    Exception e) {
-      Context.getCurrentLogger().info(e.getMessage());
-    }
+    allowedEventTypesAdded=true;
   }
   return aet;
 }

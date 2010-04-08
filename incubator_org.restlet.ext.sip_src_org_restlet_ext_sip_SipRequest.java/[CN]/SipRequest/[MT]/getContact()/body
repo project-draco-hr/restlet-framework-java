@@ -10,13 +10,15 @@ synchronized (this) {
   }
   if (!contactAdded) {
     String header=getHeaders().getValues(SipConstants.HEADER_CONTACT);
-    try {
-      this.contact.addAll(new ContactInfoReader(header).readValues());
-      contactAdded=true;
+    if (header != null) {
+      try {
+        this.contact.addAll(new ContactInfoReader(header).readValues());
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().info(e.getMessage());
+      }
     }
- catch (    Exception e) {
-      Context.getCurrentLogger().info(e.getMessage());
-    }
+    contactAdded=true;
   }
   return c;
 }

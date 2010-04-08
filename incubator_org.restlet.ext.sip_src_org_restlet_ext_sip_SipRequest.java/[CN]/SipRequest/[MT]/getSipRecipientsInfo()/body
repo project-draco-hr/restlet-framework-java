@@ -10,13 +10,16 @@ synchronized (this) {
   }
   if (!recipientsInfoAdded) {
     String header=getHeaders().getValues(HeaderConstants.HEADER_VIA);
-    try {
-      this.recipientsInfo.addAll(new SipRecipientInfoReader(header).readValues());
-      recipientsInfoAdded=true;
+    if (header != null) {
+      try {
+        this.recipientsInfo.addAll(new SipRecipientInfoReader(header).readValues());
+        recipientsInfoAdded=true;
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().info(e.getMessage());
+      }
     }
- catch (    Exception e) {
-      Context.getCurrentLogger().info(e.getMessage());
-    }
+    recipientsInfoAdded=true;
   }
   return sri;
 }

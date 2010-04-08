@@ -10,13 +10,15 @@ synchronized (this) {
   }
   if (!requiresAdded) {
     String header=getHeaders().getValues(SipConstants.HEADER_REQUIRE);
-    try {
-      this.requires.addAll(new OptionTagReader(header).readValues());
-      requiresAdded=true;
+    if (header != null) {
+      try {
+        this.requires.addAll(new OptionTagReader(header).readValues());
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().info(e.getMessage());
+      }
     }
- catch (    Exception e) {
-      Context.getCurrentLogger().info(e.getMessage());
-    }
+    requiresAdded=true;
   }
   return r;
 }

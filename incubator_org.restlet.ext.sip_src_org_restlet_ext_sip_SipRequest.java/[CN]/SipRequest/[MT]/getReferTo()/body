@@ -1,12 +1,15 @@
 {
   if (!referToAdded) {
     String header=getHeaders().getValues(SipConstants.HEADER_REFER_TO);
-    try {
-      setReferTo(new AddressReader(header).readValue());
+    if (header != null) {
+      try {
+        setReferTo(new AddressReader(header).readValue());
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().info(e.getMessage());
+      }
     }
- catch (    Exception e) {
-      Context.getCurrentLogger().info(e.getMessage());
-    }
+    referToAdded=true;
   }
   return referTo;
 }

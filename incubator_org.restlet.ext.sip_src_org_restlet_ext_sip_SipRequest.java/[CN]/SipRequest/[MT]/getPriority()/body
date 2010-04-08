@@ -1,12 +1,15 @@
 {
   if (!priorityAdded) {
     String header=getHeaders().getValues(SipConstants.HEADER_PRIORITY);
-    try {
-      setPriority(Priority.valueOf(header));
+    if (header != null) {
+      try {
+        setPriority(Priority.valueOf(header));
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().info(e.getMessage());
+      }
     }
- catch (    Exception e) {
-      Context.getCurrentLogger().info(e.getMessage());
-    }
+    priorityAdded=true;
   }
   return priority;
 }

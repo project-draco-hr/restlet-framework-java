@@ -1,12 +1,15 @@
 {
   if (!subscriptionStateAdded) {
     String header=getHeaders().getValues(SipConstants.HEADER_SUBSCRIPTION_STATE);
-    try {
-      setSubscriptionState(new SubscriptionStateReader(header).readValue());
+    if (header != null) {
+      try {
+        setSubscriptionState(new SubscriptionStateReader(header).readValue());
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().info(e.getMessage());
+      }
     }
- catch (    Exception e) {
-      Context.getCurrentLogger().info(e.getMessage());
-    }
+    subscriptionStateAdded=true;
   }
   return subscriptionState;
 }

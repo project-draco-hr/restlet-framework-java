@@ -1,12 +1,15 @@
 {
   if (!eventAdded) {
     String header=getHeaders().getValues(SipConstants.HEADER_EVENT);
-    try {
-      setEvent(new EventReader(header).readValue());
+    if (header != null) {
+      try {
+        setEvent(new EventReader(header).readValue());
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().info(e.getMessage());
+      }
     }
- catch (    Exception e) {
-      Context.getCurrentLogger().info(e.getMessage());
-    }
+    eventAdded=true;
   }
   return event;
 }

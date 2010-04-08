@@ -10,13 +10,15 @@ synchronized (this) {
   }
   if (!inReplyToAdded) {
     String header=getHeaders().getValues(SipConstants.HEADER_ALLOW_EVENTS);
-    try {
-      this.inReplyTo.addAll(new HeaderReader<String>(header).readValues());
-      inReplyToAdded=true;
+    if (header != null) {
+      try {
+        this.inReplyTo.addAll(new HeaderReader<String>(header).readValues());
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().info(e.getMessage());
+      }
     }
- catch (    Exception e) {
-      Context.getCurrentLogger().info(e.getMessage());
-    }
+    inReplyToAdded=true;
   }
   return irt;
 }

@@ -1,12 +1,15 @@
 {
   if (!alertInfoAdded) {
     String header=getHeaders().getValues(SipConstants.HEADER_ALERT_INFO);
-    try {
-      setAlertInfo(new AddressReader(header).readValue());
+    if (header != null) {
+      try {
+        setAlertInfo(new AddressReader(header).readValue());
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().info(e.getMessage());
+      }
     }
- catch (    Exception e) {
-      Context.getCurrentLogger().info(e.getMessage());
-    }
+    alertInfoAdded=true;
   }
   return alertInfo;
 }
