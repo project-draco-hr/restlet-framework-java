@@ -6,16 +6,16 @@
     }
   }
  else {
-    new String(baseSecret);
+    a1=new String(baseSecret);
   }
   if (a1 != null) {
-    String a2=DigestUtils.toMd5(previousRequest.getMethod() + ":" + challengeResponse.getDigestRef().toString());
-    StringBuilder response=new StringBuilder().append(a1).append(':').append(challengeResponse.getServerNonce());
+    String a2=DigestUtils.toMd5(request.getMethod().toString() + ":" + challengeResponse.getDigestRef().toString());
+    StringBuilder sb=new StringBuilder().append(a1).append(':').append(challengeResponse.getServerNonce());
     if (!AuthenticatorUtils.anyNull(challengeResponse.getQuality(),challengeResponse.getClientNonce(),challengeResponse.getServerNounceCount())) {
-      response.append(':').append(AuthenticatorUtils.formatNonceCount(challengeResponse.getServerNounceCount())).append(':').append(challengeResponse.getClientNonce()).append(':').append(challengeResponse.getQuality());
+      sb.append(':').append(AuthenticatorUtils.formatNonceCount(challengeResponse.getServerNounceCount())).append(':').append(challengeResponse.getClientNonce()).append(':').append(challengeResponse.getQuality());
     }
-    response.append(':').append(a2);
-    return DigestUtils.toMd5(response.toString()).toCharArray();
+    sb.append(':').append(a2);
+    return DigestUtils.toMd5(sb.toString()).toCharArray();
   }
   return null;
 }
