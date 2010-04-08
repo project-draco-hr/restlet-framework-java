@@ -13,26 +13,28 @@
       }
     }
     try {
-      InetSocketAddress socketAddress=new InetSocketAddress(hostDomain,hostPort);
-      if (socketAddress.getAddress() == null) {
-        throw new UnknownHostException(hostDomain);
-      }
       int hostConnectionCount=0;
       int bestCount=0;
       Connection<Client> bestConn=null;
       boolean foundConn=false;
-      for (      Connection<Client> currConn : getConnections()) {
-        if (socketAddress.getAddress().equals(currConn.getSocket().getInetAddress()) && socketAddress.getPort() == currConn.getSocket().getPort()) {
-          hostConnectionCount++;
-          if (currConn.getState().equals(ConnectionState.OPEN) && !currConn.isOutboundBusy()) {
-            bestConn=currConn;
-            foundConn=true;
-            continue;
-          }
-          int currCount=currConn.getOutboundMessages().size();
-          if (bestCount > currCount) {
-            bestCount=currCount;
-            bestConn=currConn;
+      if (hostDomain != null) {
+        InetSocketAddress socketAddress=new InetSocketAddress(hostDomain,hostPort);
+        if (socketAddress.getAddress() == null) {
+          throw new UnknownHostException(hostDomain);
+        }
+        for (        Connection<Client> currConn : getConnections()) {
+          if (socketAddress.getAddress().equals(currConn.getSocket().getInetAddress()) && socketAddress.getPort() == currConn.getSocket().getPort()) {
+            hostConnectionCount++;
+            if (currConn.getState().equals(ConnectionState.OPEN) && !currConn.isOutboundBusy()) {
+              bestConn=currConn;
+              foundConn=true;
+              continue;
+            }
+            int currCount=currConn.getOutboundMessages().size();
+            if (bestCount > currCount) {
+              bestCount=currCount;
+              bestConn=currConn;
+            }
           }
         }
       }
