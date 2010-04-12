@@ -1,0 +1,34 @@
+{
+  final Reference resourceRef=request.getResourceRef();
+  final Reference baseRef=resourceRef.getBaseRef();
+  final String targetTemplate=getTargetTemplate();
+  request.setResourceRef(targetRef);
+  request.setOnResponse(new Uniform(){
+    public void handle(    Request req,    Response resp){
+      System.err.println("callback " + req.getResourceRef() + " "+ req.getMethod()+ "/"+ resp.getStatus());
+      if (!resp.getStatus().isInformational()) {
+        response.setEntity(rewrite(response.getEntity()));
+        request.setResourceRef(resourceRef);
+        if (response.getLocationRef() != null) {
+          Template rt=new Template(targetTemplate);
+          rt.setLogger(getLogger());
+          int matched=rt.parse(response.getLocationRef().toString(),request);
+          if (matched > 0) {
+            String remainingPart=(String)request.getAttributes().get("rr");
+            if (remainingPart != null) {
+              response.setLocationRef(baseRef.toString() + remainingPart);
+            }
+          }
+        }
+      }
+ else {
+        System.out.println("resp.getStatus() " + resp.getStatus());
+        SipResponse provisionalResponse=new SipResponse(req);
+        provisionalResponse.setStatus(resp.getStatus());
+        provisionalResponse.commit();
+      }
+    }
+  }
+);
+  next.handle(request,response);
+}

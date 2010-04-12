@@ -1,0 +1,14 @@
+{
+  String[] arguments=new String[1];
+  arguments[0]="8182";
+  UacServerResource.main(arguments);
+  Component c=new Component();
+  c.getServers().add(Protocol.SIP);
+  Client client=new Client(new Context(),Protocol.SIP);
+  client.getContext().getParameters().add("hostDomain","localhost");
+  client.getContext().getParameters().add("hostPort",arguments[0]);
+  client.getContext().getParameters().add("pipeliningConnections","true");
+  c.getClients().add(client);
+  c.getDefaultHost().attachDefault(new B2buaRedirector(null,"sip:localhost:8182"));
+  c.start();
+}

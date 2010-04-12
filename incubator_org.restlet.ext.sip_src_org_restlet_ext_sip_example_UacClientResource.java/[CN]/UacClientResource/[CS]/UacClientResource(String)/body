@@ -1,4 +1,7 @@
 {
   this.clientResource=new ClientResource(uri);
+  Client client=new Client(new Context(),Protocol.SIP);
+  client.getContext().getParameters().add("tracing","true");
+  this.clientResource.setNext(client);
   this.proxy=this.clientResource.wrap(UacResource.class);
 }
