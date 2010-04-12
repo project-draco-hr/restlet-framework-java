@@ -3,11 +3,13 @@
   final Reference baseRef=resourceRef.getBaseRef();
   final String targetTemplate=getTargetTemplate();
   request.setResourceRef(targetRef);
+  request.getAttributes().remove(HeaderConstants.ATTRIBUTE_HEADERS);
   request.setOnResponse(new Uniform(){
     public void handle(    Request req,    Response resp){
-      System.err.println("callback " + req.getResourceRef() + " "+ req.getMethod()+ "/"+ resp.getStatus());
+      System.err.println(req.getMethod() + "resp.getStatus() " + resp.getStatus());
       if (!resp.getStatus().isInformational()) {
         response.setEntity(rewrite(response.getEntity()));
+        request.getAttributes().remove(HeaderConstants.ATTRIBUTE_HEADERS);
         request.setResourceRef(resourceRef);
         if (response.getLocationRef() != null) {
           Template rt=new Template(targetTemplate);
@@ -22,7 +24,6 @@
         }
       }
  else {
-        System.out.println("resp.getStatus() " + resp.getStatus());
         SipResponse provisionalResponse=new SipResponse(req);
         provisionalResponse.setStatus(resp.getStatus());
         provisionalResponse.commit();
