@@ -2,8 +2,12 @@
   User user=findUser(clientInfo.getUser().getIdentifier());
   if (user != null) {
     Set<Group> userGroups=findGroups(user);
-    Set<Role> userRoles=findRoles(userGroups,user);
+    Set<Role> userRoles=findRoles(user);
     for (    Role role : userRoles) {
+      clientInfo.getRoles().add(role);
+    }
+    Set<Role> groupRoles=findRoles(userGroups);
+    for (    Role role : groupRoles) {
       clientInfo.getRoles().add(role);
     }
   }
