@@ -16,7 +16,13 @@
       result.setProtocol(new Protocol("HTTP","HTTP",null,-1,protocolToken));
     }
     if (skipSpaces()) {
-      StringBuilder sb=new StringBuilder(readToken());
+      StringBuilder sb=new StringBuilder();
+      if (peek() == '[') {
+        sb.append(readIpv6Address());
+      }
+ else {
+        sb.append(readToken());
+      }
       if (read() == ':') {
         sb.append(":");
         sb.append(readToken());
