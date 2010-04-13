@@ -2,15 +2,15 @@
   List<AnnotationInfo> result=cache.get(clazz);
   if (result == null) {
     result=addAnnotations(result,clazz);
-    List<AnnotationInfo> prev=cache.putIfAbsent(clazz,result);
-    if (prev != null) {
-      result=prev;
-    }
     Class<?>[] interfaces=clazz.getInterfaces();
     if (interfaces != null) {
       for (      Class<?> interfaceClass : interfaces) {
         result=addAnnotations(result,interfaceClass);
       }
+    }
+    List<AnnotationInfo> prev=cache.putIfAbsent(clazz,result);
+    if (prev != null) {
+      result=prev;
     }
   }
   return result;
