@@ -2,9 +2,9 @@
   final Reference resourceRef=request.getResourceRef();
   final Reference baseRef=resourceRef.getBaseRef();
   final String targetTemplate=getTargetTemplate();
+  request.getAttributes().remove(HeaderConstants.ATTRIBUTE_HEADERS);
   request.setOnResponse(new Uniform(){
     public void handle(    Request req,    Response resp){
-      System.err.println(req.getMethod() + " resp.getStatus() " + resp.getStatus());
       if (!resp.getStatus().isInformational()) {
         response.setEntity(rewrite(response.getEntity()));
         request.getAttributes().remove(HeaderConstants.ATTRIBUTE_HEADERS);
@@ -32,7 +32,6 @@
 );
   Request r=new Request(request);
   r.setResourceRef(targetRef);
-  r.getAttributes().remove(HeaderConstants.ATTRIBUTE_HEADERS);
   response.setAutoCommitting(false);
   next.handle(r,response);
 }
