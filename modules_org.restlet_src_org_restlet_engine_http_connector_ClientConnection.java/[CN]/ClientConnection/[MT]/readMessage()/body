@@ -60,7 +60,7 @@
   Response response=null;
   Status status=createStatus(statusCode);
   if (status.isInformational()) {
-    response=new Response(finalResponse.getRequest());
+    response=getHelper().createResponse(finalResponse.getRequest());
   }
  else {
     response=finalResponse;
@@ -71,7 +71,7 @@
   response.getServerInfo().setPort(getSocket().getPort());
   response.setEntity(createInboundEntity(headers));
   try {
-    HeaderUtils.copyResponseTransportHeaders(headers,response);
+    copyResponseTransportHeaders(headers,response);
   }
  catch (  Throwable t) {
     getLogger().log(Level.WARNING,"Error while parsing the headers",t);
