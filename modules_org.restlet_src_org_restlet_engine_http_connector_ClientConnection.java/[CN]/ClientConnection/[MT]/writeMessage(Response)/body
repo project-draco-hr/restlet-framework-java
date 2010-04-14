@@ -7,14 +7,14 @@
     addEntityHeaders(request.getEntity(),headers);
     writeMessage(response,headers);
   }
- catch (  Exception e) {
+ catch (  IOException e) {
     getLogger().log(Level.INFO,"An exception occured writing the request",e);
     response.setStatus(Status.CONNECTOR_ERROR_COMMUNICATION,"An exception occured writing the request");
     response.setEntity(null);
     try {
       writeMessage(response,headers);
     }
- catch (    Exception ee) {
+ catch (    IOException ee) {
       getLogger().log(Level.WARNING,"Unable to send error request",ee);
     }
   }

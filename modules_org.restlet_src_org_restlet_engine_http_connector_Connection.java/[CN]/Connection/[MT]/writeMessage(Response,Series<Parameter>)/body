@@ -9,20 +9,39 @@
       connectorService.beforeSend(entity);
     }
     try {
-      writeMessageHead(message,headers);
+      try {
+        writeMessageHead(message,headers);
+      }
+ catch (      IOException ioe) {
+        getLogger().log(Level.WARNING,"Exception while writing the message headers.",ioe);
+        throw ioe;
+      }
       if (entity != null) {
         boolean chunked=HeaderUtils.isChunkedEncoding(headers);
-        WritableByteChannel entityChannel=getOutboundEntityChannel(chunked);
-        OutputStream entityStream=getOutboundEntityStream(chunked);
-        writeMessageBody(entity,entityChannel,entityStream);
-        if (entityStream != null) {
-          entityStream.flush();
-          entityStream.close();
+        OutputStream entityStream=null;
+        WritableByteChannel entityChannel=null;
+        try {
+          entityChannel=getOutboundEntityChannel(chunked);
+          entityStream=getOutboundEntityStream(chunked);
+          writeMessageBody(entity,entityChannel,entityStream);
+        }
+ catch (        IOException ioe) {
+          getLogger().log(Level.WARNING,"Exception while writing the message body.",ioe);
+          throw ioe;
+        }
+        try {
+          if (entityStream != null) {
+            entityStream.flush();
+            entityStream.close();
+          }
+        }
+ catch (        IOException ioe) {
+          getLogger().log(Level.FINE,"Exception while flushing and closing the entity stream.",ioe);
         }
       }
     }
  catch (    IOException ioe) {
-      getLogger().log(Level.FINE,"Exception while flushing and closing the entity stream.",ioe);
+      throw ioe;
     }
  finally {
       if (entity != null) {
