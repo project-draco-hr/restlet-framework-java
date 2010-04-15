@@ -12,9 +12,11 @@ synchronized (this) {
     }
   }
  catch (  Throwable e) {
-    getLogger().log(Level.WARNING,"Error while reading a message. Closing the connection.",e.getMessage());
-    getLogger().log(Level.FINE,"Error while reading a message. Closing the connection.",e);
-    close(false);
+    if (ConnectionState.CLOSING != getState() && ConnectionState.CLOSED != getState()) {
+      getLogger().log(Level.WARNING,"Error while reading a message. Closing the connection.",e.getMessage());
+      getLogger().log(Level.FINE,"Error while reading a message. Closing the connection.",e);
+      close(false);
+    }
   }
   getHelper().handleNextInbound();
 }
