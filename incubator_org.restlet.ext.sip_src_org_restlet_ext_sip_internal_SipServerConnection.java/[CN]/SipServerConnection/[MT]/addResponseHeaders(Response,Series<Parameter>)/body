@@ -60,6 +60,8 @@
     headers.add(SipConstants.HEADER_UNSUPPORTED,OptionTagWriter.write(sipResponse.getUnsupported()));
   }
   if (!sipResponse.getSipRecipientsInfo().isEmpty()) {
-    headers.add(HeaderConstants.HEADER_VIA,SipRecipientInfoWriter.write(sipResponse.getSipRecipientsInfo()));
+    for (    SipRecipientInfo recipient : sipResponse.getSipRecipientsInfo()) {
+      headers.add(HeaderConstants.HEADER_VIA,SipRecipientInfoWriter.write(recipient));
+    }
   }
 }
