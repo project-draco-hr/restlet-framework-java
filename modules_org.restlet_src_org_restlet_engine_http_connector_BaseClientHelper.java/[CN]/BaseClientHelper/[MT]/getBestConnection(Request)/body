@@ -1,0 +1,32 @@
+{
+  Connection<Client> result=null;
+  int hostConnectionCount=0;
+  int bestCount=0;
+  boolean foundConn=false;
+  InetSocketAddress socketAddress=getSocketAddress(request);
+  if (socketAddress == null) {
+    getLogger().log(Level.WARNING,"Unable to create a socket address related to the request.");
+  }
+ else {
+    for (    Connection<Client> currConn : getConnections()) {
+      if (socketAddress.getAddress().equals(currConn.getSocket().getInetAddress()) && socketAddress.getPort() == currConn.getSocket().getPort()) {
+        if (currConn.getState().equals(ConnectionState.OPEN) && !currConn.isOutboundBusy()) {
+          result=currConn;
+          foundConn=true;
+          break;
+        }
+        int currCount=currConn.getOutboundMessages().size();
+        if (bestCount > currCount) {
+          bestCount=currCount;
+          result=currConn;
+        }
+        hostConnectionCount++;
+      }
+    }
+    if (!foundConn && ((getMaxTotalConnections() == -1) || (getConnections().size() < getMaxTotalConnections())) && ((getMaxConnectionsPerHost() == -1) || (hostConnectionCount < getMaxConnectionsPerHost()))) {
+      result=createConnection(this,createSocket(request.isConfidential(),socketAddress),null);
+      result.open();
+    }
+  }
+  return result;
+}
