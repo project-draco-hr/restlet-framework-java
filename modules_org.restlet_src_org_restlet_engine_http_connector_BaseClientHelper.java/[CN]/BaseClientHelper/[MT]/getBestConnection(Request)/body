@@ -8,19 +8,21 @@
     getLogger().log(Level.WARNING,"Unable to create a socket address related to the request.");
   }
  else {
-    for (    Connection<Client> currConn : getConnections()) {
+    for (Iterator<Connection<Client>> iterator=getConnections().iterator(); !foundConn && iterator.hasNext(); ) {
+      ClientConnection currConn=(ClientConnection)iterator.next();
       if (socketAddress.getAddress().equals(currConn.getSocket().getInetAddress()) && socketAddress.getPort() == currConn.getSocket().getPort()) {
-        if (currConn.getState().equals(ConnectionState.OPEN) && !currConn.isOutboundBusy()) {
+        if (currConn.getState().equals(ConnectionState.OPEN) && currConn.canEnqueue()) {
           result=currConn;
           foundConn=true;
-          break;
         }
-        int currCount=currConn.getOutboundMessages().size();
-        if (bestCount > currCount) {
-          bestCount=currCount;
-          result=currConn;
+ else {
+          int currCount=currConn.getOutboundMessages().size();
+          if (bestCount > currCount) {
+            bestCount=currCount;
+            result=currConn;
+          }
+          hostConnectionCount++;
         }
-        hostConnectionCount++;
       }
     }
     if (!foundConn && ((getMaxTotalConnections() == -1) || (getConnections().size() < getMaxTotalConnections())) && ((getMaxConnectionsPerHost() == -1) || (hostConnectionCount < getMaxConnectionsPerHost()))) {
