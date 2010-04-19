@@ -1,8 +1,12 @@
 {
-  super.addRequestHeaders(request,headers);
   SipRequest sipRequest=null;
   if (request instanceof SipRequest) {
     sipRequest=(SipRequest)request;
+    if (!sipRequest.getSipRecipientsInfo().isEmpty()) {
+      for (      SipRecipientInfo recipient : sipRequest.getSipRecipientsInfo()) {
+        headers.add(HeaderConstants.HEADER_VIA,SipRecipientInfoWriter.write(recipient));
+      }
+    }
     if (sipRequest.getCallId() != null) {
       headers.add(SipConstants.HEADER_CALL_ID,sipRequest.getCallId());
     }
@@ -14,11 +18,6 @@
     }
     if (sipRequest.getTo() != null) {
       headers.add(SipConstants.HEADER_TO,AddressWriter.write(sipRequest.getTo()));
-    }
-    if (!sipRequest.getSipRecipientsInfo().isEmpty()) {
-      for (      SipRecipientInfo recipient : sipRequest.getSipRecipientsInfo()) {
-        headers.add(HeaderConstants.HEADER_VIA,SipRecipientInfoWriter.write(recipient));
-      }
     }
     if (sipRequest.getAlertInfo() != null) {
       headers.add(SipConstants.HEADER_ALERT_INFO,AddressWriter.write(sipRequest.getAlertInfo()));
@@ -82,4 +81,5 @@
       headers.add(SipConstants.HEADER_SUBSCRIPTION_STATE,SubscriptionStateWriter.write(sipRequest.getSubscriptionState()));
     }
   }
+  super.addRequestHeaders(request,headers);
 }
