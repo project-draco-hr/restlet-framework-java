@@ -1,0 +1,14 @@
+{
+  String str="presence";
+  EventTypeReader r=new EventTypeReader(str);
+  EventType e=r.readValue();
+  assertEquals("presence",e.getPackage());
+  assertTrue(e.getEventTemplates().isEmpty());
+  str="presence.template1.template2 ";
+  r=new EventTypeReader(str);
+  e=r.readValue();
+  assertEquals("presence",e.getPackage());
+  assertEquals(2,e.getEventTemplates().size());
+  assertEquals("template1",e.getEventTemplates().get(0));
+  assertEquals("template2",e.getEventTemplates().get(1));
+}
