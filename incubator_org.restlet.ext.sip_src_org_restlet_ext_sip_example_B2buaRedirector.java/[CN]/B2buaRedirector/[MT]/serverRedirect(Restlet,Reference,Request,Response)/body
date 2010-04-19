@@ -5,6 +5,7 @@
   request.getAttributes().remove(HeaderConstants.ATTRIBUTE_HEADERS);
   request.setOnResponse(new Uniform(){
     public void handle(    Request req,    Response resp){
+      SipResponse r=(SipResponse)resp;
       if (!resp.getStatus().isInformational()) {
         response.setEntity(rewrite(response.getEntity()));
         response.getAttributes().remove(HeaderConstants.ATTRIBUTE_HEADERS);
@@ -19,6 +20,9 @@
               response.setLocationRef(baseRef.toString() + remainingPart);
             }
           }
+        }
+        if (!r.getSipRecipientsInfo().isEmpty()) {
+          r.getSipRecipientsInfo().remove(0);
         }
         resp.commit();
       }

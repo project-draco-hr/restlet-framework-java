@@ -2,13 +2,15 @@
   String[] arguments=new String[1];
   arguments[0]="8182";
   Component c=new Component();
-  c.getServers().add(Protocol.SIP);
-  Client client=new Client(new Context(),Protocol.SIP);
+  Server server=new Server(Protocol.SIP);
+  c.getServers().add(server);
+  server.getContext().getParameters().add("tracing","false");
+  Client client=new Client(Protocol.SIP);
+  c.getClients().add(client);
   client.getContext().getParameters().add("proxyHost","localhost");
   client.getContext().getParameters().add("proxyPort",arguments[0]);
   client.getContext().getParameters().add("tracing","false");
   client.getContext().getParameters().add("pipeliningConnections","false");
-  c.getClients().add(client);
   c.getDefaultHost().attachDefault(new B2buaRedirector(null,"sip:localhost:8182"));
   c.start();
 }
