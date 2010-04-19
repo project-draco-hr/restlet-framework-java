@@ -29,17 +29,15 @@
         setStatus(status);
       }
     }
-    if ((getStatus() != null) && getStatus().isSuccess()) {
-      if ((Method.GET.equals(getMethod()) || Method.HEAD.equals(getMethod())) && resultInfo instanceof Representation) {
-        result=(Representation)resultInfo;
+    if ((Method.GET.equals(getMethod()) || Method.HEAD.equals(getMethod())) && resultInfo instanceof Representation) {
+      result=(Representation)resultInfo;
+    }
+ else     if ((getStatus() != null) && getStatus().isSuccess()) {
+      if (isNegotiated()) {
+        result=doNegotiatedHandle();
       }
  else {
-        if (isNegotiated()) {
-          result=doNegotiatedHandle();
-        }
- else {
-          result=doHandle();
-        }
+        result=doHandle();
       }
     }
   }
