@@ -1,4 +1,14 @@
 {
+  if (context == null) {
+    context=Context.getCurrent();
+  }
+  if (context != null) {
+    this.next=context.getClientDispatcher();
+  }
+  response.setRequest(request);
   this.followingRedirects=true;
+  this.retryOnError=true;
+  this.retryDelay=2000L;
+  this.retryAttempts=2;
   init(context,request,response);
 }
