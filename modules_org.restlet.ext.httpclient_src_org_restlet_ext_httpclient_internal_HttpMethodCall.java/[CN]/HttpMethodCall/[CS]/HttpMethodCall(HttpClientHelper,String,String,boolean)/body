@@ -25,6 +25,9 @@
     }
  else {
       this.httpRequest=new HttpEntityEnclosingRequestBase(){
+        @Override public String getMethod(){
+          return method;
+        }
         @Override public URI getURI(){
           try {
             return new URI(requestUri);
@@ -33,9 +36,6 @@
             getLogger().log(Level.WARNING,"Invalid URI syntax",e);
             return null;
           }
-        }
-        @Override public String getMethod(){
-          return method;
         }
       }
 ;
