@@ -1,21 +1,3 @@
 {
-  List<Variant> result=this.variants;
-  if (result == null) {
-    result=new ArrayList<Variant>();
-    if (isAnnotated() && hasAnnotations()) {
-      List<Variant> annoVariants=null;
-      for (      AnnotationInfo annotationInfo : getAnnotations()) {
-        if (getMethod().equals(annotationInfo.getRestletMethod())) {
-          annoVariants=annotationInfo.getResponseVariants(getRequestEntity(),getMetadataService(),getConverterService());
-          if (annoVariants != null) {
-            for (            Variant v : annoVariants) {
-              result.add(new VariantInfo(v,annotationInfo));
-            }
-          }
-        }
-      }
-    }
-    this.variants=result;
-  }
-  return result;
+  return getVariants(getMethod());
 }
