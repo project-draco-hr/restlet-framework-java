@@ -1,13 +1,13 @@
 {
   if (getOutboundMessageState() == null) {
-    setOutboundMessageState(MessageState.START_LINE);
+    setOutboundMessageState(WayMessageState.START_LINE);
     getOutboundBuilder().delete(0,getOutboundBuilder().length());
   }
   while (getOutboundBuffer().hasRemaining()) {
-    if (getOutboundMessageState() == MessageState.START_LINE) {
+    if (getOutboundMessageState() == WayMessageState.START_LINE) {
       writeMessageStart();
     }
- else     if (getMessageState() == MessageState.HEADERS) {
+ else     if (getMessageState() == WayMessageState.HEADERS) {
       readMessageHeaders();
     }
   }
