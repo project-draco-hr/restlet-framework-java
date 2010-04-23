@@ -1,0 +1,12 @@
+{
+  List<CacheDirective> result=super.getCacheDirectives();
+  if (!this.cacheDirectivesAdded) {
+    if (getHeaders() != null) {
+      for (      Parameter header : getHeaders().subList(HeaderConstants.HEADER_CACHE_CONTROL)) {
+        CacheDirectiveReader.addValues(header,result);
+      }
+    }
+    this.cacheDirectivesAdded=true;
+  }
+  return result;
+}

@@ -1,0 +1,11 @@
+{
+  final List<Range> result=super.getRanges();
+  if (!this.rangesAdded) {
+    if (getHeaders() != null) {
+      String ranges=getHeaders().getValues(HeaderConstants.HEADER_RANGE);
+      result.addAll(RangeReader.read(ranges));
+    }
+    this.rangesAdded=true;
+  }
+  return result;
+}

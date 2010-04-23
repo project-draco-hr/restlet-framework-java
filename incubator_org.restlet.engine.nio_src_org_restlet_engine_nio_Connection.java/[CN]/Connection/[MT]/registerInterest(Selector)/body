@@ -1,0 +1,34 @@
+{
+  int socketInterest=0;
+  int entityInterest=0;
+  try {
+    if (getInboundIoState() == IoState.READ_INTEREST) {
+      socketInterest=socketInterest | SelectionKey.OP_READ;
+    }
+    if (getOutboundIoState() == IoState.WRITE_INTEREST) {
+      socketInterest=socketInterest | SelectionKey.OP_WRITE;
+    }
+ else     if (getOutboundIoState() == IoState.READ_INTEREST) {
+      entityInterest=entityInterest | SelectionKey.OP_READ;
+    }
+    if (socketInterest > 0) {
+      getSocketChannel().register(selector,socketInterest,this);
+    }
+    if (entityInterest > 0) {
+      Representation entity=(getOutboundMessage() == null) ? null : getOutboundMessage().getEntity();
+      if (entity instanceof ReadableRepresentation) {
+        ReadableRepresentation readableEntity=(ReadableRepresentation)entity;
+        if (readableEntity.getChannel() instanceof SelectableChannel) {
+          SelectableChannel selectableChannel=(SelectableChannel)readableEntity.getChannel();
+          if (!selectableChannel.isBlocking()) {
+            selectableChannel.register(selector,entityInterest,this);
+          }
+        }
+      }
+    }
+  }
+ catch (  ClosedChannelException cce) {
+    getLogger().log(Level.WARNING,"Unable to register NIO interest operations for this connection",cce);
+    setState(ConnectionState.CLOSING);
+  }
+}

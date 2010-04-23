@@ -1,0 +1,20 @@
+{
+  try {
+    if (canRead()) {
+      int result=readBytes();
+      while (getInboundBuffer().hasRemaining()) {
+        readMessage();
+        if (!getInboundBuffer().hasRemaining()) {
+          result=readBytes();
+        }
+      }
+      if (result == -1) {
+        close(true);
+      }
+    }
+  }
+ catch (  Exception e) {
+    getLogger().log(Level.INFO,"Error while reading a message. Closing the connection.",e);
+    close(false);
+  }
+}

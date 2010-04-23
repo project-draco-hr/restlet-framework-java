@@ -1,0 +1,23 @@
+{
+  this.helper=helper;
+  this.inboundBuffer=ByteBuffer.allocate(NioUtils.BUFFER_SIZE);
+  this.inboundBuilder=new StringBuilder();
+  this.inboundMessageState=MessageState.NONE;
+  this.inboundIoState=IoState.IDLE;
+  this.inboundMessage=null;
+  this.inboundMessages=new ConcurrentLinkedQueue<Response>();
+  this.outboundBuffer=ByteBuffer.allocate(NioUtils.BUFFER_SIZE);
+  this.outboundBuilder=new StringBuilder();
+  this.outboundMessageState=MessageState.NONE;
+  this.outboundIoState=IoState.IDLE;
+  this.outboundMessage=null;
+  this.outboundMessages=new ConcurrentLinkedQueue<Response>();
+  this.persistent=helper.isPersistingConnections();
+  this.pipelining=helper.isPipeliningConnections();
+  this.state=ConnectionState.OPENING;
+  this.socketChannel=socketChannel;
+  if (getHelper().isTracing()) {
+  }
+ else {
+  }
+}

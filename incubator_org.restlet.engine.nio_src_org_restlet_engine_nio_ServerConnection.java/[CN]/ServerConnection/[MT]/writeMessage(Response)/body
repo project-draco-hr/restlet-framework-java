@@ -1,0 +1,14 @@
+{
+  if (getOutboundMessageState() == null) {
+    setOutboundMessageState(MessageState.START_LINE);
+    getOutboundBuilder().delete(0,getOutboundBuilder().length());
+  }
+  while (getOutboundBuffer().hasRemaining()) {
+    if (getOutboundMessageState() == MessageState.START_LINE) {
+      writeMessageStart();
+    }
+ else     if (getInboundMessageState() == MessageState.HEADERS) {
+      readMessageHeaders();
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  if (readMessageLine()) {
+    ConnectedRequest request=(ConnectedRequest)getInboundMessage().getRequest();
+    Series<Parameter> headers=request.getHeaders();
+    Parameter header=readMessageHeader();
+    while (header != null) {
+      if (headers == null) {
+        headers=new Form();
+      }
+      headers.add(header);
+      if (readMessageLine()) {
+        header=readMessageHeader();
+        if (header == null) {
+          if (HeaderUtils.isConnectionClose(headers)) {
+            setState(ConnectionState.CLOSING);
+          }
+          Representation entity=createInboundEntity(headers);
+          if (entity instanceof EmptyRepresentation) {
+            setInboundMessageState(MessageState.END);
+          }
+ else {
+            request.setEntity(entity);
+            setInboundMessageState(MessageState.BODY);
+          }
+          getInboundMessage().getServerInfo().setAddress(getHelper().getHelped().getAddress());
+          getInboundMessage().getServerInfo().setPort(getHelper().getHelped().getPort());
+          if (request != null) {
+            if (request.isExpectingResponse()) {
+              getInboundMessages().add(getInboundMessage());
+            }
+            getHelper().getInboundMessages().add(getInboundMessage());
+          }
+        }
+      }
+ else {
+      }
+    }
+    request.setHeaders(headers);
+  }
+}

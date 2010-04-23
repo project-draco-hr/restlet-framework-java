@@ -1,0 +1,20 @@
+{
+  boolean result=false;
+  int next;
+  while (!result && getInboundBuffer().hasRemaining()) {
+    next=(int)getInboundBuffer().get();
+    if (HeaderUtils.isCarriageReturn(next)) {
+      next=(int)getInboundBuffer().get();
+      if (HeaderUtils.isLineFeed(next)) {
+        result=true;
+      }
+ else {
+        throw new IOException("Missing carriage return character at the end of HTTP line");
+      }
+    }
+ else {
+      getInboundBuilder().append((char)next);
+    }
+  }
+  return result;
+}

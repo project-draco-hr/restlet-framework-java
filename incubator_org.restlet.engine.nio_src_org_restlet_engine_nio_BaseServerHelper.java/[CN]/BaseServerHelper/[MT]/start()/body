@@ -1,0 +1,12 @@
+{
+  this.serverSocketChannel=createServerSocketChannel();
+  setEphemeralPort(this.serverSocketChannel.socket());
+  super.start();
+  try {
+    getController().await();
+  }
+ catch (  InterruptedException ex) {
+    getLogger().log(Level.WARNING,"Interrupted while waiting for starting latch. Stopping...",ex);
+    stop();
+  }
+}

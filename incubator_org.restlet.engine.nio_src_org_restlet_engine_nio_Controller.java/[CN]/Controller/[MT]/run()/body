@@ -1,0 +1,25 @@
+{
+  setRunning(true);
+  while (isRunning()) {
+    try {
+      if (isOverloaded()) {
+        if (!isWorkerServiceFull()) {
+          setOverloaded(false);
+          getHelper().getLogger().log(Level.INFO,"Accepting new connections and transactions again.");
+        }
+      }
+ else {
+        if (isWorkerServiceFull()) {
+          setOverloaded(true);
+          getHelper().getLogger().log(Level.INFO,"Stop accepting new connections and transactions. Consider increasing the maximum number of threads.");
+        }
+        controlConnections();
+        controlHelper();
+      }
+      Thread.sleep(getHelper().getControllerSleepTimeMs());
+    }
+ catch (    Exception ex) {
+      this.helper.getLogger().log(Level.FINE,"Unexpected error while controlling connector",ex);
+    }
+  }
+}

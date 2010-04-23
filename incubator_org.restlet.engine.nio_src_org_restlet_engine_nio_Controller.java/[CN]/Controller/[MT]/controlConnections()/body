@@ -1,0 +1,27 @@
+{
+  for (  final Connection<?> conn : getHelper().getConnections()) {
+    if (conn.getState() == ConnectionState.CLOSED) {
+      getHelper().getConnections().remove(conn);
+    }
+ else     if ((conn.getState() == ConnectionState.CLOSING) && !conn.isBusy()) {
+      conn.close(true);
+    }
+ else {
+      conn.registerInterest(getSelector());
+    }
+  }
+  if (getSelector().selectNow() > 0) {
+    Connection<?> conn=null;
+    for (    SelectionKey key : getSelector().selectedKeys()) {
+      conn=(Connection<?>)key.attachment();
+      if (conn != null) {
+        if (key.isWritable() && ((isOverloaded() && getHelper().isServerSide()) || conn.canWrite())) {
+          conn.writeMessages();
+        }
+        if (key.isReadable() && ((isOverloaded() && getHelper().isClientSide()) || conn.canRead())) {
+          conn.readMessages();
+        }
+      }
+    }
+  }
+}
