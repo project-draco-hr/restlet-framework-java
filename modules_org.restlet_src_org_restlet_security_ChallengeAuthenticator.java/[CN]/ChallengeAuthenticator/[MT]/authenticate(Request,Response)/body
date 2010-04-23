@@ -38,6 +38,17 @@ getLogger().fine("Authentication failed. Stale credentials provided.");
 }
 challenge(response,true);
 break;
+case Verifier.RESULT_UNKNOWN:
+if (loggable) {
+getLogger().fine("Authentication failed. Identifier is unknown.");
+}
+if (isRechallenging()) {
+challenge(response,false);
+}
+ else {
+forbid(response);
+}
+break;
 }
 }
  else {

@@ -6,11 +6,16 @@
  else {
     String identifier=getIdentifier(request,response);
     char[] secret=getSecret(request,response);
-    if (verify(identifier,secret)) {
-      request.getClientInfo().setUser(new User(identifier));
-    }
+    try {
+      if (verify(identifier,secret)) {
+        request.getClientInfo().setUser(new User(identifier));
+      }
  else {
-      result=RESULT_INVALID;
+        result=RESULT_INVALID;
+      }
+    }
+ catch (    IllegalArgumentException iae) {
+      result=RESULT_UNKNOWN;
     }
   }
   return result;
