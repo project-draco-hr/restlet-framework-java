@@ -5,15 +5,15 @@
     String version=null;
     int i=0;
     int start=0;
-    int size=getInboundBuilder().length();
+    int size=getBuilder().length();
     char next;
     if (size == 0) {
     }
  else {
       for (i=start; (requestMethod == null) && (i < size); i++) {
-        next=getInboundBuilder().charAt(i);
+        next=getBuilder().charAt(i);
         if (HeaderUtils.isSpace(next)) {
-          requestMethod=getInboundBuilder().substring(start,i);
+          requestMethod=getBuilder().substring(start,i);
           start=i + 1;
         }
       }
@@ -21,9 +21,9 @@
         throw new IOException("Unable to parse the request method. End of line reached too early.");
       }
       for (i=start; (requestUri == null) && (i < size); i++) {
-        next=getInboundBuilder().charAt(i);
+        next=getBuilder().charAt(i);
         if (HeaderUtils.isSpace(next)) {
-          requestUri=getInboundBuilder().substring(start,i);
+          requestUri=getBuilder().substring(start,i);
           start=i + 1;
         }
       }
@@ -34,10 +34,10 @@
         requestUri="/";
       }
       for (i=start; (version == null) && (i < size); i++) {
-        next=getInboundBuilder().charAt(i);
+        next=getBuilder().charAt(i);
       }
       if (i == size) {
-        version=getInboundBuilder().substring(start,i);
+        version=getBuilder().substring(start,i);
         start=i + 1;
       }
       if (version == null) {
@@ -45,9 +45,9 @@
       }
       ConnectedRequest request=createRequest(getHelper().getContext(),this,requestMethod,requestUri,version);
       Response response=getHelper().createResponse(request);
-      setInboundMessage(response);
-      setInboundMessageState(MessageState.HEADERS);
-      getInboundBuilder().delete(0,getInboundBuilder().length());
+      setMessage(response);
+      setMessageState(MessageState.HEADERS);
+      getBuilder().delete(0,getBuilder().length());
     }
   }
  else {

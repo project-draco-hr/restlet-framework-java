@@ -1,6 +1,6 @@
 {
   if (readMessageLine()) {
-    ConnectedRequest request=(ConnectedRequest)getInboundMessage().getRequest();
+    ConnectedRequest request=(ConnectedRequest)getMessage().getRequest();
     Series<Parameter> headers=request.getHeaders();
     Parameter header=readMessageHeader();
     while (header != null) {
@@ -16,19 +16,19 @@
           }
           Representation entity=createInboundEntity(headers);
           if (entity instanceof EmptyRepresentation) {
-            setInboundMessageState(MessageState.END);
+            setMessageState(MessageState.END);
           }
  else {
             request.setEntity(entity);
-            setInboundMessageState(MessageState.BODY);
+            setMessageState(MessageState.BODY);
           }
-          getInboundMessage().getServerInfo().setAddress(getHelper().getHelped().getAddress());
-          getInboundMessage().getServerInfo().setPort(getHelper().getHelped().getPort());
+          getMessage().getServerInfo().setAddress(getHelper().getHelped().getAddress());
+          getMessage().getServerInfo().setPort(getHelper().getHelped().getPort());
           if (request != null) {
             if (request.isExpectingResponse()) {
-              getInboundMessages().add(getInboundMessage());
+              getMessages().add(getMessage());
             }
-            getHelper().getInboundMessages().add(getInboundMessage());
+            getHelper().getInboundMessages().add(getMessage());
           }
         }
       }

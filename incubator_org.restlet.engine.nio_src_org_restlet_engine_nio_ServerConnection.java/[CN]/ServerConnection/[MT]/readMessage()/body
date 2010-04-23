@@ -1,13 +1,13 @@
 {
-  if (getInboundMessageState() == null) {
-    setInboundMessageState(MessageState.START_LINE);
-    getInboundBuilder().delete(0,getInboundBuilder().length());
+  if (getMessageState() == null) {
+    setMessageState(MessageState.START_LINE);
+    getBuilder().delete(0,getBuilder().length());
   }
-  while (getInboundBuffer().hasRemaining()) {
-    if (getInboundMessageState() == MessageState.START_LINE) {
+  while (getBuffer().hasRemaining()) {
+    if (getMessageState() == MessageState.START_LINE) {
       readMessageStart();
     }
- else     if (getInboundMessageState() == MessageState.HEADERS) {
+ else     if (getMessageState() == MessageState.HEADERS) {
       readMessageHeaders();
     }
   }

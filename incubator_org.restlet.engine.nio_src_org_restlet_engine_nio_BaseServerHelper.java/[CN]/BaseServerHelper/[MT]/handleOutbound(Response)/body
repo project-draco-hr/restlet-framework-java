@@ -3,11 +3,11 @@
     ConnectedRequest request=(ConnectedRequest)response.getRequest();
     ServerConnection connection=request.getConnection();
     if (request.isExpectingResponse()) {
-      Response nextResponse=connection.getInboundMessages().peek();
+      Response nextResponse=connection.getMessages().peek();
       if ((nextResponse != null) && (nextResponse.getRequest() == request)) {
         connection.getOutboundMessages().add(response);
         if (!response.getStatus().isInformational()) {
-          connection.getInboundMessages().remove(nextResponse);
+          connection.getMessages().remove(nextResponse);
         }
         connection.writeMessages();
       }
