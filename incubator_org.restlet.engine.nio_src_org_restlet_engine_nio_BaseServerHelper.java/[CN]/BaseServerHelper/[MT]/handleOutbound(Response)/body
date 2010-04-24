@@ -1,22 +1,21 @@
 {
   if (response != null) {
     ConnectedRequest request=(ConnectedRequest)response.getRequest();
-    ServerConnection connection=request.getConnection();
+    Connection<Server> connection=request.getConnection();
     if (request.isExpectingResponse()) {
-      Response nextResponse=connection.getMessages().peek();
+      Response nextResponse=connection.getInboundWay().getMessages().peek();
       if ((nextResponse != null) && (nextResponse.getRequest() == request)) {
-        connection.getOutboundMessages().add(response);
+        connection.getOutboundWay().getMessages().add(response);
         if (!response.getStatus().isInformational()) {
-          connection.getMessages().remove(nextResponse);
+          connection.getInboundWay().getMessages().remove(nextResponse);
         }
-        connection.writeMessages();
       }
  else {
         getOutboundMessages().add(response);
       }
     }
  else {
-      connection.setInboundBusy(false);
+      connection.getInboundWay().setBusy(false);
     }
   }
 }

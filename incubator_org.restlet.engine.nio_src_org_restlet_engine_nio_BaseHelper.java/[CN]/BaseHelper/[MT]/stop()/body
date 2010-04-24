@@ -1,2 +1,27 @@
 {
+  super.stop();
+  if (this.workerService != null) {
+    this.workerService.shutdown();
+  }
+  for (  Connection<T> connection : getConnections()) {
+    connection.setState(ConnectionState.CLOSING);
+  }
+  if (this.workerService != null) {
+    try {
+      this.workerService.awaitTermination(30,TimeUnit.SECONDS);
+    }
+ catch (    InterruptedException ex) {
+      getLogger().log(Level.FINE,"Interruption while shutting down the worker service",ex);
+    }
+  }
+  if (this.controllerService != null) {
+    this.controller.setRunning(false);
+    this.controllerService.shutdown();
+    try {
+      this.controllerService.awaitTermination(10,TimeUnit.SECONDS);
+    }
+ catch (    InterruptedException ex) {
+      getLogger().log(Level.FINE,"Interruption while shutting down the controller service",ex);
+    }
+  }
 }

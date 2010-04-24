@@ -4,8 +4,8 @@
   boolean chunkedEncoding=HeaderUtils.isChunkedEncoding(headers);
   boolean connectionClosed=HeaderUtils.isConnectionClose(headers);
   if ((contentLength != Representation.UNKNOWN_SIZE && contentLength != 0) || chunkedEncoding || connectionClosed) {
-    InputStream inboundEntityStream=getInboundEntityStream(contentLength,chunkedEncoding);
-    ReadableByteChannel inboundEntityChannel=getInboundEntityChannel(contentLength,chunkedEncoding);
+    InputStream inboundEntityStream=getEntityStream(contentLength,chunkedEncoding);
+    ReadableByteChannel inboundEntityChannel=getEntityChannel(contentLength,chunkedEncoding);
     if (inboundEntityStream != null) {
       result=new InputRepresentation(inboundEntityStream,null,contentLength){
         @Override public String getText() throws IOException {
@@ -20,13 +20,8 @@
           }
         }
         @Override public void release(){
-          if (getHelper().isTracing()) {
-synchronized (System.out) {
-              System.out.println("\n");
-            }
-          }
           super.release();
-          setInboundBusy(false);
+          setBusy(false);
         }
       }
 ;
@@ -35,7 +30,7 @@ synchronized (System.out) {
       result=new ReadableRepresentation(inboundEntityChannel,null,contentLength){
         @Override public void release(){
           super.release();
-          setInboundBusy(false);
+          setBusy(false);
         }
       }
 ;
@@ -44,7 +39,7 @@ synchronized (System.out) {
   }
  else {
     result=new EmptyRepresentation();
-    setInboundBusy(false);
+    setBusy(false);
   }
   if (headers != null) {
     try {

@@ -11,16 +11,9 @@
     }
   }
   if (getSelector().selectNow() > 0) {
-    Connection<?> conn=null;
     for (    SelectionKey key : getSelector().selectedKeys()) {
-      conn=(Connection<?>)key.attachment();
-      if (conn != null) {
-        if (key.isWritable() && ((isOverloaded() && getHelper().isServerSide()) || conn.canWrite())) {
-          conn.writeMessages();
-        }
-        if (key.isReadable() && ((isOverloaded() && getHelper().isClientSide()) || conn.canRead())) {
-          conn.readMessages();
-        }
+      if (key.attachment() != null) {
+        ((Way)key.attachment()).select(key);
       }
     }
   }
