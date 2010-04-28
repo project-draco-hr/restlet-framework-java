@@ -4,7 +4,8 @@
     final java.io.PipedWriter pipedWriter=new java.io.PipedWriter();
     final java.io.PipedReader pipedReader=new java.io.PipedReader(pipedWriter);
     final org.restlet.Application application=org.restlet.Application.getCurrent();
-    application.getTaskService().execute(new Runnable(){
+    TaskService taskService=(application == null) ? new TaskService() : application.getTaskService();
+    taskService.execute(new Runnable(){
       public void run(){
         try {
           representation.write(pipedWriter);

@@ -1,0 +1,14 @@
+{
+  try {
+    new Marshaller<T>(this,this.contextPath).marshal(getObject(),writer);
+  }
+ catch (  JAXBException e) {
+    Context.getCurrentLogger().log(Level.WARNING,"JAXB marshalling error caught.",e);
+    try {
+      new Marshaller<T>(this,"failure").marshal(getObject(),writer);
+    }
+ catch (    JAXBException e2) {
+      throw new IOException(e.getMessage());
+    }
+  }
+}

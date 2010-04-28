@@ -1,23 +1,23 @@
 {
   String uri=reference.toString();
   if (Link.isBlankRef(reference)) {
-    this.bw.write(uri);
+    this.writer.write(uri);
   }
  else {
     boolean found=false;
     for (    String key : prefixes.keySet()) {
       if (uri.startsWith(key)) {
         found=true;
-        this.bw.append(prefixes.get(key));
-        this.bw.append(":");
-        this.bw.append(uri.substring(key.length()));
+        this.writer.append(prefixes.get(key));
+        this.writer.append(":");
+        this.writer.append(uri.substring(key.length()));
         break;
       }
     }
     if (!found) {
-      this.bw.append("<");
-      this.bw.append(uri);
-      this.bw.append(">");
+      this.writer.append("<");
+      this.writer.append(uri);
+      this.writer.append(">");
     }
   }
 }
