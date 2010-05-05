@@ -12,9 +12,9 @@
         header=readMessageHeader();
         if (header == null) {
           if (HeaderUtils.isConnectionClose(headers)) {
-            setState(ConnectionState.CLOSING);
+            getConnection().setState(ConnectionState.CLOSING);
           }
-          Representation entity=createInboundEntity(headers);
+          Representation entity=createEntity(headers);
           if (entity instanceof EmptyRepresentation) {
             setMessageState(WayMessageState.END);
           }
@@ -22,13 +22,13 @@
             request.setEntity(entity);
             setMessageState(WayMessageState.BODY);
           }
-          getMessage().getServerInfo().setAddress(getHelper().getHelped().getAddress());
-          getMessage().getServerInfo().setPort(getHelper().getHelped().getPort());
+          getMessage().getServerInfo().setAddress(getConnection().getHelper().getHelped().getAddress());
+          getMessage().getServerInfo().setPort(getConnection().getHelper().getHelped().getPort());
           if (request != null) {
             if (request.isExpectingResponse()) {
               getMessages().add(getMessage());
             }
-            getHelper().getInboundMessages().add(getMessage());
+            getConnection().getHelper().getInboundMessages().add(getMessage());
           }
         }
       }

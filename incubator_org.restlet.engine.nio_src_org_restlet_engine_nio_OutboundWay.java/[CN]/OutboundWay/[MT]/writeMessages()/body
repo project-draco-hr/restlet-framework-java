@@ -3,10 +3,10 @@
     Response message=null;
     if (canWrite()) {
       message=getMessages().peek();
-      setOutboundBusy((message != null));
+      setBusy((message != null));
       if (message != null) {
         writeMessage(message);
-        if ((getState() == ConnectionState.CLOSING) && !isBusy()) {
+        if ((getConnection().getState() == ConnectionState.CLOSING) && !isBusy()) {
           close(true);
         }
       }
