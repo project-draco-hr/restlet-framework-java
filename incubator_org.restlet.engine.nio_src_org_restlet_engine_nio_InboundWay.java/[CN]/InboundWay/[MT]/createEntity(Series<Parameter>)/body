@@ -21,7 +21,8 @@
         }
         @Override public void release(){
           super.release();
-          setBusy(false);
+          setMessageState(MessageState.NONE);
+          setIoState(IoState.IDLE);
         }
       }
 ;
@@ -30,7 +31,8 @@
       result=new ReadableRepresentation(inboundEntityChannel,null,contentLength){
         @Override public void release(){
           super.release();
-          setBusy(false);
+          setMessageState(MessageState.NONE);
+          setIoState(IoState.IDLE);
         }
       }
 ;
@@ -39,7 +41,8 @@
   }
  else {
     result=new EmptyRepresentation();
-    setBusy(false);
+    setMessageState(MessageState.NONE);
+    setIoState(IoState.IDLE);
   }
   if (headers != null) {
     try {

@@ -3,8 +3,9 @@
     Response message=null;
     if (canWrite()) {
       message=getMessages().peek();
-      setBusy((message != null));
       if (message != null) {
+        setMessageState(MessageState.START_LINE);
+        setIoState(IoState.WRITE_INTEREST);
         writeMessage(message);
         if ((getConnection().getState() == ConnectionState.CLOSING) && !isBusy()) {
           close(true);
