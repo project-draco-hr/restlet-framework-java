@@ -7,7 +7,7 @@
         setMessageState(MessageState.START_LINE);
         setIoState(IoState.WRITE_INTEREST);
         writeMessage(message);
-        if ((getConnection().getState() == ConnectionState.CLOSING) && !isBusy()) {
+        if ((getConnection().getState() == ConnectionState.CLOSING) && (getIoState() == IoState.IDLE)) {
           getConnection().close(true);
         }
       }

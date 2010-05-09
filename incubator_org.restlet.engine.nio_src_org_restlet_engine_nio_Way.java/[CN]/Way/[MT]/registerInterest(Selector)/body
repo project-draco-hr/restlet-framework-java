@@ -1,0 +1,20 @@
+{
+  int interestOps=getInterestOps();
+  if ((getSelectionKey() == null) && (interestOps > 0)) {
+    try {
+      setSelectionKey(getConnection().getSocketChannel().register(selector,interestOps,this));
+    }
+ catch (    ClosedChannelException cce) {
+      getLogger().log(Level.WARNING,"Unable to register NIO interest operations for this connection",cce);
+      getConnection().setState(ConnectionState.CLOSING);
+    }
+  }
+ else {
+    if (interestOps == 0) {
+      getSelectionKey().cancel();
+    }
+ else {
+      getSelectionKey().interestOps(interestOps);
+    }
+  }
+}
