@@ -1,11 +1,16 @@
 {
   try {
-    if (true) {
-      int result=readBytes();
-      while (getBuffer().hasRemaining()) {
-        readMessage();
-        if (!getBuffer().hasRemaining()) {
-          result=readBytes();
+    if (getIoState() == IoState.READ_INTEREST) {
+      int result=readSocketBytes();
+      while (getBuffer().hasRemaining() && (getMessageState() != MessageState.BODY)) {
+        if (getMessageState() == MessageState.START_LINE) {
+          readStartLine();
+        }
+ else         if (getMessageState() == MessageState.HEADERS) {
+          readHeaders();
+        }
+        if (!getBuffer().hasRemaining() && (getMessageState() != MessageState.BODY)) {
+          result=readSocketBytes();
         }
       }
       if (result == -1) {

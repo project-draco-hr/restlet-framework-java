@@ -1,15 +1,15 @@
 {
-  if (readMessageLine()) {
+  if (readLine()) {
     ConnectedRequest request=(ConnectedRequest)getMessage().getRequest();
     Series<Parameter> headers=request.getHeaders();
-    Parameter header=readMessageHeader();
+    Parameter header=readHeader();
     while (header != null) {
       if (headers == null) {
         headers=new Form();
       }
       headers.add(header);
-      if (readMessageLine()) {
-        header=readMessageHeader();
+      if (readLine()) {
+        header=readHeader();
         if (header == null) {
           if (HeaderUtils.isConnectionClose(headers)) {
             getConnection().setState(ConnectionState.CLOSING);
