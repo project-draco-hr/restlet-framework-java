@@ -1,36 +1,24 @@
 {
-  int socketInterest=0;
-  int entityInterest=0;
-  try {
-    if (getIoState() == IoState.WRITE_INTEREST) {
-      socketInterest=socketInterest | SelectionKey.OP_WRITE;
-    }
- else     if (getIoState() == IoState.READ_INTEREST) {
-      entityInterest=entityInterest | SelectionKey.OP_READ;
-    }
-    if (socketInterest > 0) {
-      getConnection().getSocketChannel().register(selector,socketInterest,this);
-    }
-    if (entityInterest > 0) {
-      Representation entity=(getMessage() == null) ? null : getMessage().getEntity();
-      if (entity instanceof ReadableRepresentation) {
-        ReadableRepresentation readableEntity=(ReadableRepresentation)entity;
-        try {
-          if (readableEntity.getChannel() instanceof SelectableChannel) {
-            SelectableChannel selectableChannel=(SelectableChannel)readableEntity.getChannel();
-            if (!selectableChannel.isBlocking()) {
-              selectableChannel.register(selector,entityInterest,this);
-            }
-          }
-        }
- catch (        IOException e) {
-          e.printStackTrace();
-        }
+  super.registerInterest(selector);
+  SelectableChannel entitySelectableChannel=getEntitySelectableChannel();
+  if (entitySelectableChannel != null) {
+    int entityInterestOps=getEntityInterestOps();
+    if ((getEntityKey() == null) && (entityInterestOps > 0)) {
+      try {
+        setEntityKey(entitySelectableChannel.register(selector,entityInterestOps,this));
+      }
+ catch (      ClosedChannelException cce) {
+        getLogger().log(Level.WARNING,"Unable to register NIO interest operations for this entity",cce);
+        getConnection().setState(ConnectionState.CLOSING);
       }
     }
-  }
- catch (  ClosedChannelException cce) {
-    getLogger().log(Level.WARNING,"Unable to register NIO interest operations for this connection",cce);
-    getConnection().setState(ConnectionState.CLOSING);
+ else {
+      if (entityInterestOps == 0) {
+        getEntityKey().cancel();
+      }
+ else {
+        getEntityKey().interestOps(entityInterestOps);
+      }
+    }
   }
 }

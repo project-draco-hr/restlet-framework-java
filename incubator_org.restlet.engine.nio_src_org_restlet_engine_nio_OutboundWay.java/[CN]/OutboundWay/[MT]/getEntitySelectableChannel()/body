@@ -1,0 +1,19 @@
+{
+  SelectableChannel result=null;
+  Representation entity=(getMessage() == null) ? null : getMessage().getEntity();
+  if (entity instanceof ReadableRepresentation) {
+    ReadableRepresentation readableEntity=(ReadableRepresentation)entity;
+    try {
+      if (readableEntity.getChannel() instanceof SelectableChannel) {
+        result=(SelectableChannel)readableEntity.getChannel();
+        if (result.isBlocking()) {
+          result=null;
+        }
+      }
+    }
+ catch (    IOException e) {
+      e.printStackTrace();
+    }
+  }
+  return result;
+}
