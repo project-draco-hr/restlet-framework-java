@@ -1,8 +1,8 @@
 {
   int interestOps=getInterestOps();
-  if ((getSelectionKey() == null) && (interestOps > 0)) {
+  if ((getSocketKey() == null) && (interestOps > 0)) {
     try {
-      setSelectionKey(getConnection().getSocketChannel().register(selector,interestOps,this));
+      setSocketKey(getConnection().getSocketChannel().register(selector,interestOps,this));
     }
  catch (    ClosedChannelException cce) {
       getLogger().log(Level.WARNING,"Unable to register NIO interest operations for this connection",cce);
@@ -11,10 +11,10 @@
   }
  else {
     if (interestOps == 0) {
-      getSelectionKey().cancel();
+      getSocketKey().cancel();
     }
  else {
-      getSelectionKey().interestOps(interestOps);
+      getSocketKey().interestOps(interestOps);
     }
   }
 }
