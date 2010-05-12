@@ -2,9 +2,23 @@
   int result=RESULT_VALID;
   try {
     Subject subject=new Subject();
+    if (request.getClientInfo().getUser() != null) {
+      subject.getPrincipals().add(request.getClientInfo().getUser());
+    }
+    if (request.getClientInfo().getRoles() != null) {
+      subject.getPrincipals().addAll(request.getClientInfo().getRoles());
+    }
     subject.getPrincipals().addAll(request.getClientInfo().getPrincipals());
     LoginContext loginContext=new LoginContext(getName(),subject,createCallbackHandler(request,response),getConfiguration());
     loginContext.login();
+    for (    Principal principal : subject.getPrincipals()) {
+      if ((!principal.equals(request.getClientInfo().getUser())) && (!request.getClientInfo().getRoles().contains(principal)) && (!request.getClientInfo().getPrincipals().contains(principal))) {
+        request.getClientInfo().getPrincipals().add(principal);
+      }
+      if ((request.getClientInfo().getUser() == null) && (this.userPrincipalClassName != null) && (principal.getClass().getName().equals(this.userPrincipalClassName))) {
+        request.getClientInfo().setUser(new User(principal.getName()));
+      }
+    }
   }
  catch (  LoginException le) {
     result=RESULT_INVALID;
