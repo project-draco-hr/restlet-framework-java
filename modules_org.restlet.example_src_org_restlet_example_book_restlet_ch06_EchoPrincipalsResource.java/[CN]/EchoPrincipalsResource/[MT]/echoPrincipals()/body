@@ -1,0 +1,21 @@
+{
+  StringBuilder sb=new StringBuilder("* User: ");
+  sb.append(getClientInfo().getUser());
+  sb.append("\n");
+  sb.append("* Roles: \n");
+  for (  Role role : getClientInfo().getRoles()) {
+    sb.append("  - ");
+    sb.append(role.getName());
+    sb.append("\n");
+  }
+  sb.append("* Principals: \n");
+  for (  Principal principal : getClientInfo().getPrincipals()) {
+    sb.append("  - ");
+    sb.append(principal.getName());
+    sb.append(" (");
+    sb.append(principal.getClass());
+    sb.append(")\n");
+  }
+  Representation rep=new StringRepresentation(sb,MediaType.TEXT_PLAIN,Language.ALL,CharacterSet.UTF_8);
+  return rep;
+}
