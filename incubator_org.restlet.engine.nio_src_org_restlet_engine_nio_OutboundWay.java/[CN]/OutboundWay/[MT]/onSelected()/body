@@ -1,14 +1,29 @@
 {
   try {
-    Response message=null;
-    if (true) {
-      message=getMessage();
+    if (getIoState() == IoState.WRITE_INTEREST) {
+      Response message=getMessage();
       if (message != null) {
-        setMessageState(MessageState.START_LINE);
-        setIoState(IoState.WRITE_INTEREST);
-        writeMessage(message);
-        if ((getConnection().getState() == ConnectionState.CLOSING) && (getIoState() == IoState.IDLE)) {
-          getConnection().close(true);
+        boolean canWrite=true;
+        while (canWrite) {
+          if (!getBuffer().hasRemaining()) {
+            if (getBuilder().length() == 0) {
+              writeLine();
+            }
+            if (getBuilder().length() > 0) {
+              int remaining=getBuffer().remaining();
+              if (remaining >= getBuilder().length()) {
+                getBuffer().put(getBuilder().toString().getBytes(CharacterSet.ISO_8859_1.getName()));
+                getBuilder().delete(0,getBuilder().length());
+              }
+ else {
+                getBuffer().put(getBuilder().substring(0,remaining).getBytes(CharacterSet.ISO_8859_1.getName()));
+                getBuilder().delete(0,remaining);
+              }
+            }
+          }
+ else {
+            canWrite=(getConnection().getSocketChannel().write(getBuffer()) > 0);
+          }
         }
       }
     }
