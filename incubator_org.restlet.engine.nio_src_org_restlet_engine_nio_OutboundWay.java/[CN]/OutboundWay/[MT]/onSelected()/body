@@ -5,23 +5,24 @@
       if (message != null) {
         boolean canWrite=true;
         while (canWrite) {
-          if (!getBuffer().hasRemaining()) {
+          if (getBuffer().hasRemaining() && (getMessageState() != MessageState.BODY)) {
             if (getBuilder().length() == 0) {
               writeLine();
             }
             if (getBuilder().length() > 0) {
               int remaining=getBuffer().remaining();
               if (remaining >= getBuilder().length()) {
-                getBuffer().put(getBuilder().toString().getBytes(CharacterSet.ISO_8859_1.getName()));
+                getBuffer().put(StringUtils.getLatin1Bytes(getBuilder().toString()));
                 getBuilder().delete(0,getBuilder().length());
               }
  else {
-                getBuffer().put(getBuilder().substring(0,remaining).getBytes(CharacterSet.ISO_8859_1.getName()));
+                getBuffer().put(StringUtils.getLatin1Bytes(getBuilder().substring(0,remaining)));
                 getBuilder().delete(0,remaining);
               }
             }
           }
  else {
+            getBuffer().flip();
             canWrite=(getConnection().getSocketChannel().write(getBuffer()) > 0);
           }
         }

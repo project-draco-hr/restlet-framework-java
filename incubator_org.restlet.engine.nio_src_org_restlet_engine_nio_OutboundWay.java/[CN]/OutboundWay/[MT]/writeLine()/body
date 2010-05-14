@@ -3,8 +3,28 @@
 switch (getMessageState()) {
 case START_LINE:
     writeStartLine();
-  break;
+  setMessageState(MessageState.HEADERS);
+break;
 case HEADERS:
+if (getHeaders() == null) {
+setHeaders(new Form());
+setHeaderIndex(0);
+addHeaders(getHeaders());
+}
+if (getHeaderIndex() < getHeaders().size()) {
+Parameter header=getHeaders().get(getHeaderIndex());
+getBuilder().append(header.getName());
+getBuilder().append(": ");
+getBuilder().append(header.getValue());
+getBuilder().append('\r');
+getBuilder().append('\n');
+setHeaderIndex(getHeaderIndex() + 1);
+}
+ else {
+getBuilder().append('\r');
+getBuilder().append('\n');
+setMessageState(MessageState.BODY);
+}
 break;
 case BODY:
 break;

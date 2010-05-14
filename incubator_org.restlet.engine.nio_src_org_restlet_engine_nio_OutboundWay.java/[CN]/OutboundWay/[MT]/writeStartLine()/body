@@ -1,17 +1,16 @@
 {
-  getBuilder().delete(0,getBuilder().length());
   Protocol protocol=getMessage().getRequest().getProtocol();
   String protocolVersion=protocol.getVersion();
   String version=protocol.getTechnicalName() + '/' + ((protocolVersion == null) ? "1.1" : protocolVersion);
-  getBuilder().append(version.getBytes(CharacterSet.ISO_8859_1.getName()));
+  getBuilder().append(version);
   getBuilder().append(' ');
-  getBuilder().append(StringUtils.getAsciiBytes(Integer.toString(getMessage().getStatus().getCode())));
+  getBuilder().append(getMessage().getStatus().getCode());
   getBuilder().append(' ');
   if (getMessage().getStatus().getDescription() != null) {
-    getBuilder().append(StringUtils.getLatin1Bytes(getMessage().getStatus().getDescription()));
+    getBuilder().append(getMessage().getStatus().getDescription());
   }
  else {
-    getBuilder().append(StringUtils.getAsciiBytes(("Status " + getMessage().getStatus().getCode())));
+    getBuilder().append("Status " + getMessage().getStatus().getCode());
   }
   getBuilder().append("\r\n");
 }
