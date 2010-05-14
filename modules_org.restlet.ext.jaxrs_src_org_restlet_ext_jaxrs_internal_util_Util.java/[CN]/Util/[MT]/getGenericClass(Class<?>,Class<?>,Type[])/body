@@ -47,10 +47,12 @@
   }
   Class<?> superClass=clazz.getSuperclass();
   Type genericSuperClass=clazz.getGenericSuperclass();
-  if (genericSuperClass instanceof Class<?>) {
-    return null;
+  if ((genericSuperClass instanceof Class<?>)) {
+    if (!implInterface.isAssignableFrom((Class<?>)genericSuperClass)) {
+      return null;
+    }
   }
-  if (gsatp == null) {
+  if ((gsatp == null) && (genericSuperClass instanceof ParameterizedType)) {
     gsatp=((ParameterizedType)genericSuperClass).getActualTypeArguments();
   }
   if (superClass != null)   return getGenericClass(superClass,implInterface,gsatp);
