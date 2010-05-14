@@ -3,6 +3,12 @@
     final javax.xml.transform.Transformer transformer=javax.xml.transform.TransformerFactory.newInstance().newTransformer();
     transformer.setOutputProperty(javax.xml.transform.OutputKeys.METHOD,"xml");
     transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT,isIndenting() ? "yes" : "no");
+    if (getCharacterSet() != null) {
+      transformer.setOutputProperty(javax.xml.transform.OutputKeys.ENCODING,getCharacterSet().getName());
+    }
+ else {
+      transformer.setOutputProperty(javax.xml.transform.OutputKeys.ENCODING,CharacterSet.ISO_8859_1.getName());
+    }
     DocumentType docType=getDocument().getDoctype();
     if (docType != null) {
       if (docType.getSystemId() != null) {
