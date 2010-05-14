@@ -1,10 +1,19 @@
 {
   List<AnnotationInfo> result=descriptors;
-  if (result == null) {
-    result=new CopyOnWriteArrayList<AnnotationInfo>();
-  }
-  for (  java.lang.reflect.Method javaMethod : clazz.getMethods()) {
-    addAnnotationDescriptors(result,javaMethod);
+  if (clazz != null && !ServerResource.class.equals(clazz)) {
+    if (result == null) {
+      result=new CopyOnWriteArrayList<AnnotationInfo>();
+    }
+    for (    java.lang.reflect.Method javaMethod : clazz.getDeclaredMethods()) {
+      addAnnotationDescriptors(result,javaMethod);
+    }
+    Class<?>[] interfaces=clazz.getInterfaces();
+    if (interfaces != null) {
+      for (      Class<?> interfaceClass : interfaces) {
+        result=addAnnotations(result,interfaceClass);
+      }
+    }
+    addAnnotations(result,clazz.getSuperclass());
   }
   return result;
 }
