@@ -1,4 +1,13 @@
 {
+  if ((getIoState() == IoState.IDLE) && (getMessages().size() > 0)) {
+    if (getMessage() == null) {
+      setIoState(IoState.WRITE_INTEREST);
+      setMessage(getMessages().peek());
+    }
+ else {
+      System.out.println("Outbound message with an IDLE IO state detected!");
+    }
+  }
   super.registerInterest(selector);
   SelectableChannel entitySelectableChannel=getEntitySelectableChannel();
   if (entitySelectableChannel != null) {
