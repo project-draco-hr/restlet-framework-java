@@ -1,29 +1,43 @@
 {
   try {
-    if (getIoState() == IoState.WRITE_INTEREST) {
-      Response message=getMessage();
-      if (message != null) {
-        boolean canWrite=true;
-        while (canWrite) {
-          if (getBuffer().hasRemaining() && (getMessageState() != MessageState.BODY)) {
-            if (getBuilder().length() == 0) {
+    Response message=getMessage();
+    if (message != null) {
+      boolean canWrite=(getIoState() == IoState.WRITE_INTEREST);
+      boolean filling=getByteBuffer().hasRemaining();
+      while (canWrite) {
+        if (filling) {
+          if (getMessageState() == MessageState.BODY) {
+          }
+ else {
+            if (getLineBuilder().length() == 0) {
               writeLine();
             }
-            if (getBuilder().length() > 0) {
-              int remaining=getBuffer().remaining();
-              if (remaining >= getBuilder().length()) {
-                getBuffer().put(StringUtils.getLatin1Bytes(getBuilder().toString()));
-                getBuilder().delete(0,getBuilder().length());
+            if (getLineBuilder().length() > 0) {
+              int remaining=getByteBuffer().remaining();
+              if (remaining >= getLineBuilder().length()) {
+                getByteBuffer().put(StringUtils.getLatin1Bytes(getLineBuilder().toString()));
+                getLineBuilder().delete(0,getLineBuilder().length());
               }
  else {
-                getBuffer().put(StringUtils.getLatin1Bytes(getBuilder().substring(0,remaining)));
-                getBuilder().delete(0,remaining);
+                getByteBuffer().put(StringUtils.getLatin1Bytes(getLineBuilder().substring(0,remaining)));
+                getLineBuilder().delete(0,remaining);
               }
             }
           }
+          canWrite=(getIoState() == IoState.WRITE_INTEREST);
+          filling=(getMessageState() != MessageState.END) && getByteBuffer().hasRemaining();
+        }
  else {
-            getBuffer().flip();
-            canWrite=(getConnection().getSocketChannel().write(getBuffer()) > 0);
+          getByteBuffer().flip();
+          int bytesWritten=getConnection().getSocketChannel().write(getByteBuffer());
+          if (bytesWritten == 0) {
+            getByteBuffer().flip();
+            canWrite=false;
+          }
+ else           if (getByteBuffer().hasRemaining()) {
+            getByteBuffer().compact();
+          }
+ else {
           }
         }
       }

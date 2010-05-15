@@ -5,15 +5,15 @@
     String version=null;
     int i=0;
     int start=0;
-    int size=getBuilder().length();
+    int size=getLineBuilder().length();
     char next;
     if (size == 0) {
     }
  else {
       for (i=start; (requestMethod == null) && (i < size); i++) {
-        next=getBuilder().charAt(i);
+        next=getLineBuilder().charAt(i);
         if (HeaderUtils.isSpace(next)) {
-          requestMethod=getBuilder().substring(start,i);
+          requestMethod=getLineBuilder().substring(start,i);
           start=i + 1;
         }
       }
@@ -21,9 +21,9 @@
         throw new IOException("Unable to parse the request method. End of line reached too early.");
       }
       for (i=start; (requestUri == null) && (i < size); i++) {
-        next=getBuilder().charAt(i);
+        next=getLineBuilder().charAt(i);
         if (HeaderUtils.isSpace(next)) {
-          requestUri=getBuilder().substring(start,i);
+          requestUri=getLineBuilder().substring(start,i);
           start=i + 1;
         }
       }
@@ -34,10 +34,10 @@
         requestUri="/";
       }
       for (i=start; (version == null) && (i < size); i++) {
-        next=getBuilder().charAt(i);
+        next=getLineBuilder().charAt(i);
       }
       if (i == size) {
-        version=getBuilder().substring(start,i);
+        version=getLineBuilder().substring(start,i);
         start=i + 1;
       }
       if (version == null) {
@@ -47,7 +47,7 @@
       Response response=getHelper().createResponse(request);
       setMessage(response);
       setMessageState(MessageState.HEADERS);
-      getBuilder().delete(0,getBuilder().length());
+      getLineBuilder().delete(0,getLineBuilder().length());
     }
   }
  else {

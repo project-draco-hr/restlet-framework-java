@@ -1,10 +1,10 @@
 {
   boolean result=false;
   int next;
-  while (!result && getBuffer().hasRemaining()) {
-    next=(int)getBuffer().get();
+  while (!result && getByteBuffer().hasRemaining()) {
+    next=(int)getByteBuffer().get();
     if (HeaderUtils.isCarriageReturn(next)) {
-      next=(int)getBuffer().get();
+      next=(int)getByteBuffer().get();
       if (HeaderUtils.isLineFeed(next)) {
         result=true;
       }
@@ -13,7 +13,7 @@
       }
     }
  else {
-      getBuilder().append((char)next);
+      getLineBuilder().append((char)next);
     }
   }
   return result;

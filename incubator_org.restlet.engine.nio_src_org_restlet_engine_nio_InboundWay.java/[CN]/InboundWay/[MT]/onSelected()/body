@@ -2,14 +2,14 @@
   try {
     if (getIoState() == IoState.READ_INTEREST) {
       int result=readSocketBytes();
-      while (getBuffer().hasRemaining() && (getMessageState() != MessageState.BODY)) {
+      while (getByteBuffer().hasRemaining() && (getMessageState() != MessageState.BODY)) {
         if (getMessageState() == MessageState.START_LINE) {
           readStartLine();
         }
  else         if (getMessageState() == MessageState.HEADERS) {
           readHeaders();
         }
-        if (!getBuffer().hasRemaining() && (getMessageState() != MessageState.BODY)) {
+        if (!getByteBuffer().hasRemaining() && (getMessageState() != MessageState.BODY)) {
           result=readSocketBytes();
         }
       }
