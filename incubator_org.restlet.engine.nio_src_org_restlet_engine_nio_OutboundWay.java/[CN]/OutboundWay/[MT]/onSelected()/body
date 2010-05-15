@@ -1,43 +1,58 @@
 {
+  if (getIoState() == IoState.WRITE_INTEREST) {
+    setIoState(IoState.WRITING);
+  }
+ else   if (getIoState() == IoState.READ_INTEREST) {
+    setIoState(IoState.READING);
+  }
+ else   if (getIoState() == IoState.CANCELING) {
+    setIoState(IoState.CANCELLED);
+  }
   try {
     Response message=getMessage();
     if (message != null) {
-      boolean canWrite=(getIoState() == IoState.WRITE_INTEREST);
-      boolean filling=getByteBuffer().hasRemaining();
-      while (canWrite) {
-        if (filling) {
+      while (getIoState() == IoState.WRITING) {
+        if (isFilling()) {
           if (getMessageState() == MessageState.BODY) {
+            if (message.getEntity() instanceof FileRepresentation) {
+            }
+ else             if (message.getEntity() instanceof ReadableRepresentation) {
+            }
+ else {
+              InputStream entityStream=message.getEntity().getStream();
+            }
+            if (getByteBuffer().hasArray()) {
+              byte[] byteArray=getByteBuffer().array();
+            }
+ else {
+              if (getLineBuilder().length() == 0) {
+                writeLine();
+              }
+              if (getLineBuilder().length() > 0) {
+                int remaining=getByteBuffer().remaining();
+                if (remaining >= getLineBuilder().length()) {
+                  getByteBuffer().put(StringUtils.getLatin1Bytes(getLineBuilder().toString()));
+                  getLineBuilder().delete(0,getLineBuilder().length());
+                }
+ else {
+                  getByteBuffer().put(StringUtils.getLatin1Bytes(getLineBuilder().substring(0,remaining)));
+                  getLineBuilder().delete(0,remaining);
+                }
+              }
+            }
           }
  else {
-            if (getLineBuilder().length() == 0) {
-              writeLine();
-            }
-            if (getLineBuilder().length() > 0) {
-              int remaining=getByteBuffer().remaining();
-              if (remaining >= getLineBuilder().length()) {
-                getByteBuffer().put(StringUtils.getLatin1Bytes(getLineBuilder().toString()));
-                getLineBuilder().delete(0,getLineBuilder().length());
-              }
- else {
-                getByteBuffer().put(StringUtils.getLatin1Bytes(getLineBuilder().substring(0,remaining)));
-                getLineBuilder().delete(0,remaining);
-              }
-            }
-          }
-          canWrite=(getIoState() == IoState.WRITE_INTEREST);
-          filling=(getMessageState() != MessageState.END) && getByteBuffer().hasRemaining();
-        }
- else {
-          getByteBuffer().flip();
-          int bytesWritten=getConnection().getSocketChannel().write(getByteBuffer());
-          if (bytesWritten == 0) {
             getByteBuffer().flip();
-            canWrite=false;
-          }
- else           if (getByteBuffer().hasRemaining()) {
-            getByteBuffer().compact();
-          }
+            int bytesWritten=getConnection().getSocketChannel().write(getByteBuffer());
+            if (bytesWritten == 0) {
+              getByteBuffer().flip();
+              setIoState(IoState.WRITE_INTEREST);
+            }
+ else             if (getByteBuffer().hasRemaining()) {
+              getByteBuffer().compact();
+            }
  else {
+            }
           }
         }
       }

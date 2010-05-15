@@ -23,10 +23,13 @@ setHeaderIndex(getHeaderIndex() + 1);
  else {
 getLineBuilder().append('\r');
 getLineBuilder().append('\n');
+if ((getMessage().getEntity() != null) && getMessage().getEntity().isAvailable()) {
 setMessageState(MessageState.BODY);
 }
-break;
-case BODY:
+ else {
+setMessageState(MessageState.END);
+}
+}
 break;
 }
 return result;
