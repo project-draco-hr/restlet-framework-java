@@ -32,6 +32,10 @@ case STREAM:
               getByteBuffer().position(getByteBuffer().position() + result);
               setEntityIndex(getEntityIndex() + result);
             }
+ else             if (result == -1) {
+              getByteBuffer().position(getByteBuffer().position() + available);
+              setEntityIndex(getEntityIndex() + available);
+            }
             if ((result == -1) || ((entitySize != -1) && (getEntityIndex() >= entitySize))) {
               setMessageState(MessageState.END);
             }
