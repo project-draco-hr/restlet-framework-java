@@ -25,6 +25,26 @@ getLineBuilder().append('\r');
 getLineBuilder().append('\n');
 if ((getMessage().getEntity() != null) && getMessage().getEntity().isAvailable()) {
 setMessageState(MessageState.BODY);
+if (getMessage().getEntity() instanceof FileRepresentation) {
+  FileRepresentation fr=(FileRepresentation)getMessage().getEntity();
+  setEntityChannel(fr.getChannel());
+  setEntityType(EntityType.FILE_CHANNEL);
+}
+ else if (getMessage().getEntity() instanceof ReadableRepresentation) {
+  ReadableRepresentation rr=(ReadableRepresentation)getMessage().getEntity();
+  setEntityChannel(rr.getChannel());
+  setEntityType(EntityType.SYNC_CHANNEL);
+  if (getEntityChannel() instanceof SelectableChannel) {
+    SelectableChannel sc=(SelectableChannel)getEntityChannel();
+    if (!sc.isBlocking()) {
+      setEntityType(EntityType.ASYNC_CHANNEL);
+    }
+  }
+}
+ else {
+  setEntityStream(getMessage().getEntity().getStream());
+  setEntityType(EntityType.STREAM);
+}
 }
  else {
 setMessageState(MessageState.END);
