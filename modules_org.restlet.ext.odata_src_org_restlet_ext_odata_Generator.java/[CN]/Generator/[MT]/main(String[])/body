@@ -4,12 +4,22 @@
   System.out.println("---------------------------");
   System.out.println("step 1 - check parameters");
   String errorMessage=null;
-  if (args.length != 2 && args.length != 3) {
-    errorMessage="Wrong number of arguments.";
+  if (args.length == 0) {
+    errorMessage="Missing mandatory argument: URI of the OData service.";
   }
   File outputDir=null;
   if (errorMessage == null) {
-    outputDir=new File(args[1]);
+    if (args.length > 1) {
+      outputDir=new File(args[1]);
+    }
+ else {
+      try {
+        outputDir=new File(".").getCanonicalFile();
+      }
+ catch (      IOException e) {
+        errorMessage="Unable to get the target directory. " + e.getMessage();
+      }
+    }
     if (outputDir.exists()) {
       System.out.println("step 2 - check the ouput directory");
       if (!outputDir.isDirectory()) {
