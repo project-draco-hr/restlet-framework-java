@@ -16,22 +16,26 @@
           setIoState(IoState.CANCELING);
         }
  else {
-          while (readLine()) {
+          ConnectedRequest request=(ConnectedRequest)((getMessage() == null) ? null : getMessage().getRequest());
+          Series<Parameter> headers=(request == null) ? null : request.getHeaders();
+          while (fillLine()) {
             if (getMessageState() == MessageState.START_LINE) {
               readStartLine();
             }
  else             if (getMessageState() == MessageState.HEADERS) {
-              ConnectedRequest request=(ConnectedRequest)getMessage().getRequest();
-              Series<Parameter> headers=request.getHeaders();
+              request=(ConnectedRequest)getMessage().getRequest();
+              headers=(headers == null) ? request.getHeaders() : headers;
               Parameter header=readHeader();
               if (header != null) {
                 if (headers == null) {
                   headers=new Form();
-                  request.setHeaders(headers);
                 }
                 headers.add(header);
               }
  else {
+                if (headers != null) {
+                  request.setHeaders(headers);
+                }
                 if (HeaderUtils.isConnectionClose(headers)) {
                   getConnection().setState(ConnectionState.CLOSING);
                 }
