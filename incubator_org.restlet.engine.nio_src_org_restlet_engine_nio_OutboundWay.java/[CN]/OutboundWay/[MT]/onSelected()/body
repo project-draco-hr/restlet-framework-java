@@ -37,7 +37,7 @@ case STREAM:
               setEntityIndex(getEntityIndex() + available);
             }
             if ((result == -1) || ((entitySize != -1) && (getEntityIndex() >= entitySize))) {
-              setMessageState(MessageState.END);
+              onCompleted(getMessage());
             }
           }
  else {
@@ -77,7 +77,7 @@ if (bytesWritten == 0) {
   getByteBuffer().compact();
 }
  else if (getMessageState() == MessageState.END) {
-  setIoState(IoState.IDLE);
+  onCompleted(getMessage());
 }
  else {
 }

@@ -21,8 +21,7 @@
         }
         @Override public void release(){
           super.release();
-          setMessageState(MessageState.START_LINE);
-          setIoState(IoState.IDLE);
+          onCompleted(getMessage());
         }
       }
 ;
@@ -31,8 +30,7 @@
       result=new ReadableRepresentation(inboundEntityChannel,null,contentLength){
         @Override public void release(){
           super.release();
-          setMessageState(MessageState.START_LINE);
-          setIoState(IoState.IDLE);
+          onCompleted(getMessage());
         }
       }
 ;
@@ -41,8 +39,7 @@
   }
  else {
     result=new EmptyRepresentation();
-    setMessageState(MessageState.START_LINE);
-    setIoState(IoState.IDLE);
+    onCompleted(getMessage());
   }
   if (headers != null) {
     try {
