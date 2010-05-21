@@ -11,10 +11,13 @@
     }
   }
   if (getSelector().selectNow() > 0) {
-    for (    SelectionKey key : getSelector().selectedKeys()) {
+    SelectionKey key;
+    for (Iterator<SelectionKey> selectedKeys=getSelector().selectedKeys().iterator(); selectedKeys.hasNext(); ) {
+      key=selectedKeys.next();
       if (key.attachment() != null) {
         ((Way)key.attachment()).onSelected();
       }
+      selectedKeys.remove();
     }
   }
 }
