@@ -7,6 +7,9 @@
     setIoState(IoState.CANCELLED);
   }
   try {
+    if (!getByteBuffer().hasRemaining()) {
+      getByteBuffer().clear();
+    }
     while ((getIoState() == IoState.READING) && (getMessageState() != MessageState.BODY)) {
       if (isFilling()) {
         int result=readSocketBytes();
