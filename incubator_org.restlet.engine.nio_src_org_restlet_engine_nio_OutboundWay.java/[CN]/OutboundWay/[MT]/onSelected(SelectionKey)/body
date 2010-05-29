@@ -1,17 +1,9 @@
 {
-  if (getIoState() == IoState.WRITE_INTEREST) {
-    setIoState(IoState.WRITING);
-  }
- else   if (getIoState() == IoState.READ_INTEREST) {
-    setIoState(IoState.READING);
-  }
- else   if (getIoState() == IoState.CANCELING) {
-    setIoState(IoState.CANCELLED);
-  }
+  super.onSelected(key);
   try {
     Response message=getMessage();
     if (message != null) {
-      while (getIoState() == IoState.WRITING) {
+      while (getIoState() == IoState.PROCESSING) {
         if (isFilling()) {
           if (getMessageState() == MessageState.BODY) {
 switch (getEntityType()) {
@@ -37,7 +29,7 @@ case STREAM:
               setEntityIndex(getEntityIndex() + available);
             }
             if ((result == -1) || ((entitySize != -1) && (getEntityIndex() >= entitySize))) {
-              setMessageState(MessageState.END);
+              setMessageState(MessageState.IDLE);
             }
           }
  else {
@@ -71,12 +63,12 @@ getByteBuffer().flip();
 int bytesWritten=getConnection().getSocketChannel().write(getByteBuffer());
 if (bytesWritten == 0) {
   getByteBuffer().flip();
-  setIoState(IoState.WRITE_INTEREST);
+  setIoState(IoState.INTEREST);
 }
  else if (getByteBuffer().hasRemaining()) {
   getByteBuffer().compact();
 }
- else if (getMessageState() == MessageState.END) {
+ else if (getMessageState() == MessageState.IDLE) {
   onCompleted(getMessage());
 }
  else {

@@ -1,19 +1,14 @@
 {
-  if (getIoState() == IoState.READ_INTEREST) {
-    setIoState(IoState.READING);
-  }
- else   if (getIoState() == IoState.CANCELING) {
-    setIoState(IoState.CANCELLED);
-  }
+  super.onSelected(key);
   try {
     if (!getByteBuffer().hasRemaining()) {
       getByteBuffer().clear();
     }
-    while ((getIoState() == IoState.READING) && (getMessageState() != MessageState.BODY)) {
+    while ((getIoState() == IoState.PROCESSING) && (getMessageState() != MessageState.BODY)) {
       if (isFilling()) {
         int result=readSocketBytes();
         if (result == 0) {
-          setIoState(IoState.READ_INTEREST);
+          setIoState(IoState.INTEREST);
         }
  else         if (result == -1) {
           setIoState(IoState.CANCELING);
@@ -49,6 +44,7 @@
                     getMessages().add(getMessage());
                   }
                   getHelper().getInboundMessages().add(getMessage());
+                  setMessage(null);
                 }
               }
             }
