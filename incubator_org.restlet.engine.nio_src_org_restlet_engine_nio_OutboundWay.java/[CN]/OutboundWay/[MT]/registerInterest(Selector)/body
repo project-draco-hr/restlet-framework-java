@@ -5,16 +5,18 @@
       setMessage(getMessages().peek());
       setMessageState(MessageState.START_LINE);
       setHeaderIndex(0);
-      setSocketKey(null);
     }
   }
-  super.registerInterest(selector);
   SelectableChannel entitySelectableChannel=getEntitySelectableChannel();
   if (entitySelectableChannel != null) {
     int entityInterestOps=getEntityInterestOps();
     if ((getEntityKey() == null) && (entityInterestOps > 0)) {
       try {
-        setEntityKey(entitySelectableChannel.register(selector,entityInterestOps,this));
+        setEntityKey(entitySelectableChannel.register(selector,entityInterestOps,new Selectable(){
+          public void onSelected(          SelectionKey key){
+          }
+        }
+));
       }
  catch (      ClosedChannelException cce) {
         getLogger().log(Level.WARNING,"Unable to register NIO interest operations for this entity",cce);
