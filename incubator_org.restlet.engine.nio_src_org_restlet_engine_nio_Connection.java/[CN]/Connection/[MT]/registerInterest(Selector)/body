@@ -1,16 +1,25 @@
 {
   int socketInterestOps=getSocketInterestOps();
-  if ((getSocketKey() == null) && (socketInterestOps > 0)) {
-    try {
-      setSocketKey(getSocketChannel().register(selector,socketInterestOps,this));
+  if (socketInterestOps > 0) {
+    if (getSocketKey() == null) {
+      try {
+        setSocketKey(getSocketChannel().register(selector,socketInterestOps,this));
+      }
+ catch (      ClosedChannelException cce) {
+        getLogger().log(Level.WARNING,"Unable to register NIO interest operations for this connection",cce);
+        onError();
+      }
     }
- catch (    ClosedChannelException cce) {
-      getLogger().log(Level.WARNING,"Unable to register NIO interest operations for this connection",cce);
-      onError();
+ else {
+      getSocketKey().interestOps(socketInterestOps);
     }
   }
- else   if (getSocketKey() != null) {
-    getSocketKey().interestOps(socketInterestOps);
+ else {
+    if (getSocketKey() != null) {
+      getSocketKey().cancel();
+      getSocketKey().attach(null);
+      setSocketKey(null);
+    }
   }
   getInboundWay().registerInterest(selector);
   getOutboundWay().registerInterest(selector);
