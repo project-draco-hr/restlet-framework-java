@@ -2,15 +2,15 @@
   if (metadata == null) {
     ClientResource resource=createResource("$metadata");
     try {
-      getLogger().log(Level.INFO,"Get the metadata for " + serviceRef + " at "+ resource.getReference());
+      getLogger().log(Level.INFO,"Get the metadata for " + getServiceRef() + " at "+ resource.getReference());
       Representation rep=resource.get(MediaType.APPLICATION_XML);
       this.metadata=new Metadata(rep,resource.getReference());
     }
  catch (    ResourceException e) {
-      getLogger().log(Level.SEVERE,"Can't get the metadata for " + serviceRef + " (response's status: "+ resource.getStatus()+ ")");
+      getLogger().log(Level.SEVERE,"Can't get the metadata for " + getServiceRef() + " (response's status: "+ resource.getStatus()+ ")");
     }
 catch (    Exception e) {
-      getLogger().log(Level.SEVERE,"Can't get the metadata for " + serviceRef,e);
+      getLogger().log(Level.SEVERE,"Can't get the metadata for " + getServiceRef(),e);
     }
  finally {
       this.latestRequest=resource.getRequest();
