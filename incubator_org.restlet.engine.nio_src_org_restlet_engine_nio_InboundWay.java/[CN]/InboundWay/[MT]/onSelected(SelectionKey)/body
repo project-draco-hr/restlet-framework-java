@@ -21,8 +21,7 @@
               readStartLine();
             }
  else             if (getMessageState() == MessageState.HEADERS) {
-              Response response=getMessage();
-              request=(ConnectedRequest)response.getRequest();
+              request=(ConnectedRequest)getMessage().getRequest();
               headers=(headers == null) ? request.getHeaders() : headers;
               Parameter header=readHeader();
               if (header != null) {
@@ -42,9 +41,12 @@
                 request.setEntity(entity);
                 if (request != null) {
                   if (request.isExpectingResponse()) {
-                    getMessages().add(response);
+                    getMessages().add(getMessage());
                   }
-                  getHelper().getInboundMessages().add(response);
+                  getHelper().getInboundMessages().add(getMessage());
+                }
+                if ((request.getEntity() == null) || !request.getEntity().isAvailable() || (request.getEntity().getSize() == 0)) {
+                  onCompleted(getMessage());
                 }
               }
             }
