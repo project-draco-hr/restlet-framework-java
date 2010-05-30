@@ -1,6 +1,8 @@
 {
-  super.controlConnections(overloaded);
-  if (!overloaded) {
+  if (key != this.acceptKey) {
+    super.onSelected(key);
+  }
+ else   if (!isOverloaded()) {
     try {
       if (this.acceptKey.isAcceptable()) {
         SocketChannel socketChannel=getHelper().getServerSocketChannel().accept();
@@ -11,7 +13,7 @@
             Connection<Server> connection=getHelper().createConnection(getHelper(),socketChannel);
             connection.open();
             getHelper().getConnections().add(connection);
-            getHelper().getLogger().info("New connection accepted. Total : " + getHelper().getConnections().size());
+            getHelper().getLogger().log(BaseHelper.DEFAULT_LEVEL,"New connection accepted. Total : " + getHelper().getConnections().size());
           }
  else {
             socketChannel.close();

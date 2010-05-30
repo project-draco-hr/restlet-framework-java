@@ -1,5 +1,6 @@
 {
   setRunning(true);
+  long sleepTime=getHelper().getControllerSleepTimeMs();
   while (isRunning()) {
     try {
       if (isOverloaded()) {
@@ -14,9 +15,8 @@
           getHelper().getLogger().log(Level.INFO,"Stop accepting new connections and transactions. Consider increasing the maximum number of threads.");
         }
       }
-      controlConnections(isOverloaded());
+      controlConnections(isOverloaded(),sleepTime);
       controlHelper();
-      Thread.sleep(getHelper().getControllerSleepTimeMs());
     }
  catch (    Exception ex) {
       this.helper.getLogger().log(Level.INFO,"Unexpected error while controlling connector",ex);

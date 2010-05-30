@@ -1,11 +1,12 @@
 {
   if ((response != null) && (response.getRequest() != null)) {
-    getLogger().info("Handling inbound message");
+    getLogger().log(BaseHelper.DEFAULT_LEVEL,"Handling inbound message");
     ConnectedRequest request=(ConnectedRequest)response.getRequest();
     handle(request,response);
     if (!response.isCommitted() && response.isAutoCommitting()) {
       getOutboundMessages().add(response);
       response.setCommitted(true);
+      getController().wakeup();
     }
   }
   handleNextOutbound();
