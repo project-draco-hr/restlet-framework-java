@@ -1,14 +1,12 @@
 {
   if (response != null) {
+    getLogger().info("Handling new outbound message");
     ConnectedRequest request=(ConnectedRequest)response.getRequest();
     Connection<Server> connection=request.getConnection();
     if (request.isExpectingResponse()) {
       Response nextResponse=connection.getInboundWay().getMessages().peek();
       if ((nextResponse != null) && (nextResponse.getRequest() == request)) {
         connection.getOutboundWay().getMessages().add(response);
-        if (!response.getStatus().isInformational()) {
-          connection.getInboundWay().getMessages().remove(nextResponse);
-        }
       }
  else {
         getOutboundMessages().add(response);

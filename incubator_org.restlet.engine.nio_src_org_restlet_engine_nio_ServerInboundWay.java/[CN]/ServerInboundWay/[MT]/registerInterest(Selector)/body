@@ -1,6 +1,9 @@
 {
   if (getIoState() == IoState.IDLE) {
-    if (getConnection().isPipelining() || (getMessages().size() == 0)) {
+    if (getConnection().isPipelining()) {
+      setIoState(IoState.INTEREST);
+    }
+ else     if (getMessages().isEmpty() && (getConnection().getOutboundWay().getMessages().isEmpty())) {
       setIoState(IoState.INTEREST);
     }
   }
