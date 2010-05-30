@@ -5,13 +5,13 @@
       if (this.acceptKey.isAcceptable()) {
         SocketChannel socketChannel=getHelper().getServerSocketChannel().accept();
         if (socketChannel != null) {
-          getHelper().getLogger().fine("New connection accepted. Total : " + getHelper().getConnections().size());
           socketChannel.configureBlocking(false);
           int connectionsCount=getHelper().getConnections().size();
           if ((getHelper().getMaxTotalConnections() == -1) || (connectionsCount <= getHelper().getMaxTotalConnections())) {
             Connection<Server> connection=getHelper().createConnection(getHelper(),socketChannel);
             connection.open();
             getHelper().getConnections().add(connection);
+            getHelper().getLogger().info("New connection accepted. Total : " + getHelper().getConnections().size());
           }
  else {
             socketChannel.close();
