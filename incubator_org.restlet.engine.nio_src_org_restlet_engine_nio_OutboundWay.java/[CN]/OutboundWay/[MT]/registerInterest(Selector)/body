@@ -1,5 +1,10 @@
 {
-  super.registerInterest(selector);
+  if ((getIoState() == IoState.IDLE) && (getMessages().size() > 0)) {
+    if (getMessage() == null) {
+      setIoState(IoState.INTEREST);
+      setMessage(getMessages().peek());
+    }
+  }
   SelectableChannel entitySelectableChannel=getEntitySelectableChannel();
   if (entitySelectableChannel != null) {
     int entityInterestOps=getEntityInterestOps();

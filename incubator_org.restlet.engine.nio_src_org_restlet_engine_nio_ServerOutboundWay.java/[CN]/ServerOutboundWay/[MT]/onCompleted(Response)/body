@@ -1,19 +1,10 @@
 {
-  setMessageState(MessageState.IDLE);
+  super.onCompleted(message);
   getMessages().remove(message);
-  setMessage(null);
-  if (getConnection().isPersistent()) {
-    if (getMessages().isEmpty()) {
-      setIoState(IoState.IDLE);
-    }
- else {
-      setIoState(IoState.INTEREST);
-      setMessageState(MessageState.START_LINE);
-    }
-    if (!message.getStatus().isInformational()) {
-      getConnection().getInboundWay().getMessages().remove(getMessage());
-      getConnection().getInboundWay().setIoState(IoState.INTEREST);
-      getConnection().getInboundWay().setMessageState(MessageState.START_LINE);
-    }
+  if (!message.getStatus().isInformational()) {
+    getConnection().getInboundWay().getMessages().remove(getMessage());
+  }
+  if (!getConnection().isPersistent()) {
+    getConnection().close(true);
   }
 }
