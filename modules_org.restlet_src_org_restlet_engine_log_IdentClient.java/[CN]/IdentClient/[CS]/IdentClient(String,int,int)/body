@@ -10,7 +10,7 @@
       socket.setSoTimeout(SO_TIMEOUT);
       socket.connect(new InetSocketAddress(clientAddress,113),CONNECT_TIMEOUT);
       socket.getOutputStream().write(StringUtils.getAsciiBytes(request));
-      in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+      in=new BufferedReader(new InputStreamReader(socket.getInputStream()),IoUtils.getBufferSize());
       final String response=in.readLine();
       if (response != null) {
         final StringTokenizer st=new StringTokenizer(response,":");
