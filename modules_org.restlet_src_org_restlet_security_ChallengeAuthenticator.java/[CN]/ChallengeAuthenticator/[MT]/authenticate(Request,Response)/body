@@ -19,34 +19,42 @@ case Verifier.RESULT_MISSING:
 if (loggable) {
   getLogger().fine("Authentication failed. No credentials provided.");
 }
+if (!isOptional()) {
 challenge(response,false);
+}
 break;
 case Verifier.RESULT_INVALID:
 if (loggable) {
 getLogger().fine("Authentication failed. Invalid credentials provided.");
 }
+if (!isOptional()) {
 if (isRechallenging()) {
 challenge(response,false);
 }
  else {
 forbid(response);
+}
 }
 break;
 case Verifier.RESULT_STALE:
 if (loggable) {
 getLogger().fine("Authentication failed. Stale credentials provided.");
 }
+if (!isOptional()) {
 challenge(response,true);
+}
 break;
 case Verifier.RESULT_UNKNOWN:
 if (loggable) {
 getLogger().fine("Authentication failed. Identifier is unknown.");
 }
+if (!isOptional()) {
 if (isRechallenging()) {
 challenge(response,false);
 }
  else {
 forbid(response);
+}
 }
 break;
 }
