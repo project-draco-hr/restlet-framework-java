@@ -97,15 +97,15 @@
     }
  else     if (localName.equalsIgnoreCase("content")) {
       if (this.state == State.FEED_ENTRY) {
-        final MediaType type=getMediaType(attrs.getValue("","type"));
-        final String srcAttr=attrs.getValue("","src");
+        contentType=getMediaType(attrs.getValue("","type"));
+        String srcAttr=attrs.getValue("","src");
         this.currentContent=new Content();
         if (srcAttr == null) {
           initiateInlineMixedContent();
         }
  else {
           this.currentContent.setExternalRef(new Reference(srcAttr));
-          this.currentContent.setExternalType(type);
+          this.currentContent.setExternalType(contentType);
         }
         this.currentEntry.setContent(currentContent);
         this.state=State.FEED_ENTRY_CONTENT;
