@@ -1,3 +1,10 @@
 {
-  this.clientProtocols=clientProtocols;
+synchronized (this.clientProtocols) {
+    if (clientProtocols != this.clientProtocols) {
+      this.clientProtocols.clear();
+      if (clientProtocols != null) {
+        this.clientProtocols.addAll(clientProtocols);
+      }
+    }
+  }
 }

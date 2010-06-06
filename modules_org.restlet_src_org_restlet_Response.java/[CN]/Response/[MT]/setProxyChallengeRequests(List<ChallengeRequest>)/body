@@ -1,7 +1,10 @@
 {
 synchronized (this) {
-    List<ChallengeRequest> cr=getProxyChallengeRequests();
-    cr.clear();
-    cr.addAll(requests);
+    if (proxyChallengeRequests != this.proxyChallengeRequests) {
+      this.proxyChallengeRequests.clear();
+      if (proxyChallengeRequests != null) {
+        this.proxyChallengeRequests.addAll(proxyChallengeRequests);
+      }
+    }
   }
 }

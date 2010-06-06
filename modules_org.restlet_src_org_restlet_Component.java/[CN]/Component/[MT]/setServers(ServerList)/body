@@ -1,6 +1,10 @@
 {
-  this.servers.clear();
-  if (servers != null) {
-    this.servers.addAll(servers);
+synchronized (this.servers) {
+    if (servers != this.servers) {
+      this.servers.clear();
+      if (servers != null) {
+        this.servers.addAll(servers);
+      }
+    }
   }
 }

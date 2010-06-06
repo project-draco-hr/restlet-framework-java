@@ -1,6 +1,10 @@
 {
-  this.rootGroups.clear();
-  if (rootGroups != null) {
-    this.rootGroups.addAll(rootGroups);
+synchronized (this.rootGroups) {
+    if (rootGroups != this.rootGroups) {
+      this.rootGroups.clear();
+      if (rootGroups != null) {
+        this.rootGroups.addAll(rootGroups);
+      }
+    }
   }
 }

@@ -1,7 +1,10 @@
 {
 synchronized (this) {
-    List<CacheDirective> cds=getCacheDirectives();
-    cds.clear();
-    cds.addAll(cacheDirectives);
+    if (cacheDirectives != this.cacheDirectives) {
+      this.cacheDirectives.clear();
+      if (cacheDirectives != null) {
+        this.cacheDirectives.addAll(cacheDirectives);
+      }
+    }
   }
 }

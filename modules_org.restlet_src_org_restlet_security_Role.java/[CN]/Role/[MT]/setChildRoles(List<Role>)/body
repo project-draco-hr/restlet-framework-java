@@ -1,6 +1,10 @@
 {
-  this.childRoles.clear();
-  if (children != null) {
-    this.childRoles.addAll(children);
+synchronized (this.childRoles) {
+    if (childRoles != this.childRoles) {
+      this.childRoles.clear();
+      if (childRoles != null) {
+        this.childRoles.addAll(childRoles);
+      }
+    }
   }
 }

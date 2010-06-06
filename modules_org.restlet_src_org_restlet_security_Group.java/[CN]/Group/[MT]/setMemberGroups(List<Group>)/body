@@ -1,6 +1,10 @@
 {
-  this.memberGroups.clear();
-  if (memberGroups != null) {
-    this.memberGroups.addAll(memberGroups);
+synchronized (this.memberGroups) {
+    if (memberGroups != this.memberGroups) {
+      this.memberGroups.clear();
+      if (memberGroups != null) {
+        this.memberGroups.addAll(memberGroups);
+      }
+    }
   }
 }

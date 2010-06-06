@@ -1,6 +1,10 @@
 {
-  this.clients.clear();
-  if (clients != null) {
-    this.clients.addAll(clients);
+synchronized (this.clients) {
+    if (clients != this.clients) {
+      this.clients.clear();
+      if (clients != null) {
+        this.clients.addAll(clients);
+      }
+    }
   }
 }

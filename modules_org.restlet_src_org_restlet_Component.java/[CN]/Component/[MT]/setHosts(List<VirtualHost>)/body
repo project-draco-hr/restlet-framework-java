@@ -1,6 +1,10 @@
 {
-  this.hosts.clear();
-  if (hosts != null) {
-    this.hosts.addAll(hosts);
+synchronized (this.hosts) {
+    if (hosts != this.hosts) {
+      this.hosts.clear();
+      if (hosts != null) {
+        this.hosts.addAll(hosts);
+      }
+    }
   }
 }

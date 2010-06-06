@@ -1,4 +1,10 @@
 {
-  this.attributes.clear();
-  this.attributes.putAll(attributes);
+synchronized (this.attributes) {
+    if (attributes != this.attributes) {
+      this.attributes.clear();
+      if (attributes != null) {
+        this.attributes.putAll(attributes);
+      }
+    }
+  }
 }

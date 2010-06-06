@@ -1,6 +1,10 @@
 {
-  this.realms.clear();
-  if (realms != null) {
-    this.realms.addAll(realms);
+synchronized (this.realms) {
+    if (realms != this.realms) {
+      this.realms.clear();
+      if (realms != null) {
+        this.realms.addAll(realms);
+      }
+    }
   }
 }

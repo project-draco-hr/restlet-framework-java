@@ -1,6 +1,10 @@
 {
-  this.users.clear();
-  if (users != null) {
-    this.users.addAll(users);
+synchronized (this.users) {
+    if (users != this.users) {
+      this.users.clear();
+      if (users != null) {
+        this.users.addAll(users);
+      }
+    }
   }
 }

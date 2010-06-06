@@ -1,4 +1,10 @@
 {
-  this.variables.clear();
-  this.variables.putAll(variables);
+synchronized (this.variables) {
+    if (variables != this.variables) {
+      this.variables.clear();
+      if (variables != null) {
+        this.variables.putAll(variables);
+      }
+    }
+  }
 }

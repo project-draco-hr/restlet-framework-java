@@ -1,6 +1,10 @@
 {
-synchronized (localSecrets) {
-    this.localSecrets.clear();
-    this.localSecrets.putAll(secrets);
+synchronized (this.localSecrets) {
+    if (localSecrets != this.localSecrets) {
+      this.localSecrets.clear();
+      if (localSecrets != null) {
+        this.localSecrets.putAll(localSecrets);
+      }
+    }
   }
 }

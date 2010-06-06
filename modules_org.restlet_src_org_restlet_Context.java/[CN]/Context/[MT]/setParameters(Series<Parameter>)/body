@@ -1,6 +1,10 @@
 {
-  this.parameters.clear();
-  if (parameters != null) {
-    this.parameters.addAll(parameters);
+synchronized (this.parameters) {
+    if (parameters != this.parameters) {
+      this.parameters.clear();
+      if (parameters != null) {
+        this.parameters.addAll(parameters);
+      }
+    }
   }
 }

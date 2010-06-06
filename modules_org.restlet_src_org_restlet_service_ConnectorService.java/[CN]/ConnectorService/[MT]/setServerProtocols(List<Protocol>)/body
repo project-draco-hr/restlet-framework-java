@@ -1,3 +1,10 @@
 {
-  this.serverProtocols=serverProtocols;
+synchronized (this.serverProtocols) {
+    if (serverProtocols != this.serverProtocols) {
+      this.serverProtocols.clear();
+      if (serverProtocols != null) {
+        this.serverProtocols.addAll(serverProtocols);
+      }
+    }
+  }
 }

@@ -1,6 +1,10 @@
 {
-  this.protocols.clear();
-  if (protocols != null) {
-    this.protocols.addAll(protocols);
+synchronized (this.protocols) {
+    if (protocols != this.protocols) {
+      this.protocols.clear();
+      if (protocols != null) {
+        this.protocols.addAll(protocols);
+      }
+    }
   }
 }
