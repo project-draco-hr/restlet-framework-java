@@ -36,7 +36,7 @@
   sb.append('\t');
   sb.append((response.getStatus() == null) ? "-" : Integer.toString(response.getStatus().getCode()));
   sb.append('\t');
-  if (response.getEntity() == null) {
+  if (!response.isEntityAvailable() || Status.REDIRECTION_NOT_MODIFIED.equals(response.getStatus()) || Status.SUCCESS_NO_CONTENT.equals(response.getStatus())|| Method.HEAD.equals(request.getMethod())) {
     sb.append('0');
   }
  else {

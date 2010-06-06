@@ -2,12 +2,12 @@
   if (entity == null || !entity.isAvailable()) {
     addHeader(HeaderConstants.HEADER_CONTENT_LENGTH,"0",headers);
   }
- else {
+ else   if (entity.getAvailableSize() != Representation.UNKNOWN_SIZE) {
+    addHeader(HeaderConstants.HEADER_CONTENT_LENGTH,Long.toString(entity.getAvailableSize()),headers);
+  }
+  if (entity != null) {
     addHeader(HeaderConstants.HEADER_CONTENT_ENCODING,EncodingWriter.write(entity.getEncodings()),headers);
     addHeader(HeaderConstants.HEADER_CONTENT_LANGUAGE,LanguageWriter.write(entity.getLanguages()),headers);
-    if (entity.getAvailableSize() != Representation.UNKNOWN_SIZE) {
-      addHeader(HeaderConstants.HEADER_CONTENT_LENGTH,Long.toString(entity.getAvailableSize()),headers);
-    }
     if (entity.getLocationRef() != null) {
       addHeader(HeaderConstants.HEADER_CONTENT_LOCATION,entity.getLocationRef().getTargetRef().toString(),headers);
     }
