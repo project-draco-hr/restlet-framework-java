@@ -47,45 +47,20 @@
             }
  else {
               final StringBuilder sb=new StringBuilder();
-              sb.append("..");
-              boolean canAdd=false;
-              for (int j=i + 1; j < basePath.length(); j++) {
-                if (basePath.charAt(j) == '/') {
-                  canAdd=true;
-                }
- else                 if (canAdd) {
-                  sb.append("/..");
-                  canAdd=false;
-                }
-              }
+              int segments=0;
+              for (int j=basePath.indexOf('/',i); j != -1; j=basePath.indexOf('/',j + 1))               segments++;
+              for (int j=0; j < segments; j++)               sb.append("../");
+              int lastLocalSlash=localPath.lastIndexOf('/');
+              sb.append(localPath.substring(lastLocalSlash + 1));
               relativePath=sb.toString();
             }
           }
  else {
             final StringBuilder sb=new StringBuilder();
-            boolean firstAdd=true;
-            boolean canAdd=false;
-            for (int j=i; j < basePath.length(); j++) {
-              if (basePath.charAt(j) == '/') {
-                canAdd=true;
-              }
- else               if (canAdd) {
-                if (firstAdd) {
-                  firstAdd=false;
-                }
- else {
-                  sb.append("/");
-                }
-                sb.append("..");
-                canAdd=false;
-              }
-            }
-            if (lastSlashIndex + 1 < localPath.length()) {
-              if (!firstAdd) {
-                sb.append('/');
-              }
-              sb.append(localPath.substring(lastSlashIndex + 1));
-            }
+            int segments=0;
+            for (int j=basePath.indexOf('/',i); j != -1; j=basePath.indexOf('/',j + 1))             segments++;
+            for (int j=0; j < segments; j++)             if (j > 0)             sb.append("/..");
+ else             sb.append("..");
             relativePath=sb.toString();
             if (relativePath.equals("")) {
               relativePath=".";
@@ -113,26 +88,9 @@
       }
  else {
         final StringBuilder sb=new StringBuilder();
-        boolean canAdd=false;
-        boolean firstAdd=true;
-        for (int j=i; j < basePath.length(); j++) {
-          if (basePath.charAt(j) == '/') {
-            canAdd=true;
-          }
- else           if (canAdd) {
-            if (firstAdd) {
-              firstAdd=false;
-            }
- else {
-              sb.append("/");
-            }
-            sb.append("..");
-            canAdd=false;
-          }
-        }
-        if (!firstAdd) {
-          sb.append('/');
-        }
+        int segments=0;
+        for (int j=basePath.indexOf('/',i); j != -1; j=basePath.indexOf('/',j + 1))         segments++;
+        for (int j=0; j < segments; j++)         sb.append("../");
         sb.append(localPath.substring(lastSlashIndex + 1));
         relativePath=sb.toString();
       }
