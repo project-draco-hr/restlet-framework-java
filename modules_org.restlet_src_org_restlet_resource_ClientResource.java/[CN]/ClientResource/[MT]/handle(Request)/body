@@ -2,12 +2,10 @@
   Response response=new Response(request);
   Uniform next=getNext();
   if (next == null) {
-    Protocol rProtocol=request.getProtocol();
-    Reference rReference=request.getResourceRef();
-    Protocol protocol=(rProtocol != null) ? rProtocol : (rReference != null) ? rReference.getSchemeProtocol() : null;
-    if (protocol != null) {
-      next=new Client(protocol);
+    next=createNext();
+    if (next != null) {
       setNext(next);
+      this.nextCreated=true;
     }
   }
   if (next != null) {
