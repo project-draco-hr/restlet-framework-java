@@ -1,0 +1,12 @@
+{
+  List<AnnotationInfo> infos=AnnotationUtils.getAnnotations(IChild.class);
+  Assert.assertEquals("Wrong count: " + infos,4,infos.size());
+  boolean found=false;
+  for (  AnnotationInfo ai : infos) {
+    if (ai.getResourceInterface().equals(IChild.class) && ai.getRestletMethod().equals(Method.PUT)) {
+      found=true;
+      Assert.assertEquals(String.class,ai.getJavaInputTypes()[0]);
+    }
+  }
+  Assert.assertEquals("Didn't find a method with IChild as the declaring class.",true,found);
+}

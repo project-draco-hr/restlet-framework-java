@@ -1,0 +1,16 @@
+{
+  Type rawType=genericType;
+  if (genericType instanceof TypeVariable) {
+    TypeVariable tv=(TypeVariable)genericType;
+    rawType=typeVariableMap.get(tv);
+    if (rawType == null) {
+      rawType=getUpperBound(tv);
+    }
+  }
+  if (rawType instanceof ParameterizedType) {
+    return ((ParameterizedType)rawType).getRawType();
+  }
+ else {
+    return rawType;
+  }
+}

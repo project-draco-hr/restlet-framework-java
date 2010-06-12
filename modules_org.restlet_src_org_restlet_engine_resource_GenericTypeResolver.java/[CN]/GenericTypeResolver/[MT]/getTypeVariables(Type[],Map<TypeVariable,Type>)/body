@@ -1,0 +1,14 @@
+{
+  for (  Type genericInterface : genericInterfaces) {
+    if (genericInterface instanceof ParameterizedType) {
+      ParameterizedType pt=(ParameterizedType)genericInterface;
+      populate(pt,typeVariableMap);
+      if (pt.getRawType() instanceof Class) {
+        getTypeVariables(((Class)pt.getRawType()).getGenericInterfaces(),typeVariableMap);
+      }
+    }
+ else     if (genericInterface instanceof Class) {
+      getTypeVariables(((Class)genericInterface).getGenericInterfaces(),typeVariableMap);
+    }
+  }
+}
