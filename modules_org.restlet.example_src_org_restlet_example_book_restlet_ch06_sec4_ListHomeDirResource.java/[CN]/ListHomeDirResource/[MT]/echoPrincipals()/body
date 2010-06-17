@@ -1,12 +1,4 @@
 {
-  Subject subject=new Subject();
-  subject.getPrincipals().add(getRequest().getClientInfo().getUser());
-  for (  Role role : getRequest().getClientInfo().getRoles()) {
-    subject.getPrincipals().add(role);
-  }
-  for (  Principal principal : getRequest().getClientInfo().getPrincipals()) {
-    subject.getPrincipals().add(principal);
-  }
   PrivilegedAction<StringBuilder> action=new PrivilegedAction<StringBuilder>(){
     public StringBuilder run(){
       File dir=new File(System.getProperty("user.home"));
@@ -25,8 +17,7 @@
     }
   }
 ;
-  StringBuilder sb=null;
-  Subject.doAsPrivileged(subject,action,null);
+  StringBuilder sb=JaasUtils.doAsPriviledged(getRequest().getClientInfo(),action);
   Representation rep=new StringRepresentation(sb,MediaType.TEXT_PLAIN,Language.ALL,CharacterSet.UTF_8);
   return rep;
 }
