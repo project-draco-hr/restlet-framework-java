@@ -1,3 +1,15 @@
 {
-  return this.next;
+  Uniform result=this.next;
+  if (result == null) {
+synchronized (this) {
+      if (result == null) {
+        result=createNext();
+        if (result != null) {
+          setNext(result);
+          this.nextCreated=true;
+        }
+      }
+    }
+  }
+  return result;
 }

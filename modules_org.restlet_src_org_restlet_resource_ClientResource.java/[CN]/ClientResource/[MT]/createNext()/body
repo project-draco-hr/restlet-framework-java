@@ -1,10 +1,16 @@
 {
   Uniform result=null;
-  Protocol rProtocol=getProtocol();
-  Reference rReference=getReference();
-  Protocol protocol=(rProtocol != null) ? rProtocol : (rReference != null) ? rReference.getSchemeProtocol() : null;
-  if (protocol != null) {
-    result=new Client(protocol);
+  result=getApplication().getOutboundRoot();
+  if ((result == null) && (getContext() != null)) {
+    result=getContext().getClientDispatcher();
+  }
+  if (result == null) {
+    Protocol rProtocol=getProtocol();
+    Reference rReference=getReference();
+    Protocol protocol=(rProtocol != null) ? rProtocol : (rReference != null) ? rReference.getSchemeProtocol() : null;
+    if (protocol != null) {
+      result=new Client(protocol);
+    }
   }
   return result;
 }
