@@ -3,7 +3,7 @@
   super.handle(request,response);
   request.setResourceRef(rr);
   String rp=rr.getRemainingPart(false,false);
-  if (isAutoDescribed() && Method.OPTIONS.equals(request.getMethod()) && (Status.CLIENT_ERROR_NOT_FOUND.equals(response.getStatus()) || !response.isEntityAvailable())&& ("/".equals(rp) || "".equals(rp))) {
+  if (isAutoDescribed() && Method.OPTIONS.equals(request.getMethod()) && (response.getStatus().isClientError() || !response.isEntityAvailable())&& ("/".equals(rp) || "".equals(rp))) {
     if (!rr.getBaseRef().getIdentifier().endsWith("/")) {
       rr.setBaseRef(rr.getBaseRef() + "/");
     }
