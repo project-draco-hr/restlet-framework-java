@@ -1,5 +1,4 @@
 {
-  ResponseInfo response=info.getResponse();
   MetadataService metadataService=getMetadataService();
   List<AnnotationInfo> annotations=getAnnotations();
   if (annotations != null && metadataService != null) {
@@ -10,7 +9,7 @@
           List<Variant> variants=(List<Variant>)getApplication().getConverterService().getVariants(classes[0],null);
           if (variants != null) {
             for (            Variant variant : variants) {
-              if ((info.getRequest() != null) && !info.getRequest().getRepresentations().contains(variant)) {
+              if ((variant.getMediaType() != null) && variant.getMediaType().isConcrete() && ((info.getRequest() == null) || !info.getRequest().getRepresentations().contains(variant))) {
                 info.addRequestRepresentation(variant);
               }
             }
@@ -20,7 +19,7 @@
           List<Variant> variants=(List<Variant>)getApplication().getConverterService().getVariants(annotationInfo.getJavaOutputType(),null);
           if (variants != null) {
             for (            Variant variant : variants) {
-              if (!response.getRepresentations().contains(variant)) {
+              if ((variant.getMediaType() != null) && variant.getMediaType().isConcrete() && ((info.getResponse() == null) || !info.getResponse().getRepresentations().contains(variant))) {
                 info.addResponseRepresentation(variant);
               }
             }
