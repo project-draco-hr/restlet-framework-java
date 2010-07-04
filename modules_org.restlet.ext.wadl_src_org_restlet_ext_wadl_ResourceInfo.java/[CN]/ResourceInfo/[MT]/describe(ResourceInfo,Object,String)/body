@@ -1,0 +1,83 @@
+{
+  info.setPath(path);
+  List<Method> methodsList=new ArrayList<Method>();
+  if (resource instanceof ServerResource) {
+    methodsList.addAll(((ServerResource)resource).getAllowedMethods());
+  }
+ else   if (resource instanceof org.restlet.resource.Resource) {
+    methodsList.addAll(((org.restlet.resource.Resource)resource).getAllowedMethods());
+  }
+ else   if (resource instanceof Directory) {
+    Directory directory=(Directory)resource;
+    methodsList.add(Method.GET);
+    if (directory.isModifiable()) {
+      methodsList.add(Method.DELETE);
+      methodsList.add(Method.PUT);
+    }
+  }
+  Method.sort(methodsList);
+  List<MethodInfo> methods=info.getMethods();
+  MethodInfo methodInfo;
+  for (  Method method : methodsList) {
+    methodInfo=new MethodInfo();
+    methods.add(methodInfo);
+    methodInfo.setName(method);
+    if (resource instanceof ServerResource) {
+      if (resource instanceof WadlServerResource) {
+        WadlServerResource wsResource=(WadlServerResource)resource;
+        if (wsResource.isDescribable(method)) {
+          methodInfo=new MethodInfo();
+          wsResource.describeMethod(method,methodInfo);
+          methods.add(methodInfo);
+        }
+        info.setParameters(wsResource.getParametersInfo());
+      }
+    }
+ else     if (resource instanceof org.restlet.resource.Resource) {
+      if (resource instanceof WadlResource) {
+        WadlResource wsResource=(WadlResource)resource;
+        if (wsResource.isDescribable(method)) {
+          methodInfo=new MethodInfo();
+          wsResource.describeMethod(method,methodInfo);
+          methods.add(methodInfo);
+        }
+        info.setParameters(wsResource.getParametersInfo());
+      }
+ else {
+        if (Method.GET.equals(method)) {
+          ResponseInfo responseInfo=null;
+          for (          Variant variant : ((org.restlet.resource.Resource)resource).getVariants()) {
+            RepresentationInfo representationInfo=new RepresentationInfo();
+            representationInfo.setMediaType(variant.getMediaType());
+            if (responseInfo == null) {
+              responseInfo=new ResponseInfo();
+              methodInfo.getResponses().add(responseInfo);
+            }
+            responseInfo.getRepresentations().add(representationInfo);
+          }
+        }
+      }
+    }
+  }
+  String title=null;
+  String textContent=null;
+  if (resource instanceof WadlServerResource) {
+    title=((WadlServerResource)resource).getName();
+    textContent=((WadlServerResource)resource).getDescription();
+  }
+ else   if (resource instanceof WadlResource) {
+    title=((WadlResource)resource).getTitle();
+  }
+  if ((title != null) && !"".equals(title)) {
+    DocumentationInfo doc=null;
+    if (info.getDocumentations().isEmpty()) {
+      doc=new DocumentationInfo();
+      info.getDocumentations().add(doc);
+    }
+ else {
+      info.getDocumentations().get(0);
+    }
+    doc.setTitle(title);
+    doc.setTextContent(textContent);
+  }
+}

@@ -1,100 +1,24 @@
 {
   ResourceInfo result=null;
+  Object resource=null;
   Application.setCurrent(this);
-  Object handler=finder.findTarget(request,response);
-  if (handler == null) {
-    ServerResource sr=finder.find(request,response);
-    if (sr != null) {
-      sr.init(getContext(),request,response);
-      sr.updateAllowedMethods();
-      handler=sr;
-    }
-  }
-  if (handler instanceof WadlResource) {
-    final WadlResource resource=(WadlResource)handler;
-    result=new ResourceInfo();
-    resource.describe(path,result);
-  }
- else   if (handler instanceof WadlServerResource) {
-    final WadlServerResource resource=(WadlServerResource)handler;
-    result=new ResourceInfo();
-    resource.describe(path,result);
+  if (finder instanceof Directory) {
+    resource=finder;
   }
  else {
+    resource=finder.findTarget(request,response);
+    if (resource == null) {
+      ServerResource sr=finder.find(request,response);
+      if (sr != null) {
+        sr.init(getContext(),request,response);
+        sr.updateAllowedMethods();
+        resource=sr;
+      }
+    }
+  }
+  if (resource != null) {
     result=new ResourceInfo();
-    result.setPath(path);
-    final List<Method> methods=new ArrayList<Method>();
-    if (handler != null) {
-      if (handler instanceof ServerResource) {
-        methods.addAll(((ServerResource)handler).getAllowedMethods());
-      }
- else       if (handler instanceof Handler) {
-        methods.addAll(((Handler)handler).getAllowedMethods());
-      }
-    }
- else {
-      if (finder instanceof Directory) {
-        Directory directory=(Directory)finder;
-        methods.add(Method.GET);
-        if (directory.isModifiable()) {
-          methods.add(Method.DELETE);
-          methods.add(Method.PUT);
-        }
-      }
-    }
-    Collections.sort(methods,new Comparator<Method>(){
-      public int compare(      Method m1,      Method m2){
-        return m1.getName().compareTo(m2.getName());
-      }
-    }
-);
-    if (handler instanceof Resource) {
-      Resource resource=(Resource)handler;
-      for (      Method method : methods) {
-        MethodInfo methodInfo=new MethodInfo();
-        methodInfo.setName(method);
-        if (Method.GET.equals(method)) {
-          ResponseInfo responseInfo=null;
-          for (          Variant variant : resource.getVariants()) {
-            RepresentationInfo representationInfo=new RepresentationInfo();
-            representationInfo.setMediaType(variant.getMediaType());
-            if (responseInfo == null) {
-              responseInfo=new ResponseInfo();
-              methodInfo.getResponses().add(responseInfo);
-            }
-            responseInfo.getRepresentations().add(representationInfo);
-          }
-        }
-        result.getMethods().add(methodInfo);
-      }
-    }
- else     if (handler instanceof ServerResource) {
-      ServerResource resource=(ServerResource)handler;
-      for (      Method method : methods) {
-        MethodInfo methodInfo=new MethodInfo();
-        methodInfo.setName(method);
-        if (Method.GET.equals(method)) {
-          ResponseInfo responseInfo=null;
-          for (          Variant variant : resource.getVariants()) {
-            RepresentationInfo representationInfo=new RepresentationInfo();
-            representationInfo.setMediaType(variant.getMediaType());
-            if (responseInfo == null) {
-              responseInfo=new ResponseInfo();
-              methodInfo.getResponses().add(responseInfo);
-            }
-            responseInfo.getRepresentations().add(representationInfo);
-          }
-        }
-        result.getMethods().add(methodInfo);
-      }
-    }
- else {
-      for (      final Method method : methods) {
-        final MethodInfo methodInfo=new MethodInfo();
-        methodInfo.setName(method);
-        result.getMethods().add(methodInfo);
-      }
-    }
+    ResourceInfo.describe(result,resource,path);
   }
   return result;
 }
