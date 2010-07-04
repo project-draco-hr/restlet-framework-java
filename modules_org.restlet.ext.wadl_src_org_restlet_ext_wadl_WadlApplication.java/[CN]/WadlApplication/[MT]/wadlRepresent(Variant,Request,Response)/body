@@ -2,8 +2,8 @@
   Representation result=null;
   if (variant != null) {
     ApplicationInfo applicationInfo=getApplicationInfo(request,response);
-    if (getTitle() != null && !"".equals(getTitle())) {
-      DocumentationInfo doc=null;
+    DocumentationInfo doc=null;
+    if ((getTitle() != null) && !"".equals(getTitle())) {
       if (applicationInfo.getDocumentations().isEmpty()) {
         doc=new DocumentationInfo();
         applicationInfo.getDocumentations().add(doc);
@@ -13,11 +13,24 @@
       }
       doc.setTitle(getTitle());
     }
+ else     if ((getName() != null) && !"".equals(getName())) {
+      if (applicationInfo.getDocumentations().isEmpty()) {
+        doc=new DocumentationInfo();
+        applicationInfo.getDocumentations().add(doc);
+      }
+ else {
+        doc=applicationInfo.getDocumentations().get(0);
+      }
+      doc.setTitle(getName());
+    }
+    if ((doc != null) && (getDescription() != null) && !"".equals(getDescription())) {
+      doc.setTextContent(getDescription());
+    }
     if (MediaType.APPLICATION_WADL.equals(variant.getMediaType())) {
       result=createWadlRepresentation(applicationInfo);
     }
  else     if (MediaType.TEXT_HTML.equals(variant.getMediaType())) {
-      result=createWadlRepresentation(applicationInfo).getHtmlRepresentation();
+      result=createHtmlRepresentation(applicationInfo);
     }
   }
   return result;
