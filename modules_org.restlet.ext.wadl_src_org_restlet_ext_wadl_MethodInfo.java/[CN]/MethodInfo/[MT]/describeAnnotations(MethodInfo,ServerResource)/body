@@ -8,16 +8,16 @@
         List<Variant> requestVariants=annotationInfo.getRequestVariants(resource.getMetadataService(),resource.getConverterService());
         if (requestVariants != null) {
           for (          Variant variant : requestVariants) {
-            if ((variant.getMediaType() != null) && variant.getMediaType().isConcrete() && ((info.getRequest() == null) || !info.getRequest().getRepresentations().contains(variant))) {
+            if ((variant.getMediaType() != null) && ((info.getRequest() == null) || !info.getRequest().getRepresentations().contains(variant))) {
               RepresentationInfo representationInfo=null;
+              if (info.getRequest() == null) {
+                info.setRequest(new RequestInfo());
+              }
               if (resource instanceof WadlServerResource) {
-                representationInfo=((WadlServerResource)resource).describe(classes[0],variant);
+                representationInfo=((WadlServerResource)resource).describe(info,info.getRequest(),classes[0],variant);
               }
  else {
                 representationInfo=new RepresentationInfo(variant);
-              }
-              if (info.getRequest() == null) {
-                info.setRequest(new RequestInfo());
               }
               info.getRequest().getRepresentations().add(representationInfo);
             }
@@ -28,10 +28,10 @@
           List<Variant> responseVariants=annotationInfo.getResponseVariants(null,resource.getMetadataService(),resource.getConverterService());
           if (responseVariants != null) {
             for (            Variant variant : responseVariants) {
-              if ((variant.getMediaType() != null) && variant.getMediaType().isConcrete() && !info.getResponse().getRepresentations().contains(variant)) {
+              if ((variant.getMediaType() != null) && !info.getResponse().getRepresentations().contains(variant)) {
                 RepresentationInfo representationInfo=null;
                 if (resource instanceof WadlServerResource) {
-                  representationInfo=((WadlServerResource)resource).describe(outputClass,variant);
+                  representationInfo=((WadlServerResource)resource).describe(info,info.getResponse(),outputClass,variant);
                 }
  else {
                   representationInfo=new RepresentationInfo(variant);

@@ -6,6 +6,9 @@
     methodsList.addAll(((ServerResource)resource).getAllowedMethods());
     if (resource instanceof WadlServerResource) {
       info.setParameters(((WadlServerResource)resource).describeParameters());
+      if (applicationInfo != null) {
+        ((WadlServerResource)resource).describe(applicationInfo);
+      }
     }
   }
  else   if (resource instanceof org.restlet.resource.Resource) {
