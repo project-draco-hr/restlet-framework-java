@@ -1,0 +1,21 @@
+{
+  ApplicationInfo result=new ApplicationInfo();
+  if (!getDocumentations().isEmpty()) {
+    String titleResource=getDocumentations().get(0).getTitle();
+    if (titleResource != null && !"".equals(titleResource)) {
+      DocumentationInfo doc=null;
+      if (result.getDocumentations().isEmpty()) {
+        doc=new DocumentationInfo();
+        result.getDocumentations().add(doc);
+      }
+ else {
+        doc=result.getDocumentations().get(0);
+      }
+      doc.setTitle(titleResource);
+    }
+  }
+  ResourcesInfo resources=new ResourcesInfo();
+  result.setResources(resources);
+  resources.getResources().add(this);
+  return result;
+}

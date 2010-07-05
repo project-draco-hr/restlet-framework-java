@@ -1,13 +1,15 @@
 {
   Representation result=null;
   if (variant != null) {
-    ResourceInfo resourceInfo=new ResourceInfo();
-    describe(resourceInfo);
+    ResourceInfo resource=new ResourceInfo();
+    describe(resource);
+    ApplicationInfo application=resource.createApplication();
+    describe(application);
     if (MediaType.APPLICATION_WADL.equals(variant.getMediaType())) {
-      result=createWadlRepresentation(resourceInfo);
+      result=createWadlRepresentation(application);
     }
  else     if (MediaType.TEXT_HTML.equals(variant.getMediaType())) {
-      result=createHtmlRepresentation(resourceInfo);
+      result=createHtmlRepresentation(application);
     }
   }
   return result;
