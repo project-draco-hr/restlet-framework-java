@@ -1,15 +1,11 @@
 {
   List<Variant> result=null;
-  String value=getValue();
-  boolean compatibleRequestEntity=true;
-  if (value != null) {
-    int colonIndex=value.indexOf(':');
-    if (colonIndex != -1) {
-      value=getValue().substring(colonIndex + 1);
-    }
+  if ((getJavaOutputType() != null) && (getJavaOutputType() != void.class) && (getJavaOutputType() != Void.class)) {
+    String value=getOutputValue();
+    boolean compatibleRequestEntity=true;
     if (value != null) {
       if (requestEntity != null) {
-        List<Variant> requestVariants=getRequestVariants(metadataService);
+        List<Variant> requestVariants=getRequestVariants(metadataService,converterService);
         if ((requestVariants != null) && !requestVariants.isEmpty()) {
           compatibleRequestEntity=false;
           for (int i=0; (!compatibleRequestEntity) && (i < requestVariants.size()); i++) {
@@ -34,9 +30,9 @@
         }
       }
     }
-  }
-  if (compatibleRequestEntity && (result == null)) {
-    result=(List<Variant>)converterService.getVariants(getJavaOutputType(),null);
+    if (compatibleRequestEntity && (result == null)) {
+      result=(List<Variant>)converterService.getVariants(getJavaOutputType(),null);
+    }
   }
   return result;
 }

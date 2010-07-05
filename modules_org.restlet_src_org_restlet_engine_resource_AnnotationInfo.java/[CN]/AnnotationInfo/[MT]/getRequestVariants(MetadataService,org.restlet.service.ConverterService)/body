@@ -1,11 +1,8 @@
 {
   List<Variant> result=null;
-  String value=getValue();
-  if (value != null) {
-    int colonIndex=value.indexOf(':');
-    if (colonIndex != -1) {
-      value=getValue().substring(0,colonIndex);
-    }
+  Class<?>[] classes=getJavaInputTypes();
+  if (classes != null && classes.length >= 1) {
+    String value=getInputValue();
     if (value != null) {
       String[] extensions=value.split("\\|");
       if (extensions != null) {
@@ -21,6 +18,10 @@
           }
         }
       }
+    }
+    if (result == null) {
+      Class<?> inputClass=classes[0];
+      result=(List<Variant>)converterService.getVariants(inputClass,null);
     }
   }
   return result;
