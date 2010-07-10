@@ -1,0 +1,18 @@
+{
+  MyBean myBean=new MyBean();
+  myBean.setList(new ArrayList<String>());
+  myBean.getList().add("list1");
+  myBean.getList().add("list2");
+  myBean.setMap(new HashMap<String,String>());
+  myBean.getMap().put("key1","value1");
+  myBean.getMap().put("key2","value2");
+  myBean.setName("myname");
+  Representation rep=new GwtConverter().toRepresentation(myBean,null,null);
+  assertNotNull(rep);
+  String test=rep.getText();
+  System.out.println(test);
+  assertTrue(test.contains("myname"));
+  assertTrue(test.contains("list2"));
+  assertTrue(test.contains("key1"));
+  assertTrue(test.contains("value2"));
+}
