@@ -23,8 +23,16 @@
         if (result.getCharacterSet() == null) {
           result.setCharacterSet(target.getCharacterSet());
         }
-        if (result.getMediaType() == null) {
-          result.setMediaType(target.getMediaType());
+        if ((result.getMediaType() == null) || !result.getMediaType().isConcrete()) {
+          if ((target.getMediaType() != null) && target.getMediaType().isConcrete()) {
+            result.setMediaType(target.getMediaType());
+          }
+ else           if (resource != null) {
+            result.setMediaType(resource.getMetadataService().getDefaultMediaType());
+          }
+ else {
+            result.setMediaType(MediaType.APPLICATION_OCTET_STREAM);
+          }
         }
         if (result.getEncodings().isEmpty()) {
           result.getEncodings().addAll(target.getEncodings());

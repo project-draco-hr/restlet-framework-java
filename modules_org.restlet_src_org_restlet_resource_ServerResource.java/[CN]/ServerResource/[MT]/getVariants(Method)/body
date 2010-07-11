@@ -5,8 +5,8 @@
     if (isAnnotated() && hasAnnotations()) {
       List<Variant> annoVariants=null;
       for (      AnnotationInfo annotationInfo : getAnnotations()) {
-        if (method.equals(annotationInfo.getRestletMethod())) {
-          annoVariants=annotationInfo.getResponseVariants(getRequestEntity(),getMetadataService(),getConverterService());
+        if (annotationInfo.isCompatible(method,getRequestEntity(),getMetadataService(),getConverterService())) {
+          annoVariants=annotationInfo.getResponseVariants(getMetadataService(),getConverterService());
           if (annoVariants != null) {
             for (            Variant v : annoVariants) {
               result.add(new VariantInfo(v,annotationInfo));

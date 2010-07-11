@@ -48,14 +48,14 @@
                 setOnResponse(callback);
               }
  else {
-                requestEntity=toRepresentation(args[i]);
+                requestEntity=toRepresentation(args[i],null);
               }
             }
           }
           Request request=new Request(getRequest());
           request.setMethod(annotation.getRestletMethod());
           request.setEntity(requestEntity);
-          List<org.restlet.representation.Variant> responseVariants=annotation.getResponseVariants(requestEntity,getMetadataService(),getConverterService());
+          List<org.restlet.representation.Variant> responseVariants=annotation.getResponseVariants(getMetadataService(),getConverterService());
           if (responseVariants != null) {
             request.setClientInfo(new ClientInfo(responseVariants));
           }

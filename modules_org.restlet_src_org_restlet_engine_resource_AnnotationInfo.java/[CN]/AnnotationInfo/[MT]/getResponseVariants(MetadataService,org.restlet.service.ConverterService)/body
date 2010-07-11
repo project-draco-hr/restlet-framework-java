@@ -1,0 +1,26 @@
+{
+  List<Variant> result=null;
+  if ((getJavaOutputType() != null) && (getJavaOutputType() != void.class) && (getJavaOutputType() != Void.class)) {
+    String value=getOutputValue();
+    if (value != null) {
+      String[] extensions=value.split("\\|");
+      for (      String extension : extensions) {
+        List<MediaType> mediaTypes=metadataService.getAllMediaTypes(extension);
+        if (mediaTypes != null) {
+          for (          MediaType mediaType : mediaTypes) {
+            if ((result == null) || (!result.contains(mediaType))) {
+              if (result == null) {
+                result=new ArrayList<Variant>();
+              }
+              result.add(new Variant(mediaType));
+            }
+          }
+        }
+      }
+    }
+    if (result == null) {
+      result=(List<Variant>)converterService.getVariants(getJavaOutputType(),null);
+    }
+  }
+  return result;
+}

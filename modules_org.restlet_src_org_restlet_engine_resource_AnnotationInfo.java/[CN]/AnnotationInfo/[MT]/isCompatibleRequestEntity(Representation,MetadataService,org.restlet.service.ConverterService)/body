@@ -1,0 +1,16 @@
+{
+  boolean result=true;
+  if ((requestEntity != null) && requestEntity.isAvailable()) {
+    List<Variant> requestVariants=getRequestVariants(metadataService,converterService);
+    if ((requestVariants != null) && !requestVariants.isEmpty()) {
+      result=false;
+      for (int i=0; (!result) && (i < requestVariants.size()); i++) {
+        result=(requestVariants.get(i).isCompatible(requestEntity));
+      }
+    }
+ else {
+      result=false;
+    }
+  }
+  return result;
+}
