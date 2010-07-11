@@ -4,13 +4,16 @@
     String value=getOutputValue();
     boolean compatibleRequestEntity=true;
     if (value != null) {
-      if (requestEntity != null) {
+      if ((requestEntity != null) && requestEntity.isAvailable()) {
         List<Variant> requestVariants=getRequestVariants(metadataService,converterService);
         if ((requestVariants != null) && !requestVariants.isEmpty()) {
           compatibleRequestEntity=false;
           for (int i=0; (!compatibleRequestEntity) && (i < requestVariants.size()); i++) {
             compatibleRequestEntity=(requestVariants.get(i).isCompatible(requestEntity));
           }
+        }
+ else {
+          compatibleRequestEntity=false;
         }
       }
       if (compatibleRequestEntity) {
