@@ -2,7 +2,12 @@
   this.count=-1;
   this.executed=false;
   this.entityClass=entityClass;
-  this.entityType=((Metadata)service.getMetadata()).getEntityType(entityClass);
+  if (service.getMetadata() != null) {
+    this.entityType=((Metadata)service.getMetadata()).getEntityType(entityClass);
+  }
+ else {
+    this.entityType=null;
+  }
   this.service=service;
   Reference ref=new Reference(subpath);
   if (ref.isAbsolute()) {
