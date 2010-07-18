@@ -1,0 +1,17 @@
+{
+  Class<?> result=null;
+  if (type instanceof Class<?>) {
+    result=(Class<?>)type;
+  }
+ else   if (type instanceof ParameterizedType) {
+    result=getTypeClass(((ParameterizedType)type).getRawType());
+  }
+ else   if (type instanceof GenericArrayType) {
+    Type componentType=((GenericArrayType)type).getGenericComponentType();
+    Class<?> componentClass=getTypeClass(componentType);
+    if (componentClass != null) {
+      result=Array.newInstance(componentClass,0).getClass();
+    }
+  }
+  return result;
+}

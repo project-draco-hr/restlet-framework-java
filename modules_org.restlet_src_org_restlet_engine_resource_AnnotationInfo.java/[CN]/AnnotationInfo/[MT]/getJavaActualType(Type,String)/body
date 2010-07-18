@@ -1,0 +1,20 @@
+{
+  Class<?> result=null;
+  if (currentType != null) {
+    if (currentType instanceof Class<?>) {
+      result=getJavaActualType((Class<?>)currentType,genericTypeName);
+    }
+ else     if (currentType instanceof ParameterizedType) {
+      ParameterizedType parameterizedType=(ParameterizedType)currentType;
+      Class<?> rawType=(Class<?>)parameterizedType.getRawType();
+      Type[] actualTypeArguments=parameterizedType.getActualTypeArguments();
+      TypeVariable<?>[] typeParameters=rawType.getTypeParameters();
+      for (int i=0; (result == null) && (i < actualTypeArguments.length); i++) {
+        if (genericTypeName.equals(typeParameters[i].getName())) {
+          result=getTypeClass(actualTypeArguments[i]);
+        }
+      }
+    }
+  }
+  return result;
+}

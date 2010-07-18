@@ -1,0 +1,11 @@
+{
+  Class<?> result=null;
+  result=getJavaActualType(currentClass.getGenericSuperclass(),genericTypeName);
+  if (result == null) {
+    Type[] interfaceTypes=currentClass.getGenericInterfaces();
+    for (int i=0; (result == null) && (i < interfaceTypes.length); i++) {
+      result=getJavaActualType(interfaceTypes[i],genericTypeName);
+    }
+  }
+  return result;
+}
