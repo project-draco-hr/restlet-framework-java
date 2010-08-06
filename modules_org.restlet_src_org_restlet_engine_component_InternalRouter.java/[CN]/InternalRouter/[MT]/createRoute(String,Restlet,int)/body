@@ -1,5 +1,5 @@
 {
-  return new org.restlet.routing.Route(this,uriPattern,target){
+  Route result=new org.restlet.routing.Route(this,uriPattern,target){
     @Override protected int beforeHandle(    Request request,    Response response){
       final int result=super.beforeHandle(request,response);
       request.setRootRef(request.getResourceRef().getBaseRef());
@@ -7,4 +7,7 @@
     }
   }
 ;
+  result.getTemplate().setMatchingMode(matchingMode);
+  result.setMatchingQuery(getDefaultMatchingQuery());
+  return result;
 }
