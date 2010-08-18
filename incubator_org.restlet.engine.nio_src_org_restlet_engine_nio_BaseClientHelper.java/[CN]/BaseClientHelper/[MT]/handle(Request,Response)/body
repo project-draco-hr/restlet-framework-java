@@ -1,0 +1,17 @@
+{
+  try {
+    if (request.getOnResponse() == null) {
+      CountDownLatch latch=new CountDownLatch(1);
+      request.getAttributes().put(CONNECTOR_LATCH,latch);
+      getOutboundMessages().add(response);
+      latch.await();
+    }
+ else {
+      getOutboundMessages().add(response);
+    }
+  }
+ catch (  Exception e) {
+    getLogger().log(Level.INFO,"Error while handling a " + request.getProtocol().getName() + " client request",e);
+    response.setStatus(Status.CONNECTOR_ERROR_INTERNAL,e);
+  }
+}

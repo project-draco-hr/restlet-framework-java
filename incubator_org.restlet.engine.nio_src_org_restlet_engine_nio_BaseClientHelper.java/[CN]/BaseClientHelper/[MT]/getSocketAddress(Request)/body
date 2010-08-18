@@ -1,0 +1,36 @@
+{
+  InetSocketAddress result=null;
+  String hostDomain=null;
+  int hostPort=0;
+  String proxyDomain=getProxyHost();
+  if (proxyDomain != null) {
+    hostDomain=proxyDomain;
+    try {
+      hostPort=getProxyPort();
+    }
+ catch (    NumberFormatException nfe) {
+      getLogger().log(Level.WARNING,"The proxy port must be a valid numeric value.",nfe);
+      throw new UnknownHostException();
+    }
+  }
+ else {
+    Reference resourceRef=request.getResourceRef().isRelative() ? request.getResourceRef().getTargetRef() : request.getResourceRef();
+    hostDomain=resourceRef.getHostDomain();
+    hostPort=resourceRef.getHostPort();
+    if (hostPort == -1) {
+      if (resourceRef.getSchemeProtocol() != null) {
+        hostPort=resourceRef.getSchemeProtocol().getDefaultPort();
+      }
+ else {
+        hostPort=getProtocols().get(0).getDefaultPort();
+      }
+    }
+  }
+  if (hostDomain != null) {
+    result=new InetSocketAddress(hostDomain,hostPort);
+    if (result != null && result.getAddress() == null) {
+      throw new UnknownHostException(hostDomain);
+    }
+  }
+  return result;
+}

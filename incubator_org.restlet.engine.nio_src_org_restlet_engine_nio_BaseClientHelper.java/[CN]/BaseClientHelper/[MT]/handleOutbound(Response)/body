@@ -1,0 +1,19 @@
+{
+  if ((response != null) && (response.getRequest() != null)) {
+    try {
+      Connection<Client> bestConn=getBestConnection(response.getRequest());
+      if (bestConn != null) {
+        bestConn.getOutboundWay().getMessages().add(response);
+        getConnections().add(bestConn);
+      }
+ else {
+        getLogger().log(Level.WARNING,"Unable to find a connection to send the request");
+      }
+    }
+ catch (    Throwable t) {
+      getLogger().log(Level.FINE,"An error occured during the communication with the remote server.",t);
+      response.setStatus(Status.CONNECTOR_ERROR_COMMUNICATION,t);
+      unblock(response);
+    }
+  }
+}

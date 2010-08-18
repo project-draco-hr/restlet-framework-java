@@ -1,0 +1,57 @@
+{
+  String certAlgorithm=getCertAlgorithm();
+  String keystorePath=getKeystorePath();
+  String keystorePassword=getKeystorePassword();
+  String keyPassword=getKeyPassword();
+  String truststoreType=getTruststoreType();
+  String truststorePath=getTruststorePath();
+  String truststorePassword=getTruststorePassword();
+  String secureRandomAlgorithm=getSecureRandomAlgorithm();
+  String securityProvider=getSecurityProvider();
+  InputStream keystoreInputStream=null;
+  if ((keystorePath != null) && (new File(keystorePath).exists())) {
+    keystoreInputStream=new FileInputStream(keystorePath);
+  }
+  KeyStore keystore=null;
+  if (keystoreInputStream != null) {
+    try {
+      keystore=KeyStore.getInstance(getKeystoreType());
+      keystore.load(keystoreInputStream,keystorePassword == null ? null : keystorePassword.toCharArray());
+    }
+ catch (    IOException ioe) {
+      getLogger().log(Level.WARNING,"Unable to load the key store",ioe);
+      keystore=null;
+    }
+  }
+  KeyManager[] keyManagers=null;
+  if ((keystore != null) && (keyPassword != null)) {
+    KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(certAlgorithm);
+    keyManagerFactory.init(keystore,keyPassword.toCharArray());
+    keyManagers=keyManagerFactory.getKeyManagers();
+  }
+  InputStream truststoreInputStream=null;
+  if ((truststorePath != null) && (new File(truststorePath).exists())) {
+    truststoreInputStream=new FileInputStream(truststorePath);
+  }
+  KeyStore truststore=null;
+  if ((truststoreType != null) && (truststoreInputStream != null)) {
+    try {
+      truststore=KeyStore.getInstance(truststoreType);
+      truststore.load(truststoreInputStream,truststorePassword == null ? null : truststorePassword.toCharArray());
+    }
+ catch (    IOException ioe) {
+      getLogger().log(Level.WARNING,"Unable to load the trust store",ioe);
+      truststore=null;
+    }
+  }
+  TrustManager[] trustManagers=null;
+  if (truststore != null) {
+    TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance(certAlgorithm);
+    trustManagerFactory.init(truststore);
+    trustManagers=trustManagerFactory.getTrustManagers();
+  }
+  SecureRandom secureRandom=secureRandomAlgorithm == null ? null : SecureRandom.getInstance(secureRandomAlgorithm);
+  SSLContext context=securityProvider == null ? SSLContext.getInstance(getSslProtocol()) : SSLContext.getInstance(getSslProtocol(),securityProvider);
+  context.init(keyManagers,trustManagers,secureRandom);
+  return context.getSocketFactory();
+}
