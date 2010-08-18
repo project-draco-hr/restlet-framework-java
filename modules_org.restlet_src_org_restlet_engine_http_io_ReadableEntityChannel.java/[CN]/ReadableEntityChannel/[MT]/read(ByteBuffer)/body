@@ -2,8 +2,8 @@
   int result=-1;
   if (this.availableSize > 0) {
     if ((this.remainingBuffer != null) && (this.remainingBuffer.hasRemaining())) {
-      result=this.remainingBuffer.remaining();
-      final byte[] src=new byte[result];
+      result=Math.min(this.remainingBuffer.remaining(),dst.remaining());
+      byte[] src=new byte[result];
       this.remainingBuffer.get(src);
       dst.put(src);
     }
