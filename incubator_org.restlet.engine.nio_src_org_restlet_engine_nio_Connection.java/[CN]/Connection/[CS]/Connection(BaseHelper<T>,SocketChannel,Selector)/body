@@ -1,0 +1,19 @@
+{
+  this.helper=helper;
+  this.inboundWay=helper.createInboundWay(this);
+  this.outboundWay=helper.createOutboundWay(this);
+  this.persistent=helper.isPersistingConnections();
+  this.pipelining=helper.isPipeliningConnections();
+  this.state=ConnectionState.OPENING;
+  this.socketChannel=socketChannel;
+  if (helper.isTracing()) {
+    this.readableSelectionChannel=new ReadableTraceChannel(new ReadableSocketChannel(socketChannel,selector));
+    this.writableSelectionChannel=new WritableTraceChannel(new WritableSocketChannel(socketChannel,selector));
+  }
+ else {
+    this.readableSelectionChannel=new ReadableSocketChannel(socketChannel,selector);
+    this.writableSelectionChannel=new WritableSocketChannel(socketChannel,selector);
+  }
+  this.lastActivity=System.currentTimeMillis();
+  this.socketKey=null;
+}

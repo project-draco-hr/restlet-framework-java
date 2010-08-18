@@ -5,11 +5,11 @@
       getLogger().warning("Chunked encoding not supported (yet) in the NIO connector.");
     }
  else {
-      result=new ReadableEntityChannel(getByteBuffer(),getConnection().getSocketChannel(),size);
+      result=new ReadableEntityChannel(getByteBuffer(),getConnection().getReadableSelectionChannel(),size);
     }
   }
  else {
-    result=getConnection().getSocketChannel();
+    result=getConnection().getReadableSelectionChannel();
   }
   return result;
 }
