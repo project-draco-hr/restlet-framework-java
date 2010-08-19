@@ -1,0 +1,10 @@
+{
+  super.onCompleted(message);
+  getMessages().remove(message);
+  if (!message.getStatus().isInformational()) {
+    getConnection().getInboundWay().getMessages().remove(message);
+  }
+  if (!getConnection().isPersistent()) {
+    getConnection().close(true);
+  }
+}

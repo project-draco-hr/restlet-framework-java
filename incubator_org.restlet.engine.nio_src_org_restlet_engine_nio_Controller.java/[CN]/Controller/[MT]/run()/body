@@ -6,14 +6,14 @@
       if (isOverloaded()) {
         if (!isWorkerServiceOverloaded()) {
           setOverloaded(false);
-          getHelper().getLogger().log(Level.INFO,"Accepting new connections again");
+          getHelper().getLogger().info("Connector overload ended. Accepting new connections again");
           getHelper().traceWorkerService();
         }
       }
  else {
         if (isWorkerServiceOverloaded()) {
           setOverloaded(true);
-          getHelper().getLogger().log(Level.INFO,"Stop accepting new connections");
+          getHelper().getLogger().info("Connector overload detected. Stop accepting new connections");
           getHelper().traceWorkerService();
         }
       }
@@ -22,7 +22,7 @@
       controlHelper();
     }
  catch (    Exception ex) {
-      this.helper.getLogger().log(Level.INFO,"Unexpected error while controlling connector",ex);
+      this.helper.getLogger().log(Level.WARNING,"Unexpected error while controlling connector",ex);
     }
   }
 }

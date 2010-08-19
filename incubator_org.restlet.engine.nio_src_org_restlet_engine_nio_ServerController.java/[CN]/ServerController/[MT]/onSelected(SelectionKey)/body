@@ -12,7 +12,9 @@
           Connection<Server> connection=getHelper().createConnection(getHelper(),socketChannel,getSelector());
           connection.open();
           getHelper().getConnections().add(connection);
-          getHelper().getLogger().log(BaseHelper.DEFAULT_LEVEL,"New connection accepted. Total : " + getHelper().getConnections().size());
+          if (getHelper().getLogger().isLoggable(Level.FINE)) {
+            getHelper().getLogger().fine("New connection accepted. Total : " + getHelper().getConnections().size());
+          }
           connection.onSelected(null);
         }
  else {
