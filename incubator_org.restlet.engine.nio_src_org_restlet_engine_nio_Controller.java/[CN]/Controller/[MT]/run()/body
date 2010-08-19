@@ -4,15 +4,17 @@
   while (isRunning()) {
     try {
       if (isOverloaded()) {
-        if (!isWorkerServiceFull()) {
+        if (!isWorkerServiceOverloaded()) {
           setOverloaded(false);
-          getHelper().getLogger().log(Level.INFO,"Accepting new connections and transactions again.");
+          getHelper().getLogger().log(Level.INFO,"Accepting new connections again");
+          getHelper().traceWorkerService();
         }
       }
  else {
-        if (isWorkerServiceFull()) {
+        if (isWorkerServiceOverloaded()) {
           setOverloaded(true);
-          getHelper().getLogger().log(Level.INFO,"Stop accepting new connections and transactions. Consider increasing the maximum number of threads.");
+          getHelper().getLogger().log(Level.INFO,"Stop accepting new connections");
+          getHelper().traceWorkerService();
         }
       }
       selectKey(sleepTime);

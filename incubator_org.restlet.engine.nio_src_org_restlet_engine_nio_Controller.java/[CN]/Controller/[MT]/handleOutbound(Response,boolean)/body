@@ -1,0 +1,23 @@
+{
+  if (response != null) {
+    if (synchronous) {
+      getHelper().handleOutbound(response);
+    }
+ else {
+      execute(new Runnable(){
+        public void run(){
+          try {
+            getHelper().handleOutbound(response);
+          }
+  finally {
+            Engine.clearThreadLocalVariables();
+          }
+        }
+        @Override public String toString(){
+          return "Handle outbound messages";
+        }
+      }
+);
+    }
+  }
+}

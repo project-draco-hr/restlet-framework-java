@@ -1,42 +1,10 @@
 {
   boolean result=false;
   for (int i=0; i < getHelper().getInboundMessages().size(); i++) {
-    final Response response=getHelper().getInboundMessages().poll();
-    if (response != null) {
-      execute(new Runnable(){
-        public void run(){
-          try {
-            getHelper().handleInbound(response);
-          }
-  finally {
-            Engine.clearThreadLocalVariables();
-          }
-        }
-        @Override public String toString(){
-          return "Handle inbound messages";
-        }
-      }
-);
-    }
+    handleInbound(getHelper().getInboundMessages().poll());
   }
   for (int i=0; i < getHelper().getOutboundMessages().size(); i++) {
-    final Response response=getHelper().getOutboundMessages().poll();
-    if (response != null) {
-      execute(new Runnable(){
-        public void run(){
-          try {
-            getHelper().handleOutbound(response);
-          }
-  finally {
-            Engine.clearThreadLocalVariables();
-          }
-        }
-        @Override public String toString(){
-          return "Handle outbound messages";
-        }
-      }
-);
-    }
+    handleOutbound(getHelper().getOutboundMessages().poll());
   }
   return result;
 }
