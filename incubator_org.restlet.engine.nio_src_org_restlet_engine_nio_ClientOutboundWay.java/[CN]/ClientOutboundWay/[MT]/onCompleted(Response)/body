@@ -1,10 +1,11 @@
 {
   super.onCompleted(message);
-  getMessages().remove(message);
-  if (!message.getStatus().isInformational()) {
-    getConnection().getInboundWay().getMessages().remove(message);
+  Request request=message.getRequest();
+  if (request.getOnSent() != null) {
+    request.getOnSent().handle(request,message);
   }
-  if (!getConnection().isPersistent()) {
-    getConnection().close(true);
+  getMessages().remove(message);
+  if (request.isExpectingResponse()) {
+    getConnection().getInboundWay().getMessages().add(message);
   }
 }
