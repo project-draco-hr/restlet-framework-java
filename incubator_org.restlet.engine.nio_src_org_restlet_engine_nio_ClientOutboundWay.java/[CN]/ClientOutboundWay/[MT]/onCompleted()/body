@@ -1,0 +1,11 @@
+{
+  Request request=getMessage().getRequest();
+  if (request.getOnSent() != null) {
+    request.getOnSent().handle(request,getMessage());
+  }
+  getMessages().remove(getMessage());
+  if (request.isExpectingResponse()) {
+    getConnection().getInboundWay().getMessages().add(getMessage());
+  }
+  super.onCompleted();
+}

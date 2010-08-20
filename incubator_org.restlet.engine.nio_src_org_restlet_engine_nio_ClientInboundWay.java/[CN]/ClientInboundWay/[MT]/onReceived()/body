@@ -1,0 +1,23 @@
+{
+  if (HeaderUtils.isConnectionClose(getHeaders())) {
+    getConnection().setState(ConnectionState.CLOSING);
+  }
+  getMessage().setEntity(createEntity(getHeaders()));
+  try {
+    copyResponseTransportHeaders(getHeaders(),getMessage());
+  }
+ catch (  Throwable t) {
+    getLogger().log(Level.WARNING,"Error while parsing the headers",t);
+  }
+  if (getHeaders() != null) {
+    getMessage().getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,getHeaders());
+  }
+  if (!getMessage().getStatus().isInformational()) {
+    getMessages().poll();
+  }
+  getHelper().getInboundMessages().add(getMessage());
+  getHelper().getController().wakeup();
+  if (!getMessage().isEntityAvailable()) {
+    onCompleted();
+  }
+}

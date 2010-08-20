@@ -11,41 +11,20 @@
           setIoState(IoState.CANCELING);
         }
  else {
-          ConnectedRequest request=(ConnectedRequest)((getMessage() == null) ? null : getMessage().getRequest());
-          Series<Parameter> headers=(request == null) ? null : request.getHeaders();
           while (fillLine()) {
             if (getMessageState() == MessageState.START_LINE) {
               readStartLine();
             }
  else             if (getMessageState() == MessageState.HEADERS) {
-              request=(ConnectedRequest)getMessage().getRequest();
-              headers=(headers == null) ? request.getHeaders() : headers;
               Parameter header=readHeader();
               if (header != null) {
-                if (headers == null) {
-                  headers=new Form();
+                if (getHeaders() == null) {
+                  setHeaders(new Form());
                 }
-                headers.add(header);
+                getHeaders().add(header);
               }
  else {
-                if (headers != null) {
-                  request.setHeaders(headers);
-                }
-                if (HeaderUtils.isConnectionClose(headers)) {
-                  getConnection().setState(ConnectionState.CLOSING);
-                }
-                Representation entity=createEntity(headers);
-                request.setEntity(entity);
-                if (request != null) {
-                  if (request.isExpectingResponse()) {
-                    getMessages().add(getMessage());
-                  }
-                  getHelper().getInboundMessages().add(getMessage());
-                  getHelper().getController().wakeup();
-                }
-                if (!request.isEntityAvailable()) {
-                  onCompleted(getMessage());
-                }
+                onReceived();
               }
             }
           }
