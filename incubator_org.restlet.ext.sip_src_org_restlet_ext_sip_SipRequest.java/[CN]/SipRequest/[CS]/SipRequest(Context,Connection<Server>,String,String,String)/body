@@ -1,0 +1,35 @@
+{
+  super(context,connection,methodName,resourceUri,version);
+  String callIdHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_CALL_ID);
+  if (callIdHeader != null) {
+    setCallId(callIdHeader);
+  }
+  String callSeqHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_CALL_SEQ);
+  if (callSeqHeader != null) {
+    setCallSequence(callSeqHeader);
+  }
+  String toHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_TO);
+  if (toHeader != null) {
+    try {
+      setTo(new AddressReader(toHeader).readValue());
+    }
+ catch (    IOException e) {
+      e.printStackTrace();
+    }
+  }
+  String fromHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(HeaderConstants.HEADER_FROM);
+  if (fromHeader != null) {
+    try {
+      setFrom(new AddressReader(fromHeader).readValue());
+    }
+ catch (    IOException e) {
+      e.printStackTrace();
+    }
+  }
+  String mimeVersionHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_MIME_VERSION);
+  setMimeVersion(mimeVersionHeader);
+  String organizationHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_ORGANIZATION);
+  setOrganization(organizationHeader);
+  String subjectHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_SUBJECT);
+  setSubject(subjectHeader);
+}
