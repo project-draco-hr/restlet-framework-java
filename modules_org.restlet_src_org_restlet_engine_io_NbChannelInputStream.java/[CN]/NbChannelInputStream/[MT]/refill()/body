@@ -3,7 +3,7 @@
   SelectionKey selectionKey=null;
   try {
     int bytesRead=readChannel();
-    if (bytesRead == 0) {
+    if ((bytesRead == 0) && (selectableChannel != null)) {
       selector=SelectorFactory.getSelector();
       if (selector != null) {
         selectionKey=this.selectableChannel.register(selector,SelectionKey.OP_READ);
