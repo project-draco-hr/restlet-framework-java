@@ -1,0 +1,12 @@
+{
+  ChallengeResponse result=super.getChallengeResponse();
+  if (!this.securityAdded) {
+    if (getHeaders() != null) {
+      String authorization=getHeaders().getValues(HeaderConstants.HEADER_AUTHORIZATION);
+      result=AuthenticatorUtils.parseResponse(this,authorization,getHeaders());
+      setChallengeResponse(result);
+    }
+    this.securityAdded=true;
+  }
+  return result;
+}

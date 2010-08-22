@@ -8,17 +8,5 @@ synchronized (this) {
       }
     }
   }
-  if (!recordedRoutesAdded) {
-    String header=(getHeaders() == null) ? null : getHeaders().getValues(SipConstants.HEADER_RECORD_ROUTE);
-    if (header != null) {
-      try {
-        this.recordedRoutes.addAll(new AddressReader(header).readValues());
-      }
- catch (      Exception e) {
-        Context.getCurrentLogger().info(e.getMessage());
-      }
-    }
-    recordedRoutesAdded=true;
-  }
   return rr;
 }

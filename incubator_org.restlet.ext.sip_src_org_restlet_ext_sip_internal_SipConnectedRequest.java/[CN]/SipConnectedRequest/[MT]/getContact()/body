@@ -1,0 +1,16 @@
+{
+  List<ContactInfo> c=super.getContact();
+  if (!contactAdded) {
+    String header=(getHeaders() == null) ? null : getHeaders().getValues(SipConstants.HEADER_CONTACT);
+    if (header != null) {
+      try {
+        c.addAll(new ContactInfoReader(header).readValues());
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().info(e.getMessage());
+      }
+    }
+    contactAdded=true;
+  }
+  return c;
+}

@@ -1,0 +1,71 @@
+{
+  getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,headers);
+  if (version != null) {
+    int slashIndex=version.indexOf('/');
+    if (slashIndex != -1) {
+      version=version.substring(slashIndex + 1);
+    }
+ else {
+      version=null;
+    }
+  }
+  Protocol serverProtocol=getConnection().getHelper().getHelped().getProtocols().get(0);
+  setProtocol(new Protocol(serverProtocol.getSchemeName(),serverProtocol.getName(),serverProtocol.getDescription(),serverProtocol.getDefaultPort(),serverProtocol.isConfidential(),version));
+  String host=(getHeaders() == null) ? null : getHeaders().getFirstValue(HeaderConstants.HEADER_HOST,true);
+  String hostDomain=null;
+  int hostPort=-1;
+  if (host != null) {
+    int colonIndex=host.indexOf(':');
+    if (colonIndex != -1) {
+      hostDomain=host.substring(0,colonIndex);
+      hostPort=Integer.valueOf(host.substring(colonIndex + 1));
+    }
+ else {
+      hostDomain=host;
+      hostPort=getProtocol().getDefaultPort();
+    }
+  }
+ else {
+    if (!Protocol.SIP.getSchemeName().equals(serverProtocol.getSchemeName()) && !Protocol.SIPS.getSchemeName().equals(serverProtocol.getSchemeName())) {
+      Context.getCurrentLogger().info("Couldn't find the mandatory \"Host\" HTTP header.");
+    }
+  }
+  Protocol protocol=getConnection().getHelper().getHelped().getProtocols().get(0);
+  StringBuilder sb=new StringBuilder();
+  sb.append(protocol.getSchemeName()).append("://");
+  sb.append(hostDomain);
+  if ((hostPort != -1) && (hostPort != protocol.getDefaultPort())) {
+    sb.append(':').append(hostPort);
+  }
+  setHostRef(sb.toString());
+  if (resourceUri != null) {
+    setResourceRef(new Reference(getHostRef(),resourceUri));
+    if (getResourceRef().isRelative()) {
+      if (!resourceUri.startsWith("/")) {
+        setResourceRef(new Reference(getHostRef().toString() + "/" + resourceUri));
+      }
+ else {
+        setResourceRef(new Reference(getHostRef().toString() + resourceUri));
+      }
+    }
+    setOriginalRef(getResourceRef().getTargetRef());
+  }
+  String dateHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(HeaderConstants.HEADER_DATE);
+  Date date=null;
+  if (dateHeader != null) {
+    date=DateUtils.parse(dateHeader);
+  }
+  if (date == null) {
+    date=new Date();
+  }
+  setDate(date);
+  String maxForwardsHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(HeaderConstants.HEADER_MAX_FORWARDS);
+  if (maxForwardsHeader != null) {
+    try {
+      setMaxForwards(Integer.parseInt(maxForwardsHeader));
+    }
+ catch (    NumberFormatException nfe) {
+      Context.getCurrentLogger().info("Unable to parse the Max-Forwards header: " + maxForwardsHeader);
+    }
+  }
+}

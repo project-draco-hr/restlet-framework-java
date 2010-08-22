@@ -1,0 +1,16 @@
+{
+  List<Address> ci=super.getCallerInfo();
+  if (!callerInfoAdded) {
+    String header=(getHeaders() == null) ? null : getHeaders().getValues(SipConstants.HEADER_CALL_INFO);
+    if (header != null) {
+      try {
+        ci.addAll(new AddressReader(header).readValues());
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().info(e.getMessage());
+      }
+    }
+    callerInfoAdded=true;
+  }
+  return ci;
+}
