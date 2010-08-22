@@ -1,14 +1,14 @@
 {
   super.stop();
-  if (this.workerService != null) {
-    this.workerService.shutdown();
+  if (getWorkerService() != null) {
+    getWorkerService().shutdown();
   }
   for (  Connection<T> connection : getConnections()) {
     connection.close(true);
   }
-  if (this.workerService != null) {
+  if (getWorkerService() != null) {
     try {
-      this.workerService.awaitTermination(30,TimeUnit.SECONDS);
+      getWorkerService().awaitTermination(30,TimeUnit.SECONDS);
     }
  catch (    InterruptedException ex) {
       getLogger().log(Level.FINE,"Interruption while shutting down the worker service",ex);

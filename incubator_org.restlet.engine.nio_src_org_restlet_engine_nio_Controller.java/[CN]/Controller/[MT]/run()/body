@@ -3,15 +3,13 @@
   long sleepTime=getHelper().getControllerSleepTimeMs();
   while (isRunning()) {
     try {
-      if (isOverloaded()) {
-        if (!isWorkerServiceOverloaded()) {
+      if (getHelper().isWorkerThreads()) {
+        if (isOverloaded() && !getHelper().isWorkerServiceOverloaded()) {
           setOverloaded(false);
           getHelper().getLogger().info("Connector overload ended. Accepting new connections again");
           getHelper().traceWorkerService();
         }
-      }
- else {
-        if (isWorkerServiceOverloaded()) {
+ else         if (getHelper().isWorkerServiceOverloaded()) {
           setOverloaded(true);
           getHelper().getLogger().info("Connector overload detected. Stop accepting new connections");
           getHelper().traceWorkerService();
