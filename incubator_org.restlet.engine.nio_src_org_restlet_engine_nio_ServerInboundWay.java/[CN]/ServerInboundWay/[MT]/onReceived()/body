@@ -1,5 +1,5 @@
 {
-  ConnectedRequest request=(ConnectedRequest)getMessage().getRequest();
+  InboundRequest request=(InboundRequest)getMessage().getRequest();
   if (getHeaders() != null) {
     request.setHeaders(getHeaders());
   }
@@ -7,17 +7,17 @@
     getConnection().setState(ConnectionState.CLOSING);
   }
   Representation entity=createEntity(getHeaders());
-  request.setEntity(entity);
+  getMessage().getRequest().setEntity(entity);
   getMessage().getServerInfo().setAddress(getConnection().getHelper().getHelped().getAddress());
   getMessage().getServerInfo().setPort(getConnection().getHelper().getHelped().getPort());
   if (request != null) {
-    if (request.isExpectingResponse()) {
+    if (getMessage().getRequest().isExpectingResponse()) {
       getMessages().add(getMessage());
     }
     getHelper().getInboundMessages().add(getMessage());
     getHelper().getController().wakeup();
   }
-  if (!request.isEntityAvailable()) {
+  if (!getMessage().getRequest().isEntityAvailable()) {
     onCompleted();
   }
 }

@@ -1,9 +1,9 @@
 {
   if (response != null) {
     getLogger().fine("Handling outbound message");
-    ConnectedRequest request=(ConnectedRequest)response.getRequest();
+    InboundRequest request=(InboundRequest)response.getRequest();
     Connection<Server> connection=request.getConnection();
-    if (request.isExpectingResponse()) {
+    if (response.getRequest().isExpectingResponse()) {
       Response nextResponse=connection.getInboundWay().getMessages().peek();
       if ((nextResponse != null) && (nextResponse.getRequest() == request)) {
         connection.getOutboundWay().getMessages().add(response);
