@@ -1,37 +1,17 @@
 {
-  super.onSelected();
   try {
-    while ((getIoState() == IoState.PROCESSING) && (getMessageState() != MessageState.BODY)) {
-      if (isFilling()) {
-        int result=readSocketBytes();
-        if (result == 0) {
-          setIoState(IoState.INTEREST);
-        }
- else         if (result == -1) {
-          setIoState(IoState.CANCELING);
-        }
+    super.onSelected();
+    while (isProcessing()) {
+      int result=readSocketBytes();
+      if (result == 0) {
+        setIoState(IoState.INTEREST);
+      }
+ else       if (result == -1) {
+        setIoState(IoState.CANCELING);
+      }
  else {
-          while ((getMessageState() != MessageState.BODY) && (getMessageState() != MessageState.IDLE) && fillLine()) {
-            if (getMessageState() == MessageState.START_LINE) {
-              readStartLine();
-            }
- else             if (getMessageState() == MessageState.HEADERS) {
-              Parameter header=readHeader();
-              if (header != null) {
-                if (getHeaders() == null) {
-                  setHeaders(new Form());
-                }
-                getHeaders().add(header);
-              }
- else {
-                onReceived();
-              }
-            }
-            if (getMessageState() == MessageState.IDLE) {
-              updateState();
-              super.onSelected();
-            }
-          }
+        while (isProcessing() && getByteBuffer().hasRemaining()) {
+          readMessage();
         }
       }
     }

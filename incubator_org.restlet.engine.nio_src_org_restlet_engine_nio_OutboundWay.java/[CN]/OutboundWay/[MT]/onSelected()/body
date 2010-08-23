@@ -1,84 +1,19 @@
 {
-  super.onSelected();
   try {
     Response message=getMessage();
     if (message != null) {
-      while (getIoState() == IoState.PROCESSING) {
-        if (isFilling()) {
-          if (getMessageState() == MessageState.BODY) {
-switch (getEntityType()) {
-case ASYNC_CHANNEL:
-              break;
-case SYNC_CHANNEL:
-            break;
-case FILE_CHANNEL:
-          break;
-case STREAM:
-        if (getByteBuffer().hasArray()) {
-          byte[] byteArray=getByteBuffer().array();
-          int available=getEntityStream().available();
-          if (available > 0) {
-            long entitySize=getMessage().getEntity().getSize();
-            int result=getEntityStream().read(byteArray,getByteBuffer().position(),available);
-            if (result > 0) {
-              getByteBuffer().position(getByteBuffer().position() + result);
-              setEntityIndex(getEntityIndex() + result);
-            }
- else             if (result == -1) {
-              getByteBuffer().position(getByteBuffer().position() + available);
-              setEntityIndex(getEntityIndex() + available);
-            }
-            if ((result == -1) || ((entitySize != -1) && (getEntityIndex() >= entitySize))) {
-              setMessageState(MessageState.IDLE);
-            }
-          }
- else {
-          }
+      super.onSelected();
+      while (isProcessing()) {
+        writeMessage();
+        writeSocketBytes();
+        if (getMessageState() == MessageState.IDLE) {
+          updateState();
         }
- else {
-          System.out.println("No underlying byte array for the NIO byte buffer!");
-        }
-      break;
-  }
-}
- else {
-  if (getLineBuilder().length() == 0) {
-    writeLine();
-  }
-  if (getLineBuilder().length() > 0) {
-    int remaining=getByteBuffer().remaining();
-    if (remaining >= getLineBuilder().length()) {
-      getByteBuffer().put(StringUtils.getLatin1Bytes(getLineBuilder().toString()));
-      getLineBuilder().delete(0,getLineBuilder().length());
-    }
- else {
-      getByteBuffer().put(StringUtils.getLatin1Bytes(getLineBuilder().substring(0,remaining)));
-      getLineBuilder().delete(0,remaining);
+      }
     }
   }
-}
-}
- else {
-getByteBuffer().flip();
-int bytesWritten=getConnection().getWritableSelectionChannel().write(getByteBuffer());
-if (bytesWritten == 0) {
-  getByteBuffer().flip();
-  setIoState(IoState.INTEREST);
-}
- else if (getByteBuffer().hasRemaining()) {
-  getByteBuffer().compact();
-}
- else if (getMessageState() == MessageState.IDLE) {
-  onCompleted();
-}
- else {
-}
-}
-}
-}
-}
- catch (Exception e) {
-getLogger().log(Level.WARNING,"Error while writing an HTTP message: ",e.getMessage());
-getLogger().log(Level.INFO,"Error while writing an HTTP message",e);
-}
+ catch (  Exception e) {
+    getLogger().log(Level.WARNING,"Error while writing an HTTP message: ",e.getMessage());
+    getLogger().log(Level.INFO,"Error while writing an HTTP message",e);
+  }
 }

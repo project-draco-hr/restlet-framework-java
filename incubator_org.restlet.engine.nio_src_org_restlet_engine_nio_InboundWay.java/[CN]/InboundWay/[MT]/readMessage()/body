@@ -1,0 +1,22 @@
+{
+  while (isProcessing() && fillLine()) {
+    if (getMessageState() == MessageState.START_LINE) {
+      readStartLine();
+    }
+ else     if (getMessageState() == MessageState.HEADERS) {
+      Parameter header=readHeader();
+      if (header != null) {
+        if (getHeaders() == null) {
+          setHeaders(new Form());
+        }
+        getHeaders().add(header);
+      }
+ else {
+        onReceived();
+        if (getMessageState() == MessageState.IDLE) {
+          updateState();
+        }
+      }
+    }
+  }
+}

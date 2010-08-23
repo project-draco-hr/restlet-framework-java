@@ -1,0 +1,61 @@
+{
+  while (isProcessing() && getByteBuffer().hasRemaining()) {
+    if (getMessageState() == MessageState.BODY) {
+      if (getMessage().isEntityAvailable()) {
+switch (getEntityType()) {
+case ASYNC_CHANNEL:
+          break;
+case SYNC_CHANNEL:
+        break;
+case FILE_CHANNEL:
+      break;
+case STREAM:
+    if (getByteBuffer().hasArray()) {
+      byte[] byteArray=getByteBuffer().array();
+      int available=getEntityStream().available();
+      if (available > 0) {
+        long entitySize=getMessage().getEntity().getSize();
+        int result=getEntityStream().read(byteArray,getByteBuffer().position(),available);
+        if (result > 0) {
+          getByteBuffer().position(getByteBuffer().position() + result);
+          setEntityIndex(getEntityIndex() + result);
+        }
+ else         if (result == -1) {
+          getByteBuffer().position(getByteBuffer().position() + available);
+          setEntityIndex(getEntityIndex() + available);
+        }
+        if ((result == -1) || ((entitySize != -1) && (getEntityIndex() >= entitySize))) {
+          setMessageState(MessageState.IDLE);
+        }
+      }
+ else {
+      }
+    }
+ else {
+      System.out.println("No underlying byte array for the NIO byte buffer!");
+    }
+  break;
+}
+}
+ else {
+setMessageState(MessageState.IDLE);
+}
+}
+ else {
+if (getLineBuilder().length() == 0) {
+writeLine();
+}
+if (getLineBuilder().length() > 0) {
+int remaining=getByteBuffer().remaining();
+if (remaining >= getLineBuilder().length()) {
+getByteBuffer().put(StringUtils.getLatin1Bytes(getLineBuilder().toString()));
+getLineBuilder().delete(0,getLineBuilder().length());
+}
+ else {
+getByteBuffer().put(StringUtils.getLatin1Bytes(getLineBuilder().substring(0,remaining)));
+getLineBuilder().delete(0,remaining);
+}
+}
+}
+}
+}

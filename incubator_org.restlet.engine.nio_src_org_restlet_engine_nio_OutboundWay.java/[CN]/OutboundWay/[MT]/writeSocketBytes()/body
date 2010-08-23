@@ -1,0 +1,18 @@
+{
+  if (getByteBuffer().position() > 0) {
+    getByteBuffer().flip();
+    int bytesWritten=getConnection().getWritableSelectionChannel().write(getByteBuffer());
+    if (bytesWritten == 0) {
+      getByteBuffer().flip();
+      setIoState(IoState.INTEREST);
+    }
+ else     if (getByteBuffer().hasRemaining()) {
+      getByteBuffer().compact();
+    }
+ else     if (getMessageState() == MessageState.IDLE) {
+      onCompleted();
+    }
+ else {
+    }
+  }
+}
