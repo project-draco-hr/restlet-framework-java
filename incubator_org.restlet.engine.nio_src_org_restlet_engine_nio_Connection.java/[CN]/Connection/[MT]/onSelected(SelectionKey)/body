@@ -13,18 +13,15 @@
           open();
         }
  else {
-          getLogger().info("Unable to establish a connection to " + getSocket().getInetAddress());
-          setState(ConnectionState.CLOSING);
+          onError("Unable to establish a connection to " + getSocketAddress(),null,Status.CONNECTOR_ERROR_CONNECTION);
         }
       }
  catch (      IOException e) {
-        getLogger().warning("Unable to establish a connection to " + getSocket().getInetAddress());
-        setState(ConnectionState.CLOSING);
+        onError("Unable to establish a connection to " + getSocketAddress(),e,Status.CONNECTOR_ERROR_CONNECTION);
       }
     }
   }
  catch (  Throwable t) {
-    getLogger().log(Level.WARNING,"Unexpected error detected. Closing the connection.",t);
-    onError();
+    onError("Unexpected error detected. Closing the connection.",t,Status.CONNECTOR_ERROR_INTERNAL);
   }
 }
