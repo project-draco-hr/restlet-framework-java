@@ -11,7 +11,7 @@
           setIoState(IoState.CANCELING);
         }
  else {
-          while ((getMessageState() != MessageState.BODY) && fillLine()) {
+          while ((getMessageState() != MessageState.BODY) && (getMessageState() != MessageState.IDLE) && fillLine()) {
             if (getMessageState() == MessageState.START_LINE) {
               readStartLine();
             }
@@ -26,6 +26,10 @@
  else {
                 onReceived();
               }
+            }
+            if (getMessageState() == MessageState.IDLE) {
+              updateState();
+              super.onSelected();
             }
           }
         }
