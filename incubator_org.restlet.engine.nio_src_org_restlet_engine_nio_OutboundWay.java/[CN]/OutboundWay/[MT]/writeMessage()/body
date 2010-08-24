@@ -2,39 +2,58 @@
   while (isProcessing() && getByteBuffer().hasRemaining()) {
     if (getMessageState() == MessageState.BODY) {
       if (getMessage().isEntityAvailable()) {
+        long entitySize=getMessage().getEntity().getSize();
+        int available=getEntityStream().available();
+        int result=0;
 switch (getEntityType()) {
 case ASYNC_CHANNEL:
-          break;
-case SYNC_CHANNEL:
-        break;
 case FILE_CHANNEL:
-      break;
-case STREAM:
-    if (getByteBuffer().hasArray()) {
-      byte[] byteArray=getByteBuffer().array();
-      int available=getEntityStream().available();
-      if (available > 0) {
-        long entitySize=getMessage().getEntity().getSize();
-        int result=getEntityStream().read(byteArray,getByteBuffer().position(),available);
+case SYNC_CHANNEL:
+          result=getEntityChannel().read(getByteBuffer());
         if (result > 0) {
-          getByteBuffer().position(getByteBuffer().position() + result);
           setEntityIndex(getEntityIndex() + result);
         }
  else         if (result == -1) {
-          getByteBuffer().position(getByteBuffer().position() + available);
           setEntityIndex(getEntityIndex() + available);
         }
-        if ((result == -1) || ((entitySize != -1) && (getEntityIndex() >= entitySize))) {
-          setMessageState(MessageState.IDLE);
-        }
+      if ((result == -1) || ((entitySize != -1) && (getEntityIndex() >= entitySize))) {
+        setMessageState(MessageState.IDLE);
       }
- else {
+    break;
+case STREAM:
+  if (getByteBuffer().hasArray()) {
+    byte[] byteArray=getByteBuffer().array();
+    if (available > 0) {
+      result=getEntityStream().read(byteArray,getByteBuffer().position(),available);
+      if (result > 0) {
+        getByteBuffer().position(getByteBuffer().position() + result);
+        setEntityIndex(getEntityIndex() + result);
+      }
+ else       if (result == -1) {
+        getByteBuffer().position(getByteBuffer().position() + available);
+        setEntityIndex(getEntityIndex() + available);
+      }
+      if ((result == -1) || ((entitySize != -1) && (getEntityIndex() >= entitySize))) {
+        setMessageState(MessageState.IDLE);
       }
     }
  else {
-      System.out.println("No underlying byte array for the NIO byte buffer!");
     }
-  break;
+  }
+ else {
+    ReadableByteChannel rbc=Channels.newChannel(getEntityStream());
+    result=rbc.read(getByteBuffer());
+    if (result > 0) {
+      setEntityIndex(getEntityIndex() + result);
+    }
+ else     if (result == -1) {
+      setEntityIndex(getEntityIndex() + available);
+    }
+    if ((result == -1) || ((entitySize != -1) && (getEntityIndex() >= entitySize))) {
+      setMessageState(MessageState.IDLE);
+    }
+  }
+break;
 }
 }
  else {
