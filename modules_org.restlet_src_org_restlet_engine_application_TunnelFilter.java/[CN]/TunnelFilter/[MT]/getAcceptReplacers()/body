@@ -1,45 +1,41 @@
 {
-  List<AcceptReplacer> a=this.acceptReplacers;
-  if (a == null) {
-synchronized (this) {
-      a=this.acceptReplacers;
-      if (a == null) {
-        this.acceptReplacers=a=new ArrayList<AcceptReplacer>();
-        final URL userAgentPropertiesUrl=Engine.getResource("org/restlet/service/accept.properties");
-        if (userAgentPropertiesUrl != null) {
-          BufferedReader reader;
-          try {
-            reader=new BufferedReader(new InputStreamReader(userAgentPropertiesUrl.openStream(),CharacterSet.UTF_8.getName()),IoUtils.getBufferSize());
-            AcceptReplacer acceptReplacer=new AcceptReplacer();
-            String line=reader.readLine();
-            for (; line != null; line=reader.readLine()) {
-              if (!line.startsWith("#")) {
-                final String[] keyValue=line.split(":");
-                if (keyValue.length == 2) {
-                  final String key=keyValue[0].trim();
-                  final String value=keyValue[1].trim();
-                  if ("acceptOld".equalsIgnoreCase(key)) {
-                    acceptReplacer.setAcceptOld(("".equals(value)) ? null : value);
-                  }
- else                   if ("acceptNew".equalsIgnoreCase(key)) {
-                    acceptReplacer.setAcceptNew(value);
-                    this.acceptReplacers.add(acceptReplacer);
-                    acceptReplacer=new AcceptReplacer();
-                  }
+  List<AcceptReplacer> acceptReplacers=new ArrayList<AcceptReplacer>();
+  final URL userAgentPropertiesUrl=Engine.getResource("org/restlet/service/accept.properties");
+  if (userAgentPropertiesUrl != null) {
+    BufferedReader reader;
+    try {
+      reader=new BufferedReader(new InputStreamReader(userAgentPropertiesUrl.openStream(),CharacterSet.UTF_8.getName()),IoUtils.getBufferSize());
+      AcceptReplacer.Builder acceptReplacerBuilder=new AcceptReplacer.Builder();
+      try {
+        String line=reader.readLine();
+        for (; line != null; line=reader.readLine()) {
+          if (!line.startsWith("#")) {
+            final String[] keyValue=line.split(":");
+            if (keyValue.length == 2) {
+              final String key=keyValue[0].trim();
+              final String value=keyValue[1].trim();
+              if ("acceptOld".equalsIgnoreCase(key)) {
+                acceptReplacerBuilder.setAcceptOld(("".equals(value)) ? null : value);
+              }
+ else               if ("acceptNew".equalsIgnoreCase(key)) {
+                acceptReplacerBuilder.setAcceptNew(value);
+                acceptReplacers.add(acceptReplacerBuilder.build());
+                acceptReplacerBuilder=new AcceptReplacer.Builder();
+              }
  else {
-                    acceptReplacer.getAgentAttributes().put(key,value);
-                  }
-                }
+                acceptReplacerBuilder.putAgentAttribute(key,value);
               }
             }
-            reader.close();
-          }
- catch (          IOException e) {
-            getContext().getLogger().warning("Cannot read '" + userAgentPropertiesUrl.toString() + "' due to: "+ e.getMessage());
           }
         }
       }
+  finally {
+        reader.close();
+      }
+    }
+ catch (    IOException e) {
+      getContext().getLogger().warning("Cannot read '" + userAgentPropertiesUrl.toString() + "' due to: "+ e.getMessage());
     }
   }
-  return a;
+  return acceptReplacers;
 }
