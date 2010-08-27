@@ -1,6 +1,10 @@
 {
-  if (authenticate(request,response) || isOptional()) {
+  if (authenticate(request,response)) {
     return authenticated(request,response);
+  }
+ else   if (isOptional()) {
+    response.setStatus(Status.SUCCESS_OK);
+    return CONTINUE;
   }
   return unauthenticated(request,response);
 }
