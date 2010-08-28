@@ -13,14 +13,12 @@
               response.setEntity(null);
             }
           }
- else {
-            if (!requestedRange.equals(response.getEntity().getRange())) {
-              if (rangedEntity) {
-                getLogger().info("The range of the response entity is not equal to the requested one.");
-              }
-              response.setEntity(new RangeRepresentation(response.getEntity(),requestedRange));
-              response.setStatus(Status.SUCCESS_PARTIAL_CONTENT);
+ else           if (!requestedRange.equals(response.getEntity().getRange())) {
+            if (rangedEntity) {
+              getLogger().info("The range of the response entity is not equal to the requested one.");
             }
+            response.setEntity(new RangeRepresentation(response.getEntity(),requestedRange));
+            response.setStatus(Status.SUCCESS_PARTIAL_CONTENT);
           }
         }
  else         if (request.getRanges().size() > 1) {
