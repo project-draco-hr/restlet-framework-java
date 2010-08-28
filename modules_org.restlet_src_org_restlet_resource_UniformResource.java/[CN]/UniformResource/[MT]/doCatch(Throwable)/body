@@ -3,9 +3,12 @@
   Status status=null;
   if (throwable instanceof ResourceException) {
     ResourceException re=(ResourceException)throwable;
-    status=re.getStatus();
     if (re.getCause() != null) {
       throwable=re.getCause();
+      status=getStatusService().getStatus(throwable,this);
+    }
+ else {
+      status=re.getStatus();
     }
   }
  else {
