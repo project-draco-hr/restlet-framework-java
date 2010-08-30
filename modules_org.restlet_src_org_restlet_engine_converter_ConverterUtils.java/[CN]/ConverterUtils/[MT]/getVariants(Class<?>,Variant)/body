@@ -5,22 +5,16 @@
     helperVariants=ch.getVariants(sourceClass);
     if (helperVariants != null) {
       for (      VariantInfo helperVariant : helperVariants) {
-        if (helperVariant.includes(targetVariant)) {
-          if (result == null) {
-            result=new ArrayList<VariantInfo>();
-          }
-          VariantInfo newVariant=new VariantInfo(targetVariant.getMediaType());
-          if (!result.contains(newVariant)) {
-            result.add(newVariant);
+        if (targetVariant == null) {
+          if (helperVariant.getMediaType().isConcrete()) {
+            result=addVariant(result,helperVariant);
           }
         }
- else         if (targetVariant == null || targetVariant.includes(helperVariant)) {
-          if (result == null) {
-            result=new ArrayList<VariantInfo>();
-          }
-          if (!result.contains(helperVariant)) {
-            result.add(helperVariant);
-          }
+ else         if (helperVariant.includes(targetVariant)) {
+          result=addVariant(result,new VariantInfo(targetVariant.getMediaType()));
+        }
+ else         if (targetVariant.includes(helperVariant)) {
+          result=addVariant(result,helperVariant);
         }
       }
     }

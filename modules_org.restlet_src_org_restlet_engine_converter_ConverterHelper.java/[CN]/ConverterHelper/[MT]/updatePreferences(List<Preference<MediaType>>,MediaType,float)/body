@@ -1,0 +1,14 @@
+{
+  boolean found=false;
+  Preference<MediaType> preference;
+  for (int i=0; !found && (i < preferences.size()); i++) {
+    preference=preferences.get(i);
+    if (preference.getMetadata().equals(mediaType) && (preference.getQuality() < score)) {
+      preference.setQuality(score);
+      found=true;
+    }
+  }
+  if (!found) {
+    preferences.add(new Preference<MediaType>(mediaType,score));
+  }
+}

@@ -1,3 +1,12 @@
 {
-  return null;
+  Object result=null;
+  if (SyndFeed.class.isAssignableFrom(target)) {
+    if (source instanceof SyndFeedRepresentation) {
+      result=((SyndFeedRepresentation)source).getFeed();
+    }
+ else {
+      result=new SyndFeedRepresentation(source).getFeed();
+    }
+  }
+  return target.cast(result);
 }

@@ -1,7 +1,11 @@
 {
   T result=null;
   org.restlet.service.ConverterService cs=getConverterService();
-  ClientInfo clientInfo=new ClientInfo(cs.getVariants(resultClass,null));
-  result=toObject(handle(method,(entity == null) ? null : toRepresentation(entity,null),clientInfo),resultClass);
+  List<? extends Variant> variants=cs.getVariants(resultClass,null);
+  ClientInfo clientInfo=getClientInfo();
+  if (clientInfo.getAcceptedMediaTypes().isEmpty()) {
+    cs.updatePreferences(clientInfo.getAcceptedMediaTypes(),resultClass);
+  }
+  result=toObject(handle(method,(entity == null) ? null : toRepresentation(entity,clientInfo.getPreferredVariant(variants,getMetadataService())),clientInfo),resultClass);
   return result;
 }
