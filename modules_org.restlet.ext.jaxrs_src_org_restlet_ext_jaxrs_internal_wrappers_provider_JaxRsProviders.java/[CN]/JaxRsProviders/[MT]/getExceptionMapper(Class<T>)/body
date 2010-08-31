@@ -14,8 +14,8 @@ catch (      WebApplicationException e) {
         localLogger.log(Level.INFO,"The exception mapper for " + causeClass + " could not be initialized, so it can#t be used. Will look for the next exception mapper in hierarchy.",e);
       }
     }
-    Class superclass=causeClass.getSuperclass();
+    Class<?> superclass=causeClass.getSuperclass();
     if (superclass == null || superclass.equals(Object.class))     return null;
-    causeClass=superclass;
+    causeClass=(Class<T>)superclass;
   }
 }
