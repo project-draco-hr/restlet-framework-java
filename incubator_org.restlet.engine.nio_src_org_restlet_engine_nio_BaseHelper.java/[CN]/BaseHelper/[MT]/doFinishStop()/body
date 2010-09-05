@@ -1,11 +1,4 @@
 {
-  super.stop();
-  if (getWorkerService() != null) {
-    getWorkerService().shutdown();
-  }
-  for (  Connection<T> connection : getConnections()) {
-    connection.close(true);
-  }
   if (getWorkerService() != null) {
     try {
       getWorkerService().awaitTermination(30,TimeUnit.SECONDS);
@@ -23,8 +16,5 @@
  catch (    InterruptedException ex) {
       getLogger().log(Level.FINE,"Interruption while shutting down the controller service",ex);
     }
-  }
-  if (isPooledConnection()) {
-    this.connectionPool=null;
   }
 }
