@@ -6,18 +6,16 @@
       if (getHelper().isWorkerThreads()) {
         if (isOverloaded() && !getHelper().isWorkerServiceOverloaded()) {
           setOverloaded(false);
-          getHelper().getLogger().info("Connector overload ended. Accepting new connections again");
+          getHelper().getLogger().info("Connector overload ended. Accepting new work again");
           getHelper().traceWorkerService();
         }
  else         if (getHelper().isWorkerServiceOverloaded()) {
           setOverloaded(true);
-          getHelper().getLogger().info("Connector overload detected. Stop accepting new connections");
+          getHelper().getLogger().info("Connector overload detected. Stop accepting new work");
           getHelper().traceWorkerService();
         }
       }
-      selectKey(sleepTime);
-      controlConnections(isOverloaded());
-      controlHelper();
+      doRun(sleepTime);
     }
  catch (    Exception ex) {
       this.helper.getLogger().log(Level.WARNING,"Unexpected error while controlling connector",ex);
