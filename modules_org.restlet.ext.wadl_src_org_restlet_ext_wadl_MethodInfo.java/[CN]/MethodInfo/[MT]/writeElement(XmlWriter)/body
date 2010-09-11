@@ -23,18 +23,6 @@
     if (!getResponses().isEmpty()) {
       for (      ResponseInfo response : getResponses()) {
         response.writeElement(writer);
-        if (!response.getFaults().isEmpty()) {
-          for (          FaultInfo faultInfo : response.getFaults()) {
-            ResponseInfo r=new ResponseInfo();
-            for (            Status status : faultInfo.getStatuses()) {
-              if (!r.getStatuses().contains(status)) {
-                r.getStatuses().add(status);
-              }
-            }
-            r.getRepresentations().add(faultInfo);
-            r.writeElement(writer);
-          }
-        }
       }
     }
     writer.endElement(APP_NAMESPACE,"method");

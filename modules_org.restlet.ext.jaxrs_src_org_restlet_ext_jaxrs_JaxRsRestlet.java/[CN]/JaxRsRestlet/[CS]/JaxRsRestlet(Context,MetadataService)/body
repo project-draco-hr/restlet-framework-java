@@ -1,3 +1,8 @@
 {
-  this(context,null,metadataService);
+  super(context);
+  final ExtensionBackwardMapping extensionBackwardMapping=new ExtensionBackwardMapping(metadataService);
+  this.excHandler=new ExceptionHandler(getLogger());
+  this.providers=new JaxRsProviders(this.objectFactory,this.tlContext,extensionBackwardMapping,getLogger());
+  this.resourceClasses=new ResourceClasses(this.tlContext,this.providers,extensionBackwardMapping,getLogger());
+  this.loadDefaultProviders();
 }
