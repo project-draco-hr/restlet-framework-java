@@ -1,6 +1,15 @@
 {
+  boolean result=false;
   if (this.algorithm != null && this.algorithm.equals(algorithm)) {
-    return checkDigest();
+    result=checkDigest();
   }
-  return super.checkDigest(algorithm);
+ else {
+    Digest digest=getDigest();
+    if (digest != null) {
+      if (algorithm.equals(digest.getAlgorithm())) {
+        result=digest.equals(computeDigest(algorithm));
+      }
+    }
+  }
+  return result;
 }

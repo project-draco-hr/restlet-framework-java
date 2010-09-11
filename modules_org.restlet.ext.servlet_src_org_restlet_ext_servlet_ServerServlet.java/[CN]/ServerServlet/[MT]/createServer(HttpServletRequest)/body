@@ -20,18 +20,21 @@
           addFullServletPath=component.getDefaultHost().getDefaultRoute() != null;
         }
  else {
-          for (          TemplateRoute route : component.getDefaultHost().getRoutes()) {
-            if (route.getTemplate().getPattern() == null) {
-              addFullServletPath=true;
-              continue;
-            }
-            if (!route.getTemplate().getPattern().startsWith(uriPattern)) {
-              if (!route.getTemplate().getPattern().startsWith(request.getServletPath())) {
+          for (          Route route : component.getDefaultHost().getRoutes()) {
+            if (route instanceof TemplateRoute) {
+              TemplateRoute templateRoute=(TemplateRoute)route;
+              if (templateRoute.getTemplate().getPattern() == null) {
                 addFullServletPath=true;
+                continue;
               }
+              if (!templateRoute.getTemplate().getPattern().startsWith(uriPattern)) {
+                if (!templateRoute.getTemplate().getPattern().startsWith(request.getServletPath())) {
+                  addFullServletPath=true;
+                }
  else {
-                addContextPath=true;
-                break;
+                  addContextPath=true;
+                  break;
+                }
               }
             }
           }
@@ -42,18 +45,21 @@
               addFullServletPath=virtualHost.getDefaultRoute() != null;
             }
  else {
-              for (              TemplateRoute route : virtualHost.getRoutes()) {
-                if (route.getTemplate().getPattern() == null) {
-                  addFullServletPath=true;
-                  continue;
-                }
-                if (!route.getTemplate().getPattern().startsWith(uriPattern)) {
-                  if (!route.getTemplate().getPattern().startsWith(request.getServletPath())) {
+              for (              Route route : virtualHost.getRoutes()) {
+                if (route instanceof TemplateRoute) {
+                  TemplateRoute templateRoute=(TemplateRoute)route;
+                  if (templateRoute.getTemplate().getPattern() == null) {
                     addFullServletPath=true;
+                    continue;
                   }
+                  if (!templateRoute.getTemplate().getPattern().startsWith(uriPattern)) {
+                    if (!templateRoute.getTemplate().getPattern().startsWith(request.getServletPath())) {
+                      addFullServletPath=true;
+                    }
  else {
-                    addContextPath=true;
-                    break;
+                      addContextPath=true;
+                      break;
+                    }
                   }
                 }
               }
@@ -74,24 +80,48 @@
           if (offsetPath != null) {
             getComponent().getContext().getAttributes().put(NAME_OFFSET_PATH_ATTRIBUTE,offsetPath);
           }
-          TemplateRoute defaultRoute=component.getDefaultHost().getDefaultRoute();
+          Route defaultRoute=component.getDefaultHost().getDefaultRoute();
           if (defaultRoute != null) {
-            defaultRoute.getTemplate().setPattern(offsetPath + defaultRoute.getTemplate().getPattern());
-            log("[Restlet] Attaching restlet: " + defaultRoute.getNext() + " to URI: "+ offsetPath+ defaultRoute.getTemplate().getPattern());
+            if (defaultRoute instanceof TemplateRoute) {
+              TemplateRoute defaultTemplateRoute=(TemplateRoute)defaultRoute;
+              defaultTemplateRoute.getTemplate().setPattern(offsetPath + defaultTemplateRoute.getTemplate().getPattern());
+              log("[Restlet] Attaching restlet: " + defaultRoute.getNext() + " to URI: "+ offsetPath+ defaultTemplateRoute.getTemplate().getPattern());
+            }
+ else {
+              log("[Restlet] Attaching restlet: " + defaultRoute.getNext());
+            }
           }
-          for (          TemplateRoute route : component.getDefaultHost().getRoutes()) {
-            log("[Restlet] Attaching restlet: " + route.getNext() + " to URI: "+ offsetPath+ route.getTemplate().getPattern());
-            route.getTemplate().setPattern(offsetPath + route.getTemplate().getPattern());
+          for (          Route route : component.getDefaultHost().getRoutes()) {
+            if (route instanceof TemplateRoute) {
+              TemplateRoute templateRoute=(TemplateRoute)route;
+              log("[Restlet] Attaching restlet: " + route.getNext() + " to URI: "+ offsetPath+ templateRoute.getTemplate().getPattern());
+              templateRoute.getTemplate().setPattern(offsetPath + templateRoute.getTemplate().getPattern());
+            }
+ else {
+              log("[Restlet] Attaching restlet: " + defaultRoute.getNext());
+            }
           }
           for (          VirtualHost virtualHost : component.getHosts()) {
             defaultRoute=virtualHost.getDefaultRoute();
             if (defaultRoute != null) {
-              defaultRoute.getTemplate().setPattern(offsetPath + defaultRoute.getTemplate().getPattern());
-              log("[Restlet] Attaching restlet: " + defaultRoute.getNext() + " to URI: "+ offsetPath+ defaultRoute.getTemplate().getPattern());
+              if (defaultRoute instanceof TemplateRoute) {
+                TemplateRoute defaultTemplateRoute=(TemplateRoute)defaultRoute;
+                defaultTemplateRoute.getTemplate().setPattern(offsetPath + defaultTemplateRoute.getTemplate().getPattern());
+                log("[Restlet] Attaching restlet: " + defaultRoute.getNext() + " to URI: "+ offsetPath+ defaultTemplateRoute.getTemplate().getPattern());
+              }
+ else {
+                log("[Restlet] Attaching restlet: " + defaultRoute.getNext());
+              }
             }
-            for (            TemplateRoute route : virtualHost.getRoutes()) {
-              log("[Restlet] Attaching restlet: " + route.getNext() + " to URI: "+ offsetPath+ route.getTemplate().getPattern());
-              route.getTemplate().setPattern(offsetPath + route.getTemplate().getPattern());
+            for (            Route route : virtualHost.getRoutes()) {
+              if (route instanceof TemplateRoute) {
+                TemplateRoute templateRoute=(TemplateRoute)route;
+                log("[Restlet] Attaching restlet: " + route.getNext() + " to URI: "+ offsetPath+ templateRoute.getTemplate().getPattern());
+                templateRoute.getTemplate().setPattern(offsetPath + templateRoute.getTemplate().getPattern());
+              }
+ else {
+                log("[Restlet] Attaching restlet: " + route.getNext());
+              }
             }
           }
         }

@@ -14,12 +14,6 @@
       }
     }
   }
- else   if (resource instanceof org.restlet.resource.Resource) {
-    methodsList.addAll(((org.restlet.resource.Resource)resource).getAllowedMethods());
-    if (resource instanceof WadlResource) {
-      info.setParameters(((WadlResource)resource).getParametersInfo());
-    }
-  }
  else   if (resource instanceof Directory) {
     Directory directory=(Directory)resource;
     methodsList.add(Method.GET);
@@ -46,37 +40,12 @@
         MethodInfo.describeAnnotations(methodInfo,(ServerResource)resource);
       }
     }
- else     if (resource instanceof org.restlet.resource.Resource) {
-      if (resource instanceof WadlResource) {
-        WadlResource wsResource=(WadlResource)resource;
-        if (wsResource.isDescribable(method)) {
-          wsResource.describeMethod(method,methodInfo);
-        }
-      }
- else {
-        if (Method.GET.equals(method)) {
-          ResponseInfo responseInfo=null;
-          for (          Variant variant : ((org.restlet.resource.Resource)resource).getVariants()) {
-            RepresentationInfo representationInfo=new RepresentationInfo();
-            representationInfo.setMediaType(variant.getMediaType());
-            if (responseInfo == null) {
-              responseInfo=new ResponseInfo();
-              methodInfo.getResponses().add(responseInfo);
-            }
-            responseInfo.getRepresentations().add(representationInfo);
-          }
-        }
-      }
-    }
   }
   String title=null;
   String textContent=null;
   if (resource instanceof WadlServerResource) {
     title=((WadlServerResource)resource).getName();
     textContent=((WadlServerResource)resource).getDescription();
-  }
- else   if (resource instanceof WadlResource) {
-    title=((WadlResource)resource).getTitle();
   }
   if ((title != null) && !"".equals(title)) {
     DocumentationInfo doc=null;

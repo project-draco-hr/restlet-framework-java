@@ -1,7 +1,7 @@
 {
-  final NodeList childNodes=node.getChildNodes();
+  NodeList childNodes=node.getChildNodes();
   for (int i=0; i < childNodes.getLength(); i++) {
-    final Node childNode=childNodes.item(i);
+    Node childNode=childNodes.item(i);
     if (isParameter(childNode)) {
       Parameter p=parseParameter(childNode);
       if (p != null) {
@@ -18,10 +18,10 @@
         uriPattern="";
       }
       item=childNode.getAttributes().getNamedItem("default");
-      final boolean bDefault=getBoolean(item,false) || "attachDefault".equals(childNode.getNodeName());
-      final Context oldContext=router.getContext();
+      boolean bDefault=getBoolean(item,false) || "attachDefault".equals(childNode.getNodeName());
+      Context oldContext=router.getContext();
       router.setContext(new Context());
-      org.restlet.routing.Route route=null;
+      TemplateRoute route=null;
       item=childNode.getAttributes().getNamedItem("targetClass");
       if (item != null) {
         route=attach(router,item.getNodeValue(),uriPattern,bDefault);
@@ -36,7 +36,7 @@
         }
       }
       if (route != null) {
-        final Template template=route.getTemplate();
+        Template template=route.getTemplate();
         item=childNode.getAttributes().getNamedItem("matchingMode");
         template.setMatchingMode(getInt(item,router.getDefaultMatchingMode()));
         item=childNode.getAttributes().getNamedItem("defaultVariableType");

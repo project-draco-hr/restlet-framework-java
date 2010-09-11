@@ -1,8 +1,12 @@
 {
-  String path=route.getTemplate().getPattern();
-  if (path.startsWith("/") && basePath.endsWith("/")) {
-    path=path.substring(1);
+  ResourceInfo result=null;
+  if (route instanceof TemplateRoute) {
+    TemplateRoute templateRoute=(TemplateRoute)route;
+    String path=templateRoute.getTemplate().getPattern();
+    if (path.startsWith("/") && basePath.endsWith("/")) {
+      path=path.substring(1);
+    }
+    result=getResourceInfo(applicationInfo,route.getNext(),path,request,response);
   }
-  ResourceInfo result=getResourceInfo(applicationInfo,route.getNext(),path,request,response);
   return result;
 }

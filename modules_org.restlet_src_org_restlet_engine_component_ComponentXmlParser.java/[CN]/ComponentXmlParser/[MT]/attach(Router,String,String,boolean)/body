@@ -1,18 +1,9 @@
 {
-  org.restlet.routing.Route route=null;
+  TemplateRoute route=null;
   if (targetClassName != null) {
     try {
       final Class<?> targetClass=Engine.loadClass(targetClassName);
-      if (org.restlet.resource.Resource.class.isAssignableFrom(targetClass)) {
-        final Class<? extends org.restlet.resource.Resource> resourceClass=(Class<? extends org.restlet.resource.Resource>)targetClass;
-        if ((uriPattern != null) && !defaultRoute) {
-          route=router.attach(uriPattern,resourceClass);
-        }
- else {
-          route=router.attachDefault(resourceClass);
-        }
-      }
- else       if (ServerResource.class.isAssignableFrom(targetClass)) {
+      if (ServerResource.class.isAssignableFrom(targetClass)) {
         final Class<? extends ServerResource> resourceClass=(Class<? extends ServerResource>)targetClass;
         if ((uriPattern != null) && !defaultRoute) {
           route=router.attach(uriPattern,resourceClass);
