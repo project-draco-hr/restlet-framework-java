@@ -18,7 +18,9 @@
       readingChunks=false;
       lastChunk=true;
     }
-    content.writeBytes(chunk.getContent());
+ else {
+      content.writeBytes(chunk.getContent());
+    }
   }
   if (content == null) {
     content=ChannelBuffers.dynamicBuffer();
@@ -57,15 +59,16 @@
         if (responseEntity != null) {
           if (nettyResponse.isChunked()) {
             nettyResponse.setContent(null);
+            future=ch.write(nettyResponse);
             ch.write(new ChunkedStream(restletResponse.getEntity().getStream()));
           }
  else {
             ChannelBuffer buf=dynamicBuffer();
             buf.writeBytes(responseEntity.getStream(),(int)responseEntity.getAvailableSize());
             nettyResponse.setContent(buf);
+            future=ch.write(nettyResponse);
           }
         }
-        future=ch.write(nettyResponse);
         if (shouldCloseConnection()) {
           future.addListener(ChannelFutureListener.CLOSE);
         }
