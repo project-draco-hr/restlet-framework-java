@@ -2,7 +2,7 @@
   if (clientAddress == null) {
     clientAddress=(InetSocketAddress)messageEvent.getRemoteAddress();
   }
-  boolean isLastChunk=false;
+  boolean lastChunk=false;
   if (!readingChunks) {
     request=(HttpRequest)messageEvent.getMessage();
     if (request.isChunked()) {
@@ -16,7 +16,7 @@
     HttpChunk chunk=(HttpChunk)messageEvent.getMessage();
     if (chunk.isLast()) {
       readingChunks=false;
-      isLastChunk=true;
+      lastChunk=true;
     }
     long chunkSize=chunk.getContent().readableBytes();
     content.writeBytes(longToHex(chunkSize));
@@ -29,25 +29,61 @@
   if (content == null) {
     content=ChannelBuffers.dynamicBuffer();
   }
-  HttpResponse response=null;
-  if ((!request.isChunked()) || isLastChunk) {
+  HttpResponse nettyResponse=null;
+  NettyServerCall httpCall=null;
+  if ((!request.isChunked()) || lastChunk) {
     SslHandler sslHandler=ctx.getPipeline().get(SslHandler.class);
     SSLEngine sslEngine=sslHandler == null ? null : sslHandler.getEngine();
-    NettyServerCall httpCall=new NettyServerCall(this.helper.getHelped(),messageEvent,content,request,clientAddress,(this.helper instanceof HttpsServerHelper),sslEngine);
+    httpCall=new NettyServerCall(this.helper.getHelped(),messageEvent,content,request,clientAddress,(this.helper instanceof HttpsServerHelper),sslEngine);
     this.helper.handle(httpCall);
-    response=httpCall.getResponse();
-  }
-  Channel ch=messageEvent.getChannel();
-  if (request.isChunked()) {
-    if (isLastChunk) {
-      ChannelFuture future=ch.write(response);
-      future.addListener(ChannelFutureListener.CLOSE);
-    }
-  }
+    nettyResponse=httpCall.getResponse();
+    Response restletResponse=httpCall.getRestletResponse();
+    if (restletResponse != null) {
+      Representation responseEntity=restletResponse.getEntity();
+      ConnectorService connectorService=ConnectorHelper.getConnectorService();
+      if (connectorService != null) {
+        connectorService.beforeSend(responseEntity);
+      }
+      try {
+        if (nettyResponse != null) {
+          nettyResponse.clearHeaders();
+        }
  else {
-    ChannelFuture future=ch.write(response);
-    if (shouldCloseConnection() || (request.getMethod() == HttpMethod.GET)) {
-      future.addListener(ChannelFutureListener.CLOSE);
+          HttpResponseStatus status=new HttpResponseStatus(restletResponse.getStatus().getCode(),restletResponse.getStatus().getName());
+          nettyResponse=new DefaultHttpResponse(HttpVersion.HTTP_1_1,status);
+        }
+        for (        Parameter header : httpCall.getResponseHeaders()) {
+          nettyResponse.addHeader(header.getName(),header.getValue());
+        }
+        if (httpCall.shouldResponseBeChunked(restletResponse)) {
+          nettyResponse.addHeader(HeaderConstants.HEADER_TRANSFER_ENCODING,"chunked");
+        }
+        Channel ch=messageEvent.getChannel();
+        ChannelFuture future=null;
+        if (responseEntity != null) {
+          if (nettyResponse.isChunked()) {
+            nettyResponse.setContent(null);
+            ch.write(new ChunkedStream(restletResponse.getEntity().getStream()));
+          }
+ else {
+            ChannelBuffer buf=dynamicBuffer();
+            buf.writeBytes(responseEntity.getStream(),0);
+            nettyResponse.setContent(buf);
+          }
+        }
+        future=ch.write(nettyResponse);
+        if (shouldCloseConnection()) {
+          future.addListener(ChannelFutureListener.CLOSE);
+        }
+      }
+  finally {
+        if (responseEntity != null) {
+          responseEntity.release();
+        }
+        if (connectorService != null) {
+          connectorService.afterSend(responseEntity);
+        }
+      }
     }
   }
 }
