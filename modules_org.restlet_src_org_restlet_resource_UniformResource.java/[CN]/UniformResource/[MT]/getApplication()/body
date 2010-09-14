@@ -1,4 +1,11 @@
 {
-  org.restlet.Application result=org.restlet.Application.getCurrent();
-  return (result == null) ? new org.restlet.Application(getContext()) : result;
+  org.restlet.Application result=this.application;
+  if (result == null) {
+    result=org.restlet.Application.getCurrent();
+    if (result == null) {
+      result=new org.restlet.Application(getContext());
+    }
+    this.application=result;
+  }
+  return result;
 }
