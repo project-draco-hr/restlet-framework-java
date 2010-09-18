@@ -10,7 +10,7 @@
  else {
     for (Iterator<Connection<Client>> iterator=getConnections().iterator(); !foundConn && iterator.hasNext(); ) {
       Connection<Client> currConn=iterator.next();
-      if (socketAddress.getAddress().equals(currConn.getSocketAddress())) {
+      if (socketAddress.equals(currConn.getSocketAddress())) {
         if (currConn.getState().equals(ConnectionState.OPEN) && currConn.getInboundWay().getIoState().equals(IoState.IDLE) && currConn.getInboundWay().getMessages().isEmpty()&& currConn.getOutboundWay().getIoState().equals(IoState.IDLE)&& currConn.getOutboundWay().getMessages().isEmpty()) {
           result=currConn;
           foundConn=true;
@@ -27,6 +27,7 @@
     }
     if (!foundConn && ((getMaxTotalConnections() == -1) || (getConnections().size() < getMaxTotalConnections())) && ((getMaxConnectionsPerHost() == -1) || (hostConnectionCount < getMaxConnectionsPerHost()))) {
       result=checkout(createSocketChannel(request.isConfidential(),socketAddress),getController().getSelector(),socketAddress);
+      getConnections().add(result);
     }
   }
   return result;

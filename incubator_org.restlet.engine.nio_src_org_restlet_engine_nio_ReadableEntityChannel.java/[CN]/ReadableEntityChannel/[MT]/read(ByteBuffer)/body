@@ -2,7 +2,11 @@
   int result=-1;
   if (this.availableSize > 0) {
     if ((this.remainingBuffer != null) && (this.remainingBuffer.hasRemaining())) {
-      result=Math.min(this.remainingBuffer.remaining(),dst.remaining());
+      int limit=this.remainingBuffer.limit();
+      int position=this.remainingBuffer.position();
+      this.remainingBuffer.limit(limit);
+      this.remainingBuffer.position(position);
+      result=Math.min(limit - position,dst.remaining());
       byte[] src=new byte[result];
       this.remainingBuffer.get(src);
       dst.put(src);
@@ -13,6 +17,9 @@
     if (result > 0) {
       this.availableSize-=result;
     }
+  }
+  if (result == -1) {
+    getInboundWay().onCompleted();
   }
   return result;
 }

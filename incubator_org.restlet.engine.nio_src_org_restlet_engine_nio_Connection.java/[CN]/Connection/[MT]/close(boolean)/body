@@ -4,7 +4,7 @@
   }
  else {
     try {
-      if (!getSocket().isClosed()) {
+      if ((getSocket() != null) && !getSocket().isClosed()) {
         getSocket().getOutputStream().flush();
         if (!(getSocket() instanceof SSLSocket)) {
           getSocket().shutdownInput();
@@ -19,7 +19,7 @@
       setState(ConnectionState.CLOSED);
     }
     try {
-      if (!getSocket().isClosed()) {
+      if ((getSocket() != null) && !getSocket().isClosed()) {
         getSocket().close();
       }
     }
