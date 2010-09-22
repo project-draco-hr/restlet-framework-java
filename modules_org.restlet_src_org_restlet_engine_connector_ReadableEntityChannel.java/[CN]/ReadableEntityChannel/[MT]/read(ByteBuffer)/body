@@ -1,15 +1,20 @@
 {
   int result=-1;
   if (this.availableSize > 0) {
-    if ((this.remainingBuffer != null) && (this.remainingBuffer.hasRemaining())) {
-      int limit=this.remainingBuffer.limit();
-      int position=this.remainingBuffer.position();
-      this.remainingBuffer.limit(limit);
-      this.remainingBuffer.position(position);
-      result=Math.min(limit - position,dst.remaining());
-      byte[] src=new byte[result];
-      this.remainingBuffer.get(src);
-      dst.put(src);
+    if (this.remainingBuffer != null) {
+synchronized (this.remainingBuffer) {
+        if (this.remainingBuffer.hasRemaining()) {
+          int limit=this.remainingBuffer.limit();
+          int position=this.remainingBuffer.position();
+          result=Math.min(limit - position,dst.remaining());
+          byte[] src=new byte[result];
+          this.remainingBuffer.get(src);
+          dst.put(src);
+        }
+ else {
+          result=getWrappedChannel().read(dst);
+        }
+      }
     }
  else {
       result=getWrappedChannel().read(dst);
