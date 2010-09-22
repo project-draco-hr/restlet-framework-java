@@ -23,7 +23,7 @@
   if (!isDirectory) {
     boolean partialPut=!request.getRanges().isEmpty();
     if (!checkMetadataConsistency(file.getName(),request.getEntity())) {
-      response.setStatus(new Status(Status.REDIRECTION_SEE_OTHER,"The metadata are not consistent with the URI"));
+      response.setStatus(new Status(Status.CLIENT_ERROR_BAD_REQUEST,"The metadata are not consistent with the URI"));
       return;
     }
     final String baseName=Entity.getBaseName(file.getName(),getMetadataService());
@@ -38,7 +38,7 @@
     List<File> variantsList=new ArrayList<File>();
     if (files != null && files.length > 0) {
       Variant variant=new Variant();
-      Entity.updateMetadata(file.getName(),variant,true,getMetadataService());
+      Entity.updateMetadata(file.getName(),variant,false,getMetadataService());
       Collection<String> extensions=Entity.getExtensions(variant,getMetadataService());
       for (      File entry : files) {
         Collection<String> entryExtensions=Entity.getExtensions(entry.getName(),getMetadataService());
@@ -60,13 +60,13 @@
       }
       Entity.updateMetadata(file.getName(),request.getEntity(),true,getMetadataService());
       StringBuilder fileName=new StringBuilder(baseName);
-      updateFileExtension(fileName,request.getEntity().getMediaType());
       for (      Language language : request.getEntity().getLanguages()) {
         updateFileExtension(fileName,language);
       }
       for (      Encoding encoding : request.getEntity().getEncodings()) {
         updateFileExtension(fileName,encoding);
       }
+      updateFileExtension(fileName,request.getEntity().getMediaType());
       file=new File(file.getParentFile(),fileName.toString());
     }
     if (!checkExtensionsConsistency(file)) {
