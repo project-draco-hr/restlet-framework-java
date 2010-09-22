@@ -1,9 +1,15 @@
 {
   this.channel=channel;
-  if (channel instanceof SelectableChannel) {
+  if (channel instanceof SelectionChannel) {
+    this.selectionChannel=(SelectionChannel)channel;
+    this.selectableChannel=null;
+  }
+ else   if (channel instanceof SelectableChannel) {
+    this.selectionChannel=null;
     this.selectableChannel=(SelectableChannel)channel;
   }
  else {
+    this.selectionChannel=null;
     this.selectableChannel=null;
   }
   this.bb=ByteBuffer.allocate(IoUtils.BUFFER_SIZE);

@@ -1,21 +1,42 @@
 {
-  Selector selector=null;
-  SelectionKey selectionKey=null;
-  try {
-    int bytesRead=readChannel();
-    if ((bytesRead == 0) && (selectableChannel != null)) {
-      selector=SelectorFactory.getSelector();
-      if (selector != null) {
-        selectionKey=this.selectableChannel.register(selector,SelectionKey.OP_READ);
-        selector.select(NioUtils.NIO_TIMEOUT);
+  int bytesRead=0;
+  while (bytesRead == 0) {
+    bytesRead=readChannel();
+    if (bytesRead == 0) {
+      if (selectionChannel != null) {
+        final CountDownLatch latch=new CountDownLatch(1);
+        try {
+          selectionChannel.register(SelectionKey.OP_READ,new SelectionListener(){
+            public void onSelected(            SelectionKey key){
+              latch.countDown();
+            }
+          }
+);
+          latch.await(100,TimeUnit.MILLISECONDS);
+        }
+ catch (        Exception e) {
+          Context.getCurrentLogger().log(Level.FINE,"Exception while registering or waiting for new content",e);
+        }
+        bytesRead=readChannel();
       }
-      bytesRead=readChannel();
-    }
- else     if (bytesRead == -1) {
-      this.endReached=true;
+ else       if (selectableChannel != null) {
+        Selector selector=null;
+        SelectionKey selectionKey=null;
+        try {
+          selector=SelectorFactory.getSelector();
+          if (selector != null) {
+            selectionKey=this.selectableChannel.register(selector,SelectionKey.OP_READ);
+            selector.select(NioUtils.NIO_TIMEOUT);
+          }
+        }
+  finally {
+          NioUtils.release(selector,selectionKey);
+        }
+        bytesRead=readChannel();
+      }
     }
   }
-  finally {
-    NioUtils.release(selector,selectionKey);
+  if (bytesRead == -1) {
+    this.endReached=true;
   }
 }
