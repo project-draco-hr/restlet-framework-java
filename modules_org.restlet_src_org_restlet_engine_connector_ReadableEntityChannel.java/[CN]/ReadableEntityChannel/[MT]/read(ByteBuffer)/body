@@ -1,21 +1,19 @@
 {
   int result=-1;
   if (this.availableSize > 0) {
-    if (this.remainingBuffer != null) {
 synchronized (this.remainingBuffer) {
-        if (this.remainingBuffer.hasRemaining()) {
-          result=Math.min((int)this.availableSize,Math.min(this.remainingBuffer.remaining(),dst.remaining()));
-          byte[] src=new byte[result];
-          this.remainingBuffer.get(src);
-          dst.put(src);
-        }
- else {
-          result=doRead(dst);
-        }
+      if ((this.remainingBuffer != null) && (this.remainingBuffer.hasRemaining())) {
+        result=Math.min((int)this.availableSize,Math.min(this.remainingBuffer.remaining(),dst.remaining()));
+        byte[] src=new byte[result];
+        this.remainingBuffer.get(src);
+        dst.put(src);
       }
-    }
  else {
-      result=doRead(dst);
+        if (this.availableSize < dst.remaining()) {
+          dst.limit((int)(this.availableSize + dst.position()));
+        }
+        result=getWrappedChannel().read(dst);
+      }
     }
     if (result > 0) {
       this.availableSize-=result;
