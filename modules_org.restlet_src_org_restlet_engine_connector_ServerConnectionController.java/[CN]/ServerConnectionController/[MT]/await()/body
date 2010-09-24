@@ -1,3 +1,5 @@
 {
-  this.latch.await();
+  if (!this.latch.await(IoUtils.IO_TIMEOUT,TimeUnit.MILLISECONDS)) {
+    getHelper().getLogger().warning("The calling thread timed out while waiting for the controller to be ready to accept connections.");
+  }
 }

@@ -4,7 +4,9 @@
       CountDownLatch latch=new CountDownLatch(1);
       request.getAttributes().put(CONNECTOR_LATCH,latch);
       getOutboundMessages().add(response);
-      latch.await();
+      if (!latch.await(IoUtils.IO_TIMEOUT,TimeUnit.MILLISECONDS)) {
+        response.setStatus(Status.CONNECTOR_ERROR_INTERNAL,"The calling thread timed out while waiting for a response to unblock it.");
+      }
     }
  else {
       getOutboundMessages().add(response);

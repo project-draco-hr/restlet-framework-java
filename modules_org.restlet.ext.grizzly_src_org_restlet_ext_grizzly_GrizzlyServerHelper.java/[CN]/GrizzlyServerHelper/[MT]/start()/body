@@ -37,7 +37,9 @@
   }
 .start();
   try {
-    latch.await();
+    if (!latch.await(IoUtils.IO_TIMEOUT,TimeUnit.MILLISECONDS)) {
+      getLogger().warning("The calling thread timed out while waiting for the connector to be ready to accept connections.");
+    }
   }
  catch (  InterruptedException ex) {
     getLogger().log(Level.WARNING,"Interrupted while waiting for starting latch. Stopping...",ex);
