@@ -6,10 +6,11 @@
     if ((getEntityKey() == null) && (entityInterestOps > 0)) {
       try {
         setEntityKey(entitySelectableChannel.register(selector,entityInterestOps,new SelectionListener(){
-          public void onSelected(          SelectionKey key){
+          public void onSelected(          SelectionRegistration registration){
           }
         }
 ));
+        selector.wakeup();
       }
  catch (      ClosedChannelException cce) {
         getConnection().onError("Unable to register NIO interest operations for this entity",cce,Status.CONNECTOR_ERROR_COMMUNICATION);

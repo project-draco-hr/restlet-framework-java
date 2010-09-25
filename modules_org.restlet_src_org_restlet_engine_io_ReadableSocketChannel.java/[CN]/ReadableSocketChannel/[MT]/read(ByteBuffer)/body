@@ -1,3 +1,8 @@
 {
-  return getWrappedChannel().read(dst);
+  if (getWrappedChannel().isOpen()) {
+    return getWrappedChannel().read(dst);
+  }
+ else {
+    throw new IOException("Wrapped channel closed");
+  }
 }

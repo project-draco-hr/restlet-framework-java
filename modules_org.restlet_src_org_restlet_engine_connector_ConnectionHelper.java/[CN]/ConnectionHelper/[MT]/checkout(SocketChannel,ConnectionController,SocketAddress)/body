@@ -1,0 +1,11 @@
+{
+  Connection<T> result=null;
+  if (isPooledConnection()) {
+    result=getConnectionPool().checkout();
+    result.reuse(socketChannel,controller,socketAddress);
+  }
+ else {
+    result=createConnection(socketChannel,controller,socketAddress);
+  }
+  return result;
+}

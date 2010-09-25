@@ -1,0 +1,31 @@
+{
+  this.lastActivity=System.currentTimeMillis();
+  try {
+    if ((registration == null) || registration.isReadable()) {
+synchronized (getInboundWay().getByteBuffer()) {
+        getInboundWay().onSelected();
+      }
+    }
+ else     if (registration.isWritable()) {
+synchronized (getOutboundWay().getByteBuffer()) {
+        getOutboundWay().onSelected();
+      }
+    }
+ else     if (registration.isConnectable()) {
+      try {
+        if (getSocketChannel().finishConnect()) {
+          open();
+        }
+ else {
+          onError("Unable to establish a connection to " + getSocketAddress(),null,Status.CONNECTOR_ERROR_CONNECTION);
+        }
+      }
+ catch (      IOException e) {
+        onError("Unable to establish a connection to " + getSocketAddress(),e,Status.CONNECTOR_ERROR_CONNECTION);
+      }
+    }
+  }
+ catch (  Throwable t) {
+    onError("Unexpected error detected. Closing the connection.",t,Status.CONNECTOR_ERROR_INTERNAL);
+  }
+}

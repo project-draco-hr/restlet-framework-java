@@ -1,0 +1,19 @@
+{
+  this.persistent=helper.isPersistingConnections();
+  this.pipelining=helper.isPipeliningConnections();
+  this.state=ConnectionState.OPENING;
+  this.socketChannel=socketChannel;
+  this.socketAddress=socketAddress;
+  if (helper.isTracing()) {
+    this.readableSelectionChannel=new ReadableTraceChannel(new ReadableSocketChannel(socketChannel,controller));
+    this.writableSelectionChannel=new WritableTraceChannel(new WritableSocketChannel(socketChannel,controller));
+  }
+ else {
+    this.readableSelectionChannel=new ReadableSocketChannel(socketChannel,controller);
+    this.writableSelectionChannel=new WritableSocketChannel(socketChannel,controller);
+  }
+  this.lastActivity=System.currentTimeMillis();
+  this.socketKey=null;
+  this.inboundWay.reuse();
+  this.outboundWay.reuse();
+}

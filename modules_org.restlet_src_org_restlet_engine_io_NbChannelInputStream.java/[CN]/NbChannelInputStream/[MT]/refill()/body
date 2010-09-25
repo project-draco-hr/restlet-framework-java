@@ -6,18 +6,23 @@
       if (selectionChannel != null) {
         final CountDownLatch latch=new CountDownLatch(1);
         try {
-          selectionChannel.register(SelectionKey.OP_READ,new SelectionListener(){
-            public void onSelected(            SelectionKey key){
-              key.cancel();
-              key.attach(null);
-              latch.countDown();
+          if (this.selectionRegistration == null) {
+            this.selectionRegistration=this.selectionChannel.register(SelectionKey.OP_READ,new SelectionListener(){
+              public void onSelected(              SelectionRegistration registration){
+                registration.suspend();
+                latch.countDown();
+              }
             }
-          }
 );
+          }
+ else {
+            this.selectionRegistration.resume();
+          }
           latch.await(IoUtils.IO_TIMEOUT,TimeUnit.MILLISECONDS);
         }
  catch (        Exception e) {
           Context.getCurrentLogger().log(Level.FINE,"Exception while registering or waiting for new content",e);
+          e.printStackTrace();
         }
         bytesRead=readChannel();
       }
@@ -40,5 +45,8 @@
   }
   if (bytesRead == -1) {
     this.endReached=true;
+    if (this.selectionRegistration != null) {
+      this.selectionRegistration.cancel();
+    }
   }
 }

@@ -7,6 +7,7 @@
       if (getSocketKey() == null) {
         try {
           setSocketKey(getSocketChannel().register(selector,socketInterestOps,this));
+          selector.wakeup();
         }
  catch (        ClosedChannelException cce) {
           onError("Unable to register NIO interest operations for this connection",cce,Status.CONNECTOR_ERROR_COMMUNICATION);
