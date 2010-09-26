@@ -1,15 +1,10 @@
 {
   ReadableSelectionChannel result=null;
-  if (getByteBuffer().hasRemaining()) {
-    if (chunked) {
-      getLogger().warning("Chunked encoding not supported (yet) in the NIO connector.");
-    }
- else {
-      result=new ReadableEntityChannel(this,getByteBuffer(),getConnection().getReadableSelectionChannel(),size);
-    }
+  if (chunked) {
+    getLogger().warning("Chunked encoding not supported (yet) in the NIO connector.");
   }
  else {
-    result=getConnection().getReadableSelectionChannel();
+    result=new ReadableEntityChannel(this,getByteBuffer(),getConnection().getReadableSelectionChannel(),size);
   }
   return result;
 }
