@@ -1,4 +1,7 @@
 {
-  getInboundWay().updateState();
-  getOutboundWay().updateState();
+  if ((getState() != ConnectionState.CLOSING) && (getState() != ConnectionState.CLOSED)) {
+    getInboundWay().updateState();
+    getOutboundWay().updateState();
+    getRegistration().setInterestOperations(getInboundWay().getRegistration().getInterestOperations() | getOutboundWay().getRegistration().getInterestOperations());
+  }
 }

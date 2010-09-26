@@ -3,6 +3,9 @@
   if (getConnection().getState() == ConnectionState.OPENING) {
     result=SelectionKey.OP_CONNECT;
   }
+ else   if ((getMessageState() == MessageState.BODY) && (getEntityRegistration() != null)) {
+    result=getEntityRegistration().getInterestOperations();
+  }
  else {
     result=super.getSocketInterestOps();
   }

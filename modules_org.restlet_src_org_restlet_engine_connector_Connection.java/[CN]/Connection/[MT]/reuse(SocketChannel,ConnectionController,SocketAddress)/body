@@ -5,14 +5,14 @@
   this.socketChannel=socketChannel;
   this.socketAddress=socketAddress;
   if ((controller != null) && (socketChannel != null) && (socketAddress != null)) {
-    this.socketRegistration=(controller == null) ? null : controller.register(socketChannel,0,this);
+    this.registration=(controller == null) ? null : controller.register(socketChannel,0,this);
     if (helper.isTracing()) {
-      this.readableSelectionChannel=new ReadableTraceChannel(new ReadableSocketChannel(socketChannel,socketRegistration));
-      this.writableSelectionChannel=new WritableTraceChannel(new WritableSocketChannel(socketChannel,socketRegistration));
+      this.readableSelectionChannel=new ReadableTraceChannel(new ReadableSocketChannel(socketChannel,registration));
+      this.writableSelectionChannel=new WritableTraceChannel(new WritableSocketChannel(socketChannel,registration));
     }
  else {
-      this.readableSelectionChannel=new ReadableSocketChannel(socketChannel,socketRegistration);
-      this.writableSelectionChannel=new WritableSocketChannel(socketChannel,socketRegistration);
+      this.readableSelectionChannel=new ReadableSocketChannel(socketChannel,registration);
+      this.writableSelectionChannel=new WritableSocketChannel(socketChannel,registration);
     }
   }
   this.lastActivity=System.currentTimeMillis();

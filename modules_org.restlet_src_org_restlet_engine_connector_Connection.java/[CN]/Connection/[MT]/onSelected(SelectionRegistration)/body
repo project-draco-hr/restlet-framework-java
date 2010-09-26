@@ -3,12 +3,12 @@
   try {
     if ((registration == null) || registration.isReadable()) {
 synchronized (getInboundWay().getByteBuffer()) {
-        getInboundWay().onSelected();
+        getInboundWay().getRegistration().onSelected(registration.getReadyOperations());
       }
     }
  else     if (registration.isWritable()) {
 synchronized (getOutboundWay().getByteBuffer()) {
-        getOutboundWay().onSelected();
+        getOutboundWay().getRegistration().onSelected(registration.getReadyOperations());
       }
     }
  else     if (registration.isConnectable()) {
