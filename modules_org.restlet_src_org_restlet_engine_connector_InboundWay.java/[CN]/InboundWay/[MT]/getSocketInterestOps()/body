@@ -1,6 +1,9 @@
 {
   int result=0;
-  if (getIoState() == IoState.INTEREST) {
+  if ((getMessageState() == MessageState.BODY) && (getEntityRegistration() != null)) {
+    result=getEntityRegistration().getInterestOperations();
+  }
+ else   if (getIoState() == IoState.INTEREST) {
     result=SelectionKey.OP_READ;
   }
   return result;

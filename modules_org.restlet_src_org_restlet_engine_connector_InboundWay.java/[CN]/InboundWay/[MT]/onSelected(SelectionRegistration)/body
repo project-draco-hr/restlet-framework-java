@@ -1,17 +1,22 @@
 {
   try {
     super.onSelected(registration);
-    while (isProcessing()) {
-      int result=readSocketBytes();
-      if (result == 0) {
-        setIoState(IoState.INTEREST);
-      }
- else       if (result == -1) {
-        setIoState(IoState.CANCELING);
-      }
+    if ((getMessageState() == MessageState.BODY) && (getEntityRegistration() != null)) {
+      getEntityRegistration().onSelected(registration.getReadyOperations());
+    }
  else {
-        while (isProcessing() && getByteBuffer().hasRemaining()) {
-          readMessage();
+      while (isProcessing()) {
+        int result=readSocketBytes();
+        if (result == 0) {
+          setIoState(IoState.INTEREST);
+        }
+ else         if (result == -1) {
+          setIoState(IoState.CANCELING);
+        }
+ else {
+          while (isProcessing() && getByteBuffer().hasRemaining()) {
+            readMessage();
+          }
         }
       }
     }
