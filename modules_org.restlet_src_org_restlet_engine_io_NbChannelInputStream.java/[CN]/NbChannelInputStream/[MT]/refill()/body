@@ -4,14 +4,13 @@
     bytesRead=readChannel();
     if (bytesRead == 0) {
       if (selectionChannel != null) {
-        System.out.println("NbChannelInputStream#refill : " + this.selectionRegistration);
         final CountDownLatch latch=new CountDownLatch(1);
         try {
           if (this.selectionRegistration == null) {
             this.selectionRegistration=this.selectionChannel.getRegistration();
+            this.selectionRegistration.setInterestOperations(SelectionKey.OP_READ);
             this.selectionRegistration.setListener(new SelectionListener(){
               public void onSelected(              SelectionRegistration registration){
-                System.out.println("NbChannelInputStream#onSelected: " + registration);
                 registration.suspend();
                 latch.countDown();
               }
