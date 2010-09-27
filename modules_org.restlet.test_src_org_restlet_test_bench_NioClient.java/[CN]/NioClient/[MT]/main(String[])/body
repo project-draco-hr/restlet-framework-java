@@ -8,7 +8,7 @@
   client.getContext().getParameters().add("directBuffers","true");
   client.start();
   String uri="http://127.0.0.1:9999/";
-  int iterations=10000;
+  int iterations=1000;
   ClientResource cr=new ClientResource(uri);
   cr.setRetryOnError(false);
   cr.setNext(client);
@@ -16,7 +16,7 @@
   System.out.println("Calling resource: " + uri + " "+ iterations+ " times");
   long start=System.currentTimeMillis();
   for (int i=0; i < iterations; i++) {
-    r=cr.get();
+    r=cr.post("Sample content posted");
     r.exhaust();
   }
   long total=(System.currentTimeMillis() - start);
