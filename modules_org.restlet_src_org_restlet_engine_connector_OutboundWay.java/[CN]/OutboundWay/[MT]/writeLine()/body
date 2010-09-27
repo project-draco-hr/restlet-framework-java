@@ -22,15 +22,15 @@ setHeaderIndex(getHeaderIndex() + 1);
  else {
 getLineBuilder().append('\r');
 getLineBuilder().append('\n');
-if (getMessage().isEntityAvailable()) {
+if (getActualMessage().isEntityAvailable()) {
 setMessageState(MessageState.BODY);
-if (getMessage().getEntity() instanceof FileRepresentation) {
-  FileRepresentation fr=(FileRepresentation)getMessage().getEntity();
+if (getActualMessage().getEntity() instanceof FileRepresentation) {
+  FileRepresentation fr=(FileRepresentation)getActualMessage().getEntity();
   setEntityChannel(fr.getChannel());
   setEntityType(EntityType.FILE_CHANNEL);
 }
- else if (getMessage().getEntity() instanceof ReadableRepresentation) {
-  ReadableRepresentation rr=(ReadableRepresentation)getMessage().getEntity();
+ else if (getActualMessage().getEntity() instanceof ReadableRepresentation) {
+  ReadableRepresentation rr=(ReadableRepresentation)getActualMessage().getEntity();
   setEntityChannel(rr.getChannel());
   setEntityType(EntityType.SYNC_CHANNEL);
   if (getEntityChannel() instanceof SelectableChannel) {
@@ -41,7 +41,7 @@ if (getMessage().getEntity() instanceof FileRepresentation) {
   }
 }
  else {
-  setEntityStream(getMessage().getEntity().getStream());
+  setEntityStream(getActualMessage().getEntity().getStream());
   setEntityType(EntityType.STREAM);
 }
 }
