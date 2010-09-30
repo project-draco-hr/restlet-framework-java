@@ -1,0 +1,14 @@
+{
+  int result=-1;
+  if (this.availableSize > 0) {
+    if (this.availableSize < dst.remaining()) {
+      dst.limit((int)(this.availableSize + dst.position()));
+    }
+    result=super.read(dst);
+  }
+  if (result > 0) {
+    this.availableSize-=result;
+  }
+  postRead(result);
+  return result;
+}

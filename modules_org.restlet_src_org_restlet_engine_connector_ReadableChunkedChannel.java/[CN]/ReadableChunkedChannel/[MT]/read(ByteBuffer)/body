@@ -1,0 +1,39 @@
+{
+  int result=-1;
+switch (this.state) {
+case STATE_CHUNK_SIZE:
+    if (fillLine()) {
+      int length=getLineBuilder().length();
+      if (length == 0) {
+        throw new IOException("An empty chunk size line was detected");
+      }
+      int index=(getLineBuilder().indexOf(";"));
+      index=(index == -1) ? getLineBuilder().length() - 1 : index;
+      try {
+        this.chunkSize=Long.parseLong(getLineBuilder().substring(0,index).trim(),16);
+      }
+ catch (      NumberFormatException ex) {
+        throw new IOException("\"" + getLineBuilder() + "\" has an invalid chunk size");
+      }
+      if (this.chunkSize == 0) {
+        result=-1;
+      }
+    }
+  break;
+case STATE_CHUNK_DATA:
+if (this.chunkSize > 0) {
+  if (this.chunkSize < dst.remaining()) {
+    dst.limit((int)(this.chunkSize + dst.position()));
+  }
+  result=super.read(dst);
+}
+break;
+case STATE_CHUNK_TRAILER:
+break;
+}
+if (result > 0) {
+this.chunkSize-=result;
+}
+postRead(result);
+return result;
+}

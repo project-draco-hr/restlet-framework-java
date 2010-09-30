@@ -1,0 +1,11 @@
+{
+  boolean result=false;
+  int remaining=getRemainingBuffer().remaining();
+  if (remaining == 0) {
+    remaining=getWrappedChannel().read(getRemainingBuffer());
+  }
+  if (remaining > 0) {
+    result=NioUtils.fillLine(getLineBuilder(),getRemainingBuffer());
+  }
+  return result;
+}
