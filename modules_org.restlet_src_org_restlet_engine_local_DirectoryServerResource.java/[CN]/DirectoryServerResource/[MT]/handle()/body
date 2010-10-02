@@ -2,10 +2,20 @@
   Representation result=null;
   if (this.directoryRedirection) {
     if (this.originalRef != null) {
-      redirectSeeOther(this.originalRef.getIdentifier() + "/");
+      if (this.originalRef.hasQuery()) {
+        redirectSeeOther(this.originalRef.getPath() + "/?" + this.originalRef.getQuery());
+      }
+ else {
+        redirectSeeOther(this.originalRef.getPath() + "/");
+      }
     }
  else {
-      redirectSeeOther(getReference().getIdentifier() + "/");
+      if (getReference().hasQuery()) {
+        redirectSeeOther(getReference().getPath() + "/?" + getReference().getQuery());
+      }
+ else {
+        redirectSeeOther(getReference().getPath() + "/");
+      }
     }
   }
  else {
