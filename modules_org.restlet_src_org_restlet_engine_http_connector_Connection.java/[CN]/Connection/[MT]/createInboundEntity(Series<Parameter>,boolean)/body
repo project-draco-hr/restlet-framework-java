@@ -1,0 +1,58 @@
+{
+  Representation result=null;
+  long contentLength=HeaderUtils.getContentLength(headers);
+  boolean chunkedEncoding=HeaderUtils.isChunkedEncoding(headers);
+  boolean connectionClosed=HeaderUtils.isConnectionClose(headers);
+  if (!ignoreContent && (contentLength != Representation.UNKNOWN_SIZE && contentLength != 0) || chunkedEncoding || connectionClosed) {
+    InputStream inboundEntityStream=getInboundEntityStream(contentLength,chunkedEncoding);
+    ReadableByteChannel inboundEntityChannel=getInboundEntityChannel(contentLength,chunkedEncoding);
+    if (inboundEntityStream != null) {
+      result=new InputRepresentation(inboundEntityStream,null,contentLength){
+        @Override public String getText() throws IOException {
+          try {
+            return super.getText();
+          }
+ catch (          IOException ioe) {
+            throw ioe;
+          }
+ finally {
+            release();
+          }
+        }
+        @Override public void release(){
+          if (getHelper().isTracing()) {
+synchronized (System.out) {
+              System.out.println("\n");
+            }
+          }
+          super.release();
+          setInboundBusy(false);
+        }
+      }
+;
+    }
+ else     if (inboundEntityChannel != null) {
+      result=new ReadableRepresentation(inboundEntityChannel,null,contentLength){
+        @Override public void release(){
+          super.release();
+          setInboundBusy(false);
+        }
+      }
+;
+    }
+    result.setSize(contentLength);
+  }
+ else {
+    result=new EmptyRepresentation();
+    setInboundBusy(false);
+  }
+  if (headers != null) {
+    try {
+      result=HeaderUtils.extractEntityHeaders(headers,result);
+    }
+ catch (    Throwable t) {
+      getLogger().log(Level.WARNING,"Error while parsing entity headers",t);
+    }
+  }
+  return result;
+}
