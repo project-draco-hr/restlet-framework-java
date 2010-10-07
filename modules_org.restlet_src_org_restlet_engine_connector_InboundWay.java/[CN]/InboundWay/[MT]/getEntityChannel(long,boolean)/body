@@ -1,7 +1,7 @@
 {
   ReadableSelectionChannel result=null;
   if (chunked) {
-    getLogger().warning("Chunked encoding not supported (yet) in the NIO connector.");
+    result=new ReadableChunkedChannel(this,getByteBuffer(),getConnection().getReadableSelectionChannel());
   }
  else {
     result=new ReadableSizedChannel(this,getByteBuffer(),getConnection().getReadableSelectionChannel(),size);
