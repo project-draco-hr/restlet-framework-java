@@ -1,5 +1,5 @@
 {
-  int result=-1;
+  int result=0;
   if (this.state == STATE_CHUNK_SIZE) {
     if (fillLine()) {
       int length=getLineBuilder().length();
@@ -15,8 +15,7 @@
         throw new IOException("\"" + getLineBuilder() + "\" has an invalid chunk size");
       }
       if (this.availableChunkSize == 0) {
-        this.state=STATE_CHUNK_END;
-        result=-1;
+        this.state=STATE_CHUNK_TRAILER;
       }
  else {
         this.state=STATE_CHUNK_DATA;
@@ -31,19 +30,18 @@
       result=super.read(dst);
       if (result > 0) {
         this.availableChunkSize-=result;
-        if (this.availableChunkSize == 0) {
-          getLineBuilder().delete(0,getLineBuilder().length());
-          fillLine();
-          this.state=STATE_CHUNK_SIZE;
-        }
       }
     }
- else {
-      this.state=STATE_CHUNK_TRAILER;
+    if (this.availableChunkSize == 0) {
+      if (fillLine()) {
+        this.state=STATE_CHUNK_SIZE;
+        this.lineBuilder.delete(0,this.lineBuilder.length());
+      }
     }
   }
   if (this.state == STATE_CHUNK_TRAILER) {
     this.state=STATE_CHUNK_END;
+    result=-1;
   }
   if (this.state == STATE_CHUNK_END) {
   }
