@@ -1,50 +1,63 @@
 {
   int result=0;
-  if (this.state == STATE_CHUNK_SIZE) {
-    if (fillLine()) {
-      int length=getLineBuilder().length();
-      if (length == 0) {
-        throw new IOException("An empty chunk size line was detected");
-      }
-      int index=(getLineBuilder().indexOf(";"));
-      index=(index == -1) ? getLineBuilder().length() : index;
-      try {
-        this.availableChunkSize=Long.parseLong(getLineBuilder().substring(0,index).trim(),16);
-      }
- catch (      NumberFormatException ex) {
-        throw new IOException("\"" + getLineBuilder() + "\" has an invalid chunk size");
-      }
-      if (this.availableChunkSize == 0) {
-        this.state=STATE_CHUNK_TRAILER;
+  boolean tryAgain=true;
+  while (tryAgain) {
+switch (this.chunkState) {
+case STATE_CHUNK_SIZE:
+      if (fillLine()) {
+        int length=getLineBuilder().length();
+        if (length == 0) {
+          throw new IOException("An empty chunk size line was detected");
+        }
+        int index=(getLineBuilder().indexOf(";"));
+        index=(index == -1) ? getLineBuilder().length() : index;
+        try {
+          this.availableChunkSize=Long.parseLong(getLineBuilder().substring(0,index).trim(),16);
+        }
+ catch (        NumberFormatException ex) {
+          throw new IOException("\"" + getLineBuilder() + "\" has an invalid chunk size");
+        }
+        if (this.availableChunkSize == 0) {
+          this.chunkState=STATE_CHUNK_TRAILER;
+        }
+ else {
+          this.chunkState=STATE_CHUNK_DATA;
+        }
       }
  else {
-        this.state=STATE_CHUNK_DATA;
+        tryAgain=false;
       }
+    break;
+case STATE_CHUNK_DATA:
+  if (this.availableChunkSize > 0) {
+    if (this.availableChunkSize < dst.remaining()) {
+      dst.limit((int)(this.availableChunkSize + dst.position()));
+    }
+    result=super.read(dst);
+    tryAgain=false;
+    if (result > 0) {
+      this.availableChunkSize-=result;
     }
   }
-  if (this.state == STATE_CHUNK_DATA) {
-    if (this.availableChunkSize > 0) {
-      if (this.availableChunkSize < dst.remaining()) {
-        dst.limit((int)(this.availableChunkSize + dst.position()));
-      }
-      result=super.read(dst);
-      if (result > 0) {
-        this.availableChunkSize-=result;
-      }
-    }
-    if (this.availableChunkSize == 0) {
-      if (fillLine()) {
-        this.state=STATE_CHUNK_SIZE;
-        this.lineBuilder.delete(0,this.lineBuilder.length());
-      }
-    }
+if (this.availableChunkSize == 0) {
+  if (fillLine()) {
+    this.chunkState=STATE_CHUNK_SIZE;
+    this.lineBuilder.delete(0,this.lineBuilder.length());
   }
-  if (this.state == STATE_CHUNK_TRAILER) {
-    this.state=STATE_CHUNK_END;
-    result=-1;
+ else {
+    tryAgain=false;
   }
-  if (this.state == STATE_CHUNK_END) {
-  }
-  postRead(result);
-  return result;
+}
+break;
+case STATE_CHUNK_TRAILER:
+this.chunkState=STATE_CHUNK_END;
+break;
+case STATE_CHUNK_END:
+result=-1;
+tryAgain=false;
+break;
+}
+}
+postRead(result);
+return result;
 }
