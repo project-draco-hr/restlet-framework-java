@@ -1,23 +1,24 @@
 {
-  BufferState result=builderState;
   int next;
-  if (result == BufferState.IDLE) {
-    result=BufferState.FILLING;
+  if (builderState == BufferState.IDLE) {
+    builderState=BufferState.FILLING;
   }
-  while ((result != BufferState.DRAINING) && byteBuffer.hasRemaining()) {
+  while ((builderState != BufferState.DRAINING) && byteBuffer.hasRemaining()) {
     next=(int)byteBuffer.get();
 switch (builderState) {
 case FILLING:
       if (HeaderUtils.isCarriageReturn(next)) {
-        result=BufferState.FILLED;
+        builderState=BufferState.FILLED;
       }
  else {
         lineBuilder.append((char)next);
+        System.out.print((char)next);
       }
     break;
 case FILLED:
   if (HeaderUtils.isLineFeed(next)) {
-    result=BufferState.DRAINING;
+    builderState=BufferState.DRAINING;
+    System.out.println();
   }
  else {
     throw new IOException("Missing line feed character at the end of the line");
@@ -25,5 +26,5 @@ case FILLED:
 break;
 }
 }
-return result;
+return builderState;
 }
