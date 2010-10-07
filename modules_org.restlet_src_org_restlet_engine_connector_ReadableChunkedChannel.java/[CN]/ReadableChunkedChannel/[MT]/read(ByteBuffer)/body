@@ -14,6 +14,7 @@ case STATE_CHUNK_SIZE:
         index=(index == -1) ? getLineBuilder().length() : index;
         try {
           this.availableChunkSize=Long.parseLong(getLineBuilder().substring(0,index).trim(),16);
+          clearLineBuilder();
           System.out.println(this.availableChunkSize);
         }
  catch (        NumberFormatException ex) {
@@ -43,8 +44,8 @@ case STATE_CHUNK_DATA:
   }
 if (this.availableChunkSize == 0) {
   if (fillLine()) {
+    clearLineBuilder();
     this.chunkState=STATE_CHUNK_SIZE;
-    this.lineBuilder.delete(0,this.lineBuilder.length());
   }
  else {
     tryAgain=false;
