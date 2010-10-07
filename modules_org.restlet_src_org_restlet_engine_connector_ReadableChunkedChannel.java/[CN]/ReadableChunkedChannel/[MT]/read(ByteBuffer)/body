@@ -31,10 +31,21 @@
       result=super.read(dst);
       if (result > 0) {
         this.availableChunkSize-=result;
+        if (this.availableChunkSize == 0) {
+          getLineBuilder().delete(0,getLineBuilder().length());
+          fillLine();
+          this.state=STATE_CHUNK_SIZE;
+        }
       }
+    }
+ else {
+      this.state=STATE_CHUNK_TRAILER;
     }
   }
   if (this.state == STATE_CHUNK_TRAILER) {
+    this.state=STATE_CHUNK_END;
+  }
+  if (this.state == STATE_CHUNK_END) {
   }
   postRead(result);
   return result;
