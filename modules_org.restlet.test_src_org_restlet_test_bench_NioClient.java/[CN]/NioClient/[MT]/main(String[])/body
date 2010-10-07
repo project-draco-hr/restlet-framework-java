@@ -1,23 +1,26 @@
 {
   Engine.getInstance().getRegisteredClients().add(0,new org.restlet.engine.connector.HttpClientHelper(null));
   Client client=new Client(new Context(),Protocol.HTTP);
+  client.getContext().getParameters().add("tracing","true");
   client.getContext().getParameters().add("minThreads","1");
   client.getContext().getParameters().add("lowThreads","30");
   client.getContext().getParameters().add("maxThreads","40");
   client.getContext().getParameters().add("maxQueued","20");
-  client.getContext().getParameters().add("directBuffers","true");
+  client.getContext().getParameters().add("directBuffers","false");
   client.start();
   String uri="http://127.0.0.1:9999/";
-  int iterations=1000;
+  int iterations=1;
   ClientResource cr=new ClientResource(uri);
   cr.setRetryOnError(false);
   cr.setNext(client);
   Representation r=null;
+  ClientResource fr=new ClientResource("file://C/TEST/restlet-copy.zip");
   System.out.println("Calling resource: " + uri + " "+ iterations+ " times");
   long start=System.currentTimeMillis();
   for (int i=0; i < iterations; i++) {
     r=cr.post("Sample content posted");
-    r.exhaust();
+    System.out.println("Copying to the local file");
+    fr.put(r);
   }
   long total=(System.currentTimeMillis() - start);
   long avg=total / iterations;
