@@ -4,16 +4,10 @@ synchronized (getByteBuffer()) {
     int size=0;
     if (getBufferState() == BufferState.DRAINING) {
       size=getByteBuffer().remaining();
-      if (size == 0) {
-        setBufferState(BufferState.FILLING);
-        getByteBuffer().clear();
-      }
     }
-    if (getBufferState() == BufferState.FILLING) {
-      size=getWrappedChannel().read(getByteBuffer());
-      if (size > 0) {
-        setBufferState(BufferState.DRAINING);
-        getByteBuffer().flip();
+    if (size == 0) {
+      if (super.refill()) {
+        size=getByteBuffer().remaining();
       }
     }
     if (size > 0) {
