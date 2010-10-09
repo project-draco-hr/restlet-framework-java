@@ -4,7 +4,6 @@
     bytesRead=readChannel();
     if (bytesRead == 0) {
       if (selectionChannel != null) {
-        final CountDownLatch latch=new CountDownLatch(1);
         try {
           if (this.selectionRegistration == null) {
             this.selectionRegistration=this.selectionChannel.getRegistration();
@@ -12,7 +11,7 @@
             this.selectionRegistration.setListener(new SelectionListener(){
               public void onSelected(              SelectionRegistration registration){
                 registration.suspend();
-                latch.countDown();
+                selectionRegistration.unblock();
               }
             }
 );
@@ -20,7 +19,7 @@
  else {
             this.selectionRegistration.resume();
           }
-          latch.await(IoUtils.IO_TIMEOUT,TimeUnit.MILLISECONDS);
+          this.selectionRegistration.block();
         }
  catch (        Exception e) {
           Context.getCurrentLogger().log(Level.FINE,"Exception while registering or waiting for new content",e);
