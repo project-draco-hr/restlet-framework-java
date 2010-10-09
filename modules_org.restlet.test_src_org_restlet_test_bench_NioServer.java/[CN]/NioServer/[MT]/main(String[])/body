@@ -1,6 +1,6 @@
 {
   ConnectorHelper<Server> helper=null;
-  helper=new org.restlet.ext.jetty.HttpServerHelper(null);
+  helper=new org.restlet.ext.simple.HttpServerHelper(null);
   Engine.getInstance().getRegisteredServers().add(0,helper);
   Server server=new Server(new Context(),Protocol.HTTP,9999);
   server.getContext().getParameters().add("minThreads","1");
@@ -13,7 +13,7 @@
   server.setNext(new Restlet(){
     @Override public void handle(    Request request,    Response response){
       try {
-        response.setEntity(new InputRepresentation(new FileInputStream("C://TEST/restlet-linux.zip")));
+        response.setEntity(new InputRepresentation(new FileInputStream("C://TEST/apache-tika-0.7-src.zip")));
       }
  catch (      FileNotFoundException e) {
         e.printStackTrace();

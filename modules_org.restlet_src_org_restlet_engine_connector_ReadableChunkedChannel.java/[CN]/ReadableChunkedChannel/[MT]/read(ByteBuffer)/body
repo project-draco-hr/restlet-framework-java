@@ -3,7 +3,7 @@
   boolean tryAgain=true;
   while (tryAgain) {
 switch (this.chunkState) {
-case STATE_CHUNK_SIZE:
+case SIZE:
       if (fillLine()) {
         System.out.print("### New chunk detected. Size: ");
         int length=getLineBuilder().length();
@@ -21,17 +21,17 @@ case STATE_CHUNK_SIZE:
           throw new IOException("\"" + getLineBuilder() + "\" has an invalid chunk size");
         }
         if (this.availableChunkSize == 0) {
-          this.chunkState=STATE_CHUNK_TRAILER;
+          this.chunkState=ChunkState.TRAILER;
         }
  else {
-          this.chunkState=STATE_CHUNK_DATA;
+          this.chunkState=ChunkState.DATA;
         }
       }
  else {
         tryAgain=false;
       }
     break;
-case STATE_CHUNK_DATA:
+case DATA:
   if (this.availableChunkSize > 0) {
     if (this.availableChunkSize < dst.remaining()) {
       dst.limit((int)(this.availableChunkSize + dst.position()));
@@ -41,21 +41,24 @@ case STATE_CHUNK_DATA:
     if (result > 0) {
       this.availableChunkSize-=result;
     }
-  }
-if (this.availableChunkSize == 0) {
-  if (fillLine()) {
-    clearLineBuilder();
-    this.chunkState=STATE_CHUNK_SIZE;
-  }
  else {
-    tryAgain=false;
+      System.out.println("No chunk data read");
+    }
   }
-}
+ else   if (this.availableChunkSize == 0) {
+    if (fillLine()) {
+      clearLineBuilder();
+      this.chunkState=ChunkState.SIZE;
+    }
+ else {
+      tryAgain=false;
+    }
+  }
 break;
-case STATE_CHUNK_TRAILER:
-this.chunkState=STATE_CHUNK_END;
+case TRAILER:
+this.chunkState=ChunkState.END;
 break;
-case STATE_CHUNK_END:
+case END:
 result=-1;
 tryAgain=false;
 break;
