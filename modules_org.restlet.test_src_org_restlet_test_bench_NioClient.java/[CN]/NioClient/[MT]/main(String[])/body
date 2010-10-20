@@ -11,19 +11,16 @@
   client.getContext().getParameters().add("directBuffers","false");
   client.start();
   String uri="http://127.0.0.1:9999/";
-  int iterations=10;
+  int iterations=1000;
   ClientResource cr=new ClientResource(uri);
   cr.setRetryOnError(false);
   cr.setNext(client);
   Representation r=null;
-  ClientResource fr=new ClientResource("file://C/TEST/apache-copy.zip");
   System.out.println("Calling resource: " + uri + " "+ iterations+ " times");
   long start=System.currentTimeMillis();
   for (int i=0; i < iterations; i++) {
-    r=cr.post("Sample content posted");
-    System.out.println("Copying to the local file");
-    fr.put(r);
-    System.out.println("Copy done!");
+    r=cr.get();
+    r.exhaust();
   }
   long total=(System.currentTimeMillis() - start);
   long avg=total / iterations;
