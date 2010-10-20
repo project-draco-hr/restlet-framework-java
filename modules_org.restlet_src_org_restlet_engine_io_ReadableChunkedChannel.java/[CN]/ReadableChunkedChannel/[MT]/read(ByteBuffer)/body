@@ -5,7 +5,7 @@
 switch (this.chunkState) {
 case SIZE:
       if (fillLineBuilder()) {
-        System.out.print("### New chunk detected. Size: ");
+        System.out.print("New chunk detected. Size: ");
         int length=getLineBuilder().length();
         if (length == 0) {
           throw new IOException("An empty chunk size line was detected");
@@ -59,8 +59,12 @@ case TRAILER:
 this.chunkState=ChunkState.END;
 break;
 case END:
+if (fillLineBuilder()) {
+if (getLineBuilder().length() == 0) {
 result=-1;
 tryAgain=false;
+}
+}
 break;
 }
 }

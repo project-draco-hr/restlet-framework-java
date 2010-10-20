@@ -11,7 +11,7 @@
   client.getContext().getParameters().add("directBuffers","false");
   client.start();
   String uri="http://127.0.0.1:9999/";
-  int iterations=1;
+  int iterations=10;
   ClientResource cr=new ClientResource(uri);
   cr.setRetryOnError(false);
   cr.setNext(client);
@@ -23,9 +23,9 @@
     r=cr.post("Sample content posted");
     System.out.println("Copying to the local file");
     fr.put(r);
-    System.out.println("Done!");
+    System.out.println("Copy done!");
   }
   long total=(System.currentTimeMillis() - start);
   long avg=total / iterations;
-  System.out.println("Done in " + total + ". avg per call: "+ avg);
+  System.out.println("Bench completed in " + total + " ms. Average time per call: "+ avg+ " ms");
 }
