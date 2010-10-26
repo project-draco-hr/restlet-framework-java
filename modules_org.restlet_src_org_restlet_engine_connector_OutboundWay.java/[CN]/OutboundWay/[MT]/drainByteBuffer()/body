@@ -1,8 +1,9 @@
 {
-  if ((getByteBuffer().position() > 0) && (getIoState() == IoState.PROCESSING)) {
-    getByteBuffer().flip();
+  if ((getByteBuffer().hasRemaining()) && (getIoState() == IoState.PROCESSING)) {
     int bytesWritten=getConnection().getWritableSelectionChannel().write(getByteBuffer());
-    System.out.println("Bytes written: " + bytesWritten);
+    if (getLogger().isLoggable(Level.FINE)) {
+      getLogger().fine("Bytes written: " + bytesWritten);
+    }
     if (bytesWritten == 0) {
       setIoState(IoState.INTEREST);
     }
