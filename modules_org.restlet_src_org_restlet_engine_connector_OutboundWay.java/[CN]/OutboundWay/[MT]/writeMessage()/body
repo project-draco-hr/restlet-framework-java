@@ -24,7 +24,7 @@ case STREAM:
   if (getByteBuffer().hasArray()) {
     byte[] byteArray=getByteBuffer().array();
     if (available > 0) {
-      result=getEntityStream().read(byteArray,getByteBuffer().position(),available);
+      result=getEntityStream().read(byteArray,getByteBuffer().position(),Math.min(available,getByteBuffer().remaining()));
       if (result > 0) {
         getByteBuffer().position(getByteBuffer().position() + result);
         setEntityIndex(getEntityIndex() + result);
@@ -38,6 +38,7 @@ case STREAM:
       }
     }
  else {
+      getLogger().warning("Blocking BIO streams are not supported yet.");
     }
   }
  else {
