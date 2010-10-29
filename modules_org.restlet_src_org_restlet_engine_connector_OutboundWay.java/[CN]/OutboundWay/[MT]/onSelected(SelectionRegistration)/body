@@ -4,10 +4,14 @@
     if (message != null) {
       super.onSelected(registration);
       while (isProcessing()) {
-        fillByteBuffer();
-        drainByteBuffer();
-        if (getMessageState() == MessageState.IDLE) {
-          updateState();
+        if (getByteBufferState() == BufferState.FILLING) {
+          fillByteBuffer();
+        }
+ else         if (getByteBufferState() == BufferState.DRAINING) {
+          drainByteBuffer();
+          if (getMessageState() == MessageState.IDLE) {
+            updateState();
+          }
         }
       }
     }

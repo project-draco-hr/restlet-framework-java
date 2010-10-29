@@ -5,7 +5,6 @@
 switch (this.chunkState) {
 case SIZE:
       if (fillLineBuilder()) {
-        System.out.print("New chunk detected. Size: ");
         int length=getLineBuilder().length();
         if (length == 0) {
           throw new IOException("An empty chunk size line was detected");
@@ -15,7 +14,7 @@ case SIZE:
         try {
           this.availableChunkSize=Long.parseLong(getLineBuilder().substring(0,index).trim(),16);
           clearLineBuilder();
-          System.out.println(this.availableChunkSize);
+          Context.getCurrentLogger().info("New chunk detected. Size: " + this.availableChunkSize);
         }
  catch (        NumberFormatException ex) {
           throw new IOException("\"" + getLineBuilder() + "\" has an invalid chunk size");
@@ -42,7 +41,7 @@ case DATA:
       this.availableChunkSize-=result;
     }
  else {
-      System.out.println("No chunk data read");
+      Context.getCurrentLogger().info("No chunk data read");
     }
   }
  else   if (this.availableChunkSize == 0) {
