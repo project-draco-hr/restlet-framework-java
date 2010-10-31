@@ -1,21 +1,26 @@
 {
   boolean result=false;
+  if (getLineBuilderState() != BufferState.DRAINING) {
 synchronized (getByteBuffer()) {
-    int size=0;
-    if (getBufferState() == BufferState.DRAINING) {
-      size=getByteBuffer().remaining();
-    }
-    if (size == 0) {
-      setBufferState(BufferState.FILLING);
-      getByteBuffer().clear();
-      if (super.refill()) {
-        size=getByteBuffer().remaining();
+      int byteBufferSize=0;
+      if (getByteBufferState() == BufferState.DRAINING) {
+        byteBufferSize=getByteBuffer().remaining();
+      }
+      if (byteBufferSize == 0) {
+        setByteBufferState(BufferState.FILLING);
+        getByteBuffer().clear();
+        if (super.refill()) {
+          byteBufferSize=getByteBuffer().remaining();
+        }
+      }
+      if (byteBufferSize > 0) {
+        setLineBuilderState(NioUtils.fillLine(getLineBuilder(),getLineBuilderState(),getByteBuffer()));
+        return getLineBuilderState() == BufferState.DRAINING;
       }
     }
-    if (size > 0) {
-      setLineBuilderState(NioUtils.fillLine(getLineBuilder(),getLineBuilderState(),getByteBuffer()));
-      return getLineBuilderState() == BufferState.DRAINING;
-    }
+  }
+ else {
+    result=true;
   }
   return result;
 }

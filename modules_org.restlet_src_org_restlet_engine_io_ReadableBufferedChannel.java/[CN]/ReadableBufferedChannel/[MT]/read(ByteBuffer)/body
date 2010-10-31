@@ -4,15 +4,11 @@
   boolean tryAgain=true;
 synchronized (getByteBuffer()) {
     while (tryAgain) {
-switch (getBufferState()) {
+switch (getByteBufferState()) {
 case FILLED:
-        setBufferState(BufferState.DRAINING);
+        setByteBufferState(BufferState.DRAINING);
 case DRAINING:
-      if (getByteBuffer().remaining() == 0) {
-        setBufferState(BufferState.FILLING);
-        getByteBuffer().clear();
-      }
- else {
+      if (getByteBuffer().remaining() > 0) {
         if (getByteBuffer().remaining() >= targetBuffer.remaining()) {
           currentRead=targetBuffer.remaining();
           tryAgain=false;
@@ -25,9 +21,13 @@ case DRAINING:
         }
         totalRead+=currentRead;
       }
-    break;
+    if (getByteBuffer().remaining() == 0) {
+      setByteBufferState(BufferState.FILLING);
+      getByteBuffer().clear();
+    }
+  break;
 case IDLE:
-  setBufferState(BufferState.FILLING);
+setByteBufferState(BufferState.FILLING);
 case FILLING:
 tryAgain=refill();
 break;

@@ -13,11 +13,13 @@ case SIZE:
         index=(index == -1) ? getLineBuilder().length() : index;
         try {
           this.availableChunkSize=Long.parseLong(getLineBuilder().substring(0,index).trim(),16);
-          clearLineBuilder();
           Context.getCurrentLogger().info("New chunk detected. Size: " + this.availableChunkSize);
         }
  catch (        NumberFormatException ex) {
           throw new IOException("\"" + getLineBuilder() + "\" has an invalid chunk size");
+        }
+ finally {
+          clearLineBuilder();
         }
         if (this.availableChunkSize == 0) {
           this.chunkState=ChunkState.TRAILER;
