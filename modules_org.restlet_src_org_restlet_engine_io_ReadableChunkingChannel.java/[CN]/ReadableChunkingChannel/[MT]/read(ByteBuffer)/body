@@ -1,4 +1,30 @@
 {
   int result=0;
+  int chunkStart=dst.position();
+  int maxChunkDataSize=dst.remaining() - this.chunkSizeLength - 4;
+  int chunkDataSize=0;
+  if (maxChunkDataSize > 0) {
+    dst.position(chunkStart + this.chunkSizeLength + 2);
+    dst.limit(dst.position() + maxChunkDataSize);
+    chunkDataSize=getWrappedChannel().read(dst);
+    dst.limit(dst.position() + 2);
+    dst.put((byte)13);
+    dst.put((byte)10);
+    if (chunkDataSize != 0) {
+      dst.position(chunkStart);
+      if (chunkDataSize == -1) {
+        putChunkSizeString(dst,0);
+      }
+ else {
+        putChunkSizeString(dst,chunkDataSize);
+      }
+      dst.position(dst.position() + chunkDataSize + 2);
+      result=dst.position() - chunkStart;
+    }
+ else {
+    }
+  }
+ else {
+  }
   return result;
 }
