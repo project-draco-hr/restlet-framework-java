@@ -4,8 +4,15 @@
   boolean chunkedEncoding=HeaderUtils.isChunkedEncoding(headers);
   boolean connectionClose=HeaderUtils.isConnectionClose(headers);
   if ((contentLength != Representation.UNKNOWN_SIZE && contentLength != 0) || chunkedEncoding || connectionClose) {
-    ReadableSelectionChannel inboundEntityChannel=getEntityChannel(contentLength,chunkedEncoding);
-    setEntityRegistration(inboundEntityChannel.getRegistration());
+    ReadableByteChannel inboundEntityChannel=null;
+    ReadableBufferedChannel rbc=new ReadableBufferedChannel(this,getByteBuffer(),getConnection().getReadableSelectionChannel());
+    if (chunkedEncoding) {
+      inboundEntityChannel=new ReadableChunkedChannel(rbc);
+    }
+ else {
+      inboundEntityChannel=new ReadableSizedChannel(rbc,contentLength);
+    }
+    setEntityRegistration(rbc.getRegistration());
     if (inboundEntityChannel != null) {
       result=new ReadableRepresentation(inboundEntityChannel,null,contentLength){
         @Override public void release(){

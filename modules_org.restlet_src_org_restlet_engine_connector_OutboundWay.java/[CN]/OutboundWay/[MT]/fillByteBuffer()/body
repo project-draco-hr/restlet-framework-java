@@ -1,60 +1,31 @@
 {
-  while (isProcessing() && getByteBuffer().hasRemaining() && (getMessageState() != MessageState.END)) {
+  while (isProcessing() && getByteBuffer().hasRemaining()) {
     if (getMessageState() == MessageState.BODY) {
-      int result=0;
-switch (getEntityType()) {
-case ASYNC_CHANNEL:
-case FILE_CHANNEL:
-case SYNC_CHANNEL:
-        result=getEntityChannel().read(getByteBuffer());
+      int result=getEntityChannel().read(getByteBuffer());
       if (result == -1) {
         setMessageState(MessageState.END);
+        onCompleted();
       }
-    break;
-case STREAM:
-  int available=getEntityStream().available();
-if (getByteBuffer().hasArray() && (available > 0)) {
-  byte[] byteArray=getByteBuffer().array();
-  result=getEntityStream().read(byteArray,getByteBuffer().position(),Math.min(available,getByteBuffer().remaining()));
-  if (result > 0) {
-    getByteBuffer().position(getByteBuffer().position() + result);
-  }
- else   if (result == -1) {
-    getByteBuffer().position(getByteBuffer().position() + available);
-  }
-  if (result == -1) {
-    setMessageState(MessageState.END);
-  }
-}
+    }
  else {
-  ReadableByteChannel rbc=Channels.newChannel(getEntityStream());
-  result=rbc.read(getByteBuffer());
-  if (result == -1) {
-    setMessageState(MessageState.END);
+      if (getLineBuilder().length() == 0) {
+        writeLine();
+      }
+      if (getLineBuilder().length() > 0) {
+        int remaining=getByteBuffer().remaining();
+        if (remaining >= getLineBuilder().length()) {
+          getByteBuffer().put(StringUtils.getLatin1Bytes(getLineBuilder().toString()));
+          clearLineBuilder();
+        }
+ else {
+          getByteBuffer().put(StringUtils.getLatin1Bytes(getLineBuilder().substring(0,remaining)));
+          getLineBuilder().delete(0,remaining);
+        }
+      }
+    }
   }
-}
-break;
-}
-}
- else {
-if (getLineBuilder().length() == 0) {
-writeLine();
-}
-if (getLineBuilder().length() > 0) {
-int remaining=getByteBuffer().remaining();
-if (remaining >= getLineBuilder().length()) {
-getByteBuffer().put(StringUtils.getLatin1Bytes(getLineBuilder().toString()));
-clearLineBuilder();
-}
- else {
-getByteBuffer().put(StringUtils.getLatin1Bytes(getLineBuilder().substring(0,remaining)));
-getLineBuilder().delete(0,remaining);
-}
-}
-}
-}
-if (getByteBuffer().position() > 0) {
-getByteBuffer().flip();
-setByteBufferState(BufferState.DRAINING);
-}
+  if (getByteBuffer().position() > 0) {
+    getByteBuffer().flip();
+    setByteBufferState(BufferState.DRAINING);
+  }
 }

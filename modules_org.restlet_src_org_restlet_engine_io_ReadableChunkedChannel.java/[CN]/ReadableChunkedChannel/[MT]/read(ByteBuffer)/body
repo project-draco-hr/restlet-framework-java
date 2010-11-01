@@ -4,24 +4,24 @@
   while (tryAgain) {
 switch (this.chunkState) {
 case SIZE:
-      if (fillLineBuilder()) {
-        int length=getLineBuilder().length();
+      if (getWrappedChannel().fillLineBuilder()) {
+        int length=getWrappedChannel().getLineBuilder().length();
         if (length == 0) {
           throw new IOException("An empty chunk size line was detected");
         }
-        int index=(getLineBuilder().indexOf(";"));
-        index=(index == -1) ? getLineBuilder().length() : index;
+        int index=(getWrappedChannel().getLineBuilder().indexOf(";"));
+        index=(index == -1) ? getWrappedChannel().getLineBuilder().length() : index;
         try {
-          this.availableChunkSize=Long.parseLong(getLineBuilder().substring(0,index).trim(),16);
-          Context.getCurrentLogger().info("New chunk detected. Size: " + this.availableChunkSize);
+          this.remainingChunkSize=Long.parseLong(getWrappedChannel().getLineBuilder().substring(0,index).trim(),16);
+          Context.getCurrentLogger().info("New chunk detected. Size: " + this.remainingChunkSize);
         }
  catch (        NumberFormatException ex) {
-          throw new IOException("\"" + getLineBuilder() + "\" has an invalid chunk size");
+          throw new IOException("\"" + getWrappedChannel().getLineBuilder() + "\" has an invalid chunk size");
         }
  finally {
-          clearLineBuilder();
+          getWrappedChannel().clearLineBuilder();
         }
-        if (this.availableChunkSize == 0) {
+        if (this.remainingChunkSize == 0) {
           this.chunkState=ChunkState.TRAILER;
         }
  else {
@@ -33,22 +33,22 @@ case SIZE:
       }
     break;
 case DATA:
-  if (this.availableChunkSize > 0) {
-    if (this.availableChunkSize < dst.remaining()) {
-      dst.limit((int)(this.availableChunkSize + dst.position()));
+  if (this.remainingChunkSize > 0) {
+    if (this.remainingChunkSize < dst.remaining()) {
+      dst.limit((int)(this.remainingChunkSize + dst.position()));
     }
-    result=super.read(dst);
+    result=getWrappedChannel().read(dst);
     tryAgain=false;
     if (result > 0) {
-      this.availableChunkSize-=result;
+      this.remainingChunkSize-=result;
     }
  else {
       Context.getCurrentLogger().info("No chunk data read");
     }
   }
- else   if (this.availableChunkSize == 0) {
-    if (fillLineBuilder()) {
-      clearLineBuilder();
+ else   if (this.remainingChunkSize == 0) {
+    if (getWrappedChannel().fillLineBuilder()) {
+      getWrappedChannel().clearLineBuilder();
       this.chunkState=ChunkState.SIZE;
     }
  else {
@@ -60,8 +60,8 @@ case TRAILER:
 this.chunkState=ChunkState.END;
 break;
 case END:
-if (fillLineBuilder()) {
-if (getLineBuilder().length() == 0) {
+if (getWrappedChannel().fillLineBuilder()) {
+if (getWrappedChannel().getLineBuilder().length() == 0) {
 result=-1;
 tryAgain=false;
 }
@@ -69,6 +69,8 @@ tryAgain=false;
 break;
 }
 }
-postRead(result);
+if (getWrappedChannel() instanceof ReadableBufferedChannel) {
+((ReadableBufferedChannel)getWrappedChannel()).postRead(result);
+}
 return result;
 }

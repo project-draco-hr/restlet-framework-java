@@ -1,3 +1,10 @@
 {
-  return (inputStream != null) ? Channels.newChannel(inputStream) : null;
+  ReadableByteChannel result=null;
+  if (inputStream instanceof FileInputStream) {
+    result=((FileInputStream)inputStream).getChannel();
+  }
+ else   if (inputStream != null) {
+    result=new InputStreamChannel(inputStream);
+  }
+  return result;
 }

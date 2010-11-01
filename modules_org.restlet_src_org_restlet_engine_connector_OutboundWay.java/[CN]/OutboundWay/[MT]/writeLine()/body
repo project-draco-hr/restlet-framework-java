@@ -24,25 +24,36 @@ getLineBuilder().append('\r');
 getLineBuilder().append('\n');
 if (getActualMessage().isEntityAvailable()) {
 setMessageState(MessageState.BODY);
-if (getActualMessage().getEntity() instanceof FileRepresentation) {
-  FileRepresentation fr=(FileRepresentation)getActualMessage().getEntity();
-  setEntityChannel(fr.getChannel());
-  setEntityType(EntityType.FILE_CHANNEL);
+ReadableByteChannel rbc=getActualMessage().getEntity().getChannel();
+if (rbc instanceof FileChannel) {
+  setEntityChannelType(EntityType.TRANSFERABLE);
 }
- else if (getActualMessage().getEntity() instanceof ReadableRepresentation) {
-  ReadableRepresentation rr=(ReadableRepresentation)getActualMessage().getEntity();
-  setEntityChannel(rr.getChannel());
-  setEntityType(EntityType.SYNC_CHANNEL);
-  if (getEntityChannel() instanceof SelectableChannel) {
-    SelectableChannel sc=(SelectableChannel)getEntityChannel();
-    if (!sc.isBlocking()) {
-      setEntityType(EntityType.ASYNC_CHANNEL);
-    }
+ else if (rbc instanceof BlockableChannel) {
+  BlockableChannel bc=(BlockableChannel)rbc;
+  if (bc.isBlocking()) {
+    setEntityChannelType(EntityType.BLOCKING);
+  }
+ else {
+    setEntityChannelType(EntityType.NON_BLOCKING);
+  }
+}
+ else if (rbc instanceof SelectableChannel) {
+  SelectableChannel sc=(SelectableChannel)rbc;
+  if (sc.isBlocking()) {
+    setEntityChannelType(EntityType.BLOCKING);
+  }
+ else {
+    setEntityChannelType(EntityType.NON_BLOCKING);
   }
 }
  else {
-  setEntityStream(getActualMessage().getEntity().getStream());
-  setEntityType(EntityType.STREAM);
+  setEntityChannelType(EntityType.BLOCKING);
+}
+if (getActualMessage().getEntity().getSize() == Representation.UNKNOWN_SIZE) {
+  setEntityChannel(new ReadableChunkingChannel(rbc));
+}
+ else {
+  setEntityChannel(new ReadableSizedChannel(rbc,getActualMessage().getEntity().getSize()));
 }
 }
  else {
