@@ -1,10 +1,9 @@
 {
-  while (isProcessing() && getByteBuffer().hasRemaining()) {
+  while (isProcessing() && getByteBuffer().hasRemaining() && (getMessageState() != MessageState.END)) {
     if (getMessageState() == MessageState.BODY) {
       int result=getEntityChannel().read(getByteBuffer());
       if (result == -1) {
         setMessageState(MessageState.END);
-        onCompleted();
       }
     }
  else {
