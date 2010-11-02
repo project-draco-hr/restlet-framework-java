@@ -2,6 +2,11 @@
   if (getLogger().isLoggable(Level.FINER)) {
     getLogger().finer("Inbound message fully received");
   }
-  getHeaders().clear();
+  if (HeaderUtils.isConnectionClose(getHeaders())) {
+    getConnection().setState(ConnectionState.CLOSING);
+  }
+  if (getHeaders() != null) {
+    getHeaders().clear();
+  }
   super.onCompleted();
 }

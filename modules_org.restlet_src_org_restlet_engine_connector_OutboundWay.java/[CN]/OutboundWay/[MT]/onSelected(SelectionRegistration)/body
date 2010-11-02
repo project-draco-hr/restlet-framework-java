@@ -5,7 +5,12 @@
       super.onSelected(registration);
       while (isProcessing()) {
         if (getByteBufferState() == BufferState.FILLING) {
-          fillByteBuffer();
+          if (getMessageState() == MessageState.END) {
+            onCompleted();
+          }
+ else {
+            fillByteBuffer();
+          }
         }
  else         if (getByteBufferState() == BufferState.DRAINING) {
           drainByteBuffer();

@@ -13,7 +13,9 @@ case SIZE:
         index=(index == -1) ? getWrappedChannel().getLineBuilder().length() : index;
         try {
           this.remainingChunkSize=Long.parseLong(getWrappedChannel().getLineBuilder().substring(0,index).trim(),16);
-          Context.getCurrentLogger().info("New chunk detected. Size: " + this.remainingChunkSize);
+          if (Context.getCurrentLogger().isLoggable(Level.FINE)) {
+            Context.getCurrentLogger().fine("New chunk detected. Size: " + this.remainingChunkSize);
+          }
         }
  catch (        NumberFormatException ex) {
           throw new IOException("\"" + getWrappedChannel().getLineBuilder() + "\" has an invalid chunk size");
@@ -43,7 +45,9 @@ case DATA:
       this.remainingChunkSize-=result;
     }
  else {
-      Context.getCurrentLogger().info("No chunk data read");
+      if (Context.getCurrentLogger().isLoggable(Level.FINE)) {
+        Context.getCurrentLogger().fine("No chunk data read");
+      }
     }
   }
  else   if (this.remainingChunkSize == 0) {
