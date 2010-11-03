@@ -1,9 +1,0 @@
-def setup(handlers=[]):
-    parser = expat.ParserCreate()
-    require((not parser.buffer_text), 'buffer_text not disabled by default')
-    parser.buffer_text = 1
-    handler = TextCollector(parser)
-    parser.CharacterDataHandler = handler.CharacterDataHandler
-    for name in handlers:
-        setattr(parser, name, getattr(handler, name))
-    return (parser, handler)

@@ -1,8 +1,0 @@
-def safe_mktemp(*args, **kwargs):
-    "Return a temp filename similar to tempfile.mktemp()\n\n    The 'safety' features:\n    o ensures the filename is safe to use as a Python module name\n    o ensures a file of the same name does not exist in the current\n    working directory (to avoid false chdir positives -- extra paranoia)\n    "
-    while True:
-        (dir, basename) = os.path.split(tempfile.mktemp(*args, **kwargs))
-        basename = basename.replace('-', '')
-        name = os.path.join(dir, basename)
-        if ((not os.path.exists(name)) and (not os.path.exists(os.path.join(os.getcwd(), basename)))):
-            return name

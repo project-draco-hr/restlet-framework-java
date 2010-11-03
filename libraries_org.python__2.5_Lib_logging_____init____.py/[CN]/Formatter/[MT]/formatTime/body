@@ -1,9 +1,0 @@
-def formatTime(self, record, datefmt=None):
-    "\n        Return the creation time of the specified LogRecord as formatted text.\n\n        This method should be called from format() by a formatter which\n        wants to make use of a formatted time. This method can be overridden\n        in formatters to provide for any specific requirement, but the\n        basic behaviour is as follows: if datefmt (a string) is specified,\n        it is used with time.strftime() to format the creation time of the\n        record. Otherwise, the ISO8601 format is used. The resulting\n        string is returned. This function uses a user-configurable function\n        to convert the creation time to a tuple. By default, time.localtime()\n        is used; to change this for a particular formatter instance, set the\n        'converter' attribute to a function with the same signature as\n        time.localtime() or time.gmtime(). To change it for all formatters,\n        for example if you want all logging times to be shown in GMT,\n        set the 'converter' attribute in the Formatter class.\n        "
-    ct = self.converter(record.created)
-    if datefmt:
-        s = time.strftime(datefmt, ct)
-    else:
-        t = time.strftime('%Y-%m-%d %H:%M:%S', ct)
-        s = ('%s,%03d' % (t, record.msecs))
-    return s

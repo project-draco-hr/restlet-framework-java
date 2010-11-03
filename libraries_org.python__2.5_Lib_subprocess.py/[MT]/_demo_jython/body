@@ -1,8 +1,0 @@
-def _demo_jython():
-    print 'Running a jython subprocess to return the number of processors...'
-    p = Popen([sys.executable, '-c', 'import sys;from java.lang import Runtime;sys.exit(Runtime.getRuntime().availableProcessors())'])
-    print p.wait()
-    print 'Connecting two jython subprocesses...'
-    p1 = Popen([sys.executable, '-c', 'import os;print os.environ["foo"]'], env=dict(foo='bar'), stdout=PIPE)
-    p2 = Popen([sys.executable, '-c', 'import os, sys;their_foo = sys.stdin.read().strip();my_foo = os.environ["foo"];msg = "Their env\'s foo: %r, My env\'s foo: %r";print msg % (their_foo, my_foo)'], env=dict(foo='baz'), stdin=p1.stdout, stdout=PIPE)
-    print p2.communicate()[0]

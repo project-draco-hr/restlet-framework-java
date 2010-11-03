@@ -1,8 +1,0 @@
-def test_expat_nsattrs_wattr():
-    parser = make_parser()
-    parser.setFeature(handler.feature_namespaces, 1)
-    gather = AttrGatherer()
-    parser.setContentHandler(gather)
-    parser.parse(StringIO(("<doc xmlns:ns='%s' ns:attr='val'/>" % ns_uri)))
-    attrs = gather._attrs
-    return ((attrs.getLength() == 1) and (attrs.getNames() == [(ns_uri, 'attr')]) and (attrs.getQNames() == ['ns:attr']) and (len(attrs) == 1) and attrs.has_key((ns_uri, 'attr')) and (attrs.keys() == [(ns_uri, 'attr')]) and (attrs.get((ns_uri, 'attr')) == 'val') and (attrs.get((ns_uri, 'attr'), 25) == 'val') and (attrs.items() == [((ns_uri, 'attr'), 'val')]) and (attrs.values() == ['val']) and (attrs.getValue((ns_uri, 'attr')) == 'val') and (attrs[(ns_uri, 'attr')] == 'val'))

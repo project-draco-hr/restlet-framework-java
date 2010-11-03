@@ -1,9 +1,0 @@
-def read_long4(f):
-    '\n    >>> import StringIO\n    >>> read_long4(StringIO.StringIO("\\x02\\x00\\x00\\x00\\xff\\x00"))\n    255L\n    >>> read_long4(StringIO.StringIO("\\x02\\x00\\x00\\x00\\xff\\x7f"))\n    32767L\n    >>> read_long4(StringIO.StringIO("\\x02\\x00\\x00\\x00\\x00\\xff"))\n    -256L\n    >>> read_long4(StringIO.StringIO("\\x02\\x00\\x00\\x00\\x00\\x80"))\n    -32768L\n    >>> read_long1(StringIO.StringIO("\\x00\\x00\\x00\\x00"))\n    0L\n    '
-    n = read_int4(f)
-    if (n < 0):
-        raise ValueError(('long4 byte count < 0: %d' % n))
-    data = f.read(n)
-    if (len(data) != n):
-        raise ValueError('not enough data in stream to read long4')
-    return decode_long(data)

@@ -1,5 +1,0 @@
-def calc_chksums(buf):
-    "Calculate the checksum for a member's header by summing up all\n       characters except for the chksum field which is treated as if\n       it was filled with spaces. According to the GNU tar sources,\n       some tars (Sun and NeXT) calculate chksum with signed char,\n       which will be different if there are chars in the buffer with\n       the high bit set. So we calculate two checksums, unsigned and\n       signed.\n    "
-    unsigned_chksum = (256 + sum((struct.unpack('148B', buf[:148]) + struct.unpack('356B', buf[156:512]))))
-    signed_chksum = (256 + sum((struct.unpack('148b', buf[:148]) + struct.unpack('356b', buf[156:512]))))
-    return (unsigned_chksum, signed_chksum)

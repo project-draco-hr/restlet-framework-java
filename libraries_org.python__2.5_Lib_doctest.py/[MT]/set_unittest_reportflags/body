@@ -1,8 +1,0 @@
-def set_unittest_reportflags(flags):
-    "Sets the unittest option flags.\n\n    The old flag is returned so that a runner could restore the old\n    value if it wished to:\n\n      >>> import doctest\n      >>> old = doctest._unittest_reportflags\n      >>> doctest.set_unittest_reportflags(REPORT_NDIFF |\n      ...                          REPORT_ONLY_FIRST_FAILURE) == old\n      True\n\n      >>> doctest._unittest_reportflags == (REPORT_NDIFF |\n      ...                                   REPORT_ONLY_FIRST_FAILURE)\n      True\n\n    Only reporting flags can be set:\n\n      >>> doctest.set_unittest_reportflags(ELLIPSIS)\n      Traceback (most recent call last):\n      ...\n      ValueError: ('Only reporting flags allowed', 8)\n\n      >>> doctest.set_unittest_reportflags(old) == (REPORT_NDIFF |\n      ...                                   REPORT_ONLY_FIRST_FAILURE)\n      True\n    "
-    global _unittest_reportflags
-    if ((flags & REPORTING_FLAGS) != flags):
-        raise ValueError('Only reporting flags allowed', flags)
-    old = _unittest_reportflags
-    _unittest_reportflags = flags
-    return old

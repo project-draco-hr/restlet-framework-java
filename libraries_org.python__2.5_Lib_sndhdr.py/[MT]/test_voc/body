@@ -1,9 +1,0 @@
-def test_voc(h, f):
-    if (h[:20] != 'Creative Voice File\x1a'):
-        return None
-    sbseek = get_short_le(h[20:22])
-    rate = 0
-    if ((0 <= sbseek < 500) and (h[sbseek] == '\x01')):
-        ratecode = ord(h[(sbseek + 4)])
-        rate = int((1000000.0 / (256 - ratecode)))
-    return ('voc', rate, 1, (-1), 8)

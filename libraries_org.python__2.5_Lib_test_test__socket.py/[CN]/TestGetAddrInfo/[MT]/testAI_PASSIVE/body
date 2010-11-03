@@ -1,9 +1,0 @@
-def testAI_PASSIVE(self):
-    IPV4_LOOPBACK = '127.0.0.1'
-    local_hostname = java.net.InetAddress.getLocalHost().getHostName()
-    local_ip_address = java.net.InetAddress.getLocalHost().getHostAddress()
-    for (flags, host_param, expected_canonname, expected_sockaddr) in [(socket.AI_PASSIVE, None, '', socket.INADDR_ANY), (socket.AI_PASSIVE, '', '', local_ip_address), (socket.AI_PASSIVE, 'localhost', '', IPV4_LOOPBACK), (socket.AI_PASSIVE, local_hostname, '', local_ip_address)]:
-        addrinfos = socket.getaddrinfo(host_param, 0, socket.AF_INET, socket.SOCK_STREAM, 0, flags)
-        for (family, socktype, proto, canonname, sockaddr) in addrinfos:
-            self.failUnlessEqual(expected_canonname, canonname, ("For hostname '%s' and flags %d, canonname '%s' != '%s'" % (host_param, flags, expected_canonname, canonname)))
-            self.failUnlessEqual(expected_sockaddr, sockaddr[0], ("For hostname '%s' and flags %d, sockaddr '%s' != '%s'" % (host_param, flags, expected_sockaddr, sockaddr[0])))

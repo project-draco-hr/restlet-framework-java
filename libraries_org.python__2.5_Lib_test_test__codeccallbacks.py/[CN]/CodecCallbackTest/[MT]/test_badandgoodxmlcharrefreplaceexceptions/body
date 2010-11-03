@@ -1,8 +1,0 @@
-def test_badandgoodxmlcharrefreplaceexceptions(self):
-    self.assertRaises(TypeError, codecs.xmlcharrefreplace_errors, 42)
-    self.assertRaises(TypeError, codecs.xmlcharrefreplace_errors, UnicodeError('ouch'))
-    self.assertRaises(TypeError, codecs.xmlcharrefreplace_errors, UnicodeDecodeError('ascii', '\xff', 0, 1, 'ouch'))
-    self.assertRaises(TypeError, codecs.xmlcharrefreplace_errors, UnicodeTranslateError(u'\u3042', 0, 1, 'ouch'))
-    cs = (0, 1, 9, 10, 99, 100, 999, 1000, 9999, 10000, 12354)
-    s = ''.join((unichr(c) for c in cs))
-    self.assertEquals(codecs.xmlcharrefreplace_errors(UnicodeEncodeError('ascii', s, 0, len(s), 'ouch')), (u''.join(((u'&#%d;' % ord(c)) for c in s)), len(s)))

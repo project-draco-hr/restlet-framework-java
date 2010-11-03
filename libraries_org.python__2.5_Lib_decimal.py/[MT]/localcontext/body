@@ -1,6 +1,0 @@
-def localcontext(ctx=None):
-    'Return a context manager for a copy of the supplied context\n\n    Uses a copy of the current context if no context is specified\n    The returned context manager creates a local decimal context\n    in a with statement:\n        def sin(x):\n             with localcontext() as ctx:\n                 ctx.prec += 2\n                 # Rest of sin calculation algorithm\n                 # uses a precision 2 greater than normal\n             return +s  # Convert result to normal precision\n\n         def sin(x):\n             with localcontext(ExtendedContext):\n                 # Rest of sin calculation algorithm\n                 # uses the Extended Context from the\n                 # General Decimal Arithmetic Specification\n             return +s  # Convert result to normal context\n\n    '
-    '\n    >>> from __future__ import with_statement\n    >>> print getcontext().prec\n    28\n    >>> with localcontext():\n    ...     ctx = getcontext()\n    ...     ctx.prec += 2\n    ...     print ctx.prec\n    ...\n    30\n    >>> with localcontext(ExtendedContext):\n    ...     print getcontext().prec\n    ...\n    9\n    >>> print getcontext().prec\n    28\n    '
-    if (ctx is None):
-        ctx = getcontext()
-    return _ContextManager(ctx)
