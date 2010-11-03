@@ -1,14 +1,7 @@
 {
-  SelectionRegistration registration=null;
-  for (  SelectionKey key : getSelector().keys()) {
-    if (key.attachment() instanceof SelectionRegistration) {
-      registration=(SelectionRegistration)key.attachment();
-      if (registration.isCanceled()) {
-        key.cancel();
-      }
- else       if (key.isValid()) {
-        key.interestOps(registration.getInterestOperations());
-      }
-    }
+  SelectionRegistration updatedRegistration=getUpdatedRegistrations().poll();
+  while (updatedRegistration != null) {
+    updatedRegistration.update();
+    updatedRegistration=getUpdatedRegistrations().poll();
   }
 }

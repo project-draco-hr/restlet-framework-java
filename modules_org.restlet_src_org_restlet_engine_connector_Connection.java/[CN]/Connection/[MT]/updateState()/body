@@ -1,7 +1,9 @@
 {
+  boolean result=false;
   if ((getState() != ConnectionState.CLOSING) && (getState() != ConnectionState.CLOSED)) {
     getInboundWay().updateState();
     getOutboundWay().updateState();
-    getRegistration().setInterestOperations(getInboundWay().getRegistration().getInterestOperations() | getOutboundWay().getRegistration().getInterestOperations());
+    result=getRegistration().setInterestOperations(getInboundWay().getRegistration().getInterestOperations() | getOutboundWay().getRegistration().getInterestOperations());
   }
+  return result;
 }

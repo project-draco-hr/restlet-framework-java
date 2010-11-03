@@ -11,8 +11,8 @@
       conn.close(false);
       getHelper().getLogger().fine("Closing connection with no IO activity during " + getHelper().getMaxIoIdleTimeMs() + " ms.");
     }
- else {
-      conn.updateState();
+ else     if (conn.updateState()) {
+      getUpdatedRegistrations().add(conn.getRegistration());
     }
   }
 }
