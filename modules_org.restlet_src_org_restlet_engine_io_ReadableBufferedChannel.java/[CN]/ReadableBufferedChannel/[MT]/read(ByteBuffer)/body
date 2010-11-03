@@ -1,5 +1,5 @@
 {
-  int totalRead=0;
+  int result=0;
   int currentRead=0;
   boolean tryAgain=true;
 synchronized (getByteBuffer()) {
@@ -19,7 +19,7 @@ case DRAINING:
         for (int i=0; i < currentRead; i++) {
           targetBuffer.put(getByteBuffer().get());
         }
-        totalRead+=currentRead;
+        result+=currentRead;
       }
     if (getByteBuffer().remaining() == 0) {
       setByteBufferState(BufferState.FILLING);
@@ -34,5 +34,5 @@ break;
 }
 }
 }
-return totalRead;
+return result;
 }
