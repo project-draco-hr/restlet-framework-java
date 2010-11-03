@@ -1,11 +1,8 @@
 {
   int result=0;
-  if (this.buffer.length < bytesToRead) {
-    this.buffer=new byte[bytesToRead];
-  }
-  result=getInputStream().read(this.buffer,0,bytesToRead);
+  result=getInputStream().read(this.buffer,0,Math.min(this.buffer.length,bytesToRead));
   if (result > 0) {
-    target.put(buffer,0,result);
+    target.put(this.buffer,0,result);
   }
   return result;
 }
