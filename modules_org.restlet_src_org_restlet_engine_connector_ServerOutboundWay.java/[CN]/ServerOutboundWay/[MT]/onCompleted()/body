@@ -3,7 +3,7 @@
   if (!getMessage().getStatus().isInformational()) {
     getConnection().getInboundWay().getMessages().remove(getMessage());
   }
-  if (!getConnection().isPersistent()) {
+  if (!getConnection().isPersistent() || HeaderUtils.isConnectionClose(getHeaders())) {
     getConnection().close(true);
   }
   super.onCompleted();
