@@ -1,6 +1,7 @@
 {
   BioUtils.delete(testDir,true);
-  Client client=new Client(Protocol.HTTP);
+  Client client=new Client(new Context(),Protocol.HTTP);
+  client.getContext().getParameters().add("tracing","true");
   Request request=new Request(Method.PUT,"http://localhost:" + TEST_PORT + "/testPut/essai.txt");
   request.setEntity(new StringRepresentation("1234567890"));
   request.setRanges(Arrays.asList(new Range(0,10)));
