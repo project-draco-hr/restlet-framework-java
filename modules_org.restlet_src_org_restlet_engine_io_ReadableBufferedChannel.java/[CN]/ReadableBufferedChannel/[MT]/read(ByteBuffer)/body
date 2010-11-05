@@ -29,7 +29,14 @@ case DRAINING:
 case IDLE:
 setByteBufferState(BufferState.FILLING);
 case FILLING:
-tryAgain=refill();
+int refillCount=refill();
+if (refillCount == -1) {
+result=-1;
+tryAgain=false;
+}
+ else if (refillCount > 0) {
+tryAgain=true;
+}
 break;
 }
 }

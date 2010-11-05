@@ -1,9 +1,8 @@
 {
-  boolean result=false;
-  if (getWrappedChannel().read(getByteBuffer()) > 0) {
+  int readCount=getWrappedChannel().read(getByteBuffer());
+  if (readCount > 0) {
     setByteBufferState(BufferState.DRAINING);
     getByteBuffer().flip();
-    result=true;
   }
-  return result;
+  return readCount;
 }
