@@ -2,6 +2,15 @@
   SocketChannel result=SocketChannel.open();
   result.configureBlocking(false);
   Socket socket=result.socket();
+  socket.setKeepAlive(isSocketKeepAlive());
+  socket.setOOBInline(isSocketOobInline());
+  socket.setReceiveBufferSize(getSocketReceiveBufferSize());
+  socket.setReuseAddress(isSocketReuseAddress());
+  socket.setSoLinger(getSocketLingerTimeMs() > 0,getSocketLingerTimeMs());
+  socket.setSendBufferSize(getSocketSendBufferSize());
+  socket.setSoTimeout(getMaxIoIdleTimeMs());
+  socket.setTcpNoDelay(isSocketNoDelay());
+  socket.setTrafficClass(getSocketTrafficClass());
   InetSocketAddress address=new InetSocketAddress(hostDomain,hostPort);
   result.connect(address);
   return result;
