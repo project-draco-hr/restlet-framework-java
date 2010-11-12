@@ -1,0 +1,27 @@
+{
+  if ((System.getProperty("java.util.logging.config.file") == null) && (System.getProperty("java.util.logging.config.class") == null)) {
+    StringBuilder sb=new StringBuilder();
+    sb.append("handlers=");
+    sb.append(ConsoleHandler.class.getCanonicalName()).append('\n');
+    if (getLogLevel() != null) {
+      sb.append(".level=" + getLogLevel().getName()).append('\n');
+    }
+    if (getRestletLogLevel() != null) {
+      sb.append("org.restlet.level=" + getRestletLogLevel().getName()).append('\n');
+    }
+    String handler=ConsoleHandler.class.getCanonicalName();
+    sb.append(handler + ".formatter=" + getLogFormatter().getCanonicalName()+ "\n");
+    if (getLogLevel() != null) {
+      sb.append(handler + ".level=" + getLogLevel().getName()+ "\n");
+    }
+    try {
+      LogManager.getLogManager().readConfiguration(new ReaderInputStream(new StringReader(sb.toString()),CharacterSet.DEFAULT));
+    }
+ catch (    Exception e) {
+      e.printStackTrace();
+    }
+ finally {
+      logConfigured=true;
+    }
+  }
+}

@@ -21,4 +21,10 @@
   }
   HeaderUtils.copyResponseTransportHeaders(headers,restletResponse);
   HeaderUtils.extractEntityHeaders(headers,restletResponse.getEntity());
+  @SuppressWarnings("unchecked") Series<Parameter> extensionHeaders=(Series<Parameter>)jaxRsHeaders.getFirst(HeaderConstants.ATTRIBUTE_HEADERS);
+  if (extensionHeaders != null) {
+    Map<String,Object> attributes=new HashMap<String,Object>();
+    attributes.put(HeaderConstants.ATTRIBUTE_HEADERS,extensionHeaders);
+    restletResponse.setAttributes(attributes);
+  }
 }

@@ -1,0 +1,22 @@
+{
+  StringBuilder sb=new StringBuilder();
+  sb.append(record.getLevel().getLocalizedName());
+  sb.append(" [");
+  sb.append(record.getLoggerName());
+  sb.append("] - ");
+  sb.append(formatMessage(record));
+  sb.append('\n');
+  if (record.getThrown() != null) {
+    try {
+      sb.append(System.getProperty("line.separator"));
+      StringWriter sw=new StringWriter();
+      PrintWriter pw=new PrintWriter(sw);
+      record.getThrown().printStackTrace(pw);
+      pw.close();
+      sb.append(sw.toString());
+    }
+ catch (    Exception ex) {
+    }
+  }
+  return sb.toString();
+}
