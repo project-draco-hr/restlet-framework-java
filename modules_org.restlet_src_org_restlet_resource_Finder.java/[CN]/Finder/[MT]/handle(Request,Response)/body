@@ -3,7 +3,9 @@
   if (isStarted()) {
     ServerResource targetResource=find(request,response);
     if (targetResource == null) {
-      getLogger().warning("No target resource was defined for this finder: " + toString());
+      if (getLogger().isLoggable(Level.WARNING)) {
+        getLogger().warning("No target resource was defined for this finder: " + toString());
+      }
       response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
     }
  else {

@@ -1,13 +1,17 @@
 {
   if (graceful) {
-    getLogger().log(Level.FINE,"Closing a connection to " + getSocketAddress() + " gracefully");
+    if (getLogger().isLoggable(Level.FINER)) {
+      getLogger().log(Level.FINER,"Closing connection to " + getSocketAddress() + " gracefully");
+    }
     if (getRegistration() != null) {
       getRegistration().setCanceling(true);
     }
     setState(ConnectionState.CLOSING);
   }
  else {
-    getLogger().log(Level.FINE,"Closing a connection to " + getSocketAddress() + " immediately");
+    if (getLogger().isLoggable(Level.FINER)) {
+      getLogger().log(Level.FINER,"Closing connection to " + getSocketAddress() + " immediately");
+    }
     try {
       if ((getSocket() != null) && !getSocket().isClosed()) {
         if (!(getSocket() instanceof SSLSocket)) {
