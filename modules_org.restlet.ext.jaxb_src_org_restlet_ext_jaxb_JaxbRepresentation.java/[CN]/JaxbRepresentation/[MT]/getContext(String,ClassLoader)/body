@@ -1,7 +1,7 @@
 {
   JAXBContext result=contexts.get(contextPath);
   if (result == null) {
-    result=JAXBContext.newInstance(contextPath);
+    result=classLoader == null ? JAXBContext.newInstance(contextPath) : JAXBContext.newInstance(contextPath,classLoader);
     contexts.put(contextPath,result);
   }
   return result;
