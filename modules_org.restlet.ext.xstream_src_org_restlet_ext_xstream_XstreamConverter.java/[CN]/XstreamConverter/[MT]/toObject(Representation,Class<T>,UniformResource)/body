@@ -3,12 +3,13 @@
   XstreamRepresentation<?> xstreamSource=null;
   if (source instanceof XstreamRepresentation) {
     xstreamSource=(XstreamRepresentation<?>)source;
+    if (target != null)     xstreamSource.getXstream().processAnnotations(target);
   }
  else   if (VARIANT_JSON.isCompatible(source)) {
-    xstreamSource=create(source);
+    xstreamSource=create(source,target);
   }
  else   if (VARIANT_APPLICATION_ALL_XML.isCompatible(source) || VARIANT_APPLICATION_XML.isCompatible(source) || VARIANT_TEXT_XML.isCompatible(source)) {
-    xstreamSource=create(source);
+    xstreamSource=create(source,target);
   }
   if (xstreamSource != null) {
     if ((target != null) && XstreamRepresentation.class.isAssignableFrom(target)) {
