@@ -1,0 +1,28 @@
+{
+  String hostName=reference.getHostDomain();
+  String path=reference.getPath();
+  StringBuilder sb=new StringBuilder();
+  if (hostName != null) {
+    if (hostName.contains(":"))     hostName=hostName.substring(0,hostName.indexOf(":"));
+    if (hostName.endsWith("s3.amazonaws.com")) {
+      if (hostName.charAt(hostName.length() - 17) == '.') {
+        String bucketName=hostName.substring(0,hostName.length() - 17);
+        sb.append("/" + bucketName);
+      }
+    }
+ else {
+      sb.append("/" + hostName);
+    }
+  }
+  int queryIdx=path.indexOf("?");
+  if (queryIdx >= 0)   sb.append(path.substring(0,queryIdx));
+ else   sb.append(path.substring(0,path.length()));
+  if (queryIdx >= 0) {
+    String query=path.substring(queryIdx - 1,path.length());
+    if (query.contains("?acl"))     sb.append("?acl");
+ else     if (query.contains("?location"))     sb.append("?location");
+ else     if (query.contains("?logging"))     sb.append("?logging");
+ else     if (query.contains("?torrent"))     sb.append("?torrent");
+  }
+  return sb.toString();
+}

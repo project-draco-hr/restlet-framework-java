@@ -1,0 +1,18 @@
+{
+  Request request=createRequest();
+  Form headers=(Form)request.getAttributes().get(ATTRIBUTES_HEADERS);
+  Assert.assertEquals(Verifier.RESULT_MISSING,awsVerifier.verify(request,null));
+  ChallengeResponse cr=new ChallengeResponse(ChallengeScheme.HTTP_AWS_S3);
+  request.setChallengeResponse(cr);
+  Assert.assertEquals(Verifier.RESULT_MISSING,awsVerifier.verify(request,null));
+  String sig=AwsUtils.getSignature(request,"badpassword".toCharArray());
+  cr.setRawValue(ACCESS_ID + ":" + sig);
+  Assert.assertEquals(Verifier.RESULT_INVALID,awsVerifier.verify(request,null));
+  sig=AwsUtils.getSignature(request,ACCESS_KEY.toCharArray());
+  cr.setRawValue(ACCESS_ID + ":" + sig);
+  Assert.assertEquals(Verifier.RESULT_VALID,awsVerifier.verify(request,null));
+  headers.removeAll(HeaderConstants.HEADER_DATE);
+  Assert.assertEquals(Verifier.RESULT_INVALID,awsVerifier.verify(request,null));
+  headers.add(HeaderConstants.HEADER_DATE,"Tue, 27 Mar 1999 19:36:42 +0000");
+  Assert.assertEquals(Verifier.RESULT_STALE,awsVerifier.verify(request,null));
+}

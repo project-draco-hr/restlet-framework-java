@@ -1,0 +1,22 @@
+{
+  StringBuilder sb=new StringBuilder();
+  Pattern spacePattern=Pattern.compile("\\s+");
+  SortedMap<String,String> amzHeaders=new TreeMap<String,String>();
+  if (requestHeaders != null) {
+    for (    Parameter header : requestHeaders) {
+      String name=header.getName().toLowerCase();
+      if (name.startsWith("x-amz-")) {
+        String value="";
+        if (amzHeaders.containsKey(name))         value=amzHeaders.get(name) + "," + header.getValue();
+ else         value=header.getValue();
+        Matcher m=spacePattern.matcher(value);
+        value=m.replaceAll(" ");
+        amzHeaders.put(name,value);
+      }
+    }
+  }
+  for (  Entry<String,String> entry : amzHeaders.entrySet()) {
+    sb.append(entry.getKey()).append(':').append(entry.getValue()).append("\n");
+  }
+  return sb.toString();
+}

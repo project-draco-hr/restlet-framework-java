@@ -1,0 +1,18 @@
+{
+  if (request.getChallengeResponse() == null)   return RESULT_MISSING;
+  Form headers=(Form)request.getAttributes().get("org.restlet.http.headers");
+  String userId=getIdentifier(request,response);
+  if (userId == null || (userId.length() == 0))   return RESULT_MISSING;
+  if (headers.getFirstValue(HeaderConstants.HEADER_DATE,true) == null)   return RESULT_INVALID;
+  if (getMaxRequestAge() > 0) {
+    Long date=DateUtils.parse(headers.getFirstValue(HeaderConstants.HEADER_DATE,true)).getTime();
+    Long now=System.currentTimeMillis();
+    if (now - date > getMaxRequestAge())     return RESULT_STALE;
+  }
+  char[] userSecret=getLocalSecret(userId);
+  char[] signature=getSecret(request,response);
+  String sigToCompare=AwsUtils.getSignature(request,userSecret);
+  if (!compare(signature,sigToCompare.toCharArray()))   return RESULT_INVALID;
+  request.getClientInfo().setUser(new User(userId));
+  return RESULT_VALID;
+}
