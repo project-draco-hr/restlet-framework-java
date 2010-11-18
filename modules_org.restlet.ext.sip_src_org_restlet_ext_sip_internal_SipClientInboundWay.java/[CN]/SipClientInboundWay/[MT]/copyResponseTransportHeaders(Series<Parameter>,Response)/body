@@ -1,0 +1,10 @@
+{
+  SipResponse sr=(SipResponse)response;
+  for (  Parameter header : headers) {
+    if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_VIA)) {
+      SipRecipientInfoReader.addValues(header,sr.getSipRecipientsInfo());
+    }
+  }
+  headers.removeAll(HeaderConstants.HEADER_VIA,true);
+  super.copyResponseTransportHeaders(headers,response);
+}

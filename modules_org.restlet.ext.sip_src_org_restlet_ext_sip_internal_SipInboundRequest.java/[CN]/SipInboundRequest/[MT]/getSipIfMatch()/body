@@ -1,0 +1,15 @@
+{
+  if (!sipIfMatchAdded) {
+    String header=(getHeaders() == null) ? null : getHeaders().getValues(SipConstants.HEADER_SIP_IF_MATCH);
+    if (header != null) {
+      try {
+        setSipIfMatch(Tag.parse(header));
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().info(e.getMessage());
+      }
+    }
+    sipIfMatchAdded=true;
+  }
+  return super.getSipIfMatch();
+}

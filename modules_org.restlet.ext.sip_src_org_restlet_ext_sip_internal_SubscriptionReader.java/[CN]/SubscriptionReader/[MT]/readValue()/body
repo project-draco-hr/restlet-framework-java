@@ -1,0 +1,34 @@
+{
+  Subscription result=null;
+  skipSpaces();
+  if (peek() != -1) {
+    String value=readToken();
+    if (value != null) {
+      result=new Subscription(value);
+      if (skipParameterSeparator()) {
+        Parameter param=readParameter();
+        while (param != null) {
+          if ("reason".equals(param.getName())) {
+            result.setReason(param.getValue());
+          }
+ else           if ("expires".equals(param.getName())) {
+            result.setExpires(Long.parseLong(param.getValue()));
+          }
+ else           if ("retry-after".equals(param.getName())) {
+            result.setRetryAfter(Long.parseLong(param.getValue()));
+          }
+ else {
+            result.getParameters().add(param);
+          }
+          if (skipParameterSeparator()) {
+            param=readParameter();
+          }
+ else {
+            param=null;
+          }
+        }
+      }
+    }
+  }
+  return result;
+}

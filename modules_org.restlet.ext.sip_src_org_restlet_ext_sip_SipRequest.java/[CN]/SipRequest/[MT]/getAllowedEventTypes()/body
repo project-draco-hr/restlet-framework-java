@@ -1,0 +1,12 @@
+{
+  List<EventType> aet=this.allowedEventTypes;
+  if (aet == null) {
+synchronized (this) {
+      aet=this.allowedEventTypes;
+      if (aet == null) {
+        this.allowedEventTypes=aet=new CopyOnWriteArrayList<EventType>();
+      }
+    }
+  }
+  return aet;
+}

@@ -1,0 +1,12 @@
+{
+  List<SipRecipientInfo> sri=this.recipientsInfo;
+  if (sri == null) {
+synchronized (this) {
+      sri=this.recipientsInfo;
+      if (sri == null) {
+        this.recipientsInfo=sri=new CopyOnWriteArrayList<SipRecipientInfo>();
+      }
+    }
+  }
+  return sri;
+}

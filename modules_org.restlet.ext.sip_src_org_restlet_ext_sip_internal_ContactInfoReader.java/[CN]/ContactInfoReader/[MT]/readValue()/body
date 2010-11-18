@@ -1,0 +1,70 @@
+{
+  ContactInfo result=null;
+  skipSpaces();
+  if (peek() != -1) {
+    result=new ContactInfo();
+    if (peek() == '"') {
+      result.setDisplayName(readQuotedString());
+      skipSpaces();
+      result.setReference(new Reference(readReference()));
+    }
+ else     if (peek() == '<') {
+      result.setReference(new Reference(readReference()));
+    }
+ else     if (HeaderUtils.isTokenChar(peek())) {
+      StringBuilder sb=null;
+      int next=read();
+      while ((next != -1) && !isComma(next) && !isSemiColon(next)) {
+        if (sb == null) {
+          sb=new StringBuilder();
+        }
+        sb.append((char)next);
+        next=read();
+      }
+      if (sb != null) {
+        for (int i=sb.length() - 1; (i >= 0) && isLinearWhiteSpace(sb.charAt(i)); i--) {
+          sb.deleteCharAt(i);
+        }
+      }
+      if (isComma(next) || isSemiColon(next)) {
+        unread();
+      }
+      int index=sb.lastIndexOf(" ");
+      if (index != -1) {
+        if (sb.charAt(index + 1) == '<') {
+          if (sb.charAt(sb.length() - 1) == '>') {
+            result.setReference(new Reference(sb.substring(index + 2,sb.length() - 1)));
+          }
+ else {
+            throw new IOException("Unexpected end of reference. Please check your value");
+          }
+        }
+        result.setDisplayName(sb.substring(0,index).trim());
+      }
+ else {
+        result.setReference(new Reference(sb.toString()));
+      }
+    }
+  }
+  if (skipParameterSeparator()) {
+    Parameter param=readParameter();
+    while (param != null) {
+      if ("q".equals(param.getName())) {
+        result.setQuality(PreferenceReader.readQuality(param.getValue()));
+      }
+ else       if ("expires".equals(param.getName())) {
+        result.setExpires(param.getValue());
+      }
+ else {
+        addParameter(result,param);
+      }
+      if (skipParameterSeparator()) {
+        param=readParameter();
+      }
+ else {
+        param=null;
+      }
+    }
+  }
+  return result;
+}

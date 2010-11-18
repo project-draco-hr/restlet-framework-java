@@ -1,0 +1,16 @@
+{
+  List<OptionTag> pr=super.getProxyRequires();
+  if (!proxyRequiresAdded) {
+    String header=(getHeaders() == null) ? null : getHeaders().getValues(SipConstants.HEADER_PROXY_REQUIRE);
+    if (header != null) {
+      try {
+        pr.addAll(new OptionTagReader(header).readValues());
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().info(e.getMessage());
+      }
+    }
+    proxyRequiresAdded=true;
+  }
+  return pr;
+}

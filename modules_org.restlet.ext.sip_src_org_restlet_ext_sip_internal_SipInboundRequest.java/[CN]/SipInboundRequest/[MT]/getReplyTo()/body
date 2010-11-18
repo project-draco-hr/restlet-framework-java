@@ -1,0 +1,15 @@
+{
+  if (!replyToAdded) {
+    String header=(getHeaders() == null) ? null : getHeaders().getValues(SipConstants.HEADER_REPLY_TO);
+    if (header != null) {
+      try {
+        setReplyTo(new AddressReader(header).readValue());
+      }
+ catch (      Exception e) {
+        Context.getCurrentLogger().info(e.getMessage());
+      }
+    }
+    replyToAdded=true;
+  }
+  return super.getReplyTo();
+}

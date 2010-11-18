@@ -1,0 +1,12 @@
+{
+  List<Address> r=this.routes;
+  if (r == null) {
+synchronized (this) {
+      r=this.routes;
+      if (r == null) {
+        this.routes=r=new CopyOnWriteArrayList<Address>();
+      }
+    }
+  }
+  return r;
+}

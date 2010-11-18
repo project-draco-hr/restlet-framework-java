@@ -1,0 +1,10 @@
+{
+  List<RecipientInfo> result=super.getRecipientsInfo();
+  if (!recipientsInfoAdded && (getHeaders() != null)) {
+    for (    String header : getHeaders().getValuesArray(HeaderConstants.HEADER_VIA)) {
+      new RecipientInfoReader(header).addValues(result);
+    }
+    setRecipientsInfo(result);
+  }
+  return result;
+}
