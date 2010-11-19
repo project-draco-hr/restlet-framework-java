@@ -79,7 +79,12 @@
     }
  else {
       pushState(State.COMPLEX_TYPE_PROPERTY);
-      this.currentComplexType.getProperties().add(property);
+      if (property instanceof ComplexProperty) {
+        this.currentComplexType.getComplexProperties().add((ComplexProperty)property);
+      }
+ else {
+        this.currentComplexType.getProperties().add(property);
+      }
     }
     discoverMapping(this.currentEntityType,property,currentMetadata,attrs);
   }

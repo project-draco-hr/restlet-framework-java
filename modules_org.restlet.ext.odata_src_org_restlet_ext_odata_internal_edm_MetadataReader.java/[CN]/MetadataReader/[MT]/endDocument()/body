@@ -72,5 +72,13 @@
         }
       }
     }
+    for (    ComplexType complexType : schema.getComplexTypes()) {
+      for (      ComplexProperty property : complexType.getComplexProperties()) {
+        ComplexType type=(ComplexType)resolve(property.getComplexType(),registeredComplexTypes,schema);
+        if (type != null) {
+          property.setComplexType(type);
+        }
+      }
+    }
   }
 }
