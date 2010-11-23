@@ -1,9 +1,14 @@
 {
-  if (getApplicationContext() != null && getApplicationContext().containsBean(getBeanName())) {
+  if (getBeanFactory() == null && getApplicationContext() == null) {
+    throw new IllegalStateException("Either a beanFactory or an applicationContext is required for SpringBeanFinder.");
+  }
+ else   if (getApplicationContext() != null && getApplicationContext().containsBean(getBeanName())) {
     return getApplicationContext().getBean(getBeanName());
   }
  else   if (getBeanFactory() != null && getBeanFactory().containsBean(getBeanName())) {
     return getBeanFactory().getBean(getBeanName());
   }
-  throw new IllegalStateException("Either a beanFactory or an applicationContext is required for SpringBeanFinder.");
+ else {
+    throw new IllegalStateException(String.format("No bean named %s present.",getBeanName()));
+  }
 }
