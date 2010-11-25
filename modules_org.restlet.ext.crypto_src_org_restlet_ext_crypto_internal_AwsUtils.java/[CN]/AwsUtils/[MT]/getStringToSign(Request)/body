@@ -1,43 +1,4 @@
 {
   Form headers=(Form)request.getAttributes().get("org.restlet.http.headers");
-  String canonicalizedAmzHeaders=getCanonicalizedAmzHeaders(headers);
-  String canonicalizedResource=getCanonicalizedResourceName(request.getResourceRef());
-  String contentMD5=(headers == null) ? null : headers.getFirstValue(HeaderConstants.HEADER_CONTENT_MD5,true);
-  String contentType=(headers == null) ? null : headers.getFirstValue(HeaderConstants.HEADER_CONTENT_TYPE,true);
-  String date=(headers == null) ? null : headers.getFirstValue("X-Amz-Date",true);
-  String method=request.getMethod().getName();
-  if (date == null || (date.length() == 0)) {
-    date=(headers == null) ? null : headers.getFirstValue(HeaderConstants.HEADER_DATE,true);
-  }
-  if (date == null || (date.length() == 0)) {
-    date=DateUtils.format(new Date(),DateUtils.FORMAT_RFC_1123.get(0));
-    if (headers != null) {
-      headers.add(HeaderConstants.HEADER_DATE,date);
-    }
-  }
-  if (contentType == null || (contentType.length() == 0)) {
-    boolean applyPatch=false;
-    final String jvmVendor=System.getProperty("java.vm.vendor");
-    if ((jvmVendor != null) && (jvmVendor.toLowerCase()).startsWith("sun")) {
-      final int majorVersionNumber=SystemUtils.getJavaMajorVersion();
-      final int minorVersionNumber=SystemUtils.getJavaMinorVersion();
-      if (majorVersionNumber == 1) {
-        if (minorVersionNumber < 5) {
-          applyPatch=true;
-        }
- else         if (minorVersionNumber == 5) {
-          applyPatch=(SystemUtils.getJavaUpdateVersion() < 10);
-        }
-      }
-    }
-    if (applyPatch && !request.getMethod().equals(Method.PUT))     contentType="application/x-www-form-urlencoded";
-  }
-  StringBuilder toSign=new StringBuilder();
-  toSign.append(method != null ? method : "").append("\n");
-  toSign.append(contentMD5 != null ? contentMD5 : "").append("\n");
-  toSign.append(contentType != null ? contentType : "").append("\n");
-  toSign.append(date != null ? date : "").append("\n");
-  toSign.append(canonicalizedAmzHeaders != null ? canonicalizedAmzHeaders : "");
-  toSign.append(canonicalizedResource != null ? canonicalizedResource : "");
-  return toSign.toString();
+  return getStringToSign(request,headers);
 }

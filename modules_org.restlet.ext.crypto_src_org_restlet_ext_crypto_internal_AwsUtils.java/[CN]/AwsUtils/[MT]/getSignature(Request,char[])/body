@@ -1,5 +1,4 @@
 {
-  String stringToSign=getStringToSign(request);
-  String sig=Base64.encode(DigestUtils.toHMac(stringToSign,BioUtils.toByteArray(secret)),false);
-  return sig;
+  Form headers=(Form)request.getAttributes().get("org.restlet.http.headers");
+  return getSignature(request,headers,secret);
 }
