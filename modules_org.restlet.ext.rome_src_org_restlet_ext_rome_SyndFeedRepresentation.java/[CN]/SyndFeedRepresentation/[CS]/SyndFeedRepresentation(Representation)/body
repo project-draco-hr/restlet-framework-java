@@ -2,12 +2,7 @@
   super(null);
   try {
     this.feed=new SyndFeedInput().build(feedRepresentation.getReader());
-    if (this.feed.getFeedType().startsWith("atom")) {
-      setMediaType(MediaType.APPLICATION_ATOM);
-    }
- else {
-      setMediaType(MediaType.APPLICATION_RSS);
-    }
+    setMediaType(getMediaType(this.feed.getFeedType()));
   }
  catch (  Exception e) {
     Context.getCurrentLogger().log(Level.WARNING,"Unable to parse feed",e);
