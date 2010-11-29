@@ -1,6 +1,6 @@
 {
-  if (getWrapped().isShutdown()) {
-    setWrapped(wrap(createExecutorService()));
+  if ((getWrapped() == null) || getWrapped().isShutdown()) {
+    setWrapped(wrap(createExecutorService(getCorePoolSize())));
   }
   super.start();
 }

@@ -1,0 +1,74 @@
+{
+  return new ScheduledExecutorService(){
+    public boolean awaitTermination(    long timeout,    TimeUnit unit) throws InterruptedException {
+      return executorService.awaitTermination(timeout,unit);
+    }
+    public void execute(    final Runnable runnable){
+      final Application currentApplication=Application.getCurrent();
+      final Context currentContext=Context.getCurrent();
+      final Integer currentVirtualHost=VirtualHost.getCurrent();
+      final Response currentResponse=Response.getCurrent();
+      executorService.execute(new Runnable(){
+        public void run(){
+          Response.setCurrent(currentResponse);
+          Context.setCurrent(currentContext);
+          VirtualHost.setCurrent(currentVirtualHost);
+          Application.setCurrent(currentApplication);
+          try {
+            runnable.run();
+          }
+  finally {
+            Engine.clearThreadLocalVariables();
+          }
+        }
+      }
+);
+    }
+    public <T>List<Future<T>> invokeAll(    Collection<Callable<T>> tasks) throws InterruptedException {
+      return executorService.invokeAll(tasks);
+    }
+    public <T>List<Future<T>> invokeAll(    Collection<Callable<T>> tasks,    long timeout,    TimeUnit unit) throws InterruptedException {
+      return executorService.invokeAll(tasks,timeout,unit);
+    }
+    public <T>T invokeAny(    Collection<Callable<T>> tasks) throws InterruptedException, ExecutionException {
+      return executorService.invokeAny(tasks);
+    }
+    public <T>T invokeAny(    Collection<Callable<T>> tasks,    long timeout,    TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+      return executorService.invokeAny(tasks,timeout,unit);
+    }
+    public boolean isShutdown(){
+      return executorService.isShutdown();
+    }
+    public boolean isTerminated(){
+      return executorService.isTerminated();
+    }
+    public <V>ScheduledFuture<V> schedule(    Callable<V> callable,    long delay,    TimeUnit unit){
+      return executorService.schedule(callable,delay,unit);
+    }
+    public ScheduledFuture<?> schedule(    Runnable command,    long delay,    TimeUnit unit){
+      return executorService.schedule(command,delay,unit);
+    }
+    public ScheduledFuture<?> scheduleAtFixedRate(    Runnable command,    long initialDelay,    long period,    TimeUnit unit){
+      return executorService.scheduleAtFixedRate(command,initialDelay,period,unit);
+    }
+    public ScheduledFuture<?> scheduleWithFixedDelay(    Runnable command,    long initialDelay,    long delay,    TimeUnit unit){
+      return executorService.scheduleWithFixedDelay(command,initialDelay,delay,unit);
+    }
+    public void shutdown(){
+      executorService.shutdown();
+    }
+    public List<Runnable> shutdownNow(){
+      return executorService.shutdownNow();
+    }
+    public <T>Future<T> submit(    Callable<T> task){
+      return executorService.submit(task);
+    }
+    public Future<?> submit(    Runnable task){
+      return executorService.submit(task);
+    }
+    public <T>Future<T> submit(    Runnable task,    T result){
+      return executorService.submit(task,result);
+    }
+  }
+;
+}
