@@ -1,0 +1,30 @@
+{
+  Level level=Level.INFO;
+  Status status=null;
+  if (throwable instanceof ResourceException) {
+    ResourceException re=(ResourceException)throwable;
+    if (re.getCause() != null) {
+      throwable=re.getCause();
+      status=getStatusService().getStatus(throwable,this);
+    }
+ else {
+      status=re.getStatus();
+    }
+  }
+ else {
+    status=getStatusService().getStatus(throwable,this);
+  }
+  if (status.isServerError()) {
+    level=Level.WARNING;
+  }
+ else   if (status.isConnectorError()) {
+    level=Level.INFO;
+  }
+ else   if (status.isClientError()) {
+    level=Level.FINE;
+  }
+  getLogger().log(level,"Exception or error caught in server resource",throwable);
+  if (getResponse() != null) {
+    getResponse().setStatus(status);
+  }
+}
