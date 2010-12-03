@@ -1,0 +1,10 @@
+{
+  Token t=super.generateToken(user,expire);
+  if (expire != Token.UNLIMITED) {
+    ExpireToken et=(ExpireToken)t;
+    tokenStore.put(et.getRefreshToken(),et);
+    scheduleCleanup(et,expire);
+  }
+  tokenStore.put(t.getToken(),t);
+  return t;
+}

@@ -1,0 +1,17 @@
+{
+  super.doInit();
+  Context ctx=getContext();
+  ConcurrentMap<String,Object> attribs=ctx.getAttributes();
+  log=ctx.getLogger();
+  clients=(ClientStore)attribs.get(ClientStore.class.getCanonicalName());
+  log.info("Found client store = " + clients);
+  generator=clients.getTokenGenerator();
+  log.info("Found token generator = " + generator);
+  if (attribs.containsKey(TOKEN_SERVER_TIME_SEC)) {
+    tokenTimeSec=(Long)attribs.get(TOKEN_SERVER_TIME_SEC);
+  }
+  if (attribs.containsKey(TOKEN_SERVER_MAX_TIME_SEC)) {
+    tokenMaxTimeSec=(Long)attribs.get(TOKEN_SERVER_MAX_TIME_SEC);
+  }
+  generator.setMaxTokenTime(tokenMaxTimeSec);
+}

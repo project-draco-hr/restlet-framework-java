@@ -1,0 +1,47 @@
+{
+  Logger log=getLogger();
+  log.info("Handle on OP");
+  ConcurrentMap<String,Object> attribs=getContext().getAttributes();
+  ServerManager manager=(ServerManager)attribs.get("openid_manager");
+  log.info("OP endpoint = " + manager.getOPEndpointUrl());
+  String mode=request.hasParameter("openid.mode") ? request.getParameterValue("openid.mode") : null;
+  Message response;
+  String responseText;
+  if ("associate".equals(mode)) {
+    response=manager.associationResponse(request);
+    responseText=response.keyValueFormEncoding();
+  }
+ else   if ("checkid_setup".equals(mode) || "checkid_immediate".equals(mode)) {
+    List<?> userData=userInteraction(request,manager.getOPEndpointUrl());
+    String userSelectedId=(String)userData.get(0);
+    String userSelectedClaimedId=(String)userData.get(1);
+    Boolean authenticatedAndApproved=(Boolean)userData.get(2);
+    response=manager.authResponse(request,userSelectedId,userSelectedClaimedId,authenticatedAndApproved.booleanValue());
+    if (response instanceof DirectError) {
+      Form f=new Form();
+      @SuppressWarnings("unchecked") Map<String,String> m=(Map<String,String>)response.getParameterMap();
+      for (      String key : m.keySet()) {
+        f.add(key,m.get(key));
+      }
+      return f.getWebRepresentation();
+    }
+ else {
+      redirectTemporary(response.getDestinationUrl(true));
+      return new EmptyRepresentation();
+    }
+  }
+ else   if ("check_authentication".equals(mode)) {
+    response=manager.verify(request);
+    log.info("OpenID : " + response.keyValueFormEncoding());
+    responseText=response.keyValueFormEncoding();
+  }
+ else   if (Method.GET.equals(getRequest().getMethod())) {
+    sendXRDSLocation();
+    return new StringRepresentation("XRDS Discovery Information");
+  }
+ else {
+    response=DirectError.createDirectError("Unknown request");
+    responseText=response.keyValueFormEncoding();
+  }
+  return new StringRepresentation(responseText);
+}

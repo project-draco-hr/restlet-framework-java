@@ -1,0 +1,17 @@
+{
+  long individualExp=user.getTokenExpire();
+  if (individualExp > 0) {
+    expire=individualExp;
+  }
+  expire=(expire <= maxTokenTimeSec) ? expire : maxTokenTimeSec;
+  StringBuilder raw=new StringBuilder(generate(40));
+  String token=raw.toString();
+  Token t=null;
+  if (expire != Token.UNLIMITED) {
+    t=new ExpireToken(token,expire,generate(20),user);
+  }
+ else {
+    t=new Token(token,user);
+  }
+  return t;
+}

@@ -1,0 +1,16 @@
+{
+  Client client=validate(clientId,clientSecret);
+  if (client == null)   return;
+  if (!client.containsUser(AUTONOMOUS_USER))   client.createUser(AUTONOMOUS_USER);
+  AuthenticatedUser user=client.findUser(AUTONOMOUS_USER);
+  String[] scopes=parseScope(params.getFirstValue(SCOPE));
+  for (  String scope : scopes) {
+    log.info("Requested scopes none flow = " + scope);
+    user.addScope(scope,"");
+    log.info("Adding scope = " + scope + " to auto user");
+  }
+  Token token=generator.generateToken(user,tokenTimeSec);
+  JSONObject body=createJsonToken(token,null);
+  getResponse().setCacheDirectives(noStore);
+  getResponse().setEntity(new JsonRepresentation(body));
+}

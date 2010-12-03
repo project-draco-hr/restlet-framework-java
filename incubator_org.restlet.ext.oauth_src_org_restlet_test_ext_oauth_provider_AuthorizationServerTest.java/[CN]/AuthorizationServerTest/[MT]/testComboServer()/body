@@ -1,0 +1,16 @@
+{
+  String callbackUri=prot + "://localhost:" + serverPort+ "/";
+  String baseRef=prot + "://localhost:" + serverPort+ "/combo/";
+  OAuthParameters params=new OAuthParameters("1234567890","1234567890",baseRef,"foo bar");
+  OAuthUser user=OAuthUtils.userAgent(params,callbackUri,null);
+  assertNotNull(user);
+  Reference ref=new Reference(prot + "://localhost:" + serverPort+ "/combo/protected");
+  ref.addQueryParameter("oauth_token",user.getAccessToken());
+  ClientResource cr=new ClientResource(ref);
+  Representation r=cr.get();
+  assertNotNull(r);
+  String text=r.getText();
+  assertEquals("Response text test",text,"TestSuccessful");
+  assertEquals("Response content type test",r.getMediaType(),MediaType.TEXT_HTML);
+  cr.release();
+}

@@ -1,0 +1,21 @@
+{
+  Cookie c=request.getCookies().getFirst(UserCookieID);
+  if (c != null) {
+    Representation r=response.getEntity();
+    if (r != null && (r instanceof JsonRepresentation)) {
+      JsonRepresentation jr=(JsonRepresentation)r;
+      try {
+        JSONObject o=jr.getJsonObject();
+        if (o != null && o.has("id")) {
+          String id=o.getString("id");
+          getLogger().info("Caching JSON id = " + id);
+          userCache.put(c.getValue(),id);
+          createResponse(id,request,response);
+          clearCookies(response);
+        }
+      }
+ catch (      JSONException ignore) {
+      }
+    }
+  }
+}

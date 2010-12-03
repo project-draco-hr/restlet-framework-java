@@ -1,0 +1,26 @@
+{
+  Document response=null;
+  ConcurrentMap<String,Object> attribs=getContext().getAttributes();
+  ServerManager manager=(ServerManager)attribs.get("openid_manager");
+  String opEndpoint=manager.getOPEndpointUrl();
+  Form query=getQuery();
+  String returnTo=query.getFirstValue("returnTo");
+  if (returnTo != null && returnTo.length() > 0) {
+    response=createDocument(TYPE_RETURN_TO,returnTo,null);
+  }
+ else {
+    String id=query.getFirstValue("id");
+    if (id == null || id.length() == 0) {
+      response=createDocument(TYPE_SERVER,opEndpoint,null);
+    }
+ else {
+      StringBuilder localId=new StringBuilder();
+      localId.append(opEndpoint);
+      localId.append("?id=");
+      localId.append(id);
+      response=createDocument(TYPE_SIGNON,opEndpoint,localId.toString());
+    }
+  }
+  MediaType xrds=new MediaType("application/xrds+xml");
+  return new DomRepresentation(xrds,response);
+}

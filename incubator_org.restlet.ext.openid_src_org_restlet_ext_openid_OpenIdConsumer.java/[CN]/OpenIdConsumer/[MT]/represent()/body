@@ -1,0 +1,113 @@
+{
+  Form params=getQuery();
+  log.info("OpenIDResource : " + params);
+  String rc=params.getFirstValue("return");
+  if (rc != null && rc.length() > 0) {
+    Map<String,String> axRequired=new HashMap<String,String>();
+    Map<String,String> axOptional=new HashMap<String,String>();
+    Identifier i=verifyResponse(axRequired,axOptional);
+    if (i == null) {
+      log.info("Authentication Failed");
+      getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+      return new StringRepresentation("Authentication Failed");
+    }
+    log.info("Identifier = " + i.getIdentifier());
+    String id=i.getIdentifier();
+    if (id != null) {
+      JSONObject obj=new JSONObject();
+      try {
+        obj.put("id",i.getIdentifier());
+        for (        String s : axRequired.keySet()) {
+          obj.put(s,axRequired.get(s));
+        }
+        for (        String s : axOptional.keySet()) {
+          obj.put(s,axOptional.get(s));
+        }
+      }
+ catch (      JSONException e) {
+        log.log(Level.WARNING,"Failed to get the ID!",e);
+      }
+      getResponse().setEntity(new JsonRepresentation(obj));
+    }
+    getResponse().getCookieSettings().remove(DESCRIPTOR_COOKIE);
+    CookieSetting disc=new CookieSetting(DESCRIPTOR_COOKIE,"");
+    disc.setMaxAge(0);
+    getResponse().getCookieSettings().add(disc);
+    return getResponse().getEntity();
+  }
+  String target=params.getFirstValue("openid_identifier");
+  if (target == null || target.length() == 0) {
+    String location=setXRDSHeader();
+    StringBuilder html=new StringBuilder();
+    html.append("<html><head><meta http-equiv=\"X-XRDS-Location\" content=\"");
+    html.append(location);
+    html.append("\"/></head></html>");
+    return new StringRepresentation(html.toString(),MediaType.TEXT_HTML);
+  }
+  try {
+    StringBuilder returnToUrl=new StringBuilder();
+    returnToUrl.append(getReference().getBaseRef());
+    returnToUrl.append("?return=true");
+    List<?> discoveries=null;
+    discoveries=discovery.discover(target);
+    for (    Object o : discoveries) {
+      if (o instanceof DiscoveryInformation) {
+        DiscoveryInformation di=(DiscoveryInformation)o;
+        log.info("Found - " + di.getOPEndpoint());
+        target=di.getOPEndpoint().toString();
+      }
+    }
+    ConsumerManager manager=getManager(target);
+    DiscoveryInformation discovered=manager.associate(discoveries);
+    String sessionId=String.valueOf(System.identityHashCode(discovered));
+    session.put(sessionId,discovered);
+    getResponse().getCookieSettings().add(new CookieSetting(DESCRIPTOR_COOKIE,sessionId));
+    AuthRequest authReq=manager.authenticate(discovered,returnToUrl.toString());
+    log.info("OpenID - REALM = " + getReference().getHostIdentifier());
+    authReq.setRealm(getReference().getHostIdentifier().toString());
+    FetchRequest fetch=FetchRequest.createFetchRequest();
+    String[] optional=params.getValuesArray("ax_optional",true);
+    for (    String o : optional) {
+      if (!ax.containsKey(o)) {
+        log.warning("Not supported AX extension : " + o);
+        continue;
+      }
+      fetch.addAttribute(o,ax.get(o),false);
+    }
+    String[] required=params.getValuesArray("ax_required",true);
+    for (    String r : required) {
+      if (!ax.containsKey(r)) {
+        log.warning("Not supported AX extension : " + r);
+        continue;
+      }
+      fetch.addAttribute(r,ax.get(r),true);
+    }
+    authReq.addExtension(fetch);
+    if (!discovered.isVersion2()) {
+      redirectTemporary(authReq.getDestinationUrl(true));
+      return null;
+    }
+ else {
+      Form msg=new Form();
+      for (      Object key : authReq.getParameterMap().keySet()) {
+        msg.add(key.toString(),authReq.getParameterValue(key.toString()));
+        log.info("Adding to form - key " + key.toString() + " : value"+ authReq.getParameterValue(key.toString()));
+      }
+      Redirector dispatcher=new Redirector(getContext(),authReq.getOPEndpoint(),Redirector.MODE_SERVER_OUTBOUND);
+      Request req=getRequest();
+      req.setEntity(msg.getWebRepresentation());
+      req.setMethod(Method.POST);
+      dispatcher.handle(getRequest(),getResponse());
+    }
+  }
+ catch (  DiscoveryException e) {
+    e.printStackTrace();
+  }
+catch (  MessageException e) {
+    e.printStackTrace();
+  }
+catch (  ConsumerException e) {
+    e.printStackTrace();
+  }
+  return getResponse().getEntity();
+}

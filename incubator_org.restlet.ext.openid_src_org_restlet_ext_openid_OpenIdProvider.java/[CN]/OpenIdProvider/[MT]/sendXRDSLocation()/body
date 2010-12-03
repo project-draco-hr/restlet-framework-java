@@ -1,0 +1,17 @@
+{
+  ConcurrentMap<String,Object> attribs=getContext().getAttributes();
+  String id=getQuery().getFirstValue("id");
+  String xrds=attribs.get("xrds").toString();
+  String location=(id != null) ? xrds + "?id=" + id : xrds;
+  getLogger().info("XRDS endpoint = " + xrds);
+  Form headers=(Form)getResponse().getAttributes().get("org.restlet.http.headers");
+  if (headers == null) {
+    headers=new Form();
+    headers.add("X-XRDS-Location",location);
+    getResponse().getAttributes().put("org.restlet.http.headers",headers);
+  }
+ else {
+    headers.add("X-XRDS-Location",location);
+  }
+  getLogger().info("Sending empty representation.");
+}

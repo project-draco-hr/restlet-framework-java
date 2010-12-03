@@ -1,0 +1,48 @@
+{
+  OAuthUser result=null;
+  Form form=new Form();
+  form.add(OAuthServerResource.RESPONSE_TYPE,OAuthServerResource.ResponseType.token.name());
+  form.add(OAuthServerResource.CLIENT_ID,params.clientId);
+  form.add(OAuthServerResource.REDIR_URI,callbackUri);
+  if (params.scope != null && params.scope.length() > 0) {
+    form.add(OAuthServerResource.SCOPE,params.scope);
+  }
+  if (state != null && state.length() > 0) {
+    form.add(OAuthServerResource.STATE,state);
+  }
+  String q=form.getQueryString();
+  Reference redirRef=new Reference(params.baseRef,params.authorizePath,q,null);
+  ClientResource authResource=new ClientResource(redirRef.toUri());
+  authResource.setFollowingRedirects(false);
+  Representation r=authResource.get();
+  int maxRedirCnt=10;
+  int cnt=0;
+  while (authResource.getStatus().isRedirection()) {
+    String fragment=authResource.getLocationRef().getFragment();
+    if (fragment != null && fragment.length() > 0) {
+      Form f=new Form(fragment);
+      String accessToken=f.getFirstValue(OAuthServerResource.ACCESS_TOKEN);
+      String refreshToken=f.getFirstValue(OAuthServerResource.REFRESH_TOKEN);
+      long expiresIn=0;
+      String exp=f.getFirstValue(OAuthServerResource.EXPIRES_IN);
+      if (exp != null && exp.length() > 0) {
+        expiresIn=Long.parseLong(exp);
+      }
+      if (accessToken != null && accessToken.length() > 0) {
+        Context.getCurrentLogger().info("Successful UserAgent flow : AccessToken = " + accessToken + " RefreshToken = "+ refreshToken+ " ExpiresIn = "+ expiresIn);
+        result=new OAuthUser(null,accessToken,refreshToken,expiresIn);
+        result.setState(f.getFirstValue(OAuthServerResource.STATE));
+        break;
+      }
+ else {
+      }
+    }
+    if (++cnt >= maxRedirCnt)     break;
+    Context.getCurrentLogger().info("Redir to = " + authResource.getResponse().getLocationRef());
+    authResource.setReference(authResource.getResponse().getLocationRef());
+    authResource.get();
+  }
+  r.release();
+  authResource.release();
+  return result;
+}

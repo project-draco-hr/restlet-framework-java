@@ -1,0 +1,15 @@
+{
+  Client client=clients.findById(clientId);
+  log.info("Client = " + client);
+  if (client == null) {
+    sendError(ErrorCode.invalid_client,"Could not find the correct client with id : " + clientId,null);
+    setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+    return null;
+  }
+  if (clientSecret == null || !clientSecret.equals(client.getClientSecret())) {
+    sendError(ErrorCode.invalid_grant,"Client secret did not match",null);
+    setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
+    log.info("Could not find or match client secret " + clientSecret + " : "+ client.getClientSecret());
+  }
+  return client;
+}

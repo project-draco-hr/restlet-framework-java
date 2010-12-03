@@ -1,0 +1,82 @@
+{
+  log.info("Method = " + getRequest().getMethod().getName());
+  log.info("In request : " + getOriginalRef().toString());
+  Form params=new Form(input);
+  String typeString=params.getFirstValue(GRANT_TYPE);
+  log.info("Token Service - In service type = " + typeString);
+  String clientId=params.getFirstValue(CLIENT_ID);
+  String clientSecret=params.getFirstValue(CLIENT_SECRET);
+  if (clientSecret == null || clientSecret.length() == 0) {
+    ChallengeResponse cr=getRequest().getChallengeResponse();
+    if (ChallengeScheme.HTTP_BASIC.equals(cr.getScheme())) {
+      String basic=new String(Base64.decode(cr.getRawValue()));
+      int colon=basic.indexOf(':');
+      if (colon > -1) {
+        clientSecret=basic.substring(colon + 1);
+        log.info("Found secret in BASIC Authentication : " + clientSecret);
+        if (colon > 0) {
+          clientId=basic.substring(0,colon);
+          log.info("Found id in BASIC Authentication : " + clientId);
+        }
+      }
+    }
+  }
+  if (clientId == null || clientId.length() == 0) {
+    sendError(ErrorCode.invalid_request,"Mandatory parameter client_id is missing",null);
+    setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+    return new EmptyRepresentation();
+  }
+  if (clientSecret == null || clientSecret.length() == 0) {
+    sendError(ErrorCode.invalid_request,"Mandatory parameter client_secret is missing",null);
+    setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+    return new EmptyRepresentation();
+  }
+  try {
+    GrantType type=Enum.valueOf(GrantType.class,typeString);
+    log.info("Found flow - " + type);
+    if (Method.POST.equals(getMethod())) {
+      try {
+switch (type) {
+case authorization_code:
+          log.info("doWebServerFlow() - flow");
+        doAuthCodeFlow(clientId,clientSecret,params);
+      break;
+case password:
+    sendError(ErrorCode.unsupported_grant_type,"Password flow not supported",null);
+  setStatus(Status.SERVER_ERROR_NOT_IMPLEMENTED);
+break;
+case assertion:
+sendError(ErrorCode.unsupported_grant_type,"Assertion flow not supported",null);
+setStatus(Status.SERVER_ERROR_NOT_IMPLEMENTED);
+break;
+case refresh_token:
+doRefreshFlow(clientId,clientSecret,params);
+break;
+case none:
+doNoneFlow(clientId,clientSecret,params);
+break;
+default :
+sendError(ErrorCode.unsupported_grant_type,"Flow not supported",null);
+setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+}
+}
+ catch (IllegalArgumentException e) {
+sendError(ErrorCode.invalid_grant,e.getMessage(),null);
+setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
+}
+}
+ else {
+sendError(ErrorCode.invalid_request,"Only supporting HTTP POST.",null);
+setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+}
+}
+ catch (IllegalArgumentException iae) {
+sendError(ErrorCode.unsupported_grant_type,"Flow not supported",null);
+setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+}
+catch (NullPointerException npe) {
+sendError(ErrorCode.unsupported_grant_type,"Flow not supported",null);
+setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+}
+return getResponse().getEntity();
+}

@@ -1,0 +1,114 @@
+{
+  Boolean auth=false;
+  request.setCacheDirectives(no);
+  redirectUri=request.getResourceRef().toUrl().toString();
+  Form query=new Form(request.getOriginalRef().getQuery());
+  String error=query.getFirstValue(OAuthServerResource.ERROR);
+  if (error != null && error.length() > 0) {
+    Representation repr=new EmptyRepresentation();
+    String desc=query.getFirstValue(OAuthServerResource.ERROR_DESC);
+    String uri=query.getFirstValue(OAuthServerResource.ERROR_URI);
+    if (desc != null || uri != null) {
+      StringBuilder sb=new StringBuilder();
+      sb.append("<html><body><pre>");
+      sb.append("OAuth2 error detected.\n");
+      if (desc != null) {
+        sb.append("Error description : ").append(desc);
+      }
+      if (uri != null) {
+        sb.append("<a href=\"");
+        sb.append(uri);
+        sb.append("\">Error Description</a>");
+      }
+      sb.append("</pre></body></html>");
+      repr=new StringRepresentation(sb.toString(),MediaType.TEXT_HTML);
+    }
+    ErrorCode ec=ErrorCode.valueOf(error);
+switch (ec) {
+case invalid_request:
+      response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,error);
+    response.setEntity(repr);
+  break;
+case invalid_client:
+response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,error);
+response.setEntity(repr);
+break;
+case unauthorized_client:
+response.setStatus(Status.CLIENT_ERROR_FORBIDDEN,error);
+response.setEntity(repr);
+break;
+case redirect_uri_mismatch:
+response.setStatus(Status.CLIENT_ERROR_FORBIDDEN,error);
+response.setEntity(repr);
+break;
+case access_denied:
+response.setStatus(Status.CLIENT_ERROR_FORBIDDEN,error);
+response.setEntity(repr);
+break;
+case unsupported_response_type:
+response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,error);
+response.setEntity(repr);
+break;
+case invalid_scope:
+response.setStatus(Status.CLIENT_ERROR_FORBIDDEN,error);
+response.setEntity(repr);
+break;
+default :
+log.warning("Unhandled error response type. " + ec.name());
+}
+return false;
+}
+String code=query.getFirstValue(OAuthServerResource.CODE);
+log.info("Incomming request query = " + query);
+if (code == null) {
+Form form=new Form();
+form.add(OAuthServerResource.RESPONSE_TYPE,OAuthServerResource.ResponseType.code.name());
+form.add(OAuthServerResource.CLIENT_ID,params.getClientId());
+form.add(OAuthServerResource.REDIR_URI,redirectUri);
+form.add(OAuthServerResource.SCOPE,params.getScope());
+try {
+form.encode();
+}
+ catch (IOException ioe) {
+getLogger().warning(ioe.getMessage());
+}
+String q=form.getQueryString();
+Reference redirRef=new Reference(params.getBaseRef(),params.getAuthorizePath(),q,null);
+log.info("Redirecting to : " + redirRef.toUri());
+response.setCacheDirectives(no);
+response.redirectTemporary(redirRef);
+log.info("After Redirecting to : " + redirRef.toUri());
+}
+ else {
+log.info("Came back after SNS code = " + code);
+Form form=new Form();
+form.add(OAuthServerResource.GRANT_TYPE,OAuthServerResource.GrantType.authorization_code.name());
+form.add(OAuthServerResource.REDIR_URI,request.getResourceRef().getBaseRef().toUri().toString());
+if (basicSecret) {
+ChallengeResponse authentication=new ChallengeResponse(ChallengeScheme.HTTP_BASIC);
+authentication.setDigestAlgorithm("NONE");
+String basic=params.getClientId() + ':' + params.getClientSecret();
+authentication.setRawValue(Base64.encode(basic.getBytes(),false));
+tokenResource.getRequest().setChallengeResponse(authentication);
+}
+ else {
+form.add(OAuthServerResource.CLIENT_ID,params.getClientId());
+form.add(OAuthServerResource.CLIENT_SECRET,params.getClientSecret());
+}
+form.add(OAuthServerResource.CODE,code);
+log.info("Sending access form : " + form.getQueryString() + " to : "+ tokenResource.getReference());
+Representation body=tokenResource.post(form.getWebRepresentation());
+if (tokenResource.getResponse().getStatus().isSuccess()) {
+authUser=OAuthUtils.handleSuccessResponse(body);
+if (authUser != null) {
+request.getClientInfo().setUser(authUser);
+request.getClientInfo().setAuthenticated(true);
+log.info("storing to context = : " + getContext());
+auth=true;
+}
+}
+log.info("Before sns release");
+body.release();
+}
+return auth;
+}

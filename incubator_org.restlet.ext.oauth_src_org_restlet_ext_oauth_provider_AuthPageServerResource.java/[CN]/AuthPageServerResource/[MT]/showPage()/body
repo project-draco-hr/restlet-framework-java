@@ -1,0 +1,26 @@
+{
+  String action=getQuery().getFirstValue("action");
+  if (action != null) {
+    String[] scopes=getQuery().getValuesArray("scope");
+    handleAction(action,scopes);
+    return new EmptyRepresentation();
+  }
+  String authPage=(String)getContext().getAttributes().get("oauth_auth_page");
+  if (authPage != null && authPage.length() > 0) {
+    String sameScope=(String)getContext().getAttributes().get("oauth_auth_skip_same_scope");
+    if (sameScope != null && Boolean.parseBoolean(sameScope)) {
+      String[] scopesArray=getQuery().getValuesArray("scope");
+      List<String> scopes=Arrays.asList(scopesArray);
+      List<String> previousScopes=Arrays.asList(getQuery().getValuesArray("grantedScope"));
+      if (previousScopes.containsAll(scopes)) {
+        log.fine("All scopes already approved. - skip auth page.");
+        handleAction("Accept",scopesArray);
+        return new EmptyRepresentation();
+      }
+    }
+    getResponse().setCacheDirectives(noCache);
+    return getPage(authPage);
+  }
+  handleAction("Accept",getQuery().getValuesArray("scope"));
+  return new EmptyRepresentation();
+}

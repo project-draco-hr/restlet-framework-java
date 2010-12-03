@@ -1,0 +1,38 @@
+{
+  try {
+    log.setLevel(Level.FINEST);
+    Logger.getLogger("").setLevel(Level.FINEST);
+    ParameterList response=new ParameterList(getQuery().getValuesMap());
+    log.info("response = " + response);
+    String openidDisc=getCookies().getFirstValue(DESCRIPTOR_COOKIE);
+    DiscoveryInformation discovered=(DiscoveryInformation)session.get(openidDisc);
+    log.info("discovered = " + discovered);
+    log.info("getOriginalRef = " + getOriginalRef());
+    log.info("OpenID disc : " + discovered.getOPEndpoint());
+    log.info("OpenID orig ref : " + getOriginalRef());
+    ConsumerManager manager=getManager(discovered.getOPEndpoint().toString());
+    VerificationResult verification=manager.verify(getOriginalRef().toString(),response,discovered);
+    log.info("verification = " + verification);
+    Identifier verified=verification.getVerifiedId();
+    log.info("verified = " + verified);
+    if (verified != null) {
+      AuthSuccess authSuccess=(AuthSuccess)verification.getAuthResponse();
+      if (authSuccess.hasExtension(AxMessage.OPENID_NS_AX)) {
+        FetchRequest fetchResp=(FetchRequest)authSuccess.getExtension(AxMessage.OPENID_NS_AX);
+        MessageExtension ext=authSuccess.getExtension(AxMessage.OPENID_NS_AX);
+        if (ext instanceof FetchRequest) {
+          Map<String,String> required=fetchResp.getAttributes(true);
+          axRequired.putAll(required);
+          Map<String,String> optional=fetchResp.getAttributes(false);
+          axOptional.putAll(optional);
+        }
+      }
+      return verified;
+    }
+  }
+ catch (  OpenIDException e) {
+    log.log(Level.INFO,"",e);
+  }
+  log.setLevel(Level.INFO);
+  return null;
+}

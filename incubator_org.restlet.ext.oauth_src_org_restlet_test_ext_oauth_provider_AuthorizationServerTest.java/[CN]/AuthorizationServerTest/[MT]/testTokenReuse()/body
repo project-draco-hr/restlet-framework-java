@@ -1,0 +1,33 @@
+{
+  assertNotNull(client.getToken());
+  Reference ref=new Reference(prot + "://localhost:" + serverPort+ "/server/protected");
+  ref.addQueryParameter("oauth_token",client.getToken());
+  ClientResource cr=new ClientResource(ref);
+  Representation r=cr.get();
+  assertNotNull(r);
+  String text=r.getText();
+  assertEquals("Response text test",text,"TestSuccessful");
+  assertEquals("Response content type test",r.getMediaType(),MediaType.TEXT_HTML);
+  cr.release();
+  ref=new Reference(prot + "://localhost:" + serverPort+ "/server/protected");
+  cr=new ClientResource(ref);
+  ChallengeResponse challengeResponse=new ChallengeResponse(ChallengeScheme.HTTP_OAUTH);
+  challengeResponse.setRawValue(client.getToken());
+  cr.setChallengeResponse(challengeResponse);
+  r=cr.get();
+  assertNotNull(r);
+  text=r.getText();
+  assertEquals("Response text test",text,"TestSuccessful");
+  assertEquals("Response content type test",r.getMediaType(),MediaType.TEXT_HTML);
+  cr.release();
+  ref=new Reference(prot + "://localhost:" + serverPort+ "/server/protected");
+  cr=new ClientResource(ref);
+  OAuthForm form=new OAuthForm(client.getToken());
+  form.add("foo","bar");
+  r=cr.post(form.getWebRepresentation());
+  assertNotNull(r);
+  text=r.getText();
+  assertEquals("Response text test",text,"Dummy");
+  assertEquals("Response content type test",r.getMediaType(),MediaType.TEXT_PLAIN);
+  cr.release();
+}

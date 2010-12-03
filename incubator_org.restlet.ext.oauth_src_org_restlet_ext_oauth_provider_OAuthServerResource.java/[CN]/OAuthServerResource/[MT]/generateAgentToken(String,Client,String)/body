@@ -1,0 +1,16 @@
+{
+  AuthenticatedUser user=null;
+  if (client.containsUser(userId)) {
+    user=client.findUser(userId);
+  }
+ else {
+    user=client.createUser(userId);
+  }
+  Token token=generator.generateToken(user,tokenTimeSec);
+  StringBuilder location=new StringBuilder(redirURL);
+  location.append("#access_token=").append(token.getToken());
+  appendState(location);
+  getResponse().setCacheDirectives(noStore);
+  log.info("Redirecting to -> " + location.toString());
+  return location.toString();
+}

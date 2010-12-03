@@ -1,0 +1,137 @@
+{
+  Logger log=Context.getCurrentLogger();
+  log.info("Checking for param access_token");
+  String accessToken=null;
+  if (req.getChallengeResponse() != null) {
+    accessToken=req.getChallengeResponse().getRawValue();
+    getLogger().info("Found Authorization header" + accessToken);
+  }
+ else   if (accessToken == null || accessToken.length() == 0) {
+    log.info("Didn't contain a Authorization header - checking query");
+    accessToken=req.getOriginalRef().getQueryAsForm().getFirstValue(OAuthServerResource.OAUTH_TOKEN);
+    if (accessToken == null || accessToken.length() == 0) {
+      if (req.getMethod() == Method.POST || req.getMethod() == Method.PUT || req.getMethod() == Method.DELETE) {
+        Representation r=req.getEntity();
+        if (r != null && MediaType.APPLICATION_WWW_FORM.equals(r.getMediaType())) {
+          Form form=new Form(r);
+          accessToken=form.getFirstValue(OAuthServerResource.OAUTH_TOKEN);
+          if (accessToken != null && accessToken.length() > 0) {
+            req.setEntity(form.getWebRepresentation());
+          }
+        }
+      }
+    }
+  }
+  if (accessToken == null || accessToken.length() == 0) {
+    ChallengeRequest cr=new ChallengeRequest(ChallengeScheme.HTTP_OAUTH,"oauth");
+    Series<Parameter> parameters=new Form();
+    parameters.add("error",OAuthError.ErrorCode.invalid_request.name());
+    cr.setParameters(parameters);
+    resp.getChallengeRequests().add(cr);
+    resp.setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+  }
+ else {
+    getLogger().info("Found Access Token " + accessToken);
+    ClientResource authResource=new ClientResource(validateRef);
+    JSONObject request=new JSONObject();
+    try {
+      Reference uri=req.getOriginalRef();
+      request.put("access_token",accessToken);
+      ScopedResource scoped=null;
+      log.info("Looking for a scoped resource");
+      for (Restlet next=getNext(); next != null; ) {
+        if (next instanceof Finder) {
+          Finder f=(Finder)next;
+          ServerResource sr=f.find(req,resp);
+          if (sr instanceof ScopedResource) {
+            scoped=(ScopedResource)sr;
+          }
+          break;
+        }
+ else         if (next instanceof Filter) {
+          next=((Filter)next).getNext();
+        }
+ else {
+          getLogger().warning("Unsupported class found in loop : " + next.getClass().getCanonicalName());
+          break;
+        }
+      }
+      log.info("After scoped resource - " + scoped);
+      if (scoped != null) {
+        String owner=scoped.getOwner(uri);
+        if (owner != null && owner.length() > 0)         request.put("owner",owner);
+        log.info("Found owner = " + owner);
+        String[] scopes=scoped.getScope(uri);
+        log.info("Found scopes = " + scopes.length);
+        if (scopes != null && scopes.length > 0) {
+          JSONArray jArray=new JSONArray();
+          for (          String scope : scopes)           jArray.put(scope);
+          request.put("scope",jArray);
+        }
+      }
+      request.put("uri",uri.getHierarchicalPart());
+      JsonRepresentation repr=new JsonRepresentation(request);
+      StringRepresentation sr=new StringRepresentation(request.toString());
+      sr.setCharacterSet(repr.getCharacterSet());
+      repr.setSize(sr.getSize());
+      log.info("Posting to validator... json = " + request);
+      Representation r=authResource.post(repr);
+      log.info("After posting to validator...");
+      repr.release();
+      sr.release();
+      getLogger().info("Got Respose from auth resource OK " + r.getClass().getCanonicalName());
+      JsonRepresentation returned=new JsonRepresentation(r);
+      JSONObject response=returned.getJsonObject();
+      boolean authenticated=response.getBoolean("authenticated");
+      if (response.has("tokenOwner")) {
+        String tokenOwner=response.getString("tokenOwner");
+        log.info("User " + tokenOwner + " is accessing : "+ req.getOriginalRef());
+        User user=new User(tokenOwner,accessToken);
+        req.getClientInfo().setUser(user);
+        req.getClientInfo().setAuthenticated(true);
+      }
+      String error=null;
+      if (response.has("error")) {
+        error=response.getString("error");
+      }
+      getLogger().info("In Auth Filer -> " + authenticated);
+      returned.release();
+      r.release();
+      authResource.release();
+      if (authenticated)       return true;
+ else       if (error != null && error.length() > 0) {
+        ChallengeRequest cr=new ChallengeRequest(ChallengeScheme.HTTP_OAUTH,"oauth");
+        Series<Parameter> parameters=new Form();
+        parameters.add("error",error);
+        OAuthError.ErrorCode code=OAuthError.ErrorCode.valueOf(error);
+switch (code) {
+case invalid_request:
+          resp.setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+        break;
+case invalid_token:
+case expired_token:
+      resp.setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
+    break;
+case insufficient_scope:
+  resp.setStatus(Status.CLIENT_ERROR_FORBIDDEN);
+break;
+}
+cr.setParameters(parameters);
+resp.getChallengeRequests().add(cr);
+}
+}
+ catch (JSONException e) {
+e.printStackTrace();
+}
+catch (IOException e) {
+e.printStackTrace();
+}
+ finally {
+if (authResource != null) {
+authResource.getResponse().release();
+authResource.release();
+}
+}
+}
+return false;
+}

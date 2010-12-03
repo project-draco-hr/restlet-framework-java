@@ -1,0 +1,28 @@
+{
+  String rToken=params.getFirstValue(REFRESH_TOKEN);
+  if (rToken == null || rToken.length() == 0) {
+    sendError(ErrorCode.invalid_request,"Mandatory parameter refresh_token is missing",null);
+    setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+    return;
+  }
+  Client client=validate(clientId,clientSecret);
+  if (client == null)   return;
+  Token token=generator.findToken(rToken);
+  if (token != null && (token instanceof ExpireToken)) {
+    AuthenticatedUser user=token.getUser();
+    if (client.containsUser(user.getId())) {
+      generator.refreshToken((ExpireToken)token);
+      JSONObject body=createJsonToken(token,null);
+      getResponse().setCacheDirectives(noStore);
+      getResponse().setEntity(new JsonRepresentation(body));
+    }
+ else {
+      sendError(ErrorCode.unauthorized_client,"User does not match.",null);
+      setStatus(Status.CLIENT_ERROR_FORBIDDEN);
+    }
+  }
+ else {
+    sendError(ErrorCode.invalid_grant,"Refresh token.",null);
+    setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
+  }
+}

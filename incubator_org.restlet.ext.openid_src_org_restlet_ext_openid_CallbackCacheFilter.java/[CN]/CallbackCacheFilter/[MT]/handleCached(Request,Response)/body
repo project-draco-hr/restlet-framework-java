@@ -1,0 +1,12 @@
+{
+  Cookie c=request.getCookies().getFirst(UserCookieID);
+  if (c != null) {
+    String key=c.getValue();
+    if (key != null && key.length() > 0 && userCache.containsKey(key)) {
+      createResponse(userCache.get(key),request,response);
+      clearCookies(response);
+      return true;
+    }
+  }
+  return false;
+}

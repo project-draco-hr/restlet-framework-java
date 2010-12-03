@@ -1,0 +1,31 @@
+{
+  String callback=response.getCookieSettings().getFirstValue(INTERNAL_SERVER_COOKIE);
+  if (callback == null)   callback=request.getCookies().getFirstValue(INTERNAL_SERVER_COOKIE);
+  if (callback != null) {
+    Redirector dispatcher=new Redirector(getContext(),callback,Redirector.MODE_CLIENT_TEMPORARY);
+    getContext().getAttributes().put("id",id);
+    dispatcher.handle(request,response);
+    response.getCookieSettings().remove(INTERNAL_SERVER_COOKIE);
+  }
+ else {
+    JSONObject obj=new JSONObject();
+    try {
+      obj.put("id",id);
+    }
+ catch (    JSONException e) {
+      getLogger().log(Level.WARNING,"Failed to get the ID!",e);
+    }
+    String jcallback=response.getCookieSettings().getFirstValue(EXTERNAL_SERVER_COOKIE);
+    if (jcallback == null)     jcallback=request.getCookies().getFirstValue(EXTERNAL_SERVER_COOKIE);
+    if (jcallback != null) {
+      Redirector dispatcher=new Redirector(getContext(),jcallback,Redirector.MODE_SERVER_OUTBOUND);
+      request.setEntity(new JsonRepresentation(obj));
+      request.setMethod(Method.POST);
+      dispatcher.handle(request,response);
+      response.getCookieSettings().remove(EXTERNAL_SERVER_COOKIE);
+    }
+ else {
+      response.setEntity(new JsonRepresentation(obj));
+    }
+  }
+}

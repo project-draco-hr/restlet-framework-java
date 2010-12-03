@@ -1,0 +1,40 @@
+{
+  Form params=getQuery();
+  String sessionId=getCookies().getFirstValue(ClientCookieID);
+  log.info("sessionId = " + sessionId);
+  ConcurrentMap<String,Object> attribs=getContext().getAttributes();
+  AuthSession session=(sessionId == null) ? null : (AuthSession)attribs.get(sessionId);
+  String id=(String)getContext().getAttributes().get(ID);
+  log.info("id = " + id);
+  log.info("session = " + session);
+  if (session != null)   log.info("client = " + session.getClient());
+ else {
+    getResponse().getCookieSettings().removeAll(ClientCookieID);
+  }
+  if (id != null && session != null && session.getClient() != null) {
+    log.info("After Authentication - cleanup");
+    params.removeFirst(OPENID);
+    Client client=(Client)session.getClient();
+    log.info("Found client = " + client);
+    session.setScopeOwner(id);
+    return doPostAuthenticate(session,client);
+  }
+  String typeString=params.getFirstValue(RESPONSE_TYPE);
+  log.info("In service type = " + typeString);
+  try {
+    ResponseType type=Enum.valueOf(ResponseType.class,typeString);
+    log.info("Found flow - " + type);
+    if (Method.GET.equals(getMethod())) {
+      doGet(type,session);
+    }
+ else     setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+  }
+ catch (  IllegalArgumentException iae) {
+    sendError(sessionId,ErrorCode.unsupported_response_type,params.getFirstValue(STATE),"Unsupported flow",null);
+    log.log(Level.WARNING,"Error in execution.",iae);
+  }
+catch (  NullPointerException npe) {
+    sendError(sessionId,ErrorCode.invalid_request,params.getFirstValue(STATE),"No response_type parameter found.",null);
+  }
+  return getResponse().getEntity();
+}

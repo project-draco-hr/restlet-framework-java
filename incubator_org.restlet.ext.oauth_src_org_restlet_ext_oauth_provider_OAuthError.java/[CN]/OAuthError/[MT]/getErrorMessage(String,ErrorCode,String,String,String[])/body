@@ -1,0 +1,20 @@
+{
+  ChallengeRequest challenge=new ChallengeRequest(ChallengeScheme.HTTP_OAUTH,realm);
+  Form response=new Form();
+  response.add("error",error.name());
+  if (description != null && description.length() > 0) {
+    response.add("error_description",description);
+  }
+  if (errorUri != null && errorUri.length() > 0) {
+    response.add("error_uri",errorUri);
+  }
+  if (scopes != null && scopes.length > 0) {
+    StringBuilder scope=new StringBuilder(scopes[0]);
+    for (int i=1; i < scopes.length; i++) {
+      scope.append(' ').append(scopes[i]);
+    }
+    response.add("scope",scope.toString());
+  }
+  challenge.setParameters(response);
+  return challenge;
+}

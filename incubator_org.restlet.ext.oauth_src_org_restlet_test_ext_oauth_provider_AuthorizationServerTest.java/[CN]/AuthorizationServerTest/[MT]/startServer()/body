@@ -1,0 +1,31 @@
+{
+  Logger log=Context.getCurrentLogger();
+  log.info("Starting server test!");
+  String keystore=ClassLoader.getSystemResource("localhost.jks").getPath();
+  System.setProperty("javax.net.ssl.trustStore",keystore);
+  System.setProperty("javax.net.ssl.trustStoreType","JKS");
+  System.setProperty("javax.net.ssl.trustStorePassword","testpass");
+  Server server=new Server(Protocol.HTTP,serverPort);
+  component=new Component();
+  component.getServers().add(server);
+  component.getClients().add(Protocol.HTTP);
+  component.getClients().add(Protocol.HTTPS);
+  component.getClients().add(Protocol.RIAP);
+  component.getDefaultHost().attach("/oauth",new OauthTestApplication(0));
+  component.getDefaultHost().attach("/client",client);
+  component.getDefaultHost().attach("/server",new OauthProtectedTestApplication());
+  component.getDefaultHost().attach("/combo",new OauthComboTestApplication(0));
+  Series<Parameter> parameters=server.getContext().getParameters();
+  parameters.add("keystorePath",keystore);
+  parameters.add("keystorePassword","testpass");
+  parameters.add("keyPassword","testpass");
+  parameters.add("keystoreType","JKS");
+  parameters.add("sslServerAlias","localhost");
+  component.start();
+  List<AuthenticatorHelper> authenticators=Engine.getInstance().getRegisteredAuthenticators();
+  for (  AuthenticatorHelper helper : authenticators) {
+    System.out.println("Found default auth helper : " + helper);
+  }
+  authenticators.add(new OAuthAuthenticationHelper());
+  System.out.println(Engine.getInstance().getRegisteredClients().get(0));
+}

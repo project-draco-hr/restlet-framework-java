@@ -1,0 +1,25 @@
+{
+  DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
+  Document doc=factory.newDocumentBuilder().newDocument();
+  Element root=doc.createElement("xrds:XRDS");
+  root.setAttribute("xmlns:xrds","xri://$xrds");
+  root.setAttribute("xmlns:openid","http://openid.net/xmlns/1.0");
+  root.setAttribute("xmlns","xri://$xrd*($v*2.0)");
+  doc.appendChild(root);
+  Element xrd=doc.createElement("XRD");
+  root.appendChild(xrd);
+  Element service=doc.createElement("Service");
+  xrd.appendChild(service);
+  Element typeElement=doc.createElement("Type");
+  typeElement.appendChild(doc.createTextNode(type));
+  service.appendChild(typeElement);
+  Element uriElement=doc.createElement("URI");
+  uriElement.appendChild(doc.createTextNode(uri));
+  service.appendChild(uriElement);
+  if (localId != null) {
+    Element localIdElement=doc.createElement("LocalID");
+    localIdElement.appendChild(doc.createTextNode(localId));
+    service.appendChild(localIdElement);
+  }
+  return doc;
+}

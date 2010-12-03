@@ -1,0 +1,19 @@
+{
+  OAuthUser result=null;
+  Form form=new Form();
+  form.add(OAuthServerResource.GRANT_TYPE,OAuthServerResource.GrantType.none.name());
+  form.add(OAuthServerResource.CLIENT_ID,params.clientId);
+  form.add(OAuthServerResource.CLIENT_SECRET,params.clientSecret);
+  if (params.scope != null && params.scope.length() > 0) {
+    form.add(OAuthServerResource.SCOPE,params.scope);
+  }
+  ClientResource tokenResource=new ClientResource(params.baseRef + params.accessTokenPath);
+  Context.getCurrentLogger().info("Sending NoneFlow form : " + form.getQueryString());
+  Representation body=tokenResource.post(form.getWebRepresentation());
+  if (tokenResource.getResponse().getStatus().isSuccess()) {
+    result=handleSuccessResponse(body);
+  }
+  body.release();
+  tokenResource.release();
+  return result;
+}

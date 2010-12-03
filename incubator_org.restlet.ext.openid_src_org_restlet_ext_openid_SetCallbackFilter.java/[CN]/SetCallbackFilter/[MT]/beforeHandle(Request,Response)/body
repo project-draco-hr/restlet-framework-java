@@ -1,0 +1,17 @@
+{
+  String cb=request.getOriginalRef().getQueryAsForm().getFirstValue(CallbackCacheFilter.EXTERNAL_SERVER_COOKIE);
+  if (cb != null && cb.length() > 0 && response.getStatus().isSuccess()) {
+    Reference ref=new Reference(cb);
+    if (ref.getQueryAsForm().removeFirst("internal")) {
+      getLogger().info("OpenID - setting internal cb cookie = " + cb);
+      CookieSetting cs=new CookieSetting(CallbackCacheFilter.INTERNAL_SERVER_COOKIE,cb);
+      response.getCookieSettings().add(cs);
+    }
+ else {
+      getLogger().info("OpenID - setting external cb cookie = " + cb);
+      CookieSetting cs=new CookieSetting(CallbackCacheFilter.EXTERNAL_SERVER_COOKIE,cb);
+      response.getCookieSettings().add(cs);
+    }
+  }
+  return super.beforeHandle(request,response);
+}

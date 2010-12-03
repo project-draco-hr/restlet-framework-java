@@ -1,0 +1,38 @@
+{
+  String sessionId=getCookies().getFirstValue(ClientCookieID);
+  ConcurrentMap<String,Object> attribs=getContext().getAttributes();
+  AuthSession session=(sessionId == null) ? null : (AuthSession)attribs.get(sessionId);
+  if ("Reject".equals(action)) {
+    setStatus(Status.CLIENT_ERROR_FORBIDDEN);
+    sendError(session,ErrorCode.access_denied,session.getState(),"Rejected.",null);
+    log.info("Rejected.");
+    return;
+  }
+  Client client=session.getClient();
+  String id=session.getScopeOwner();
+  String redirUrl=session.getDynamicCallbackURI();
+  getLogger().info("OAuth2 get dynamic callback = " + redirUrl);
+  if (redirUrl == null || redirUrl.length() == 0)   redirUrl=client.getRedirectUri();
+  String location=null;
+  ResponseType flow=session.getAuthFlow();
+  if (flow.equals(ResponseType.token)) {
+    location=generateAgentToken(id,client,redirUrl);
+  }
+ else   if (flow.equals(ResponseType.code)) {
+    location=generateCode(id,client,redirUrl);
+  }
+  AuthenticatedUser user=client.findUser(session.getScopeOwner());
+  user.revokeScopes();
+  for (  String s : scopes) {
+    getLogger().info("Adding scope = " + s + " to user = "+ id);
+    user.addScope(s,"");
+  }
+  String state=session.getState();
+  if (state != null && state.length() > 0) {
+    Reference stateful=new Reference(location);
+    stateful.addQueryParameter(OAuthServerResource.STATE,state);
+    location=stateful.toString();
+  }
+  session.setState(null);
+  redirectTemporary(location);
+}
