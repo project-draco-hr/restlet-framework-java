@@ -3,14 +3,28 @@
   long contentLength=getContentLength();
   boolean chunkedEncoding=HeaderUtils.isChunkedEncoding(getRequestHeaders());
   boolean connectionClosed=HeaderUtils.isConnectionClose(getRequestHeaders());
-  if ((contentLength != Representation.UNKNOWN_SIZE && contentLength != 0) || chunkedEncoding || connectionClosed) {
+  if (((contentLength != Representation.UNKNOWN_SIZE) && (contentLength != 0)) || chunkedEncoding || connectionClosed) {
     InputStream requestStream=getRequestEntityStream(contentLength);
-    ReadableByteChannel requestChannel=getRequestEntityChannel(contentLength);
+    if (connectionClosed) {
+      PushbackInputStream pbi=new PushbackInputStream(requestStream);
+      try {
+        int next=pbi.read();
+        if (next != -1) {
+          pbi.unread(next);
+        }
+ else {
+          requestStream=null;
+        }
+      }
+ catch (      IOException e) {
+        getLogger().fine("Unable to read request entity");
+      }
+    }
     if (requestStream != null) {
       result=new InputRepresentation(requestStream,null,contentLength);
     }
- else     if (requestChannel != null) {
-      result=new ReadableRepresentation(requestChannel,null,contentLength);
+ else {
+      result=new EmptyRepresentation();
     }
     result.setSize(contentLength);
   }
