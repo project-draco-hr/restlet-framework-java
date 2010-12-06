@@ -62,7 +62,7 @@
           Response response=handle(request);
           if (isSynchronous) {
             if (response.getStatus().isError()) {
-              throw new ResourceException(response.getStatus());
+              doError(response.getStatus());
             }
             if (!annotation.getJavaOutputType().equals(void.class)) {
               result=toObject((response == null ? null : response.getEntity()),annotation.getJavaOutputType());
