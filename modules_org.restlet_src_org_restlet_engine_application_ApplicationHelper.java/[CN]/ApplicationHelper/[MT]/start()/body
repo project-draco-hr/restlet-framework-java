@@ -2,11 +2,11 @@
   Filter filter=null;
   for (  Service service : getHelped().getServices()) {
     if (service.isEnabled()) {
-      filter=service.createInboundFilter(getContext());
+      filter=service.createInboundFilter((getContext() == null) ? null : getContext().createChildContext());
       if (filter != null) {
         addInboundFilter(filter);
       }
-      filter=service.createOutboundFilter(getContext());
+      filter=service.createOutboundFilter((getContext() == null) ? null : getContext().createChildContext());
       if (filter != null) {
         addOutboundFilter(filter);
       }
