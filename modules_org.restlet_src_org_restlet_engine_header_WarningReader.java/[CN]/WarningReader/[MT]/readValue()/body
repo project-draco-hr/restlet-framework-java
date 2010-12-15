@@ -1,15 +1,23 @@
 {
   Warning result=new Warning();
   String code=readToken();
-  String agent=readRawValue();
+  skipSpaces();
+  String agent=readRawText();
+  skipSpaces();
   String text=readQuotedString();
-  String date=readQuotedString();
+  skipSpaces();
+  String date=null;
+  if (peek() != -1) {
+    date=readQuotedString();
+  }
   if ((code == null) || (agent == null) || (text == null)) {
     throw new IOException("Warning header malformed.");
   }
   result.setStatus(Status.valueOf(Integer.parseInt(code)));
   result.setAgent(agent);
   result.setText(text);
-  result.setDate(DateUtils.parse(date));
+  if (date != null) {
+    result.setDate(DateUtils.parse(date));
+  }
   return result;
 }
