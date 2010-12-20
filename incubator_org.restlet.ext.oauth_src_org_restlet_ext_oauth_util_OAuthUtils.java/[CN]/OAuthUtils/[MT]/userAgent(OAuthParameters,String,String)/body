@@ -40,7 +40,13 @@
     if (++cnt >= maxRedirCnt)     break;
     Context.getCurrentLogger().info("Redir to = " + authResource.getResponse().getLocationRef());
     authResource.setReference(authResource.getResponse().getLocationRef());
-    authResource.get();
+    r=authResource.get();
+    try {
+      r=OpenIdFormFrowarder.handleFormRedirect(r,authResource);
+    }
+ catch (    IOException e) {
+      Context.getCurrentLogger().log(Level.WARNING,"Failed in OpenID FW",e);
+    }
   }
   r.release();
   authResource.release();
