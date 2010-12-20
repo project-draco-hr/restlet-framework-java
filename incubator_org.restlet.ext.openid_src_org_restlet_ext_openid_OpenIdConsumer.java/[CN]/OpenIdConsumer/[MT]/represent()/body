@@ -93,11 +93,7 @@
         msg.add(key.toString(),authReq.getParameterValue(key.toString()));
         log.info("Adding to form - key " + key.toString() + " : value"+ authReq.getParameterValue(key.toString()));
       }
-      Redirector dispatcher=new Redirector(getContext(),authReq.getOPEndpoint(),Redirector.MODE_SERVER_OUTBOUND);
-      Request req=getRequest();
-      req.setEntity(msg.getWebRepresentation());
-      req.setMethod(Method.POST);
-      dispatcher.handle(getRequest(),getResponse());
+      return generateForm(authReq);
     }
   }
  catch (  DiscoveryException e) {
