@@ -1,0 +1,17 @@
+{
+  int result=0;
+  int srcSize=src.remaining();
+  if (srcSize > 0) {
+    int remaining=getPacketBuffer().remaining();
+    if (remaining > 0) {
+      getWrappedChannel().write(getPacketBuffer());
+      remaining=getPacketBuffer().remaining();
+    }
+    if (remaining == 0) {
+      getPacketBuffer().clear();
+      getEngine().wrap(src,getPacketBuffer());
+      result=srcSize - src.remaining();
+    }
+  }
+  return result;
+}

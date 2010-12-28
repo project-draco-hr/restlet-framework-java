@@ -1,0 +1,13 @@
+{
+  int result=0;
+  int remaining=getPacketBuffer().remaining();
+  if (remaining == 0) {
+    getPacketBuffer().clear();
+    remaining=getWrappedChannel().read(getPacketBuffer());
+  }
+  if (remaining > 0) {
+    getEngine().unwrap(getPacketBuffer(),dst);
+    result=remaining - getPacketBuffer().remaining();
+  }
+  return result;
+}
