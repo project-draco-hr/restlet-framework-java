@@ -18,7 +18,31 @@
  else {
         getPacketBuffer().clear();
       }
-    }
-  }
-  return result;
+switch (sslResult.getStatus()) {
+case BUFFER_OVERFLOW:
+        break;
+case BUFFER_UNDERFLOW:
+      break;
+case CLOSED:
+    break;
+case OK:
+switch (sslResult.getHandshakeStatus()) {
+case FINISHED:
+    break;
+case NEED_TASK:
+  break;
+case NEED_UNWRAP:
+getConnection().getOutboundWay().setIoState(IoState.IDLE);
+getConnection().getInboundWay().setIoState(IoState.INTEREST);
+break;
+case NEED_WRAP:
+break;
+case NOT_HANDSHAKING:
+break;
+}
+break;
+}
+}
+}
+return result;
 }

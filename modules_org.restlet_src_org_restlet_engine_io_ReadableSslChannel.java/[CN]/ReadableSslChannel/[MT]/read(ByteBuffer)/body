@@ -1,13 +1,61 @@
 {
   int result=0;
-  int remaining=getPacketBuffer().remaining();
-  if (remaining == 0) {
-    getPacketBuffer().clear();
-    remaining=getWrappedChannel().read(getPacketBuffer());
-  }
-  if (remaining > 0) {
-    getManager().getEngine().unwrap(getPacketBuffer(),dst);
-    result=remaining - getPacketBuffer().remaining();
-  }
-  return result;
+  boolean continueReading=true;
+  while (continueReading) {
+    if (getPacketBufferState() == BufferState.FILLING) {
+      continueReading=(refill() > 0);
+    }
+    if (getPacketBufferState() == BufferState.DRAINING) {
+      int remaining=dst.remaining();
+      SSLEngineResult sslResult=getManager().getEngine().unwrap(getPacketBuffer(),dst);
+      result=remaining - dst.remaining();
+      if (Context.getCurrentLogger().isLoggable(Level.INFO)) {
+        Context.getCurrentLogger().log(Level.INFO,"SSL I/O result" + sslResult);
+      }
+      if (getPacketBuffer().remaining() == 0) {
+        setPacketBufferState(BufferState.FILLING);
+      }
+switch (sslResult.getStatus()) {
+case BUFFER_OVERFLOW:
+        continueReading=false;
+      break;
+case BUFFER_UNDERFLOW:
+    continueReading=false;
+  break;
+case CLOSED:
+getConnection().close(true);
+continueReading=false;
+break;
+case OK:
+boolean continueHandshake=true;
+while (continueHandshake) {
+switch (sslResult.getHandshakeStatus()) {
+case FINISHED:
+continueHandshake=false;
+break;
+case NEED_TASK:
+Runnable task=null;
+while ((task=getManager().getEngine().getDelegatedTask()) != null) {
+getConnection().getHelper().getWorkerService().execute(task);
+}
+break;
+case NEED_UNWRAP:
+continueHandshake=false;
+break;
+case NEED_WRAP:
+getConnection().getOutboundWay().setIoState(IoState.INTEREST);
+getConnection().getInboundWay().setIoState(IoState.IDLE);
+continueHandshake=false;
+continueReading=false;
+break;
+case NOT_HANDSHAKING:
+continueHandshake=false;
+break;
+}
+break;
+}
+}
+}
+}
+return result;
 }
