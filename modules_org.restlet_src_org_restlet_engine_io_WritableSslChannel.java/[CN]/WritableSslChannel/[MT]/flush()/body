@@ -1,9 +1,11 @@
 {
+  int result=0;
   if (getPacketBufferState() == BufferState.DRAINING) {
-    getWrappedChannel().write(getPacketBuffer());
+    result=getWrappedChannel().write(getPacketBuffer());
     if (getPacketBuffer().remaining() == 0) {
       setPacketBufferState(BufferState.FILLING);
       getPacketBuffer().clear();
     }
   }
+  return result;
 }
