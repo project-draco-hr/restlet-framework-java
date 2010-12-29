@@ -1,0 +1,12 @@
+{
+  if (getContext() != null) {
+    if (getPeerAddress() != null) {
+      setEngine(getContext().createSSLEngine(getPeerAddress().getHostName(),getPeerAddress().getPort()));
+    }
+ else {
+      setEngine(getContext().createSSLEngine());
+    }
+    getEngine().setUseClientMode(isClientSide());
+    getEngine().beginHandshake();
+  }
+}
