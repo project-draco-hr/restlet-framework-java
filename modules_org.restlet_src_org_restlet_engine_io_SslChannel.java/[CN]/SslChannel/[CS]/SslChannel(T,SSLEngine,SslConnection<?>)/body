@@ -1,0 +1,14 @@
+{
+  super(wrappedChannel);
+  this.engine=engine;
+  this.connection=connection;
+  if (engine != null) {
+    SSLSession session=getEngine().getSession();
+    int packetSize=session.getPacketBufferSize();
+    this.packetBuffer=getConnection().createByteBuffer(packetSize);
+  }
+ else {
+    this.packetBuffer=null;
+  }
+  this.packetBufferState=BufferState.IDLE;
+}

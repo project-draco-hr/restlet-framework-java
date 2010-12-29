@@ -1,0 +1,9 @@
+{
+  if (getPacketBufferState() == BufferState.DRAINING) {
+    getWrappedChannel().write(getPacketBuffer());
+    if (getPacketBuffer().remaining() == 0) {
+      setPacketBufferState(BufferState.FILLING);
+      getPacketBuffer().clear();
+    }
+  }
+}
