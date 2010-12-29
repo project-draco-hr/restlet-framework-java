@@ -1,3 +1,9 @@
 {
-  return ServerResource.class.cast(getInjector().getInstance(serverResourceKey));
+  try {
+    return ServerResource.class.cast(getInjector().getInstance(serverResourceKey));
+  }
+ catch (  ClassCastException ex) {
+    String msg=String.format("Must bind %s to ServerResource (or subclass)",serverResourceKey);
+    throw new ProvisionException(msg,ex);
+  }
 }
