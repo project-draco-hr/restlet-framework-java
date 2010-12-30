@@ -25,7 +25,17 @@
         }
       }
     }
-    if (!foundConn && ((getMaxTotalConnections() == -1) || (getConnections().size() < getMaxTotalConnections())) && ((getMaxConnectionsPerHost() == -1) || (hostConnectionCount < getMaxConnectionsPerHost()))) {
+    if (foundConn) {
+      getLogger().log(Level.FINE,"Reusing an existing client connection to: " + socketAddress);
+    }
+ else     if ((getMaxTotalConnections() != -1) && (getConnections().size() >= getMaxTotalConnections())) {
+      getLogger().log(Level.WARNING,"Unable to create a new connection. Maximum total number of connections reached!");
+    }
+ else     if ((getMaxConnectionsPerHost() != -1) && (hostConnectionCount >= getMaxConnectionsPerHost())) {
+      getLogger().log(Level.WARNING,"Unable to create a new connection. Maximum number of connections reached for host: " + socketAddress);
+    }
+ else {
+      getLogger().log(Level.FINE,"Creating a new client connection to: " + socketAddress);
       result=checkout(createSocketChannel(request.isConfidential(),socketAddress),getController(),socketAddress);
       getConnections().add(result);
     }

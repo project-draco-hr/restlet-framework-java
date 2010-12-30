@@ -8,7 +8,9 @@
       while (isProcessing()) {
         int result=readSocketBytes();
         if (result == 0) {
-          setIoState(IoState.INTEREST);
+          if (getIoState() == IoState.PROCESSING) {
+            setIoState(IoState.INTEREST);
+          }
         }
  else         if (result == -1) {
           getConnection().close(true);
