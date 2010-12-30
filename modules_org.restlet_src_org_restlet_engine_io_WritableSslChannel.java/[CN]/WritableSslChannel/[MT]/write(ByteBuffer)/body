@@ -1,15 +1,14 @@
 {
   int result=0;
-  if (Context.getCurrentLogger().isLoggable(Level.INFO)) {
-    Context.getCurrentLogger().log(Level.INFO,getManager().toString());
-  }
   flush();
-  if (getPacketBufferState() == BufferState.FILLING) {
+  if ((getPacketBufferState() == BufferState.FILLING) || (getManager().getState() == SslState.HANDSHAKING)) {
     int srcSize=src.remaining();
     if (srcSize > 0) {
-      SSLEngineResult sslResult=runEngine(src);
-      handleResult(sslResult,src);
-      flush();
+      while (getPacketBuffer().hasRemaining() && (getConnection().getOutboundWay().getIoState() != IoState.IDLE)) {
+        SSLEngineResult sslResult=runEngine(src);
+        handleResult(sslResult,src);
+        flush();
+      }
       result=srcSize - src.remaining();
     }
   }

@@ -2,6 +2,9 @@
   int result=0;
   if (getPacketBufferState() == BufferState.DRAINING) {
     result=getWrappedChannel().write(getPacketBuffer());
+    if (getConnection().getLogger().isLoggable(Level.INFO)) {
+      getConnection().getLogger().log(Level.INFO,"Packet bytes written: " + result);
+    }
     if (getPacketBuffer().remaining() == 0) {
       setPacketBufferState(BufferState.FILLING);
       getPacketBuffer().clear();

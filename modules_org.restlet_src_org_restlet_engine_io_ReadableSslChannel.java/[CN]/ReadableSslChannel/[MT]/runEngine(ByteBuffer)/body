@@ -1,9 +1,12 @@
 {
+  if (getConnection().getLogger().isLoggable(Level.INFO)) {
+    getConnection().getLogger().log(Level.INFO,"Unwrapping bytes with: " + getPacketBuffer());
+  }
   SSLEngineResult result=getManager().getEngine().unwrap(getPacketBuffer(),applicationBuffer);
   int remaining=getPacketBuffer().remaining();
   if (remaining == 0) {
     setPacketBufferState(BufferState.FILLING);
-    refill();
+    getPacketBuffer().clear();
   }
   return result;
 }
