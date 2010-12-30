@@ -1,10 +1,16 @@
 {
-  while (isProcessing() && fillLine()) {
+  boolean continueReading=true;
+  while (continueReading && isProcessing() && fillLine()) {
     if (getMessageState() == MessageState.START) {
-      if (getHelper().getLogger().isLoggable(Level.FINE)) {
-        getHelper().getLogger().fine("Reading message from " + getConnection().getSocketAddress());
+      if (getLineBuilder().length() == 0) {
+        continueReading=false;
       }
-      readStartLine();
+ else {
+        if (getHelper().getLogger().isLoggable(Level.FINE)) {
+          getHelper().getLogger().fine("Reading message from " + getConnection().getSocketAddress());
+        }
+        readStartLine();
+      }
     }
  else     if (getMessageState() == MessageState.HEADERS) {
       Parameter header=readHeader();
