@@ -12,7 +12,9 @@
       }
     }
     if (bytesWritten == 0) {
-      setIoState(IoState.INTEREST);
+      if (getIoState() == IoState.PROCESSING) {
+        setIoState(IoState.INTEREST);
+      }
     }
  else     if (getByteBuffer().hasRemaining()) {
       getByteBuffer().compact();
