@@ -1,20 +1,24 @@
 {
   final Runnable task=getManager().getEngine().getDelegatedTask();
   if (task != null) {
-    final IoState inboundState=getConnection().getInboundWay().getIoState();
-    final IoState outboundState=getConnection().getOutboundWay().getIoState();
     getConnection().getInboundWay().setIoState(IoState.IDLE);
     getConnection().getOutboundWay().setIoState(IoState.IDLE);
     getConnection().getHelper().getWorkerService().execute(new Runnable(){
       public void run(){
+        getConnection().getLogger().log(Level.INFO,"Running delegated task...");
         task.run();
         Runnable nextTask=getManager().getEngine().getDelegatedTask();
         while (nextTask != null) {
           nextTask.run();
           nextTask=getManager().getEngine().getDelegatedTask();
         }
-        getConnection().getInboundWay().setIoState(inboundState);
-        getConnection().getOutboundWay().setIoState(outboundState);
+        try {
+          handleResult(runEngine(applicationBuffer),applicationBuffer);
+        }
+ catch (        IOException e) {
+          getConnection().getLogger().log(Level.FINE,"Unable to run SSL engine",e);
+        }
+        getConnection().getLogger().log(Level.INFO,"Done running delegated tasks for this connection: " + getConnection());
       }
     }
 );

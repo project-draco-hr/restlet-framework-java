@@ -1,0 +1,13 @@
+{
+  SSLEngineResult result=getManager().getEngine().wrap(applicationBuffer,getPacketBuffer());
+  getPacketBuffer().flip();
+  int remaining=getPacketBuffer().remaining();
+  if (remaining > 0) {
+    setPacketBufferState(BufferState.DRAINING);
+    flush();
+  }
+ else {
+    getPacketBuffer().clear();
+  }
+  return result;
+}

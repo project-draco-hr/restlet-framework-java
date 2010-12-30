@@ -4,14 +4,10 @@
   if (getPacketBufferState() == BufferState.DRAINING) {
     int dstSize=dst.remaining();
     if (dstSize > 0) {
-      SSLEngineResult sslResult=getManager().getEngine().unwrap(getPacketBuffer(),dst);
+      SSLEngineResult sslResult=runEngine(dst);
+      handleResult(sslResult,dst);
+      refill();
       result=dstSize - dst.remaining();
-      int remaining=getPacketBuffer().remaining();
-      if (remaining == 0) {
-        setPacketBufferState(BufferState.FILLING);
-        refill();
-      }
-      handleResult(sslResult);
     }
   }
   return result;
