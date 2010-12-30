@@ -1,6 +1,7 @@
 {
   int result=0;
   boolean continueReading=true;
+  boolean continueHandshake=true;
   while (continueReading) {
     if (getPacketBufferState() == BufferState.FILLING) {
       continueReading=(refill() > 0);
@@ -27,7 +28,6 @@ getConnection().close(true);
 continueReading=false;
 break;
 case OK:
-boolean continueHandshake=true;
 while (continueHandshake) {
 switch (sslResult.getHandshakeStatus()) {
 case FINISHED:
@@ -38,6 +38,7 @@ Runnable task=null;
 while ((task=getManager().getEngine().getDelegatedTask()) != null) {
 getConnection().getHelper().getWorkerService().execute(task);
 }
+continueHandshake=false;
 break;
 case NEED_UNWRAP:
 continueHandshake=false;
