@@ -1,16 +1,18 @@
 {
   int result=0;
-  if (getPacketBufferState() == BufferState.FILLING) {
-    refill();
-  }
+  refill();
   if (getPacketBufferState() == BufferState.DRAINING) {
-    int remaining=dst.remaining();
-    SSLEngineResult sslResult=getManager().getEngine().unwrap(getPacketBuffer(),dst);
-    result=remaining - dst.remaining();
-    if (getPacketBuffer().remaining() == 0) {
-      setPacketBufferState(BufferState.FILLING);
+    int dstSize=dst.remaining();
+    if (dstSize > 0) {
+      SSLEngineResult sslResult=getManager().getEngine().unwrap(getPacketBuffer(),dst);
+      result=dstSize - dst.remaining();
+      int remaining=getPacketBuffer().remaining();
+      if (remaining == 0) {
+        setPacketBufferState(BufferState.FILLING);
+        refill();
+      }
+      handleResult(sslResult);
     }
-    handleResult(sslResult);
   }
   return result;
 }
