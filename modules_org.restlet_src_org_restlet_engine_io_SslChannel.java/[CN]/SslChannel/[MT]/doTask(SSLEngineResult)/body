@@ -1,0 +1,22 @@
+{
+  final Runnable task=getManager().getEngine().getDelegatedTask();
+  if (task != null) {
+    final IoState inboundState=getConnection().getInboundWay().getIoState();
+    final IoState outboundState=getConnection().getOutboundWay().getIoState();
+    getConnection().getInboundWay().setIoState(IoState.IDLE);
+    getConnection().getOutboundWay().setIoState(IoState.IDLE);
+    getConnection().getHelper().getWorkerService().execute(new Runnable(){
+      public void run(){
+        task.run();
+        Runnable nextTask=getManager().getEngine().getDelegatedTask();
+        while (nextTask != null) {
+          nextTask.run();
+          nextTask=getManager().getEngine().getDelegatedTask();
+        }
+        getConnection().getInboundWay().setIoState(inboundState);
+        getConnection().getOutboundWay().setIoState(outboundState);
+      }
+    }
+);
+  }
+}

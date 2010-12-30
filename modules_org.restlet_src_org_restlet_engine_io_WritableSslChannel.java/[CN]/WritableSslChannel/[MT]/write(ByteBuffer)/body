@@ -5,9 +5,6 @@
     int srcSize=src.remaining();
     if (srcSize > 0) {
       SSLEngineResult sslResult=getManager().getEngine().wrap(src,getPacketBuffer());
-      if (Context.getCurrentLogger().isLoggable(Level.INFO)) {
-        Context.getCurrentLogger().log(Level.INFO,"SSL I/O result" + sslResult);
-      }
       result=srcSize - src.remaining();
       getPacketBuffer().flip();
       int remaining=getPacketBuffer().remaining();
@@ -18,31 +15,8 @@
  else {
         getPacketBuffer().clear();
       }
-switch (sslResult.getStatus()) {
-case BUFFER_OVERFLOW:
-        break;
-case BUFFER_UNDERFLOW:
-      break;
-case CLOSED:
-    break;
-case OK:
-switch (sslResult.getHandshakeStatus()) {
-case FINISHED:
-    break;
-case NEED_TASK:
-  break;
-case NEED_UNWRAP:
-getConnection().getOutboundWay().setIoState(IoState.IDLE);
-getConnection().getInboundWay().setIoState(IoState.INTEREST);
-break;
-case NEED_WRAP:
-break;
-case NOT_HANDSHAKING:
-break;
-}
-break;
-}
-}
-}
-return result;
+      handleResult(sslResult);
+    }
+  }
+  return result;
 }
