@@ -4,7 +4,7 @@
   if ((getPacketBufferState() == BufferState.FILLING) || (getManager().getState() == SslState.HANDSHAKING)) {
     int srcSize=src.remaining();
     if (srcSize > 0) {
-      while (getPacketBuffer().hasRemaining() && (getConnection().getOutboundWay().getIoState() != IoState.IDLE)) {
+      while (getPacketBuffer().hasRemaining() && (getConnection().getOutboundWay().getIoState() != IoState.IDLE) && src.hasRemaining()) {
         SSLEngineResult sslResult=runEngine(src);
         handleResult(sslResult,src);
         flush();
