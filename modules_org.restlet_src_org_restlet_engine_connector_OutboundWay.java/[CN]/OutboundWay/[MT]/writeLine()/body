@@ -1,8 +1,11 @@
 {
 switch (getMessageState()) {
 case START:
-    writeStartLine();
-  setMessageState(MessageState.HEADERS);
+    if (getHelper().getLogger().isLoggable(Level.FINE)) {
+      getHelper().getLogger().fine("Writing message from " + getConnection().getSocketAddress());
+    }
+  writeStartLine();
+setMessageState(MessageState.HEADERS);
 break;
 case HEADERS:
 if (getHeaders() == null) {
@@ -26,34 +29,34 @@ if (getActualMessage().isEntityAvailable()) {
 setMessageState(MessageState.BODY);
 ReadableByteChannel rbc=getActualMessage().getEntity().getChannel();
 if (rbc instanceof FileChannel) {
-  setEntityChannelType(EntityType.TRANSFERABLE);
+setEntityChannelType(EntityType.TRANSFERABLE);
 }
  else if (rbc instanceof BlockableChannel) {
-  BlockableChannel bc=(BlockableChannel)rbc;
-  if (bc.isBlocking()) {
-    setEntityChannelType(EntityType.BLOCKING);
-  }
- else {
-    setEntityChannelType(EntityType.NON_BLOCKING);
-  }
-}
- else if (rbc instanceof SelectableChannel) {
-  SelectableChannel sc=(SelectableChannel)rbc;
-  if (sc.isBlocking()) {
-    setEntityChannelType(EntityType.BLOCKING);
-  }
- else {
-    setEntityChannelType(EntityType.NON_BLOCKING);
-  }
-}
- else {
+BlockableChannel bc=(BlockableChannel)rbc;
+if (bc.isBlocking()) {
   setEntityChannelType(EntityType.BLOCKING);
 }
-if (getActualMessage().getEntity().getAvailableSize() == Representation.UNKNOWN_SIZE) {
-  setEntityChannel(new ReadableChunkingChannel(rbc,getByteBuffer().capacity()));
+ else {
+  setEntityChannelType(EntityType.NON_BLOCKING);
+}
+}
+ else if (rbc instanceof SelectableChannel) {
+SelectableChannel sc=(SelectableChannel)rbc;
+if (sc.isBlocking()) {
+  setEntityChannelType(EntityType.BLOCKING);
 }
  else {
-  setEntityChannel(new ReadableSizedChannel(rbc,getActualMessage().getEntity().getAvailableSize()));
+  setEntityChannelType(EntityType.NON_BLOCKING);
+}
+}
+ else {
+setEntityChannelType(EntityType.BLOCKING);
+}
+if (getActualMessage().getEntity().getAvailableSize() == Representation.UNKNOWN_SIZE) {
+setEntityChannel(new ReadableChunkingChannel(rbc,getByteBuffer().capacity()));
+}
+ else {
+setEntityChannel(new ReadableSizedChannel(rbc,getActualMessage().getEntity().getAvailableSize()));
 }
 }
  else {
