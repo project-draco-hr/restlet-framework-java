@@ -1,5 +1,10 @@
 {
-  getManager().setState(SslState.APPLICATION_DATA);
+  if (getManager().getState() == SslState.HANDSHAKING) {
+    getManager().setState(SslState.APPLICATION_DATA);
+  }
+ else   if (getManager().getState() == SslState.CLOSING) {
+    getManager().setState(SslState.CLOSED);
+  }
   if (getConnection().isClientSide()) {
     getConnection().getInboundWay().setIoState(IoState.IDLE);
     getConnection().getOutboundWay().setIoState(IoState.INTEREST);

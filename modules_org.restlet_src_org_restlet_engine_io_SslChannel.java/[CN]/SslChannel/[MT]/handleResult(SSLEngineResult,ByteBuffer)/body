@@ -1,32 +1,19 @@
 {
-  log(sslResult);
+  if (sslResult != null) {
+    log(sslResult);
 switch (sslResult.getStatus()) {
 case BUFFER_OVERFLOW:
-    onBufferOverflow(sslResult);
-  break;
+      onBufferOverflow(sslResult);
+    break;
 case BUFFER_UNDERFLOW:
-onBufferUnderflow(sslResult);
+  onBufferUnderflow(sslResult);
 break;
 case CLOSED:
-onClosed(sslResult);
+onClosed(sslResult,applicationBuffer);
 break;
 case OK:
-switch (sslResult.getHandshakeStatus()) {
-case FINISHED:
-onHandshakeFinished(sslResult);
-break;
-case NEED_TASK:
-runTask(sslResult,applicationBuffer);
-break;
-case NEED_UNWRAP:
-onUnwrap(sslResult);
-break;
-case NEED_WRAP:
-onWrap(sslResult);
-break;
-case NOT_HANDSHAKING:
+onOk(sslResult,applicationBuffer);
 break;
 }
-break;
 }
 }
