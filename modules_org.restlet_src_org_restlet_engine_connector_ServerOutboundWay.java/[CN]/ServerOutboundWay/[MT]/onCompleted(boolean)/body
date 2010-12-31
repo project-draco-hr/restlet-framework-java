@@ -1,7 +1,10 @@
 {
   getMessages().remove(getMessage());
   if (!getMessage().getStatus().isInformational()) {
-    getConnection().getInboundWay().getMessages().remove(getMessage());
+    Response inboundMessage=getConnection().getInboundWay().getMessages().peek();
+    if (inboundMessage.getRequest() == getMessage().getRequest()) {
+      getConnection().getInboundWay().getMessages().remove(inboundMessage);
+    }
   }
   if (!getConnection().isPersistent() || HeaderUtils.isConnectionClose(getHeaders())) {
     getConnection().close(true);
