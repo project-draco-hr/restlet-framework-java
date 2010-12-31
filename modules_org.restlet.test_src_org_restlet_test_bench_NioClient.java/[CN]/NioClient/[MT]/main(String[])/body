@@ -2,6 +2,7 @@
   ConnectorHelper<Client> helper;
   helper=new org.restlet.engine.connector.HttpClientHelper(null);
   Engine.getInstance().getRegisteredClients().add(0,helper);
+  Engine.setLogLevel(Level.FINE);
   Client client=new Client(new Context(),Protocol.HTTP);
   client.getContext().getParameters().add("tracing","false");
   client.getContext().getParameters().add("minThreads","1");
@@ -20,7 +21,7 @@
   long start=System.currentTimeMillis();
   for (int i=0; i < iterations; i++) {
     r=cr.get();
-    r.exhaust();
+    System.out.println(r.getText());
   }
   long total=(System.currentTimeMillis() - start);
   long avg=total / iterations;
