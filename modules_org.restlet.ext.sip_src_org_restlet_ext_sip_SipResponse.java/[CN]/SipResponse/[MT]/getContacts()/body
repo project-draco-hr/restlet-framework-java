@@ -1,0 +1,12 @@
+{
+  List<ContactInfo> c=this.contacts;
+  if (c == null) {
+synchronized (this) {
+      c=this.contacts;
+      if (c == null) {
+        this.contacts=c=new CopyOnWriteArrayList<ContactInfo>();
+      }
+    }
+  }
+  return c;
+}
