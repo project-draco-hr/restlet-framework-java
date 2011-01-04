@@ -3,13 +3,13 @@
     log=Context.getCurrentLogger();
   }
   if (store == null) {
-    @SuppressWarnings("rawtypes") Class[] classTypes=new Class[params.length];
+    Class<?>[] classTypes=new Class[params.length];
     int i=0;
     for (    Object o : params) {
       classTypes[i++]=o.getClass();
     }
     try {
-      Constructor<? extends ClientStore> c=defaultImpl.getConstructor(classTypes);
+      Constructor<? extends ClientStore<?>> c=defaultImpl.getConstructor(classTypes);
       store=c.newInstance(params);
     }
  catch (    SecurityException e) {

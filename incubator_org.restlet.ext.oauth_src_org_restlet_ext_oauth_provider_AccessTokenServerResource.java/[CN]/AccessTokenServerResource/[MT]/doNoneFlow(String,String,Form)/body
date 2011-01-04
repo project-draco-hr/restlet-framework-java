@@ -1,6 +1,10 @@
 {
   Client client=validate(clientId,clientSecret);
-  if (client == null)   return;
+  if (client == null) {
+    sendError(ErrorCode.invalid_client,"Client id verification failed.",null);
+    setStatus(Status.CLIENT_ERROR_FORBIDDEN);
+    return;
+  }
   if (!client.containsUser(AUTONOMOUS_USER))   client.createUser(AUTONOMOUS_USER);
   AuthenticatedUser user=client.findUser(AUTONOMOUS_USER);
   String[] scopes=parseScope(params.getFirstValue(SCOPE));

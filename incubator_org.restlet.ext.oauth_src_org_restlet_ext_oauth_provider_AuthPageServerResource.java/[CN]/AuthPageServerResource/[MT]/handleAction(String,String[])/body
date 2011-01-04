@@ -22,6 +22,9 @@
     location=generateCode(id,client,redirUrl);
   }
   AuthenticatedUser user=client.findUser(session.getScopeOwner());
+  if (user == null) {
+    setStatus(Status.CLIENT_ERROR_NOT_FOUND,"Can't find User id : " + session.getScopeOwner());
+  }
   user.revokeScopes();
   for (  String s : scopes) {
     getLogger().info("Adding scope = " + s + " to user = "+ id);
@@ -34,5 +37,6 @@
     location=stateful.toString();
   }
   session.setState(null);
+  user.persist();
   redirectTemporary(location);
 }
