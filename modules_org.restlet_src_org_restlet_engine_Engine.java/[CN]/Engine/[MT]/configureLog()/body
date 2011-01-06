@@ -9,10 +9,12 @@
     if (getRestletLogLevel() != null) {
       sb.append("org.restlet.level=" + getRestletLogLevel().getName()).append('\n');
     }
-    String handler=java.util.logging.ConsoleHandler.class.getCanonicalName();
-    sb.append(handler + ".formatter=" + getLogFormatter().getCanonicalName()+ "\n");
-    if (getLogLevel() != null) {
-      sb.append(handler + ".level=" + getLogLevel().getName()+ "\n");
+    if (getLogFormatter() != null) {
+      String handler=java.util.logging.ConsoleHandler.class.getCanonicalName();
+      sb.append(handler + ".formatter=" + getLogFormatter().getCanonicalName()+ "\n");
+      if (getLogLevel() != null) {
+        sb.append(handler + ".level=" + getLogLevel().getName()+ "\n");
+      }
     }
     try {
       LogManager.getLogManager().readConfiguration(new org.restlet.engine.io.ReaderInputStream(new StringReader(sb.toString()),CharacterSet.DEFAULT));
