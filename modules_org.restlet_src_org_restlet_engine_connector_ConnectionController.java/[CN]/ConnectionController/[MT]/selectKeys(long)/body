@@ -1,5 +1,9 @@
 {
-  if (getSelector().select(sleepTime) > 0) {
+  int selectCount=getSelector().select(sleepTime);
+  if (selectCount > 0) {
+    if (getHelper().getLogger().isLoggable(Level.FINEST)) {
+      getHelper().getLogger().log(Level.FINEST,"NIO selected " + selectCount + " key(s) !");
+    }
     for (Iterator<SelectionKey> keys=getSelector().selectedKeys().iterator(); keys.hasNext(); ) {
       onSelected(keys.next());
       keys.remove();

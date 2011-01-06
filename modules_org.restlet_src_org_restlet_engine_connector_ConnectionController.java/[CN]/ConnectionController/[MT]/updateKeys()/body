@@ -1,6 +1,9 @@
 {
   SelectionRegistration updatedRegistration=getUpdatedRegistrations().poll();
   while (updatedRegistration != null) {
+    if (getHelper().getLogger().isLoggable(Level.FINEST)) {
+      getHelper().getLogger().log(Level.FINEST,"Updating NIO interest with selector: " + updatedRegistration);
+    }
     updatedRegistration.update();
     updatedRegistration=getUpdatedRegistrations().poll();
   }
