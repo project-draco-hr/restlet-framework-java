@@ -5,20 +5,15 @@
     getConnection().getOutboundWay().setIoState(IoState.IDLE);
     getConnection().getHelper().getWorkerService().execute(new Runnable(){
       public void run(){
-        getLogger().log(Level.INFO,"Running delegated task...");
+        getLogger().log(Level.INFO,"Running delegated tasks...");
         task.run();
         Runnable nextTask=getManager().getEngine().getDelegatedTask();
         while (nextTask != null) {
           nextTask.run();
           nextTask=getManager().getEngine().getDelegatedTask();
         }
-        try {
-          handleResult(runEngine(applicationBuffer),applicationBuffer);
-        }
- catch (        IOException e) {
-          getLogger().log(Level.FINE,"Unable to run SSL engine",e);
-        }
-        getLogger().log(Level.INFO,"Done running delegated tasks for this connection: " + getConnection());
+        onDelegatedTasksCompleted();
+        getLogger().log(Level.INFO,"Done running delegated tasks");
       }
     }
 );
