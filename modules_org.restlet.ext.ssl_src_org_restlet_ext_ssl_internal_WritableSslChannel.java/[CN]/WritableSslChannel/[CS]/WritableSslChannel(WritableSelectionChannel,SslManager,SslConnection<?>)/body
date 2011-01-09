@@ -1,3 +1,12 @@
 {
   super(wrappedChannel,manager,connection);
+  if (manager != null) {
+    SSLSession session=manager.getSession();
+    int packetSize=session.getPacketBufferSize();
+    this.packetBuffer=getConnection().createByteBuffer(packetSize);
+  }
+ else {
+    this.packetBuffer=null;
+  }
+  this.packetBufferState=BufferState.FILLING;
 }

@@ -1,5 +1,8 @@
 {
   int result=0;
+  if (getManager().getState() == SslState.READING_APPLICATION_DATA) {
+    getManager().setState(SslState.WRITING_APPLICATION_DATA);
+  }
   flush();
   if ((getPacketBufferState() == BufferState.FILLING) || (getManager().getState() == SslState.HANDSHAKING)) {
     int srcSize=src.remaining();

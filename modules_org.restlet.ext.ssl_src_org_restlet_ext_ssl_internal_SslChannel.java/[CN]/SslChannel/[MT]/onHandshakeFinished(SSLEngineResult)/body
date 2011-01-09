@@ -1,9 +1,13 @@
 {
+  getLogger().log(Level.INFO,"SSL handshake finished: " + sslResult);
   if (getManager().getState() == SslState.HANDSHAKING) {
-    getManager().setState(SslState.APPLICATION_DATA);
-  }
- else   if (getManager().getState() == SslState.CLOSING) {
-    getManager().setState(SslState.CLOSED);
+    if (getManager().isClientSide()) {
+      getManager().setState(SslState.WRITING_APPLICATION_DATA);
+    }
+ else {
+      getManager().setState(SslState.READING_APPLICATION_DATA);
+    }
+    getManager().setHandshakeStatus(HandshakeStatus.NOT_HANDSHAKING);
   }
   if (getConnection().isClientSide()) {
     getConnection().getInboundWay().setIoState(IoState.IDLE);
