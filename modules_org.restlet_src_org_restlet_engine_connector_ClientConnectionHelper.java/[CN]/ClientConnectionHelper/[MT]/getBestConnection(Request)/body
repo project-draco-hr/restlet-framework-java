@@ -1,7 +1,7 @@
 {
   Connection<Client> result=null;
   int hostConnectionCount=0;
-  int bestCount=0;
+  int bestScore=0;
   boolean foundConn=false;
   InetSocketAddress socketAddress=getSocketAddress(request);
   if (socketAddress == null) {
@@ -11,14 +11,14 @@
     for (Iterator<Connection<Client>> iterator=getConnections().iterator(); !foundConn && iterator.hasNext(); ) {
       Connection<Client> currConn=iterator.next();
       if (socketAddress.equals(currConn.getSocketAddress())) {
-        if (currConn.isPersistent() && currConn.getState().equals(ConnectionState.OPEN) && currConn.getInboundWay().getMessageState().equals(MessageState.IDLE)&& currConn.getInboundWay().getIoState().equals(IoState.IDLE)&& currConn.getInboundWay().getMessages().isEmpty()&& currConn.getOutboundWay().getMessageState().equals(MessageState.IDLE)&& currConn.getOutboundWay().getIoState().equals(IoState.IDLE)&& currConn.getOutboundWay().getMessages().isEmpty()) {
+        if (currConn.isReady()) {
           result=currConn;
           foundConn=true;
         }
  else {
-          int currCount=currConn.getOutboundWay().getMessages().size();
-          if (bestCount > currCount) {
-            bestCount=currCount;
+          int currScore=currConn.getLoadScore();
+          if (bestScore > currScore) {
+            bestScore=currScore;
             result=currConn;
           }
           hostConnectionCount++;

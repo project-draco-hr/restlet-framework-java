@@ -9,14 +9,5 @@
   if (getHeaders() != null) {
     getMessage().getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,getHeaders());
   }
-  if (!getMessage().getStatus().isInformational()) {
-    getMessages().poll();
-  }
-  getHelper().getInboundMessages().add(getMessage());
-  if (getMessage().isEntityAvailable()) {
-    setIoState(IoState.IDLE);
-  }
- else {
-    onCompleted(false);
-  }
+  onReceived(getMessage());
 }

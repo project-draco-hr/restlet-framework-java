@@ -10,13 +10,5 @@
   getMessage().getRequest().setEntity(entity);
   getMessage().getServerInfo().setAddress(getConnection().getHelper().getHelped().getAddress());
   getMessage().getServerInfo().setPort(getConnection().getHelper().getHelped().getPort());
-  if (request != null) {
-    if (getMessage().getRequest().isExpectingResponse()) {
-      getMessages().add(getMessage());
-    }
-    getHelper().getInboundMessages().add(getMessage());
-  }
-  if (!getMessage().getRequest().isEntityAvailable()) {
-    onCompleted(false);
-  }
+  onReceived(getMessage());
 }

@@ -41,15 +41,8 @@
     if (reasonPhrase == null) {
       throw new IOException("Unable to parse the reason phrase. End of line reached too early.");
     }
-    Response finalResponse=getMessages().peek();
-    Response response=null;
     Status status=createStatus(statusCode);
-    if (status.isInformational()) {
-      response=getHelper().createResponse(finalResponse.getRequest());
-    }
- else {
-      response=finalResponse;
-    }
+    Response response=createResponse(status);
     response.setStatus(status,reasonPhrase);
     response.getServerInfo().setAddress(getConnection().getSocket().getLocalAddress().toString());
     response.getServerInfo().setAgent(Engine.VERSION_HEADER);

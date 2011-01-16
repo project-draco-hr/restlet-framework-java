@@ -1,11 +1,6 @@
 {
-  if (getIoState() == IoState.IDLE) {
-    if (getConnection().isPipelining()) {
-      setIoState(IoState.INTEREST);
-    }
- else     if (getMessages().isEmpty() && (getConnection().getOutboundWay().getMessages().isEmpty())) {
-      setIoState(IoState.INTEREST);
-    }
+  if ((getIoState() == IoState.IDLE) && getConnection().isPipelining()) {
+    setIoState(IoState.INTEREST);
   }
   super.updateState();
 }
