@@ -1,0 +1,14 @@
+{
+  int result=0;
+  if (getState() == BufferState.FILLING) {
+    if (sourceChannel.isOpen()) {
+      result=sourceChannel.read(getBytes());
+      if (result > 0) {
+        getBytes().flip();
+        setState(BufferState.DRAINING);
+        Context.getCurrentLogger().fine("Refilled buffer with " + result + " byte(s)");
+      }
+    }
+  }
+  return result;
+}

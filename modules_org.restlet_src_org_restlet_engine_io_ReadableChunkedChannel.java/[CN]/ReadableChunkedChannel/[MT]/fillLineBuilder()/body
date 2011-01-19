@@ -2,21 +2,19 @@
   boolean result=false;
   if (getLineBuilderState() != BufferState.DRAINING) {
     int byteBufferSize=0;
-    if (getWrappedChannel().getByteBufferState() == BufferState.DRAINING) {
-      byteBufferSize=getWrappedChannel().getByteBuffer().remaining();
+    if (getWrappedChannel().getIoBuffer().isDraining()) {
+      byteBufferSize=getWrappedChannel().getIoBuffer().getBytes().remaining();
     }
     if (byteBufferSize == 0) {
-      getWrappedChannel().setByteBufferState(BufferState.FILLING);
-      getWrappedChannel().getByteBuffer().clear();
+      getWrappedChannel().getIoBuffer().clear();
       if (getWrappedChannel().refill() > 0) {
-        byteBufferSize=getWrappedChannel().getByteBuffer().remaining();
+        byteBufferSize=getWrappedChannel().getIoBuffer().getBytes().remaining();
       }
     }
     if (byteBufferSize > 0) {
-      setLineBuilderState(NioUtils.fillLine(getLineBuilder(),getLineBuilderState(),getWrappedChannel().getByteBuffer()));
-      if (getWrappedChannel().getByteBuffer().remaining() == 0) {
-        getWrappedChannel().setByteBufferState(BufferState.FILLING);
-        getWrappedChannel().getByteBuffer().clear();
+      setLineBuilderState(getWrappedChannel().getIoBuffer().fillLine(getLineBuilder(),getLineBuilderState()));
+      if (!getWrappedChannel().getIoBuffer().getBytes().hasRemaining()) {
+        getWrappedChannel().getIoBuffer().clear();
       }
       return getLineBuilderState() == BufferState.DRAINING;
     }

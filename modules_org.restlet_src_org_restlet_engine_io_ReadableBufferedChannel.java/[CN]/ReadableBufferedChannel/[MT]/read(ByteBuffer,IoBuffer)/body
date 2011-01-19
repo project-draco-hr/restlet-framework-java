@@ -1,0 +1,39 @@
+{
+  int result=0;
+  int lastRead=0;
+  boolean tryAgain=true;
+synchronized (getIoBuffer().getBytes()) {
+    while (tryAgain) {
+switch (getIoBuffer().getState()) {
+case FILLED:
+        getIoBuffer().setState(BufferState.DRAINING);
+case DRAINING:
+      if (getIoBuffer().getBytes().remaining() > 0) {
+        lastRead=ioBuffer.drain(targetBuffer);
+        result+=lastRead;
+        tryAgain=ioBuffer.canRetry(lastRead,targetBuffer);
+      }
+    if (!getIoBuffer().canDrain()) {
+      getIoBuffer().clear();
+    }
+  break;
+case IDLE:
+getIoBuffer().setState(BufferState.FILLING);
+case FILLING:
+int refillCount=refill();
+if (refillCount > 0) {
+tryAgain=true;
+}
+ else if (refillCount == -1) {
+result=-1;
+tryAgain=false;
+}
+ else if (refillCount == 0) {
+tryAgain=false;
+}
+break;
+}
+}
+}
+return result;
+}

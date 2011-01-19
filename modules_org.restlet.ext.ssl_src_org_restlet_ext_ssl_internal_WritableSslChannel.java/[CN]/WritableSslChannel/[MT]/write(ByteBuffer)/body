@@ -4,10 +4,10 @@
     getManager().setState(SslState.WRITING_APPLICATION_DATA);
   }
   flush();
-  if ((getPacketBufferState() == BufferState.FILLING) || (getManager().getState() == SslState.HANDSHAKING)) {
+  if ((getPacketBuffer().isFilling()) || (getManager().getState() == SslState.HANDSHAKING)) {
     int srcSize=src.remaining();
     if (srcSize > 0) {
-      while (getPacketBuffer().hasRemaining() && (getConnection().getOutboundWay().getIoState() != IoState.IDLE) && src.hasRemaining()) {
+      while (getPacketBuffer().getBytes().hasRemaining() && (getConnection().getOutboundWay().getIoState() != IoState.IDLE) && src.hasRemaining()) {
         SSLEngineResult sslResult=runEngine(src);
         handleResult(sslResult,src);
         flush();

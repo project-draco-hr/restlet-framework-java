@@ -1,6 +1,6 @@
 {
-  if ((getByteBuffer().hasRemaining()) && (getIoState() == IoState.PROCESSING)) {
-    int bytesWritten=getConnection().getWritableSelectionChannel().write(getByteBuffer());
+  if ((getIoBuffer().canDrain()) && (getIoState() == IoState.PROCESSING)) {
+    int bytesWritten=getConnection().getWritableSelectionChannel().write(getIoBuffer().getBytes());
     if (getLogger().isLoggable(Level.FINER)) {
       getLogger().finer("Bytes written: " + bytesWritten);
     }
@@ -16,15 +16,14 @@
         setIoState(IoState.INTEREST);
       }
     }
- else     if (getByteBuffer().hasRemaining()) {
-      getByteBuffer().compact();
+ else     if (getIoBuffer().getBytes().hasRemaining()) {
+      getIoBuffer().getBytes().compact();
     }
  else     if (getMessageState() == MessageState.END) {
-      onCompleted(false,getByteBufferState());
+      onCompleted(false);
     }
  else {
-      getByteBuffer().clear();
-      setByteBufferState(BufferState.FILLING);
+      getIoBuffer().clear();
     }
   }
 }

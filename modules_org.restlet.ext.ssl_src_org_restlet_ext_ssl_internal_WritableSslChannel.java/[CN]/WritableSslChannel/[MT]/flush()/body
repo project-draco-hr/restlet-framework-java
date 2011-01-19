@@ -1,13 +1,12 @@
 {
   int result=0;
-  if (getPacketBufferState() == BufferState.DRAINING) {
+  if (getPacketBuffer().isDraining()) {
     if (getWrappedChannel().isOpen()) {
-      result=getWrappedChannel().write(getPacketBuffer());
+      result=getWrappedChannel().write(getPacketBuffer().getBytes());
       if (getConnection().getLogger().isLoggable(Level.INFO)) {
         getConnection().getLogger().log(Level.INFO,"Packet bytes written: " + result);
       }
-      if (getPacketBuffer().remaining() == 0) {
-        setPacketBufferState(BufferState.FILLING);
+      if (!getPacketBuffer().getBytes().hasRemaining()) {
         getPacketBuffer().clear();
       }
     }

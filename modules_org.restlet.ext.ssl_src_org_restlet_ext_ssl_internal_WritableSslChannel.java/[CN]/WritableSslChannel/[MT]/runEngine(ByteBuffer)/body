@@ -3,13 +3,13 @@
   if (getConnection().getLogger().isLoggable(Level.INFO)) {
     getConnection().getLogger().log(Level.INFO,"Wrapping bytes with: " + getPacketBuffer());
   }
-  int remaining=getPacketBuffer().remaining();
+  int remaining=getPacketBuffer().getBytes().remaining();
   if (remaining > 0) {
-    result=getManager().getEngine().wrap(applicationBuffer,getPacketBuffer());
-    getPacketBuffer().flip();
-    remaining=getPacketBuffer().remaining();
+    result=getManager().getEngine().wrap(applicationBuffer,getPacketBuffer().getBytes());
+    getPacketBuffer().getBytes().flip();
+    remaining=getPacketBuffer().getBytes().remaining();
     if (remaining > 0) {
-      setPacketBufferState(BufferState.DRAINING);
+      getPacketBuffer().setState(BufferState.DRAINING);
     }
  else {
       getPacketBuffer().clear();

@@ -4,7 +4,7 @@
     int packetSize=session.getPacketBufferSize();
     ByteBuffer packetBuffer=createByteBuffer(packetSize);
     packetBuffer.flip();
-    ReadableBufferedChannel rbc=new ReadableBufferedChannel(getInboundWay(),packetBuffer,BufferState.FILLING,super.createReadableSelectionChannel());
+    ReadableBufferedChannel rbc=new ReadableBufferedChannel(getInboundWay(),new IoBuffer(packetBuffer),super.createReadableSelectionChannel());
     return new ReadableSslChannel(rbc,getSslManager(),this);
   }
  else {

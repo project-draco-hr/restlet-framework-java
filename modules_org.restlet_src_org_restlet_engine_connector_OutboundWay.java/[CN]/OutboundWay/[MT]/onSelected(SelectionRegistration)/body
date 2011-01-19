@@ -4,15 +4,15 @@
     if (message != null) {
       super.onSelected(registration);
       while (isProcessing()) {
-        if (getByteBufferState() == BufferState.FILLING) {
+        if (getIoBuffer().isFilling()) {
           if (getMessageState() == MessageState.END) {
-            onCompleted(false,getByteBufferState());
+            onCompleted(false);
           }
  else {
             fillByteBuffer();
           }
         }
- else         if (getByteBufferState() == BufferState.DRAINING) {
+ else         if (getIoBuffer().isDraining()) {
           drainByteBuffer();
           if (getMessageState() == MessageState.IDLE) {
             updateState();

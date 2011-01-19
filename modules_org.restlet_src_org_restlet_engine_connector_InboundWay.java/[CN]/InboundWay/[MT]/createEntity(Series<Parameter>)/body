@@ -5,7 +5,7 @@
   boolean connectionClose=HeaderUtils.isConnectionClose(headers);
   if ((contentLength != Representation.UNKNOWN_SIZE && contentLength != 0) || chunkedEncoding || connectionClose) {
     ReadableByteChannel inboundEntityChannel=null;
-    ReadableBufferedChannel rbc=new ReadableBufferedChannel(this,getByteBuffer(),getByteBufferState(),getConnection().getReadableSelectionChannel());
+    ReadableBufferedChannel rbc=new ReadableBufferedChannel(this,getIoBuffer(),getConnection().getReadableSelectionChannel());
     if (chunkedEncoding) {
       inboundEntityChannel=new ReadableChunkedChannel(rbc);
     }

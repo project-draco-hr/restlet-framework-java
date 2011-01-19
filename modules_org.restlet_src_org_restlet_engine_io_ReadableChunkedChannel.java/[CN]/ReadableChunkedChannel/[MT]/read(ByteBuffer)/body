@@ -5,13 +5,13 @@
 switch (this.chunkState) {
 case SIZE:
       if (fillLineBuilder()) {
-        int length=getLineBuilder().length();
-        if (length == 0) {
-          throw new IOException("An empty chunk size line was detected");
-        }
-        int index=getLineBuilder().indexOf(";");
-        index=(index == -1) ? getLineBuilder().length() : index;
         try {
+          int length=getLineBuilder().length();
+          if (length == 0) {
+            throw new IOException("An empty chunk size line was detected");
+          }
+          int index=getLineBuilder().indexOf(";");
+          index=(index == -1) ? getLineBuilder().length() : index;
           this.remainingChunkSize=Long.parseLong(getLineBuilder().substring(0,index).trim(),16);
           if (Context.getCurrentLogger().isLoggable(Level.FINE)) {
             Context.getCurrentLogger().fine("New chunk detected. Size: " + this.remainingChunkSize);

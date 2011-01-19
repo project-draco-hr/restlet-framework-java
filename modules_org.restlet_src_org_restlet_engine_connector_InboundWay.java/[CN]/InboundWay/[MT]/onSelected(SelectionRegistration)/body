@@ -6,7 +6,7 @@
     }
  else {
       while (isProcessing()) {
-        int result=readSocketBytes();
+        int result=getIoBuffer().refill(getConnection().getReadableSelectionChannel());
         if (result == 0) {
           if (getIoState() == IoState.PROCESSING) {
             setIoState(IoState.INTEREST);
@@ -18,7 +18,7 @@
           setMessageState(MessageState.IDLE);
         }
  else {
-          while (isProcessing() && getByteBuffer().hasRemaining()) {
+          while (isProcessing() && getIoBuffer().canDrain()) {
             readMessage();
           }
         }

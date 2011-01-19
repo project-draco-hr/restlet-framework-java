@@ -1,13 +1,3 @@
 {
-  int result=0;
-  if (getByteBufferState() == BufferState.FILLING) {
-    if (getWrappedChannel().isOpen()) {
-      result=getWrappedChannel().read(getByteBuffer());
-      if (result > 0) {
-        getByteBuffer().flip();
-        setByteBufferState(BufferState.DRAINING);
-      }
-    }
-  }
-  return result;
+  return getIoBuffer().refill(getWrappedChannel());
 }
