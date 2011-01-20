@@ -8,7 +8,7 @@
     int srcSize=src.remaining();
     if (srcSize > 0) {
       while (getPacketBuffer().getBytes().hasRemaining() && (getConnection().getOutboundWay().getIoState() != IoState.IDLE) && src.hasRemaining()) {
-        SSLEngineResult sslResult=runEngine(src);
+        SSLEngineResult sslResult=wrap(src);
         handleResult(sslResult,src);
         flush();
       }

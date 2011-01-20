@@ -1,0 +1,12 @@
+{
+  getLogger().log(Level.WARNING,"SSL buffer underflow");
+  if (getConnection().getInboundWay().getIoState() != IoState.PROCESSING) {
+    if (getConnection().getInboundWay().getIoBuffer().canDrain()) {
+      getConnection().getInboundWay().setIoState(IoState.READY);
+    }
+ else {
+      getConnection().getInboundWay().setIoState(IoState.INTEREST);
+    }
+    getConnection().getOutboundWay().setIoState(IoState.IDLE);
+  }
+}
