@@ -1,4 +1,6 @@
 {
-  getLogger().log(Level.INFO,"SSL wrap: " + sslResult);
-  wrap(applicationBuffer);
+  if (getConnection().getOutboundWay().getIoState() == IoState.IDLE) {
+    getConnection().getInboundWay().setIoState(IoState.IDLE);
+    getConnection().getOutboundWay().setIoState(IoState.READY);
+  }
 }

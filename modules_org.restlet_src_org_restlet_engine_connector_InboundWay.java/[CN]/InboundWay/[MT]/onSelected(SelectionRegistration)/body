@@ -5,7 +5,7 @@
       getEntityRegistration().onSelected(registration.getReadyOperations());
     }
  else {
-      while (isProcessing()) {
+      while (isSelected()) {
         int result=getIoBuffer().refill(getConnection().getReadableSelectionChannel());
         if (result == 0) {
           if (getIoState() == IoState.PROCESSING) {
@@ -17,10 +17,8 @@
           setIoState(IoState.IDLE);
           setMessageState(MessageState.IDLE);
         }
- else {
-          while (isProcessing() && getIoBuffer().canDrain()) {
-            readMessage();
-          }
+        while (isMessageReadable()) {
+          readMessage();
         }
       }
     }

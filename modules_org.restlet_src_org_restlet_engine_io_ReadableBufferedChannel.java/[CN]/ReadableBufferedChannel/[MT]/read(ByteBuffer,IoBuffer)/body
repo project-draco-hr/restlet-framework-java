@@ -2,23 +2,23 @@
   int result=0;
   int lastRead=0;
   boolean tryAgain=true;
-synchronized (getIoBuffer().getBytes()) {
+synchronized (getSourceBuffer().getBytes()) {
     while (tryAgain) {
-switch (getIoBuffer().getState()) {
+switch (getSourceBuffer().getState()) {
 case FILLED:
-        getIoBuffer().setState(BufferState.DRAINING);
+        getSourceBuffer().setState(BufferState.DRAINING);
 case DRAINING:
-      if (getIoBuffer().getBytes().remaining() > 0) {
-        lastRead=ioBuffer.drain(targetBuffer);
+      if (getSourceBuffer().getBytes().remaining() > 0) {
+        lastRead=sourceBuffer.drain(targetBuffer);
         result+=lastRead;
-        tryAgain=ioBuffer.canRetry(lastRead,targetBuffer);
+        tryAgain=sourceBuffer.canRetry(lastRead,targetBuffer);
       }
-    if (!getIoBuffer().canDrain()) {
-      getIoBuffer().clear();
+    if (!getSourceBuffer().canDrain()) {
+      getSourceBuffer().clear();
     }
   break;
 case IDLE:
-getIoBuffer().setState(BufferState.FILLING);
+getSourceBuffer().setState(BufferState.FILLING);
 case FILLING:
 int refillCount=refill();
 if (refillCount > 0) {

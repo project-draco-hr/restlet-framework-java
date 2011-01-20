@@ -2,19 +2,19 @@
   boolean result=false;
   if (getLineBuilderState() != BufferState.DRAINING) {
     int byteBufferSize=0;
-    if (getWrappedChannel().getIoBuffer().isDraining()) {
-      byteBufferSize=getWrappedChannel().getIoBuffer().getBytes().remaining();
+    if (getWrappedChannel().getSourceBuffer().isDraining()) {
+      byteBufferSize=getWrappedChannel().getSourceBuffer().getBytes().remaining();
     }
     if (byteBufferSize == 0) {
-      getWrappedChannel().getIoBuffer().clear();
+      getWrappedChannel().getSourceBuffer().clear();
       if (getWrappedChannel().refill() > 0) {
-        byteBufferSize=getWrappedChannel().getIoBuffer().getBytes().remaining();
+        byteBufferSize=getWrappedChannel().getSourceBuffer().getBytes().remaining();
       }
     }
     if (byteBufferSize > 0) {
-      setLineBuilderState(getWrappedChannel().getIoBuffer().fillLine(getLineBuilder(),getLineBuilderState()));
-      if (!getWrappedChannel().getIoBuffer().getBytes().hasRemaining()) {
-        getWrappedChannel().getIoBuffer().clear();
+      setLineBuilderState(getWrappedChannel().getSourceBuffer().fillLine(getLineBuilder(),getLineBuilderState()));
+      if (!getWrappedChannel().getSourceBuffer().getBytes().hasRemaining()) {
+        getWrappedChannel().getSourceBuffer().clear();
       }
       return getLineBuilderState() == BufferState.DRAINING;
     }
