@@ -1,0 +1,14 @@
+{
+  SipResponse response=(SipResponse)message;
+  if (response != null) {
+    String tid=response.getTransactionId();
+    SipRequest sipRequest=getHelper().getRequests().get(tid);
+    if (sipRequest != null) {
+      response.setRequest(sipRequest);
+    }
+ else {
+      getLogger().fine("Unable to find the transaction associated to a given response");
+    }
+  }
+  super.onReceived(message);
+}

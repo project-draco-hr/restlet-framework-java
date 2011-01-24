@@ -1,6 +1,11 @@
 {
-  CountDownLatch latch=(CountDownLatch)response.getRequest().getAttributes().get(CONNECTOR_LATCH);
-  if (latch != null) {
-    latch.countDown();
+  if (response.getRequest() != null) {
+    CountDownLatch latch=(CountDownLatch)response.getRequest().getAttributes().get(CONNECTOR_LATCH);
+    if (latch != null) {
+      latch.countDown();
+    }
+  }
+ else {
+    getLogger().warning("The client of the following response couldn't be unblocked: " + response);
   }
 }

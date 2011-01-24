@@ -1,11 +1,16 @@
 {
   if (response != null) {
     getLogger().finer("Handling response...");
-    if (response.getRequest().getOnResponse() != null) {
+    boolean handled=false;
+    if ((response.getRequest() != null) && (response.getRequest().getOnResponse() != null)) {
       response.getRequest().getOnResponse().handle(response.getRequest(),response);
+      handled=true;
     }
     if (!response.getStatus().isInformational()) {
       unblock(response);
+    }
+ else     if (!handled) {
+      getLogger().warning("The following response couldn't be handled : " + response);
     }
   }
 }
