@@ -1,13 +1,13 @@
 {
   if (response != null) {
     if (synchronous || !getHelper().isWorkerThreads()) {
-      getHelper().handleInbound(response);
+      getHelper().doHandleInbound(response);
     }
  else {
-      execute(new Runnable(){
+      getHelper().execute(new Runnable(){
         public void run(){
           try {
-            getHelper().handleInbound(response);
+            getHelper().doHandleInbound(response);
           }
   finally {
             Engine.clearThreadLocalVariables();
