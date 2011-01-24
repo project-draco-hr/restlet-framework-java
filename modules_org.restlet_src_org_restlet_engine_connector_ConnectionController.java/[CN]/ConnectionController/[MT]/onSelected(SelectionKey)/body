@@ -1,5 +1,11 @@
 {
-  if (selectedKey.attachment() != null) {
-    ((SelectionRegistration)selectedKey.attachment()).onSelected(selectedKey.readyOps());
+  try {
+    if (selectedKey.attachment() != null) {
+      ((SelectionRegistration)selectedKey.attachment()).onSelected(selectedKey.readyOps());
+    }
+  }
+ catch (  CancelledKeyException cke) {
+    getHelper().getLogger().log(Level.FINER,"Problem during NIO selection",cke);
+    getNewRegistrations().add(((SelectionRegistration)selectedKey.attachment()));
   }
 }
