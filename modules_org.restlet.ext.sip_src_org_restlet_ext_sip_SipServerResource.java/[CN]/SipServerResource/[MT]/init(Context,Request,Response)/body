@@ -1,0 +1,18 @@
+{
+  try {
+    SipResponse sipResponse=(SipResponse)response;
+    SipRequest sipRequest=(SipRequest)request;
+    sipResponse.setCallId(sipRequest.getCallId());
+    sipResponse.setCommandSequence(sipRequest.getCommandSequence());
+    if (sipRequest.getFrom() != null) {
+      sipResponse.setFrom((Address)sipRequest.getFrom().clone());
+    }
+    if (sipRequest.getTo() != null) {
+      sipResponse.setTo((Address)sipRequest.getTo().clone());
+    }
+  }
+ catch (  CloneNotSupportedException e) {
+    doCatch(e);
+  }
+  super.init(context,request,response);
+}
