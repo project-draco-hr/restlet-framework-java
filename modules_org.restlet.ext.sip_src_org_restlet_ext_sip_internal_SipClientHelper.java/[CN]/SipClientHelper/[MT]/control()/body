@@ -1,0 +1,12 @@
+{
+  boolean result=super.control();
+  SipRequest request;
+  for (Iterator<SipRequest> iter=getRequests().values().iterator(); iter.hasNext(); ) {
+    request=iter.next();
+    if (request.hasTimedOut()) {
+      getLogger().fine("The transaction represented by this request has timed out: " + request);
+      iter.remove();
+    }
+  }
+  return result;
+}

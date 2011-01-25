@@ -1,9 +1,10 @@
 {
   if ((getMessage() == null) && (response != null)) {
     SipResponse sipResponse=(SipResponse)response;
-    SipRequest sipRequest=(SipRequest)sipResponse.getRequest();
-    String tid=sipRequest.getTransaction();
-    getHelper().getRequests().put(tid,sipRequest);
+    SipRequest request=(SipRequest)sipResponse.getRequest();
+    String tid=request.getTransaction();
+    getHelper().getRequests().put(tid,request);
+    request.updateLastActivity();
     setMessage(sipResponse);
     setIoState(IoState.INTEREST);
   }
