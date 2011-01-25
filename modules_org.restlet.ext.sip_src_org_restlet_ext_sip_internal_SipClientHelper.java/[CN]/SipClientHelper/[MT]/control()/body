@@ -4,7 +4,17 @@
   for (Iterator<SipRequest> iter=getRequests().values().iterator(); iter.hasNext(); ) {
     request=iter.next();
     if (request.hasTimedOut()) {
-      getLogger().fine("The transaction represented by this request has timed out: " + request);
+      Level level;
+      if (request.isHandled()) {
+        level=Level.FINE;
+      }
+ else {
+        level=Level.INFO;
+        SipResponse response=new SipResponse(request);
+        response.setStatus(SipStatus.CLIENT_ERROR_REQUEST_TIMEOUT,"The SIP client connector has timeout due to lack of activity on this transaction: " + request.getTransaction());
+        handleInbound(response,false);
+      }
+      getLogger().log(level,"This SIP transaction has timed out: " + request.getTransaction());
       iter.remove();
     }
   }
