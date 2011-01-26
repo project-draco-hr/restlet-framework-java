@@ -1,8 +1,13 @@
 {
+  if (getPacketBuffer().isFilling()) {
+    getPacketBuffer().clear();
+    getPacketBuffer().getBytes().flip();
+    getPacketBuffer().setState(BufferState.DRAINING);
+  }
   if (getLogger().isLoggable(Level.INFO)) {
     getLogger().log(Level.INFO,"---------------------------------------------------------------------------------");
-    getLogger().log(Level.INFO,"Unwrapping bytes with: " + getPacketBuffer());
-    getLogger().log(Level.INFO,"Application buffer: " + applicationBuffer);
+    getLogger().log(Level.INFO,"Unwrapping packet buffer: " + getPacketBuffer());
+    getLogger().log(Level.INFO,"into application buffer: " + applicationBuffer);
   }
   if (getLogger().isLoggable(Level.FINE)) {
     getLogger().log(Level.FINE,"Application buffer suggested size: " + getManager().getEngine().getSession().getApplicationBufferSize());
