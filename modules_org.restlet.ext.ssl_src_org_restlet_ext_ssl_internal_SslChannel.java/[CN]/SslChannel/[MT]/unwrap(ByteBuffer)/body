@@ -2,10 +2,11 @@
   if (getLogger().isLoggable(Level.INFO)) {
     getLogger().log(Level.INFO,"---------------------------------------------------------------------------------");
     getLogger().log(Level.INFO,"Unwrapping bytes with: " + getPacketBuffer());
-    getLogger().log(Level.INFO,"Application buffer suggested size: " + getManager().getEngine().getSession().getApplicationBufferSize());
-    getLogger().log(Level.INFO,"Packet buffer suggested size: " + getManager().getEngine().getSession().getPacketBufferSize());
     getLogger().log(Level.INFO,"Application buffer: " + applicationBuffer);
-    getLogger().log(Level.INFO,"Packet buffer: " + getPacketBuffer());
+  }
+  if (getLogger().isLoggable(Level.FINE)) {
+    getLogger().log(Level.FINE,"Application buffer suggested size: " + getManager().getEngine().getSession().getApplicationBufferSize());
+    getLogger().log(Level.FINE,"Packet buffer suggested size: " + getManager().getEngine().getSession().getPacketBufferSize());
   }
   SSLEngineResult result=getManager().getEngine().unwrap(getPacketBuffer().getBytes(),applicationBuffer);
   int remaining=getPacketBuffer().getBytes().remaining();
