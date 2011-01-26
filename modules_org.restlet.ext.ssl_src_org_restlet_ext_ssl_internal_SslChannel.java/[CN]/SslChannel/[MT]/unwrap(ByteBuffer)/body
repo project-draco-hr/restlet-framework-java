@@ -1,8 +1,6 @@
 {
   if (getPacketBuffer().isFilling()) {
-    getPacketBuffer().clear();
-    getPacketBuffer().getBytes().flip();
-    getPacketBuffer().setState(BufferState.DRAINING);
+    getPacketBuffer().flip();
   }
   if (getLogger().isLoggable(Level.INFO)) {
     getLogger().log(Level.INFO,"---------------------------------------------------------------------------------");
@@ -14,10 +12,8 @@
     getLogger().log(Level.FINE,"Packet buffer suggested size: " + getManager().getEngine().getSession().getPacketBufferSize());
   }
   SSLEngineResult result=getManager().getEngine().unwrap(getPacketBuffer().getBytes(),applicationBuffer);
-  int remaining=getPacketBuffer().getBytes().remaining();
-  if (remaining == 0) {
-    getPacketBuffer().setState(BufferState.FILLING);
-    getPacketBuffer().clear();
+  if (!getPacketBuffer().canDrain()) {
+    getPacketBuffer().flip();
   }
   return result;
 }

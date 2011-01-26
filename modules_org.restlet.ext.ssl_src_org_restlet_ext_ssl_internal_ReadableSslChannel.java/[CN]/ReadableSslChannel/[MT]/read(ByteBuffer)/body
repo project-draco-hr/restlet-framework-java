@@ -1,6 +1,9 @@
 {
   int result=0;
   boolean continueReading=true;
+  if (getPacketBuffer().canDrain() && getManager().getEngineStatus() == Status.BUFFER_UNDERFLOW) {
+    getPacketBuffer().flip();
+  }
   getWrappedChannel().refill();
   if (getManager().getState() == SslState.WRITING_APPLICATION_DATA) {
     getManager().setState(SslState.READING_APPLICATION_DATA);

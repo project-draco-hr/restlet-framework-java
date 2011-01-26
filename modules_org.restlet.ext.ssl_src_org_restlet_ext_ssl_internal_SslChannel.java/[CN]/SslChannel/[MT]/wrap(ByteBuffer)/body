@@ -1,21 +1,16 @@
 {
   SSLEngineResult result=null;
+  if (getPacketBuffer().isDraining()) {
+    getPacketBuffer().flip();
+  }
   getLogger().log(Level.INFO,"---------------------------------------------------------------------------------");
   if (getConnection().getLogger().isLoggable(Level.INFO)) {
     getConnection().getLogger().log(Level.INFO,"Wrapping application buffer: " + applicationBuffer);
     getLogger().log(Level.INFO,"into packet buffer: " + getPacketBuffer());
   }
-  int remaining=getPacketBuffer().getBytes().remaining();
-  if (remaining > 0) {
-    result=getManager().getEngine().wrap(applicationBuffer,getPacketBuffer().getBytes());
-    getPacketBuffer().getBytes().flip();
-    remaining=getPacketBuffer().getBytes().remaining();
-    if (remaining > 0) {
-      getPacketBuffer().setState(BufferState.DRAINING);
-    }
- else {
-      getPacketBuffer().clear();
-    }
+  result=getManager().getEngine().wrap(applicationBuffer,getPacketBuffer().getBytes());
+  if (getPacketBuffer().couldDrain()) {
+    getPacketBuffer().flip();
   }
   return result;
 }

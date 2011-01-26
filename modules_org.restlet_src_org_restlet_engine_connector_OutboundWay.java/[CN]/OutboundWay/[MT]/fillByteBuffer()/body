@@ -1,7 +1,7 @@
 {
   while (isSelected() && getIoBuffer().canFill() && (getMessageState() != MessageState.END)) {
     if (getMessageState() == MessageState.BODY) {
-      int result=getEntityChannel().read(getIoBuffer().getBytes());
+      int result=getIoBuffer().fill(getEntityChannel());
       if (result == -1) {
         setMessageState(MessageState.END);
       }
@@ -11,20 +11,17 @@
         writeLine();
       }
       if (getLineBuilder().length() > 0) {
-        int remaining=getIoBuffer().getBytes().remaining();
+        int remaining=getIoBuffer().remaining();
         if (remaining >= getLineBuilder().length()) {
-          getIoBuffer().getBytes().put(StringUtils.getLatin1Bytes(getLineBuilder().toString()));
+          getIoBuffer().fill(StringUtils.getLatin1Bytes(getLineBuilder().toString()));
           clearLineBuilder();
         }
  else {
-          getIoBuffer().getBytes().put(StringUtils.getLatin1Bytes(getLineBuilder().substring(0,remaining)));
+          getIoBuffer().fill(StringUtils.getLatin1Bytes(getLineBuilder().substring(0,remaining)));
           getLineBuilder().delete(0,remaining);
         }
       }
     }
   }
-  if (getIoBuffer().getBytes().position() > 0) {
-    getIoBuffer().getBytes().flip();
-    getIoBuffer().setState(BufferState.DRAINING);
-  }
+  getIoBuffer().flip();
 }
