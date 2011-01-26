@@ -1,0 +1,19 @@
+{
+  if (getState() == BufferState.FILLING) {
+    setState(BufferState.DRAINING);
+    getBytes().limit(getBytes().position());
+    getBytes().position(this.begin);
+    this.begin=0;
+  }
+ else   if (getState() == BufferState.DRAINING) {
+    if (hasRemaining()) {
+      setState(BufferState.FILLING);
+      this.begin=getBytes().position();
+      getBytes().position(getBytes().limit());
+      getBytes().limit(getBytes().capacity());
+    }
+ else {
+      clear();
+    }
+  }
+}

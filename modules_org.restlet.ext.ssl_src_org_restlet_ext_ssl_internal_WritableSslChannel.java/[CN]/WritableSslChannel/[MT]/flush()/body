@@ -2,11 +2,11 @@
   int result=0;
   if (getPacketBuffer().isDraining()) {
     if (getWrappedChannel().isOpen()) {
-      result=getWrappedChannel().write(getPacketBuffer().getBytes());
+      result=getPacketBuffer().drain(getWrappedChannel());
       if (getConnection().getLogger().isLoggable(Level.INFO)) {
         getConnection().getLogger().log(Level.INFO,"Packet bytes written: " + result);
       }
-      if (!getPacketBuffer().getBytes().hasRemaining()) {
+      if (!getPacketBuffer().hasRemaining()) {
         getPacketBuffer().clear();
       }
     }

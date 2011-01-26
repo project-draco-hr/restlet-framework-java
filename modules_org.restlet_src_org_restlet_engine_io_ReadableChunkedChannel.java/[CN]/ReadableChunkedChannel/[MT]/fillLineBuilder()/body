@@ -3,17 +3,17 @@
   if (getLineBuilderState() != BufferState.DRAINING) {
     int byteBufferSize=0;
     if (getWrappedChannel().getSourceBuffer().isDraining()) {
-      byteBufferSize=getWrappedChannel().getSourceBuffer().getBytes().remaining();
+      byteBufferSize=getWrappedChannel().getSourceBuffer().remaining();
     }
     if (byteBufferSize == 0) {
       getWrappedChannel().getSourceBuffer().clear();
       if (getWrappedChannel().refill() > 0) {
-        byteBufferSize=getWrappedChannel().getSourceBuffer().getBytes().remaining();
+        byteBufferSize=getWrappedChannel().getSourceBuffer().remaining();
       }
     }
     if (byteBufferSize > 0) {
       setLineBuilderState(getWrappedChannel().getSourceBuffer().fillLine(getLineBuilder(),getLineBuilderState()));
-      if (!getWrappedChannel().getSourceBuffer().getBytes().hasRemaining()) {
+      if (!getWrappedChannel().getSourceBuffer().hasRemaining()) {
         getWrappedChannel().getSourceBuffer().clear();
       }
       return getLineBuilderState() == BufferState.DRAINING;
