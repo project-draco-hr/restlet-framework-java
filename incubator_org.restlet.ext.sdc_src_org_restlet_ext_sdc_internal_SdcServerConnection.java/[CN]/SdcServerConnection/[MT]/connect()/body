@@ -2,11 +2,12 @@
   readHandshake();
   try {
     FrameInfo frameInfo=getFrameReceiver().readOneFrame();
-    if (frameInfo.getType() == FrameInfo.Type.REGISTRATION) {
-      RegistrationRequestV4 registrationRequest=RegistrationRequestV4.parseFrom(frameInfo.getPayload());
-      System.out.println(registrationRequest);
-      RegistrationResponseV4 registrationResponse=RegistrationResponseV4.newBuilder().setResult(ResultCode.OK).build();
-      getFrameSender().sendFrame(FrameInfo.Type.REGISTRATION,registrationResponse.toByteString());
+    if (frameInfo.getType() == FrameInfo.Type.AUTHORIZATION) {
+      AuthorizationInfo authorizationRequest=AuthorizationInfo.parseFrom(frameInfo.getPayload());
+      setKey(authorizationRequest.getEmail() + ":" + authorizationRequest.getPassword());
+      System.out.println(authorizationRequest);
+      AuthorizationInfo authorizationResponse=AuthorizationInfo.newBuilder().setResult(ResultCode.OK).build();
+      getFrameSender().sendFrame(FrameInfo.Type.AUTHORIZATION,authorizationResponse.toByteString());
     }
  else {
       System.out.println(frameInfo);

@@ -5,7 +5,18 @@
     if (!request.getMethod().equals(Method.GET)) {
       throw new IOException("Only GET methods are allowed.");
     }
-    result=new SdcClientCall(this,null,request.getMethod().toString(),targetRef.toString(),request.isEntityAvailable());
+    if (request.getChallengeResponse() != null) {
+      if (request.getChallengeResponse().getScheme().equals(ChallengeScheme.valueOf("SDC"))) {
+        String key=request.getChallengeResponse().getIdentifier() + ":" + String.valueOf(request.getChallengeResponse().getSecret());
+        SdcServerConnection ssc=getConnections().get(key);
+        if (ssc == null) {
+          getLogger().log(Level.WARNING,"Unable to find an established SDC tunnel for this request: ",request.getResourceRef());
+        }
+ else {
+          result=new SdcClientCall(this,ssc,request.getMethod().toString(),targetRef.toString(),request.isEntityAvailable());
+        }
+      }
+    }
   }
  catch (  IOException ioe) {
     getLogger().log(Level.WARNING,"Unable to create the HTTP client call",ioe);
