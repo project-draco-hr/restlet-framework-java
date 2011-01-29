@@ -1,0 +1,17 @@
+{
+  Status result=null;
+  try {
+    if (request.isEntityAvailable()) {
+      Representation entity=request.getEntity();
+    }
+    for (    Parameter header : getRequestHeaders()) {
+      getFetchReply().getHeadersList().add(MessageHeader.newBuilder().setKey(header.getName()).setValue(header.getValue()).build());
+    }
+    result=super.sendRequest(request);
+  }
+ catch (  Exception e) {
+    getHelper().getLogger().log(Level.FINE,"An unexpected error occurred during the sending of the HTTP request.",e);
+    result=new Status(Status.CONNECTOR_ERROR_INTERNAL,e);
+  }
+  return result;
+}

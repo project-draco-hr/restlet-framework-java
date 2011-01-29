@@ -1,0 +1,11 @@
+{
+  super(sdcClientHelper,method,requestUri);
+  this.connection=connection;
+  if (requestUri.startsWith("http")) {
+    setFetchRequest(FetchRequest.newBuilder().setResource(requestUri).setStrategy("URLConnection").build());
+    getConnection().getFrameSender().sendFrame(FrameInfo.Type.FETCH_REQUEST,getFetchRequest().toByteString());
+  }
+ else {
+    throw new IllegalArgumentException("Only HTTP or HTTPS resource URIs are allowed here");
+  }
+}

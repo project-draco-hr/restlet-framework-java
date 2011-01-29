@@ -1,0 +1,18 @@
+{
+  readHandshake();
+  try {
+    FrameInfo frameInfo=getFrameReceiver().readOneFrame();
+    if (frameInfo.getType() == FrameInfo.Type.REGISTRATION) {
+      RegistrationRequestV4 registrationRequest=RegistrationRequestV4.parseFrom(frameInfo.getPayload());
+      System.out.println(registrationRequest);
+      RegistrationResponseV4 registrationResponse=RegistrationResponseV4.newBuilder().setResult(ResultCode.OK).build();
+      getFrameSender().sendFrame(FrameInfo.Type.REGISTRATION,registrationResponse.toByteString());
+    }
+ else {
+      System.out.println(frameInfo);
+    }
+  }
+ catch (  FramingException e) {
+    e.printStackTrace();
+  }
+}
