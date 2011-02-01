@@ -1,4 +1,5 @@
 {
+  this.helper=helper;
   this.socket=socket;
   this.inputStream=socket.getInputStream();
   this.outputStream=socket.getOutputStream();
@@ -8,4 +9,10 @@
   ShutdownManager shutdownManager=new ShutdownManager();
   this.frameSender=new FrameSender(sendQueue,shutdownManager);
   this.frameSender.setOutputStream(getOutputStream());
+  getHelper().getWorkerService().execute(new Runnable(){
+    @Override public void run(){
+      getFrameSender().run();
+    }
+  }
+);
 }
