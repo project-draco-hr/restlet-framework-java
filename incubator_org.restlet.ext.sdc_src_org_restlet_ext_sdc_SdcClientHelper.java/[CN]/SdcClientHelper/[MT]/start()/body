@@ -1,7 +1,6 @@
 {
   super.start();
   getLogger().info("Starting the SDC tunnel on port 4433.");
-  final CountDownLatch latch=new CountDownLatch(1);
   new Thread(){
     @Override public void run(){
       try {
@@ -10,7 +9,7 @@
         SSLServerSocket serverSocket=(SSLServerSocket)ssf.createServerSocket(4433);
         boolean loop=true;
         SSLSocket socket=null;
-        latch.countDown();
+        getLatch().countDown();
         while (loop) {
           try {
             socket=(SSLSocket)serverSocket.accept();
