@@ -1,18 +1,22 @@
 {
   Status result=null;
   if (Protocol.HTTP.equals(request.getResourceRef().getSchemeProtocol())) {
-    setFetchRequest(FetchRequest.newBuilder().setId(UUID.randomUUID().toString()).setResource(request.getResourceRef().toString()).setStrategy("URLConnection").build());
+    List<MessageHeader> headers=new CopyOnWriteArrayList<SdcFrame.MessageHeader>();
     for (    Parameter header : getRequestHeaders()) {
-      getFetchRequest().getHeadersList().add(MessageHeader.newBuilder().setKey(header.getName()).setValue(header.getValue()).build());
+      headers.add(MessageHeader.newBuilder().setKey(header.getName()).setValue(header.getValue()).build());
     }
+    setFetchRequest(FetchRequest.newBuilder().setId(UUID.randomUUID().toString()).setResource(request.getResourceRef().toString()).setStrategy("URLConnection").addAllHeaders(headers).build());
   }
  else {
     throw new IllegalArgumentException("Only HTTP or HTTPS resource URIs are allowed here");
   }
   try {
-    getConnection().getFrameSender().sendFrame(FrameInfo.Type.FETCH_REQUEST,getFetchRequest().toByteString());
+    getConnection().sendRequest(this);
     if (!getLatch().await(NioUtils.NIO_TIMEOUT,TimeUnit.MILLISECONDS)) {
       result=new Status(Status.CONNECTOR_ERROR_INTERNAL,"The calling thread timed out while waiting for a response to unblock it.");
+    }
+ else {
+      result=Status.valueOf(getFetchReply().getStatus());
     }
   }
  catch (  Exception e) {
