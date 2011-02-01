@@ -1,13 +1,19 @@
 {
   Status result=null;
-  try {
-    if (request.isEntityAvailable()) {
-      Representation entity=request.getEntity();
-    }
+  if (Protocol.HTTP.equals(request.getResourceRef().getSchemeProtocol())) {
+    setFetchRequest(FetchRequest.newBuilder().setId(UUID.randomUUID().toString()).setResource(request.getResourceRef().toString()).setStrategy("URLConnection").build());
     for (    Parameter header : getRequestHeaders()) {
-      getFetchReply().getHeadersList().add(MessageHeader.newBuilder().setKey(header.getName()).setValue(header.getValue()).build());
+      getFetchRequest().getHeadersList().add(MessageHeader.newBuilder().setKey(header.getName()).setValue(header.getValue()).build());
     }
-    result=super.sendRequest(request);
+  }
+ else {
+    throw new IllegalArgumentException("Only HTTP or HTTPS resource URIs are allowed here");
+  }
+  try {
+    getConnection().getFrameSender().sendFrame(FrameInfo.Type.FETCH_REQUEST,getFetchRequest().toByteString());
+    if (!getLatch().await(NioUtils.NIO_TIMEOUT,TimeUnit.MILLISECONDS)) {
+      result=new Status(Status.CONNECTOR_ERROR_INTERNAL,"The calling thread timed out while waiting for a response to unblock it.");
+    }
   }
  catch (  Exception e) {
     getHelper().getLogger().log(Level.FINE,"An unexpected error occurred during the sending of the HTTP request.",e);
