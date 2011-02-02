@@ -2,9 +2,6 @@
   ClientCall result=null;
   try {
     Reference targetRef=request.getResourceRef().getBaseRef() == null ? request.getResourceRef() : request.getResourceRef().getTargetRef();
-    if (!request.getMethod().equals(Method.GET)) {
-      throw new IOException("Only GET methods are allowed.");
-    }
     if (request.getChallengeResponse() != null) {
       if (request.getChallengeResponse().getScheme().equals(ChallengeScheme.valueOf("SDC"))) {
         String key=request.getChallengeResponse().getIdentifier() + ":" + String.valueOf(request.getChallengeResponse().getSecret());

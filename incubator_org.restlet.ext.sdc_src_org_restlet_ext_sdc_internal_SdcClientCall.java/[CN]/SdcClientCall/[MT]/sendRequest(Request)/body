@@ -1,27 +1,58 @@
 {
   Status result=null;
-  if (Protocol.HTTP.equals(request.getResourceRef().getSchemeProtocol())) {
-    List<MessageHeader> headers=new CopyOnWriteArrayList<SdcFrame.MessageHeader>();
-    for (    Parameter header : getRequestHeaders()) {
-      headers.add(MessageHeader.newBuilder().setKey(header.getName()).setValue(header.getValue()).build());
-    }
-    setFetchRequest(FetchRequest.newBuilder().setId(UUID.randomUUID().toString()).setResource(request.getResourceRef().toString()).setStrategy("HTTPClient").addAllHeaders(headers).build());
-  }
- else {
-    throw new IllegalArgumentException("Only HTTP or HTTPS resource URIs are allowed here");
+  Representation entity=request.isEntityAvailable() ? request.getEntity() : null;
+  org.restlet.service.ConnectorService connectorService=ConnectorHelper.getConnectorService();
+  if (connectorService != null) {
+    connectorService.beforeSend(entity);
   }
   try {
-    getConnection().sendRequest(this);
-    if (!getLatch().await(NioUtils.NIO_TIMEOUT,TimeUnit.MILLISECONDS)) {
-      result=new Status(Status.CONNECTOR_ERROR_INTERNAL,"The calling thread timed out while waiting for a response to unblock it.");
-    }
+    try {
+      List<MessageHeader> headers=new CopyOnWriteArrayList<SdcFrame.MessageHeader>();
+      for (      Parameter header : getRequestHeaders()) {
+        if (!header.getName().equals(HeaderConstants.HEADER_CONTENT_LENGTH)) {
+          headers.add(MessageHeader.newBuilder().setKey(header.getName()).setValue(header.getValue()).build());
+        }
+      }
+      if (!Method.GET.equals(request.getMethod())) {
+        headers.add(MessageHeader.newBuilder().setKey("x-sdc-http-method").setValue(request.getMethod().getName()).build());
+      }
+      if (entity != null) {
+        OutputStream requestStream=getRequestEntityStream();
+        if (requestStream != null) {
+          entity.write(requestStream);
+          requestStream.flush();
+          requestStream.close();
+          setFetchRequest(FetchRequest.newBuilder().setId(UUID.randomUUID().toString()).setResource(request.getResourceRef().toString()).setStrategy("HTTPClient").addAllHeaders(headers).setContents(ByteString.copyFrom(this.requestEntityStream.toByteArray())).build());
+        }
+      }
  else {
-      result=Status.valueOf(getFetchReply().getStatus());
+        setFetchRequest(FetchRequest.newBuilder().setId(UUID.randomUUID().toString()).setResource(request.getResourceRef().toString()).setStrategy("HTTPClient").addAllHeaders(headers).build());
+      }
+      getConnection().sendRequest(this);
+      if (!getLatch().await(NioUtils.NIO_TIMEOUT,TimeUnit.MILLISECONDS)) {
+        result=new Status(Status.CONNECTOR_ERROR_INTERNAL,"The calling thread timed out while waiting for a response to unblock it.");
+      }
+ else {
+        result=Status.valueOf(getFetchReply().getStatus());
+      }
     }
+ catch (    Exception e) {
+      getHelper().getLogger().log(Level.FINE,"An unexpected error occurred during the sending of the HTTP request.",e);
+      result=new Status(Status.CONNECTOR_ERROR_INTERNAL,e);
+    }
+    result=new Status(getStatusCode(),null,getReasonPhrase(),null);
   }
- catch (  Exception e) {
-    getHelper().getLogger().log(Level.FINE,"An unexpected error occurred during the sending of the HTTP request.",e);
-    result=new Status(Status.CONNECTOR_ERROR_INTERNAL,e);
+ catch (  IOException ioe) {
+    getHelper().getLogger().log(Level.FINE,"An error occured during the communication with the remote HTTP server.",ioe);
+    result=new Status(Status.CONNECTOR_ERROR_COMMUNICATION,ioe);
+  }
+ finally {
+    if (entity != null) {
+      entity.release();
+    }
+    if (connectorService != null) {
+      connectorService.afterSend(entity);
+    }
   }
   return result;
 }
