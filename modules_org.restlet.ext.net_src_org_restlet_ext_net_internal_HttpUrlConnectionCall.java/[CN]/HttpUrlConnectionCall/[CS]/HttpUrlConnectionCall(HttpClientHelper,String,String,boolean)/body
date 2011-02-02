@@ -14,20 +14,20 @@
     this.connection.setInstanceFollowRedirects(getHelper().isFollowRedirects());
     this.connection.setUseCaches(getHelper().isUseCaches());
     this.responseHeadersAdded=false;
-    if (this.connection instanceof HttpsURLConnection) {
+    if (this.connection instanceof javax.net.ssl.HttpsURLConnection) {
       setConfidential(true);
-      HttpsURLConnection https=(HttpsURLConnection)this.connection;
-      SslContextFactory sslContextFactory=SslUtils.getSslContextFactory(getHelper());
+      javax.net.ssl.HttpsURLConnection https=(javax.net.ssl.HttpsURLConnection)this.connection;
+      org.restlet.engine.security.SslContextFactory sslContextFactory=SslUtils.getSslContextFactory(getHelper());
       if (sslContextFactory != null) {
         try {
-          SSLContext sslContext=sslContextFactory.createSslContext();
+          javax.net.ssl.SSLContext sslContext=sslContextFactory.createSslContext();
           https.setSSLSocketFactory(sslContext.getSocketFactory());
         }
  catch (        Exception e) {
           throw new RuntimeException("Unable to create SSLContext.",e);
         }
       }
-      HostnameVerifier verifier=helper.getHostnameVerifier();
+      javax.net.ssl.HostnameVerifier verifier=helper.getHostnameVerifier();
       if (verifier != null) {
         https.setHostnameVerifier(verifier);
       }

@@ -1,5 +1,5 @@
 {
-  KeyManagerFactory kmf=null;
+  javax.net.ssl.KeyManagerFactory kmf=null;
   if ((this.keyStorePath != null) || (this.keyStoreProvider != null) || (this.keyStoreType != null)) {
     final KeyStore keyStore=(this.keyStoreProvider != null) ? KeyStore.getInstance((this.keyStoreType != null) ? this.keyStoreType : KeyStore.getDefaultType(),this.keyStoreProvider) : KeyStore.getInstance((this.keyStoreType != null) ? this.keyStoreType : KeyStore.getDefaultType());
     FileInputStream keyStoreInputStream=null;
@@ -12,10 +12,10 @@
         keyStoreInputStream.close();
       }
     }
-    kmf=KeyManagerFactory.getInstance(this.keyManagerAlgorithm);
+    kmf=javax.net.ssl.KeyManagerFactory.getInstance(this.keyManagerAlgorithm);
     kmf.init(keyStore,this.keyStoreKeyPassword);
   }
-  TrustManagerFactory tmf=null;
+  javax.net.ssl.TrustManagerFactory tmf=null;
   if ((this.trustStorePath != null) || (this.trustStoreProvider != null) || (this.trustStoreType != null)) {
     final KeyStore trustStore=(this.trustStoreProvider != null) ? KeyStore.getInstance((this.trustStoreType != null) ? this.trustStoreType : KeyStore.getDefaultType(),this.trustStoreProvider) : KeyStore.getInstance((this.trustStoreType != null) ? this.trustStoreType : KeyStore.getDefaultType());
     FileInputStream trustStoreInputStream=null;
@@ -28,10 +28,10 @@
         trustStoreInputStream.close();
       }
     }
-    tmf=TrustManagerFactory.getInstance(this.trustManagerAlgorithm);
+    tmf=javax.net.ssl.TrustManagerFactory.getInstance(this.trustManagerAlgorithm);
     tmf.init(trustStore);
   }
-  final SSLContext sslContext=SSLContext.getInstance(this.secureSocketProtocol);
+  final javax.net.ssl.SSLContext sslContext=javax.net.ssl.SSLContext.getInstance(this.secureSocketProtocol);
   SecureRandom sr=null;
   if (this.secureRandomAlgorithm != null) {
     sr=SecureRandom.getInstance(this.secureRandomAlgorithm);
