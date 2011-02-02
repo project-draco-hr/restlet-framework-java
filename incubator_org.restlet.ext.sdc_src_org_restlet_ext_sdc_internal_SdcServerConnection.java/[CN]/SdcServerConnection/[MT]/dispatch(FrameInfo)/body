@@ -1,6 +1,5 @@
 {
   if (frameInfo.getType() == Type.FETCH_REQUEST) {
-    System.out.println(frameInfo);
     try {
       FetchReply fetchReply=FetchReply.parseFrom(frameInfo.getPayload());
       SdcClientCall call=getCalls().get(fetchReply.getId());
@@ -20,7 +19,6 @@
     RegistrationRequestV4 registrationRequest;
     try {
       registrationRequest=RegistrationRequestV4.parseFrom(frameInfo.getPayload());
-      System.out.println(registrationRequest);
       RegistrationResponseV4 registrationResponse=RegistrationResponseV4.newBuilder().setResult(com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4.ResultCode.OK).setServerSuppliedConf(ServerSuppliedConf.newBuilder().setHealthCheckTimeout(5000).setHealthCheckWakeUpInterval(5000).build()).build();
       getFrameSender().sendFrame(FrameInfo.Type.REGISTRATION,registrationResponse.toByteString());
     }
@@ -29,7 +27,6 @@
     }
   }
  else   if (frameInfo.getType() == Type.HEALTH_CHECK) {
-    System.out.println(frameInfo);
     HealthCheckInfo checkResponse=HealthCheckInfo.newBuilder().setSource(Source.SERVER).setTimeStamp(System.currentTimeMillis()).setType(com.google.dataconnector.protocol.proto.SdcFrame.HealthCheckInfo.Type.RESPONSE).build();
     getFrameSender().sendFrame(Type.HEALTH_CHECK,checkResponse.toByteString());
   }

@@ -5,7 +5,6 @@
     if (frameInfo.getType() == FrameInfo.Type.AUTHORIZATION) {
       AuthorizationInfo authorizationRequest=AuthorizationInfo.parseFrom(frameInfo.getPayload());
       setKey(authorizationRequest.getEmail() + ":" + authorizationRequest.getPassword());
-      System.out.println(authorizationRequest);
       AuthorizationInfo authorizationResponse=AuthorizationInfo.newBuilder().setResult(ResultCode.OK).build();
       getFrameSender().sendFrame(FrameInfo.Type.AUTHORIZATION,authorizationResponse.toByteString());
       getFrameReceiver().registerDispatcher(Type.FETCH_REQUEST,this);
