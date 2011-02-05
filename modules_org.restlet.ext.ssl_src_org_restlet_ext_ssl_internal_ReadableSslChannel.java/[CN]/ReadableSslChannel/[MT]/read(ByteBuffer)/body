@@ -5,9 +5,9 @@
     getManager().setState(SslState.READING_APPLICATION_DATA);
   }
   while (continueReading) {
-    getPacketBuffer().beforeFill();
     result+=drain(targetBuffer);
-    continueReading=(getWrappedChannel().refill() > 0) || (getPacketBuffer().canDrain() && (getManager().getEngineStatus() == Status.OK));
+    getPacketBuffer().beforeFill();
+    continueReading=(getWrappedChannel().refill() > 0) || (getPacketBuffer().couldDrain() && (getManager().getEngineStatus() == Status.OK));
   }
   return result;
 }
