@@ -1,5 +1,8 @@
 {
   try {
+    if (Context.getCurrentLogger().isLoggable(Level.FINE)) {
+      Context.getCurrentLogger().log(Level.FINE,"Calling thread about to block on the NIO selection registration. Timeout: " + TimeUnit.MILLISECONDS.toMillis(IoUtils.TIMEOUT_MS) + " ms. Waiting: "+ this.barrier.getNumberWaiting());
+    }
     this.barrier.await(IoUtils.TIMEOUT_MS,TimeUnit.MILLISECONDS);
   }
  catch (  Exception e) {

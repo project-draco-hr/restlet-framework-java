@@ -2,18 +2,18 @@
   try {
     Response message=getMessage();
     if (message != null) {
-      super.onSelected(registration);
+      super.onSelected();
       while (isSelected()) {
         if (getIoBuffer().isFilling()) {
           if (getMessageState() == MessageState.END) {
             onCompleted(false);
           }
  else {
-            fillByteBuffer();
+            fillIoBuffer();
           }
         }
  else         if (getIoBuffer().isDraining()) {
-          drainByteBuffer();
+          drainIoBuffer();
           if (getMessageState() == MessageState.IDLE) {
             updateState();
           }

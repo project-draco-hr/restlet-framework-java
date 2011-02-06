@@ -9,8 +9,11 @@
             this.selectionRegistration=this.selectionChannel.getRegistration();
             this.selectionRegistration.setInterestOperations(SelectionKey.OP_READ);
             this.selectionRegistration.setListener(new SelectionListener(){
-              public void onSelected(              SelectionRegistration registration){
-                registration.suspend();
+              public void onSelected(){
+                if (Context.getCurrentLogger().isLoggable(Level.FINE)) {
+                  Context.getCurrentLogger().log(Level.FINE,"NbChannelInputStream selected");
+                }
+                selectionRegistration.suspend();
                 selectionRegistration.unblock();
                 selectionRegistration.setListener(null);
               }

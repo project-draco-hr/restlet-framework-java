@@ -1,4 +1,7 @@
 {
+  if (Context.getCurrentLogger().isLoggable(Level.FINE)) {
+    Context.getCurrentLogger().log(Level.FINE,"Calling thread about to unblock the NIO selection registration. Timeout: " + TimeUnit.MILLISECONDS + " ms. Waiting: "+ this.barrier.getNumberWaiting());
+  }
   try {
     if (this.barrier.getNumberWaiting() == 1) {
       this.barrier.await(IoUtils.TIMEOUT_MS,TimeUnit.MILLISECONDS);
