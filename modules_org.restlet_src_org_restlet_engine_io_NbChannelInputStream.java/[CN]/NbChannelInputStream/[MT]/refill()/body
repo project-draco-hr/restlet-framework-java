@@ -15,7 +15,6 @@
                 }
                 selectionRegistration.suspend();
                 selectionRegistration.unblock();
-                selectionRegistration.setListener(null);
               }
             }
 );
@@ -24,11 +23,11 @@
             this.selectionRegistration.resume();
           }
           this.selectionRegistration.block();
+          bytesRead=readChannel();
         }
  catch (        Exception e) {
           Context.getCurrentLogger().log(Level.FINE,"Exception while registering or waiting for new content",e);
         }
-        bytesRead=readChannel();
       }
  else       if (selectableChannel != null) {
         Selector selector=null;
@@ -51,6 +50,7 @@
     this.endReached=true;
     if (this.selectionRegistration != null) {
       this.selectionRegistration.setCanceling(true);
+      this.selectionRegistration.setListener(null);
     }
   }
 }
