@@ -1,12 +1,11 @@
 {
   if (Context.getCurrentLogger().isLoggable(Level.FINE)) {
-    Context.getCurrentLogger().log(Level.FINE,"Calling thread about to unblock the NIO selection registration. Timeout: " + TimeUnit.MILLISECONDS + " ms. Waiting: "+ this.barrier.getNumberWaiting());
+    Context.getCurrentLogger().log(Level.FINE,"Calling thread about to unblock the NIO selection registration. Timeout: " + TimeUnit.MILLISECONDS.toMillis(IoUtils.TIMEOUT_MS) + " ms. Waiting: "+ this.barrier.getNumberWaiting());
   }
   try {
     this.barrier.await(IoUtils.TIMEOUT_MS,TimeUnit.MILLISECONDS);
-    this.barrier.reset();
   }
  catch (  Exception e) {
-    e.printStackTrace();
+    Context.getCurrentLogger().log(Level.FINE,"Unable to unblock the waiting thread at the cyclic barrier",e);
   }
 }
