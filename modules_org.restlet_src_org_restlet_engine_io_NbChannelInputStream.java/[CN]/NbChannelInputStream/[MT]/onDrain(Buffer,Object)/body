@@ -1,0 +1,15 @@
+{
+  int result=0;
+  if (args.length == 1) {
+    result=getBuffer().drain();
+    args[0]=result;
+  }
+ else   if (args.length == 3) {
+    byte[] targetArray=(byte[])args[0];
+    int offset=((Integer)args[1]).intValue();
+    int length=((Integer)args[2]).intValue();
+    result=Math.min(length,getBuffer().remaining());
+    getBuffer().drain(targetArray,offset,result);
+  }
+  return result;
+}

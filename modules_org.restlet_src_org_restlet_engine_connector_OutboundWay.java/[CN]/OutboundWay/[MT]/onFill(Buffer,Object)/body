@@ -1,0 +1,30 @@
+{
+  int beforeFill=buffer.remaining();
+  if (getMessageState() == MessageState.END) {
+  }
+ else {
+    if (getMessageState() == MessageState.BODY) {
+      int result=getBuffer().fill(getEntityChannel());
+      if (result == -1) {
+        setMessageState(MessageState.END);
+      }
+    }
+ else {
+      if (getLineBuilder().length() == 0) {
+        writeLine();
+      }
+      if (getLineBuilder().length() > 0) {
+        int remaining=getBuffer().remaining();
+        if (remaining >= getLineBuilder().length()) {
+          getBuffer().fill(StringUtils.getLatin1Bytes(getLineBuilder().toString()));
+          clearLineBuilder();
+        }
+ else {
+          getBuffer().fill(StringUtils.getLatin1Bytes(getLineBuilder().substring(0,remaining)));
+          getLineBuilder().delete(0,remaining);
+        }
+      }
+    }
+  }
+  return beforeFill - buffer.remaining();
+}
