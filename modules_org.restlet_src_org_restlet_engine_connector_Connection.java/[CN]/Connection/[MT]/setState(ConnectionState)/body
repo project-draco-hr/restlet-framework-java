@@ -1,9 +1,11 @@
 {
-  if (getLogger().isLoggable(Level.FINEST)) {
-    getLogger().finest("Connection state (old | new) : " + this.state + " | "+ state);
+  if (getState() != state) {
+    if (getLogger().isLoggable(Level.FINEST)) {
+      getLogger().finest("Connection state (old | new) : " + this.state + " | "+ state);
+    }
+    if (state == ConnectionState.CLOSED) {
+      System.out.println("CLOSED");
+    }
+    this.state=state;
   }
-  if (state == ConnectionState.CLOSED) {
-    System.out.println("CLOSED");
-  }
-  this.state=state;
 }
