@@ -2,6 +2,9 @@
   int result=0;
   boolean tryAgain=true;
   while (tryAgain) {
+    if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
+      Context.getCurrentLogger().log(Level.FINER,"Chunk state: " + this.chunkState);
+    }
 switch (this.chunkState) {
 case SIZE:
       if (fillLineBuilder()) {
@@ -13,8 +16,8 @@ case SIZE:
           int index=getLineBuilder().indexOf(";");
           index=(index == -1) ? getLineBuilder().length() : index;
           this.remainingChunkSize=Long.parseLong(getLineBuilder().substring(0,index).trim(),16);
-          if (Context.getCurrentLogger().isLoggable(Level.FINE)) {
-            Context.getCurrentLogger().fine("New chunk detected. Size: " + this.remainingChunkSize);
+          if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
+            Context.getCurrentLogger().log(Level.FINER,"New chunk detected. Size: " + this.remainingChunkSize);
           }
         }
  catch (        NumberFormatException ex) {
