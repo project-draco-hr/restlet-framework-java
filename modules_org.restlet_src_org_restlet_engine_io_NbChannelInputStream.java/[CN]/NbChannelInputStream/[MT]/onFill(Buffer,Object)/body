@@ -1,5 +1,5 @@
 {
-  int result=getBuffer().fill(this.channel);
+  int result=buffer.fill(this.channel);
   if (result == 0) {
     if (selectionChannel != null) {
       try {
@@ -21,7 +21,7 @@
           this.selectionRegistration.resume();
         }
         this.selectionRegistration.block();
-        result=getBuffer().fill(this.channel);
+        result=buffer.fill(this.channel);
       }
  catch (      Exception e) {
         Context.getCurrentLogger().log(Level.FINE,"Exception while registering or waiting for new content",e);
@@ -40,7 +40,7 @@
   finally {
         NioUtils.release(selector,selectionKey);
       }
-      result=getBuffer().fill(this.channel);
+      result=buffer.fill(this.channel);
     }
   }
   if (result == -1) {
