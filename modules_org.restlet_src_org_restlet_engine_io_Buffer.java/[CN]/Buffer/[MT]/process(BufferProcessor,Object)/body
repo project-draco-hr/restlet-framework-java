@@ -18,6 +18,9 @@ synchronized (getLock()) {
             totalDrained+=drained;
             lastDrainFailed=false;
             lastFillFailed=false;
+            if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
+              Context.getCurrentLogger().finer(drained + " bytes drained from buffer");
+            }
           }
  else           if (!lastFillFailed && couldFill()) {
             lastDrainFailed=true;
@@ -36,6 +39,9 @@ synchronized (getLock()) {
             totalFilled+=filled;
             lastDrainFailed=false;
             lastFillFailed=false;
+            if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
+              Context.getCurrentLogger().finer(filled + " bytes filled into buffer");
+            }
           }
  else           if (!lastDrainFailed && couldDrain()) {
             lastFillFailed=true;

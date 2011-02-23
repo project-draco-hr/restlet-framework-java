@@ -1,19 +1,9 @@
 {
   int result=0;
-  if (canFill()) {
-    if (sourceChannel.isOpen()) {
-      result=sourceChannel.read(getBytes());
-      if (result > 0) {
-        flip();
-        if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
-          Context.getCurrentLogger().finer("Refilled buffer with " + result + " byte(s)");
-        }
-      }
- else {
-        if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
-          Context.getCurrentLogger().finer("Coudn't refill buffer : " + toString());
-        }
-      }
+  if (sourceChannel.isOpen()) {
+    result=sourceChannel.read(getBytes());
+    if (result > 0) {
+      flip();
     }
   }
   return result;
