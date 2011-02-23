@@ -7,7 +7,7 @@
     }
 switch (this.chunkState) {
 case SIZE:
-      if (fillLineBuilder()) {
+      if (refill()) {
         try {
           int length=getLineBuilder().length();
           if (length == 0) {
@@ -54,7 +54,7 @@ case DATA:
     }
   }
  else   if (this.remainingChunkSize == 0) {
-    if (fillLineBuilder()) {
+    if (refill()) {
       clearLineBuilder();
       this.chunkState=ChunkState.SIZE;
     }
@@ -67,11 +67,15 @@ case TRAILER:
 this.chunkState=ChunkState.END;
 break;
 case END:
-if (fillLineBuilder()) {
-if (getLineBuilder().length() == 0) {
-result=-1;
-tryAgain=false;
+if (refill()) {
+if (getLineBuilder().length() != 0) {
+Context.getCurrentLogger().log(Level.FINE,"The last chunk line had a non empty line");
 }
+tryAgain=false;
+result=-1;
+}
+ else {
+tryAgain=false;
 }
 break;
 }
