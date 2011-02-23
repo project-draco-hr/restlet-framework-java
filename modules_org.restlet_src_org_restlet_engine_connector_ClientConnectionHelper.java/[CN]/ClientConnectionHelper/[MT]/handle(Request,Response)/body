@@ -5,7 +5,6 @@
       CountDownLatch latch=new CountDownLatch(1);
       request.getAttributes().put(CONNECTOR_LATCH,latch);
       getOutboundMessages().add(response);
-      getController().wakeup();
       if (getMaxIoIdleTimeMs() <= 0) {
         latch.await();
       }
@@ -17,7 +16,6 @@
     }
  else {
       getOutboundMessages().add(response);
-      getController().wakeup();
     }
   }
  catch (  Exception e) {
