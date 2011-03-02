@@ -1,13 +1,13 @@
 {
   if (graceful) {
-    if (getLogger().isLoggable(Level.FINE)) {
-      getLogger().log(Level.FINE,"Closing connection to " + getSocketAddress() + " gracefully");
+    if (getLogger().isLoggable(Level.FINER)) {
+      getLogger().log(Level.FINER,"Closing connection to " + getSocketAddress() + " gracefully");
     }
     setState(ConnectionState.CLOSING);
   }
  else {
-    if (getLogger().isLoggable(Level.FINE)) {
-      getLogger().log(Level.FINE,"Closing connection to " + getSocketAddress() + " immediately");
+    if (getLogger().isLoggable(Level.FINER)) {
+      getLogger().log(Level.FINER,"Closing connection to " + getSocketAddress() + " immediately");
     }
     try {
       Socket socket=getSocket();
@@ -34,6 +34,9 @@
       getInboundWay().onClosed();
       getInboundWay().onClosed();
       setState(ConnectionState.CLOSED);
+      if (getLogger().isLoggable(Level.FINE)) {
+        getLogger().log(Level.FINE,"Connection to " + getSocketAddress() + " is now closed");
+      }
     }
   }
 }

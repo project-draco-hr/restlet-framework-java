@@ -35,7 +35,9 @@
       getLogger().log(Level.WARNING,"Unable to create a new connection. Maximum number of connections reached for host: " + socketAddress);
     }
  else {
-      getLogger().log(Level.FINE,"Creating a new client connection to: " + socketAddress);
+      if (getLogger().isLoggable(Level.FINE)) {
+        getLogger().log(Level.FINE,"Creating a new client connection to: " + socketAddress);
+      }
       result=checkout(createSocketChannel(request.isConfidential(),socketAddress),getController(),socketAddress);
       getConnections().add(result);
     }
