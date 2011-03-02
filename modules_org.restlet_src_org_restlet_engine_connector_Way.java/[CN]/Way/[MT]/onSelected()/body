@@ -9,7 +9,11 @@
  else     if (getIoState() == IoState.CANCELING) {
       setIoState(IoState.CANCELLED);
     }
-    processIoBuffer();
+    getLogger().log(Level.FINE,"Way selected. Processing IO for : " + this);
+    int drained=processIoBuffer();
+    if ((drained == -1) && (getConnection().getState() == ConnectionState.CLOSING)) {
+      getBuffer().clear();
+    }
   }
  catch (  Exception e) {
     getLogger().log(Level.FINE,"Error while processing a message. Closing the connection.",e);
