@@ -1,12 +1,10 @@
 {
   int result=-1;
-  int wrappedRead=0;
   if (this.availableSize > 0) {
     if (this.availableSize < dst.remaining()) {
       dst.limit((int)(this.availableSize + dst.position()));
     }
-    wrappedRead=getWrappedChannel().read(dst);
-    result=wrappedRead;
+    result=getWrappedChannel().read(dst);
   }
   if (result > 0) {
     this.availableSize-=result;
@@ -19,8 +17,11 @@
       }
     }
   }
+ else   if (result == -1) {
+    this.endReached=true;
+  }
   if ((result == -1) && (getWrappedChannel() instanceof CompletionListener)) {
-    ((CompletionListener)getWrappedChannel()).onCompleted((wrappedRead == -1));
+    ((CompletionListener)getWrappedChannel()).onCompleted(this.endReached);
   }
   return result;
 }
