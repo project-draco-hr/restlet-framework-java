@@ -21,9 +21,6 @@
  catch (    IOException ex) {
       getLogger().log(Level.FINE,"Unable to properly shutdown socket",ex);
     }
- finally {
-      setState(ConnectionState.CLOSED);
-    }
     try {
       Socket socket=getSocket();
       if ((socket != null) && !socket.isClosed()) {
@@ -34,6 +31,8 @@
       getLogger().log(Level.FINE,"Unable to properly close socket",ex);
     }
  finally {
+      getInboundWay().onClosed();
+      getInboundWay().onClosed();
       setState(ConnectionState.CLOSED);
     }
   }
