@@ -1,5 +1,5 @@
 {
-  int totalDrained=0;
+  int result=0;
   int totalFilled=0;
 synchronized (getLock()) {
     if (processor.couldFill()) {
@@ -15,12 +15,18 @@ synchronized (getLock()) {
             drained=processor.onDrain(this,args);
           }
           if (drained > 0) {
-            totalDrained+=drained;
+            result+=drained;
             lastDrainFailed=false;
             lastFillFailed=false;
             if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
               Context.getCurrentLogger().finer(drained + " bytes drained from buffer");
             }
+          }
+ else           if (drained == -1) {
+            if (result == 0) {
+              result=-1;
+            }
+            tryAgain=false;
           }
  else           if (!lastFillFailed && couldFill()) {
             lastDrainFailed=true;
@@ -43,6 +49,12 @@ synchronized (getLock()) {
               Context.getCurrentLogger().finer(filled + " bytes filled into buffer");
             }
           }
+ else           if (filled == -1) {
+            if (result == 0) {
+              result=-1;
+            }
+            tryAgain=false;
+          }
  else           if (!lastDrainFailed && couldDrain()) {
             lastFillFailed=true;
             beforeDrain();
@@ -55,13 +67,13 @@ synchronized (getLock()) {
           tryAgain=false;
         }
       }
-      if ((totalDrained == 0) && !processor.couldFill()) {
-        totalDrained=-1;
+      if ((result == 0) && !processor.couldFill()) {
+        result=-1;
       }
     }
  else {
-      totalDrained=-1;
+      result=-1;
     }
   }
-  return totalDrained;
+  return result;
 }
