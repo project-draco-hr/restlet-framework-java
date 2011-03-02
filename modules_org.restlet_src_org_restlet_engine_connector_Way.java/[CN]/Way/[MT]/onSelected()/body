@@ -9,7 +9,9 @@
  else     if (getIoState() == IoState.CANCELING) {
       setIoState(IoState.CANCELLED);
     }
-    getLogger().log(Level.FINE,"Way selected. Processing IO for : " + this);
+    if (getLogger().isLoggable(Level.FINER)) {
+      getLogger().log(Level.FINER,"Way selected. Processing IO for : " + this);
+    }
     int drained=processIoBuffer();
     if ((drained == -1) && (getConnection().getState() == ConnectionState.CLOSING)) {
       getBuffer().clear();

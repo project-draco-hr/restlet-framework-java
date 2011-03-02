@@ -8,6 +8,7 @@ synchronized (getLock()) {
       int filled=0;
       boolean lastDrainFailed=false;
       boolean lastFillFailed=false;
+      boolean fillEnded=false;
       while (tryAgain && processor.canLoop()) {
         if (isDraining()) {
           drained=0;
@@ -22,18 +23,14 @@ synchronized (getLock()) {
               Context.getCurrentLogger().finer(drained + " bytes drained from buffer");
             }
           }
- else           if (drained == -1) {
-            if (result == 0) {
-              result=-1;
-            }
-            tryAgain=false;
-          }
- else           if (!lastFillFailed && couldFill()) {
-            lastDrainFailed=true;
-            beforeFill();
-          }
  else {
-            tryAgain=false;
+            if (!lastFillFailed && couldFill()) {
+              beforeFill();
+            }
+ else {
+              tryAgain=false;
+            }
+            lastDrainFailed=true;
           }
         }
  else         if (isFilling()) {
@@ -49,25 +46,22 @@ synchronized (getLock()) {
               Context.getCurrentLogger().finer(filled + " bytes filled into buffer");
             }
           }
- else           if (filled == -1) {
-            if (result == 0) {
-              result=-1;
-            }
-            tryAgain=false;
-          }
- else           if (!lastDrainFailed && couldDrain()) {
-            lastFillFailed=true;
-            beforeDrain();
-          }
  else {
-            tryAgain=false;
+            if (!lastDrainFailed && couldDrain()) {
+              beforeDrain();
+            }
+ else {
+              tryAgain=false;
+            }
+            fillEnded=(filled == -1);
+            lastFillFailed=true;
           }
         }
  else {
           tryAgain=false;
         }
       }
-      if ((result == 0) && !processor.couldFill()) {
+      if ((result == 0) && (!processor.couldFill() || fillEnded)) {
         result=-1;
       }
     }
