@@ -16,6 +16,9 @@
     if ((drained == -1) && (getConnection().getState() == ConnectionState.CLOSING)) {
       getBuffer().clear();
     }
+ else     if (getIoState() == IoState.PROCESSING) {
+      setIoState(IoState.INTEREST);
+    }
   }
  catch (  Exception e) {
     getLogger().log(Level.FINE,"Error while processing a message. Closing the connection.",e);

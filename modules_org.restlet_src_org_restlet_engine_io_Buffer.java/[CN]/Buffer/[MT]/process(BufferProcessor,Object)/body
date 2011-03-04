@@ -2,14 +2,14 @@
   int result=0;
   int totalFilled=0;
 synchronized (getLock()) {
-    if (processor.couldFill()) {
+    if (processor.couldFill(this,args)) {
       boolean tryAgain=true;
       int drained=0;
       int filled=0;
       boolean lastDrainFailed=false;
       boolean lastFillFailed=false;
       boolean fillEnded=false;
-      while (tryAgain && processor.canLoop()) {
+      while (tryAgain && processor.canLoop(this,args)) {
         if (isDraining()) {
           drained=0;
           if (hasRemaining()) {
@@ -61,7 +61,7 @@ synchronized (getLock()) {
           tryAgain=false;
         }
       }
-      if ((result == 0) && (!processor.couldFill() || fillEnded)) {
+      if ((result == 0) && (!processor.couldFill(this,args) || fillEnded)) {
         result=-1;
       }
     }
