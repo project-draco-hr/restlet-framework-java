@@ -1,0 +1,78 @@
+{
+  int result=0;
+  int totalFilled=0;
+synchronized (getLock()) {
+    if (processor.couldFill(this,args)) {
+      boolean tryAgain=true;
+      int drained=0;
+      int filled=0;
+      boolean lastDrainFailed=false;
+      boolean lastFillFailed=false;
+      boolean fillEnded=false;
+      while (tryAgain && processor.canLoop(this,args)) {
+        if (isDraining()) {
+          drained=0;
+          if (hasRemaining()) {
+            if (maxDrained <= 0) {
+              drained=processor.onDrain(this,0,args);
+            }
+ else             if (maxDrained - result > 0) {
+              drained=processor.onDrain(this,maxDrained - result,args);
+            }
+          }
+          if (drained > 0) {
+            result+=drained;
+            lastDrainFailed=false;
+            lastFillFailed=false;
+            if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
+              Context.getCurrentLogger().finer(drained + " bytes drained from buffer");
+            }
+          }
+ else {
+            if (!lastFillFailed && couldFill()) {
+              beforeFill();
+            }
+ else {
+              tryAgain=false;
+            }
+            lastDrainFailed=true;
+          }
+        }
+ else         if (isFilling()) {
+          filled=0;
+          if (hasRemaining()) {
+            filled=processor.onFill(this,args);
+          }
+          if (filled > 0) {
+            totalFilled+=filled;
+            lastDrainFailed=false;
+            lastFillFailed=false;
+            if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
+              Context.getCurrentLogger().finer(filled + " bytes filled into buffer");
+            }
+          }
+ else {
+            if (!lastDrainFailed && couldDrain()) {
+              beforeDrain();
+            }
+ else {
+              tryAgain=false;
+            }
+            fillEnded=(filled == -1);
+            lastFillFailed=true;
+          }
+        }
+ else {
+          tryAgain=false;
+        }
+      }
+      if ((result == 0) && (!processor.couldFill(this,args) || fillEnded)) {
+        result=-1;
+      }
+    }
+ else {
+      result=-1;
+    }
+  }
+  return result;
+}
