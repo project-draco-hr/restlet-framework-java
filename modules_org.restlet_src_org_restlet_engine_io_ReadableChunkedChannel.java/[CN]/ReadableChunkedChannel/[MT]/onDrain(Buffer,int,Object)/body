@@ -49,7 +49,11 @@ if (result > 0) {
 }
 }
 if (getRemainingChunkSize() == 0) {
+setLineBuilderState(buffer.drain(getLineBuilder(),getLineBuilderState()));
+if (getLineBuilderState() == BufferState.DRAINING) {
 setChunkState(ChunkState.SIZE);
+clearLineBuilder();
+}
 }
 break;
 case TRAILER:
