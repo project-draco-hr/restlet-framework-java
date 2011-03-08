@@ -48,8 +48,7 @@ if (result > 0) {
   }
 }
 }
- else if (getRemainingChunkSize() == 0) {
-clearLineBuilder();
+if (getRemainingChunkSize() == 0) {
 setChunkState(ChunkState.SIZE);
 }
 break;
@@ -66,8 +65,8 @@ setEndReached(true);
 }
 break;
 }
-if ((result == -1) && (getWrappedChannel() instanceof CompletionListener)) {
-((CompletionListener)getWrappedChannel()).onCompleted(false);
+if (result == -1) {
+onCompleted(isEndReached());
 }
  else {
 result=before - buffer.remaining();

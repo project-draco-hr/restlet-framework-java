@@ -1,0 +1,24 @@
+{
+  int result=0;
+  if (getAvailableSize() > 0) {
+    result=super.onDrain(buffer,(int)getAvailableSize(),args);
+  }
+  if (result > 0) {
+    setAvailableSize(getAvailableSize() - result);
+    if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
+      Context.getCurrentLogger().finer("Bytes (read | available) : " + result + " | "+ this.availableSize);
+    }
+    if (getAvailableSize() == 0) {
+      if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
+        Context.getCurrentLogger().finer("Channel fully read.");
+      }
+    }
+  }
+ else   if (result == -1) {
+    setEndReached(true);
+  }
+  if (result == -1) {
+    onCompleted(isEndReached());
+  }
+  return result;
+}

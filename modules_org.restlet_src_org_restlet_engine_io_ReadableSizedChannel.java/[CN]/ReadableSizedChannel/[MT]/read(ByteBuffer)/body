@@ -1,17 +1,17 @@
 {
   int result=-1;
-  if (this.availableSize > 0) {
-    if (this.availableSize < dst.remaining()) {
-      dst.limit((int)(this.availableSize + dst.position()));
+  if (getAvailableSize() > 0) {
+    if (getAvailableSize() < dst.remaining()) {
+      dst.limit((int)(getAvailableSize() + dst.position()));
     }
     result=getWrappedChannel().read(dst);
   }
   if (result > 0) {
-    this.availableSize-=result;
+    setAvailableSize(getAvailableSize() - result);
     if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
-      Context.getCurrentLogger().finer("Bytes (read | available) : " + result + " | "+ this.availableSize);
+      Context.getCurrentLogger().finer("Bytes (read | available) : " + result + " | "+ getAvailableSize());
     }
-    if (this.availableSize == 0) {
+    if (getAvailableSize() == 0) {
       if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
         Context.getCurrentLogger().finer("Channel fully read.");
       }

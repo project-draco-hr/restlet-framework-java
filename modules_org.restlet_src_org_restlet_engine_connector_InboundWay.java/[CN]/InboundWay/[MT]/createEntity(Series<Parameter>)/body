@@ -9,8 +9,7 @@
       inboundEntityChannel=new ReadableChunkedChannel(this,getBuffer(),getConnection().getReadableSelectionChannel());
     }
  else {
-      ReadableBufferedChannel rbc=new ReadableBufferedChannel(this,getBuffer(),getConnection().getReadableSelectionChannel());
-      inboundEntityChannel=new ReadableSizedSelectionChannel(rbc,contentLength);
+      inboundEntityChannel=new ReadableSizedSelectionChannel(this,getBuffer(),getConnection().getReadableSelectionChannel(),contentLength);
     }
     setEntityRegistration(inboundEntityChannel.getRegistration());
     if (inboundEntityChannel != null) {
