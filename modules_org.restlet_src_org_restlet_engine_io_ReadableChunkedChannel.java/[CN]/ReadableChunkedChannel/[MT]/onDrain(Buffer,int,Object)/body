@@ -43,8 +43,8 @@ if (result > 0) {
   setRemainingChunkSize(getRemainingChunkSize() - result);
 }
  else {
-  if (Context.getCurrentLogger().isLoggable(Level.FINE)) {
-    Context.getCurrentLogger().fine("No chunk data read");
+  if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
+    Context.getCurrentLogger().finer("No chunk data read");
   }
 }
 }
@@ -65,12 +65,12 @@ if (getLineBuilderState() == BufferState.DRAINING) {
 if (getLineBuilder().length() != 0) {
 Context.getCurrentLogger().log(Level.FINE,"The last chunk line had a non empty line");
 }
-setEofDetected(true);
+setEndReached(true);
 }
 break;
 }
 if (result == -1) {
-onCompleted(isEofDetected());
+onCompleted(isEndReached());
 }
  else {
 result=before - buffer.remaining();
