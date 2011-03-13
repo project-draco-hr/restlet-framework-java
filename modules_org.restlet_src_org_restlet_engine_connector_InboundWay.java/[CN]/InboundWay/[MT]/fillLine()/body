@@ -1,4 +1,11 @@
 {
+  boolean result=false;
   setLineBuilderState(getBuffer().drain(getLineBuilder(),getLineBuilderState()));
-  return getLineBuilderState() == BufferState.DRAINING;
+  if (getLineBuilderState() == BufferState.DRAINING) {
+    result=true;
+    if (getLogger().isLoggable(Level.FINE)) {
+      getLogger().log(Level.FINE,getLineBuilder().toString());
+    }
+  }
+  return result;
 }

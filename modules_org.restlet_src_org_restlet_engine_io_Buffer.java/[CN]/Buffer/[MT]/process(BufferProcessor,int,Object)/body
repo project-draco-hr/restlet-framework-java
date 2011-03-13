@@ -24,8 +24,8 @@ synchronized (getLock()) {
             result+=drained;
             lastDrainFailed=false;
             lastFillFailed=false;
-            if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
-              Context.getCurrentLogger().finer(drained + " bytes drained from buffer");
+            if (Context.getCurrentLogger().isLoggable(Level.FINEST)) {
+              Context.getCurrentLogger().log(Level.FINEST,drained + " bytes drained from buffer");
             }
           }
  else {
@@ -47,8 +47,8 @@ synchronized (getLock()) {
             totalFilled+=filled;
             lastDrainFailed=false;
             lastFillFailed=false;
-            if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
-              Context.getCurrentLogger().finer(filled + " bytes filled into buffer");
+            if (Context.getCurrentLogger().isLoggable(Level.FINEST)) {
+              Context.getCurrentLogger().log(Level.FINEST,filled + " bytes filled into buffer");
             }
           }
  else {
@@ -58,7 +58,10 @@ synchronized (getLock()) {
  else {
               tryAgain=false;
             }
-            fillEnded=(filled == -1);
+            if (filled == -1) {
+              fillEnded=true;
+              processor.onFillEof();
+            }
             lastFillFailed=true;
           }
         }

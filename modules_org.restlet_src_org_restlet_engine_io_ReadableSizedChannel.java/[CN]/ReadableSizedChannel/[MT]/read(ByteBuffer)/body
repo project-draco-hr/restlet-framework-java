@@ -1,10 +1,13 @@
 {
-  int result=-1;
+  int result=0;
   if (getAvailableSize() > 0) {
     if (getAvailableSize() < dst.remaining()) {
       dst.limit((int)(getAvailableSize() + dst.position()));
     }
     result=getWrappedChannel().read(dst);
+  }
+ else {
+    result=-1;
   }
   if (result > 0) {
     setAvailableSize(getAvailableSize() - result);
@@ -18,10 +21,7 @@
     }
   }
  else   if (result == -1) {
-    this.eofDetected=true;
-  }
-  if ((result == -1) && (getWrappedChannel() instanceof CompletionListener)) {
-    ((CompletionListener)getWrappedChannel()).onCompleted(isEofDetected());
+    setEndDetected(true);
   }
   return result;
 }
