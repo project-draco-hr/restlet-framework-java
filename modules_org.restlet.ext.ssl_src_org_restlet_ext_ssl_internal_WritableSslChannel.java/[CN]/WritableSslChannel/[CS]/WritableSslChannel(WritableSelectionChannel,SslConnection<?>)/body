@@ -1,12 +1,4 @@
 {
-  super(wrappedChannel);
+  super(new Buffer(connection.getPacketBufferSize(),connection.getHelper().isDirectBuffers()),target);
   this.connection=connection;
-  if (connection != null) {
-    SSLSession session=connection.getSslSession();
-    int packetSize=session.getPacketBufferSize();
-    this.packetBuffer=new Buffer(packetSize,getConnection().getHelper().isDirectBuffers());
-  }
- else {
-    this.packetBuffer=null;
-  }
 }
