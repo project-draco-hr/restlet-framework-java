@@ -1,0 +1,21 @@
+{
+  if (sslResult != null) {
+    log(sslResult);
+    setSslEngineStatus(sslResult.getStatus());
+    setHandshakeStatus(sslResult.getHandshakeStatus());
+switch (sslResult.getStatus()) {
+case BUFFER_OVERFLOW:
+      onBufferOverflow(sslResult,applicationBuffer);
+    break;
+case BUFFER_UNDERFLOW:
+  onBufferUnderflow(sslResult,packetBuffer,applicationBuffer);
+break;
+case CLOSED:
+onClosed(sslResult,applicationBuffer,listener);
+break;
+case OK:
+onOk(sslResult,applicationBuffer,listener);
+break;
+}
+}
+}

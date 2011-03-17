@@ -1,0 +1,19 @@
+{
+  if (getSslState() == SslState.HANDSHAKING) {
+    if (isClientSide()) {
+      setSslState(SslState.WRITING_APPLICATION_DATA);
+    }
+ else {
+      setSslState(SslState.READING_APPLICATION_DATA);
+    }
+    setHandshakeStatus(HandshakeStatus.NOT_HANDSHAKING);
+  }
+  if (isClientSide()) {
+    getInboundWay().setIoState(IoState.IDLE);
+    getOutboundWay().setIoState(IoState.INTEREST);
+  }
+ else {
+    getInboundWay().setIoState(IoState.INTEREST);
+    getOutboundWay().setIoState(IoState.IDLE);
+  }
+}

@@ -2,11 +2,11 @@
   int result=0;
   int dstSize=targetBuffer.remaining();
   SSLEngineResult sslResult=null;
-switch (getManager().getState()) {
+switch (getConnection().getSslState()) {
 case READING_APPLICATION_DATA:
 case HANDSHAKING:
     sslResult=unwrap(targetBuffer);
-  handleResult(sslResult,targetBuffer);
+  getConnection().handleResult(sslResult,getPacketBuffer(),targetBuffer,this);
 break;
 case CLOSED:
 case WRITING_APPLICATION_DATA:

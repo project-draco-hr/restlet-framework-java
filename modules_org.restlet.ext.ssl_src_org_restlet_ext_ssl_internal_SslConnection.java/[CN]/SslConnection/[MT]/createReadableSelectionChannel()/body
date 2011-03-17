@@ -1,11 +1,6 @@
 {
-  if (getSslManager() != null) {
-    SSLSession session=getSslManager().getSession();
-    int packetSize=session.getPacketBufferSize();
-    ReadableBufferedChannel rbc=new ReadableBufferedChannel(getInboundWay(),new Buffer(packetSize,getHelper().isDirectBuffers()),super.createReadableSelectionChannel());
-    return new ReadableSslChannel(rbc,getSslManager(),this);
-  }
- else {
-    return null;
-  }
+  SSLSession session=getSslSession();
+  int packetSize=session.getPacketBufferSize();
+  ReadableBufferedChannel rbc=new ReadableBufferedChannel(getInboundWay(),new Buffer(packetSize,getHelper().isDirectBuffers()),super.createReadableSelectionChannel());
+  return new ReadableSslChannel(rbc,this);
 }

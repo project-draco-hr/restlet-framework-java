@@ -1,4 +1,10 @@
 {
-  SslManager sslManager=new SslManager(getSslContext(),socketAddress,isClientSide());
-  return new SslConnection<Client>(this,socketChannel,controller,socketAddress,sslManager);
+  SSLEngine engine;
+  if (socketAddress != null) {
+    engine=getSslContext().createSSLEngine(socketAddress.getHostName(),socketAddress.getPort());
+  }
+ else {
+    engine=getSslContext().createSSLEngine();
+  }
+  return new SslConnection<Client>(this,socketChannel,controller,socketAddress,engine);
 }

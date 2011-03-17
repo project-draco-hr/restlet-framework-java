@@ -1,15 +1,15 @@
 {
   int result=0;
-  if (getManager().getState() == SslState.READING_APPLICATION_DATA) {
-    getManager().setState(SslState.WRITING_APPLICATION_DATA);
+  if (getConnection().getSslState() == SslState.READING_APPLICATION_DATA) {
+    getConnection().setSslState(SslState.WRITING_APPLICATION_DATA);
   }
   drain();
-  if ((getPacketBuffer().isFilling()) || (getManager().getState() == SslState.HANDSHAKING)) {
+  if ((getPacketBuffer().isFilling()) || (getConnection().getSslState() == SslState.HANDSHAKING)) {
     int srcSize=src.remaining();
     if (srcSize > 0) {
       while (getPacketBuffer().hasRemaining() && (getConnection().getOutboundWay().getIoState() != IoState.IDLE) && src.hasRemaining()) {
         SSLEngineResult sslResult=wrap(src);
-        handleResult(sslResult,src);
+        getConnection().handleResult(sslResult,getPacketBuffer(),src,this);
         drain();
       }
       result=srcSize - src.remaining();
