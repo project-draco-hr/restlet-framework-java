@@ -1,12 +1,12 @@
 {
   int result=0;
-  int dstSize=targetBuffer.remaining();
+  int dstSize=applicationBuffer.remaining();
   SSLEngineResult sslResult=null;
 switch (getConnection().getSslState()) {
 case READING_APPLICATION_DATA:
 case HANDSHAKING:
-    sslResult=unwrap(targetBuffer);
-  getConnection().handleResult(sslResult,getPacketBuffer(),targetBuffer,this);
+    sslResult=getConnection().getSslEngine().unwrap(getBuffer().getBytes(),applicationBuffer.getBytes());
+  getConnection().handleResult(sslResult,getBuffer(),applicationBuffer.getBytes(),this);
 break;
 case CLOSED:
 case WRITING_APPLICATION_DATA:
@@ -16,6 +16,6 @@ case IDLE:
 case REHANDSHAKING:
 throw new IOException("Unexpected SSL state");
 }
-result=dstSize - targetBuffer.remaining();
+result=dstSize - applicationBuffer.remaining();
 return result;
 }
