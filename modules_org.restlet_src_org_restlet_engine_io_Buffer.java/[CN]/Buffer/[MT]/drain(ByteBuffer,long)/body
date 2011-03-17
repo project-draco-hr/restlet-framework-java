@@ -1,8 +1,3 @@
 {
-  int maxBuffer=Math.min(getBytes().remaining(),targetBuffer.remaining());
-  int result=(maxDrained == 0) ? maxBuffer : Math.min((int)maxDrained,maxBuffer);
-  for (int i=0; i < result; i++) {
-    targetBuffer.put(getBytes().get());
-  }
-  return result;
+  return NioUtils.copy(getBytes(),targetBuffer,maxDrained);
 }
