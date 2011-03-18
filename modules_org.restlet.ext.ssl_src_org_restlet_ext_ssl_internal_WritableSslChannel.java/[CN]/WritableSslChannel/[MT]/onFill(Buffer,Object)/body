@@ -1,21 +1,9 @@
 {
-  int result=0;
   if (getConnection().getSslState() == SslState.READING_APPLICATION_DATA) {
     getConnection().setSslState(SslState.WRITING_APPLICATION_DATA);
   }
-  if ((getBuffer().isFilling()) || (getConnection().getSslState() == SslState.HANDSHAKING)) {
-    int srcSize=buffer.remaining();
-    if (srcSize > 0) {
-      while (getBuffer().hasRemaining() && (getConnection().getOutboundWay().getIoState() != IoState.IDLE) && buffer.hasRemaining()) {
-        getBuffer().beforeFill();
-        SSLEngineResult sslResult=getConnection().getSslEngine().wrap(buffer.getBytes(),getBuffer().getBytes());
-        if (getBuffer().couldDrain()) {
-          getBuffer().beforeDrain();
-        }
-        getConnection().handleResult(sslResult,getBuffer(),buffer.getBytes(),this);
-      }
-      result=srcSize - buffer.remaining();
-    }
-  }
-  return result;
+  int srcSize=buffer.remaining();
+  SSLEngineResult sslResult=getConnection().getSslEngine().wrap(buffer.getBytes(),getBuffer().getBytes());
+  getConnection().handleResult(sslResult,getBuffer(),buffer.getBytes(),this);
+  return srcSize - buffer.remaining();
 }
