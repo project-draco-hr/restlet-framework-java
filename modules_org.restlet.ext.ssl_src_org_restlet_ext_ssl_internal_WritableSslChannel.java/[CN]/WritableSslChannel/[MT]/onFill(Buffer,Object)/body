@@ -3,7 +3,8 @@
     getConnection().setSslState(SslState.WRITING_APPLICATION_DATA);
   }
   int srcSize=buffer.remaining();
-  SSLEngineResult sslResult=getConnection().getSslEngine().wrap(buffer.getBytes(),getBuffer().getBytes());
-  getConnection().handleResult(sslResult,getBuffer(),buffer.getBytes(),this);
+  ByteBuffer applicationBuffer=(ByteBuffer)args[0];
+  SSLEngineResult sslResult=getConnection().getSslEngine().wrap(applicationBuffer,buffer.getBytes());
+  getConnection().handleResult(sslResult,buffer,buffer.getBytes(),this);
   return srcSize - buffer.remaining();
 }
