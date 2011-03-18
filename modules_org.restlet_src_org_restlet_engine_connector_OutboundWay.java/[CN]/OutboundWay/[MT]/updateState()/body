@@ -1,9 +1,8 @@
 {
-  if ((getMessageState() == MessageState.IDLE) && (getMessage() != null)) {
+  if (canStart()) {
     setMessageState(MessageState.START);
-    setIoState(IoState.INTEREST);
   }
-  if (getBuffer().canDrain()) {
+  if (hasIoInterest()) {
     setIoState(IoState.INTEREST);
   }
   super.updateState();
