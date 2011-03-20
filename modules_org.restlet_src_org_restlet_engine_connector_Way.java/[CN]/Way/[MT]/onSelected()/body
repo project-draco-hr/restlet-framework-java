@@ -7,7 +7,12 @@
       setIoState(IoState.CANCELLED);
     }
     if (getLogger().isLoggable(Level.FINER)) {
-      getLogger().log(Level.FINER,"Way selected. Processing IO for : " + this);
+      if (this instanceof InboundWay) {
+        getLogger().log(Level.FINER,"Inbound way selected. Processing IO for : " + this);
+      }
+ else {
+        getLogger().log(Level.FINER,"Outbound way selected. Processing IO for : " + this);
+      }
     }
     int drained=processIoBuffer();
     if ((drained == -1) && (getConnection().getState() == ConnectionState.CLOSING)) {
