@@ -1,0 +1,20 @@
+{
+  final Runnable task=getSslEngine().getDelegatedTask();
+  if (task != null) {
+    getInboundWay().setIoState(IoState.IDLE);
+    getOutboundWay().setIoState(IoState.IDLE);
+    getHelper().getWorkerService().execute(new Runnable(){
+      public void run(){
+        getLogger().log(Level.FINE,"Running delegated tasks...");
+        task.run();
+        Runnable nextTask=getSslEngine().getDelegatedTask();
+        while (nextTask != null) {
+          nextTask.run();
+          nextTask=getSslEngine().getDelegatedTask();
+        }
+        getLogger().log(Level.FINE,"Done running delegated tasks");
+      }
+    }
+);
+  }
+}

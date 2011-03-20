@@ -2,23 +2,9 @@
   if (getConnection().getSslState() == SslState.WRITING_APPLICATION_DATA) {
     getConnection().setSslState(SslState.READING_APPLICATION_DATA);
   }
-  int result=0;
-  int dstSize=applicationBuffer.remaining();
-  SSLEngineResult sslResult=null;
-switch (getConnection().getSslState()) {
-case READING_APPLICATION_DATA:
-case HANDSHAKING:
-    sslResult=getConnection().getSslEngine().unwrap(getBuffer().getBytes(),applicationBuffer.getBytes());
-  getConnection().handleResult(sslResult,getBuffer(),applicationBuffer.getBytes(),this);
-break;
-case CLOSED:
-case WRITING_APPLICATION_DATA:
-break;
-case CREATED:
-case IDLE:
-case REHANDSHAKING:
-throw new IOException("Unexpected SSL state");
-}
-result=dstSize - applicationBuffer.remaining();
-return result;
+  ByteBuffer applicationBuffer=(ByteBuffer)args[0];
+  int initialSize=buffer.remaining();
+  SSLEngineResult sslResult=getConnection().getSslEngine().unwrap(buffer.getBytes(),applicationBuffer);
+  getConnection().setSslResult(sslResult);
+  return initialSize - buffer.remaining();
 }

@@ -12,7 +12,7 @@ synchronized (getLock()) {
       while (tryAgain && processor.canLoop(this,args)) {
         if (isDraining()) {
           drained=0;
-          if (hasRemaining()) {
+          if (hasRemaining() || processor.couldDrain(this,args)) {
             if (maxDrained <= 0) {
               drained=processor.onDrain(this,0,args);
             }
@@ -52,7 +52,7 @@ synchronized (getLock()) {
             }
           }
  else {
-            if (!lastDrainFailed && couldDrain()) {
+            if (!lastDrainFailed && (couldDrain() || processor.couldDrain(this,args))) {
               beforeDrain();
             }
  else {
