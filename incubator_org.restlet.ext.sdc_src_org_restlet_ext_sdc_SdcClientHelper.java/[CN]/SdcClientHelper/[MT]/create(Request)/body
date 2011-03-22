@@ -2,9 +2,10 @@
   ClientCall result=null;
   try {
     Reference targetRef=request.getResourceRef().getBaseRef() == null ? request.getResourceRef() : request.getResourceRef().getTargetRef();
-    if (request.getChallengeResponse() != null) {
-      if (request.getChallengeResponse().getScheme().equals(ChallengeScheme.valueOf("SDC"))) {
-        String key=request.getChallengeResponse().getIdentifier() + ":" + String.valueOf(request.getChallengeResponse().getSecret());
+    ChallengeResponse cr=request.getProxyChallengeResponse();
+    if (cr != null) {
+      if (cr.getScheme().equals(ChallengeScheme.valueOf("SDC"))) {
+        String key=cr.getIdentifier() + ":" + String.valueOf(cr.getSecret());
         int retryAttempts=3;
         int retryDelay=3000;
         SdcServerConnection ssc=null;
