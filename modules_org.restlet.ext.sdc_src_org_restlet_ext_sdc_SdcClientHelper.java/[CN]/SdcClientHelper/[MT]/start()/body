@@ -1,12 +1,12 @@
 {
   super.start();
-  getLogger().info("Starting the SDC tunnel on port 4433.");
+  getLogger().info("Starting the SDC client and its tunnel server on port " + getServerPort());
   new Thread(){
     @Override public void run(){
       try {
         SslContextFactory contextFactory=SslUtils.getSslContextFactory(SdcClientHelper.this);
         SSLServerSocketFactory ssf=contextFactory.createSslContext().getServerSocketFactory();
-        SSLServerSocket serverSocket=(SSLServerSocket)ssf.createServerSocket(4433);
+        SSLServerSocket serverSocket=(SSLServerSocket)ssf.createServerSocket(getServerPort());
         boolean loop=true;
         SSLSocket socket=null;
         getLatch().countDown();
@@ -14,8 +14,7 @@
           try {
             socket=(SSLSocket)serverSocket.accept();
             socket.setEnabledCipherSuites(getEnabledCipherSuites());
-            SdcServerConnection ssc;
-            ssc=new SdcServerConnection(SdcClientHelper.this,socket);
+            SdcServerConnection ssc=new SdcServerConnection(SdcClientHelper.this,socket);
             ssc.connect();
             getConnections().put(ssc.getKey(),ssc);
           }
@@ -31,7 +30,7 @@
   }
 .start();
   try {
-    if (!latch.await(IoUtils.TIMEOUT_MS,TimeUnit.MILLISECONDS)) {
+    if (!getLatch().await(IoUtils.TIMEOUT_MS,TimeUnit.MILLISECONDS)) {
       getLogger().warning("The calling thread timed out while waiting for the connector to be ready to accept connections.");
     }
   }
