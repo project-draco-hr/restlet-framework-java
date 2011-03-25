@@ -28,9 +28,14 @@
           if (references == null) {
             references=new ArrayList<Reference>();
           }
-          references.add(request.getResourceRef());
-          request.setResourceRef(newTargetRef);
-          handle(request,response,references,0,next);
+          if (references.size() >= getMaxRedirects()) {
+            getLogger().warning("Unable to follow the redirection because the request the maximum number of redirections for a single call has been reached.");
+          }
+ else {
+            references.add(request.getResourceRef());
+            request.setResourceRef(newTargetRef);
+            handle(request,response,references,0,next);
+          }
         }
       }
     }
