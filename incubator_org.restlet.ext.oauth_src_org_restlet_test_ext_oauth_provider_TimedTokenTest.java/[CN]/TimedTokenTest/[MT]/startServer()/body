@@ -5,7 +5,8 @@
   System.setProperty("javax.net.ssl.trustStore",keystore);
   System.setProperty("javax.net.ssl.trustStoreType","JKS");
   System.setProperty("javax.net.ssl.trustStorePassword","testpass");
-  Server server=new Server(Protocol.HTTP,serverPort);
+  Server server=new Server(new Context(),Protocol.HTTP,serverPort);
+  server.getContext().getParameters().add("maxQueued","0");
   component=new Component();
   component.getServers().add(server);
   component.getClients().add(Protocol.HTTP);
