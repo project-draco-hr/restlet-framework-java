@@ -63,15 +63,16 @@
     session.put(sessionId,discovered);
     getResponse().getCookieSettings().add(new CookieSetting(DESCRIPTOR_COOKIE,sessionId));
     AuthRequest authReq=manager.authenticate(discovered,returnToUrl.toString());
-    log.info("OpenID - REALM = " + getReference().getHostIdentifier());
-    authReq.setRealm(getReference().getHostIdentifier().toString());
-    FetchRequest fetch=FetchRequest.createFetchRequest();
+    log.info("OpenID - REALM = " + getReference().getBaseRef());
+    authReq.setRealm(getReference().getBaseRef().toString());
+    FetchRequest fetch=null;
     String[] optional=params.getValuesArray("ax_optional",true);
     for (    String o : optional) {
       if (!ax.containsKey(o)) {
         log.warning("Not supported AX extension : " + o);
         continue;
       }
+      if (fetch == null)       fetch=FetchRequest.createFetchRequest();
       fetch.addAttribute(o,ax.get(o),false);
     }
     String[] required=params.getValuesArray("ax_required",true);
@@ -80,9 +81,12 @@
         log.warning("Not supported AX extension : " + r);
         continue;
       }
+      if (fetch == null)       fetch=FetchRequest.createFetchRequest();
       fetch.addAttribute(r,ax.get(r),true);
     }
-    authReq.addExtension(fetch);
+    if (fetch != null) {
+      authReq.addExtension(fetch);
+    }
     if (!discovered.isVersion2()) {
       redirectTemporary(authReq.getDestinationUrl(true));
       return null;
