@@ -1,5 +1,8 @@
 {
   if (next != null) {
+    if (isRequestEntityBuffering() && (request.getEntity() != null) && request.getEntity().isTransient()&& request.getEntity().isAvailable()) {
+      request.setEntity(new BufferingRepresentation(request.getEntity()));
+    }
     next.handle(request,response);
     if (isFollowingRedirects() && response.getStatus().isRedirection() && (response.getLocationRef() != null)) {
       boolean doRedirection=false;
@@ -39,7 +42,7 @@
         }
       }
     }
- else     if (isRetryOnError() && response.getStatus().isRecoverableError() && request.getMethod().isIdempotent()&& (retryAttempt < getRetryAttempts())&& ((getRequestEntity() == null) || getRequestEntity().isAvailable())) {
+ else     if (isRetryOnError() && response.getStatus().isRecoverableError() && request.getMethod().isIdempotent()&& (retryAttempt < getRetryAttempts())&& ((request.getEntity() == null) || request.getEntity().isAvailable())) {
       getLogger().log(Level.INFO,"A recoverable error was detected (" + response.getStatus().getCode() + "), attempting again in "+ getRetryDelay()+ " ms.");
       if (getRetryDelay() > 0) {
         try {
@@ -51,5 +54,11 @@
       }
       handle(request,response,references,++retryAttempt,next);
     }
+    if (isResponseEntityBuffering() && (response.getEntity() != null) && response.getEntity().isTransient()&& response.getEntity().isAvailable()) {
+      response.setEntity(new BufferingRepresentation(response.getEntity()));
+    }
+  }
+ else {
+    getLogger().log(Level.WARNING,"Request ignored as no next Restlet is available");
   }
 }
