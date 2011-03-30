@@ -1,7 +1,7 @@
 {
   if (next != null) {
     if (isRequestEntityBuffering() && (request.getEntity() != null) && request.getEntity().isTransient()&& request.getEntity().isAvailable()) {
-      request.setEntity(new BufferingRepresentation(request.getEntity()));
+      request.setEntity(new org.restlet.engine.io.BufferingRepresentation(request.getEntity()));
     }
     next.handle(request,response);
     if (isFollowingRedirects() && response.getStatus().isRedirection() && (response.getLocationRef() != null)) {
@@ -55,7 +55,7 @@
       handle(request,response,references,++retryAttempt,next);
     }
     if (isResponseEntityBuffering() && (response.getEntity() != null) && response.getEntity().isTransient()&& response.getEntity().isAvailable()) {
-      response.setEntity(new BufferingRepresentation(response.getEntity()));
+      response.setEntity(new org.restlet.engine.io.BufferingRepresentation(response.getEntity()));
     }
   }
  else {
