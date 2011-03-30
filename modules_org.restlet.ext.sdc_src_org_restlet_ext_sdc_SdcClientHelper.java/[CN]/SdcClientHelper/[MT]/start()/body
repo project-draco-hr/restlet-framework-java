@@ -16,7 +16,12 @@
             socket.setEnabledCipherSuites(getEnabledCipherSuites());
             SdcServerConnection ssc=new SdcServerConnection(SdcClientHelper.this,socket);
             ssc.connect();
-            getConnections().put(ssc.getKey(),ssc);
+            if (ssc.getKey() != null) {
+              getConnections().put(ssc.getKey(),ssc);
+            }
+ else {
+              getLogger().warning("Detected wrong connection.");
+            }
           }
  catch (          IOException e) {
             e.printStackTrace();
