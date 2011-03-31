@@ -1,10 +1,10 @@
 {
   Context ctx=getContext();
   Router router=new Router(ctx);
-  RemoteAuthorizer auth=new RemoteAuthorizer(AuthorizationServerTest.prot + "://localhost:" + AuthorizationServerTest.serverPort+ "/oauth/validate",AuthorizationServerTest.prot + "://localhost:" + AuthorizationServerTest.serverPort+ "/oauth/authorize");
+  OAuthAuthorizer auth=new OAuthAuthorizer(AuthorizationServerTest.prot + "://localhost:" + AuthorizationServerTest.serverPort+ "/oauth/validate",AuthorizationServerTest.prot + "://localhost:" + AuthorizationServerTest.serverPort+ "/oauth/authorize");
   auth.setNext(DummyResource.class);
   router.attach("/protected",auth);
-  RemoteAuthorizer auth2=new RemoteAuthorizer(AuthorizationServerTest.prot + "://localhost:" + AuthorizationServerTest.serverPort+ "/oauth/validate",AuthorizationServerTest.prot + "://localhost:" + AuthorizationServerTest.serverPort+ "/oauth/authorize");
+  OAuthAuthorizer auth2=new OAuthAuthorizer(AuthorizationServerTest.prot + "://localhost:" + AuthorizationServerTest.serverPort+ "/oauth/validate",AuthorizationServerTest.prot + "://localhost:" + AuthorizationServerTest.serverPort+ "/oauth/authorize");
   auth2.setNext(ScopedDummyResource.class);
   router.attach("/scoped",auth2);
   return router;
