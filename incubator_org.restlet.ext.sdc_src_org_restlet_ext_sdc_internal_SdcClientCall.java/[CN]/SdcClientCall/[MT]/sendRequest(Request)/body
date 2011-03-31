@@ -29,7 +29,7 @@
         setFetchRequest(FetchRequest.newBuilder().setId(UUID.randomUUID().toString()).setResource(request.getResourceRef().toString()).setStrategy("HTTPClient").addAllHeaders(headers).build());
       }
       getConnection().sendRequest(this);
-      if (!getLatch().await(NioUtils.NIO_TIMEOUT,TimeUnit.MILLISECONDS)) {
+      if (!getLatch().await(60000,TimeUnit.MILLISECONDS)) {
         result=new Status(Status.CONNECTOR_ERROR_INTERNAL,"The calling thread timed out while waiting for a response to unblock it.");
       }
  else {
