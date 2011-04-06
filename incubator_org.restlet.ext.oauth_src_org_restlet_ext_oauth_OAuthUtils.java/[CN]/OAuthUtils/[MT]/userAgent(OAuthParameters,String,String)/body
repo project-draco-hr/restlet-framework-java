@@ -12,12 +12,13 @@
   }
   String q=form.getQueryString();
   Reference redirRef=new Reference(params.getBaseRef(),params.getAuthorizePath(),q,null);
-  ClientResource authResource=new ClientResource(redirRef.toUri());
+  ClientResource authResource=new CookieCopyClientResource(redirRef.toUri());
   authResource.setFollowingRedirects(false);
   Representation r=authResource.get();
   int maxRedirCnt=10;
   int cnt=0;
   while (authResource.getStatus().isRedirection()) {
+    System.out.println("WE ARE IN REDIRECTION!");
     String fragment=authResource.getLocationRef().getFragment();
     if (fragment != null && fragment.length() > 0) {
       Form f=new Form(fragment);
@@ -40,6 +41,11 @@
     if (++cnt >= maxRedirCnt)     break;
     Context.getCurrentLogger().info("Redir to = " + authResource.getResponse().getLocationRef());
     authResource.setReference(authResource.getResponse().getLocationRef());
+    if (cnt == 1) {
+      for (      CookieSetting cs : authResource.getCookieSettings()) {
+        authResource.getCookies().add(cs.getName(),cs.getValue());
+      }
+    }
     r=authResource.get();
     try {
       r=OpenIdFormFrowarder.handleFormRedirect(r,authResource);

@@ -1,0 +1,22 @@
+{
+  if (copyCookies && isFollowingRedirects() && response.getStatus().isRedirection()&& (response.getLocationRef() != null)) {
+    boolean doRedirection=false;
+    if (request.getMethod().isSafe()) {
+      doRedirection=true;
+    }
+ else {
+      if (Status.REDIRECTION_SEE_OTHER.equals(response.getStatus())) {
+        doRedirection=true;
+      }
+ else       if (Status.REDIRECTION_USE_PROXY.equals(response.getStatus())) {
+        doRedirection=true;
+      }
+    }
+    if (doRedirection) {
+      for (      CookieSetting cs : response.getCookieSettings()) {
+        request.getCookies().add(cs.getName(),cs.getValue());
+      }
+    }
+  }
+  super.handle(request,response,references,retryAttempt,next);
+}

@@ -7,7 +7,7 @@
   if (params.getScope() != null && params.getScope().length() > 0) {
     form.add(OAuthServerResource.SCOPE,params.getScope());
   }
-  ClientResource tokenResource=new ClientResource(params.getBaseRef() + params.getAccessTokenPath());
+  ClientResource tokenResource=new CookieCopyClientResource(params.getBaseRef() + params.getAccessTokenPath());
   Context.getCurrentLogger().info("Sending NoneFlow form : " + form.getQueryString());
   Representation body=tokenResource.post(form.getWebRepresentation());
   if (tokenResource.getResponse().getStatus().isSuccess()) {
