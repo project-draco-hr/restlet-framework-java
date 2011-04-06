@@ -1,0 +1,22 @@
+{
+  Reference newTargetRef=response.getLocationRef();
+  if ((references != null) && references.contains(newTargetRef)) {
+    getLogger().warning("Infinite redirection loop detected with URI: " + newTargetRef);
+  }
+ else   if (request.getEntity() != null && !request.isEntityAvailable()) {
+    getLogger().warning("Unable to follow the redirection because the request entity isn't available anymore.");
+  }
+ else {
+    if (references == null) {
+      references=new ArrayList<Reference>();
+    }
+    if (references.size() >= getMaxRedirects()) {
+      getLogger().warning("Unable to follow the redirection because the request the maximum number of redirections for a single call has been reached.");
+    }
+ else {
+      references.add(request.getResourceRef());
+      request.setResourceRef(newTargetRef);
+      handle(request,response,references,0,next);
+    }
+  }
+}

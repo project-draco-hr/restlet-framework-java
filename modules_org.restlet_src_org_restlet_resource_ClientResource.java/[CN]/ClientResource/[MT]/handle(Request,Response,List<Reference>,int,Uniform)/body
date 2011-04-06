@@ -20,39 +20,14 @@
         }
       }
       if (doRedirection) {
-        Reference newTargetRef=response.getLocationRef();
-        if ((references != null) && references.contains(newTargetRef)) {
-          getLogger().warning("Infinite redirection loop detected with URI: " + newTargetRef);
-        }
- else         if (request.getEntity() != null && !request.isEntityAvailable()) {
-          getLogger().warning("Unable to follow the redirection because the request entity isn't available anymore.");
-        }
+        redirect(request,response,references,retryAttempt,next);
+      }
  else {
-          if (references == null) {
-            references=new ArrayList<Reference>();
-          }
-          if (references.size() >= getMaxRedirects()) {
-            getLogger().warning("Unable to follow the redirection because the request the maximum number of redirections for a single call has been reached.");
-          }
- else {
-            references.add(request.getResourceRef());
-            request.setResourceRef(newTargetRef);
-            handle(request,response,references,0,next);
-          }
-        }
+        getLogger().fine("Unable to redirect the client call after a response" + response);
       }
     }
  else     if (isRetryOnError() && response.getStatus().isRecoverableError() && request.getMethod().isIdempotent()&& (retryAttempt < getRetryAttempts())&& ((request.getEntity() == null) || request.getEntity().isAvailable())) {
-      getLogger().log(Level.INFO,"A recoverable error was detected (" + response.getStatus().getCode() + "), attempting again in "+ getRetryDelay()+ " ms.");
-      if (getRetryDelay() > 0) {
-        try {
-          Thread.sleep(getRetryDelay());
-        }
- catch (        InterruptedException e) {
-          getLogger().log(Level.FINE,"Retry delay sleep was interrupted",e);
-        }
-      }
-      handle(request,response,references,++retryAttempt,next);
+      retry(request,response,references,retryAttempt,next);
     }
     if (isResponseEntityBuffering() && (response.getEntity() != null) && response.getEntity().isTransient()&& response.getEntity().isAvailable()) {
       response.setEntity(new org.restlet.engine.io.BufferingRepresentation(response.getEntity()));

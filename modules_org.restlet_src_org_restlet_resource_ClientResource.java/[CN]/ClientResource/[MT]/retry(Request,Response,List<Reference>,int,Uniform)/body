@@ -1,0 +1,12 @@
+{
+  getLogger().log(Level.INFO,"A recoverable error was detected (" + response.getStatus().getCode() + "), attempting again in "+ getRetryDelay()+ " ms.");
+  if (getRetryDelay() > 0) {
+    try {
+      Thread.sleep(getRetryDelay());
+    }
+ catch (    InterruptedException e) {
+      getLogger().log(Level.FINE,"Retry delay sleep was interrupted",e);
+    }
+  }
+  handle(request,response,references,++retryAttempt,next);
+}
