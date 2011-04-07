@@ -62,6 +62,7 @@
     String sessionId=String.valueOf(System.identityHashCode(discovered));
     session.put(sessionId,discovered);
     getResponse().getCookieSettings().add(new CookieSetting(DESCRIPTOR_COOKIE,sessionId));
+    log.info("Setting DESCRIPTOR COOKIE");
     AuthRequest authReq=manager.authenticate(discovered,returnToUrl.toString());
     log.info("OpenID - REALM = " + getReference().getBaseRef());
     authReq.setRealm(getReference().getBaseRef().toString());
@@ -88,6 +89,7 @@
       authReq.addExtension(fetch);
     }
     if (!discovered.isVersion2()) {
+      log.info("REDIRECTING TEMPORARY");
       redirectTemporary(authReq.getDestinationUrl(true));
       return null;
     }

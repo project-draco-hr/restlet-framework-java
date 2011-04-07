@@ -4,7 +4,22 @@
     Logger.getLogger("").setLevel(Level.FINEST);
     ParameterList response=new ParameterList(getQuery().getValuesMap());
     log.info("response = " + response);
+    log.info("GET COOKIES");
     String openidDisc=getCookies().getFirstValue(DESCRIPTOR_COOKIE);
+    log.info("openIdDiscServer - " + getCookieSettings().getFirstValue("DESCRIPTOR_COOKIE"));
+    log.info("openIdDiscServerLength -" + getCookieSettings().size());
+    log.info("openIdDiscClient - " + openidDisc);
+    log.info("openIdDiscClientLength -" + getCookies().size());
+    if (getCookieSettings().size() > 0) {
+      for (      CookieSetting setting : getCookieSettings()) {
+        log.info("CookieSetting: " + setting.getName() + setting.getFirst());
+      }
+    }
+    if (getCookies().size() > 0) {
+      for (      Cookie setting : getCookies()) {
+        log.info("Cookie: " + setting.getName() + setting.getFirst());
+      }
+    }
     DiscoveryInformation discovered=(DiscoveryInformation)session.get(openidDisc);
     log.info("discovered = " + discovered);
     log.info("getOriginalRef = " + getOriginalRef());
