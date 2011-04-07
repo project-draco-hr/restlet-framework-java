@@ -1,79 +1,77 @@
 {
   int result=0;
-  int totalFilled=0;
 synchronized (getLock()) {
-    if (canDrain() || processor.couldDrain(this,args) || couldDrain()|| processor.couldFill(this,args)) {
-      boolean tryAgain=true;
-      int drained=0;
-      int filled=0;
-      boolean lastDrainFailed=false;
-      boolean lastFillFailed=false;
-      boolean fillEnded=false;
-      while (tryAgain && processor.canLoop(this,args)) {
-        if (isDraining()) {
-          drained=0;
-          if (hasRemaining() || processor.couldDrain(this,args)) {
-            if (maxDrained <= 0) {
-              drained=processor.onDrain(this,0,args);
-            }
- else             if (maxDrained - result > 0) {
-              drained=processor.onDrain(this,maxDrained - result,args);
-            }
+    int totalFilled=0;
+    int drained=0;
+    int filled=0;
+    boolean lastDrainFailed=false;
+    boolean lastFillFailed=false;
+    boolean fillEnded=false;
+    boolean tryAgain=true;
+    if (Context.getCurrentLogger().isLoggable(Level.FINEST)) {
+      Context.getCurrentLogger().log(Level.FINEST,"Processing buffer " + this);
+    }
+    while (tryAgain && processor.canLoop(this,args)) {
+      if (isDraining()) {
+        drained=0;
+        if (hasRemaining() || processor.couldDrain(this,args)) {
+          if (maxDrained <= 0) {
+            drained=processor.onDrain(this,0,args);
           }
-          if (drained > 0) {
-            result+=drained;
-            lastDrainFailed=false;
-            lastFillFailed=false;
-            if (Context.getCurrentLogger().isLoggable(Level.FINEST)) {
-              Context.getCurrentLogger().log(Level.FINEST,drained + " bytes drained from buffer");
-            }
-          }
- else {
-            if (!lastFillFailed && couldFill()) {
-              beforeFill();
-            }
- else {
-              tryAgain=false;
-            }
-            lastDrainFailed=true;
+ else           if (maxDrained - result > 0) {
+            drained=processor.onDrain(this,maxDrained - result,args);
           }
         }
- else         if (isFilling()) {
-          filled=0;
-          if (hasRemaining() && processor.couldFill(this,args)) {
-            filled=processor.onFill(this,args);
-          }
-          if (filled > 0) {
-            totalFilled+=filled;
-            lastDrainFailed=false;
-            lastFillFailed=false;
-            if (Context.getCurrentLogger().isLoggable(Level.FINEST)) {
-              Context.getCurrentLogger().log(Level.FINEST,filled + " bytes filled into buffer");
-            }
-          }
- else {
-            if (!lastDrainFailed && (couldDrain() || processor.couldDrain(this,args))) {
-              beforeDrain();
-            }
- else {
-              tryAgain=false;
-            }
-            if (filled == -1) {
-              fillEnded=true;
-              processor.onFillEof();
-            }
-            lastFillFailed=true;
+        if (drained > 0) {
+          result+=drained;
+          lastDrainFailed=false;
+          lastFillFailed=false;
+          if (Context.getCurrentLogger().isLoggable(Level.FINEST)) {
+            Context.getCurrentLogger().log(Level.FINEST,drained + " bytes drained from buffer, " + remaining()+ " remaining bytes");
           }
         }
  else {
-          tryAgain=false;
+          if (!lastFillFailed && couldFill()) {
+            beforeFill();
+          }
+ else {
+            tryAgain=false;
+          }
+          lastDrainFailed=true;
         }
       }
-      if ((result == 0) && (!processor.couldFill(this,args) || fillEnded)) {
-        result=-1;
+ else       if (isFilling()) {
+        filled=0;
+        if (hasRemaining() && processor.couldFill(this,args)) {
+          filled=processor.onFill(this,args);
+        }
+        if (filled > 0) {
+          totalFilled+=filled;
+          lastDrainFailed=false;
+          lastFillFailed=false;
+          if (Context.getCurrentLogger().isLoggable(Level.FINEST)) {
+            Context.getCurrentLogger().log(Level.FINEST,filled + " bytes filled into buffer");
+          }
+        }
+ else {
+          if (!lastDrainFailed && (couldDrain() || processor.couldDrain(this,args))) {
+            beforeDrain();
+          }
+ else {
+            tryAgain=false;
+          }
+          if (filled == -1) {
+            fillEnded=true;
+            processor.onFillEof();
+          }
+          lastFillFailed=true;
+        }
+      }
+ else {
+        tryAgain=false;
       }
     }
- else {
+    if ((result == 0) && (!processor.couldFill(this,args) || fillEnded)) {
       result=-1;
     }
   }
