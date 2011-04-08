@@ -5,15 +5,15 @@
     getOutboundWay().setIoState(IoState.IDLE);
     getHelper().getWorkerService().execute(new Runnable(){
       public void run(){
-        getLogger().log(Level.FINE,"Running delegated tasks...");
+        getLogger().log(Level.FINER,"Running delegated tasks...");
         task.run();
         Runnable nextTask=getSslEngine().getDelegatedTask();
         while (nextTask != null) {
           nextTask.run();
           nextTask=getSslEngine().getDelegatedTask();
         }
-        if (getLogger().isLoggable(Level.FINE)) {
-          getLogger().log(Level.FINE,"Done running delegated tasks. " + SslConnection.this.toString());
+        if (getLogger().isLoggable(Level.FINER)) {
+          getLogger().log(Level.FINER,"Done running delegated tasks. " + SslConnection.this.toString());
         }
         try {
           handleSslHandshake();
