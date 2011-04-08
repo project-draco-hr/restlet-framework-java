@@ -1,6 +1,9 @@
 {
-  if ((response != null) && (response.getRequest() != null)) {
-    try {
+  try {
+    if ((response != null) && (response.getRequest() != null)) {
+      if (getLogger().isLoggable(Level.FINE)) {
+        getLogger().log(Level.FINE,"Client request to be sent: " + response.getRequest());
+      }
       Connection<Client> bestConn=getBestConnection(response.getRequest());
       if (bestConn != null) {
         bestConn.getOutboundWay().handle(response);
@@ -12,10 +15,10 @@
         unblock(response);
       }
     }
- catch (    Throwable t) {
-      getLogger().log(Level.FINE,"An error occured during the communication with the remote server.",t);
-      response.setStatus(Status.CONNECTOR_ERROR_COMMUNICATION,t);
-      unblock(response);
-    }
+  }
+ catch (  Throwable t) {
+    getLogger().log(Level.FINE,"An error occured during the communication with the remote server.",t);
+    response.setStatus(Status.CONNECTOR_ERROR_COMMUNICATION,t);
+    unblock(response);
   }
 }
