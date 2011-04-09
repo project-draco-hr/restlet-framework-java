@@ -1,0 +1,32 @@
+{
+  JSONObject json=new JSONObject();
+  json.put("version",VERSION);
+  json.put("authorization_url",authorizationUrl);
+  json.put("access_token_url",accessTokenUrl);
+  JSONArray a=new JSONArray();
+  for (  String flow : flows) {
+    a.put(flow);
+  }
+  json.put("flows",a);
+  a=new JSONArray();
+  for (  String param : authParams) {
+    a.put(param);
+  }
+  json.put("auth_parameters",a);
+  json.put("x_validation_url",validationUrl);
+  if (revocationUrl != null && revocationUrl.length() > 0) {
+    json.put("x_revocation_url",revocationUrl);
+  }
+  if (clientSignupUrl != null && clientSignupUrl.length() > 0) {
+    json.put("x_client_signup_url",clientSignupUrl);
+  }
+  if (userSignupUrl != null && userSignupUrl.length() > 0) {
+    json.put("x_user_signup_url",userSignupUrl);
+  }
+  a=new JSONArray();
+  for (  String id : idTechnologies) {
+    a.put(id);
+  }
+  json.put("x_id_technology",a);
+  return json;
+}

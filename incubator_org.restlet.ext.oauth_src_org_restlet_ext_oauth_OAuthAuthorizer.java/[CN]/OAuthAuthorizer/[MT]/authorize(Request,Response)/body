@@ -51,6 +51,9 @@
  else         if (next instanceof Filter) {
           next=((Filter)next).getNext();
         }
+ else         if (next instanceof Router) {
+          next=((Router)next).getNext(req,resp);
+        }
  else {
           getLogger().warning("Unsupported class found in loop : " + next.getClass().getCanonicalName());
           break;
@@ -61,7 +64,7 @@
         String owner=scoped.getOwner(uri);
         if (owner != null && owner.length() > 0)         request.put("owner",owner);
         log.info("Found owner = " + owner);
-        String[] scopes=scoped.getScope(uri);
+        String[] scopes=scoped.getScope(uri,req.getMethod());
         log.info("Found scopes = " + scopes.length);
         if (scopes != null && scopes.length > 0) {
           JSONArray jArray=new JSONArray();

@@ -97,7 +97,9 @@ form.add(OAuthServerResource.CLIENT_SECRET,params.getClientSecret());
 }
 form.add(OAuthServerResource.CODE,code);
 log.info("Sending access form : " + form.getQueryString() + " to : "+ tokenResource.getReference());
-Representation body=tokenResource.post(form.getWebRepresentation());
+try {
+Representation input=form.getWebRepresentation();
+Representation body=tokenResource.post(input);
 if (tokenResource.getResponse().getStatus().isSuccess()) {
 authUser=OAuthUtils.handleSuccessResponse(body);
 if (authUser != null) {
@@ -109,6 +111,10 @@ auth=true;
 }
 log.info("Before sns release");
 body.release();
+}
+ catch (ResourceException re) {
+log.warning("Could not find token resource.");
+}
 }
 return auth;
 }

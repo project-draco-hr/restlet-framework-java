@@ -1,0 +1,10 @@
+{
+  getContext().getAttributes().put(ValidationServerResource.LOCAL_ACCESS_ONLY,"true");
+  DiscoverableAuthServerInfo asi=new DiscoverableAuthServerInfo("/authorize","authenticate","validate");
+  DiscoverableFilter disc=new DiscoverableFilter(asi);
+  Restlet r=super.createInboundRoot();
+  Router router=(Router)r;
+  router.attach("/resource{trailing}",DiscoverableDummyResource.class);
+  disc.setNext(router);
+  return disc;
+}
