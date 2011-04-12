@@ -1,0 +1,71 @@
+{
+  Object result=null;
+  if (javaMethod.equals(Object.class.getMethod("toString"))) {
+    result="ClientProxy for resource: " + clientResource;
+  }
+ else   if (javaMethod.equals(ClientProxy.class.getMethod("getClientResource"))) {
+    result=clientResource;
+  }
+ else {
+    AnnotationInfo annotation=AnnotationUtils.getAnnotation(annotations,javaMethod);
+    if (annotation != null) {
+      Representation requestEntity=null;
+      boolean isSynchronous=true;
+      if ((args != null) && args.length > 0) {
+        for (int i=0; i < args.length; i++) {
+          Object o=args[i];
+          if (o == null) {
+            requestEntity=null;
+          }
+ else           if (Result.class.isAssignableFrom(o.getClass())) {
+            isSynchronous=false;
+            final Result rCallback=(Result)o;
+            Type[] genericParameterTypes=javaMethod.getGenericParameterTypes();
+            Type genericParameterType=genericParameterTypes[i];
+            ParameterizedType parameterizedType=(genericParameterType instanceof java.lang.reflect.ParameterizedType) ? (java.lang.reflect.ParameterizedType)genericParameterType : null;
+            final Class<?> actualType=(parameterizedType.getActualTypeArguments()[0] instanceof Class<?>) ? (Class<?>)parameterizedType.getActualTypeArguments()[0] : null;
+            Uniform callback=new Uniform(){
+              @SuppressWarnings("unchecked") public void handle(              Request request,              Response response){
+                if (response.getStatus().isError()) {
+                  rCallback.onFailure(new ResourceException(response.getStatus()));
+                }
+ else {
+                  if (actualType != null) {
+                    rCallback.onSuccess(getClientResource().toObject(response.getEntity(),actualType.getClass()));
+                  }
+ else {
+                    rCallback.onSuccess(null);
+                  }
+                }
+              }
+            }
+;
+            getClientResource().setOnResponse(callback);
+          }
+ else {
+            requestEntity=getClientResource().toRepresentation(args[i],null);
+          }
+        }
+      }
+      Request request=getClientResource().createRequest(getClientResource().getRequest());
+      request.setMethod(annotation.getRestletMethod());
+      request.setEntity(requestEntity);
+      if ((request.getClientInfo().getAcceptedCharacterSets().size() == 0) && (request.getClientInfo().getAcceptedEncodings().size() == 0) && (request.getClientInfo().getAcceptedLanguages().size() == 0)&& (request.getClientInfo().getAcceptedMediaTypes().size() == 0)) {
+        List<Variant> responseVariants=annotation.getResponseVariants(getClientResource().getMetadataService(),getClientResource().getConverterService());
+        if (responseVariants != null) {
+          request.setClientInfo(new ClientInfo(responseVariants));
+        }
+      }
+      Response response=getClientResource().handle(request);
+      if (isSynchronous) {
+        if (response.getStatus().isError()) {
+          getClientResource().doError(response.getStatus());
+        }
+        if (!annotation.getJavaOutputType().equals(void.class)) {
+          result=getClientResource().toObject((response == null ? null : response.getEntity()),annotation.getJavaOutputType());
+        }
+      }
+    }
+  }
+  return result;
+}
