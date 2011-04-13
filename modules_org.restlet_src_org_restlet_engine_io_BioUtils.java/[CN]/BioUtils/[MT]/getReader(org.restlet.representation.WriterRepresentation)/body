@@ -4,8 +4,7 @@
     final java.io.PipedWriter pipedWriter=new java.io.PipedWriter();
     final java.io.PipedReader pipedReader=new java.io.PipedReader(pipedWriter);
     final org.restlet.Application application=org.restlet.Application.getCurrent();
-    org.restlet.service.TaskService taskService=(application == null) ? new org.restlet.service.TaskService() : application.getTaskService();
-    taskService.execute(new Runnable(){
+    Runnable task=new Runnable(){
       public void run(){
         try {
           representation.write(pipedWriter);
@@ -16,7 +15,13 @@
         }
       }
     }
-);
+;
+    if (application != null && application.getTaskService() != null) {
+      application.getTaskService().execute(task);
+    }
+ else {
+      new Thread(task).run();
+    }
     result=pipedReader;
   }
  else {

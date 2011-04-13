@@ -6,8 +6,7 @@
     }
     final PipeStream pipe=new PipeStream();
     final org.restlet.Application application=org.restlet.Application.getCurrent();
-    org.restlet.service.TaskService taskService=(application == null) ? new org.restlet.service.TaskService() : application.getTaskService();
-    taskService.execute(new Runnable(){
+    Runnable task=new Runnable(){
       public void run(){
         try {
           java.io.OutputStream os=pipe.getOutputStream();
@@ -20,7 +19,13 @@
         }
       }
     }
-);
+;
+    if (application != null && application.getTaskService() != null) {
+      application.getTaskService().execute(task);
+    }
+ else {
+      new Thread(task).run();
+    }
     result=pipe.getInputStream();
   }
  else {
