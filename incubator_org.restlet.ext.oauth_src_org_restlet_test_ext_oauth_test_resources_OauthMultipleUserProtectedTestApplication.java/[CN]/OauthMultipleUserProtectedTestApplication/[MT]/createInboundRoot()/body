@@ -1,0 +1,10 @@
+{
+  Context ctx=getContext();
+  Router router=new Router(ctx);
+  OAuthAuthorizer auth2=new OAuthAuthorizer(AuthorizationServerTest.prot + "://localhost:" + MultipleUserAuthorizationServerTest.oauthServerPort+ "/oauth/validate",AuthorizationServerTest.prot + "://localhost:" + MultipleUserAuthorizationServerTest.oauthServerPort+ "/oauth/authorize");
+  ScopedRouter sr=new ScopedRouter();
+  auth2.setNext(sr);
+  router.attach("/scoped",auth2);
+  sr.init();
+  return router;
+}

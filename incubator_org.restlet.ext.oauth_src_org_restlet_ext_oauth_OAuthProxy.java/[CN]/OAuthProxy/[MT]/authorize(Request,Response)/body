@@ -1,7 +1,7 @@
 {
   Boolean auth=false;
   request.setCacheDirectives(no);
-  redirectUri=request.getResourceRef().toUrl().toString();
+  String redirectUri=request.getResourceRef().toUrl().toString();
   Form query=new Form(request.getOriginalRef().getQuery());
   String error=query.getFirstValue(OAuthServerResource.ERROR);
   if (error != null && error.length() > 0) {
@@ -81,9 +81,11 @@ log.info("After Redirecting to : " + redirRef.toUri());
 }
  else {
 log.info("Came back after SNS code = " + code);
+ClientResource tokenResource=new CookieCopyClientResource(params.getBaseRef() + params.getAccessTokenPath());
 Form form=new Form();
 form.add(OAuthServerResource.GRANT_TYPE,OAuthServerResource.GrantType.authorization_code.name());
-form.add(OAuthServerResource.REDIR_URI,request.getResourceRef().getBaseRef().toUri().toString());
+String redir=request.getResourceRef().getHostIdentifier() + request.getResourceRef().getPath();
+form.add(OAuthServerResource.REDIR_URI,redir);
 if (basicSecret) {
 ChallengeResponse authentication=new ChallengeResponse(ChallengeScheme.HTTP_BASIC);
 authentication.setDigestAlgorithm("NONE");
@@ -101,7 +103,7 @@ try {
 Representation input=form.getWebRepresentation();
 Representation body=tokenResource.post(input);
 if (tokenResource.getResponse().getStatus().isSuccess()) {
-authUser=OAuthUtils.handleSuccessResponse(body);
+OAuthUser authUser=OAuthUtils.handleSuccessResponse(body);
 if (authUser != null) {
 request.getClientInfo().setUser(authUser);
 request.getClientInfo().setAuthenticated(true);
@@ -115,6 +117,7 @@ body.release();
  catch (ResourceException re) {
 log.warning("Could not find token resource.");
 }
+tokenResource.release();
 }
 return auth;
 }

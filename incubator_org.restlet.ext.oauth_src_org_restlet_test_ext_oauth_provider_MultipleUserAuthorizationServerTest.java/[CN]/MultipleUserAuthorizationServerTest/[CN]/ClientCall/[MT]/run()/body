@@ -1,0 +1,42 @@
+{
+  try {
+    this.sleep(r.nextInt(500));
+  }
+ catch (  InterruptedException e1) {
+    e1.printStackTrace();
+  }
+  for (int i=0; i < numTimes; i++) {
+    System.out.println(this.getName() + " " + i);
+    int u=r.nextInt(5) + 1;
+    OAuthUser user=OAuthUtils.passwordFlow(params,"user" + u,"pass" + u,myClient);
+    if (user == null) {
+      SingletonStore.I().addError();
+      SingletonStore.I().addRequest();
+      continue;
+    }
+    Reference ref=new Reference(prot + "://localhost:" + serverPort+ "/server/scoped/user"+ u);
+    ref.addQueryParameter("oauth_token",user.getAccessToken());
+    ClientResource cr=new ClientResource(ref);
+    cr.setNext(myClient);
+    Representation r=cr.get();
+    if (r == null) {
+      SingletonStore.I().addError();
+      SingletonStore.I().addRequest();
+      cr.release();
+      continue;
+    }
+    try {
+      String text=r.getText();
+      if (!text.equalsIgnoreCase("TestSuccessful")) {
+        SingletonStore.I().addError();
+      }
+    }
+ catch (    Exception e) {
+      SingletonStore.I().addError();
+    }
+    SingletonStore.I().addRequest();
+    r.release();
+    cr.release();
+  }
+  SingletonStore.I().addRequest();
+}
