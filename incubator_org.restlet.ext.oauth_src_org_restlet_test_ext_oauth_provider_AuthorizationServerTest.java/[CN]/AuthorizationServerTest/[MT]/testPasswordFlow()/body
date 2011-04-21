@@ -1,5 +1,5 @@
 {
-  OAuthUser user=OAuthUtils.passwordFlow(client.getOauthParameters(),Oauth2TestApplication.TEST_USER,Oauth2TestApplication.TEST_PASS);
+  OAuthUser user=OAuthUtils.passwordFlow(client.getOauthParameters(),OAuthTestApplication.TEST_USER,OAuthTestApplication.TEST_PASS);
   assertNotNull(user);
   Reference ref=new Reference(prot + "://localhost:" + serverPort+ "/server/protected");
   ref.addQueryParameter("oauth_token",user.getAccessToken());
@@ -11,13 +11,13 @@
   assertEquals("Response content type test",r.getMediaType(),MediaType.TEXT_HTML);
   cr.release();
   try {
-    user=OAuthUtils.passwordFlow(client.getOauthParameters(),"sowrong",Oauth2TestApplication.TEST_PASS);
+    user=OAuthUtils.passwordFlow(client.getOauthParameters(),"sowrong",OAuthTestApplication.TEST_PASS);
   }
  catch (  ResourceException re) {
     assertEquals(Status.CLIENT_ERROR_BAD_REQUEST,re.getStatus());
   }
   try {
-    user=OAuthUtils.passwordFlow(client.getOauthParameters(),Oauth2TestApplication.TEST_USER,"sowrong");
+    user=OAuthUtils.passwordFlow(client.getOauthParameters(),OAuthTestApplication.TEST_USER,"sowrong");
   }
  catch (  ResourceException re) {
     assertEquals(Status.CLIENT_ERROR_FORBIDDEN,re.getStatus());

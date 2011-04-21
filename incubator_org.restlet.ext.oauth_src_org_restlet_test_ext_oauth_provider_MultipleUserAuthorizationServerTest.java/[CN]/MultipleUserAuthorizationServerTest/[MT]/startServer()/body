@@ -11,14 +11,14 @@
   component.getClients().add(Protocol.HTTP);
   component.getClients().add(Protocol.HTTPS);
   component.getClients().add(Protocol.RIAP);
-  component.getDefaultHost().attach("/server",new Oauth2MultipleUserProtectedTestApplication());
+  component.getDefaultHost().attach("/server",new OAuthMultipleUserProtectedTestApplication());
   Server oauthServer=new Server(new Context(),Protocol.HTTP,oauthServerPort);
   Component oauthcomp=new Component();
   oauthcomp.getServers().add(oauthServer);
   oauthcomp.getClients().add(Protocol.HTTP);
   oauthcomp.getClients().add(Protocol.HTTPS);
   oauthcomp.getClients().add(Protocol.RIAP);
-  oauthcomp.getDefaultHost().attach("/oauth",new Oauth2MultipleUserTestApplication(0));
+  oauthcomp.getDefaultHost().attach("/oauth",new OAuthMultipleUserTestApplication(0));
   Series<Parameter> parameters=server.getContext().getParameters();
   parameters.add("keystorePath",keystore);
   parameters.add("keystorePassword","testpass");
