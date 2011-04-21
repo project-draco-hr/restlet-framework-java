@@ -30,11 +30,11 @@
  else     setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
   }
  catch (  IllegalArgumentException iae) {
-    sendError(sessionId,ErrorCode.unsupported_response_type,params.getFirstValue(STATE),"Unsupported flow",null);
+    sendError(sessionId,OAuthError.UNSUPPORTED_RESPONSE_TYPE,params.getFirstValue(STATE),"Unsupported flow",null);
     log.log(Level.WARNING,"Error in execution.",iae);
   }
 catch (  NullPointerException npe) {
-    sendError(sessionId,ErrorCode.invalid_request,params.getFirstValue(STATE),"No response_type parameter found.",null);
+    sendError(sessionId,OAuthError.INVALID_REQUEST,params.getFirstValue(STATE),"No response_type parameter found.",null);
   }
   return getResponse().getEntity();
 }

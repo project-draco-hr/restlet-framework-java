@@ -28,14 +28,14 @@
     Token t=generator.findToken(token);
     if (t == null) {
       response.put("authenticated",authenticated);
-      error=OAuthError.ErrorCode.invalid_token.name();
+      error=OAuthError.INVALID_TOKEN.name();
     }
  else {
       log.info("In Validator resource - got token = " + t);
       if (t instanceof ExpireToken) {
         ExpireToken et=(ExpireToken)t;
         if (!token.equals(et.getToken())) {
-          error=OAuthError.ErrorCode.invalid_token.name();
+          error=OAuthError.INVALID_TOKEN.name();
           getLogger().warning("Should not use the refresh_token to sign!");
         }
       }
@@ -45,7 +45,7 @@
       AuthenticatedUser user=t.getUser();
       authenticated=(user == null) ? false : true;
       if (!authenticated) {
-        error=OAuthError.ErrorCode.invalid_request.name();
+        error=OAuthError.INVALID_REQUEST.name();
       }
       if (authenticated && scopes != null && scopes.length() > 0) {
         for (int i=0; i < scopes.length(); i++) {
@@ -54,7 +54,7 @@
           boolean granted=user.isGrantedScope(scope,owner);
           getLogger().info("Granted permission : " + scope + " = "+ granted);
           if (!granted) {
-            error=OAuthError.ErrorCode.insufficient_scope.name();
+            error=OAuthError.INSUFFICIENT_SCOPE.name();
             authenticated=false;
             break;
           }
@@ -63,7 +63,7 @@
       if (authenticated) {
         if (owner != null && owner.length() > 0 && !AUTONOMOUS_USER.equals(user.getId()) && !owner.equals(user.getId())) {
           authenticated=false;
-          error=OAuthError.ErrorCode.invalid_request.name();
+          error=OAuthError.INVALID_REQUEST.name();
         }
  else {
           response.put("tokenOwner",user.getId());

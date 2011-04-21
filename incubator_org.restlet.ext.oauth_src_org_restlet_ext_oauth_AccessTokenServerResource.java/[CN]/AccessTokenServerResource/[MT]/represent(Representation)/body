@@ -22,12 +22,12 @@
     }
   }
   if (clientId == null || clientId.length() == 0) {
-    sendError(ErrorCode.invalid_request,"Mandatory parameter client_id is missing",null);
+    sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter client_id is missing",null);
     setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
     return new EmptyRepresentation();
   }
   if (clientSecret == null || clientSecret.length() == 0) {
-    sendError(ErrorCode.invalid_request,"Mandatory parameter client_secret is missing",null);
+    sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter client_secret is missing",null);
     setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
     return new EmptyRepresentation();
   }
@@ -45,7 +45,7 @@ case password:
     doPasswordFlow(clientId,clientSecret,params);
   break;
 case assertion:
-sendError(ErrorCode.unsupported_grant_type,"Assertion flow not supported",null);
+sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Assertion flow not supported",null);
 setStatus(Status.SERVER_ERROR_NOT_IMPLEMENTED);
 break;
 case refresh_token:
@@ -55,26 +55,26 @@ case none:
 doNoneFlow(clientId,clientSecret,params);
 break;
 default :
-sendError(ErrorCode.unsupported_grant_type,"Flow not supported",null);
+sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Flow not supported",null);
 setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
 }
 }
  catch (IllegalArgumentException e) {
-sendError(ErrorCode.invalid_grant,e.getMessage(),null);
+sendError(OAuthError.INVALID_GRANT,e.getMessage(),null);
 setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
 }
 }
  else {
-sendError(ErrorCode.invalid_request,"Only supporting HTTP POST.",null);
+sendError(OAuthError.INVALID_REQUEST,"Only supporting HTTP POST.",null);
 setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
 }
 }
  catch (IllegalArgumentException iae) {
-sendError(ErrorCode.unsupported_grant_type,"Flow not supported",null);
+sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Flow not supported",null);
 setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
 }
 catch (NullPointerException npe) {
-sendError(ErrorCode.unsupported_grant_type,"Flow not supported",null);
+sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Flow not supported",null);
 setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
 }
 return getResponse().getEntity();

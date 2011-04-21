@@ -1,13 +1,13 @@
 {
   String rToken=params.getFirstValue(REFRESH_TOKEN);
   if (rToken == null || rToken.length() == 0) {
-    sendError(ErrorCode.invalid_request,"Mandatory parameter refresh_token is missing",null);
+    sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter refresh_token is missing",null);
     setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
     return;
   }
   Client client=validate(clientId,clientSecret);
   if (client == null) {
-    sendError(ErrorCode.invalid_client,"Client id verification failed.",null);
+    sendError(OAuthError.INVALID_CLIENT,"Client id verification failed.",null);
     setStatus(Status.CLIENT_ERROR_FORBIDDEN);
     return;
   }
@@ -21,12 +21,12 @@
       getResponse().setEntity(new JsonRepresentation(body));
     }
  else {
-      sendError(ErrorCode.unauthorized_client,"User does not match.",null);
+      sendError(OAuthError.UNAUTHORIZED_CLIENT,"User does not match.",null);
       setStatus(Status.CLIENT_ERROR_FORBIDDEN);
     }
   }
  else {
-    sendError(ErrorCode.invalid_grant,"Refresh token.",null);
+    sendError(OAuthError.INVALID_GRANT,"Refresh token.",null);
     setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
   }
 }

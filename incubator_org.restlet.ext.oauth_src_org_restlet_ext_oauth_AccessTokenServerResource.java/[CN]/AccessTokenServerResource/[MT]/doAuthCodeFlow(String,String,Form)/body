@@ -1,24 +1,24 @@
 {
   String redirUri=params.getFirstValue(REDIR_URI);
   if (redirUri == null || redirUri.length() == 0) {
-    sendError(ErrorCode.invalid_request,"Mandatory parameter redirect_uri is missing",null);
+    sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter redirect_uri is missing",null);
     setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
     return;
   }
   String code=params.getFirstValue(CODE);
   if (code == null || code.length() == 0) {
-    sendError(ErrorCode.invalid_request,"Mandatory parameter code is missing",null);
+    sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter code is missing",null);
     setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
     return;
   }
   Client client=validate(clientId,clientSecret);
   if (client == null) {
-    sendError(ErrorCode.invalid_client,"Client id verification failed.",null);
+    sendError(OAuthError.INVALID_CLIENT,"Client id verification failed.",null);
     setStatus(Status.CLIENT_ERROR_FORBIDDEN);
     return;
   }
   if (!clientSecret.equals(client.getClientSecret())) {
-    sendError(ErrorCode.invalid_grant,"Client secret did not match",null);
+    sendError(OAuthError.INVALID_GRANT,"Client secret did not match",null);
     setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
     return;
   }
