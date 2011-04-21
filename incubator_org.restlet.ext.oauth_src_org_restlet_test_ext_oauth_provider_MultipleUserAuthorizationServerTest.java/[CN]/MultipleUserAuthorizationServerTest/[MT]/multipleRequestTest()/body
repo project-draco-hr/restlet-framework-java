@@ -1,15 +1,21 @@
 {
-  int numThreads=100;
+  int numThreads=10;
   int numCalls=10;
   int totRequests=(numThreads * numCalls) + numThreads;
   Thread[] clients=new Thread[numThreads];
   Context c=new Context();
+  Client client=null;
+  log.warning("Starting long running test with " + numThreads + " threads doing "+ numCalls+ " requests each");
+  long l=System.currentTimeMillis();
   for (int i=0; i < numThreads; i++) {
-    clients[i]=new ClientCall(numCalls,c);
+    if (i % 25 == 0)     client=new Client(Protocol.HTTP);
+    clients[i]=new ClientCall(numCalls,c,client);
     clients[i].start();
   }
   Awaitility.setDefaultTimeout(Duration.FOREVER);
   Awaitility.await().until(numCalls(),Matchers.equalTo(totRequests));
+  long tot=System.currentTimeMillis() - l;
+  log.warning("Executed " + (numThreads * numCalls) + " in "+ tot+ " millseconds, average time "+ (tot / (numThreads * numCalls))+ " millis/request");
   System.out.println(SingletonStore.I().getCallbacks() + " " + SingletonStore.I().getErrors());
   Assert.assertEquals(0,SingletonStore.I().getErrors());
 }
