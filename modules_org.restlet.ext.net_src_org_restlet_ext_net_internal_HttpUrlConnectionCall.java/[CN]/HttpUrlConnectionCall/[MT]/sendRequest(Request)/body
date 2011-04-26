@@ -22,6 +22,10 @@
     for (    Parameter header : getRequestHeaders()) {
       getConnection().addRequestProperty(header.getName(),header.getValue());
     }
+    if ((Edition.CURRENT == Edition.GAE) && (request.getProtocol() == Protocol.SDC)) {
+      getConnection().getRequestProperties().remove(HeaderConstants.HEADER_PROXY_AUTHORIZATION);
+      getConnection().setRequestProperty("use_intranet","true");
+    }
     getConnection().connect();
     result=super.sendRequest(request);
   }
