@@ -1,0 +1,20 @@
+{
+  ClientInfo info=request.getClientInfo();
+  if (info.isAuthenticated()) {
+    return true;
+  }
+ else   if (userService.isUserLoggedIn()) {
+    com.google.appengine.api.users.User gaeUser=userService.getCurrentUser();
+    User restletUser=new User(gaeUser.getUserId());
+    restletUser.setEmail(gaeUser.getEmail());
+    restletUser.setFirstName(gaeUser.getNickname());
+    info.setUser(restletUser);
+    info.setAuthenticated(true);
+    return true;
+  }
+ else {
+    String loginUrl=userService.createLoginURL(request.getOriginalRef().toString());
+    response.redirectTemporary(loginUrl);
+    return false;
+  }
+}
