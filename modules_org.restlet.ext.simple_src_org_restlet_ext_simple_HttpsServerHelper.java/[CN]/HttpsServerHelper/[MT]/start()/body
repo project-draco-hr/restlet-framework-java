@@ -16,11 +16,10 @@
   ContainerServer server=new ContainerServer(container,getDefaultThreads());
   SimpleServer filter=new SimpleServer(server);
   Connection connection=new SocketConnection(filter);
-  setSslContext(sslContext);
   setConfidential(true);
   setContainerServer(server);
   setConnection(connection);
-  InetSocketAddress address=(InetSocketAddress)getConnection().connect(getAddress(),getSslContext());
+  InetSocketAddress address=(InetSocketAddress)getConnection().connect(getAddress(),sslContext);
   setEphemeralPort(address.getPort());
   super.start();
 }
