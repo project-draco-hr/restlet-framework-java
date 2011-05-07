@@ -5,7 +5,7 @@
   this.outputStream=socket.getOutputStream();
   this.frameReceiver=new FrameReceiver();
   this.frameReceiver.setInputStream(getInputStream());
-  this.calls=new TreeMap<String,SdcClientCall>();
+  this.calls=new ConcurrentHashMap<String,SdcClientCall>();
   BlockingQueue<FrameInfo> sendQueue=new LinkedBlockingQueue<SdcFrame.FrameInfo>();
   ShutdownManager shutdownManager=new ShutdownManager();
   this.frameSender=new FrameSender(sendQueue,shutdownManager);
