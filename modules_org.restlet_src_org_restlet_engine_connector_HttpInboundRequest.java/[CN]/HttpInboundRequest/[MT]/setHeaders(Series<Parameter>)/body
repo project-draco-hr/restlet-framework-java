@@ -27,7 +27,18 @@
   }
  else {
     if (!Protocol.SIP.getSchemeName().equals(serverProtocol.getSchemeName()) && !Protocol.SIPS.getSchemeName().equals(serverProtocol.getSchemeName())) {
-      Context.getCurrentLogger().info("Couldn't find the mandatory \"Host\" HTTP header.");
+      Context.getCurrentLogger().info("Couldn't find the mandatory \"Host\" HTTP header. Falling back to the IP address.");
+      hostDomain=getConnection().getAddress();
+      hostPort=getConnection().getPort();
+      if (hostDomain == null) {
+        hostDomain="localhost";
+      }
+      if (hostPort == -1) {
+        hostPort=getConnection().getHelper().getHelped().getActualPort();
+      }
+      if (hostPort == -1) {
+        getProtocol().getDefaultPort();
+      }
     }
   }
   Protocol protocol=getConnection().getHelper().getHelped().getProtocols().get(0);
