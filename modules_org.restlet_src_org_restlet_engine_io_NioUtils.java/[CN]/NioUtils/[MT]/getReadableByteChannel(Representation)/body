@@ -2,8 +2,8 @@
   ReadableByteChannel result=null;
   if (Edition.CURRENT != Edition.GAE) {
     final java.nio.channels.Pipe pipe=java.nio.channels.Pipe.open();
-    final org.restlet.Application application=org.restlet.Application.getCurrent();
-    application.getTaskService().execute(new Runnable(){
+    org.restlet.Application application=org.restlet.Application.getCurrent();
+    Runnable task=new Runnable(){
       public void run(){
         try {
           WritableByteChannel wbc=pipe.sink();
@@ -15,7 +15,13 @@
         }
       }
     }
-);
+;
+    if (application != null && application.getTaskService() != null) {
+      application.getTaskService().execute(task);
+    }
+ else {
+      new Thread(task,"Restlet-PipedWritableChannel").start();
+    }
     result=pipe.source();
   }
  else {
