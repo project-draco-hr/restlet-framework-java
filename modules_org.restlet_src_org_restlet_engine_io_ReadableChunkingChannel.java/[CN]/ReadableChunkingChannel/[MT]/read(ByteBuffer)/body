@@ -13,6 +13,9 @@
       if (maxChunkDataSize > 0) {
         dst.position(chunkStart + this.chunkSizeLength + 2);
         dst.limit(dst.position() + maxChunkDataSize);
+        if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
+          Context.getCurrentLogger().finer("Position before read | Limit | MaxChunkDataSize : " + dst.position() + " | "+ dst.limit()+ " | "+ maxChunkDataSize);
+        }
         chunkDataSize=getWrappedChannel().read(dst);
         dst.limit(dst.capacity());
         if (chunkDataSize == -1) {
@@ -29,7 +32,13 @@
           dst.put((byte)10);
           dst.position(chunkStart);
           fillChunkSizeString(chunkDataSize,dst);
+          if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
+            Context.getCurrentLogger().finer("Old position | Limit | MaxChunkDataSize | ChunkDataSize : " + dst.position() + " | "+ dst.limit()+ " | "+ maxChunkDataSize+ " | "+ chunkDataSize);
+          }
           dst.position(dst.position() + chunkDataSize + 2);
+          if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
+            Context.getCurrentLogger().finer("New position : " + dst.position());
+          }
           result+=dst.position() - chunkStart;
         }
  else {
