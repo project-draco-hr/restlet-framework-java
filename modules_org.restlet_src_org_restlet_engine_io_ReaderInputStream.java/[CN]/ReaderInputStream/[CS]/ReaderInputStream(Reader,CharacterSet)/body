@@ -1,11 +1,9 @@
 {
+  this.byteBuffer=ByteBuffer.allocate(1024);
+  this.byteBuffer.flip();
+  this.charBuffer=CharBuffer.allocate(1024);
+  this.charBuffer.flip();
+  this.charsetEncoder=(characterSet == null) ? CharacterSet.ISO_8859_1.toCharset().newEncoder() : characterSet.toCharset().newEncoder();
+  this.endReached=false;
   this.reader=(reader instanceof BufferedReader) ? (BufferedReader)reader : new BufferedReader(reader,IoUtils.BUFFER_SIZE);
-  this.pipedInputStream=new PipedInputStream();
-  this.pipedOutputStream=new PipedOutputStream(this.pipedInputStream);
-  if (characterSet != null) {
-    this.outputStreamWriter=new OutputStreamWriter(this.pipedOutputStream,characterSet.getName());
-  }
- else {
-    this.outputStreamWriter=new OutputStreamWriter(this.pipedOutputStream,CharacterSet.ISO_8859_1.getName());
-  }
 }

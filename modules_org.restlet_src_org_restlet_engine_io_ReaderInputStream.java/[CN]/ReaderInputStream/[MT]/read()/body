@@ -1,16 +1,4 @@
 {
-  int result=-1;
-  if (this.pipedInputStream.available() == 0) {
-    int character=this.reader.read();
-    if (character != -1) {
-      this.outputStreamWriter.write(character);
-      this.outputStreamWriter.flush();
-      this.pipedOutputStream.flush();
-      result=this.pipedInputStream.read();
-    }
-  }
- else {
-    result=this.pipedInputStream.read();
-  }
-  return result;
+  byte[] temp=new byte[1];
+  return (read(temp) == -1) ? -1 : temp[0] & 0xFF;
 }
