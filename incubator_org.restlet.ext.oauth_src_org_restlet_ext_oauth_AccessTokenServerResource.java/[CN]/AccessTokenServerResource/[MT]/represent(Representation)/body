@@ -1,22 +1,22 @@
 {
-  log.info("Method = " + getRequest().getMethod().getName());
-  log.info("In request : " + getOriginalRef().toString());
+  getLogger().info("Method = " + getMethod().getName());
+  getLogger().info("In request : " + getOriginalRef().toString());
   Form params=new Form(input);
   String typeString=params.getFirstValue(GRANT_TYPE);
-  log.info("Token Service - In service type = " + typeString);
+  getLogger().info("Token Service - In service type = " + typeString);
   String clientId=params.getFirstValue(CLIENT_ID);
   String clientSecret=params.getFirstValue(CLIENT_SECRET);
   if (clientSecret == null || clientSecret.length() == 0) {
-    ChallengeResponse cr=getRequest().getChallengeResponse();
+    ChallengeResponse cr=getChallengeResponse();
     if (ChallengeScheme.HTTP_BASIC.equals(cr.getScheme())) {
       String basic=new String(Base64.decode(cr.getRawValue()));
       int colon=basic.indexOf(':');
       if (colon > -1) {
         clientSecret=basic.substring(colon + 1);
-        log.info("Found secret in BASIC Authentication : " + clientSecret);
+        getLogger().info("Found secret in BASIC Authentication : " + clientSecret);
         if (colon > 0) {
           clientId=basic.substring(0,colon);
-          log.info("Found id in BASIC Authentication : " + clientId);
+          getLogger().info("Found id in BASIC Authentication : " + clientId);
         }
       }
     }
@@ -33,17 +33,16 @@
   }
   try {
     GrantType type=Enum.valueOf(GrantType.class,typeString);
-    log.info("Found flow - " + type);
-    if (Method.POST.equals(getMethod())) {
-      try {
+    getLogger().info("Found flow - " + type);
+    try {
 switch (type) {
 case authorization_code:
-          log.info("doWebServerFlow() - flow");
-        doAuthCodeFlow(clientId,clientSecret,params);
-      break;
+        getLogger().info("doWebServerFlow() - flow");
+      doAuthCodeFlow(clientId,clientSecret,params);
+    break;
 case password:
-    doPasswordFlow(clientId,clientSecret,params);
-  break;
+  doPasswordFlow(clientId,clientSecret,params);
+break;
 case assertion:
 sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Assertion flow not supported",null);
 setStatus(Status.SERVER_ERROR_NOT_IMPLEMENTED);
@@ -64,11 +63,6 @@ sendError(OAuthError.INVALID_GRANT,e.getMessage(),null);
 setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
 }
 }
- else {
-sendError(OAuthError.INVALID_REQUEST,"Only supporting HTTP POST.",null);
-setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
-}
-}
  catch (IllegalArgumentException iae) {
 sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Flow not supported",null);
 setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
@@ -77,5 +71,5 @@ catch (NullPointerException npe) {
 sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Flow not supported",null);
 setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
 }
-return getResponse().getEntity();
+return getResponseEntity();
 }

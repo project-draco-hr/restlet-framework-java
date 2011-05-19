@@ -1,6 +1,6 @@
 {
   Reference ref=new Reference("riap://application/auth_page");
-  log.info("Name = " + getApplication().getInboundRoot());
+  getLogger().info("Name = " + getApplication().getInboundRoot());
   ref.addQueryParameter("client",client.getClientId());
   String[] scopes=session.getRequestedScope();
   if (scopes != null && scopes.length > 0) {
@@ -13,8 +13,8 @@
       for (      String s : scopes)       ref.addQueryParameter("grantedScope",s);
     }
   }
-  log.info("Redir = " + ref);
+  getLogger().info("Redir = " + ref);
   Redirector dispatcher=new Redirector(getContext(),ref.toString(),Redirector.MODE_SERVER_OUTBOUND);
   dispatcher.handle(getRequest(),getResponse());
-  return getResponse().getEntity();
+  return getResponseEntity();
 }

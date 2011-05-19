@@ -91,7 +91,7 @@ ChallengeResponse authentication=new ChallengeResponse(ChallengeScheme.HTTP_BASI
 authentication.setDigestAlgorithm("NONE");
 String basic=params.getClientId() + ':' + params.getClientSecret();
 authentication.setRawValue(Base64.encode(basic.getBytes(),false));
-tokenResource.getRequest().setChallengeResponse(authentication);
+tokenResource.setChallengeResponse(authentication);
 }
  else {
 form.add(OAuthServerResource.CLIENT_ID,params.getClientId());
@@ -102,7 +102,7 @@ log.info("Sending access form : " + form.getQueryString() + " to : "+ tokenResou
 try {
 Representation input=form.getWebRepresentation();
 Representation body=tokenResource.post(input);
-if (tokenResource.getResponse().getStatus().isSuccess()) {
+if (tokenResource.getStatus().isSuccess()) {
 OAuthUser authUser=OAuthUtils.handleSuccessResponse(body);
 if (authUser != null) {
 request.getClientInfo().setUser(authUser);

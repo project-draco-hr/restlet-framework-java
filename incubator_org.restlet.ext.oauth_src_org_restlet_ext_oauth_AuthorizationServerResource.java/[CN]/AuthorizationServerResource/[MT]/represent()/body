@@ -1,29 +1,29 @@
 {
   Form params=getQuery();
   String sessionId=getCookies().getFirstValue(ClientCookieID);
-  log.info("sessionId = " + sessionId);
+  getLogger().info("sessionId = " + sessionId);
   ConcurrentMap<String,Object> attribs=getContext().getAttributes();
   AuthSession session=(sessionId == null) ? null : (AuthSession)attribs.get(sessionId);
   String id=(String)getContext().getAttributes().get(ID);
-  log.info("id = " + id);
-  log.info("session = " + session);
-  if (session != null)   log.info("client = " + session.getClient());
+  getLogger().info("id = " + id);
+  getLogger().info("session = " + session);
+  if (session != null)   getLogger().info("client = " + session.getClient());
  else {
-    getResponse().getCookieSettings().removeAll(ClientCookieID);
+    getCookieSettings().removeAll(ClientCookieID);
   }
   if (id != null && session != null && session.getClient() != null) {
-    log.info("After Authentication - cleanup");
+    getLogger().info("After Authentication - cleanup");
     params.removeFirst(OPENID);
     Client client=(Client)session.getClient();
-    log.info("Found client = " + client);
+    getLogger().info("Found client = " + client);
     session.setScopeOwner(id);
     return doPostAuthenticate(session,client);
   }
   String typeString=params.getFirstValue(RESPONSE_TYPE);
-  log.info("In service type = " + typeString);
+  getLogger().info("In service type = " + typeString);
   try {
     ResponseType type=Enum.valueOf(ResponseType.class,typeString);
-    log.info("Found flow - " + type);
+    getLogger().info("Found flow - " + type);
     if (Method.GET.equals(getMethod())) {
       doGet(type,session);
     }
@@ -31,10 +31,10 @@
   }
  catch (  IllegalArgumentException iae) {
     sendError(sessionId,OAuthError.UNSUPPORTED_RESPONSE_TYPE,params.getFirstValue(STATE),"Unsupported flow",null);
-    log.log(Level.WARNING,"Error in execution.",iae);
+    getLogger().log(Level.WARNING,"Error in execution.",iae);
   }
 catch (  NullPointerException npe) {
     sendError(sessionId,OAuthError.INVALID_REQUEST,params.getFirstValue(STATE),"No response_type parameter found.",null);
   }
-  return getResponse().getEntity();
+  return getResponseEntity();
 }
