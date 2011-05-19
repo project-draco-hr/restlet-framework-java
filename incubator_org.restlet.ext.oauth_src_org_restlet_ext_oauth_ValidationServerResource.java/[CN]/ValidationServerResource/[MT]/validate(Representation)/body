@@ -1,6 +1,5 @@
 {
-  Logger log=getLogger();
-  log.info("In Validator resource");
+  getLogger().info("In Validator resource");
   JSONObject response=new JSONObject();
   boolean authenticated=false;
   String lo=(String)getContext().getAttributes().get(LOCAL_ACCESS_ONLY);
@@ -24,14 +23,14 @@
     if (call.has("scope"))     scopes=call.getJSONArray("scope");
     String owner=null;
     if (call.has("owner"))     owner=call.getString("owner");
-    log.info("In Validator resource - searching for token = " + token);
+    getLogger().info("In Validator resource - searching for token = " + token);
     Token t=generator.findToken(token);
     if (t == null) {
       response.put("authenticated",authenticated);
       error=OAuthError.INVALID_TOKEN.name();
     }
  else {
-      log.info("In Validator resource - got token = " + t);
+      getLogger().info("In Validator resource - got token = " + t);
       if (t instanceof ExpireToken) {
         ExpireToken et=(ExpireToken)t;
         if (!token.equals(et.getToken())) {
@@ -39,9 +38,9 @@
           getLogger().warning("Should not use the refresh_token to sign!");
         }
       }
-      log.info("Received uri = " + uri);
-      log.info("Received scope = " + scopes);
-      log.info("Received owner = " + owner);
+      getLogger().info("Received uri = " + uri);
+      getLogger().info("Received scope = " + scopes);
+      getLogger().info("Received owner = " + owner);
       AuthenticatedUser user=t.getUser();
       authenticated=(user == null) ? false : true;
       if (!authenticated) {

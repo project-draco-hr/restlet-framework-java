@@ -1,13 +1,12 @@
 {
-  Logger log=Context.getCurrentLogger();
-  log.info("Checking for param access_token");
+  getLogger().info("Checking for param access_token");
   String accessToken=null;
   if (req.getChallengeResponse() != null) {
     accessToken=req.getChallengeResponse().getRawValue();
     getLogger().info("Found Authorization header" + accessToken);
   }
  else   if (accessToken == null || accessToken.length() == 0) {
-    log.info("Didn't contain a Authorization header - checking query");
+    getLogger().info("Didn't contain a Authorization header - checking query");
     accessToken=req.getOriginalRef().getQueryAsForm().getFirstValue(OAuthServerResource.OAUTH_TOKEN);
     if (accessToken == null || accessToken.length() == 0) {
       if (req.getMethod() == Method.POST || req.getMethod() == Method.PUT || req.getMethod() == Method.DELETE) {
@@ -38,7 +37,7 @@
       Reference uri=req.getOriginalRef();
       request.put("access_token",accessToken);
       ScopedResource scoped=null;
-      log.info("Looking for a scoped resource");
+      getLogger().info("Looking for a scoped resource");
       for (Restlet next=getNext(); next != null; ) {
         if (next instanceof Finder) {
           Finder f=(Finder)next;
@@ -59,13 +58,13 @@
           break;
         }
       }
-      log.info("After scoped resource - " + scoped);
+      getLogger().info("After scoped resource - " + scoped);
       if (scoped != null) {
         String owner=scoped.getOwner(uri);
         if (owner != null && owner.length() > 0)         request.put("owner",owner);
-        log.info("Found owner = " + owner);
+        getLogger().info("Found owner = " + owner);
         String[] scopes=scoped.getScope(uri,req.getMethod());
-        log.info("Found scopes = " + scopes);
+        getLogger().info("Found scopes = " + scopes);
         if (scopes != null && scopes.length > 0) {
           JSONArray jArray=new JSONArray();
           for (          String scope : scopes)           jArray.put(scope);
@@ -77,9 +76,9 @@
       StringRepresentation sr=new StringRepresentation(request.toString());
       sr.setCharacterSet(repr.getCharacterSet());
       repr.setSize(sr.getSize());
-      log.info("Posting to validator... json = " + request);
+      getLogger().info("Posting to validator... json = " + request);
       Representation r=authResource.post(repr);
-      log.info("After posting to validator...");
+      getLogger().info("After posting to validator...");
       repr.release();
       sr.release();
       getLogger().info("Got Respose from auth resource OK " + r.getClass().getCanonicalName());
@@ -88,7 +87,7 @@
       boolean authenticated=response.getBoolean("authenticated");
       if (response.has("tokenOwner")) {
         String tokenOwner=response.getString("tokenOwner");
-        log.info("User " + tokenOwner + " is accessing : "+ req.getOriginalRef());
+        getLogger().info("User " + tokenOwner + " is accessing : "+ req.getOriginalRef());
         User user=new User(tokenOwner,accessToken);
         req.getClientInfo().setUser(user);
         req.getClientInfo().setAuthenticated(true);
