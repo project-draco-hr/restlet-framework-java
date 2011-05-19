@@ -1,11 +1,11 @@
 {
-  if (getLastOutbound() != null) {
-    getLastOutbound().setNext(filter);
-    setLastOutbound(filter);
+  Restlet next=getOutboundNext();
+  if (getFirstOutboundFilter() == null) {
+    setFirstOutboundFilter(filter);
   }
- else {
-    filter.setNext(getFirstOutbound());
-    setFirstOutbound(filter);
-    setLastOutbound(filter);
+ else   if (getLastOutboundFilter() != null) {
+    getLastOutboundFilter().setNext(filter);
   }
+  setLastOutboundFilter(filter);
+  setOutboundNext(next);
 }

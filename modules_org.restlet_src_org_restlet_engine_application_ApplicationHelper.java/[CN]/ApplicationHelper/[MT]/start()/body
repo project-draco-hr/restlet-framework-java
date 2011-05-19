@@ -13,4 +13,13 @@
     }
   }
   setInboundNext(getHelped().getInboundRoot());
+  if (getOutboundNext() == null) {
+    setOutboundNext(new Restlet(){
+      @Override public void handle(      Request request,      Response response){
+        response.setStatus(Status.SERVER_ERROR_INTERNAL,"The server isn't properly configured to handle client calls.");
+        getLogger().warning("By default, the outbound root of an application can't handle calls without being attached to a parent component.");
+      }
+    }
+);
+  }
 }

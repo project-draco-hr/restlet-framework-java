@@ -1,7 +1,12 @@
 {
   if ((response != null) && (response.getRequest() != null)) {
     getLogger().finer("Handling request...");
-    handle(response.getRequest(),response);
+    try {
+      handle(response.getRequest(),response);
+    }
+ catch (    Throwable t) {
+      response.setStatus(Status.SERVER_ERROR_INTERNAL,t);
+    }
     if (!response.isCommitted() && response.isAutoCommitting()) {
       response.setCommitted(true);
       getOutboundMessages().add(response);
