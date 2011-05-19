@@ -4,12 +4,12 @@
     HeaderUtils.addResponseHeaders(response,response.getHttpCall().getResponseHeaders());
     if (response.getStatus() != null) {
       response.getHttpCall().setStatusCode(response.getStatus().getCode());
-      response.getHttpCall().setReasonPhrase(response.getStatus().getName());
+      response.getHttpCall().setReasonPhrase(response.getStatus().getReasonPhrase());
     }
   }
  catch (  Exception e) {
     getLogger().log(Level.INFO,"Exception intercepted while adding the response headers",e);
     response.getHttpCall().setStatusCode(Status.SERVER_ERROR_INTERNAL.getCode());
-    response.getHttpCall().setReasonPhrase(Status.SERVER_ERROR_INTERNAL.getName());
+    response.getHttpCall().setReasonPhrase(Status.SERVER_ERROR_INTERNAL.getReasonPhrase());
   }
 }
