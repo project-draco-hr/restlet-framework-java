@@ -17,7 +17,7 @@ synchronized (getLock()) {
           Context.getCurrentLogger().log(Level.FINEST,"Draining buffer " + this);
         }
         drained=0;
-        if (hasRemaining() || processor.couldDrain(this,args)) {
+        if (hasRemaining()) {
           if (maxDrained <= 0) {
             drained=processor.onDrain(this,0,args);
           }
@@ -60,7 +60,7 @@ synchronized (getLock()) {
           }
         }
  else {
-          if (!lastDrainFailed && (couldDrain() || processor.couldDrain(this,args))) {
+          if (!lastDrainFailed && couldDrain()) {
             beforeDrain();
           }
  else {
