@@ -1,6 +1,9 @@
 {
   int result=buffer.fill(this.channel);
   if (result == 0) {
+    if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
+      Context.getCurrentLogger().log(Level.FINER,"Couldn't fill the buffer immediately. Trying to register a select key to get more.");
+    }
     if (selectionChannel != null) {
       try {
         if (this.selectionRegistration == null) {
