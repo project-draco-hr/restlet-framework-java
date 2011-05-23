@@ -1,25 +1,15 @@
 {
   int result=0;
-  int available=getInputStream().available();
   if (!isBlocking()) {
+    int available=getInputStream().available();
+    int readLength=0;
     if (available > 0) {
-      if (target.hasArray()) {
-        byte[] byteArray=target.array();
-        result=getInputStream().read(byteArray,target.position(),Math.min(available,target.remaining()));
-        if (result > 0) {
-          target.position(target.position() + result);
-        }
- else         if (result == -1) {
-          target.position(target.position() + available);
-        }
-      }
- else {
-        result=read(target,available);
-      }
+      readLength=Math.min(available,target.remaining());
     }
  else {
-      result=-1;
+      readLength=target.remaining();
     }
+    result=read(target,readLength);
   }
  else {
     result=read(target,IoUtils.BUFFER_SIZE);

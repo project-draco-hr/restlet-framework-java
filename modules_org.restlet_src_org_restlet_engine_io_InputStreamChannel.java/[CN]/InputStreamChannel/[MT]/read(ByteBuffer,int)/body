@@ -1,11 +1,20 @@
 {
   int result=0;
-  if (this.buffer.length < IoUtils.BUFFER_SIZE) {
-    this.buffer=new byte[IoUtils.BUFFER_SIZE];
+  if (target.hasArray()) {
+    byte[] byteArray=target.array();
+    result=getInputStream().read(byteArray,target.position(),readLength);
+    if (result > 0) {
+      target.position(target.position() + result);
+    }
   }
-  result=getInputStream().read(this.buffer,0,Math.min(Math.min(bytesToRead,IoUtils.BUFFER_SIZE),target.remaining()));
-  if (result > 0) {
-    target.put(buffer,0,result);
+ else {
+    if (this.buffer.length < IoUtils.BUFFER_SIZE) {
+      this.buffer=new byte[IoUtils.BUFFER_SIZE];
+    }
+    result=getInputStream().read(this.buffer,0,Math.min(Math.min(readLength,IoUtils.BUFFER_SIZE),target.remaining()));
+    if (result > 0) {
+      target.put(buffer,0,result);
+    }
   }
   return result;
 }
