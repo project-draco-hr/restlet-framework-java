@@ -9,10 +9,13 @@ synchronized (getLock()) {
     boolean fillEnded=false;
     boolean tryAgain=true;
     if (Context.getCurrentLogger().isLoggable(Level.FINEST)) {
-      Context.getCurrentLogger().log(Level.FINEST,"Processing buffer " + this);
+      Context.getCurrentLogger().log(Level.FINEST,"Beginning process of buffer " + this);
     }
     while (tryAgain && processor.canLoop(this,args)) {
       if (isDraining()) {
+        if (Context.getCurrentLogger().isLoggable(Level.FINEST)) {
+          Context.getCurrentLogger().log(Level.FINEST,"Draining buffer " + this);
+        }
         drained=0;
         if (hasRemaining() || processor.couldDrain(this,args)) {
           if (maxDrained <= 0) {
@@ -41,6 +44,9 @@ synchronized (getLock()) {
         }
       }
  else       if (isFilling()) {
+        if (Context.getCurrentLogger().isLoggable(Level.FINEST)) {
+          Context.getCurrentLogger().log(Level.FINEST,"Filling buffer " + this);
+        }
         filled=0;
         if (hasRemaining() && processor.couldFill(this,args)) {
           filled=processor.onFill(this,args);
@@ -73,6 +79,9 @@ synchronized (getLock()) {
     }
     if ((result == 0) && (!processor.couldFill(this,args) || fillEnded)) {
       result=-1;
+    }
+    if (Context.getCurrentLogger().isLoggable(Level.FINEST)) {
+      Context.getCurrentLogger().log(Level.FINEST,"Ending process of buffer " + this + ". Result: "+ result+ ", try again: "+ tryAgain+ ", can loop: "+ processor.canLoop(this,args));
     }
   }
   return result;
