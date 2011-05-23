@@ -2,7 +2,12 @@
   if (this.messageState != messageState) {
     this.messageState=messageState;
     if (getLogger().isLoggable(Level.FINEST)) {
-      getLogger().finest("New message state: " + messageState);
+      if (this instanceof OutboundWay) {
+        Context.getCurrentLogger().log(Level.FINER,"OutboundWay#setMessageState: " + messageState);
+      }
+ else {
+        Context.getCurrentLogger().log(Level.FINER,"InboundWay#setMessageState: " + messageState);
+      }
     }
   }
 }
