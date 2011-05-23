@@ -34,8 +34,16 @@ synchronized (getLock()) {
           }
         }
  else {
-          if (!lastFillFailed && couldFill()) {
-            beforeFill();
+          if (!lastFillFailed) {
+            if (couldFill()) {
+              beforeFill();
+            }
+ else             if (canCompact()) {
+              compact();
+            }
+ else {
+              tryAgain=false;
+            }
           }
  else {
             tryAgain=false;
