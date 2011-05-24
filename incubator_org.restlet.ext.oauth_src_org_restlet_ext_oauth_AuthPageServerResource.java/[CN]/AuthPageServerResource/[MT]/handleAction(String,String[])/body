@@ -25,10 +25,10 @@
   if (user == null) {
     setStatus(Status.CLIENT_ERROR_NOT_FOUND,"Can't find User id : " + session.getScopeOwner());
   }
-  user.revokeScopes();
+  user.revokeRoles();
   for (  String s : scopes) {
     getLogger().info("Adding scope = " + s + " to user = "+ id);
-    user.addScope(s,"");
+    user.addRole(OAuthUtils.scopeToRole(s),"");
   }
   String state=session.getState();
   if (state != null && state.length() > 0) {

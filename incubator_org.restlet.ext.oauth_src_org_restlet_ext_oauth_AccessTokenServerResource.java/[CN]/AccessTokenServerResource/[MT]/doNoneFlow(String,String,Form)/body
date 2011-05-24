@@ -7,11 +7,11 @@
   }
   if (!client.containsUser(AUTONOMOUS_USER))   client.createUser(AUTONOMOUS_USER);
   AuthenticatedUser user=client.findUser(AUTONOMOUS_USER);
-  String[] scopes=parseScope(params.getFirstValue(SCOPE));
-  for (  String scope : scopes) {
-    getLogger().info("Requested scopes none flow = " + scope);
-    user.addScope(scope,"");
-    getLogger().info("Adding scope = " + scope + " to auto user");
+  List<Role> roles=OAuthUtils.scopesToRole(params.getFirstValue(SCOPE));
+  for (  Role r : roles) {
+    getLogger().info("Requested scopes none flow = " + roles);
+    user.addRole(r,"");
+    getLogger().info("Adding scope = " + r.getName() + " to auto user");
   }
   Token token=generator.generateToken(user,tokenTimeSec);
   JSONObject body=createJsonToken(token,null);

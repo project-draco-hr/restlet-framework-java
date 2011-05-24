@@ -50,7 +50,7 @@
         for (int i=0; i < scopes.length(); i++) {
           if (scopes.isNull(i))           continue;
           String scope=scopes.getString(i);
-          boolean granted=user.isGrantedScope(scope,owner);
+          boolean granted=user.isGrantedRole(OAuthUtils.scopeToRole(scope),owner);
           getLogger().info("Granted permission : " + scope + " = "+ granted);
           if (!granted) {
             error=OAuthError.INSUFFICIENT_SCOPE.name();

@@ -63,11 +63,11 @@
         String owner=scoped.getOwner(uri);
         if (owner != null && owner.length() > 0)         request.put("owner",owner);
         getLogger().info("Found owner = " + owner);
-        String[] scopes=scoped.getScope(uri,req.getMethod());
-        getLogger().info("Found scopes = " + scopes);
-        if (scopes != null && scopes.length > 0) {
+        List<Role> roles=scoped.getRoles(uri,req.getMethod());
+        getLogger().info("Found scopes = " + roles);
+        if (roles != null && roles.size() > 0) {
           JSONArray jArray=new JSONArray();
-          for (          String scope : scopes)           jArray.put(scope);
+          for (          Role r : roles)           jArray.put(OAuthUtils.roleToScope(r));
           request.put("scope",jArray);
         }
       }
