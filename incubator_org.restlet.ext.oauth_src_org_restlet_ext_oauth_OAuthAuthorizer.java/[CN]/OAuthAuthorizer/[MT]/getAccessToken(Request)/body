@@ -1,0 +1,24 @@
+{
+  String accessToken=null;
+  if (req.getChallengeResponse() != null) {
+    accessToken=req.getChallengeResponse().getRawValue();
+    getLogger().info("Found Authorization header" + accessToken);
+  }
+ else   if (accessToken == null || accessToken.length() == 0) {
+    getLogger().info("Didn't contain a Authorization header - checking query");
+    accessToken=req.getOriginalRef().getQueryAsForm().getFirstValue(OAuthServerResource.OAUTH_TOKEN);
+    if (accessToken == null || accessToken.length() == 0) {
+      if (req.getMethod() == Method.POST || req.getMethod() == Method.PUT || req.getMethod() == Method.DELETE) {
+        Representation r=req.getEntity();
+        if (r != null && MediaType.APPLICATION_WWW_FORM.equals(r.getMediaType())) {
+          Form form=new Form(r);
+          accessToken=form.getFirstValue(OAuthServerResource.OAUTH_TOKEN);
+          if (accessToken != null && accessToken.length() > 0) {
+            req.setEntity(form.getWebRepresentation());
+          }
+        }
+      }
+    }
+  }
+  return accessToken;
+}

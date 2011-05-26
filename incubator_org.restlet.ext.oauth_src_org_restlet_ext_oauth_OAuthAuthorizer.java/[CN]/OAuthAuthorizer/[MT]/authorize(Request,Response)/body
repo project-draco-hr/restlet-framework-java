@@ -1,26 +1,6 @@
 {
   getLogger().info("Checking for param access_token");
-  String accessToken=null;
-  if (req.getChallengeResponse() != null) {
-    accessToken=req.getChallengeResponse().getRawValue();
-    getLogger().info("Found Authorization header" + accessToken);
-  }
- else   if (accessToken == null || accessToken.length() == 0) {
-    getLogger().info("Didn't contain a Authorization header - checking query");
-    accessToken=req.getOriginalRef().getQueryAsForm().getFirstValue(OAuthServerResource.OAUTH_TOKEN);
-    if (accessToken == null || accessToken.length() == 0) {
-      if (req.getMethod() == Method.POST || req.getMethod() == Method.PUT || req.getMethod() == Method.DELETE) {
-        Representation r=req.getEntity();
-        if (r != null && MediaType.APPLICATION_WWW_FORM.equals(r.getMediaType())) {
-          Form form=new Form(r);
-          accessToken=form.getFirstValue(OAuthServerResource.OAUTH_TOKEN);
-          if (accessToken != null && accessToken.length() > 0) {
-            req.setEntity(form.getWebRepresentation());
-          }
-        }
-      }
-    }
-  }
+  String accessToken=getAccessToken(req);
   if (accessToken == null || accessToken.length() == 0) {
     ChallengeRequest cr=new ChallengeRequest(ChallengeScheme.HTTP_OAUTH,"oauth");
     Series<Parameter> parameters=new Form();
@@ -32,108 +12,40 @@
  else {
     getLogger().info("Found Access Token " + accessToken);
     ClientResource authResource=new CookieCopyClientResource(validateRef);
-    JSONObject request=new JSONObject();
+    JSONObject request;
     try {
-      Reference uri=req.getOriginalRef();
-      request.put("access_token",accessToken);
-      ScopedResource scoped=null;
-      getLogger().info("Looking for a scoped resource");
-      for (Restlet next=getNext(); next != null; ) {
-        if (next instanceof Finder) {
-          Finder f=(Finder)next;
-          ServerResource sr=f.find(req,resp);
-          if (sr instanceof ScopedResource) {
-            scoped=(ScopedResource)sr;
-          }
-          break;
-        }
- else         if (next instanceof Filter) {
-          next=((Filter)next).getNext();
-        }
- else         if (next instanceof Router) {
-          next=((Router)next).getNext(req,resp);
-        }
- else {
-          getLogger().warning("Unsupported class found in loop : " + next.getClass().getCanonicalName());
-          break;
-        }
-      }
-      getLogger().info("After scoped resource - " + scoped);
-      if (scoped != null) {
-        String owner=scoped.getOwner(uri);
-        if (owner != null && owner.length() > 0)         request.put("owner",owner);
-        getLogger().info("Found owner = " + owner);
-        List<Role> roles=scoped.getRoles(uri,req.getMethod());
-        getLogger().info("Found scopes = " + roles);
-        if (roles != null && roles.size() > 0) {
-          JSONArray jArray=new JSONArray();
-          for (          Role r : roles)           jArray.put(OAuthUtils.roleToScope(r));
-          request.put("scope",jArray);
-        }
-      }
-      request.put("uri",uri.getHierarchicalPart());
-      JsonRepresentation repr=new JsonRepresentation(request);
-      StringRepresentation sr=new StringRepresentation(request.toString());
-      sr.setCharacterSet(repr.getCharacterSet());
-      repr.setSize(sr.getSize());
+      request=createValidationRequest(accessToken,req);
+      JsonRepresentation repr=this.createJsonRepresentation(request);
       getLogger().info("Posting to validator... json = " + request);
       Representation r=authResource.post(repr);
       getLogger().info("After posting to validator...");
       repr.release();
-      sr.release();
       getLogger().info("Got Respose from auth resource OK " + r.getClass().getCanonicalName());
       JsonRepresentation returned=new JsonRepresentation(r);
       JSONObject response=returned.getJsonObject();
       boolean authenticated=response.getBoolean("authenticated");
-      if (response.has("tokenOwner")) {
-        String tokenOwner=response.getString("tokenOwner");
-        getLogger().info("User " + tokenOwner + " is accessing : "+ req.getOriginalRef());
-        User user=new User(tokenOwner,accessToken);
-        req.getClientInfo().setUser(user);
-        req.getClientInfo().setAuthenticated(true);
-      }
+      if (response.has("tokenOwner"))       this.setUser(req,response,accessToken);
       String error=null;
-      if (response.has("error")) {
-        error=response.getString("error");
-      }
+      if (response.has("error"))       error=response.getString("error");
       getLogger().info("In Auth Filer -> " + authenticated);
       returned.release();
       r.release();
       authResource.release();
       if (authenticated)       return true;
- else       if (error != null && error.length() > 0) {
-        ChallengeRequest cr=new ChallengeRequest(ChallengeScheme.HTTP_OAUTH,"oauth");
-        Series<Parameter> parameters=new Form();
-        parameters.add("error",error);
-        OAuthError code=OAuthError.valueOf(error);
-switch (code) {
-case INVALID_REQUEST:
-          resp.setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
-        break;
-case INVALID_TOKEN:
-case EXPIRED_TOKEN:
-      resp.setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
-    break;
-case INSUFFICIENT_SCOPE:
-  resp.setStatus(Status.CLIENT_ERROR_FORBIDDEN);
-break;
-}
-cr.setParameters(parameters);
-resp.getChallengeRequests().add(cr);
-}
-}
- catch (JSONException e) {
-e.printStackTrace();
-}
-catch (IOException e) {
-e.printStackTrace();
-}
+      handleError(error,resp);
+    }
+ catch (    JSONException e) {
+      e.printStackTrace();
+    }
+catch (    IOException e) {
+      e.printStackTrace();
+    }
  finally {
-if (authResource != null) {
-authResource.getResponse().release();
-authResource.release();
-}
-}
-}
-return false;
+      if (authResource != null) {
+        authResource.getResponse().release();
+        authResource.release();
+      }
+    }
+  }
+  return false;
 }
