@@ -1,18 +1,16 @@
 {
-  int result=0;
-  if (!isBlocking()) {
+  int readLength=0;
+  if (isBlocking()) {
+    readLength=IoUtils.BUFFER_SIZE;
+  }
+ else {
     int available=getInputStream().available();
-    int readLength=0;
     if (available > 0) {
       readLength=Math.min(available,target.remaining());
     }
  else {
       readLength=target.remaining();
     }
-    result=read(target,readLength);
   }
- else {
-    result=read(target,IoUtils.BUFFER_SIZE);
-  }
-  return result;
+  return read(target,readLength);
 }
