@@ -65,7 +65,7 @@ Form form=new Form();
 form.add(OAuthServerResource.RESPONSE_TYPE,OAuthServerResource.ResponseType.code.name());
 form.add(OAuthServerResource.CLIENT_ID,params.getClientId());
 form.add(OAuthServerResource.REDIR_URI,redirectUri);
-form.add(OAuthServerResource.SCOPE,OAuthUtils.rolesToScope(params.getRoles()));
+form.add(OAuthServerResource.SCOPE,Scopes.toScope(params.getRoles()));
 try {
 form.encode();
 }
@@ -103,7 +103,7 @@ try {
 Representation input=form.getWebRepresentation();
 Representation body=tokenResource.post(input);
 if (tokenResource.getStatus().isSuccess()) {
-OAuthUser authUser=OAuthUtils.handleSuccessResponse(body);
+OAuthUser authUser=OAuthUser.createJson(body);
 if (authUser != null) {
 request.getClientInfo().setUser(authUser);
 request.getClientInfo().setAuthenticated(true);

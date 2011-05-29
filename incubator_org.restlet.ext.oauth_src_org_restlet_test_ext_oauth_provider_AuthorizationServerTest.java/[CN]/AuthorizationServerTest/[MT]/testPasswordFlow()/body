@@ -1,5 +1,5 @@
 {
-  OAuthUser user=OAuthFlows.doFlow(client.getOauthParameters(),null,null,OAuthTestApplication.TEST_USER,OAuthTestApplication.TEST_PASS,null,Flow.PASSWORD);
+  OAuthUser user=Flow.PASSWORD.execute(client.getOauthParameters(),null,null,OAuthTestApplication.TEST_USER,OAuthTestApplication.TEST_PASS,null);
   assertNotNull(user);
   Reference ref=new Reference(prot + "://localhost:" + serverPort+ "/server/protected");
   ref.addQueryParameter("oauth_token",user.getAccessToken());
@@ -11,13 +11,13 @@
   assertEquals("Response content type test",r.getMediaType(),MediaType.TEXT_HTML);
   cr.release();
   try {
-    user=OAuthFlows.doFlow(client.getOauthParameters(),null,null,"somewrong",OAuthTestApplication.TEST_PASS,null,Flow.PASSWORD);
+    user=Flow.PASSWORD.execute(client.getOauthParameters(),null,null,"somewrong",OAuthTestApplication.TEST_PASS,null);
   }
  catch (  ResourceException re) {
     assertEquals(Status.CLIENT_ERROR_BAD_REQUEST,re.getStatus());
   }
   try {
-    user=OAuthFlows.doFlow(client.getOauthParameters(),null,null,OAuthTestApplication.TEST_USER,"somewrong",null,Flow.PASSWORD);
+    user=Flow.PASSWORD.execute(client.getOauthParameters(),null,null,OAuthTestApplication.TEST_USER,"somewrong",null);
   }
  catch (  ResourceException re) {
     assertEquals(Status.CLIENT_ERROR_FORBIDDEN,re.getStatus());

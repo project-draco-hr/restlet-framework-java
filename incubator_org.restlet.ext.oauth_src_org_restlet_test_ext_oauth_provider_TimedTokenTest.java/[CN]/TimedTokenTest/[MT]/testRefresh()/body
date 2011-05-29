@@ -1,11 +1,11 @@
 {
   OAuthUser user=client.getUser();
   assertNotNull(user);
-  OAuthUser refreshed=OAuthFlows.doFlow(client.getOauthParameters(),null,null,null,null,client.getUser().getRefreshToken(),Flow.REFRESH);
+  OAuthUser refreshed=Flow.REFRESH.execute(client.getOauthParameters(),null,null,null,null,client.getUser().getRefreshToken());
   assertNotNull(user);
   String wrongToken=refreshed.getAccessToken();
   assertNotNull(wrongToken);
-  refreshed=OAuthFlows.doFlow(client.getOauthParameters(),null,null,null,null,client.getUser().getRefreshToken(),Flow.REFRESH);
+  refreshed=Flow.REFRESH.execute(client.getOauthParameters(),null,null,null,null,client.getUser().getRefreshToken());
   String newToken=refreshed.getAccessToken();
   assertNotNull(newToken);
   Reference ref=new Reference(prot + "://localhost:" + serverPort+ "/server/protected");

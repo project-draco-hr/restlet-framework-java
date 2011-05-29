@@ -1,8 +1,8 @@
 {
   String callbackUri=prot + "://localhost:" + serverPort+ "/";
   OAuthParameters right=client.getOauthParameters();
-  OAuthParameters wrong=new OAuthParameters(right.getClientId(),right.getClientSecret(),right.getBaseRef().toString(),OAuthUtils.scopesToRole("one two"));
-  OAuthUser user=OAuthFlows.doFlow(wrong,callbackUri,null,null,null,null,Flow.USERAGENT);
+  OAuthParameters wrong=new OAuthParameters(right.getClientId(),right.getClientSecret(),right.getBaseRef().toString(),Scopes.toRoles("one two"));
+  OAuthUser user=Flow.USERAGENT.execute(wrong,callbackUri,null,null,null,null);
   assertNotNull(user);
   Reference ref=new Reference(prot + "://localhost:" + serverPort+ "/server/scoped");
   ref.addQueryParameter("oauth_token",user.getAccessToken());

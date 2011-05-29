@@ -1,8 +1,8 @@
 {
   String callbackUri=prot + "://localhost:" + serverPort+ "/";
   String baseRef=prot + "://localhost:" + serverPort+ "/combo/";
-  OAuthParameters params=new OAuthParameters("1234567890","1234567890",baseRef,OAuthUtils.scopesToRole("foo bar"));
-  OAuthUser user=OAuthFlows.doFlow(params,callbackUri,null,null,null,null,Flow.USERAGENT);
+  OAuthParameters params=new OAuthParameters("1234567890","1234567890",baseRef,Scopes.toRoles("foo bar"));
+  OAuthUser user=Flow.USERAGENT.execute(params,callbackUri,null,null,null,null);
   assertNotNull(user);
   Reference ref=new Reference(prot + "://localhost:" + serverPort+ "/combo/protected");
   ref.addQueryParameter("oauth_token",user.getAccessToken());
