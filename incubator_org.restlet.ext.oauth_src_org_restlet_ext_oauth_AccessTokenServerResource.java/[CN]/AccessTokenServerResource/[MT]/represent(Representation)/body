@@ -21,15 +21,14 @@
       }
     }
   }
+  Representation toRet=null;
   if (clientId == null || clientId.length() == 0) {
-    sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter client_id is missing",null);
     setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
-    return new EmptyRepresentation();
+    return sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter client_id is missing",null);
   }
   if (clientSecret == null || clientSecret.length() == 0) {
-    sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter client_secret is missing",null);
     setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
-    return new EmptyRepresentation();
+    return sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter client_secret is missing",null);
   }
   try {
     GrantType type=Enum.valueOf(GrantType.class,typeString);
@@ -38,38 +37,38 @@
 switch (type) {
 case authorization_code:
         getLogger().info("doWebServerFlow() - flow");
-      doAuthCodeFlow(clientId,clientSecret,params);
+      toRet=doAuthCodeFlow(clientId,clientSecret,params);
     break;
 case password:
-  doPasswordFlow(clientId,clientSecret,params);
+  toRet=doPasswordFlow(clientId,clientSecret,params);
 break;
 case assertion:
 sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Assertion flow not supported",null);
 setStatus(Status.SERVER_ERROR_NOT_IMPLEMENTED);
 break;
 case refresh_token:
-doRefreshFlow(clientId,clientSecret,params);
+toRet=doRefreshFlow(clientId,clientSecret,params);
 break;
 case none:
-doNoneFlow(clientId,clientSecret,params);
+toRet=doNoneFlow(clientId,clientSecret,params);
 break;
 default :
-sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Flow not supported",null);
+toRet=sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Flow not supported",null);
 setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
 }
 }
  catch (IllegalArgumentException e) {
-sendError(OAuthError.INVALID_GRANT,e.getMessage(),null);
+toRet=sendError(OAuthError.INVALID_GRANT,e.getMessage(),null);
 setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
 }
 }
  catch (IllegalArgumentException iae) {
-sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Flow not supported",null);
+toRet=sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Flow not supported",null);
 setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
 }
 catch (NullPointerException npe) {
-sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Flow not supported",null);
+toRet=sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Flow not supported",null);
 setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
 }
-return getResponseEntity();
+return toRet;
 }

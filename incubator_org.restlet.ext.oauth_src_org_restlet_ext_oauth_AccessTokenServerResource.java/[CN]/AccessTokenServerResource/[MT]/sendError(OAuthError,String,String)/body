@@ -8,10 +8,10 @@
     if (errorUri != null && errorUri.length() > 0) {
       result.put(OAuthServerResource.ERROR_URI,errorUri);
     }
-    JsonRepresentation repr=new JsonRepresentation(result);
-    getResponse().setEntity(repr);
+    return new JsonStringRepresentation(result);
   }
  catch (  JSONException e) {
     getLogger().log(Level.WARNING,"Error while sending OAuth error.",e);
   }
+  return null;
 }

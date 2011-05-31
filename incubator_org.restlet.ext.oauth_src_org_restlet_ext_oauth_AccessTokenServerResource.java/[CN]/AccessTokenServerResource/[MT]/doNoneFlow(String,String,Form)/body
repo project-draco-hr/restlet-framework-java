@@ -1,9 +1,8 @@
 {
   Client client=validate(clientId,clientSecret);
   if (client == null) {
-    sendError(OAuthError.INVALID_CLIENT,"Client id verification failed.",null);
     setStatus(Status.CLIENT_ERROR_FORBIDDEN);
-    return;
+    return sendError(OAuthError.INVALID_CLIENT,"Client id verification failed.",null);
   }
   if (!client.containsUser(AUTONOMOUS_USER))   client.createUser(AUTONOMOUS_USER);
   AuthenticatedUser user=client.findUser(AUTONOMOUS_USER);
@@ -16,5 +15,5 @@
   Token token=generator.generateToken(user,tokenTimeSec);
   JSONObject body=createJsonToken(token,null);
   getResponse().setCacheDirectives(noStore);
-  getResponse().setEntity(new JsonRepresentation(body));
+  return new JsonStringRepresentation(body);
 }

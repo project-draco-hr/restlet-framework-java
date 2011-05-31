@@ -1,15 +1,13 @@
 {
   String rToken=params.getFirstValue(REFRESH_TOKEN);
   if (rToken == null || rToken.length() == 0) {
-    sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter refresh_token is missing",null);
     setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
-    return;
+    return sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter refresh_token is missing",null);
   }
   Client client=validate(clientId,clientSecret);
   if (client == null) {
-    sendError(OAuthError.INVALID_CLIENT,"Client id verification failed.",null);
     setStatus(Status.CLIENT_ERROR_FORBIDDEN);
-    return;
+    return sendError(OAuthError.INVALID_CLIENT,"Client id verification failed.",null);
   }
   Token token=generator.findToken(rToken);
   if (token != null && (token instanceof ExpireToken)) {
@@ -18,15 +16,15 @@
       generator.refreshToken((ExpireToken)token);
       JSONObject body=createJsonToken(token,null);
       getResponse().setCacheDirectives(noStore);
-      getResponse().setEntity(new JsonRepresentation(body));
+      return new JsonStringRepresentation(body);
     }
  else {
-      sendError(OAuthError.UNAUTHORIZED_CLIENT,"User does not match.",null);
       setStatus(Status.CLIENT_ERROR_FORBIDDEN);
+      return sendError(OAuthError.UNAUTHORIZED_CLIENT,"User does not match.",null);
     }
   }
  else {
-    sendError(OAuthError.INVALID_GRANT,"Refresh token.",null);
     setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
+    return sendError(OAuthError.INVALID_GRANT,"Refresh token.",null);
   }
 }
