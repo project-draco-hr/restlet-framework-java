@@ -26,6 +26,10 @@ setHeaderIndex(getHeaderIndex() + 1);
 getLineBuilder().append('\r');
 getLineBuilder().append('\n');
 if (getActualMessage().isEntityAvailable()) {
+ConnectorService connectorService=ConnectorHelper.getConnectorService();
+if (connectorService != null) {
+connectorService.afterSend(getActualMessage().getEntity());
+}
 setMessageState(MessageState.BODY);
 ReadableByteChannel rbc=getActualMessage().getEntity().getChannel();
 if (rbc instanceof FileChannel) {
