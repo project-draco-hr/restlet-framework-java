@@ -1,33 +1,19 @@
 {
   AbstractConnector result=null;
-  final SslContextFactory sslContextFactory=SslUtils.getSslContextFactory(this);
-  final String[] excludedCipherSuites=SslUtils.getDisabledCipherSuites(this);
+  SslContextFactory sslContextFactory=new SslContextFactory();
+  try {
+    org.restlet.ext.ssl.SslContextFactory restletSslContextFactory=org.restlet.ext.ssl.internal.SslUtils.getSslContextFactory(this);
+    sslContextFactory.setSslContext(restletSslContextFactory.createSslContext());
+  }
+ catch (  Exception e) {
+    getLogger().log(Level.WARNING,"Unable to create the Jetty SSL context factory",e);
+  }
 switch (getType()) {
 case 1:
-    SslSelectChannelConnector nioResult;
-  nioResult=new SslSelectChannelConnector(){
-    @Override protected SSLContext createSSLContext() throws Exception {
-      return sslContextFactory.createSslContext();
-    }
-  }
-;
-if (excludedCipherSuites != null) {
-  nioResult.setExcludeCipherSuites(excludedCipherSuites);
-}
-result=nioResult;
-break;
+    result=new SslSelectChannelConnector(sslContextFactory);
+  break;
 case 2:
-SslSocketConnector bioResult=new SslSocketConnector(){
-@Override protected SSLServerSocketFactory createFactory() throws Exception {
-final SSLContext sslContext=sslContextFactory.createSslContext();
-return sslContext.getServerSocketFactory();
-}
-}
-;
-if (excludedCipherSuites != null) {
-bioResult.setExcludeCipherSuites(excludedCipherSuites);
-}
-result=bioResult;
+result=new SslSocketConnector(sslContextFactory);
 break;
 }
 return result;
