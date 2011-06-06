@@ -18,11 +18,7 @@
       addHeader(HeaderConstants.HEADER_CONTENT_RANGE,RangeWriter.write(entity.getRange(),entity.getSize()),headers);
     }
     if (entity.getMediaType() != null) {
-      String contentType=entity.getMediaType().toString();
-      if ((entity.getMediaType().getParameters().getFirstValue("charset") == null) && (entity.getCharacterSet() != null)) {
-        contentType=contentType + "; charset=" + entity.getCharacterSet().getName();
-      }
-      addHeader(HeaderConstants.HEADER_CONTENT_TYPE,contentType,headers);
+      addHeader(HeaderConstants.HEADER_CONTENT_TYPE,ContentType.writeHeader(entity),headers);
     }
     if (entity.getExpirationDate() != null) {
       addHeader(HeaderConstants.HEADER_EXPIRES,DateWriter.write(entity.getExpirationDate()),headers);
