@@ -1,6 +1,6 @@
 {
   for (  MultiPartData data : getData()) {
-    outputStream.write(getBoundary().getBytes());
+    outputStream.write(("--" + getBoundary()).getBytes());
     HeaderUtils.writeCRLF(outputStream);
     if (MediaType.TEXT_PLAIN.equals(data.getMediaType())) {
       String line="Content-Disposition: form-data; name=\"" + data.getName() + "\"";
@@ -19,6 +19,6 @@
     data.getValue().write(outputStream);
     HeaderUtils.writeCRLF(outputStream);
   }
-  outputStream.write((getBoundary() + "--").getBytes());
+  outputStream.write(("--" + getBoundary() + "--").getBytes());
   HeaderUtils.writeCRLF(outputStream);
 }
