@@ -1,0 +1,23 @@
+{
+  for (  MultiPartData data : getData()) {
+    outputStream.write(getBoundary().getBytes());
+    HeaderUtils.writeCRLF(outputStream);
+    if (MediaType.TEXT_PLAIN.equals(data.getMediaType())) {
+      String line="Content-Disposition: form-data; name=\"" + data.getName() + "\"";
+      outputStream.write(line.getBytes());
+      HeaderUtils.writeCRLF(outputStream);
+    }
+ else {
+      String line="Content-Disposition: form-data; name=\"" + data.getName() + "\"; filename=\""+ data.getFilename()+ "\"";
+      outputStream.write(line.getBytes());
+      HeaderUtils.writeCRLF(outputStream);
+      line="Content-Type: " + ContentType.writeHeader(data.getValue());
+      outputStream.write(line.getBytes());
+      HeaderUtils.writeCRLF(outputStream);
+    }
+    HeaderUtils.writeCRLF(outputStream);
+    data.getValue().write(outputStream);
+    HeaderUtils.writeCRLF(outputStream);
+  }
+  outputStream.write((getBoundary() + "--").getBytes());
+}
