@@ -6,9 +6,10 @@
   Configuration config=new Configuration();
   ContextTemplateLoader ctl=new ContextTemplateLoader(getContext(),"clap:///");
   config.setTemplateLoader(ctl);
+  getLogger().info("loading: " + authPage);
   TemplateRepresentation result=new TemplateRepresentation(authPage,config,MediaType.TEXT_HTML);
   HashMap<String,Object> data=new HashMap<String,Object>();
-  data.put("target",getRootRef() + "/auth_page");
+  data.put("target",getRootRef() + "/" + OAuthHelper.getAuthPage(getContext()));
   data.put("clientId",clientId);
   data.put("clientDescription",client.toString());
   data.put("clientCallback",client.getRedirectUri());

@@ -5,10 +5,11 @@
     handleAction(action,scopes);
     return new EmptyRepresentation();
   }
-  String authPage=(String)getContext().getAttributes().get("oauth_auth_page");
+  String authPage=OAuthHelper.getAuthPageTemplate(getContext());
+  getLogger().info("this is auth page: " + authPage);
   if (authPage != null && authPage.length() > 0) {
-    String sameScope=(String)getContext().getAttributes().get("oauth_auth_skip_same_scope");
-    if (sameScope != null && Boolean.parseBoolean(sameScope)) {
+    boolean sameScope=OAuthHelper.getAuthSkipApproved(getContext());
+    if (sameScope) {
       String[] scopesArray=getQuery().getValuesArray("scope");
       List<String> scopes=Arrays.asList(scopesArray);
       List<String> previousScopes=Arrays.asList(getQuery().getValuesArray("grantedScope"));
