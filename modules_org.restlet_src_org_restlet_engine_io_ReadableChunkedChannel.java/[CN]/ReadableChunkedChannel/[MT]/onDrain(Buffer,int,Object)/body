@@ -1,46 +1,53 @@
 {
   int result=0;
   ByteBuffer targetBuffer=(ByteBuffer)args[0];
-  int before=buffer.remaining();
-  if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
-    Context.getCurrentLogger().log(Level.FINER,"Chunk state: " + getChunkState());
-  }
+  boolean doLoop=true;
+  while (doLoop) {
+    if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
+      Context.getCurrentLogger().log(Level.FINER,"Chunk state: " + getChunkState());
+    }
+    System.out.println("onDrain " + getChunkState());
 switch (getChunkState()) {
 case SIZE:
-    setLineBuilderState(buffer.drain(getLineBuilder(),getLineBuilderState()));
-  if (getLineBuilderState() == BufferState.DRAINING) {
-    int length=getLineBuilder().length();
-    if (length == 0) {
-      throw new IOException("An empty chunk size line was detected");
-    }
-    int index=getLineBuilder().indexOf(";");
-    index=(index == -1) ? getLineBuilder().length() : index;
-    try {
-      setRemainingChunkSize(Integer.parseInt(getLineBuilder().substring(0,index).trim(),16));
-      if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
-        Context.getCurrentLogger().log(Level.FINER,"New chunk detected. Size: " + this.remainingChunkSize);
+      setLineBuilderState(buffer.drain(getLineBuilder(),getLineBuilderState()));
+    if (getLineBuilderState() == BufferState.DRAINING) {
+      int length=getLineBuilder().length();
+      if (length == 0) {
+        throw new IOException("An empty chunk size line was detected");
       }
-    }
- catch (    NumberFormatException ex) {
-      throw new IOException("\"" + getLineBuilder() + "\" has an invalid chunk size");
-    }
+      int index=getLineBuilder().indexOf(";");
+      index=(index == -1) ? getLineBuilder().length() : index;
+      try {
+        setRemainingChunkSize(Integer.parseInt(getLineBuilder().substring(0,index).trim(),16));
+        if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
+          Context.getCurrentLogger().log(Level.FINER,"New chunk detected. Size: " + this.remainingChunkSize);
+        }
+      }
+ catch (      NumberFormatException ex) {
+        throw new IOException("\"" + getLineBuilder() + "\" has an invalid chunk size");
+      }
  finally {
-      clearLineBuilder();
-    }
-    if (getRemainingChunkSize() == 0) {
-      setChunkState(ChunkState.TRAILER);
+        clearLineBuilder();
+      }
+      if (getRemainingChunkSize() == 0) {
+        setChunkState(ChunkState.TRAILER);
+      }
+ else {
+        setChunkState(ChunkState.DATA);
+      }
+      break;
     }
  else {
-      setChunkState(ChunkState.DATA);
+      doLoop=false;
     }
-    break;
-  }
-break;
+  break;
 case DATA:
+int read=0;
 if (getRemainingChunkSize() > 0) {
-result=super.onDrain(buffer,this.remainingChunkSize,targetBuffer);
-if (result > 0) {
-  setRemainingChunkSize(getRemainingChunkSize() - result);
+read=super.onDrain(buffer,this.remainingChunkSize,targetBuffer);
+result+=read;
+if (read > 0) {
+  setRemainingChunkSize(getRemainingChunkSize() - read);
 }
  else {
   if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
@@ -54,7 +61,14 @@ if (getLineBuilderState() == BufferState.DRAINING) {
 setChunkState(ChunkState.SIZE);
 clearLineBuilder();
 }
+ else {
+doLoop=false;
 }
+}
+ else {
+doLoop=false;
+}
+System.out.println(result);
 break;
 case TRAILER:
 setChunkState(ChunkState.END);
@@ -66,11 +80,16 @@ if (getLineBuilder().length() != 0) {
 Context.getCurrentLogger().log(Level.FINE,"The last chunk line had a non empty line");
 }
 setEndReached(true);
+result=-1;
+doLoop=false;
+}
+ else {
+doLoop=false;
 }
 break;
 }
-if (result != -1) {
-result=before - buffer.remaining();
+System.out.println(doLoop);
 }
+System.out.println(result + " " + getChunkState());
 return result;
 }
