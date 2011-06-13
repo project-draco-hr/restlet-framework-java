@@ -4,11 +4,16 @@
     InboundRequest request=(InboundRequest)response.getRequest();
     Connection<Server> connection=request.getConnection();
     if (response.getRequest().isExpectingResponse()) {
-      if (canHandle(connection,response)) {
-        connection.getOutboundWay().handle(response);
-      }
+      try {
+        if (canHandle(connection,response)) {
+          connection.getOutboundWay().handle(response);
+        }
  else {
-        getOutboundMessages().add(response);
+          getOutboundMessages().add(response);
+        }
+      }
+ catch (      IOException e) {
+        getLogger().log(Level.FINE,"Unable to handle outbound message",e);
       }
     }
  else {
