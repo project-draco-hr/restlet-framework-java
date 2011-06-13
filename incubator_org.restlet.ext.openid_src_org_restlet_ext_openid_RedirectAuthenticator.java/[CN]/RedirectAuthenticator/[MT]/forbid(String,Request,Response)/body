@@ -1,0 +1,10 @@
+{
+  if (errorResource == null)   response.setStatus(Status.CLIENT_ERROR_FORBIDDEN);
+ else {
+    getLogger().info("sending to error resource");
+    Reference ref=new Reference(errorResource);
+    if (origRef != null)     ref.addQueryParameter("origRef",origRef);
+    Redirector r=new Redirector(getContext(),ref.toString(),Redirector.MODE_SERVER_OUTBOUND);
+    r.handle(request,response);
+  }
+}

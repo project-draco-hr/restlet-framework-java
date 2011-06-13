@@ -1,0 +1,50 @@
+{
+  Logger l=Context.getCurrentLogger();
+  try {
+    ParameterList response=new ParameterList(params.getValuesMap());
+    l.info("response = " + response);
+    l.info("GET COOKIES");
+    String openidDisc=request.getCookies().getFirstValue(OpenIdConsumer.DESCRIPTOR_COOKIE);
+    l.info("openIdDiscServer - " + resp.getCookieSettings().getFirstValue("DESCRIPTOR_COOKIE"));
+    l.info("openIdDiscServerLength -" + resp.getCookieSettings().size());
+    l.info("openIdDiscClient - " + openidDisc);
+    l.info("openIdDiscClientLength -" + request.getCookies().size());
+    if (resp.getCookieSettings().size() > 0) {
+      for (      CookieSetting setting : resp.getCookieSettings()) {
+        l.info("CookieSetting: " + setting.getName() + setting.getFirst());
+      }
+    }
+    if (request.getCookies().size() > 0) {
+      for (      Cookie setting : request.getCookies()) {
+        l.info("Cookie: " + setting.getName() + setting.getFirst());
+      }
+    }
+    DiscoveryInformation discovered=(DiscoveryInformation)session.get(openidDisc);
+    l.info("discovered = " + discovered);
+    l.info("getOriginalRef = " + request.getOriginalRef());
+    ConsumerManager manager=getManager(discovered.getOPEndpoint().toString());
+    String redir=request.getResourceRef().getHostIdentifier() + request.getResourceRef().getPath() + "?return=true";
+    VerificationResult verification=manager.verify(redir,response,discovered);
+    Identifier verified=verification.getVerifiedId();
+    l.info("verified = " + verified);
+    if (verified != null) {
+      AuthSuccess authSuccess=(AuthSuccess)verification.getAuthResponse();
+      if (authSuccess.hasExtension(AxMessage.OPENID_NS_AX)) {
+        FetchResponse fetchResp=(FetchResponse)authSuccess.getExtension(AxMessage.OPENID_NS_AX);
+        MessageExtension ext=authSuccess.getExtension(AxMessage.OPENID_NS_AX);
+        if (ext instanceof FetchResponse) {
+          List<String> aliases=fetchResp.getAttributeAliases();
+          for (          String alias : aliases) {
+            String value=fetchResp.getAttributeValue(alias);
+            axResp.put(AX.valueOf(alias),value);
+          }
+        }
+      }
+      return verified;
+    }
+  }
+ catch (  OpenIDException e) {
+    l.log(Level.INFO,"",e);
+  }
+  return null;
+}
