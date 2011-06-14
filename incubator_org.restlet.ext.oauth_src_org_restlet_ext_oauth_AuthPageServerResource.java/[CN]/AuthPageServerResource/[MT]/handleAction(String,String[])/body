@@ -1,5 +1,6 @@
 {
   String sessionId=(String)getRequest().getAttributes().get(ClientCookieID);
+  if (sessionId == null)   sessionId=getCookies().getFirstValue(ClientCookieID);
   ConcurrentMap<String,Object> attribs=getContext().getAttributes();
   AuthSession session=(sessionId == null) ? null : (AuthSession)attribs.get(sessionId);
   if ("Reject".equals(action)) {
