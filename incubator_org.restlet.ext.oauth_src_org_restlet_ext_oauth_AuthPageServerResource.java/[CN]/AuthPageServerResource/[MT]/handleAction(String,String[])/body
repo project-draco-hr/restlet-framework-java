@@ -1,5 +1,5 @@
 {
-  String sessionId=getCookies().getFirstValue(ClientCookieID);
+  String sessionId=(String)getRequest().getAttributes().get(ClientCookieID);
   ConcurrentMap<String,Object> attribs=getContext().getAttributes();
   AuthSession session=(sessionId == null) ? null : (AuthSession)attribs.get(sessionId);
   if ("Reject".equals(action)) {
@@ -8,6 +8,7 @@
     getLogger().info("Rejected.");
     return;
   }
+  getLogger().info("Accepting scopes - in handleAction");
   Client client=session.getClient();
   String id=session.getScopeOwner();
   String redirUrl=session.getDynamicCallbackURI();

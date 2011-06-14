@@ -1,10 +1,10 @@
 {
   client.clearUser();
   assertNull(client.getToken());
+  ChallengeResponse chresp=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"bob","alice");
   ClientResource cr=new CookieCopyClientResource(prot + "://localhost:" + serverPort+ "/client/webclient");
+  cr.setChallengeResponse(chresp);
   Representation r=cr.get();
-  assertNotNull(r);
-  r=OpenIdFormFrowarder.handleFormRedirect(r,cr);
   assertNotNull(r);
   String text=r.getText();
   assertEquals("Response text test",text,"TestSuccessful");
