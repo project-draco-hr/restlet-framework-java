@@ -3,7 +3,7 @@
  else {
     getLogger().info("sending to error resource");
     Reference ref=new Reference(errorResource);
-    if (origRef != null)     ref.addQueryParameter("origRef",origRef);
+    request.getAttributes().put(OriginalRefAttribute,origRef);
     Redirector r=new Redirector(getContext(),ref.toString(),Redirector.MODE_SERVER_OUTBOUND);
     r.handle(request,response);
   }

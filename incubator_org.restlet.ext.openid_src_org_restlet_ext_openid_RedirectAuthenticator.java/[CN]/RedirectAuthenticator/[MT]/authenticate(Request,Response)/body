@@ -2,13 +2,18 @@
   Form f=request.getResourceRef().getQueryAsForm();
   User u=request.getClientInfo().getUser();
   String identifier=request.getCookies().getFirstValue(identifierCookie);
+  String origRef;
   if (identifier != null) {
     u=new User(identifier);
     request.getClientInfo().setUser(u);
     return true;
   }
   if (!request.getCookies().contains(origRefCookie)) {
+    origRef=request.getResourceRef().toString();
     response.getCookieSettings().add(origRefCookie,request.getResourceRef().toString());
+  }
+ else {
+    origRef=request.getCookies().getFirstValue(origRefCookie);
   }
   int verified=verifier.verify(request,response);
   getLogger().info("VERIFIED: " + verified);
@@ -16,7 +21,6 @@
     response.getCookieSettings().removeAll(identifierCookie);
     response.getCookieSettings().add(identifierCookie,request.getClientInfo().getUser().getIdentifier());
     handleUser(request.getClientInfo().getUser());
-    String origRef=request.getCookies().getFirstValue(origRefCookie);
     request.getCookies().removeAll(origRefCookie);
     response.getCookieSettings().removeAll(origRefCookie);
     if (origRef != null) {
@@ -26,7 +30,6 @@
   }
   response.getCookieSettings().removeAll(identifierCookie);
   if (verified == Verifier.RESULT_UNKNOWN || verified == Verifier.RESULT_INVALID) {
-    String origRef=request.getCookies().getFirstValue(origRefCookie);
     request.getCookies().removeAll(origRefCookie);
     response.getCookieSettings().removeAll(origRefCookie);
     forbid(origRef,request,response);

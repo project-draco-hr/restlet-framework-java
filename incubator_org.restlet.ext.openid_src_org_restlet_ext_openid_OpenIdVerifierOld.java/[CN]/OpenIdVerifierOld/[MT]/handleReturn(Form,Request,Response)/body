@@ -1,0 +1,29 @@
+{
+  JSONObject obj=null;
+  Logger l=Context.getCurrentLogger();
+  Map<AX,String> axResp=new HashMap<AX,String>();
+  Identifier i=verifyResponse(params,axResp,request,response);
+  if (i == null) {
+    l.info("Authentication Failed");
+    return obj;
+  }
+  l.info("Identifier = " + i.getIdentifier());
+  String id=i.getIdentifier();
+  if (id != null) {
+    obj=new JSONObject();
+    try {
+      obj.put("id",i.getIdentifier());
+      for (      AX s : axResp.keySet()) {
+        obj.put(s.toString(),axResp.get(s));
+      }
+    }
+ catch (    JSONException e) {
+      l.log(Level.WARNING,"Failed to get the ID!",e);
+    }
+  }
+  response.getCookieSettings().remove(OpenIdConsumer.DESCRIPTOR_COOKIE);
+  CookieSetting disc=new CookieSetting(OpenIdConsumer.DESCRIPTOR_COOKIE,"");
+  disc.setMaxAge(0);
+  response.getCookieSettings().add(disc);
+  return obj;
+}
