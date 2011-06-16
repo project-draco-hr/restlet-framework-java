@@ -1,0 +1,17 @@
+{
+  String redirUri=session.getDynamicCallbackURI();
+  Reference cb=new Reference(redirUri);
+  cb.addQueryParameter("error",error.name());
+  if (state != null && state.length() > 0) {
+    cb.addQueryParameter("state",state);
+  }
+  if (description != null && description.length() > 0) {
+    cb.addQueryParameter("error_description",description);
+  }
+  if (errorUri != null && errorUri.length() > 0) {
+    cb.addQueryParameter("error_uri",errorUri);
+  }
+  redirectTemporary(cb.toString());
+  ConcurrentMap<String,Object> attribs=getContext().getAttributes();
+  attribs.remove(session.getId());
+}

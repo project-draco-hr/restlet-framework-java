@@ -1,0 +1,74 @@
+{
+  getLogger().info("Method = " + getMethod().getName());
+  getLogger().info("In request : " + getOriginalRef().toString());
+  Form params=new Form(input);
+  String typeString=params.getFirstValue(GRANT_TYPE);
+  getLogger().info("Token Service - In service type = " + typeString);
+  String clientId=params.getFirstValue(CLIENT_ID);
+  String clientSecret=params.getFirstValue(CLIENT_SECRET);
+  if (clientSecret == null || clientSecret.length() == 0) {
+    ChallengeResponse cr=getChallengeResponse();
+    if (ChallengeScheme.HTTP_BASIC.equals(cr.getScheme())) {
+      String basic=new String(Base64.decode(cr.getRawValue()));
+      int colon=basic.indexOf(':');
+      if (colon > -1) {
+        clientSecret=basic.substring(colon + 1);
+        getLogger().info("Found secret in BASIC Authentication : " + clientSecret);
+        if (colon > 0) {
+          clientId=basic.substring(0,colon);
+          getLogger().info("Found id in BASIC Authentication : " + clientId);
+        }
+      }
+    }
+  }
+  Representation toRet=null;
+  if (clientId == null || clientId.length() == 0) {
+    setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+    return sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter client_id is missing",null);
+  }
+  if (clientSecret == null || clientSecret.length() == 0) {
+    setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+    return sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter client_secret is missing",null);
+  }
+  try {
+    GrantType type=Enum.valueOf(GrantType.class,typeString);
+    getLogger().info("Found flow - " + type);
+    try {
+switch (type) {
+case authorization_code:
+        getLogger().info("doWebServerFlow() - flow");
+      toRet=doAuthCodeFlow(clientId,clientSecret,params);
+    break;
+case password:
+  toRet=doPasswordFlow(clientId,clientSecret,params);
+break;
+case assertion:
+sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Assertion flow not supported",null);
+setStatus(Status.SERVER_ERROR_NOT_IMPLEMENTED);
+break;
+case refresh_token:
+toRet=doRefreshFlow(clientId,clientSecret,params);
+break;
+case none:
+toRet=doNoneFlow(clientId,clientSecret,params);
+break;
+default :
+toRet=sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Flow not supported",null);
+setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+}
+}
+ catch (IllegalArgumentException e) {
+toRet=sendError(OAuthError.INVALID_GRANT,e.getMessage(),null);
+setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
+}
+}
+ catch (IllegalArgumentException iae) {
+toRet=sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Flow not supported",null);
+setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+}
+catch (NullPointerException npe) {
+toRet=sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Flow not supported",null);
+setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+}
+return toRet;
+}

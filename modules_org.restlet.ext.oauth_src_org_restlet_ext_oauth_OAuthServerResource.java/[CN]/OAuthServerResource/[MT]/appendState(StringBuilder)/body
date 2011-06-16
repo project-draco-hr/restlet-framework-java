@@ -1,0 +1,12 @@
+{
+  String sessionId=(String)getRequest().getAttributes().get(ClientCookieID);
+  if (sessionId == null)   sessionId=getCookies().getFirstValue(ClientCookieID);
+  ConcurrentMap<String,Object> attribs=getContext().getAttributes();
+  AuthSession session=(AuthSession)attribs.get(sessionId);
+  String state=session.getState();
+  if (state != null && state.length() > 0) {
+    location.append("&state=");
+    location.append(state);
+  }
+  session.reset();
+}

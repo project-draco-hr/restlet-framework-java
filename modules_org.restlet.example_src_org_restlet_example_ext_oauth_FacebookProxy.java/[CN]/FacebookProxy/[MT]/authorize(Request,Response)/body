@@ -1,0 +1,44 @@
+{
+  String myId=request.getCookies().getFirstValue(CookieID);
+  Logger log=getLogger();
+  log.info("In Authorize");
+  if (myId != null && myId.length() > 0) {
+    log.info("User known");
+    return true;
+  }
+ else {
+    User user=request.getClientInfo().getUser();
+    getLogger().info("User from ClientInfo = " + user);
+    boolean cont;
+    if (user == null) {
+      cont=super.authorize(request,response);
+      if (!cont)       return cont;
+      user=request.getClientInfo().getUser();
+      getLogger().info("User from ClientInfo2 = " + user);
+    }
+    String accessToken=OAuthUser.getToken(user);
+    getLogger().info("AccessToken from ClientInfo = " + accessToken);
+    Reference meRef=new Reference("me");
+    meRef.addQueryParameter(OAuthServerResource.ACCESS_TOKEN,accessToken);
+    ClientResource graphResource=new ClientResource(FB_GRAPH);
+    ClientResource meResource=graphResource.getChild(meRef);
+    JsonRepresentation meRepr=meResource.get(JsonRepresentation.class);
+    if (meResource.getResponse().getStatus().isSuccess()) {
+      JSONObject me;
+      try {
+        me=meRepr.getJsonObject();
+        String id=me.get("id").toString();
+        log.info("Your ID = " + id);
+        accessTokens.put(id,accessToken);
+        return true;
+      }
+ catch (      JSONException e) {
+        log.log(Level.WARNING,"Failed in parsing the me object.",e);
+      }
+    }
+    meRepr.release();
+    meResource.release();
+    graphResource.release();
+  }
+  return false;
+}

@@ -1,0 +1,26 @@
+{
+  Client client=validate(clientId,clientSecret);
+  if (client == null) {
+    setStatus(Status.CLIENT_ERROR_FORBIDDEN);
+    return sendError(OAuthError.INVALID_CLIENT,"Client id verification failed.",null);
+  }
+  String username=params.getFirstValue(USERNAME);
+  AuthenticatedUser user=null;
+  if (username == null || (user=client.findUser(username)) == null) {
+    setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+    return sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter username missing.",null);
+  }
+  String password=params.getFirstValue(PASSWORD);
+  if (password == null) {
+    setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+    return sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter password missing.",null);
+  }
+  if (!password.equals(user.getPassword())) {
+    setStatus(Status.CLIENT_ERROR_FORBIDDEN);
+    return sendError(OAuthError.INVALID_GRANT,"Password not correct.",null);
+  }
+  Token token=generator.generateToken(user,tokenTimeSec);
+  JSONObject body=createJsonToken(token,null);
+  getResponse().setCacheDirectives(noStore);
+  return new JsonStringRepresentation(body);
+}

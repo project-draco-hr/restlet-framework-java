@@ -1,0 +1,19 @@
+{
+  Client client=validate(clientId,clientSecret);
+  if (client == null) {
+    setStatus(Status.CLIENT_ERROR_FORBIDDEN);
+    return sendError(OAuthError.INVALID_CLIENT,"Client id verification failed.",null);
+  }
+  if (!client.containsUser(AUTONOMOUS_USER))   client.createUser(AUTONOMOUS_USER);
+  AuthenticatedUser user=client.findUser(AUTONOMOUS_USER);
+  List<Role> roles=Scopes.toRoles(params.getFirstValue(SCOPE));
+  for (  Role r : roles) {
+    getLogger().info("Requested scopes none flow = " + roles);
+    user.addRole(r,"");
+    getLogger().info("Adding scope = " + r.getName() + " to auto user");
+  }
+  Token token=generator.generateToken(user,tokenTimeSec);
+  JSONObject body=createJsonToken(token,null);
+  getResponse().setCacheDirectives(noStore);
+  return new JsonStringRepresentation(body);
+}

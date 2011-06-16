@@ -1,0 +1,21 @@
+{
+  getLogger().info("doGet()");
+  Form params=getQuery();
+  String clientId=params.getFirstValue(CLIENT_ID);
+  String sessionId=null;
+  if (session != null)   sessionId=session.getId();
+  if (clientId != null && clientId.length() > 0) {
+    try {
+      doServerFlow(flow,clientId,session);
+    }
+ catch (    Exception e) {
+      getLogger().log(Level.WARNING,"Error in execution.",e);
+      setStatus(Status.SERVER_ERROR_INTERNAL);
+      getLogger().log(Level.WARNING,"",e);
+    }
+  }
+ else {
+    sendError(sessionId,OAuthError.INVALID_REQUEST,params.getFirstValue(STATE),"No client_id parameter found.",null);
+    getLogger().info("Could not find client ID");
+  }
+}

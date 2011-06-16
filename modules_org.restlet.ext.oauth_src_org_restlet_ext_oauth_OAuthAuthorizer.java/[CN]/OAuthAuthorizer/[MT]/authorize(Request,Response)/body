@@ -1,0 +1,51 @@
+{
+  getLogger().info("Checking for param access_token");
+  String accessToken=getAccessToken(req);
+  if (accessToken == null || accessToken.length() == 0) {
+    ChallengeRequest cr=new ChallengeRequest(ChallengeScheme.HTTP_OAUTH,"oauth");
+    Series<Parameter> parameters=new Form();
+    parameters.add("error",OAuthError.INVALID_REQUEST.name());
+    cr.setParameters(parameters);
+    resp.getChallengeRequests().add(cr);
+    resp.setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+  }
+ else {
+    getLogger().info("Found Access Token " + accessToken);
+    ClientResource authResource=new CookieCopyClientResource(validateRef);
+    JSONObject request;
+    try {
+      request=createValidationRequest(accessToken,req);
+      Representation repr=new JsonStringRepresentation(request);
+      getLogger().info("Posting to validator... json = " + request);
+      Representation r=authResource.post(repr);
+      getLogger().info("After posting to validator...");
+      repr.release();
+      getLogger().info("Got Respose from auth resource OK " + r.getClass().getCanonicalName());
+      JsonRepresentation returned=new JsonRepresentation(r);
+      JSONObject response=returned.getJsonObject();
+      boolean authenticated=response.getBoolean("authenticated");
+      if (response.has("tokenOwner"))       this.setUser(req,response,accessToken);
+      String error=null;
+      if (response.has("error"))       error=response.getString("error");
+      getLogger().info("In Auth Filer -> " + authenticated);
+      returned.release();
+      r.release();
+      authResource.release();
+      if (authenticated)       return true;
+      handleError(error,resp);
+    }
+ catch (    JSONException e) {
+      e.printStackTrace();
+    }
+catch (    IOException e) {
+      e.printStackTrace();
+    }
+ finally {
+      if (authResource != null) {
+        authResource.getResponse().release();
+        authResource.release();
+      }
+    }
+  }
+  return false;
+}

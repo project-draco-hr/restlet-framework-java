@@ -1,0 +1,55 @@
+{
+  Boolean auth=false;
+  request.setCacheDirectives(no);
+  response.setCacheDirectives(no);
+  redirectUri=request.getResourceRef().toUrl().toString();
+  Form query=new Form(request.getOriginalRef().getQuery());
+  String code=query.getFirstValue("code");
+  getLogger().info("Incomming request query = " + query);
+  if (code == null) {
+    Form form=new Form();
+    form.add("type","web_server");
+    form.add("client_id",params.getClientId());
+    form.add("redirect_uri",redirectUri);
+    form.add("scope",Scopes.toScope(params.getRoles()));
+    try {
+      form.encode();
+    }
+ catch (    IOException ioe) {
+      getLogger().warning(ioe.getMessage());
+    }
+    String q=form.getQueryString();
+    getLogger().info("TEST query = " + q);
+    Reference redirRef=new Reference(params.getBaseRef(),params.getAuthorizePath(),q,null);
+    getLogger().info("Redirecting to : " + redirRef.toUri());
+    response.redirectSeeOther(redirRef);
+    getLogger().info("After Redirecting to : " + redirRef.toUri());
+  }
+ else {
+    getLogger().info("Came back after SNS code = " + code);
+    ClientResource graphResource=new ClientResource(params.getBaseRef());
+    ClientResource tokenResource=graphResource.getChild(params.getAccessTokenPath());
+    Form form=new Form();
+    form.add("type","web_server");
+    form.add("client_id",params.getClientId());
+    String redir=request.getResourceRef().getHostIdentifier() + request.getResourceRef().getPath();
+    form.add("redirect_uri",redir);
+    form.add("client_secret",params.getClientSecret());
+    form.add("code",code);
+    Representation body=tokenResource.post(form.getWebRepresentation());
+    if (tokenResource.getStatus().isSuccess()) {
+      Form answer=new Form(body);
+      getLogger().info("Got answer on AccessToken = " + answer.toString());
+      accessToken=answer.getFirstValue("access_token");
+      getLogger().info("AccessToken in changed OldOauthProxy = " + accessToken);
+      request.getClientInfo().setUser(new User(accessToken,accessToken.toCharArray()));
+      request.getClientInfo().setAuthenticated(true);
+      auth=true;
+    }
+    getLogger().info("Before graph release");
+    body.release();
+    tokenResource.release();
+    graphResource.release();
+  }
+  return auth;
+}

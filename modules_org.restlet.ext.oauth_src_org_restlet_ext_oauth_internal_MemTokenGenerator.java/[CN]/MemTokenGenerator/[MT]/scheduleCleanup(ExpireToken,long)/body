@@ -1,0 +1,12 @@
+{
+  Runnable r=new Runnable(){
+    public void run(){
+      String token=et.getToken();
+      tokenStore.remove(token);
+      et.expireToken();
+    }
+  }
+;
+  ScheduledFuture<?> future=timers.schedule(r,expire,TimeUnit.SECONDS);
+  et.setFuture(future);
+}

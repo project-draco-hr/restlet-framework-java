@@ -1,0 +1,123 @@
+{
+  Boolean auth=false;
+  request.setCacheDirectives(no);
+  String redirectUri=request.getResourceRef().toUrl().toString();
+  Form query=new Form(request.getOriginalRef().getQuery());
+  String error=query.getFirstValue(OAuthServerResource.ERROR);
+  if (error != null && error.length() > 0) {
+    Representation repr=new EmptyRepresentation();
+    String desc=query.getFirstValue(OAuthServerResource.ERROR_DESC);
+    String uri=query.getFirstValue(OAuthServerResource.ERROR_URI);
+    if (desc != null || uri != null) {
+      StringBuilder sb=new StringBuilder();
+      sb.append("<html><body><pre>");
+      sb.append("OAuth2 error detected.\n");
+      if (desc != null) {
+        sb.append("Error description : ").append(desc);
+      }
+      if (uri != null) {
+        sb.append("<a href=\"");
+        sb.append(uri);
+        sb.append("\">Error Description</a>");
+      }
+      sb.append("</pre></body></html>");
+      repr=new StringRepresentation(sb.toString(),MediaType.TEXT_HTML);
+    }
+    OAuthError ec=OAuthError.valueOf(error);
+switch (ec) {
+case INVALID_REQUEST:
+      response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,error);
+    response.setEntity(repr);
+  break;
+case INVALID_CLIENT:
+response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,error);
+response.setEntity(repr);
+break;
+case UNAUTHORIZED_CLIENT:
+response.setStatus(Status.CLIENT_ERROR_FORBIDDEN,error);
+response.setEntity(repr);
+break;
+case REDIRECT_URI_MISMATCH:
+response.setStatus(Status.CLIENT_ERROR_FORBIDDEN,error);
+response.setEntity(repr);
+break;
+case ACCESS_DENIED:
+response.setStatus(Status.CLIENT_ERROR_FORBIDDEN,error);
+response.setEntity(repr);
+break;
+case UNSUPPORTED_RESPONSE_TYPE:
+response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,error);
+response.setEntity(repr);
+break;
+case INVALID_SCOPE:
+response.setStatus(Status.CLIENT_ERROR_FORBIDDEN,error);
+response.setEntity(repr);
+break;
+default :
+getLogger().warning("Unhandled error response type. " + ec.name());
+}
+return false;
+}
+String code=query.getFirstValue(OAuthServerResource.CODE);
+getLogger().info("Incomming request query = " + query);
+if (code == null) {
+Form form=new Form();
+form.add(OAuthServerResource.RESPONSE_TYPE,OAuthServerResource.ResponseType.code.name());
+form.add(OAuthServerResource.CLIENT_ID,params.getClientId());
+form.add(OAuthServerResource.REDIR_URI,redirectUri);
+form.add(OAuthServerResource.SCOPE,Scopes.toScope(params.getRoles()));
+try {
+form.encode();
+}
+ catch (IOException ioe) {
+getLogger().warning(ioe.getMessage());
+}
+String q=form.getQueryString();
+Reference redirRef=new Reference(params.getBaseRef(),params.getAuthorizePath(),q,null);
+getLogger().info("Redirecting to : " + redirRef.toUri());
+response.setCacheDirectives(no);
+response.redirectTemporary(redirRef);
+getLogger().info("After Redirecting to : " + redirRef.toUri());
+}
+ else {
+getLogger().info("Came back after SNS code = " + code);
+ClientResource tokenResource=new CookieCopyClientResource(params.getBaseRef() + params.getAccessTokenPath());
+Form form=new Form();
+form.add(OAuthServerResource.GRANT_TYPE,OAuthServerResource.GrantType.authorization_code.name());
+String redir=request.getResourceRef().getHostIdentifier() + request.getResourceRef().getPath();
+form.add(OAuthServerResource.REDIR_URI,redir);
+if (basicSecret) {
+ChallengeResponse authentication=new ChallengeResponse(ChallengeScheme.HTTP_BASIC);
+authentication.setDigestAlgorithm("NONE");
+String basic=params.getClientId() + ':' + params.getClientSecret();
+authentication.setRawValue(Base64.encode(basic.getBytes(),false));
+tokenResource.setChallengeResponse(authentication);
+}
+ else {
+form.add(OAuthServerResource.CLIENT_ID,params.getClientId());
+form.add(OAuthServerResource.CLIENT_SECRET,params.getClientSecret());
+}
+form.add(OAuthServerResource.CODE,code);
+getLogger().info("Sending access form : " + form.getQueryString() + " to : "+ tokenResource.getReference());
+try {
+Representation input=form.getWebRepresentation();
+Representation body=tokenResource.post(input);
+if (tokenResource.getStatus().isSuccess()) {
+OAuthUser authUser=OAuthUser.createJson(body);
+if (authUser != null) {
+request.getClientInfo().setUser(authUser);
+request.getClientInfo().setAuthenticated(true);
+getLogger().info("storing to context = : " + getContext());
+auth=true;
+}
+}
+getLogger().info("Before sns release");
+body.release();
+}
+ catch (ResourceException re) {
+getLogger().warning("Could not find token resource.");
+}
+tokenResource.release();
+}
+return auth;
+}

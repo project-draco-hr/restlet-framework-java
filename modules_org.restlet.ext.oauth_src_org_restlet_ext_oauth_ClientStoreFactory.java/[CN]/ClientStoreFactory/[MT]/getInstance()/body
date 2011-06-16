@@ -1,0 +1,35 @@
+{
+  if (log == null) {
+    log=Context.getCurrentLogger();
+  }
+  if (store == null) {
+    Class<?>[] classTypes=new Class[params.length];
+    int i=0;
+    for (    Object o : params) {
+      classTypes[i++]=o.getClass();
+    }
+    try {
+      Constructor<? extends ClientStore<?>> c=defaultImpl.getConstructor(classTypes);
+      store=c.newInstance(params);
+    }
+ catch (    SecurityException e) {
+      log.log(Level.SEVERE,"Failed to initialize OAuth Data backend!",e);
+    }
+catch (    NoSuchMethodException e) {
+      log.log(Level.SEVERE,"Failed to initialize OAuth Data backend!",e);
+    }
+catch (    IllegalArgumentException e) {
+      log.log(Level.SEVERE,"Failed to initialize OAuth Data backend!",e);
+    }
+catch (    InstantiationException e) {
+      log.log(Level.SEVERE,"Failed to initialize OAuth Data backend!",e);
+    }
+catch (    IllegalAccessException e) {
+      log.log(Level.SEVERE,"Failed to initialize OAuth Data backend!",e);
+    }
+catch (    InvocationTargetException e) {
+      log.log(Level.SEVERE,"Failed to initialize OAuth Data backend!",e);
+    }
+  }
+  return store;
+}
