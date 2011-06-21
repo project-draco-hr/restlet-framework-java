@@ -1,0 +1,25 @@
+{
+  WadlServerResource wadl=null;
+  log.info("Looking for a wadl resource");
+  for (Restlet next=getNext(); next != null; ) {
+    if (next instanceof Finder) {
+      Finder f=(Finder)next;
+      ServerResource sr=f.find(request,response);
+      if (sr instanceof WadlServerResource) {
+        wadl=(WadlServerResource)sr;
+      }
+      break;
+    }
+ else     if (next instanceof Filter) {
+      next=((Filter)next).getNext();
+    }
+ else     if (next instanceof Router) {
+      next=((Router)next).getNext(request,response);
+    }
+ else {
+      getLogger().warning("Unsupported class found in loop : " + next.getClass().getCanonicalName());
+      break;
+    }
+  }
+  log.info("After wadl resource - " + wadl);
+}

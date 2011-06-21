@@ -41,31 +41,6 @@
     }
   }
  else {
-    getLogger().info("Base ref = " + getReference().getParentRef());
-    Reference ref=new Reference("riap://application/" + OAuthHelper.getLoginPage(getContext()));
-    getLogger().info("OAuth2 session = " + session);
-    if (session == null) {
-      session=new AuthSession(getContext().getAttributes(),new ScheduledThreadPoolExecutor(5));
-      CookieSetting cs=new CookieSetting(ClientCookieID,session.getId());
-      getCookieSettings().add(cs);
-      getLogger().info("Setting cookie - " + session.getId());
-    }
-    session.setClient(client);
-    session.setAuthFlow(flow);
-    if (!redirUri.equals(client.getRedirectUri())) {
-      session.setDynamicCallbackURI(redirUri);
-      getLogger().info("OAuth2 set dynamic callback = " + redirUri);
-    }
-    String state=getCookies().getFirstValue(STATE);
-    if (state != null && state.length() > 0)     session.setState(state);
-    String[] scopes=parseScope(params.getFirstValue(SCOPE));
-    session.setRequestedScope(scopes);
-    getLogger().info("Setting callback url after Authentication = " + getReference().getBaseRef());
-    Reference cb=new Reference(getReference().getBaseRef());
-    cb.addQueryParameter("internal",null);
-    ref.addQueryParameter("callback",cb.toString(true,false));
-    getResponse().setCacheDirectives(noStore);
-    Redirector dispatcher=new Redirector(getContext(),ref.toString(),Redirector.MODE_SERVER_OUTBOUND);
-    dispatcher.handle(getRequest(),getResponse());
+    setStatus(Status.CLIENT_ERROR_FORBIDDEN);
   }
 }

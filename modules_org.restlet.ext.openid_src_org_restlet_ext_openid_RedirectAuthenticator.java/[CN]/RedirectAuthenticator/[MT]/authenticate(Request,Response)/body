@@ -8,7 +8,7 @@
     request.getClientInfo().setUser(u);
     return true;
   }
-  if (!request.getCookies().contains(origRefCookie)) {
+  if (request.getCookies().getFirstValue(origRefCookie) == null) {
     origRef=request.getResourceRef().toString();
     response.getCookieSettings().add(origRefCookie,request.getResourceRef().toString());
   }
@@ -30,8 +30,8 @@
   }
   response.getCookieSettings().removeAll(identifierCookie);
   if (verified == Verifier.RESULT_UNKNOWN || verified == Verifier.RESULT_INVALID) {
-    request.getCookies().removeAll(origRefCookie);
-    response.getCookieSettings().removeAll(origRefCookie);
+    origRef=response.getCookieSettings().getFirstValue(origRefCookie);
+    if (origRef == null)     origRef=request.getCookies().getFirstValue(origRefCookie);
     forbid(origRef,request,response);
   }
   return false;
