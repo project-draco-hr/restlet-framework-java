@@ -42,7 +42,7 @@
       getLogger().info("Got answer on AccessToken = " + answer.toString());
       accessToken=answer.getFirstValue("access_token");
       getLogger().info("AccessToken in changed OldOauthProxy = " + accessToken);
-      request.getClientInfo().setUser(new User(accessToken,accessToken.toCharArray()));
+      request.getClientInfo().setUser(new OAuthUser(null,accessToken));
       request.getClientInfo().setAuthenticated(true);
       auth=true;
     }
@@ -51,5 +51,13 @@
     tokenResource.release();
     graphResource.release();
   }
-  return auth;
+  if (auth) {
+    return CONTINUE;
+  }
+ else {
+    if (response.getStatus().isSuccess() || response.getStatus().isServerError()) {
+      response.setStatus(Status.CLIENT_ERROR_FORBIDDEN);
+    }
+    return STOP;
+  }
 }
