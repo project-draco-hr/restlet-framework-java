@@ -62,7 +62,7 @@ String code=query.getFirstValue(OAuthServerResource.CODE);
 getLogger().info("Incomming request query = " + query);
 if (code == null) {
 Form form=new Form();
-form.add(OAuthServerResource.RESPONSE_TYPE,OAuthServerResource.ResponseType.code.name());
+form.add(OAuthServerResource.RESPONSE_TYPE,ResponseType.CODE.name());
 form.add(OAuthServerResource.CLIENT_ID,params.getClientId());
 form.add(OAuthServerResource.REDIR_URI,redirectUri);
 form.add(OAuthServerResource.SCOPE,Scopes.toScope(params.getRoles()));
@@ -83,7 +83,7 @@ getLogger().info("After Redirecting to : " + redirRef.toUri());
 getLogger().info("Came back after SNS code = " + code);
 ClientResource tokenResource=new CookieCopyClientResource(params.getBaseRef() + params.getAccessTokenPath());
 Form form=new Form();
-form.add(OAuthServerResource.GRANT_TYPE,OAuthServerResource.GrantType.authorization_code.name());
+form.add(OAuthServerResource.GRANT_TYPE,GrantType.AUTHORIZATION_CODE.name());
 String redir=request.getResourceRef().getHostIdentifier() + request.getResourceRef().getPath();
 form.add(OAuthServerResource.REDIR_URI,redir);
 if (basicSecret) {
