@@ -1,0 +1,8 @@
+{
+  ScheduledThreadPoolExecutor pool=new ScheduledThreadPoolExecutor(5);
+  TokenGenerator generator=new MemTokenGenerator(pool);
+  AuthenticatedUser user=new AuthenticatedUserImpl("1234567890",null);
+  Token token=generator.generateToken(user,Token.UNLIMITED);
+  assertEquals("1234567890",token.getUser().getId());
+  assertTrue(token instanceof UnlimitedToken);
+}

@@ -1,0 +1,10 @@
+{
+  ScheduledThreadPoolExecutor pool=new ScheduledThreadPoolExecutor(5);
+  TokenGenerator generator=new MemTokenGenerator(pool);
+  AuthenticatedUser user=new AuthenticatedUserImpl("1234567890",null);
+  Set<String> codes=new HashSet<String>();
+  for (int i=0; i < 100; i++) {
+    codes.add(generator.generateCode(user));
+  }
+  assertEquals(100,codes.size());
+}

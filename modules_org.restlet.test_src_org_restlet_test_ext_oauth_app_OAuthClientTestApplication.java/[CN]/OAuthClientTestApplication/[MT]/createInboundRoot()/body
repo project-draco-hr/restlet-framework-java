@@ -1,0 +1,10 @@
+{
+  Context ctx=getContext();
+  Router router=new Router(ctx);
+  params=new OAuthParameters("1234567890","1234567890",AuthorizationServerTestCase.prot + "://localhost:" + AuthorizationServerTestCase.serverPort+ "/oauth/",Scopes.toRoles("foo bar"));
+  local=new OAuthProxy(params,getContext(),true);
+  local.setNext(DummyResource.class);
+  router.attach("/webclient",local);
+  router.attach("/unprotected",DummyResource.class);
+  return router;
+}

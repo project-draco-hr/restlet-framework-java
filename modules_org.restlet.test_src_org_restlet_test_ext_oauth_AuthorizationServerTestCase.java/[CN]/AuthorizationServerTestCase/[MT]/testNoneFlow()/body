@@ -1,0 +1,22 @@
+{
+  OAuthUser user=Flow.NONE.execute(client.getOauthParameters(),null,null,null,null,null);
+  assertNotNull(user);
+  Reference ref=new Reference(prot + "://localhost:" + serverPort+ "/server/protected");
+  ref.addQueryParameter("oauth_token",user.getAccessToken());
+  ClientResource cr=new ClientResource(ref);
+  Representation r=cr.get();
+  assertNotNull(r);
+  String text=r.getText();
+  assertTrue(text.startsWith("TestSuccessful"));
+  assertEquals("Response content type test",r.getMediaType(),MediaType.TEXT_HTML);
+  cr.release();
+  ref=new Reference(prot + "://localhost:" + serverPort+ "/server/scoped");
+  ref.addQueryParameter("oauth_token",client.getToken());
+  cr=new ClientResource(ref);
+  r=cr.get();
+  assertNotNull(r);
+  text=r.getText();
+  assertTrue(text.startsWith("TestSuccessful"));
+  assertEquals("Response content type test",r.getMediaType(),MediaType.TEXT_HTML);
+  cr.release();
+}
