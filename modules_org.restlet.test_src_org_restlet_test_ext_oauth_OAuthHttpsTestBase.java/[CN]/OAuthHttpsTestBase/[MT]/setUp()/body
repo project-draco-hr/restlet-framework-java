@@ -1,0 +1,42 @@
+{
+  super.setUp();
+  Engine engine=Engine.getInstance();
+  engine.getRegisteredServers().add(0,new org.restlet.ext.jetty.HttpsServerHelper(null));
+  System.setProperty("javax.net.ssl.trustStore",testKeystoreFile.getPath());
+  System.setProperty("javax.net.ssl.trustStoreType","JKS");
+  System.setProperty("javax.net.ssl.trustStorePassword","testtest");
+  try {
+    if (!testKeystoreFile.exists()) {
+      BioUtils.delete(this.testDir,true);
+      this.testDir.mkdir();
+      Response response=new Client(Protocol.CLAP).handle(new Request(Method.GET,"clap://class/org/restlet/test/engine/dummy.jks"));
+      if (response.getEntity() != null) {
+        OutputStream outputStream=new FileOutputStream(testKeystoreFile);
+        response.getEntity().write(outputStream);
+        outputStream.flush();
+        outputStream.close();
+      }
+ else {
+        throw new Exception("Unable to find the dummy.jks file in the classpath.");
+      }
+    }
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+  Server server;
+  component=new Component();
+  server=component.getServers().add(Protocol.HTTPS,serverPort);
+  configureSslServerParameters(server.getContext());
+  component.getClients().add(Protocol.HTTPS);
+  component.getClients().add(Protocol.RIAP);
+  component.getClients().add(Protocol.CLAP);
+  component.getDefaultHost().attach("/oauth",new OAuthTestApplication(tokenTimeout,"https",8080));
+  client=new OAuthClientTestApplication("https",8080);
+  component.getDefaultHost().attach("/client",client);
+  component.getDefaultHost().attach("/server",new OAuthProtectedTestApplication("https",8080));
+  component.getDefaultHost().attach("/combo",new OAuthComboTestApplication(prot,serverPort,0));
+  List<AuthenticatorHelper> authenticators=Engine.getInstance().getRegisteredAuthenticators();
+  authenticators.add(new OAuthHelper());
+  component.start();
+}
