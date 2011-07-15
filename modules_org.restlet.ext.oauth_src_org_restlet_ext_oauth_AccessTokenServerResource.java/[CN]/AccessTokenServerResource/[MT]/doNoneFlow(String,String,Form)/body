@@ -8,9 +8,9 @@
   AuthenticatedUser user=client.findUser(AUTONOMOUS_USER);
   List<Role> roles=Scopes.toRoles(params.getFirstValue(SCOPE));
   for (  Role r : roles) {
-    getLogger().info("Requested scopes none flow = " + roles);
+    getLogger().fine("Requested scopes none flow = " + roles);
     user.addRole(r,"");
-    getLogger().info("Adding scope = " + r.getName() + " to auto user");
+    getLogger().fine("Adding scope = " + r.getName() + " to auto user");
   }
   Token token=generator.generateToken(user,tokenTimeSec);
   JSONObject body=createJsonToken(token,null);

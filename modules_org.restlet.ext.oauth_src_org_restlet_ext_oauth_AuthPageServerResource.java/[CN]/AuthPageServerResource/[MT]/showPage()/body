@@ -6,9 +6,9 @@
     return new EmptyRepresentation();
   }
   String authPage=OAuthHelper.getAuthPageTemplate(getContext());
-  getLogger().info("this is auth page: " + authPage);
+  getLogger().fine("this is auth page: " + authPage);
   if (authPage != null && authPage.length() > 0) {
-    getLogger().info("loading authPage: " + authPage);
+    getLogger().fine("loading authPage: " + authPage);
     boolean sameScope=OAuthHelper.getAuthSkipApproved(getContext());
     if (sameScope) {
       String[] scopesArray=getQuery().getValuesArray("scope");
@@ -23,8 +23,8 @@
     getResponse().setCacheDirectives(noCache);
     return getPage(authPage);
   }
-  getLogger().info("accepting scopes since no authPage: " + authPage);
+  getLogger().fine("accepting scopes since no authPage: " + authPage);
   handleAction("Accept",getQuery().getValuesArray("scope"));
-  getLogger().info("action handled");
+  getLogger().fine("action handled");
   return new EmptyRepresentation();
 }

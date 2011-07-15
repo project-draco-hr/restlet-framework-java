@@ -1,5 +1,5 @@
 {
-  getLogger().info("In Validator resource");
+  getLogger().fine("In Validator resource");
   JSONObject response=new JSONObject();
   boolean authenticated=false;
   String lo=(String)getContext().getAttributes().get(LOCAL_ACCESS_ONLY);
@@ -23,14 +23,14 @@
     if (call.has("scope"))     scopes=call.getJSONArray("scope");
     String owner=null;
     if (call.has("owner"))     owner=call.getString("owner");
-    getLogger().info("In Validator resource - searching for token = " + token);
+    getLogger().fine("In Validator resource - searching for token = " + token);
     Token t=generator.findToken(token);
     if (t == null) {
       response.put("authenticated",authenticated);
       error=OAuthError.INVALID_TOKEN.name();
     }
  else {
-      getLogger().info("In Validator resource - got token = " + t);
+      getLogger().fine("In Validator resource - got token = " + t);
       if (t instanceof ExpireToken) {
         ExpireToken et=(ExpireToken)t;
         if (!token.equals(et.getToken())) {
@@ -38,9 +38,9 @@
           getLogger().warning("Should not use the refresh_token to sign!");
         }
       }
-      getLogger().info("Received uri = " + uri);
-      getLogger().info("Received scope = " + scopes);
-      getLogger().info("Received owner = " + owner);
+      getLogger().fine("Received uri = " + uri);
+      getLogger().fine("Received scope = " + scopes);
+      getLogger().fine("Received owner = " + owner);
       AuthenticatedUser user=t.getUser();
       authenticated=(user == null) ? false : true;
       if (!authenticated) {
@@ -51,7 +51,7 @@
           if (scopes.isNull(i))           continue;
           String scope=scopes.getString(i);
           boolean granted=user.isGrantedRole(Scopes.toRole(scope),owner);
-          getLogger().info("Granted permission : " + scope + " = "+ granted);
+          getLogger().fine("Granted permission : " + scope + " = "+ granted);
           if (!granted) {
             error=OAuthError.INSUFFICIENT_SCOPE.name();
             authenticated=false;

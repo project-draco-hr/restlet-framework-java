@@ -1,5 +1,5 @@
 {
-  getLogger().info("Checking for param access_token");
+  getLogger().fine("Checking for param access_token");
   String accessToken=getAccessToken(req);
   if (accessToken == null || accessToken.length() == 0) {
     ChallengeRequest cr=new ChallengeRequest(ChallengeScheme.HTTP_OAUTH,"oauth");
@@ -10,24 +10,24 @@
     resp.setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
   }
  else {
-    getLogger().info("Found Access Token " + accessToken);
+    getLogger().fine("Found Access Token " + accessToken);
     ClientResource authResource=new CookieCopyClientResource(validateRef);
     JSONObject request;
     try {
       request=createValidationRequest(accessToken,req);
       Representation repr=new JsonStringRepresentation(request);
-      getLogger().info("Posting to validator... json = " + request);
+      getLogger().fine("Posting to validator... json = " + request);
       Representation r=authResource.post(repr);
-      getLogger().info("After posting to validator...");
+      getLogger().fine("After posting to validator...");
       repr.release();
-      getLogger().info("Got Respose from auth resource OK " + r.getClass().getCanonicalName());
+      getLogger().fine("Got Respose from auth resource OK " + r.getClass().getCanonicalName());
       JsonRepresentation returned=new JsonRepresentation(r);
       JSONObject response=returned.getJsonObject();
       boolean authenticated=response.getBoolean("authenticated");
       if (response.has("tokenOwner"))       this.setUser(req,response,accessToken);
       String error=null;
       if (response.has("error"))       error=response.getString("error");
-      getLogger().info("In Auth Filer -> " + authenticated);
+      getLogger().fine("In Auth Filer -> " + authenticated);
       returned.release();
       r.release();
       authResource.release();

@@ -5,34 +5,34 @@
   if (session != null)   sessionId=session.getId();
   if (redirUri == null || redirUri.length() == 0) {
     sendError(sessionId,OAuthError.INVALID_REQUEST,params.getFirstValue(STATE),"No redirect_uri parameter found.",null);
-    getLogger().info("No mandatory redirect URI provided");
+    getLogger().warning("No mandatory redirect URI provided");
     return;
   }
   Client client=clients.findById(clientId);
-  getLogger().info("Client = " + client);
+  getLogger().fine("Client = " + client);
   if (client == null) {
     sendError(sessionId,OAuthError.INVALID_CLIENT,params.getFirstValue(STATE),"Need to register the client : " + clientId,null);
-    getLogger().info("Need to register the client : " + clientId);
+    getLogger().warning("Need to register the client : " + clientId);
     return;
   }
-  getLogger().info("Compare client redir:provided redir = " + client.getRedirectUri() + ":"+ redirUri);
+  getLogger().fine("Compare client redir:provided redir = " + client.getRedirectUri() + ":"+ redirUri);
   if (!redirUri.startsWith(client.getRedirectUri())) {
     sendError(sessionId,OAuthError.REDIRECT_URI_MISMATCH,params.getFirstValue(STATE),"Callback URI does not match.",null);
-    getLogger().info("Callback URI does not match.");
+    getLogger().warning("Callback URI does not match.");
     return;
   }
   if (session != null && session.getScopeOwner() != null) {
     if (flow.equals(ResponseType.TOKEN) || flow.equals(ResponseType.CODE)) {
       String[] requestedScopes=parseScope(params.getFirstValue(SCOPE));
       for (      String scope : requestedScopes) {
-        getLogger().info("Requested scopes = " + scope);
+        getLogger().fine("Requested scopes = " + scope);
       }
       session.setClient(client);
       session.setAuthFlow(flow);
       session.setRequestedScope(requestedScopes);
       if (!redirUri.equals(client.getRedirectUri())) {
         session.setDynamicCallbackURI(redirUri);
-        getLogger().info("OAuth2 set dynamic callback = " + redirUri);
+        getLogger().fine("OAuth2 set dynamic callback = " + redirUri);
       }
       String state=getCookies().getFirstValue(STATE);
       if (state != null && state.length() > 0)       session.setState(state);

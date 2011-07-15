@@ -2,10 +2,10 @@
   String accessToken=null;
   if (request.getChallengeResponse() != null) {
     accessToken=request.getChallengeResponse().getRawValue();
-    getLogger().info("Found Authorization header" + accessToken);
+    getLogger().fine("Found Authorization header" + accessToken);
   }
  else   if (accessToken == null || accessToken.length() == 0) {
-    getLogger().info("Didn't contain a Authorization header - checking query");
+    getLogger().fine("Didn't contain a Authorization header - checking query");
     accessToken=request.getOriginalRef().getQueryAsForm().getFirstValue(OAuthServerResource.OAUTH_TOKEN);
     if (accessToken == null || accessToken.length() == 0) {
       if (request.getMethod() == Method.POST || request.getMethod() == Method.PUT || request.getMethod() == Method.DELETE) {
