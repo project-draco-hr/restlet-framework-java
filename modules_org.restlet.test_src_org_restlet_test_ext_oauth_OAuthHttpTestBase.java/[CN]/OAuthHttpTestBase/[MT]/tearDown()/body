@@ -1,5 +1,14 @@
 {
   component.stop();
   component=null;
+  if (oauthcomp != null) {
+    oauthcomp.stop();
+    oauthcomp=null;
+  }
+  if (https) {
+    BioUtils.delete(this.testKeystoreFile);
+    BioUtils.delete(this.testDir,true);
+    org.restlet.engine.Engine.register();
+  }
   super.tearDown();
 }

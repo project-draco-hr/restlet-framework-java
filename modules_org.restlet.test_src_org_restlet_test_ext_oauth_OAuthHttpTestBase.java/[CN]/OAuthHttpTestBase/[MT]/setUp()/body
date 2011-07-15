@@ -1,16 +1,9 @@
 {
   super.setUp();
-  client=new OAuthClientTestApplication(prot,serverPort);
-  Server server=new Server(new Context(),Protocol.HTTP,serverPort);
-  component=new Component();
-  component.getServers().add(server);
-  component.getClients().add(Protocol.HTTP);
-  component.getClients().add(Protocol.RIAP);
-  component.getDefaultHost().attach("/oauth",new OAuthTestApplication(tokenTimeout));
-  component.getDefaultHost().attach("/client",client);
-  component.getDefaultHost().attach("/server",new OAuthProtectedTestApplication());
-  component.getDefaultHost().attach("/combo",new OAuthComboTestApplication(prot,serverPort,0));
+  setupConnectors(cc,sc);
+  if (https)   setupHttps();
   List<AuthenticatorHelper> authenticators=Engine.getInstance().getRegisteredAuthenticators();
   authenticators.add(new OAuthHelper());
-  component.start();
+  if (multiple)   setupMultiple();
+ else   setupSingle();
 }

@@ -1,0 +1,35 @@
+{
+  for (int i=0; i < numTimes; i++) {
+    int u=r.nextInt(5) + 1;
+    OAuthUser user=Flow.PASSWORD.execute(params,null,null,"user" + u,"pass" + u,null,myClient);
+    if (user == null) {
+      SingletonStore.I().addError();
+      SingletonStore.I().addRequest();
+      continue;
+    }
+    Reference ref=new Reference(getProt() + "://localhost:" + serverPort+ "/server/scoped/user"+ u);
+    ref.addQueryParameter("oauth_token",user.getAccessToken());
+    ClientResource cr=new ClientResource(ref);
+    cr.setNext(myClient);
+    Representation r=cr.get();
+    if (r == null) {
+      SingletonStore.I().addError();
+      SingletonStore.I().addRequest();
+      cr.release();
+      continue;
+    }
+    try {
+      String text=r.getText();
+      if (!text.endsWith("user" + u)) {
+        SingletonStore.I().addError();
+      }
+    }
+ catch (    Exception e) {
+      SingletonStore.I().addError();
+    }
+    SingletonStore.I().addRequest();
+    r.release();
+    cr.release();
+  }
+  SingletonStore.I().addRequest();
+}

@@ -1,0 +1,29 @@
+{
+  client=new OAuthClientTestApplication(getProt(),serverPort);
+  component=new Component();
+  if (https) {
+    Context c=component.getServers().add(Protocol.HTTPS,serverPort).getContext();
+    configureSslServerParameters(c);
+    component.getClients().add(Protocol.HTTPS);
+  }
+ else {
+    component.getServers().add(Protocol.HTTP,serverPort);
+  }
+  component.getClients().add(Protocol.HTTP);
+  component.getClients().add(Protocol.RIAP);
+  component.getDefaultHost().attach("/server",new OAuthMultipleUserProtectedTestApplication(getProt(),oauthServerPort));
+  oauthcomp=new Component();
+  if (https) {
+    Context c=oauthcomp.getServers().add(Protocol.HTTPS,oauthServerPort).getContext();
+    configureSslServerParameters(c);
+    oauthcomp.getClients().add(Protocol.HTTPS);
+  }
+ else {
+    oauthcomp.getServers().add(Protocol.HTTP,oauthServerPort);
+  }
+  oauthcomp.getClients().add(Protocol.HTTP);
+  oauthcomp.getClients().add(Protocol.RIAP);
+  oauthcomp.getDefaultHost().attach("/oauth",new OAuthMultipleUserTestApplication(0,getProt(),serverPort));
+  component.start();
+  oauthcomp.start();
+}
