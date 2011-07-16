@@ -1,19 +1,13 @@
 {
-  log.info("Getting consumer manager for - " + OPUri);
+  log.fine("Getting consumer manager for - " + OPUri);
   if (!managers.containsKey(OPUri)) {
-    log.info("Creating new consumer manager for - " + OPUri);
-    try {
-      ConsumerManager cm=new ConsumerManager();
-      cm.setConnectTimeout(30000);
-      cm.setSocketTimeout(30000);
-      cm.setFailedAssocExpire(0);
-      managers.put(OPUri,cm);
-      return cm;
-    }
- catch (    ConsumerException e) {
-      log.warning("Failed to create ConsumerManager for - " + OPUri);
-    }
-    return null;
+    log.fine("Creating new consumer manager for - " + OPUri);
+    ConsumerManager cm=new ConsumerManager();
+    cm.setConnectTimeout(30000);
+    cm.setSocketTimeout(30000);
+    cm.setFailedAssocExpire(0);
+    managers.put(OPUri,cm);
+    return cm;
   }
  else {
     return managers.get(OPUri);

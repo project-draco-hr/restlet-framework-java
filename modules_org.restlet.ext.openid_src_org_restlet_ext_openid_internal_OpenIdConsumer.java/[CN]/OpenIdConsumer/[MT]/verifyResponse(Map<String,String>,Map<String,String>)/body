@@ -1,35 +1,34 @@
 {
   try {
-    log.setLevel(Level.FINEST);
     Logger.getLogger("").setLevel(Level.FINEST);
     ParameterList response=new ParameterList(getQuery().getValuesMap());
-    log.info("response = " + response);
-    log.info("GET COOKIES");
+    log.fine("response = " + response);
+    log.fine("GET COOKIES");
     String openidDisc=getCookies().getFirstValue(DESCRIPTOR_COOKIE);
-    log.info("openIdDiscServer - " + getCookieSettings().getFirstValue("DESCRIPTOR_COOKIE"));
-    log.info("openIdDiscServerLength -" + getCookieSettings().size());
-    log.info("openIdDiscClient - " + openidDisc);
-    log.info("openIdDiscClientLength -" + getCookies().size());
+    log.fine("openIdDiscServer - " + getCookieSettings().getFirstValue("DESCRIPTOR_COOKIE"));
+    log.fine("openIdDiscServerLength -" + getCookieSettings().size());
+    log.fine("openIdDiscClient - " + openidDisc);
+    log.fine("openIdDiscClientLength -" + getCookies().size());
     if (getCookieSettings().size() > 0) {
       for (      CookieSetting setting : getCookieSettings()) {
-        log.info("CookieSetting: " + setting.getName() + setting.getFirst());
+        log.fine("CookieSetting: " + setting.getName() + setting.getFirst());
       }
     }
     if (getCookies().size() > 0) {
       for (      Cookie setting : getCookies()) {
-        log.info("Cookie: " + setting.getName() + setting.getFirst());
+        log.fine("Cookie: " + setting.getName() + setting.getFirst());
       }
     }
     DiscoveryInformation discovered=(DiscoveryInformation)session.get(openidDisc);
-    log.info("discovered = " + discovered);
-    log.info("getOriginalRef = " + getOriginalRef());
-    log.info("OpenID disc : " + discovered.getOPEndpoint());
-    log.info("OpenID orig ref : " + getOriginalRef());
+    log.fine("discovered = " + discovered);
+    log.fine("getOriginalRef = " + getOriginalRef());
+    log.fine("OpenID disc : " + discovered.getOPEndpoint());
+    log.fine("OpenID orig ref : " + getOriginalRef());
     ConsumerManager manager=getManager(discovered.getOPEndpoint().toString());
     VerificationResult verification=manager.verify(getOriginalRef().toString(),response,discovered);
-    log.info("verification = " + verification);
+    log.fine("verification = " + verification);
     Identifier verified=verification.getVerifiedId();
-    log.info("verified = " + verified);
+    log.fine("verified = " + verified);
     if (verified != null) {
       AuthSuccess authSuccess=(AuthSuccess)verification.getAuthResponse();
       if (authSuccess.hasExtension(AxMessage.OPENID_NS_AX)) {

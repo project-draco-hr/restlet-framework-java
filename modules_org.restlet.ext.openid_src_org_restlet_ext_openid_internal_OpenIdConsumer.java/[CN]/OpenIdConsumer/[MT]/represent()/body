@@ -1,17 +1,17 @@
 {
   Form params=getQuery();
-  log.info("OpenIDResource : " + params);
+  log.fine("OpenIDResource : " + params);
   String rc=params.getFirstValue("return");
   if (rc != null && rc.length() > 0) {
     Map<String,String> axRequired=new HashMap<String,String>();
     Map<String,String> axOptional=new HashMap<String,String>();
     Identifier i=verifyResponse(axRequired,axOptional);
     if (i == null) {
-      log.info("Authentication Failed");
+      log.warning("Authentication Failed");
       getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND);
       return new StringRepresentation("Authentication Failed");
     }
-    log.info("Identifier = " + i.getIdentifier());
+    log.fine("Identifier = " + i.getIdentifier());
     String id=i.getIdentifier();
     if (id != null) {
       JSONObject obj=new JSONObject();
@@ -53,7 +53,7 @@
     for (    Object o : discoveries) {
       if (o instanceof DiscoveryInformation) {
         DiscoveryInformation di=(DiscoveryInformation)o;
-        log.info("Found - " + di.getOPEndpoint());
+        log.fine("Found - " + di.getOPEndpoint());
         target=di.getOPEndpoint().toString();
       }
     }
@@ -62,9 +62,9 @@
     String sessionId=String.valueOf(System.identityHashCode(discovered));
     session.put(sessionId,discovered);
     getResponse().getCookieSettings().add(new CookieSetting(DESCRIPTOR_COOKIE,sessionId));
-    log.info("Setting DESCRIPTOR COOKIE");
+    log.fine("Setting DESCRIPTOR COOKIE");
     AuthRequest authReq=manager.authenticate(discovered,returnToUrl.toString());
-    log.info("OpenID - REALM = " + getReference().getBaseRef());
+    log.fine("OpenID - REALM = " + getReference().getBaseRef());
     authReq.setRealm(getReference().getBaseRef().toString());
     FetchRequest fetch=null;
     String[] optional=params.getValuesArray("ax_optional",true);
@@ -89,7 +89,7 @@
       authReq.addExtension(fetch);
     }
     if (!discovered.isVersion2()) {
-      log.info("REDIRECTING TEMPORARY");
+      log.fine("REDIRECTING TEMPORARY");
       redirectTemporary(authReq.getDestinationUrl(true));
       return null;
     }
@@ -97,7 +97,7 @@
       Form msg=new Form();
       for (      Object key : authReq.getParameterMap().keySet()) {
         msg.add(key.toString(),authReq.getParameterValue(key.toString()));
-        log.info("Adding to form - key " + key.toString() + " : value"+ authReq.getParameterValue(key.toString()));
+        log.fine("Adding to form - key " + key.toString() + " : value"+ authReq.getParameterValue(key.toString()));
       }
       return generateForm(authReq);
     }

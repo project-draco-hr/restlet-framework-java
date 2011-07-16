@@ -6,7 +6,7 @@
   for (  Object o : discoveries) {
     if (o instanceof DiscoveryInformation) {
       DiscoveryInformation di=(DiscoveryInformation)o;
-      l.info("Found - " + di.getOPEndpoint());
+      l.fine("Found - " + di.getOPEndpoint());
       target=di.getOPEndpoint().toString();
     }
   }
@@ -15,10 +15,9 @@
   String sessionId=String.valueOf(System.identityHashCode(discovered));
   session.put(sessionId,discovered);
   response.getCookieSettings().add(new CookieSetting(OpenIdConsumer.DESCRIPTOR_COOKIE,sessionId));
-  l.info("Setting DESCRIPTOR COOKIE");
   AuthRequest authReq=manager.authenticate(discovered,redir);
   String ref=request.getResourceRef().getBaseRef().toString();
-  l.info("OpenID - REALM = " + ref);
+  l.fine("OpenID - REALM = " + ref);
   authReq.setRealm(ref);
   FetchRequest fetch=null;
   for (  AX o : this.optionalAttributes) {
@@ -33,15 +32,15 @@
     authReq.addExtension(fetch);
   }
   if (!discovered.isVersion2()) {
-    l.info("OpenId - Http Redirect");
+    l.fine("OpenId - Http Redirect");
     response.redirectTemporary(authReq.getDestinationUrl(true));
   }
  else {
-    l.info("OpenId - HTML Form Redirect");
+    l.fine("OpenId - HTML Form Redirect");
     Form msg=new Form();
     for (    Object key : authReq.getParameterMap().keySet()) {
       msg.add(key.toString(),authReq.getParameterValue(key.toString()));
-      l.info("Adding to form - key " + key.toString() + " : value"+ authReq.getParameterValue(key.toString()));
+      l.fine("Adding to form - key " + key.toString() + " : value"+ authReq.getParameterValue(key.toString()));
     }
     response.setEntity(generateForm(authReq));
   }
