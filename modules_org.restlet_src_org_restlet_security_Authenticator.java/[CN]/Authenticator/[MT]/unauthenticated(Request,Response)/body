@@ -1,7 +1,7 @@
 {
-  if (isOptional()) {
-    response.setStatus(Status.SUCCESS_OK);
-    return CONTINUE;
+  boolean loggable=request.isLoggable() && getLogger().isLoggable(Level.FINE);
+  if (loggable) {
+    getLogger().log(Level.FINE,"The authentication failed for the identifer \"" + request.getChallengeResponse().getIdentifier() + "\" using the "+ request.getChallengeResponse().getScheme()+ " scheme.");
   }
   if (request.getClientInfo() != null) {
     request.getClientInfo().setAuthenticated(false);
