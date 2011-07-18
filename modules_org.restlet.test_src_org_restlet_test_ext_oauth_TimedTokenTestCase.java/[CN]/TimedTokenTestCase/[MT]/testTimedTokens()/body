@@ -3,6 +3,7 @@
   assertNull(client.getToken());
   ChallengeResponse chresp=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"bob","alice");
   ClientResource cr=new CookieCopyClientResource(getProt() + "://localhost:" + serverPort+ "/client/webclient");
+  cr.setNext(this.reqClient);
   cr.setChallengeResponse(chresp);
   Representation r=cr.get();
   assertNotNull(r);
@@ -16,6 +17,7 @@
   Reference ref=new Reference(getProt() + "://localhost:" + serverPort+ "/server/protected");
   ref.addQueryParameter("oauth_token",client.getToken());
   cr=new ClientResource(ref);
+  cr.setNext(this.reqClient);
   r=cr.get();
   assertNotNull(r);
   text=r.getText();
@@ -26,6 +28,7 @@
   assertNotNull(client.getToken());
   ref.addQueryParameter("oauth_token",client.getToken());
   cr=new ClientResource(ref);
+  cr.setNext(this.reqClient);
   try {
     r=cr.get();
   }

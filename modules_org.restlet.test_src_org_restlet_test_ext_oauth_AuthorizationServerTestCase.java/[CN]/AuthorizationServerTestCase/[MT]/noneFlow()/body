@@ -1,9 +1,10 @@
 {
-  OAuthUser user=Flow.NONE.execute(client.getOauthParameters(),null,null,null,null,null);
+  OAuthUser user=Flow.NONE.execute(client.getOauthParameters(),null,null,null,null,null,this.reqClient);
   assertNotNull(user);
   Reference ref=new Reference(getProt() + "://localhost:" + serverPort+ "/server/protected");
   ref.addQueryParameter("oauth_token",user.getAccessToken());
   ClientResource cr=new ClientResource(ref);
+  cr.setNext(this.reqClient);
   Representation r=cr.get();
   assertNotNull(r);
   String text=r.getText();
@@ -13,6 +14,7 @@
   ref=new Reference(getProt() + "://localhost:" + serverPort+ "/server/scoped");
   ref.addQueryParameter("oauth_token",user.getAccessToken());
   cr=new ClientResource(ref);
+  cr.setNext(this.reqClient);
   r=cr.get();
   assertNotNull(r);
   text=r.getText();

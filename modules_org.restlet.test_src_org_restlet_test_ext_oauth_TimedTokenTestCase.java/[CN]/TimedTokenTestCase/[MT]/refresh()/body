@@ -1,16 +1,17 @@
 {
   OAuthUser user=client.getUser();
   assertNotNull(user);
-  OAuthUser refreshed=Flow.REFRESH.execute(client.getOauthParameters(),null,null,null,null,client.getUser().getRefreshToken());
+  OAuthUser refreshed=Flow.REFRESH.execute(client.getOauthParameters(),null,null,null,null,client.getUser().getRefreshToken(),this.reqClient);
   assertNotNull(user);
   String wrongToken=refreshed.getAccessToken();
   assertNotNull(wrongToken);
-  refreshed=Flow.REFRESH.execute(client.getOauthParameters(),null,null,null,null,client.getUser().getRefreshToken());
+  refreshed=Flow.REFRESH.execute(client.getOauthParameters(),null,null,null,null,client.getUser().getRefreshToken(),this.reqClient);
   String newToken=refreshed.getAccessToken();
   assertNotNull(newToken);
   Reference ref=new Reference(getProt() + "://localhost:" + serverPort+ "/server/protected");
   ref.addQueryParameter("oauth_token",newToken);
   ClientResource cr=new ClientResource(ref);
+  cr.setNext(this.reqClient);
   Representation r=cr.get();
   assertNotNull(r);
   String text=r.getText();
@@ -20,6 +21,7 @@
   ref=new Reference(getProt() + "://localhost:" + serverPort+ "/server/protected");
   ref.addQueryParameter("oauth_token",wrongToken);
   cr=new ClientResource(ref);
+  cr.setNext(this.reqClient);
   try {
     r=cr.get();
   }

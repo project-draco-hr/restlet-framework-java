@@ -1,6 +1,7 @@
 {
   assertNull(client.getToken());
   ClientResource cr=new ClientResource(getProt() + "://localhost:" + serverPort+ "/client/webclient");
+  cr.setNext(this.reqClient);
   ChallengeResponse chresp=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"bob","alice");
   cr.setChallengeResponse(chresp);
   Representation r=cr.get();
@@ -11,6 +12,7 @@
   cr.release();
   Reference ref=new Reference(getProt() + "://localhost:" + serverPort+ "/server/protected");
   cr=new ClientResource(ref);
+  cr.setNext(this.reqClient);
   ChallengeResponse challengeResponse=new ChallengeResponse(ChallengeScheme.HTTP_OAUTH);
   challengeResponse.setRawValue(client.getToken());
   cr.setChallengeResponse(challengeResponse);
@@ -22,6 +24,7 @@
   cr.release();
   ref=new Reference(getProt() + "://localhost:" + serverPort+ "/server/protected");
   cr=new ClientResource(ref);
+  cr.setNext(this.reqClient);
   OAuthForm form=new OAuthForm(client.getToken());
   form.add("foo","bar");
   r=cr.post(form.getWebRepresentation());
@@ -33,6 +36,7 @@
   ref=new Reference(getProt() + "://localhost:" + serverPort+ "/server/protected");
   ref.addQueryParameter("oauth_token",client.getToken());
   cr=new ClientResource(ref);
+  cr.setNext(this.reqClient);
   r=cr.get();
   assertNotNull(r);
   text=r.getText();
