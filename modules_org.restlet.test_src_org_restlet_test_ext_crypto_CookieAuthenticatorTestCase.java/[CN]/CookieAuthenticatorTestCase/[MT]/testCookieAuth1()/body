@@ -1,0 +1,37 @@
+{
+  CookieGuardedApplication cga=new CookieGuardedApplication();
+  Component c=new Component();
+  c.getDefaultHost().attachDefault(cga);
+  ClientResource cr=new ClientResource("http://toto.com/");
+  cr.setNext(c);
+  try {
+    cr.get();
+    fail("A resource exception should have been thrown");
+  }
+ catch (  ResourceException re) {
+    assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED,re.getStatus());
+  }
+  ClientResource loginCr=cr.getChild("/login");
+  Form loginForm=new Form();
+  loginForm.add("login","scott");
+  loginForm.add("password","titi");
+  try {
+    loginCr.post(loginForm);
+    fail("A resource exception should have been thrown");
+  }
+ catch (  ResourceException re) {
+    assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED,re.getStatus());
+  }
+  loginForm.set("password","tiger");
+  loginCr.post(loginForm);
+  assertEquals(Status.SUCCESS_OK,loginCr.getStatus());
+  CookieSetting cs=loginCr.getCookieSettings().getFirst("Credentials");
+  assertNotNull("No cookie credentials found",cs);
+  cr.getCookies().add(cs.getName(),cs.getValue());
+  assertEquals("Hello, world!",cr.get(String.class));
+  ClientResource logoutCr=cr.getChild("/logout");
+  logoutCr.get();
+  assertEquals(Status.SUCCESS_OK,logoutCr.getStatus());
+  cs=logoutCr.getCookieSettings().getFirst("Credentials");
+  assertEquals(0,cs.getMaxAge());
+}

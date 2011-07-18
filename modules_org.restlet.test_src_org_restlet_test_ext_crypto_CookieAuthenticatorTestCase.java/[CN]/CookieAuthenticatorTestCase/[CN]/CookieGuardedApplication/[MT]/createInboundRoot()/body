@@ -1,0 +1,14 @@
+{
+  CookieAuthenticator co=new CookieAuthenticator(getContext(),false,"My cookie realm","MyExtraSecretKey".getBytes());
+  MapVerifier mapVerifier=new MapVerifier();
+  mapVerifier.getLocalSecrets().put("scott","tiger".toCharArray());
+  co.setVerifier(mapVerifier);
+  Restlet hr=new Restlet(){
+    @Override public void handle(    Request request,    Response response){
+      response.setEntity("Hello, world!",MediaType.TEXT_PLAIN);
+    }
+  }
+;
+  co.setNext(hr);
+  return co;
+}

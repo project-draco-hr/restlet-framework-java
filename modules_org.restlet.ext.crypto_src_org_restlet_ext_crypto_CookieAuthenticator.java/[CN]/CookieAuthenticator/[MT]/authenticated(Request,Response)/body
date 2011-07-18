@@ -1,0 +1,11 @@
+{
+  try {
+    CookieSetting credentialsCookie=getCredentialsCookie(request,response);
+    credentialsCookie.setValue(formatCredentials(request.getChallengeResponse()));
+    credentialsCookie.setMaxAge(getMaxCookieAge());
+  }
+ catch (  GeneralSecurityException e) {
+    getLogger().log(Level.SEVERE,"Could not format credentials cookie",e);
+  }
+  return super.authenticated(request,response);
+}

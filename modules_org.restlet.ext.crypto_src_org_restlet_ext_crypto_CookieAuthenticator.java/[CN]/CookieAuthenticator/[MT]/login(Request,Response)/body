@@ -1,0 +1,8 @@
+{
+  Form form=new Form(request.getEntity());
+  Parameter identifier=form.getFirst(getIdentifierFormName());
+  Parameter secret=form.getFirst(getSecretFormName());
+  ChallengeResponse cr=new ChallengeResponse(getScheme(),identifier != null ? identifier.getValue() : null,secret != null ? secret.getValue() : null);
+  request.setChallengeResponse(cr);
+  attemptRedirect(request,response);
+}
