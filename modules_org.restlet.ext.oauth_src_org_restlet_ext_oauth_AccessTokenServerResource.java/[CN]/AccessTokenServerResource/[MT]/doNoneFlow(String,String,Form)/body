@@ -4,7 +4,9 @@
     setStatus(Status.CLIENT_ERROR_FORBIDDEN);
     return sendError(OAuthError.INVALID_CLIENT,"Client id verification failed.",null);
   }
-  if (!client.containsUser(AUTONOMOUS_USER))   client.createUser(AUTONOMOUS_USER);
+  if (!client.containsUser(AUTONOMOUS_USER)) {
+    client.createUser(AUTONOMOUS_USER);
+  }
   AuthenticatedUser user=client.findUser(AUTONOMOUS_USER);
   List<Role> roles=Scopes.toRoles(params.getFirstValue(SCOPE));
   for (  Role r : roles) {
@@ -12,7 +14,7 @@
     user.addRole(r,"");
     getLogger().fine("Adding scope = " + r.getName() + " to auto user");
   }
-  Token token=generator.generateToken(user,tokenTimeSec);
+  Token token=this.generator.generateToken(user,this.tokenTimeSec);
   JSONObject body=createJsonToken(token,null);
   getResponse().setCacheDirectives(noStore);
   return new JsonStringRepresentation(body);

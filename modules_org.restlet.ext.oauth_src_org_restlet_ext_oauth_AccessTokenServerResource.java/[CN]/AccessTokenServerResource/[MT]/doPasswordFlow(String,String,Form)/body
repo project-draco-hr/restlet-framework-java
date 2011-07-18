@@ -6,7 +6,7 @@
   }
   String username=params.getFirstValue(USERNAME);
   AuthenticatedUser user=null;
-  if (username == null || (user=client.findUser(username)) == null) {
+  if ((username == null) || ((user=client.findUser(username)) == null)) {
     setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
     return sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter username missing.",null);
   }
@@ -19,7 +19,7 @@
     setStatus(Status.CLIENT_ERROR_FORBIDDEN);
     return sendError(OAuthError.INVALID_GRANT,"Password not correct.",null);
   }
-  Token token=generator.generateToken(user,tokenTimeSec);
+  Token token=this.generator.generateToken(user,this.tokenTimeSec);
   JSONObject body=createJsonToken(token,null);
   getResponse().setCacheDirectives(noStore);
   return new JsonStringRepresentation(body);

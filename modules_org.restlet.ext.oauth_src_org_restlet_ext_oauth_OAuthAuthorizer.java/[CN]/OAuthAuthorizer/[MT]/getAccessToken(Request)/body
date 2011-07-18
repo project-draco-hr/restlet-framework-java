@@ -4,16 +4,16 @@
     accessToken=request.getChallengeResponse().getRawValue();
     getLogger().fine("Found Authorization header" + accessToken);
   }
- else   if (accessToken == null || accessToken.length() == 0) {
+ else   if ((accessToken == null) || (accessToken.length() == 0)) {
     getLogger().fine("Didn't contain a Authorization header - checking query");
     accessToken=request.getOriginalRef().getQueryAsForm().getFirstValue(OAuthServerResource.OAUTH_TOKEN);
-    if (accessToken == null || accessToken.length() == 0) {
-      if (request.getMethod() == Method.POST || request.getMethod() == Method.PUT || request.getMethod() == Method.DELETE) {
+    if ((accessToken == null) || (accessToken.length() == 0)) {
+      if ((request.getMethod() == Method.POST) || (request.getMethod() == Method.PUT) || (request.getMethod() == Method.DELETE)) {
         Representation r=request.getEntity();
-        if (r != null && MediaType.APPLICATION_WWW_FORM.equals(r.getMediaType())) {
+        if ((r != null) && MediaType.APPLICATION_WWW_FORM.equals(r.getMediaType())) {
           Form form=new Form(r);
           accessToken=form.getFirstValue(OAuthServerResource.OAUTH_TOKEN);
-          if (accessToken != null && accessToken.length() > 0) {
+          if ((accessToken != null) && (accessToken.length() > 0)) {
             request.setEntity(form.getWebRepresentation());
           }
         }

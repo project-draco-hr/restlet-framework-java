@@ -4,11 +4,11 @@
   String redirectUri=request.getResourceRef().toUrl().toString();
   Form query=new Form(request.getOriginalRef().getQuery());
   String error=query.getFirstValue(OAuthServerResource.ERROR);
-  if (error != null && error.length() > 0) {
+  if ((error != null) && (error.length() > 0)) {
     Representation repr=new EmptyRepresentation();
     String desc=query.getFirstValue(OAuthServerResource.ERROR_DESC);
     String uri=query.getFirstValue(OAuthServerResource.ERROR_URI);
-    if (desc != null || uri != null) {
+    if ((desc != null) || (uri != null)) {
       StringBuilder sb=new StringBuilder();
       sb.append("<html><body><pre>");
       sb.append("OAuth2 error detected.\n");
@@ -63,9 +63,9 @@ getLogger().fine("Incomming request query = " + query);
 if (code == null) {
 Form form=new Form();
 form.add(OAuthServerResource.RESPONSE_TYPE,ResponseType.CODE.name());
-form.add(OAuthServerResource.CLIENT_ID,params.getClientId());
+form.add(OAuthServerResource.CLIENT_ID,this.params.getClientId());
 form.add(OAuthServerResource.REDIR_URI,redirectUri);
-form.add(OAuthServerResource.SCOPE,Scopes.toScope(params.getRoles()));
+form.add(OAuthServerResource.SCOPE,Scopes.toScope(this.params.getRoles()));
 try {
 form.encode();
 }
@@ -73,7 +73,7 @@ form.encode();
 getLogger().warning(ioe.getMessage());
 }
 String q=form.getQueryString();
-Reference redirRef=new Reference(params.getBaseRef(),params.getAuthorizePath(),q,null);
+Reference redirRef=new Reference(this.params.getBaseRef(),this.params.getAuthorizePath(),q,null);
 getLogger().fine("Redirecting to : " + redirRef.toUri());
 response.setCacheDirectives(no);
 response.redirectTemporary(redirRef);
@@ -81,21 +81,24 @@ getLogger().fine("After Redirecting to : " + redirRef.toUri());
 }
  else {
 getLogger().fine("Came back after SNS code = " + code);
-ClientResource tokenResource=new CookieCopyClientResource(params.getBaseRef() + params.getAccessTokenPath());
+ClientResource tokenResource=new CookieCopyClientResource(this.params.getBaseRef() + this.params.getAccessTokenPath());
+if (this.cc != null) {
+tokenResource.setNext(this.cc);
+}
 Form form=new Form();
 form.add(OAuthServerResource.GRANT_TYPE,GrantType.AUTHORIZATION_CODE.name());
 String redir=request.getResourceRef().getHostIdentifier() + request.getResourceRef().getPath();
 form.add(OAuthServerResource.REDIR_URI,redir);
-if (basicSecret) {
+if (this.basicSecret) {
 ChallengeResponse authentication=new ChallengeResponse(ChallengeScheme.HTTP_BASIC);
 authentication.setDigestAlgorithm("NONE");
-String basic=params.getClientId() + ':' + params.getClientSecret();
+String basic=this.params.getClientId() + ':' + this.params.getClientSecret();
 authentication.setRawValue(Base64.encode(basic.getBytes(),false));
 tokenResource.setChallengeResponse(authentication);
 }
  else {
-form.add(OAuthServerResource.CLIENT_ID,params.getClientId());
-form.add(OAuthServerResource.CLIENT_SECRET,params.getClientSecret());
+form.add(OAuthServerResource.CLIENT_ID,this.params.getClientId());
+form.add(OAuthServerResource.CLIENT_SECRET,this.params.getClientSecret());
 }
 form.add(OAuthServerResource.CODE,code);
 getLogger().fine("Sending access form : " + form.getQueryString() + " to : "+ tokenResource.getReference());

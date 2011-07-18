@@ -1,6 +1,6 @@
 {
   String rToken=params.getFirstValue(REFRESH_TOKEN);
-  if (rToken == null || rToken.length() == 0) {
+  if ((rToken == null) || (rToken.length() == 0)) {
     setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
     return sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter refresh_token is missing",null);
   }
@@ -9,11 +9,11 @@
     setStatus(Status.CLIENT_ERROR_FORBIDDEN);
     return sendError(OAuthError.INVALID_CLIENT,"Client id verification failed.",null);
   }
-  Token token=generator.findToken(rToken);
-  if (token != null && (token instanceof ExpireToken)) {
+  Token token=this.generator.findToken(rToken);
+  if ((token != null) && (token instanceof ExpireToken)) {
     AuthenticatedUser user=token.getUser();
     if (client.containsUser(user.getId())) {
-      generator.refreshToken((ExpireToken)token);
+      this.generator.refreshToken((ExpireToken)token);
       JSONObject body=createJsonToken(token,null);
       getResponse().setCacheDirectives(noStore);
       return new JsonStringRepresentation(body);

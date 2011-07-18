@@ -3,7 +3,7 @@
   JSONObject response=new JSONObject();
   boolean authenticated=false;
   String lo=(String)getContext().getAttributes().get(LOCAL_ACCESS_ONLY);
-  if (lo != null && lo.length() > 0) {
+  if ((lo != null) && (lo.length() > 0)) {
     boolean localOnly=Boolean.parseBoolean(lo);
     if (localOnly) {
       String scheme=getOriginalRef().getScheme();
@@ -20,11 +20,15 @@
     String token=call.get("access_token").toString();
     String uri=call.get("uri").toString();
     JSONArray scopes=null;
-    if (call.has("scope"))     scopes=call.getJSONArray("scope");
+    if (call.has("scope")) {
+      scopes=call.getJSONArray("scope");
+    }
     String owner=null;
-    if (call.has("owner"))     owner=call.getString("owner");
+    if (call.has("owner")) {
+      owner=call.getString("owner");
+    }
     getLogger().fine("In Validator resource - searching for token = " + token);
-    Token t=generator.findToken(token);
+    Token t=this.generator.findToken(token);
     if (t == null) {
       response.put("authenticated",authenticated);
       error=OAuthError.INVALID_TOKEN.name();
@@ -46,9 +50,11 @@
       if (!authenticated) {
         error=OAuthError.INVALID_REQUEST.name();
       }
-      if (authenticated && scopes != null && scopes.length() > 0) {
+      if (authenticated && (scopes != null) && (scopes.length() > 0)) {
         for (int i=0; i < scopes.length(); i++) {
-          if (scopes.isNull(i))           continue;
+          if (scopes.isNull(i)) {
+            continue;
+          }
           String scope=scopes.getString(i);
           boolean granted=user.isGrantedRole(Scopes.toRole(scope),owner);
           getLogger().fine("Granted permission : " + scope + " = "+ granted);
@@ -60,7 +66,7 @@
         }
       }
       if (authenticated) {
-        if (owner != null && owner.length() > 0 && !AUTONOMOUS_USER.equals(user.getId()) && !owner.equals(user.getId())) {
+        if ((owner != null) && (owner.length() > 0) && !AUTONOMOUS_USER.equals(user.getId())&& !owner.equals(user.getId())) {
           authenticated=false;
           error=OAuthError.INVALID_REQUEST.name();
         }

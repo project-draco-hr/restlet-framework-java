@@ -1,12 +1,12 @@
 {
-  Client client=clients.findById(clientId);
+  Client client=this.clients.findById(clientId);
   getLogger().fine("Client = " + client);
   if (client == null) {
     sendError(OAuthError.INVALID_CLIENT,"Could not find the correct client with id : " + clientId,null);
     setStatus(Status.CLIENT_ERROR_NOT_FOUND);
     return null;
   }
-  if (clientSecret == null || !clientSecret.equals(client.getClientSecret())) {
+  if ((clientSecret == null) || !clientSecret.equals(client.getClientSecret())) {
     sendError(OAuthError.INVALID_GRANT,"Client secret did not match",null);
     setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
     getLogger().warning("Could not find or match client secret " + clientSecret + " : "+ client.getClientSecret());

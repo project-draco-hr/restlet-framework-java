@@ -1,11 +1,11 @@
 {
   String redirUri=params.getFirstValue(REDIR_URI);
-  if (redirUri == null || redirUri.length() == 0) {
+  if ((redirUri == null) || (redirUri.length() == 0)) {
     setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
     return sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter redirect_uri is missing",null);
   }
   String code=params.getFirstValue(CODE);
-  if (code == null || code.length() == 0) {
+  if ((code == null) || (code.length() == 0)) {
     setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
     return sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter code is missing",null);
   }
@@ -18,7 +18,7 @@
     setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
     return sendError(OAuthError.INVALID_GRANT,"Client secret did not match",null);
   }
-  Token token=generator.exchangeForToken(code,tokenTimeSec);
+  Token token=this.generator.exchangeForToken(code,this.tokenTimeSec);
   JSONObject body=createJsonToken(token,null);
   getResponse().setCacheDirectives(noStore);
   return new JsonStringRepresentation(body);
