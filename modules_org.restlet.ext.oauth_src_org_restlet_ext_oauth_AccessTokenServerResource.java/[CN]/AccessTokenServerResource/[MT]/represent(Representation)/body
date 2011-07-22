@@ -24,11 +24,11 @@
   Representation toRet=null;
   if ((clientId == null) || (clientId.length() == 0)) {
     setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
-    return sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter client_id is missing",null);
+    return sendError(OAuthError.invalid_request,"Mandatory parameter client_id is missing",null);
   }
   if ((clientSecret == null) || (clientSecret.length() == 0)) {
     setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
-    return sendError(OAuthError.INVALID_REQUEST,"Mandatory parameter client_secret is missing",null);
+    return sendError(OAuthError.invalid_request,"Mandatory parameter client_secret is missing",null);
   }
   try {
     GrantType type=Enum.valueOf(GrantType.class,typeString);
@@ -42,7 +42,7 @@ case password:
     toRet=doPasswordFlow(clientId,clientSecret,params);
   break;
 case assertion:
-sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Assertion flow not supported",null);
+sendError(OAuthError.unsupported_grant_type,"Assertion flow not supported",null);
 setStatus(Status.SERVER_ERROR_NOT_IMPLEMENTED);
 break;
 case refresh_token:
@@ -52,21 +52,21 @@ case none:
 toRet=doNoneFlow(clientId,clientSecret,params);
 break;
 default :
-toRet=sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Flow not supported",null);
+toRet=sendError(OAuthError.unsupported_grant_type,"Flow not supported",null);
 setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
 }
 }
  catch (IllegalArgumentException e) {
-toRet=sendError(OAuthError.INVALID_GRANT,e.getMessage(),null);
+toRet=sendError(OAuthError.invalid_grant,e.getMessage(),null);
 setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
 }
 }
  catch (IllegalArgumentException iae) {
-toRet=sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Flow not supported",null);
+toRet=sendError(OAuthError.unsupported_grant_type,"Flow not supported",null);
 setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
 }
 catch (NullPointerException npe) {
-toRet=sendError(OAuthError.UNSUPPORTED_GRANT_TYPE,"Flow not supported",null);
+toRet=sendError(OAuthError.unsupported_grant_type,"Flow not supported",null);
 setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
 }
 return toRet;

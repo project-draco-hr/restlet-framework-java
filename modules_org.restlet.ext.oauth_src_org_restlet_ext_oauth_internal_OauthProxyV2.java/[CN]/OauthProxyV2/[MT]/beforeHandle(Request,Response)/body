@@ -4,6 +4,7 @@
   response.setCacheDirectives(no);
   redirectUri=request.getResourceRef().toUrl().toString();
   Form query=new Form(request.getOriginalRef().getQuery());
+  if (handleError(query,response))   return STOP;
   String code=query.getFirstValue("code");
   getLogger().fine("Incomming request query = " + query);
   if (code == null) {

@@ -4,20 +4,20 @@
   String sessionId=null;
   if (session != null)   sessionId=session.getId();
   if (redirUri == null || redirUri.length() == 0) {
-    sendError(sessionId,OAuthError.INVALID_REQUEST,params.getFirstValue(STATE),"No redirect_uri parameter found.",null);
+    sendError(sessionId,OAuthError.invalid_request,params.getFirstValue(STATE),"No redirect_uri parameter found.",null);
     getLogger().warning("No mandatory redirect URI provided");
     return;
   }
   Client client=clients.findById(clientId);
   getLogger().fine("Client = " + client);
   if (client == null) {
-    sendError(sessionId,OAuthError.INVALID_CLIENT,params.getFirstValue(STATE),"Need to register the client : " + clientId,null);
+    sendError(sessionId,OAuthError.invalid_request,params.getFirstValue(STATE),"Need to register the client : " + clientId,null);
     getLogger().warning("Need to register the client : " + clientId);
     return;
   }
   getLogger().fine("Compare client redir:provided redir = " + client.getRedirectUri() + ":"+ redirUri);
   if (!redirUri.startsWith(client.getRedirectUri())) {
-    sendError(sessionId,OAuthError.REDIRECT_URI_MISMATCH,params.getFirstValue(STATE),"Callback URI does not match.",null);
+    sendError(sessionId,OAuthError.redirect_uri_mismatch,params.getFirstValue(STATE),"Callback URI does not match.",null);
     getLogger().warning("Callback URI does not match.");
     return;
   }
