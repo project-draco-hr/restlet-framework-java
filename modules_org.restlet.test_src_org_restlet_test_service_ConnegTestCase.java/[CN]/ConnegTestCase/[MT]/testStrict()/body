@@ -1,0 +1,20 @@
+{
+  List<Variant> variants=new ArrayList<Variant>();
+  Variant variant=new Variant(MediaType.APPLICATION_XML);
+  variants.add(variant);
+  ClientInfo clientInfo=new ClientInfo();
+  clientInfo.getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.APPLICATION_JSON));
+  MetadataService metadataService=new MetadataService();
+  ConnegService connegService=new ConnegService();
+  Variant preferedVariant=connegService.getPreferredVariant(variants,clientInfo,metadataService);
+  assertNotNull(preferedVariant);
+  assertEquals(MediaType.APPLICATION_XML,preferedVariant.getMediaType());
+  connegService.setStrict(true);
+  preferedVariant=connegService.getPreferredVariant(variants,clientInfo,metadataService);
+  assertNull(preferedVariant);
+  variant=new Variant(MediaType.APPLICATION_JSON);
+  variants.add(variant);
+  preferedVariant=connegService.getPreferredVariant(variants,clientInfo,metadataService);
+  assertNotNull(preferedVariant);
+  assertEquals(MediaType.APPLICATION_JSON,preferedVariant.getMediaType());
+}

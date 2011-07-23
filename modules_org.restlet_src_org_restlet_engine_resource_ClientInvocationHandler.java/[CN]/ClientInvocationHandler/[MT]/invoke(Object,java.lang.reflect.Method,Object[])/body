@@ -7,8 +7,8 @@
     result=clientResource;
   }
  else {
-    AnnotationInfo annotation=AnnotationUtils.getAnnotation(annotations,javaMethod);
-    if (annotation != null) {
+    AnnotationInfo annotationInfo=AnnotationUtils.getAnnotation(annotations,javaMethod);
+    if (annotationInfo != null) {
       Representation requestEntity=null;
       boolean isSynchronous=true;
       if ((args != null) && args.length > 0) {
@@ -48,10 +48,15 @@
         }
       }
       Request request=getClientResource().createRequest(getClientResource().getRequest());
-      request.setMethod(annotation.getRestletMethod());
+      request.setMethod(annotationInfo.getRestletMethod());
+      String query=annotationInfo.getQuery();
+      if (query != null) {
+        Form queryParams=new Form(annotationInfo.getQuery());
+        request.getResourceRef().addQueryParameters(queryParams);
+      }
       request.setEntity(requestEntity);
       if ((request.getClientInfo().getAcceptedCharacterSets().size() == 0) && (request.getClientInfo().getAcceptedEncodings().size() == 0) && (request.getClientInfo().getAcceptedLanguages().size() == 0)&& (request.getClientInfo().getAcceptedMediaTypes().size() == 0)) {
-        List<Variant> responseVariants=annotation.getResponseVariants(getClientResource().getMetadataService(),getClientResource().getConverterService());
+        List<Variant> responseVariants=annotationInfo.getResponseVariants(getClientResource().getMetadataService(),getClientResource().getConverterService());
         if (responseVariants != null) {
           request.setClientInfo(new ClientInfo(responseVariants));
         }
@@ -61,8 +66,8 @@
         if (response.getStatus().isError()) {
           getClientResource().doError(response.getStatus());
         }
-        if (!annotation.getJavaOutputType().equals(void.class)) {
-          result=getClientResource().toObject((response == null ? null : response.getEntity()),annotation.getJavaOutputType());
+        if (!annotationInfo.getJavaOutputType().equals(void.class)) {
+          result=getClientResource().toObject((response == null ? null : response.getEntity()),annotationInfo.getJavaOutputType());
         }
       }
     }

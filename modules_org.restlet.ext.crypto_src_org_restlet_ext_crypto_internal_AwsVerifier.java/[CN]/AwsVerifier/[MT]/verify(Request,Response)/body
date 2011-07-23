@@ -1,6 +1,6 @@
 {
   if (request.getChallengeResponse() == null)   return RESULT_MISSING;
-  Form headers=(Form)request.getAttributes().get("org.restlet.http.headers");
+  @SuppressWarnings("unchecked") Series<Header> headers=(Series<Header>)request.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
   String userId=getIdentifier(request,response);
   if (userId == null || (userId.length() == 0))   return RESULT_MISSING;
   if (headers.getFirstValue(HeaderConstants.HEADER_DATE,true) == null)   return RESULT_INVALID;

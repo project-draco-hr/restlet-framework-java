@@ -2,23 +2,7 @@
   List<Variant> result=null;
   Class<?>[] classes=getJavaInputTypes();
   if (classes != null && classes.length >= 1) {
-    String value=getInputValue();
-    if (value != null) {
-      String[] extensions=value.split("\\|");
-      if (extensions != null) {
-        for (        String extension : extensions) {
-          List<MediaType> mediaTypes=metadataService.getAllMediaTypes(extension);
-          if (mediaTypes != null) {
-            if (result == null) {
-              result=new ArrayList<Variant>();
-            }
-            for (            MediaType mediaType : mediaTypes) {
-              result.add(new Variant(mediaType));
-            }
-          }
-        }
-      }
-    }
+    result=getVariants(metadataService,getInput());
     if (result == null) {
       Class<?> inputClass=classes[0];
       result=(List<Variant>)converterService.getVariants(inputClass,null);

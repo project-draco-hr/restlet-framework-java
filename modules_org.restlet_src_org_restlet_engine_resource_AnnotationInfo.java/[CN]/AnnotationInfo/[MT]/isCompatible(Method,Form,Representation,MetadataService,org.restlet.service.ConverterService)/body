@@ -1,0 +1,16 @@
+{
+  boolean result=true;
+  if (getQuery() != null) {
+    Form requiredParams=new Form(getQuery());
+    for (Iterator<Parameter> iter=requiredParams.iterator(); iter.hasNext() && result; ) {
+      result=queryParams.contains(iter.next());
+    }
+  }
+  if (result) {
+    result=getRestletMethod().equals(restletMethod);
+  }
+  if (result) {
+    result=isCompatibleRequestEntity(requestEntity,metadataService,converterService);
+  }
+  return result;
+}

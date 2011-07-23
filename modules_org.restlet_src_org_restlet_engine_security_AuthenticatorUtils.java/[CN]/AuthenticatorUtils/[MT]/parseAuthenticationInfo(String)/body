@@ -1,13 +1,13 @@
 {
   AuthenticationInfo result=null;
-  ParameterReader hr=new ParameterReader(header);
+  HeaderReader<Parameter> hr=new HeaderReader<Parameter>(header);
   try {
     String nextNonce=null;
     String qop=null;
     String responseAuth=null;
     String cnonce=null;
     int nonceCount=0;
-    Parameter param=hr.readValue();
+    Parameter param=hr.readParameter();
     while (param != null) {
       try {
         if ("nextnonce".equals(param.getName())) {
@@ -26,7 +26,7 @@
           nonceCount=Integer.parseInt(param.getValue(),16);
         }
         if (hr.skipValueSeparator()) {
-          param=hr.readValue();
+          param=hr.readParameter();
         }
  else {
           param=null;

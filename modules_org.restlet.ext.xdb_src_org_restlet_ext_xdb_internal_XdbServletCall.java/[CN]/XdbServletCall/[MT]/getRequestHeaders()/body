@@ -1,13 +1,13 @@
 {
   if (this.requestHeaders == null) {
-    this.requestHeaders=new Form();
+    this.requestHeaders=new Series<Header>(Header.class);
     String headerName;
     String headerValue;
-    for (final Enumeration<String> names=getRequest().getHeaderNames(); names.hasMoreElements(); ) {
+    for (Enumeration<String> names=getRequest().getHeaderNames(); names.hasMoreElements(); ) {
       headerName=names.nextElement();
-      for (final Enumeration<String> values=getRequest().getHeaders(headerName); values.hasMoreElements(); ) {
+      for (Enumeration<String> values=getRequest().getHeaders(headerName); values.hasMoreElements(); ) {
         headerValue=values.nextElement();
-        this.requestHeaders.add(new Parameter(headerName,headerValue));
+        this.requestHeaders.add(headerName,headerValue);
       }
     }
   }

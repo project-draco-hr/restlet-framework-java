@@ -1,8 +1,8 @@
 {
   if (Status.isError(getStatusCode()) && (response.getEntity() == null)) {
     try {
-      Parameter header;
-      for (Iterator<Parameter> iter=getResponseHeaders().iterator(); iter.hasNext(); ) {
+      Header header;
+      for (Iterator<Header> iter=getResponseHeaders().iterator(); iter.hasNext(); ) {
         header=iter.next();
         if (!header.getName().equals(HeaderConstants.HEADER_CONTENT_LENGTH)) {
           getResponse().addHeader(header.getName(),header.getValue());
@@ -16,9 +16,9 @@
   }
  else {
     getResponse().setStatus(getStatusCode());
-    Parameter header;
-    Parameter contentLengthHeader=null;
-    for (Iterator<Parameter> iter=getResponseHeaders().iterator(); iter.hasNext(); ) {
+    Header header;
+    Header contentLengthHeader=null;
+    for (Iterator<Header> iter=getResponseHeaders().iterator(); iter.hasNext(); ) {
       header=iter.next();
       if (header.getName().equals(HeaderConstants.HEADER_CONTENT_LENGTH)) {
         contentLengthHeader=header;

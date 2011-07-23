@@ -1,12 +1,12 @@
 {
-  final Form httpHeaders=Util.getHttpHeaders(this.tlContext.get().getRequest());
-  final String headerName=this.headerParam.value();
+  Series<Header> httpHeaders=Util.getHttpHeaders(this.tlContext.get().getRequest());
+  String headerName=this.headerParam.value();
   try {
     if (this.collType == null) {
       final String firstHeader=WrapperUtil.getValue(httpHeaders.getFirst(headerName,true));
       return convertParamValue(firstHeader);
     }
-    return convertParamValues(new ParamValueIter(httpHeaders.subList(headerName,true)));
+    return convertParamValues(new NamedValuesIter(httpHeaders.subList(headerName,true)));
   }
  catch (  ConvertParameterException e) {
     throw new ConvertHeaderParamException(e);

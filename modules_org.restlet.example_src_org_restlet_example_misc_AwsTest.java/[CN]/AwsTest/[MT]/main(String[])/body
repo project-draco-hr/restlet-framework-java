@@ -1,12 +1,12 @@
 {
-  final Request request=new Request(Method.GET,"http://s3.amazonaws.com/quotes/nelson");
+  Request request=new Request(Method.GET,"http://s3.amazonaws.com/quotes/nelson");
   request.setChallengeResponse(new ChallengeResponse(ChallengeScheme.HTTP_AWS_S3,"44CF9590006BF252F707","OtxrzxIsfpFjA7SwPzILwy8Bw21TLhquhboDYROV"));
-  final Series<Parameter> extraHeaders=new Form();
+  Series<Header> extraHeaders=new Series<Header>(Header.class);
   extraHeaders.add("X-Amz-Meta-Author","foo@bar.com");
   extraHeaders.add("X-Amz-Magic","abracadabra");
-  request.getAttributes().put("org.restlet.http.headers",extraHeaders);
-  final Client client=new Client(Protocol.HTTP);
-  final Response response=client.handle(request);
-  final Representation output=response.getEntity();
+  request.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,extraHeaders);
+  Client client=new Client(Protocol.HTTP);
+  Response response=client.handle(request);
+  Representation output=response.getEntity();
   output.write(System.out);
 }

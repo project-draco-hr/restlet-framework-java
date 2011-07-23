@@ -1,0 +1,44 @@
+{
+  if (response.getServerInfo().isAcceptingRanges()) {
+    addHeader(HeaderConstants.HEADER_ACCEPT_RANGES,"bytes",headers);
+  }
+  if (response.getAge() > 0) {
+    addHeader(HeaderConstants.HEADER_AGE,Integer.toString(response.getAge()),headers);
+  }
+  if (response.getStatus().equals(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED) || Method.OPTIONS.equals(response.getRequest().getMethod())) {
+    addHeader(HeaderConstants.HEADER_ALLOW,MethodWriter.write(response.getAllowedMethods()),headers);
+  }
+  if (response.getLocationRef() != null) {
+    addHeader(HeaderConstants.HEADER_LOCATION,response.getLocationRef().getTargetRef().toString(),headers);
+  }
+  if (response.getProxyChallengeRequests() != null) {
+    for (    ChallengeRequest challengeRequest : response.getProxyChallengeRequests()) {
+      addHeader(HeaderConstants.HEADER_PROXY_AUTHENTICATE,org.restlet.engine.security.AuthenticatorUtils.formatRequest(challengeRequest,response,headers),headers);
+    }
+  }
+  if (response.getRetryAfter() != null) {
+    addHeader(HeaderConstants.HEADER_RETRY_AFTER,DateWriter.write(response.getRetryAfter()),headers);
+  }
+  if ((response.getServerInfo() != null) && (response.getServerInfo().getAgent() != null)) {
+    addHeader(HeaderConstants.HEADER_SERVER,response.getServerInfo().getAgent(),headers);
+  }
+ else {
+    addHeader(HeaderConstants.HEADER_SERVER,Engine.VERSION_HEADER,headers);
+  }
+  if (!((response.getRequest().getClientInfo().getAgent() != null) && response.getRequest().getClientInfo().getAgent().contains("MSIE"))) {
+    addHeader(HeaderConstants.HEADER_VARY,DimensionWriter.write(response.getDimensions()),headers);
+  }
+  if (response.getChallengeRequests() != null) {
+    for (    ChallengeRequest challengeRequest : response.getChallengeRequests()) {
+      addHeader(HeaderConstants.HEADER_WWW_AUTHENTICATE,org.restlet.engine.security.AuthenticatorUtils.formatRequest(challengeRequest,response,headers),headers);
+    }
+  }
+  if (response.getAuthenticationInfo() != null) {
+    addHeader(HeaderConstants.HEADER_AUTHENTICATION_INFO,org.restlet.engine.security.AuthenticatorUtils.formatAuthenticationInfo(response.getAuthenticationInfo()),headers);
+  }
+  for (  CookieSetting cookieSetting : response.getCookieSettings()) {
+    addHeader(HeaderConstants.HEADER_SET_COOKIE,CookieSettingWriter.write(cookieSetting),headers);
+  }
+  Series<Header> additionalHeaders=(Series<Header>)response.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
+  addExtensionHeaders(headers,additionalHeaders);
+}

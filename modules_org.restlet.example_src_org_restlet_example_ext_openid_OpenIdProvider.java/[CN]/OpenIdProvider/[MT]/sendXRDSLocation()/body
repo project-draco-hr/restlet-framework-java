@@ -4,11 +4,11 @@
   String xrds=attribs.get("xrds").toString();
   String location=(id != null) ? xrds + "?id=" + id : xrds;
   getLogger().info("XRDS endpoint = " + xrds);
-  Form headers=(Form)getResponse().getAttributes().get("org.restlet.http.headers");
+  @SuppressWarnings("unchecked") Series<Header> headers=(Series<Header>)getResponse().getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
   if (headers == null) {
-    headers=new Form();
+    headers=new Series<Header>(Header.class);
     headers.add("X-XRDS-Location",location);
-    getResponse().getAttributes().put("org.restlet.http.headers",headers);
+    getResponse().getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,headers);
   }
  else {
     headers.add("X-XRDS-Location",location);

@@ -1,9 +1,9 @@
 {
-  Form headers=(Form)getRequest.getAttributes().get(ATTRIBUTES_HEADERS);
+  Series<Header> headers=(Series<Header>)getRequest.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
   String expected="";
   String actual=AwsUtils.getCanonicalizedAmzHeaders(headers);
   Assert.assertEquals(expected,actual);
-  headers=(Form)uploadRequest.getAttributes().get(ATTRIBUTES_HEADERS);
+  headers=(Series<Header>)uploadRequest.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
   expected="x-amz-acl:public-read\n" + "x-amz-meta-checksumalgorithm:crc32\n" + "x-amz-meta-filechecksum:0x02661779\n"+ "x-amz-meta-reviewedby:joe@johnsmith.net,jane@johnsmith.net\n";
   actual=AwsUtils.getCanonicalizedAmzHeaders(headers);
   Assert.assertEquals(expected,actual);

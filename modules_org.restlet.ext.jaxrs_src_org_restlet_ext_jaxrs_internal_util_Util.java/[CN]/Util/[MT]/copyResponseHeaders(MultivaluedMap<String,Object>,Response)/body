@@ -1,5 +1,5 @@
 {
-  Series<Parameter> headers=new Form();
+  Series<Header> headers=new Series<Header>(Header.class);
   for (  Map.Entry<String,List<Object>> m : jaxRsHeaders.entrySet()) {
     String headerName=m.getKey();
     for (    Object headerValue : m.getValue()) {
@@ -13,7 +13,7 @@
  else {
         hValue=headerValue.toString();
       }
-      headers.add(new Parameter(headerName,hValue));
+      headers.add(headerName,hValue);
     }
   }
   if (restletResponse.getEntity() == null) {
@@ -21,7 +21,7 @@
   }
   HeaderUtils.copyResponseTransportHeaders(headers,restletResponse);
   HeaderUtils.extractEntityHeaders(headers,restletResponse.getEntity());
-  @SuppressWarnings("unchecked") Series<Parameter> extensionHeaders=(Series<Parameter>)jaxRsHeaders.getFirst(HeaderConstants.ATTRIBUTE_HEADERS);
+  @SuppressWarnings("unchecked") Series<Header> extensionHeaders=(Series<Header>)jaxRsHeaders.getFirst(HeaderConstants.ATTRIBUTE_HEADERS);
   if (extensionHeaders != null) {
     Map<String,Object> attributes=new HashMap<String,Object>();
     attributes.put(HeaderConstants.ATTRIBUTE_HEADERS,extensionHeaders);

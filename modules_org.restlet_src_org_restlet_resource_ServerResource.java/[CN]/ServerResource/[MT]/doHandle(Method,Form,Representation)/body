@@ -1,0 +1,16 @@
+{
+  Representation result=null;
+  if (getAnnotation(method) != null) {
+    AnnotationInfo annotationInfo=getAnnotation(method,query,entity);
+    if (annotationInfo != null) {
+      result=doHandle(annotationInfo,null);
+    }
+ else {
+      doError(Status.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE);
+    }
+  }
+ else {
+    doError(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+  }
+  return result;
+}

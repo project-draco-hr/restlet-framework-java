@@ -1,0 +1,56 @@
+{
+  Representation result=null;
+  ConverterHelper ch=ConverterUtils.getBestHelper(source,target,resource);
+  if (ch != null) {
+    try {
+      boolean loggable=(resource == null) ? true : resource.isLoggable();
+      if (loggable && Context.getCurrentLogger().isLoggable(Level.FINE)) {
+        Context.getCurrentLogger().fine("Converter selected for " + source.getClass().getSimpleName() + ": "+ ch.getClass().getSimpleName());
+      }
+      if (target == null) {
+        List<VariantInfo> variants=ch.getVariants(source.getClass());
+        if ((variants != null) && !variants.isEmpty()) {
+          if (resource != null) {
+            target=resource.getConnegService().getPreferredVariant(variants,resource.getClientInfo(),resource.getMetadataService());
+          }
+ else {
+            target=variants.get(0);
+          }
+        }
+ else {
+          target=new Variant();
+        }
+      }
+      result=ch.toRepresentation(source,target,resource);
+      if (result != null) {
+        if (result.getCharacterSet() == null) {
+          result.setCharacterSet(target.getCharacterSet());
+        }
+        if ((result.getMediaType() == null) || !result.getMediaType().isConcrete()) {
+          if ((target.getMediaType() != null) && target.getMediaType().isConcrete()) {
+            result.setMediaType(target.getMediaType());
+          }
+ else           if (resource != null) {
+            result.setMediaType(resource.getMetadataService().getDefaultMediaType());
+          }
+ else {
+            result.setMediaType(MediaType.APPLICATION_OCTET_STREAM);
+          }
+        }
+        if (result.getEncodings().isEmpty()) {
+          result.getEncodings().addAll(target.getEncodings());
+        }
+        if (result.getLanguages().isEmpty()) {
+          result.getLanguages().addAll(target.getLanguages());
+        }
+      }
+    }
+ catch (    IOException e) {
+      Context.getCurrentLogger().log(Level.WARNING,"Unable to convert object to a representation",e);
+    }
+  }
+ else {
+    Context.getCurrentLogger().warning("Unable to find a converter for this object : " + source);
+  }
+  return result;
+}

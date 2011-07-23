@@ -1,3 +1,11 @@
 {
-  return org.restlet.engine.util.ConnegUtils.getPreferredVariant(this,variants,metadataService);
+  ConnegService connegService=null;
+  Application app=Application.getCurrent();
+  if (app == null) {
+    connegService=new ConnegService();
+  }
+ else {
+    connegService=app.getConnegService();
+  }
+  return connegService.getPreferredVariant(variants,this,metadataService);
 }

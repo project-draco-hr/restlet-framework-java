@@ -1,12 +1,12 @@
 {
   final Restlet restlet=new Restlet(){
     @SuppressWarnings("unchecked") @Override public void handle(    Request request,    Response response){
-      Series<Parameter> headers=(Series<Parameter>)request.getAttributes().get("org.restlet.http.headers");
+      Series<Header> headers=(Series<Header>)request.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
       response.setEntity("Accept header: " + headers.getFirstValue("accept",true),MediaType.TEXT_PLAIN);
-      headers=new Form();
+      headers=new Series<Header>(Header.class);
       headers.add("X-Test","Test value");
       headers.add("Location","http://www.restlet.org");
-      response.getAttributes().put("org.restlet.http.headers",headers);
+      response.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,headers);
     }
   }
 ;

@@ -1,23 +1,18 @@
 {
   boolean result=(obj == this);
   if (!result) {
-    if (super.equals(obj)) {
-      if (obj instanceof Cookie) {
-        final Cookie that=(Cookie)obj;
-        result=(this.version == that.version);
+    result=obj instanceof Cookie;
+    if (result) {
+      Cookie that=(Cookie)obj;
+      result=(((that.getName() == null) && (getName() == null)) || ((getName() != null) && getName().equals(that.getName())));
+      if (result) {
+        result=(((that.getValue() == null) && (getValue() == null)) || ((getValue() != null) && getValue().equals(that.getValue())));
         if (result) {
-          if (!(this.domain == null)) {
-            result=(this.domain.equals(that.domain));
-          }
- else {
-            result=(that.domain == null);
-          }
+          result=(this.version == that.version);
           if (result) {
-            if (!(this.path == null)) {
-              result=(this.path.equals(that.path));
-            }
- else {
-              result=(that.path == null);
+            result=(((that.getDomain() == null) && (getDomain() == null)) || ((getDomain() != null) && getDomain().equals(that.getDomain())));
+            if (result) {
+              result=(((that.getPath() == null) && (getPath() == null)) || ((getPath() != null) && getPath().equals(that.getPath())));
             }
           }
         }

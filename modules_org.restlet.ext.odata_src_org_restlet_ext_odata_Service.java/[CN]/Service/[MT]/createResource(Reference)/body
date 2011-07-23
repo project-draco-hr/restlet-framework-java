@@ -5,14 +5,14 @@
   }
   resource.setChallengeResponse(getCredentials());
   if (getClientVersion() != null || getMaxClientVersion() != null) {
-    Form form=new Form();
+    Series<Header> headers=new Series<Header>(Header.class);
     if (getClientVersion() != null) {
-      form.add("DataServiceVersion",getClientVersion());
+      headers.add("DataServiceVersion",getClientVersion());
     }
     if (getMaxClientVersion() != null) {
-      form.add("MaxDataServiceVersion",getMaxClientVersion());
+      headers.add("MaxDataServiceVersion",getMaxClientVersion());
     }
-    resource.getRequestAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,form);
+    resource.getRequestAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,headers);
   }
   return resource;
 }

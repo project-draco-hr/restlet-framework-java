@@ -1,14 +1,14 @@
 {
-  final String cookieName=this.cookieParam.value();
+  String cookieName=this.cookieParam.value();
   Series<org.restlet.data.Cookie> cookies;
   cookies=this.tlContext.get().getRequest().getCookies();
   if (this.convertTo.equals(Cookie.class)) {
-    final Collection<Cookie> coll=createColl();
-    for (    final org.restlet.data.Cookie rc : cookies) {
+    Collection<Cookie> coll=createColl();
+    for (    org.restlet.data.Cookie rc : cookies) {
       if (!rc.getName().equals(cookieName)) {
         continue;
       }
-      final Cookie cookie=Converter.toJaxRsCookie(rc);
+      Cookie cookie=Converter.toJaxRsCookie(rc);
       if (coll == null) {
         return cookie;
       }
@@ -18,7 +18,7 @@
       return null;
     }
     if (coll.isEmpty()) {
-      final String value=this.defaultValue.value();
+      String value=this.defaultValue.value();
       coll.add(new Cookie(cookieName,value));
     }
     if (this.isArray) {
@@ -28,10 +28,10 @@
   }
   try {
     if (this.collType == null) {
-      final String firstCookieValue=WrapperUtil.getValue(cookies.getFirst(cookieName));
+      String firstCookieValue=WrapperUtil.getValue(cookies.getFirst(cookieName));
       return convertParamValue(firstCookieValue);
     }
-    return convertParamValues(new ParamValueIter((Series)cookies.subList(cookieName)));
+    return convertParamValues(new NamedValuesIter((Series)cookies.subList(cookieName)));
   }
  catch (  ConvertParameterException e) {
     throw new ConvertCookieParamException(e);

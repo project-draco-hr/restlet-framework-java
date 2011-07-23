@@ -1,0 +1,18 @@
+{
+  NV result=null;
+  String name=readToken();
+  int nextChar=read();
+  if (name.length() > 0) {
+    if (nextChar == '=') {
+      result=createNamedValue(resultClass,name,readActualNamedValue());
+    }
+ else {
+      unread();
+      result=createNamedValue(resultClass,name);
+    }
+  }
+ else {
+    throw new IOException("Parameter or extension has no name. Please check your value");
+  }
+  return result;
+}
