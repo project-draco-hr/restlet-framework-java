@@ -1,15 +1,8 @@
 {
-  Representation result=null;
-  Request request=createRequest(getRequest());
+  Request request=createRequest();
   request.setMethod(method);
   request.setEntity(entity);
   request.setClientInfo(clientInfo);
-  Response response=handle(request);
-  if (response.getStatus().isError()) {
-    doError(response.getStatus());
-  }
- else {
-    result=(response == null) ? null : response.getEntity();
-  }
-  return result;
+  Response response=handleOutbound(request);
+  return handleInbound(response);
 }

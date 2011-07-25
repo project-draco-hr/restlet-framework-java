@@ -47,7 +47,7 @@
           }
         }
       }
-      Request request=getClientResource().createRequest(getClientResource().getRequest());
+      Request request=getClientResource().createRequest();
       request.setMethod(annotationInfo.getRestletMethod());
       String query=annotationInfo.getQuery();
       if (query != null) {
@@ -61,7 +61,7 @@
           request.setClientInfo(new ClientInfo(responseVariants));
         }
       }
-      Response response=getClientResource().handle(request);
+      Response response=getClientResource().handleOutbound(request);
       if (isSynchronous) {
         if (response.getStatus().isError()) {
           getClientResource().doError(response.getStatus());

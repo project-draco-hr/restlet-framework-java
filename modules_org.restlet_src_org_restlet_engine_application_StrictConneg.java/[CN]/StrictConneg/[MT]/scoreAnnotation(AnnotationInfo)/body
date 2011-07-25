@@ -1,0 +1,60 @@
+{
+  float result=-1.0F;
+  if (annotation != null) {
+    if (annotation.getQuery() != null) {
+      if (getRequest().getResourceRef().getQuery() == null) {
+        result=-1.0F;
+      }
+ else {
+        Form constraintParams=new Form(annotation.getQuery());
+        Form actualParams=getRequest().getResourceRef().getQueryAsForm();
+        Set<Parameter> matchedParams=new HashSet<Parameter>();
+        Parameter constraintParam;
+        Parameter actualParam;
+        boolean allConstraintsMatched=true;
+        boolean constraintMatched=false;
+        for (int i=0; (i < constraintParams.size()) && allConstraintsMatched; i++) {
+          constraintParam=constraintParams.get(i);
+          constraintMatched=false;
+          for (int j=0; j < actualParams.size(); j++) {
+            actualParam=actualParams.get(j);
+            if (constraintParam.getName().equals(actualParam.getName())) {
+              if ((constraintParam.getValue() == null) || constraintParam.getValue().equals(actualParam.getValue())) {
+                constraintMatched=true;
+                matchedParams.add(actualParam);
+              }
+            }
+          }
+          allConstraintsMatched=allConstraintsMatched && constraintMatched;
+        }
+        boolean allActualMatched=(actualParams.size() == matchedParams.size());
+        if (allConstraintsMatched) {
+          if (allActualMatched) {
+            result=1.0F;
+          }
+ else {
+            result=0.75F;
+          }
+        }
+ else {
+          result=-1.0F;
+        }
+      }
+    }
+ else {
+      if (getRequest().getResourceRef().getQuery() == null) {
+        result=0.5F;
+      }
+ else {
+        result=0.25F;
+      }
+    }
+    if (Context.getCurrentLogger().isLoggable(Level.FINE)) {
+      Context.getCurrentLogger().fine("Score of annotation \"" + annotation + "\"= "+ result);
+    }
+  }
+ else {
+    result=0.0F;
+  }
+  return result;
+}

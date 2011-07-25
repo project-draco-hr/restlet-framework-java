@@ -2,8 +2,9 @@
   if (response != null) {
     getLogger().finer("Handling response...");
     boolean handled=false;
-    if ((response.getRequest() != null) && (response.getRequest().getOnResponse() != null)) {
-      response.getRequest().getOnResponse().handle(response.getRequest(),response);
+    Request request=response.getRequest();
+    if ((request != null) && (request.isAsynchronous())) {
+      request.getOnResponse().handle(request,response);
       handled=true;
     }
     if (!response.getStatus().isInformational()) {
