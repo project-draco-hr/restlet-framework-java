@@ -5,9 +5,10 @@
   Entry entry=toEntry(entity);
   ClientResource resource=createResource(getSubpath(entity));
   try {
-    ByteArrayOutputStream o=new ByteArrayOutputStream();
-    entry.write(o);
-    StringRepresentation r=new StringRepresentation(o.toString(),MediaType.APPLICATION_ATOM);
+    ByteArrayOutputStream baos=new ByteArrayOutputStream();
+    entry.write(baos);
+    baos.flush();
+    StringRepresentation r=new StringRepresentation(baos.toString(),MediaType.APPLICATION_ATOM);
     String tag=getTag(entity);
     if (tag != null) {
       resource.getConditions().setMatch(Arrays.asList(new Tag(tag)));

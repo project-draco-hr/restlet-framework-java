@@ -6,9 +6,10 @@
       throw new Exception("Can't add entity to this entity set " + resource.getReference() + " due to the lack of the service's metadata.");
     }
     try {
-      ByteArrayOutputStream o=new ByteArrayOutputStream();
-      entry.write(o);
-      StringRepresentation r=new StringRepresentation(o.toString(),MediaType.APPLICATION_ATOM);
+      ByteArrayOutputStream baos=new ByteArrayOutputStream();
+      entry.write(baos);
+      baos.flush();
+      StringRepresentation r=new StringRepresentation(baos.toString(),MediaType.APPLICATION_ATOM);
       Representation rep=resource.post(r);
       EntryContentHandler<?> entryContentHandler=new EntryContentHandler<Object>(entity.getClass(),(Metadata)getMetadata(),getLogger());
       Feed feed=new Feed();
