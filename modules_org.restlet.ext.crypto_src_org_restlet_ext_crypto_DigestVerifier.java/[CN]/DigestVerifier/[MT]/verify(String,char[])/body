@@ -1,5 +1,5 @@
 {
-  boolean result=false;
+  int result=RESULT_INVALID;
   char[] secretDigest=secret;
   if (getAlgorithm() == null) {
     if (getWrappedAlgorithm() != null) {
@@ -11,12 +11,13 @@
   }
  else {
     if (getWrappedAlgorithm() == null) {
-      result=compare(secretDigest,getWrappedSecretDigest(identifier));
+      result=compare(secretDigest,getWrappedSecretDigest(identifier)) ? RESULT_VALID : RESULT_INVALID;
     }
  else     if (getAlgorithm().equals(getWrappedAlgorithm())) {
       result=getWrappedVerifier().verify(identifier,secretDigest);
     }
  else {
+      result=RESULT_UNSUPPORTED;
       Context.getCurrentLogger().log(Level.WARNING,"The input and output algorithms can't be different.");
     }
   }
