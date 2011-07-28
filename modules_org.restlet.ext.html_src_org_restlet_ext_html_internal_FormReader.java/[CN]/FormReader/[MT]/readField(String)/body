@@ -1,0 +1,36 @@
+{
+  FormData field=readNextField();
+  Object result=null;
+  while (field != null) {
+    if (field.getName().equals(name)) {
+      if (result != null) {
+        List<Object> values=null;
+        if (result instanceof List) {
+          values=(List<Object>)result;
+        }
+ else {
+          values=new ArrayList<Object>();
+          values.add(result);
+          result=values;
+        }
+        if (field.getValue() == null) {
+          values.add(Series.EMPTY_VALUE);
+        }
+ else {
+          values.add(field.getValue());
+        }
+      }
+ else {
+        if (field.getValue() == null) {
+          result=Series.EMPTY_VALUE;
+        }
+ else {
+          result=field.getValue();
+        }
+      }
+    }
+    field=readNextField();
+  }
+  this.stream.close();
+  return result;
+}

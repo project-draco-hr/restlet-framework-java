@@ -1,0 +1,26 @@
+{
+  boolean readNext=true;
+  FormData field=null;
+  if (this.stream != null) {
+    try {
+      while (readNext) {
+        field=readNextField();
+        if (field != null) {
+          fields.add(field);
+        }
+ else {
+          readNext=false;
+        }
+      }
+    }
+ catch (    IOException ioe) {
+      Context.getCurrentLogger().log(Level.WARNING,"Unable to parse a form field. Skipping the remaining fields.",ioe);
+    }
+    try {
+      this.stream.close();
+    }
+ catch (    IOException ioe) {
+      Context.getCurrentLogger().log(Level.WARNING,"Unable to close the form input stream",ioe);
+    }
+  }
+}
