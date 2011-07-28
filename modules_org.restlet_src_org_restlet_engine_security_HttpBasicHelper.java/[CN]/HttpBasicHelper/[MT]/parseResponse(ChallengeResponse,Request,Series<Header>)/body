@@ -2,12 +2,12 @@
   try {
     byte[] credentialsEncoded=Base64.decode(challenge.getRawValue());
     if (credentialsEncoded == null) {
-      getLogger().warning("Cannot decode credentials: " + challenge.getRawValue());
+      getLogger().info("Cannot decode credentials: " + challenge.getRawValue());
     }
     String credentials=new String(credentialsEncoded,"ISO-8859-1");
     int separator=credentials.indexOf(':');
     if (separator == -1) {
-      getLogger().warning("Invalid credentials given by client with IP: " + ((request != null) ? request.getClientInfo().getAddress() : "?"));
+      getLogger().info("Invalid credentials given by client with IP: " + ((request != null) ? request.getClientInfo().getAddress() : "?"));
     }
  else {
       challenge.setIdentifier(credentials.substring(0,separator));
@@ -15,6 +15,9 @@
     }
   }
  catch (  UnsupportedEncodingException e) {
-    getLogger().log(Level.WARNING,"Unsupported encoding error",e);
+    getLogger().log(Level.INFO,"Unsupported HTTP Basic encoding error",e);
+  }
+catch (  IllegalArgumentException e) {
+    getLogger().log(Level.INFO,"Unable to decode the HTTP Basic credential",e);
   }
 }
