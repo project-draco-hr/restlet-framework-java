@@ -1,5 +1,14 @@
 {
-  XMLResource result=new XMLResourceImpl();
+  XMLResource result=null;
+  if (MediaType.APPLICATION_ECORE.isCompatible(getMediaType())) {
+    result=new EMOFResourceImpl();
+  }
+ else   if (MediaType.APPLICATION_XMI.isCompatible(getMediaType())) {
+    result=new XMIResourceImpl();
+  }
+ else {
+    result=new XMLResourceImpl();
+  }
   if (getCharacterSet() != null) {
     result.setEncoding(getCharacterSet().getName());
   }
