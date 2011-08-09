@@ -1,0 +1,13 @@
+{
+  org.restlet.resource.Finder result=null;
+  if (getFinderClass() != null) {
+    result=org.restlet.resource.Finder.createFinder(resourceClass,getFinderClass(),getContext(),getLogger());
+  }
+ else   if ((getApplication() != null) && (getApplication() != this)) {
+    result=getApplication().createFinder(resourceClass);
+  }
+ else {
+    result=org.restlet.resource.Finder.createFinder(resourceClass,org.restlet.resource.Finder.class,getContext(),getLogger());
+  }
+  return result;
+}
