@@ -3,8 +3,9 @@
   Engine.getInstance().getRegisteredConverters().clear();
   Engine.getInstance().registerDefaultConverters();
   c=new Component();
-  c.getServers().add(Protocol.HTTP,8111);
+  final Server server=c.getServers().add(Protocol.HTTP,0);
   c.getDefaultHost().attach(new TestApplication());
   c.start();
   client=new Client(Protocol.HTTP);
+  uri="http://localhost:" + server.getEphemeralPort() + "/test";
 }
