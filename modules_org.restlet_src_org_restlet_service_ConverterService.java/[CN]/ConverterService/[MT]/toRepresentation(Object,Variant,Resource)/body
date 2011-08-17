@@ -1,9 +1,9 @@
 {
   Representation result=null;
+  boolean loggable=(resource == null) ? true : resource.isLoggable();
   ConverterHelper ch=ConverterUtils.getBestHelper(source,target,resource);
   if (ch != null) {
     try {
-      boolean loggable=(resource == null) ? true : resource.isLoggable();
       if (loggable && Context.getCurrentLogger().isLoggable(Level.FINE)) {
         Context.getCurrentLogger().fine("Converter selected for " + source.getClass().getSimpleName() + ": "+ ch.getClass().getSimpleName());
       }
@@ -45,12 +45,16 @@
         }
       }
     }
- catch (    IOException e) {
-      Context.getCurrentLogger().log(Level.WARNING,"Unable to convert object to a representation",e);
+ catch (    Exception e) {
+      if (loggable) {
+        Context.getCurrentLogger().log(Level.WARNING,"Unable to convert object " + source + " to this representation variant: "+ target,e);
+      }
     }
   }
  else {
-    Context.getCurrentLogger().warning("Unable to find a converter for this object : " + source);
+    if (loggable) {
+      Context.getCurrentLogger().warning("Unable to find a converter for this object : " + source);
+    }
   }
   return result;
 }

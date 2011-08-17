@@ -1,27 +1,32 @@
 {
   T result=null;
+  boolean loggable=(resource == null) ? true : resource.isLoggable();
   if ((source != null) && source.isAvailable() && (source.getSize() != 0)) {
     ConverterHelper ch=ConverterUtils.getBestHelper(source,target,resource);
     if (ch != null) {
-      Context.getCurrentLogger().fine("The following converter was selected for the " + source + " representation: "+ ch);
       try {
+        if (loggable && Context.getCurrentLogger().isLoggable(Level.FINE)) {
+          Context.getCurrentLogger().fine("The following converter was selected for the " + source + " representation: "+ ch);
+        }
         result=ch.toObject(source,target,resource);
+        if (result instanceof Representation) {
+          Representation resultRepresentation=(Representation)result;
+          resultRepresentation.setCharacterSet(source.getCharacterSet());
+          resultRepresentation.setMediaType(source.getMediaType());
+          resultRepresentation.getEncodings().addAll(source.getEncodings());
+          resultRepresentation.getLanguages().addAll(source.getLanguages());
+        }
       }
- catch (      Throwable throwable) {
-        IOException ioe=new IOException("Unable to convert a " + source.getMediaType() + " representation into a "+ target.getCanonicalName()+ " object.");
-        ioe.initCause(throwable);
-        throw ioe;
-      }
-      if (result instanceof Representation) {
-        Representation resultRepresentation=(Representation)result;
-        resultRepresentation.setCharacterSet(source.getCharacterSet());
-        resultRepresentation.setMediaType(source.getMediaType());
-        resultRepresentation.getEncodings().addAll(source.getEncodings());
-        resultRepresentation.getLanguages().addAll(source.getLanguages());
+ catch (      Exception exception) {
+        if (loggable) {
+          Context.getCurrentLogger().log(Level.WARNING,"Unable to convert a " + source + " representation into an object of class "+ target.getCanonicalName(),exception);
+        }
       }
     }
  else {
-      Context.getCurrentLogger().warning("Unable to find a converter for this representation : " + source);
+      if (loggable) {
+        Context.getCurrentLogger().warning("Unable to find a converter for this representation : " + source);
+      }
     }
   }
   return result;
