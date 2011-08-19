@@ -3,6 +3,11 @@
   Reference uri=req.getOriginalRef();
   request.put("access_token",accessToken);
   List<Role> roles=getAuthorizedRoles();
+  Object obj=req.getAttributes().get(this.roleAttribute);
+  if (obj != null && obj instanceof Role[]) {
+    getLogger().fine("Found dynamic scopes");
+    roles=Arrays.asList((Role[])obj);
+  }
   if ((roles != null) && (roles.size() > 0)) {
     JSONArray jArray=new JSONArray();
     for (    Role r : roles) {
@@ -11,7 +16,7 @@
     request.put("scope",jArray);
     getLogger().fine("Found scopes: " + jArray.toString());
   }
-  String owner=(String)req.getAttributes().get("oauth-user");
+  String owner=(String)req.getAttributes().get(this.ownerAttribute);
   if ((owner != null) && (owner.length() > 0)) {
     getLogger().fine("Found Owner:" + owner);
     request.put("owner",owner);
