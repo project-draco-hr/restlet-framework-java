@@ -1,0 +1,42 @@
+{
+  List<?> discoveries=cm.discover(identifier);
+  DiscoveryInformation di=cm.associate(discoveries);
+  String sessionId=null;
+  if (sessionAware && di != null) {
+    getLogger().info("save discovery information to session");
+    sessionId=UUID.randomUUID().toString();
+    this.sessions.put(sessionId,di);
+    Reference ref=new Reference(returnTo);
+    ref.addQueryParameter("sessionId",sessionId);
+    returnTo=ref.toString();
+  }
+  if (addReturnTo) {
+    Reference ref=new Reference(returnTo);
+    ref.addQueryParameter("returnTo","true");
+    returnTo=ref.toString();
+  }
+  AuthRequest authReq=cm.authenticate(di,returnTo);
+  FetchRequest fetch=null;
+  if (optionalAttrs != null) {
+    fetch=FetchRequest.createFetchRequest();
+    for (    AX o : optionalAttrs) {
+      fetch.addAttribute(o.getName(),o.getSchema(),false);
+    }
+  }
+  if (requiredAttrs != null) {
+    if (fetch == null)     fetch=FetchRequest.createFetchRequest();
+    for (    AX r : requiredAttrs) {
+      fetch.addAttribute(r.getName(),r.getSchema(),true);
+    }
+  }
+  if (fetch != null)   authReq.addExtension(fetch);
+  if (di.isVersion2()) {
+    getLogger().info("sending auth request using OpenId 2 form");
+    res.setEntity(getForm(authReq));
+  }
+ else {
+    getLogger().info("sending auth request using OpenId 1 query parameters");
+    res.redirectTemporary(authReq.getDestinationUrl(true));
+  }
+  return sessionId;
+}

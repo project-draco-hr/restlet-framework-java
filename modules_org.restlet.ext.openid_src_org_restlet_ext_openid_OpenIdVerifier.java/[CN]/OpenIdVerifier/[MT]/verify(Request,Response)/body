@@ -1,40 +1,51 @@
 {
   Form params=request.getResourceRef().getQueryAsForm();
-  if (this.isResponse(params)) {
-    JSONObject obj=this.handleReturn(params,request,response);
-    if (obj == null) {
-      return Verifier.RESULT_INVALID;
-    }
- else {
-      if (!obj.isNull("id")) {
-        try {
-          Context.getCurrentLogger().fine(obj.toString(2));
-          String id=obj.getString("id");
-          User u=new User();
-          u.setIdentifier(id);
-          request.getClientInfo().setUser(u);
-          setAttributes(optionalAttributes,obj,u);
-          setAttributes(requiredAttributes,obj,u);
-          return Verifier.RESULT_VALID;
+  if (rp.hasReturnTo(request)) {
+    Context.getCurrentLogger().info("handling return");
+    Map<AX,String> axResp=new HashMap<AX,String>();
+    try {
+      Identifier identifier=rp.verify(axResp,request,true);
+      if (identifier != null && identifier.getIdentifier() != null) {
+        User u=new User(identifier.getIdentifier());
+        if (axResp.size() > 0) {
+          for (          Map.Entry<AX,String> entry : axResp.entrySet()) {
+            OpenIdUser.setValueFromAX(entry.getKey(),entry.getValue(),u);
+          }
         }
- catch (        JSONException e) {
-          e.printStackTrace();
-        }
+        request.getClientInfo().setUser(u);
+        return RESULT_VALID;
       }
-      Context.getCurrentLogger().warning("Could not find identifier");
-      return Verifier.RESULT_INVALID;
+ else       return RESULT_INVALID;
+    }
+ catch (    Exception e) {
+      Reference ref=new Reference(request.getResourceRef().getHostIdentifier() + request.getResourceRef().getPath());
+      Context.getCurrentLogger().info("Generating XRDS Response");
+      if (params.getFirst("sessionId") != null) {
+        ref.addQueryParameter("sessionId",params.getFirstValue("sessionId"));
+        ref.addQueryParameter("return","true");
+      }
+      try {
+        Representation rep=XRDS.returnToXrds(ref.toString());
+        response.setEntity(rep);
+        return RESULT_MISSING;
+      }
+ catch (      Exception e1) {
+        e.printStackTrace();
+        return RESULT_UNKNOWN;
+      }
     }
   }
-  String target=this.getTarget(params,request);
-  if (target != null) {
+ else {
+    String target=this.getTarget(params,request);
+    Reference ref=new Reference(request.getResourceRef().getHostIdentifier() + request.getResourceRef().getPath());
+    Context.getCurrentLogger().info("generating a authentication request");
     try {
-      this.handleTarget(target,params,request,response);
-      return Verifier.RESULT_MISSING;
+      rp.authRequest(target,true,true,ref.toString(),optionalAttributes,requiredAttributes,request,response);
+      return RESULT_MISSING;
     }
  catch (    Exception e) {
       e.printStackTrace();
+      return RESULT_INVALID;
     }
   }
-  Context.getCurrentLogger().warning("No Target or Return - reporting error");
-  return Verifier.RESULT_INVALID;
 }
