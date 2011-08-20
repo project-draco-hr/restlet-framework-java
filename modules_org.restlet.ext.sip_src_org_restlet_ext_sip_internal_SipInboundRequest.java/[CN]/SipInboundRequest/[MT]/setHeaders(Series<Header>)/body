@@ -1,16 +1,16 @@
 {
   getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,headers);
-  if (version != null) {
-    int slashIndex=version.indexOf('/');
+  if (protocol != null) {
+    int slashIndex=protocol.indexOf('/');
     if (slashIndex != -1) {
-      version=version.substring(slashIndex + 1);
+      protocol=protocol.substring(slashIndex + 1);
     }
  else {
-      version=null;
+      protocol=null;
     }
   }
   Protocol serverProtocol=getConnection().getHelper().getHelped().getProtocols().get(0);
-  setProtocol(new Protocol(serverProtocol.getSchemeName(),serverProtocol.getName(),serverProtocol.getDescription(),serverProtocol.getDefaultPort(),serverProtocol.isConfidential(),version));
+  setProtocol(new Protocol(serverProtocol.getSchemeName(),serverProtocol.getName(),serverProtocol.getDescription(),serverProtocol.getDefaultPort(),serverProtocol.isConfidential(),protocol));
   String host=(getHeaders() == null) ? null : getHeaders().getFirstValue(HeaderConstants.HEADER_HOST,true);
   String hostDomain=null;
   int hostPort=-1;

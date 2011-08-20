@@ -14,5 +14,17 @@
   this.resourceUri=resourceUri;
   this.securityAdded=false;
   this.warningsAdded=false;
+  int versionSeparator=protocol.indexOf('/');
+  Protocol connectorProtocol=getConnection().getHelper().getHelped().getProtocols().get(0);
+  if (versionSeparator != -1) {
+    String name=protocol.substring(0,versionSeparator);
+    String version=protocol.substring(versionSeparator + 1);
+    if (connectorProtocol.getTechnicalName().equals(name) && connectorProtocol.getVersion().equals(version)) {
+      setProtocol(connectorProtocol);
+    }
+ else {
+      setProtocol(Protocol.valueOf(name,version));
+    }
+  }
   setMethod(Method.valueOf(methodName));
 }
