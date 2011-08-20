@@ -2,13 +2,13 @@
   Form params=request.getResourceRef().getQueryAsForm();
   if (rp.hasReturnTo(request)) {
     Context.getCurrentLogger().info("handling return");
-    Map<AX,String> axResp=new HashMap<AX,String>();
+    Map<AttributeExchange,String> axResp=new HashMap<AttributeExchange,String>();
     try {
       Identifier identifier=rp.verify(axResp,request,true);
       if (identifier != null && identifier.getIdentifier() != null) {
         User u=new User(identifier.getIdentifier());
         if (axResp.size() > 0) {
-          for (          Map.Entry<AX,String> entry : axResp.entrySet()) {
+          for (          Map.Entry<AttributeExchange,String> entry : axResp.entrySet()) {
             OpenIdUser.setValueFromAX(entry.getKey(),entry.getValue(),u);
           }
         }
