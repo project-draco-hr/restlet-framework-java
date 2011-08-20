@@ -1,0 +1,16 @@
+{
+  Representation result=null;
+  if (source instanceof SuperCsvRepresentation) {
+    result=(SuperCsvRepresentation<?>)source;
+  }
+ else {
+    if (target.getMediaType() == null) {
+      target.setMediaType(MediaType.TEXT_CSV);
+    }
+    if (VARIANT_CSV.isCompatible(target)) {
+      SuperCsvRepresentation<Object> superCsvRepresentation=create(target.getMediaType(),source);
+      result=superCsvRepresentation;
+    }
+  }
+  return result;
+}

@@ -1,0 +1,17 @@
+{
+  T result=null;
+  if (this.object != null) {
+    result=this.object;
+  }
+ else   if (this.csvRepresentation != null) {
+    try {
+      CsvBeanReader beanReader=new CsvBeanReader(this.csvRepresentation.getReader(),CsvPreference.EXCEL_PREFERENCE);
+      String[] header=beanReader.getCSVHeader(true);
+      result=beanReader.read(getObjectClass(),header);
+    }
+ catch (    IOException e) {
+      Context.getCurrentLogger().log(Level.WARNING,"Unable to parse the object with Jackson.",e);
+    }
+  }
+  return result;
+}
