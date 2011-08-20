@@ -1,9 +1,10 @@
 {
-  int pos=src.position();
-  int off=src.arrayOffset() + pos;
+  int oldPos=src.position();
+  int off=src.arrayOffset() + oldPos;
   int result=getWrappedChannel().write(src);
-  if ((result > 0) && (src.position() > pos)) {
-    System.out.write(src.array(),off,result);
+  int newPos=src.position();
+  if ((result > 0) && (newPos > oldPos)) {
+    System.out.write(src.array(),off,newPos - oldPos);
   }
   return result;
 }
