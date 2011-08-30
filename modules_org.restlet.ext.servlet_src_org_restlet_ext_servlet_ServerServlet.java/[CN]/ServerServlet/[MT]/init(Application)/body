@@ -1,16 +1,18 @@
 {
   if (application != null) {
     Context applicationContext=application.getContext();
-    applicationContext.getAttributes().put("org.restlet.ext.servlet.ServletContext",getServletContext());
-    String initParam;
-    javax.servlet.ServletConfig servletConfig=getServletConfig();
-    for (Enumeration<String> enum1=servletConfig.getInitParameterNames(); enum1.hasMoreElements(); ) {
-      initParam=enum1.nextElement();
-      applicationContext.getParameters().add(initParam,servletConfig.getInitParameter(initParam));
-    }
-    for (Enumeration<String> enum1=getServletContext().getInitParameterNames(); enum1.hasMoreElements(); ) {
-      initParam=enum1.nextElement();
-      applicationContext.getParameters().add(initParam,getServletContext().getInitParameter(initParam));
+    if (applicationContext != null) {
+      applicationContext.getAttributes().put("org.restlet.ext.servlet.ServletContext",getServletContext());
+      String initParam;
+      javax.servlet.ServletConfig servletConfig=getServletConfig();
+      for (Enumeration<String> enum1=servletConfig.getInitParameterNames(); enum1.hasMoreElements(); ) {
+        initParam=enum1.nextElement();
+        applicationContext.getParameters().add(initParam,servletConfig.getInitParameter(initParam));
+      }
+      for (Enumeration<String> enum1=getServletContext().getInitParameterNames(); enum1.hasMoreElements(); ) {
+        initParam=enum1.nextElement();
+        applicationContext.getParameters().add(initParam,getServletContext().getInitParameter(initParam));
+      }
     }
   }
 }
