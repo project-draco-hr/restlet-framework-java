@@ -1,6 +1,13 @@
 {
   try {
-    writeNode(source,true);
+    if (this.lastSource == null) {
+      writeNode(source,true);
+    }
+ else     if (!source.equals(this.lastSource)) {
+      this.writer.endElement(RDF_SYNTAX,"Description");
+      writeNode(source,true);
+    }
+    this.lastSource=source;
     String typeRefNs=getNamespace(typeRef.getTargetRef());
     String typeRefPrefix=getPrefix(typeRef.getTargetRef());
     if (target.getLanguage() != null || target.getDatatypeRef() != null) {
@@ -18,7 +25,6 @@
     }
     this.writer.characters(target.getValue());
     this.writer.endElement(typeRefNs,typeRefPrefix);
-    this.writer.endElement(RDF_SYNTAX,"Description");
   }
  catch (  SAXException e) {
     org.restlet.Context.getCurrentLogger().warning("Cannot write the representation of a statement due to: " + e.getMessage());
