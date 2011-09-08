@@ -1,0 +1,20 @@
+{
+  InputStream inStr=getClass().getResourceAsStream("/org/restlet/Component.xsd");
+  assertNotNull("Component.xsd input stream MUST NOT be null",inStr);
+  InputSource inSrc=new InputSource(inStr);
+  assertNotNull("Component.xsd SAX input source MUST NOT be null",inSrc);
+  SaxRepresentation schema=new SaxRepresentation(MediaType.APPLICATION_W3C_SCHEMA,inSrc);
+  assertNotNull("Component.xsd SAX Representation MUST NOT be null",schema);
+  Representation xmlRep=new StringRepresentation(RESTLET_XML);
+  assertNotNull("Restlet.xml SAX Representation MUST NOT be null",xmlRep);
+  DomRepresentation xml=new DomRepresentation(xmlRep);
+  assertNotNull("Restlet.xml DOM Representation MUST NOT be null",xml);
+  try {
+    xml.validate(schema);
+    assertTrue(true);
+  }
+ catch (  Exception x) {
+    x.printStackTrace(System.err);
+    fail("Bug717TestCase - Failed validating a correct restlet.xml " + "representation against the current Component W3C schema: " + x.getLocalizedMessage());
+  }
+}
