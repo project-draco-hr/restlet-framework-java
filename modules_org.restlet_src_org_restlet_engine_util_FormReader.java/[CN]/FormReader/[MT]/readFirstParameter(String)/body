@@ -1,12 +1,14 @@
 {
-  Parameter param=readNextParameter();
   Parameter result=null;
-  while ((param != null) && (result == null)) {
-    if (param.getName().equals(name)) {
-      result=param;
+  if (this.stream != null) {
+    Parameter param=readNextParameter();
+    while ((param != null) && (result == null)) {
+      if (param.getName().equals(name)) {
+        result=param;
+      }
+      param=readNextParameter();
     }
-    param=readNextParameter();
+    this.stream.close();
   }
-  this.stream.close();
   return result;
 }
