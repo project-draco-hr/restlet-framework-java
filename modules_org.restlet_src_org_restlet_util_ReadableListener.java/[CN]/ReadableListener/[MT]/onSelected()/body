@@ -1,0 +1,21 @@
+{
+  try {
+synchronized (this.byteBuffer) {
+      this.byteBuffer.clear();
+      int result=this.byteChannel.read(this.byteBuffer);
+      if (result > 0) {
+        this.byteBuffer.flip();
+        onContent(this.byteBuffer);
+      }
+ else       if (result == -1) {
+        onEnd();
+      }
+ else {
+        Context.getCurrentLogger().fine("NIO selection detected with no content available");
+      }
+    }
+  }
+ catch (  IOException ioe) {
+    onError(ioe);
+  }
+}

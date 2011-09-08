@@ -1,3 +1,9 @@
 {
-  return new WritableSocketChannel(getSocketChannel(),getRegistration());
+  return new WritableSocketChannel(getSocketChannel(),getRegistration()){
+    @Override public int write(    ByteBuffer src) throws IOException {
+      onActivity();
+      return super.write(src);
+    }
+  }
+;
 }
