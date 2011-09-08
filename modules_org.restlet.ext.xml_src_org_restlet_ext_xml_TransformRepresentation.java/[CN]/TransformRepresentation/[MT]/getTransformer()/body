@@ -4,10 +4,13 @@
     Templates templates=getTemplates();
     if (templates != null) {
       result=templates.newTransformer();
-      if (this.uriResolver != null) {
+      if (getErrorListener() != null) {
+        result.setErrorListener(getErrorListener());
+      }
+      if (getUriResolver() != null) {
         result.setURIResolver(getUriResolver());
       }
-      for (      final String name : getParameters().keySet()) {
+      for (      String name : getParameters().keySet()) {
         result.setParameter(name,getParameters().get(name));
       }
       for (      String name : getOutputProperties().keySet()) {
