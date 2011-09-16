@@ -13,5 +13,5 @@
   String canonicalizedResource=getCanonicalizedResourceName(request.getResourceRef());
   StringBuilder rest=new StringBuilder();
   rest.append(date).append('\n').append('/').append(challenge.getIdentifier()).append(canonicalizedResource);
-  cw.append(challenge.getIdentifier()).append(':').append(Base64.encode(DigestUtils.toHMac256(rest.toString(),Base64.decode(challenge.getSecret())),true));
+  cw.append(challenge.getIdentifier()).append(':').append(Base64.encode(DigestUtils.toHMacSha256(rest.toString(),Base64.decode(challenge.getSecret())),true));
 }

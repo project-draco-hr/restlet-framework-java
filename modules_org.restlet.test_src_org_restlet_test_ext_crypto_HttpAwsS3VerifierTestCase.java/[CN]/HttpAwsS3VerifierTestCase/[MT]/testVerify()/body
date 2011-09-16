@@ -5,10 +5,10 @@
   ChallengeResponse cr=new ChallengeResponse(ChallengeScheme.HTTP_AWS_S3);
   request.setChallengeResponse(cr);
   Assert.assertEquals(Verifier.RESULT_MISSING,awsVerifier.verify(request,null));
-  String sig=AwsUtils.getSignature(request,"badpassword".toCharArray());
+  String sig=AwsUtils.getS3Signature(request,"badpassword".toCharArray());
   cr.setRawValue(ACCESS_ID + ":" + sig);
   Assert.assertEquals(Verifier.RESULT_INVALID,awsVerifier.verify(request,null));
-  sig=AwsUtils.getSignature(request,ACCESS_KEY.toCharArray());
+  sig=AwsUtils.getS3Signature(request,ACCESS_KEY.toCharArray());
   cr.setRawValue(ACCESS_ID + ":" + sig);
   Assert.assertEquals(Verifier.RESULT_VALID,awsVerifier.verify(request,null));
   headers.removeAll(HeaderConstants.HEADER_DATE);
