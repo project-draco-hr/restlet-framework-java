@@ -1,7 +1,6 @@
 {
   ClientCall result=null;
   try {
-    Reference targetRef=request.getResourceRef().getBaseRef() == null ? request.getResourceRef() : request.getResourceRef().getTargetRef();
     ChallengeResponse cr=request.getProxyChallengeResponse();
     if (cr != null) {
       if (cr.getScheme().equals(ChallengeScheme.valueOf("SDC"))) {
@@ -24,7 +23,7 @@
           getLogger().log(Level.WARNING,"Unable to find an established SDC tunnel for this request: ",request.getResourceRef());
         }
  else {
-          result=new SdcClientCall(this,ssc,request.getMethod().toString(),targetRef.toString());
+          result=new SdcClientCall(this,ssc,request.getMethod().toString(),ReferenceUtils.update(request.getResourceRef(),request).toString());
         }
       }
     }

@@ -1,0 +1,19 @@
+{
+  String result=null;
+  Reference requestRef=update(resourceRef,request);
+  if (isProxied) {
+    result=requestRef.getIdentifier();
+  }
+ else {
+    if (requestRef.hasQuery()) {
+      result=requestRef.getPath() + "?" + requestRef.getQuery();
+    }
+ else {
+      result=requestRef.getPath();
+    }
+    if ((result == null) || (result.equals(""))) {
+      result="/";
+    }
+  }
+  return result;
+}
