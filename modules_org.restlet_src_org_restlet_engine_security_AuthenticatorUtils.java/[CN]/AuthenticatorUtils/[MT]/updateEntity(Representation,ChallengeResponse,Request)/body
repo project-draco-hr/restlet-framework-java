@@ -1,0 +1,12 @@
+{
+  if (challengeResponse != null) {
+    AuthenticatorHelper helper=Engine.getInstance().findHelper(challengeResponse.getScheme(),true,false);
+    if (helper != null) {
+      entity=helper.updateEntity(entity,challengeResponse,request);
+    }
+ else {
+      Context.getCurrentLogger().warning("Challenge scheme " + challengeResponse.getScheme() + " not supported by the Restlet engine.");
+    }
+  }
+  return entity;
+}

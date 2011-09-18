@@ -1,0 +1,16 @@
+{
+  Representation result=entity;
+  if (MediaType.APPLICATION_WWW_FORM.equals(entity.getMediaType())) {
+    Form form=new Form(entity);
+    form.add("AWSAccessKeyId",new String(request.getChallengeResponse().getSecret()));
+    form.add("SignatureMethod","HmacSHA256");
+    form.add("SignatureVersion","2");
+    form.add("Version","2009-04-15");
+    String df=DateUtils.format(new Date(),DateUtils.FORMAT_ISO_8601.get(0));
+    form.add("Timestamp",df);
+    String signature=AwsUtils.getSdbSignature(request.getMethod(),request.getResourceRef(),form,request.getChallengeResponse().getSecret());
+    form.add("Signature",signature);
+    result=form.getWebRepresentation();
+  }
+  return result;
+}

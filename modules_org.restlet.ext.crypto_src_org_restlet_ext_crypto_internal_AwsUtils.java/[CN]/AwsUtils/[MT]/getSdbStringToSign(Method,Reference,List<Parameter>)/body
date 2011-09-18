@@ -1,21 +1,20 @@
 {
   StringBuilder toSign=new StringBuilder();
-  toSign.append("POST").append("\n");
+  toSign.append(method != null ? method.getName() : "").append("\n");
   String domain=resourceRef.getHostDomain();
   toSign.append(domain != null ? domain : "").append("\n");
   String path=resourceRef.getPath();
   toSign.append(path != null ? path : "").append("\n");
-  Form query=resourceRef.getQueryAsForm(false);
-  Collections.sort(query);
+  Collections.sort(params);
   Parameter param;
-  for (int i=0; i < query.size(); i++) {
-    param=query.get(i);
+  for (int i=0; i < params.size(); i++) {
+    param=params.get(i);
     if (i > 0) {
       toSign.append('&');
     }
-    toSign.append(param.getName());
+    toSign.append(Reference.encode(param.getName()));
     if (param.getValue() != null) {
-      toSign.append('=').append(param.getValue());
+      toSign.append('=').append(Reference.encode(param.getValue()));
     }
   }
   System.out.println(toSign.toString());
