@@ -1,5 +1,8 @@
 {
   for (  Connection<?> conn : getHelper().getConnections()) {
+    if (getHelper().getLogger().isLoggable(Level.FINEST)) {
+      getHelper().getLogger().log(Level.FINEST,"Connection status: " + conn);
+    }
     if (conn.getState() == ConnectionState.CLOSED) {
       getHelper().getConnections().remove(conn);
       getHelper().checkin(conn);
