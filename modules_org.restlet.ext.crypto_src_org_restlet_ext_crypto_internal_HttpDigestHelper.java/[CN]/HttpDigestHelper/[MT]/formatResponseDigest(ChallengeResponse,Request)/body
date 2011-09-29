@@ -1,12 +1,12 @@
 {
   String a1=null;
-  if (!Digest.ALGORITHM_HTTP_DIGEST.equals(baseSecretAlgorithm)) {
-    if (!AuthenticatorUtils.anyNull(challengeResponse.getIdentifier(),baseSecret,challengeResponse.getRealm())) {
-      a1=DigestUtils.toHttpDigest(identifier,baseSecret,challengeResponse.getRealm());
+  if (!Digest.ALGORITHM_HTTP_DIGEST.equals(challengeResponse.getSecretAlgorithm())) {
+    if (!AuthenticatorUtils.anyNull(challengeResponse.getIdentifier(),challengeResponse.getSecret(),challengeResponse.getRealm())) {
+      a1=DigestUtils.toHttpDigest(challengeResponse.getIdentifier(),challengeResponse.getSecret(),challengeResponse.getRealm());
     }
   }
  else {
-    a1=new String(baseSecret);
+    a1=new String(challengeResponse.getSecret());
   }
   if (a1 != null && !AuthenticatorUtils.anyNull(request.getMethod(),challengeResponse.getDigestRef())) {
     String a2=DigestUtils.toMd5(request.getMethod().toString() + ":" + challengeResponse.getDigestRef().toString());
