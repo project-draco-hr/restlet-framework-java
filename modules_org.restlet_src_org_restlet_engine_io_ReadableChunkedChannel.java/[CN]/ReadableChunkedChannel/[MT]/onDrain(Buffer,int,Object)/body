@@ -4,7 +4,7 @@
   boolean doLoop=true;
   while (doLoop) {
     if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
-      Context.getCurrentLogger().log(Level.FINER,"Chunk state: " + getChunkState());
+      Context.getCurrentLogger().log(Level.FINER,"Readable chunk state: " + getChunkState());
     }
 switch (getChunkState()) {
 case SIZE:
@@ -19,7 +19,7 @@ case SIZE:
       try {
         setRemainingChunkSize(Integer.parseInt(getLineBuilder().substring(0,index).trim(),16));
         if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
-          Context.getCurrentLogger().log(Level.FINER,"New chunk detected. Size: " + this.remainingChunkSize);
+          Context.getCurrentLogger().log(Level.FINER,"New readable chunk detected. Size: " + this.remainingChunkSize);
         }
       }
  catch (      NumberFormatException ex) {
@@ -50,7 +50,7 @@ if (read > 0) {
 }
  else {
   if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
-    Context.getCurrentLogger().finer("No chunk data read");
+    Context.getCurrentLogger().finer("No readable chunk data found");
   }
 }
 }
@@ -75,7 +75,7 @@ case END:
 setLineBuilderState(buffer.drain(getLineBuilder(),getLineBuilderState()));
 if (getLineBuilderState() == BufferState.DRAINING) {
 if (getLineBuilder().length() != 0) {
-Context.getCurrentLogger().log(Level.FINE,"The last chunk line had a non empty line");
+Context.getCurrentLogger().log(Level.FINE,"The last readable chunk line had a non empty line");
 }
 setEndReached(true);
 if (result <= 0) {

@@ -14,7 +14,7 @@
         dst.position(chunkStart + this.chunkSizeLength + 2);
         dst.limit(dst.position() + maxChunkDataSize);
         if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
-          Context.getCurrentLogger().finer("Position before read | Limit | MaxChunkDataSize : " + dst.position() + " | "+ dst.limit()+ " | "+ maxChunkDataSize);
+          Context.getCurrentLogger().finer("Position in destination buffer before chunking | Limit | MaxChunkDataSize : " + dst.position() + " | "+ dst.limit()+ " | "+ maxChunkDataSize);
         }
         chunkDataSize=getWrappedChannel().read(dst);
         dst.limit(dst.capacity());
@@ -33,11 +33,11 @@
           dst.position(chunkStart);
           fillChunkSizeString(chunkDataSize,dst);
           if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
-            Context.getCurrentLogger().finer("Old position | Limit | MaxChunkDataSize | ChunkDataSize : " + dst.position() + " | "+ dst.limit()+ " | "+ maxChunkDataSize+ " | "+ chunkDataSize);
+            Context.getCurrentLogger().finer("Old chunking position in destination buffer | Limit | MaxChunkDataSize | ChunkDataSize : " + dst.position() + " | "+ dst.limit()+ " | "+ maxChunkDataSize+ " | "+ chunkDataSize);
           }
           dst.position(dst.position() + chunkDataSize + 2);
           if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
-            Context.getCurrentLogger().finer("New position : " + dst.position());
+            Context.getCurrentLogger().finer("New chunking position in destination buffer | Limit | MaxChunkDataSize | ChunkDataSize : " + dst.position() + " | "+ dst.limit()+ " | "+ maxChunkDataSize+ " | "+ chunkDataSize);
           }
           result+=dst.position() - chunkStart;
         }

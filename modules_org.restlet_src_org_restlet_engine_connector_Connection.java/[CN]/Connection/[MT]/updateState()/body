@@ -1,9 +1,15 @@
 {
   boolean result=true;
   if (getState() != ConnectionState.CLOSED) {
+    if (getHelper().getLogger().isLoggable(Level.FINEST)) {
+      getHelper().getLogger().log(Level.FINEST,"Old connection NIO interest: " + getRegistration());
+    }
     getInboundWay().updateState();
     getOutboundWay().updateState();
     result=getRegistration().setInterestOperations(getInboundWay().getRegistration().getInterestOperations() | getOutboundWay().getRegistration().getInterestOperations());
+    if (getHelper().getLogger().isLoggable(Level.FINEST)) {
+      getHelper().getLogger().log(Level.FINEST,"New connection NIO interest: " + getRegistration());
+    }
   }
   return result;
 }
