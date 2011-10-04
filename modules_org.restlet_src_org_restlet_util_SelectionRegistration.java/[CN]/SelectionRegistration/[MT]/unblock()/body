@@ -7,5 +7,8 @@
   }
  catch (  Exception e) {
     Context.getCurrentLogger().log(Level.WARNING,"Unable to unblock the waiting thread at the cyclic barrier",e);
+    IOException ioe=new IOException("Unable to unblock the waiting thread at the cyclic barrier.");
+    ioe.initCause(e);
+    throw ioe;
   }
 }
