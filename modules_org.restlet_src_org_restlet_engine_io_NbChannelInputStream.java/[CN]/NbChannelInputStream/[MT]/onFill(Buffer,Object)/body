@@ -5,30 +5,25 @@
       Context.getCurrentLogger().log(Level.FINER,"Couldn't fill the buffer immediately. Trying to register a select key to get more.");
     }
     if (selectionChannel != null) {
-      try {
-        if (this.selectionRegistration == null) {
-          this.selectionRegistration=this.selectionChannel.getRegistration();
-          this.selectionRegistration.setInterestOperations(SelectionKey.OP_READ);
-          this.selectionRegistration.setListener(new SelectionListener(){
-            public void onSelected() throws IOException {
-              if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
-                Context.getCurrentLogger().log(Level.FINER,"NbChannelInputStream selected");
-              }
-              selectionRegistration.suspend();
-              selectionRegistration.unblock();
+      if (this.selectionRegistration == null) {
+        this.selectionRegistration=this.selectionChannel.getRegistration();
+        this.selectionRegistration.setInterestOperations(SelectionKey.OP_READ);
+        this.selectionRegistration.setListener(new SelectionListener(){
+          public void onSelected() throws IOException {
+            if (Context.getCurrentLogger().isLoggable(Level.FINER)) {
+              Context.getCurrentLogger().log(Level.FINER,"NbChannelInputStream selected");
             }
+            selectionRegistration.suspend();
+            selectionRegistration.unblock();
           }
+        }
 );
-        }
+      }
  else {
-          this.selectionRegistration.resume();
-        }
-        this.selectionRegistration.block();
-        result=buffer.fill(this.channel);
+        this.selectionRegistration.resume();
       }
- catch (      Exception e) {
-        Context.getCurrentLogger().log(Level.FINE,"Exception while registering or waiting for new content",e);
-      }
+      this.selectionRegistration.block();
+      result=buffer.fill(this.channel);
     }
  else     if (selectableChannel != null) {
       Selector selector=null;
