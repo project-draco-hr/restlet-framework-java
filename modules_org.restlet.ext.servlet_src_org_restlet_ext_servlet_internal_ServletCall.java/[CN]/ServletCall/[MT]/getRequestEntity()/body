@@ -1,0 +1,21 @@
+{
+  Representation result=null;
+  if (MediaType.APPLICATION_WWW_FORM.isCompatible(new MediaType(getRequest().getContentType()))) {
+    Form form=new Form();
+    Map<String,String[]> map=request.getParameterMap();
+    for (    Entry<String,String[]> entry : map.entrySet()) {
+      for (int i=0; i < entry.getValue().length; i++) {
+        form.add(entry.getKey(),entry.getValue()[i]);
+      }
+    }
+    result=form.getWebRepresentation();
+    Header header=getRequestHeaders().getFirst(HeaderConstants.HEADER_CONTENT_LANGUAGE,true);
+    if (header != null) {
+      new LanguageReader(header.getValue()).addValues(result.getLanguages());
+    }
+  }
+ else {
+    result=super.getRequestEntity();
+  }
+  return result;
+}
