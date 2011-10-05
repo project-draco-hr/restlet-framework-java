@@ -3,7 +3,15 @@
   form.add("normalParam","abcd");
   form.add("emptyParam","");
   form.add("nullParam",null);
+  assertEquals(3,form.size());
   assertEquals("abcd",form.getFirstValue("normalParam"));
   assertEquals("",form.getFirstValue("emptyParam"));
   assertNull(form.getFirstValue("nullParam"));
+  assertNull(form.getFirstValue("unknownParam"));
+  form=new Form("normalParam=abcd&emptyParam=&nullParam");
+  assertEquals(3,form.size());
+  assertEquals("abcd",form.getFirstValue("normalParam"));
+  assertEquals("",form.getFirstValue("emptyParam"));
+  assertNull(form.getFirstValue("nullParam"));
+  assertNull(form.getFirstValue("unknownParam"));
 }
