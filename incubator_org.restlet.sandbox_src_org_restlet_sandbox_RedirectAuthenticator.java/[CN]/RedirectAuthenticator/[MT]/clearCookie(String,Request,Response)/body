@@ -1,0 +1,9 @@
+{
+  Cookie cookie=req.getCookies().getFirst(cookieId);
+  CookieSetting cookieSetting=res.getCookieSettings().getFirst(cookieId);
+  if (cookieSetting == null && cookie != null) {
+    cookieSetting=new CookieSetting(cookieId,null);
+    res.getCookieSettings().add(cookieSetting);
+  }
+  if (cookieSetting != null)   cookieSetting.setMaxAge(0);
+}

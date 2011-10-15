@@ -1,0 +1,15 @@
+{
+  CookieSetting credentialsCookie=response.getCookieSettings().getFirst(getCookieName());
+  if (credentialsCookie == null) {
+    credentialsCookie=new CookieSetting(getCookieName(),null);
+    credentialsCookie.setAccessRestricted(true);
+    if (request.getRootRef() != null) {
+      String p=request.getRootRef().getPath();
+      credentialsCookie.setPath(p == null ? "/" : p);
+    }
+ else {
+    }
+    response.getCookieSettings().add(credentialsCookie);
+  }
+  return credentialsCookie;
+}
