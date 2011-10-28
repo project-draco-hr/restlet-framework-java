@@ -1,11 +1,36 @@
 {
   String result=null;
-  AuthenticatorHelper helper=Engine.getInstance().findHelper(challenge.getScheme(),true,false);
-  if (helper != null) {
-    result=helper.formatResponse(challenge,request,httpHeaders);
+  if (challenge == null) {
+    Context.getCurrentLogger().warning("No challenge response to format.");
+  }
+ else   if (challenge.getScheme() == null) {
+    Context.getCurrentLogger().warning("A challenge response must have a scheme defined.");
+  }
+ else   if (challenge.getScheme().getTechnicalName() == null) {
+    Context.getCurrentLogger().warning("A challenge scheme must have a technical name defined.");
   }
  else {
-    Context.getCurrentLogger().warning("Challenge scheme " + challenge.getScheme() + " not supported by the Restlet engine.");
+    ChallengeWriter cw=new ChallengeWriter();
+    cw.append(challenge.getScheme().getTechnicalName()).appendSpace();
+    int cwInitialLength=cw.getBuffer().length();
+    if (challenge.getRawValue() != null) {
+      cw.append(challenge.getRawValue());
+    }
+ else {
+      AuthenticatorHelper helper=Engine.getInstance().findHelper(challenge.getScheme(),true,false);
+      if (helper != null) {
+        try {
+          helper.formatResponse(cw,challenge,request,httpHeaders);
+        }
+ catch (        Exception e) {
+          Context.getCurrentLogger().log(Level.WARNING,"Unable to format the challenge response: " + challenge,e);
+        }
+      }
+ else {
+        Context.getCurrentLogger().warning("Challenge scheme " + challenge.getScheme() + " not supported by the Restlet engine.");
+      }
+    }
+    result=(cw.getBuffer().length() > cwInitialLength) ? cw.toString() : null;
   }
   return result;
 }
