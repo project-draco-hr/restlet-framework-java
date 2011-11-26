@@ -1,0 +1,11 @@
+{
+  if (MediaType.APPLICATION_ALL_XML.isCompatible(getMediaType()) || MediaType.TEXT_XML.isCompatible(getMediaType()) || MediaType.APPLICATION_XMI.isCompatible(getMediaType())|| MediaType.APPLICATION_ECORE.isCompatible(getMediaType())) {
+    Resource emfResource=createEmfResource(getMediaType());
+    emfResource.getContents().add(object);
+    emfResource.save(outputStream,getSaveOptions());
+  }
+ else   if (MediaType.TEXT_HTML.isCompatible(getMediaType())) {
+    EmfHtmlWriter htmlWriter=new EmfHtmlWriter(object);
+    htmlWriter.write(new OutputStreamWriter(outputStream,((getCharacterSet() == null) ? CharacterSet.ISO_8859_1.getName() : getCharacterSet().getName())));
+  }
+}

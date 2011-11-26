@@ -1,30 +1,3 @@
 {
-  XMLResource result=null;
-  if (MediaType.APPLICATION_ECORE.isCompatible(getMediaType())) {
-    result=new EMOFResourceImpl();
-  }
- else   if (MediaType.APPLICATION_XMI.isCompatible(getMediaType())) {
-    result=new XMIResourceImpl();
-  }
- else {
-    result=new XMLResourceImpl();
-  }
-  if (getCharacterSet() != null) {
-    result.setEncoding(getCharacterSet().getName());
-  }
- else {
-    result.setEncoding(CharacterSet.UTF_8.getName());
-  }
-  result.getDefaultLoadOptions().put(XMLResource.OPTION_EXTENDED_META_DATA,Boolean.TRUE);
-  result.getDefaultLoadOptions().put(XMLResource.OPTION_USE_LEXICAL_HANDLER,Boolean.TRUE);
-  result.getDefaultLoadOptions().put(XMLResource.OPTION_USE_ENCODED_ATTRIBUTE_STYLE,Boolean.TRUE);
-  result.getDefaultSaveOptions().put(XMLResource.OPTION_EXTENDED_META_DATA,Boolean.TRUE);
-  result.getDefaultSaveOptions().put(XMLResource.OPTION_LINE_WIDTH,getLineWidth());
-  result.getDefaultSaveOptions().put(XMLResource.OPTION_USE_ENCODED_ATTRIBUTE_STYLE,isUsingEncodedAttributeStyle());
-  result.getDefaultSaveOptions().put(XMLResource.OPTION_SCHEMA_LOCATION,Boolean.TRUE);
-  XMLOptions xmlOptions=new XMLOptionsImpl();
-  xmlOptions.setProcessAnyXML(true);
-  xmlOptions.setProcessSchemaLocations(true);
-  result.getDefaultLoadOptions().put(XMLResource.OPTION_XML_OPTIONS,xmlOptions);
-  return result;
+  return createEmfResource(mediaType);
 }
