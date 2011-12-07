@@ -1,6 +1,5 @@
 {
   org.restlet.service.ConverterService cs=getConverterService();
-  List<? extends Variant> variants=cs.getVariants(resultClass,null);
   ClientInfo clientInfo=getClientInfo();
   if (clientInfo.getAcceptedMediaTypes().isEmpty()) {
     cs.updatePreferences(clientInfo.getAcceptedMediaTypes(),resultClass);
@@ -8,7 +7,11 @@
   Request request=createRequest();
   request.setMethod(method);
   request.setClientInfo(clientInfo);
-  Representation requestEntity=(entity == null) ? null : toRepresentation(entity,getConnegService().getPreferredVariant(variants,request,getMetadataService()));
+  Representation requestEntity=null;
+  if (entity != null) {
+    List<? extends Variant> entityVariants=cs.getVariants(entity.getClass(),null);
+    toRepresentation(entity,getConnegService().getPreferredVariant(entityVariants,request,getMetadataService()));
+  }
   request.setEntity(requestEntity);
   Response response=handleOutbound(request);
   Representation responseEntity=handleInbound(response);
