@@ -1,0 +1,17 @@
+{
+  Message m=fetchAttributes(pl);
+  if (m == null)   return null;
+  MessageExtension me=m.getExtension(AxMessage.OPENID_NS_AX);
+  if (me instanceof FetchRequest) {
+    FetchRequest fr=(FetchRequest)me;
+    Map attrs=fr.getAttributes(required);
+    Set<AttributeExchange> toRet=new TreeSet<AttributeExchange>();
+    for (    Object key : attrs.keySet()) {
+      String type=(String)attrs.get(key);
+      AttributeExchange ax=AttributeExchange.valueOfType(type);
+      if (ax != null)       toRet.add(ax);
+    }
+    return toRet;
+  }
+  return null;
+}
