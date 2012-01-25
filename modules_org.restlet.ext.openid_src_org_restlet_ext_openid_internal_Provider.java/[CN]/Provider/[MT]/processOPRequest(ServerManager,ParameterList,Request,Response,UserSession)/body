@@ -3,7 +3,7 @@
   OpenIdMode mode=null;
   Message response;
   if (pl == null && us != null) {
-    pl=us.pl;
+    pl=us.getParameterList();
   }
   mode=OpenIdMode.valueOf(pl.getParameterValue(OPENID_MODE));
   try {
@@ -19,21 +19,21 @@ case associate:
   return new ProviderResult(OPR.OK,response.keyValueFormEncoding());
 case checkid_setup:
 case checkid_immediate:
-if (us == null || us.user == null) {
+if (us == null || us.getUser() == null) {
   String session=UUID.randomUUID().toString();
   this.sessions.put(session,new UserSession(pl));
   return new ProviderResult(OPR.GET_USER,session);
 }
-OpenIdUser user=us.user;
+OpenIdUser user=us.getUser();
 response=sm.authResponse(pl,user.getClaimedId(),user.getClaimedId(),user.getApproved());
 if (response instanceof DirectError) {
 return new ProviderResult(OPR.OK,response.keyValueFormEncoding());
 }
-if (us.user.attributes() != null && us.user.attributes().size() > 0) {
+if (us.getUser().attributes() != null && us.getUser().attributes().size() > 0) {
 FetchResponse fr=null;
 fr=FetchResponse.createFetchResponse();
-for (AttributeExchange attr : us.user.attributes()) {
-String val=us.user.getAXValue(attr);
+for (AttributeExchange attr : us.getUser().attributes()) {
+String val=us.getUser().getAXValue(attr);
 if (val != null) {
 try {
 fr.addAttribute(attr.getName(),attr.getSchema(),val);
