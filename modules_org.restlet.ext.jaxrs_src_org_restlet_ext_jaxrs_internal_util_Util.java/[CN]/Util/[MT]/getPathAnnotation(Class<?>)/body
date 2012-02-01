@@ -2,7 +2,13 @@
   if (jaxRsClass == null) {
     throw new IllegalArgumentException("The jaxRsClass must not be null");
   }
-  final Path path=jaxRsClass.getAnnotation(Path.class);
+  Path path=jaxRsClass.getAnnotation(Path.class);
+  if (path == null) {
+    Class<?>[] interfaces=jaxRsClass.getInterfaces();
+    for (int i=0; (path == null) && i < interfaces.length; i++) {
+      path=interfaces[i].getAnnotation(Path.class);
+    }
+  }
   if (path == null) {
     throw new MissingAnnotationException("The root resource class does not have a @Path annotation");
   }
