@@ -5,6 +5,7 @@
   if (identifier != null) {
     u=new User(identifier);
     request.getClientInfo().setUser(u);
+    handleUser(u,true);
     return true;
   }
   if (request.getCookies().getFirstValue(origRefCookie) == null) {
@@ -19,7 +20,7 @@
   if (verified == Verifier.RESULT_VALID) {
     response.getCookieSettings().removeAll(identifierCookie);
     response.getCookieSettings().add(identifierCookie,request.getClientInfo().getUser().getIdentifier());
-    handleUser(request.getClientInfo().getUser());
+    handleUser(request.getClientInfo().getUser(),false);
     request.getCookies().removeAll(origRefCookie);
     response.getCookieSettings().removeAll(origRefCookie);
     if (origRef != null) {

@@ -1,5 +1,12 @@
 {
-  if (!jaxRsClass.isAnnotationPresent(Path.class)) {
+  boolean found=jaxRsClass.isAnnotationPresent(Path.class);
+  if (!found) {
+    Class<?>[] interfaces=jaxRsClass.getInterfaces();
+    for (int i=0; !found && i < interfaces.length; i++) {
+      found=(interfaces[i].isAnnotationPresent(Path.class));
+    }
+  }
+  if (!found) {
     final String msg="The " + typeName + " "+ jaxRsClass.getName()+ " is not annotated with @Path. The class will be ignored.";
     throw new MissingAnnotationException(msg);
   }
