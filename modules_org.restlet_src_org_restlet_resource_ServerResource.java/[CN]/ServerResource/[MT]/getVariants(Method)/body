@@ -9,8 +9,30 @@
         if (annotationInfo.isCompatible(method,getQuery(),getRequestEntity(),getMetadataService(),getConverterService())) {
           annoVariants=annotationInfo.getResponseVariants(getMetadataService(),getConverterService());
           if (annoVariants != null) {
+            float score=0.5f;
+            if ((getRequest().getEntity() != null) && getRequest().getEntity().isAvailable()) {
+              MediaType emt=getRequest().getEntity().getMediaType();
+              MediaType amt=getMetadataService().getMediaType(annotationInfo.getInput());
+              if (amt != null && amt.equals(amt)) {
+                score=1.0f;
+              }
+ else               if (amt != null && amt.includes(emt)) {
+                score=0.4f;
+              }
+ else               if (amt != null && amt.isCompatible(emt)) {
+                score=0.4f;
+              }
+ else               if (emt == null) {
+                score=0.4f;
+              }
+ else               if (amt == null) {
+                score=0.3f;
+              }
+            }
             for (            Variant v : annoVariants) {
-              result.add(new VariantInfo(v,annotationInfo));
+              VariantInfo vi=new VariantInfo(v,annotationInfo);
+              vi.setInputScore(score);
+              result.add(vi);
             }
           }
         }
