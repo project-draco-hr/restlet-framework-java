@@ -5,8 +5,8 @@
   }
   for (  Annotation annotation : javaMethod.getAnnotations()) {
     Annotation methodAnnotation=annotation.annotationType().getAnnotation(org.restlet.engine.Method.class);
-    if (methodAnnotation != null) {
-      Method restletMethod=Method.valueOf(((org.restlet.engine.Method)methodAnnotation).value());
+    Method restletMethod=getRestletMethod(annotation,methodAnnotation);
+    if (restletMethod != null) {
       String toString=annotation.toString();
       int startIndex=annotation.annotationType().getCanonicalName().length() + 8;
       int endIndex=toString.length() - 1;
