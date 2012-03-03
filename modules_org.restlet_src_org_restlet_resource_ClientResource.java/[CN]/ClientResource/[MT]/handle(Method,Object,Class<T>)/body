@@ -7,12 +7,13 @@
   Request request=createRequest();
   request.setMethod(method);
   request.setClientInfo(clientInfo);
-  Representation requestEntity=null;
   if (entity != null) {
     List<? extends Variant> entityVariants=cs.getVariants(entity.getClass(),null);
-    toRepresentation(entity,getConnegService().getPreferredVariant(entityVariants,request,getMetadataService()));
+    request.setEntity(toRepresentation(entity,getConnegService().getPreferredVariant(entityVariants,request,getMetadataService())));
   }
-  request.setEntity(requestEntity);
+ else {
+    request.setEntity(null);
+  }
   Response response=handleOutbound(request);
   Representation responseEntity=handleInbound(response);
   return toObject(responseEntity,resultClass);

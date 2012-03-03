@@ -1,0 +1,12 @@
+{
+  Path pathAnnotation=resourceInterface.getAnnotation(Path.class);
+  if (pathAnnotation == null) {
+    throw new MissingAnnotationException("The resource interface must have the JAX-RS path annotation.");
+  }
+  String path=pathAnnotation.value();
+  if (path == null || path.length() == 0) {
+    throw new IllegalPathException(pathAnnotation,"The path annotation must have a value.");
+  }
+  String fullUriFromPath=baseUri + (baseUri.endsWith("/") ? "" : "/") + path;
+  return JaxRsClientResource.createJaxRsClient(null,new Reference(fullUriFromPath),resourceInterface);
+}
