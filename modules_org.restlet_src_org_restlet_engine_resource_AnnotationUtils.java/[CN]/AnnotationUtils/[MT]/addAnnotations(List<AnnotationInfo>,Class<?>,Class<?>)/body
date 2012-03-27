@@ -6,21 +6,21 @@
     }
     if (clazz.isInterface()) {
       for (      java.lang.reflect.Method javaMethod : clazz.getMethods()) {
-        addAnnotationDescriptors(result,clazz,javaMethod);
+        addAnnotationDescriptors(result,clazz,initialClass,javaMethod);
       }
     }
  else {
       for (      java.lang.reflect.Method javaMethod : clazz.getDeclaredMethods()) {
-        addAnnotationDescriptors(result,clazz,javaMethod);
+        addAnnotationDescriptors(result,clazz,initialClass,javaMethod);
       }
     }
     Class<?>[] interfaces=clazz.getInterfaces();
     if (interfaces != null) {
       for (      Class<?> interfaceClass : interfaces) {
-        result=addAnnotations(result,interfaceClass);
+        result=addAnnotations(result,interfaceClass,initialClass);
       }
     }
-    addAnnotations(result,clazz.getSuperclass());
+    addAnnotations(result,clazz.getSuperclass(),initialClass);
   }
   return result;
 }

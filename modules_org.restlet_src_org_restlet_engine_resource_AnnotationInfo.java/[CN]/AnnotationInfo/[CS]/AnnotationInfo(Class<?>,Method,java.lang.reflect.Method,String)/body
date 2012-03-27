@@ -3,6 +3,19 @@
   this.resourceClass=resourceClass;
   this.restletMethod=restletMethod;
   this.javaMethod=javaMethod;
+  java.lang.reflect.Method m=null;
+  try {
+    m=resourceClass.getMethod(javaMethod.getName(),javaMethod.getParameterTypes());
+  }
+ catch (  Exception e) {
+    m=javaMethod;
+  }
+  if (m != null) {
+    this.javaMethodImpl=m;
+  }
+ else {
+    this.javaMethodImpl=javaMethod;
+  }
   if ((value != null) && !value.equals("")) {
     int queryIndex=value.indexOf('?');
     if (queryIndex != -1) {
