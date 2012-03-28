@@ -9,7 +9,10 @@
     Reference rReference=getReference();
     Protocol protocol=(rProtocol != null) ? rProtocol : (rReference != null) ? rReference.getSchemeProtocol() : null;
     if (protocol != null) {
-      result=new Client(protocol);
+      Client client=new Client(protocol);
+      TemplateDispatcher dispatcher=new TemplateDispatcher();
+      dispatcher.setNext(client);
+      result=dispatcher;
     }
   }
   return result;
