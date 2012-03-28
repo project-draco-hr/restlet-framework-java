@@ -1,4 +1,9 @@
 {
-  Request req=new Request(Method.GET,uri);
+  Request req=new Request(Method.GET,new Template(uri).format(new Resolver<String>(){
+    @Override public String resolve(    String name){
+      return name;
+    }
+  }
+));
   return (TemplateRoute)router.getNext(req,new Response(req));
 }
