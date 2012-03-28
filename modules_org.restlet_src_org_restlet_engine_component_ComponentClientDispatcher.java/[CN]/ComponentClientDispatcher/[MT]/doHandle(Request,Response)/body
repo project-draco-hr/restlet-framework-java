@@ -1,9 +1,9 @@
 {
-  super.doHandle(request,response);
+  int result=CONTINUE;
   Protocol protocol=request.getProtocol();
   if (protocol.equals(Protocol.RIAP)) {
-    final LocalReference cr=new LocalReference(request.getResourceRef());
-    final Component component=getComponent();
+    LocalReference cr=new LocalReference(request.getResourceRef());
+    Component component=getComponent();
     if (component != null) {
       if (cr.getRiapAuthorityType() == LocalReference.RIAP_COMPONENT) {
         request.getResourceRef().setBaseRef(request.getResourceRef().getHostIdentifier());
@@ -30,17 +30,21 @@
         }
  else {
           getLogger().warning("No virtual host is available to route the RIAP Host request.");
+          result=STOP;
         }
       }
  else {
         getLogger().warning("Unknown RIAP authority. Only \"component\" is supported.");
+        result=STOP;
       }
     }
  else {
       getLogger().warning("No component is available to route the RIAP request.");
+      result=STOP;
     }
   }
  else {
     getComponentContext().getComponentHelper().getClientRouter().handle(request,response);
   }
+  return result;
 }

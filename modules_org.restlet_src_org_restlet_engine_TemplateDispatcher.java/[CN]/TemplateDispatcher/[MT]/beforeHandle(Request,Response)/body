@@ -1,5 +1,4 @@
 {
-  Response.setCurrent(response);
   Protocol protocol=request.getProtocol();
   if (protocol == null) {
     throw new UnsupportedOperationException("Unable to determine the protocol to use for this call.");
@@ -9,8 +8,6 @@
     Template template=new Template(targetUri);
     request.setResourceRef(template.format(request,response));
   }
-  doHandle(request,response);
-  if ((response.getEntity() != null) && (response.getEntity().getLocationRef() == null)) {
-    response.getEntity().setLocationRef(request.getResourceRef().getTargetRef().toString());
-  }
+  request.setOriginalRef(request.getResourceRef().getTargetRef());
+  return CONTINUE;
 }
