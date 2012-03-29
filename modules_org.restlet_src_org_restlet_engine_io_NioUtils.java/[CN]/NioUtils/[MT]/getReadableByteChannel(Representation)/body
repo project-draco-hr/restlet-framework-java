@@ -2,7 +2,6 @@
   ReadableByteChannel result=null;
   if (Edition.CURRENT != Edition.GAE) {
     final java.nio.channels.Pipe pipe=java.nio.channels.Pipe.open();
-    org.restlet.Application application=org.restlet.Application.getCurrent();
     Runnable task=new Runnable(){
       public void run(){
         try {
@@ -16,6 +15,7 @@
       }
     }
 ;
+    org.restlet.Application application=org.restlet.Application.getCurrent();
     if (application != null && application.getTaskService() != null) {
       application.getTaskService().execute(task);
     }
