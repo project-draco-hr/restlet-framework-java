@@ -3,13 +3,18 @@
   if (source instanceof JacksonRepresentation) {
     result=(JacksonRepresentation<?>)source;
   }
+ else   if (source instanceof JacksonSmileRepresentation) {
+    result=(JacksonSmileRepresentation<?>)source;
+  }
  else {
     if (target.getMediaType() == null) {
       target.setMediaType(MediaType.APPLICATION_JSON);
     }
-    if (VARIANT_JSON.isCompatible(target)) {
-      JacksonRepresentation<Object> jacksonRepresentation=create(target.getMediaType(),source);
-      result=jacksonRepresentation;
+    if (VARIANT_JSON_SMILE.isCompatible(target)) {
+      result=createBinary(target.getMediaType(),source);
+    }
+ else     if (VARIANT_JSON.isCompatible(target)) {
+      result=create(target.getMediaType(),source);
     }
   }
   return result;

@@ -4,14 +4,9 @@
     result=this.object;
   }
  else   if (this.representation != null) {
-    try {
-      Resource emfResource=createEmfResource(this.representation.getMediaType());
-      emfResource.load(this.representation.getStream(),getLoadOptions());
-      result=(T)emfResource.getContents().get(0);
-    }
- catch (    IOException e) {
-      Context.getCurrentLogger().log(Level.WARNING,"Unable to parse the object with an EMF resource.",e);
-    }
+    Resource emfResource=createEmfResource(this.representation.getMediaType());
+    emfResource.load(this.representation.getStream(),getLoadOptions());
+    result=(T)emfResource.getContents().get(0);
   }
   return result;
 }

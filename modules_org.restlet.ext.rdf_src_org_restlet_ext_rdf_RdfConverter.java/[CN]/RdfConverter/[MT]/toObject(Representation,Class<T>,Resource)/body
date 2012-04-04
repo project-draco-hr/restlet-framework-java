@@ -1,15 +1,10 @@
 {
   Object result=null;
-  try {
-    if (source instanceof RdfRepresentation) {
-      result=((RdfRepresentation)source).getGraph();
-    }
- else {
-      result=(new RdfRepresentation(source)).getGraph();
-    }
+  if (source instanceof RdfRepresentation) {
+    result=((RdfRepresentation)source).getGraph();
   }
- catch (  Exception e) {
-    Context.getCurrentLogger().warning("Cannot convert a source representation into a Graph object.");
+ else {
+    result=(new RdfRepresentation(source)).getGraph();
   }
   return target.cast(result);
 }

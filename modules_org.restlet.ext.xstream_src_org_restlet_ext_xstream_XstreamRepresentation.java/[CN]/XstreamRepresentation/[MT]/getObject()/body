@@ -5,15 +5,10 @@
     result=this.object;
   }
  else   if (this.representation != null) {
-    try {
-      if (this.targetClass != null) {
-        getXstream().processAnnotations(this.targetClass);
-      }
-      result=(T)getXstream().fromXML(this.representation.getStream());
+    if (this.targetClass != null) {
+      getXstream().processAnnotations(this.targetClass);
     }
- catch (    IOException e) {
-      Context.getCurrentLogger().log(Level.WARNING,"Unable to parse the object with XStream.",e);
-    }
+    result=(T)getXstream().fromXML(this.representation.getStream());
   }
   return result;
 }

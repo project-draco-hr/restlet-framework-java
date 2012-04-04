@@ -1,5 +1,20 @@
 {
   Object result=null;
+  JacksonSmileRepresentation<?> bSource=null;
+  if (source instanceof JacksonSmileRepresentation) {
+    bSource=(JacksonSmileRepresentation<?>)source;
+  }
+ else   if (VARIANT_JSON_SMILE.isCompatible(source)) {
+    bSource=createBinary(source,target);
+  }
+  if (bSource != null) {
+    if ((target != null) && JacksonSmileRepresentation.class.isAssignableFrom(target)) {
+      result=bSource;
+    }
+ else {
+      result=bSource.getObject();
+    }
+  }
   JacksonRepresentation<?> jacksonSource=null;
   if (source instanceof JacksonRepresentation) {
     jacksonSource=(JacksonRepresentation<?>)source;

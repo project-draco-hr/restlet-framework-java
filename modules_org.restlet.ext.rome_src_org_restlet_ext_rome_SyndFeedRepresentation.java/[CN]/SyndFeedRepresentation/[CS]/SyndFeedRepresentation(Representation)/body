@@ -1,11 +1,14 @@
 {
   super(null);
+  InputSource source=new InputSource(feedRepresentation.getStream());
   try {
-    InputSource source=new InputSource(feedRepresentation.getStream());
     this.feed=new SyndFeedInput().build(source);
-    setMediaType(getMediaType(this.feed.getFeedType()));
   }
- catch (  Exception e) {
-    Context.getCurrentLogger().log(Level.WARNING,"Unable to parse feed",e);
+ catch (  IllegalArgumentException e) {
+    throw new IOException("Couldn't read the feed representation. " + e.getMessage());
   }
+catch (  FeedException e) {
+    throw new IOException("Couldn't read the feed representation. " + e.getMessage());
+  }
+  setMediaType(getMediaType(this.feed.getFeedType()));
 }
