@@ -15,19 +15,21 @@
       result=bSource.getObject();
     }
   }
-  JacksonRepresentation<?> jacksonSource=null;
-  if (source instanceof JacksonRepresentation) {
-    jacksonSource=(JacksonRepresentation<?>)source;
-  }
- else   if (VARIANT_JSON.isCompatible(source)) {
-    jacksonSource=create(source,target);
-  }
-  if (jacksonSource != null) {
-    if ((target != null) && JacksonRepresentation.class.isAssignableFrom(target)) {
-      result=jacksonSource;
-    }
  else {
-      result=jacksonSource.getObject();
+    JacksonRepresentation<?> jacksonSource=null;
+    if (source instanceof JacksonRepresentation) {
+      jacksonSource=(JacksonRepresentation<?>)source;
+    }
+ else     if (VARIANT_JSON.isCompatible(source)) {
+      jacksonSource=create(source,target);
+    }
+    if (jacksonSource != null) {
+      if ((target != null) && JacksonRepresentation.class.isAssignableFrom(target)) {
+        result=jacksonSource;
+      }
+ else {
+        result=jacksonSource.getObject();
+      }
     }
   }
   return (T)result;
