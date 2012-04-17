@@ -1,20 +1,8 @@
 {
   List<VariantInfo> result=null;
-  List<VariantInfo> helperVariants=null;
   for (  ConverterHelper ch : Engine.getInstance().getRegisteredConverters()) {
-    helperVariants=ch.getVariants(sourceClass);
-    if (helperVariants != null) {
-      for (      VariantInfo helperVariant : helperVariants) {
-        if (targetVariant == null) {
-          result=addVariant(result,helperVariant);
-        }
- else         if (helperVariant.includes(targetVariant)) {
-          result=addVariant(result,new VariantInfo(targetVariant.getMediaType()));
-        }
- else         if (targetVariant.includes(helperVariant)) {
-          result=addVariant(result,helperVariant);
-        }
-      }
+    if (ch != null) {
+      result=ch.addVariants(sourceClass,targetVariant,result);
     }
   }
   return result;

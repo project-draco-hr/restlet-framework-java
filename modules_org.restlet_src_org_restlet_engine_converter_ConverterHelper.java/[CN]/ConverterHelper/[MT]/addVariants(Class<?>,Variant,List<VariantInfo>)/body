@@ -1,0 +1,17 @@
+{
+  List<VariantInfo> helperVariants=getVariants(sourceClass);
+  if (helperVariants != null) {
+    for (    VariantInfo helperVariant : helperVariants) {
+      if (targetVariant == null) {
+        variants=addVariant(variants,helperVariant);
+      }
+ else       if (helperVariant.includes(targetVariant)) {
+        variants=addVariant(variants,new VariantInfo(targetVariant.getMediaType()));
+      }
+ else       if (targetVariant.includes(helperVariant)) {
+        variants=addVariant(variants,helperVariant);
+      }
+    }
+  }
+  return variants;
+}

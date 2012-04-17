@@ -5,13 +5,37 @@
   Collection<MediaType> p=resourceMethod.getProducedMimes();
   if (p.isEmpty()) {
     p=providers.writerSubSet(entityClass,genericReturnType).getAllProducibleMediaTypes();
-    if (p.isEmpty())     return MediaType.APPLICATION_OCTET_STREAM;
   }
+  if (p.isEmpty())   return MediaType.ALL;
+ else   p=sortByConcreteness(p);
   SortedMetadata<MediaType> a=callContext.getAccMediaTypes();
   if (a.isEmpty())   a=SortedMetadata.getMediaTypeAll();
-  List<MediaType> pSorted=sortByConcreteness(p);
   List<MediaType> m=new ArrayList<MediaType>();
-  for (  MediaType acc : a)   for (  MediaType prod : pSorted)   if (prod.isCompatible(acc))   m.add(MediaType.getMostSpecific(prod,acc));
+  for (  MediaType a1 : a) {
+    for (    MediaType p1 : p) {
+      if (a1.equals(p1)) {
+        m.add(a1);
+      }
+    }
+  }
+  if (m.isEmpty()) {
+    for (    MediaType a1 : a) {
+      for (      MediaType p1 : p) {
+        if (a1.includes(p1)) {
+          m.add(MediaType.getMostSpecific(a1,p1));
+        }
+      }
+    }
+  }
+  if (m.isEmpty()) {
+    for (    MediaType a1 : a) {
+      for (      MediaType p1 : p) {
+        if (a1.isCompatible(p1)) {
+          m.add(MediaType.getMostSpecific(a1,p1));
+        }
+      }
+    }
+  }
   if (m.isEmpty())   excHandler.notAcceptableWhileDetermineMediaType();
   for (  MediaType mediaType : m)   if (mediaType.isConcrete())   return mediaType;
   if (m.contains(MediaType.ALL) || m.contains(MediaType.APPLICATION_ALL))   return MediaType.APPLICATION_OCTET_STREAM;
