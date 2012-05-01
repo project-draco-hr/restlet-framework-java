@@ -2,23 +2,22 @@
   ConnectorHelper<Server> helper=null;
   helper=new org.restlet.engine.connector.HttpServerHelper(null);
   Engine.getInstance().getRegisteredServers().add(0,helper);
-  Server server=new Server(new Context(),Protocol.HTTP,9999);
-  server.getContext().getParameters().add("tracing","false");
-  server.getContext().getParameters().add("minThreads","1");
-  server.getContext().getParameters().add("lowThreads","30");
-  server.getContext().getParameters().add("maxThreads","40");
-  server.getContext().getParameters().add("maxQueued","0");
-  server.getContext().getParameters().add("directBuffers","false");
-  server.getContext().getParameters().add("workerThreads","true");
-  server.getContext().getParameters().add("pooledConnections","true");
-  server.getContext().getParameters().add("maxIoIdleTimeMs","3000000");
-  final ClientResource fr=new ClientResource("file://C/TEST/restlet-jse-2.0.5-ff.zip");
-  server.setNext(new Restlet(){
+  final Server server=new Server(new Context(),Protocol.HTTP,9999);
+  System.out.println("NIO SERVER");
+  Component comp=new Component();
+  comp.getServers().add(server);
+  comp.getClients().add(Protocol.CLAP);
+  final ClientResource fr=new ClientResource("file://C/Test/getting-started.pdf");
+  comp.getDefaultHost().attach(new Restlet(){
     @Override public void handle(    Request request,    Response response){
-      fr.put(request.getEntity());
-      response.setEntity("hello, world!",MediaType.TEXT_PLAIN);
+      try {
+        response.setEntity(fr.get());
+      }
+ catch (      Exception e) {
+        e.printStackTrace();
+      }
     }
   }
 );
-  server.start();
+  comp.start();
 }
