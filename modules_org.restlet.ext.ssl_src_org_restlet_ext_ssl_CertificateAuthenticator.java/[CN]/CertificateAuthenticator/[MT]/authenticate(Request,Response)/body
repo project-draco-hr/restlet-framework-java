@@ -1,0 +1,15 @@
+{
+  List<Certificate> certchain=request.getClientInfo().getCertificates();
+  List<Principal> principals=getPrincipals(certchain);
+  if ((principals != null) && (principals.size() > 0)) {
+    request.getClientInfo().getPrincipals().addAll(principals);
+    User user=getUser(principals.get(0));
+    if (user != null) {
+      request.getClientInfo().setUser(user);
+    }
+    return true;
+  }
+ else {
+    return false;
+  }
+}
