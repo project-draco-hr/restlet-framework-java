@@ -4,7 +4,24 @@
       this.source=((XmlRepresentation)xmlRepresentation).getSaxSource();
     }
  else {
-      this.source=new SAXSource(new InputSource(xmlRepresentation.getReader()));
+      try {
+        SAXParserFactory spf=SAXParserFactory.newInstance();
+        spf.setNamespaceAware(isNamespaceAware());
+        spf.setValidating(isValidatingDtd());
+        javax.xml.validation.Schema xsd=getSchema();
+        if (xsd != null) {
+          spf.setSchema(xsd);
+        }
+        spf.setXIncludeAware(isXIncludeAware());
+        spf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,isSecureProcessing());
+        spf.setFeature("http://xml.org/sax/features/external-general-entities",isExpandingEntityRefs());
+        spf.setFeature("http://xml.org/sax/features/external-parameter-entities",isExpandingEntityRefs());
+        XMLReader xmlReader=spf.newSAXParser().getXMLReader();
+        this.source=new SAXSource(xmlReader,new InputSource(xmlRepresentation.getReader()));
+      }
+ catch (      Exception e) {
+        throw new IOException("Unable to create customized SAX source",e);
+      }
     }
     if (xmlRepresentation.getLocationRef() != null) {
       this.source.setSystemId(xmlRepresentation.getLocationRef().getTargetRef().toString());

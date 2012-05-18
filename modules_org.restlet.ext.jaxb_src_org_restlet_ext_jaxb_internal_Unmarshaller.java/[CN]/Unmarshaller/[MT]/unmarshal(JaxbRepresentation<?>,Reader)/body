@@ -1,0 +1,18 @@
+{
+  SAXSource ss=null;
+  try {
+    SAXParserFactory spf=SAXParserFactory.newInstance();
+    spf.setValidating(jaxbRep.isValidatingDtd());
+    spf.setXIncludeAware(jaxbRep.isXIncludeAware());
+    spf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,jaxbRep.isSecureProcessing());
+    spf.setFeature("http://xml.org/sax/features/external-general-entities",jaxbRep.isExpandingEntityRefs());
+    spf.setFeature("http://xml.org/sax/features/external-parameter-entities",jaxbRep.isExpandingEntityRefs());
+    XMLReader xmlReader=spf.newSAXParser().getXMLReader();
+    ss=new SAXSource(xmlReader,new InputSource(reader));
+  }
+ catch (  Exception e) {
+    throw new JAXBException("Unable to create customized SAX source",e);
+  }
+  getUnmarshaller().setEventHandler(jaxbRep.getValidationEventHandler());
+  return getUnmarshaller().unmarshal(ss);
+}
