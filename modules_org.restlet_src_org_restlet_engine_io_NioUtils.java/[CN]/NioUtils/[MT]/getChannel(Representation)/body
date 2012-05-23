@@ -4,13 +4,22 @@
     final java.nio.channels.Pipe pipe=java.nio.channels.Pipe.open();
     Runnable task=new Runnable(){
       public void run(){
+        WritableByteChannel wbc=null;
         try {
-          WritableByteChannel wbc=pipe.sink();
+          wbc=pipe.sink();
           representation.write(wbc);
           wbc.close();
         }
  catch (        IOException ioe) {
           Context.getCurrentLogger().log(Level.FINE,"Error while writing to the piped channel.",ioe);
+        }
+ finally {
+          if (wbc != null)           try {
+            wbc.close();
+          }
+ catch (          IOException e) {
+            Context.getCurrentLogger().log(Level.FINE,"Error while closing to the piped channel.",e);
+          }
         }
       }
     }
