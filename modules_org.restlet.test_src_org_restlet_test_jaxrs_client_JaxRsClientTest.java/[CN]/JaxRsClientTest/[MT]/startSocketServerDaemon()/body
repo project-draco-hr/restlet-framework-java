@@ -1,0 +1,19 @@
+{
+  final JaxRsClientTest clientTest=new JaxRsClientTest();
+  setUseTcp(true);
+  Thread t=new Thread(new Runnable(){
+    @Override public void run(){
+      try {
+        clientTest.startServer(clientTest.createApplication());
+      }
+ catch (      Exception e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+);
+  t.setDaemon(true);
+  t.start();
+  Thread.sleep(500);
+  return clientTest;
+}
