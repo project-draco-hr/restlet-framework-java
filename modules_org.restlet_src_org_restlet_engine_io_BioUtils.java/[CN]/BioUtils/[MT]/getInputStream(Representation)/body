@@ -5,16 +5,23 @@
       return null;
     }
     final PipeStream pipe=new PipeStream();
+    final java.io.OutputStream os=pipe.getOutputStream();
     Runnable task=new Runnable(){
       public void run(){
         try {
-          java.io.OutputStream os=pipe.getOutputStream();
           representation.write(os);
           os.flush();
-          os.close();
         }
  catch (        IOException ioe) {
-          Context.getCurrentLogger().log(Level.FINE,"Error while writing to the piped input stream.",ioe);
+          Context.getCurrentLogger().log(Level.WARNING,"Error while writing to the piped input stream.",ioe);
+        }
+ finally {
+          try {
+            os.close();
+          }
+ catch (          IOException ioe2) {
+            Context.getCurrentLogger().log(Level.WARNING,"Error while closing the pipe.",ioe2);
+          }
         }
       }
     }
