@@ -1,0 +1,12 @@
+{
+  IEclipseContext childContext=serviceContext.createChild("ResourceContext");
+  diLock.lock();
+  try {
+    InjectedResource serverResource=(InjectedResource)ContextInjectionFactory.make(clazz,childContext);
+    serverResource.setEclipseContext(childContext);
+    return (ServerResource)serverResource;
+  }
+  finally {
+    diLock.unlock();
+  }
+}
