@@ -1,0 +1,22 @@
+{
+  Annotation[][] parameterAnnotations=javaMethod.getParameterAnnotations();
+  for (  Annotation[] annotations : parameterAnnotations) {
+    for (    Annotation annotation : annotations) {
+      if (annotation instanceof HeaderParam) {
+        HeaderParam headerParam=(HeaderParam)annotation;
+        String value=headerParam.value();
+        Series<Header> headers=Util.getHttpHeaders(request);
+        ConverterService converterService=clientResource.getApplication().getConverterService();
+        Representation representation=converterService.toRepresentation(args[0]);
+        try {
+          headers.add(value,representation.getText());
+        }
+ catch (        IOException exception) {
+          throw new RuntimeException(exception);
+        }
+      }
+ else       if (annotation instanceof QueryParam) {
+      }
+    }
+  }
+}
