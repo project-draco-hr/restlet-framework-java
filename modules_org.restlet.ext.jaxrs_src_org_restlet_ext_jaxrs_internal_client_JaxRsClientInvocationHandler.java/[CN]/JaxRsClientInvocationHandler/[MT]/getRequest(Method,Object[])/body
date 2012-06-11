@@ -1,11 +1,6 @@
 {
   Request request=super.getRequest(javaMethod,args);
-  Path methodPathAnnotation=javaMethod.getAnnotation(Path.class);
-  if (methodPathAnnotation != null) {
-    String methodPath=methodPathAnnotation.value();
-    if (methodPath != null && methodPath.length() > 0) {
-      request.getResourceRef().setPath(request.getResourceRef().getPath() + "/" + methodPath);
-    }
-  }
+  setRequestParams(javaMethod,args,request);
+  setRequestPathToAnnotationPath(javaMethod,request);
   return request;
 }
