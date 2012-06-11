@@ -1,21 +1,31 @@
 {
+  int argIndex=0;
   Annotation[][] parameterAnnotations=javaMethod.getParameterAnnotations();
   for (  Annotation[] annotations : parameterAnnotations) {
+    String representationAsText=getRepresentationAsText(argIndex,args);
     for (    Annotation annotation : annotations) {
-      if (annotation instanceof HeaderParam) {
-        HeaderParam headerParam=(HeaderParam)annotation;
-        String value=headerParam.value();
-        Series<Header> headers=Util.getHttpHeaders(request);
-        ConverterService converterService=clientResource.getApplication().getConverterService();
-        Representation representation=converterService.toRepresentation(args[0]);
-        try {
-          headers.add(value,representation.getText());
-        }
- catch (        IOException exception) {
-          throw new RuntimeException(exception);
-        }
+      if (annotation instanceof HeaderParam && representationAsText != null) {
+        Util.getHttpHeaders(request).add(((HeaderParam)annotation).value(),representationAsText);
+        argIndex++;
       }
  else       if (annotation instanceof QueryParam) {
+        request.getResourceRef().addQueryParameter(new Parameter(((QueryParam)annotation).value(),representationAsText));
+        argIndex++;
+      }
+ else       if (annotation instanceof MatrixParam && representationAsText != null) {
+        argIndex++;
+      }
+ else       if (annotation instanceof CookieParam && representationAsText != null) {
+        argIndex++;
+      }
+ else       if (annotation instanceof FormParam && representationAsText != null) {
+        argIndex++;
+      }
+ else       if (annotation instanceof QueryParam && representationAsText != null) {
+        argIndex++;
+      }
+ else       if (annotation instanceof PathParam && representationAsText != null) {
+        argIndex++;
       }
     }
   }
