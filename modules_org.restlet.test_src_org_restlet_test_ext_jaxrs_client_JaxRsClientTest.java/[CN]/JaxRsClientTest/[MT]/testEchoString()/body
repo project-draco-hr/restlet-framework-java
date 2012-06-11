@@ -1,5 +1,8 @@
 {
   final JaxRsClientTest clientTest=startSocketServerDaemon();
+  while (!_serverStarted.get()) {
+    Thread.sleep(100);
+  }
   EchoResource echoResource=JaxRsClientResource.createJaxRsClient("http://localhost:" + clientTest.getServerPort(),EchoResource.class);
   assertEquals("this is a test",echoResource.echo("this is a test"));
   clientTest.stopServer();

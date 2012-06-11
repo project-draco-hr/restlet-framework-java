@@ -1,10 +1,18 @@
 {
+  List<ConverterHelper> registeredConverters=Engine.getInstance().getRegisteredConverters();
+  for (int i=registeredConverters.size() - 1; i >= 0; i--) {
+    ConverterHelper converterHelper=registeredConverters.get(i);
+    if (converterHelper instanceof EmfConverter) {
+      registeredConverters.remove(i);
+    }
+  }
   final JaxRsClientTest clientTest=new JaxRsClientTest();
   setUseTcp(true);
   Thread t=new Thread(new Runnable(){
     @Override public void run(){
       try {
         clientTest.startServer(clientTest.createApplication());
+        _serverStarted.set(true);
       }
  catch (      Exception e) {
         throw new RuntimeException(e);
@@ -14,6 +22,5 @@
 );
   t.setDaemon(true);
   t.start();
-  Thread.sleep(500);
   return clientTest;
 }
