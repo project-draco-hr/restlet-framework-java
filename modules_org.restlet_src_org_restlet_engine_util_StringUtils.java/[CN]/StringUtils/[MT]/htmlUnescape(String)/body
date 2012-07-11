@@ -1,0 +1,83 @@
+{
+  if (str == null) {
+    return null;
+  }
+  int len=str.length();
+  StringBuilder sb=new StringBuilder(len);
+  for (int i=0; i < len; i++) {
+    char c=str.charAt(i);
+    if (c == '&') {
+      int nextIndex=i + 1;
+      int semicolonIndex=-1;
+      int ampersandIndex=-1;
+      boolean stop=false;
+      for (int j=nextIndex; !stop && j < len; j++) {
+        char ch=str.charAt(j);
+        if (';' == ch) {
+          semicolonIndex=j;
+          stop=true;
+        }
+ else         if ('&' == ch) {
+          ampersandIndex=j;
+          stop=true;
+        }
+      }
+      if (semicolonIndex != -1) {
+        if (nextIndex != semicolonIndex) {
+          int entityValue=-1;
+          String entityName=str.substring(nextIndex,semicolonIndex);
+          if (entityName.charAt(0) == '#') {
+            if (entityName.length() > 1) {
+              char hexChar=entityName.charAt(1);
+              try {
+                if (hexChar == 'X') {
+                  entityValue=Integer.parseInt(entityName.substring(2),16);
+                }
+ else                 if (hexChar == 'x') {
+                  entityValue=Integer.parseInt(entityName.substring(2),16);
+                }
+ else {
+                  entityValue=Integer.parseInt(entityName.substring(1),10);
+                }
+                if (!Character.isValidCodePoint(entityValue)) {
+                  entityValue=-1;
+                }
+              }
+ catch (              NumberFormatException e) {
+                entityValue=-1;
+              }
+            }
+          }
+ else {
+            Integer val=html40Entities.getValue(entityName);
+            if (val != null) {
+              entityValue=val.intValue();
+            }
+          }
+          if (entityValue == -1) {
+            sb.append('&').append(entityName).append(';');
+          }
+ else {
+            sb.append((char)entityValue);
+          }
+        }
+ else {
+          sb.append("&;");
+        }
+        i=semicolonIndex;
+      }
+ else       if (stop) {
+        sb.append(str,i,ampersandIndex).append('&');
+        i=ampersandIndex;
+      }
+ else {
+        sb.append(str,i,len);
+        i=len;
+      }
+    }
+ else {
+      sb.append(c);
+    }
+  }
+  return sb.toString();
+}

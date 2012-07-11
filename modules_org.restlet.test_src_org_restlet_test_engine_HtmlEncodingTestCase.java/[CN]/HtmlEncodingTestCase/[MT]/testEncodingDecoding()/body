@@ -1,0 +1,13 @@
+{
+  assertEquals("",StringUtils.htmlEscape(""));
+  assertNull(StringUtils.htmlEscape(null));
+  assertEquals("",StringUtils.htmlUnescape(""));
+  assertNull(StringUtils.htmlUnescape(null));
+  String str="<test>azerty????@??&%???????&#174;&reg;</test>&&&;&testest";
+  String strEncoded="&lt;test&gt;azerty&eacute;&egrave;@&agrave;&amp;%&ugrave;&euro;&reg;&amp;#174;&amp;reg;&lt;/test&gt;&amp;&amp;&amp;;&amp;testest";
+  String strDecoded="<test>azerty????@??&%???????????</test>&&&;&testest";
+  assertEquals(strEncoded,StringUtils.htmlEscape(str));
+  assertEquals(strDecoded,StringUtils.htmlUnescape(str));
+  assertEquals(str,StringUtils.htmlUnescape(StringUtils.htmlEscape(str)));
+  assertEquals(strDecoded,StringUtils.htmlUnescape(StringUtils.htmlUnescape(str)));
+}
