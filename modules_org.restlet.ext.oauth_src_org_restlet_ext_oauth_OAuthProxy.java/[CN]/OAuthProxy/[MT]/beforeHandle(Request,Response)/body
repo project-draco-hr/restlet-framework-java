@@ -104,6 +104,7 @@ form.add(OAuthServerResource.CODE,code);
 getLogger().fine("Sending access form : " + form.getQueryString() + " to : "+ tokenResource.getReference());
 try {
 Representation input=form.getWebRepresentation();
+tokenResource.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.APPLICATION_JSON));
 Representation body=tokenResource.post(input);
 if (tokenResource.getStatus().isSuccess()) {
 OAuthUser authUser=OAuthUser.createJson(request.getClientInfo().getUser(),body);
