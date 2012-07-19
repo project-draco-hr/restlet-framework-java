@@ -13,4 +13,34 @@
   setSslProtocol(helperParameters.getFirstValue("sslProtocol",true,"TLS"));
   setNeedClientAuthentication(Boolean.parseBoolean(helperParameters.getFirstValue("needClientAuthentication",true,"false")));
   setWantClientAuthentication(Boolean.parseBoolean(helperParameters.getFirstValue("wantClientAuthentication",true,"false")));
+  String[] enabledCipherSuitesArray=helperParameters.getValuesArray("enabledCipherSuites");
+  Set<String> enabledCipherSuites=new HashSet<String>();
+  for (  String enabledCipherSuiteSeries : enabledCipherSuitesArray) {
+    for (    String enabledCipherSuite : enabledCipherSuiteSeries.split(" ")) {
+      enabledCipherSuites.add(enabledCipherSuite);
+    }
+  }
+  if (enabledCipherSuites.size() > 0) {
+    enabledCipherSuitesArray=new String[enabledCipherSuites.size()];
+    enabledCipherSuites.toArray(enabledCipherSuitesArray);
+    setEnabledCipherSuites(enabledCipherSuitesArray);
+  }
+ else {
+    setEnabledCipherSuites(null);
+  }
+  String[] disabledCipherSuitesArray=helperParameters.getValuesArray("disabledCipherSuites");
+  Set<String> disabledCipherSuites=new HashSet<String>();
+  for (  String disabledCipherSuiteSeries : disabledCipherSuitesArray) {
+    for (    String disabledCipherSuite : disabledCipherSuiteSeries.split(" ")) {
+      disabledCipherSuites.add(disabledCipherSuite);
+    }
+  }
+  if (disabledCipherSuites.size() > 0) {
+    disabledCipherSuitesArray=new String[disabledCipherSuites.size()];
+    disabledCipherSuites.toArray(disabledCipherSuitesArray);
+    setDisabledCipherSuites(disabledCipherSuitesArray);
+  }
+ else {
+    setDisabledCipherSuites(null);
+  }
 }
