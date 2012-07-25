@@ -3,20 +3,27 @@
   if (Edition.CURRENT != Edition.GAE) {
     final java.io.PipedWriter pipedWriter=new java.io.PipedWriter();
     java.io.PipedReader pipedReader=new java.io.PipedReader(pipedWriter);
-    org.restlet.Application application=org.restlet.Application.getCurrent();
     Runnable task=new Runnable(){
       public void run(){
         try {
           representation.write(pipedWriter);
           pipedWriter.flush();
-          pipedWriter.close();
         }
  catch (        IOException ioe) {
-          Context.getCurrentLogger().log(Level.FINE,"Error while writing to the piped reader.",ioe);
+          Context.getCurrentLogger().log(Level.WARNING,"Error while writing to the piped reader.",ioe);
+        }
+ finally {
+          try {
+            pipedWriter.close();
+          }
+ catch (          IOException ioe2) {
+            Context.getCurrentLogger().log(Level.WARNING,"Error while closing the pipe.",ioe2);
+          }
         }
       }
     }
 ;
+    org.restlet.Application application=org.restlet.Application.getCurrent();
     if (application != null && application.getTaskService() != null) {
       application.getTaskService().execute(task);
     }

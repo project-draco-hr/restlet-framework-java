@@ -1,9 +1,17 @@
 {
   int remaining=buffer.remaining();
   if (getMessageState() == MessageState.BODY) {
-    int filled=buffer.fill(getEntityChannel());
-    if (filled == -1) {
-      setMessageState(MessageState.END);
+    try {
+      int filled=buffer.fill(getEntityChannel());
+      if (filled == -1) {
+        setMessageState(MessageState.END);
+      }
+    }
+ catch (    IOException ioe) {
+      if (getLogger().isLoggable(Level.WARNING)) {
+        getLogger().log(Level.WARNING,"Unable to read the entity",ioe);
+      }
+      throw ioe;
     }
   }
  else   if (getMessageState() != MessageState.END) {
