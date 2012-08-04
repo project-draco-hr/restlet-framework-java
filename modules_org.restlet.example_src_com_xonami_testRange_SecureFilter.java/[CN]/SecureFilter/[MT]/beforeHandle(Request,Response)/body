@@ -1,0 +1,17 @@
+{
+  if (!enforceSecurity)   return CONTINUE;
+  Form requestHeaders=(Form)request.getAttributes().get("org.restlet.http.headers");
+  if ((requestHeaders.getValues("x-forwarded-proto") != null) && (requestHeaders.getValues("x-forwarded-proto").indexOf("https") != 0)) {
+    if (doRedirect) {
+      String target="https://" + request.getHostRef().getHostDomain() + request.getResourceRef().getPath();
+      Redirector redirector=new Redirector(getContext(),target,Redirector.MODE_CLIENT_SEE_OTHER);
+      redirector.handle(request,response);
+      return STOP;
+    }
+ else {
+      response.setStatus(Status.CLIENT_ERROR_FORBIDDEN);
+      return STOP;
+    }
+  }
+  return CONTINUE;
+}

@@ -1,0 +1,35 @@
+{
+  getClientResource().getRequest().setEntity(null);
+  getClientResource().getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.APPLICATION_JAVA_OBJECT_GWT));
+  getClientResource().setMethod(Method.GET);
+  getClientResource().setOnResponse(new Uniform(){
+    public void handle(    Request request,    Response response){
+      if (getClientResource().getStatus().isError()) {
+        callback.onFailure(new ResourceException(getClientResource().getStatus()));
+      }
+ else {
+        org.restlet.example.book.restlet.ch09.common.ContactsRepresentation result=null;
+        boolean serializationError=false;
+        try {
+          if (response.isEntityAvailable()) {
+            if (MediaType.APPLICATION_JAVA_OBJECT_GWT.equals(response.getEntity().getMediaType())) {
+              result=new ObjectRepresentation<org.restlet.example.book.restlet.ch09.common.ContactsRepresentation>(response.getEntity().getText(),(SerializationStreamFactory)ContactsResourceProxyImpl.this,false).getObject();
+            }
+ else {
+              throw new IOException("Can't parse the enclosed entity because of its media type. Expected <" + MediaType.APPLICATION_JAVA_OBJECT_GWT + "> but was <"+ response.getEntity().getMediaType()+ ">. Make sure you have added the org.restlet.client.ext.gwt.jar file to your server.");
+            }
+          }
+        }
+ catch (        Throwable e) {
+          serializationError=true;
+          callback.onFailure(new ResourceException(e));
+        }
+        if (!serializationError) {
+          callback.onSuccess(result);
+        }
+      }
+    }
+  }
+);
+  getClientResource().handle();
+}

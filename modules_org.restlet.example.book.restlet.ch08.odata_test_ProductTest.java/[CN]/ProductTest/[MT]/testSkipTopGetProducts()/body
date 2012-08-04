@@ -1,0 +1,39 @@
+{
+  OdataDemoService service=new OdataDemoService();
+  Query<Product> query=service.createProductQuery("/Products").skip(8).top(1);
+  int count=0;
+  Product firstProduct=null;
+  Product lastProduct=null;
+  boolean begin=true;
+  for (  Product product : query) {
+    System.out.println("- " + product.getId() + ", "+ product.getName());
+    if (begin) {
+      firstProduct=product;
+      begin=false;
+    }
+    lastProduct=product;
+    count++;
+  }
+  Assert.assertEquals(1,count);
+  Assert.assertEquals(8,firstProduct.getId());
+  Assert.assertEquals("LCD HDTV",firstProduct.getName());
+  query=service.createProductQuery("/Products").skip(1).top(2);
+  count=0;
+  firstProduct=null;
+  lastProduct=null;
+  begin=true;
+  for (  Product product : query) {
+    System.out.println("- " + product.getId() + ", "+ product.getName());
+    if (begin) {
+      firstProduct=product;
+      begin=false;
+    }
+    lastProduct=product;
+    count++;
+  }
+  Assert.assertEquals(2,count);
+  Assert.assertEquals(1,firstProduct.getId());
+  Assert.assertEquals("Milk",firstProduct.getName());
+  Assert.assertEquals(2,lastProduct.getId());
+  Assert.assertEquals("Vint soda",lastProduct.getName());
+}

@@ -1,0 +1,13 @@
+{
+  OdataDemoService service=new OdataDemoService();
+  Query<Product> query=service.createProductQuery("/Products(1)").select("Category");
+  Iterator<Product> iterator=query.iterator();
+  Product product=iterator.next();
+  Assert.assertNotNull(product);
+  Assert.assertEquals(0,product.getId());
+  Assert.assertNull(product.getName());
+  Assert.assertEquals(1,product.getCategory().getId());
+  Assert.assertEquals("Beverages",product.getCategory().getName());
+  System.out.println("- " + product.getId() + ", "+ product.getName());
+  Assert.assertFalse(iterator.hasNext());
+}
