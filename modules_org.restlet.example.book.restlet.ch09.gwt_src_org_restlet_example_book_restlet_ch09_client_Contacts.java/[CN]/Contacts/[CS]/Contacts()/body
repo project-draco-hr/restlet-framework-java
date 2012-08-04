@@ -1,0 +1,68 @@
+{
+  initWidget(binder.createAndBindUi(this));
+  ClientResource clientResource=new ClientResource("/accounts/chunkylover53/contacts/");
+  clientResource.setOnResponse(new Uniform(){
+    public void handle(    Request request,    Response response){
+      try {
+        JsonRepresentation representation=new JsonRepresentation(response.getEntity());
+        JSONArray jsonContacts=(JSONArray)representation.getValue();
+        for (int i=0; i < jsonContacts.size(); i++) {
+          JSONObject jsonContact=(JSONObject)jsonContacts.get(i);
+          ContactRepresentation contact=new ContactRepresentation();
+          contact.setFirstName(((JSONString)jsonContact.get("firstName")).stringValue());
+          contact.setLastName(((JSONString)jsonContact.get("lastName")).stringValue());
+          contact.setEmail(((JSONString)jsonContact.get("email")).stringValue());
+          contact.setLogin(((JSONString)jsonContact.get("login")).stringValue());
+          contact.setSenderName(((JSONString)jsonContact.get("senderName")).stringValue());
+        }
+      }
+ catch (      Exception ex) {
+        GWT.log("Unable to parse JSON",ex);
+      }
+    }
+  }
+);
+  clientResource.get(MediaType.APPLICATION_JSON);
+  clientResource.setOnResponse(new Uniform(){
+    public void handle(    Request request,    Response response){
+      try {
+        DomRepresentation representation=new DomRepresentation(response.getEntity());
+        Document document=representation.getDocument();
+        com.google.gwt.xml.client.Element listElement=(com.google.gwt.xml.client.Element)document.getFirstChild();
+        NodeList nodes=listElement.getElementsByTagName("org.restlet.example.book.restlet.ch09.common.ContactRepresentation");
+        for (int i=0; i < nodes.getLength(); i++) {
+          com.google.gwt.xml.client.Element contactElement=(com.google.gwt.xml.client.Element)nodes.item(i);
+          ContactRepresentation contact=new ContactRepresentation();
+          Element contactFirstNameElement=(Element)contactElement.getElementsByTagName("firstName").item(0);
+          contact.setFirstName(contactFirstNameElement.getFirstChild().getNodeValue());
+          Element contactLastNameElement=(Element)contactElement.getElementsByTagName("lastName").item(0);
+          contact.setLastName(contactLastNameElement.getFirstChild().getNodeValue());
+          Element contactEmailElement=(Element)contactElement.getElementsByTagName("email").item(0);
+          contact.setEmail(contactEmailElement.getFirstChild().getNodeValue());
+          Element contactLoginElement=(Element)contactElement.getElementsByTagName("login").item(0);
+          contact.setLogin(contactLoginElement.getFirstChild().getNodeValue());
+          Element contactSenderNameElement=(Element)contactElement.getElementsByTagName("senderName").item(0);
+          contact.setSenderName(contactSenderNameElement.getFirstChild().getNodeValue());
+        }
+      }
+ catch (      Exception ex) {
+        GWT.log("Unable to parse XML",ex);
+      }
+    }
+  }
+);
+  clientResource.get(MediaType.APPLICATION_XML);
+  ContactsResourceProxy client=GWT.create(ContactsResourceProxy.class);
+  client.getClientResource().setReference("/accounts/chunkylover53/contacts/");
+  client.retrieve(new Result<ContactsRepresentation>(){
+    @Override public void onSuccess(    ContactsRepresentation result){
+      for (      ContactRepresentation contact : result.getContacts()) {
+        addContact(contact);
+      }
+    }
+    @Override public void onFailure(    Throwable caught){
+      GWT.log("Unable to retrieve the contacts list");
+    }
+  }
+);
+}

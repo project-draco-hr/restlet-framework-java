@@ -1,0 +1,12 @@
+{
+  Client client=new Client(new Context(),Protocol.HTTPS);
+  Series<Parameter> parameters=client.getContext().getParameters();
+  parameters.add("truststorePath","src/org/restlet/example/book/restlet/ch05/clientTrust.jks");
+  parameters.add("truststorePassword","password");
+  parameters.add("truststoreType","JKS");
+  ClientResource clientResource=new ClientResource("https://localhost:8183/accounts/chunkylover53/mails/123");
+  clientResource.setNext(client);
+  MailResource mailClient=clientResource.wrap(MailResource.class);
+  mailClient.store(mailClient.retrieve());
+  client.stop();
+}

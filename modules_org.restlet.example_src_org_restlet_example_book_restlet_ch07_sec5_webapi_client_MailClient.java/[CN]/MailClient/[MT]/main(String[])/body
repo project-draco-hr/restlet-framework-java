@@ -1,0 +1,28 @@
+{
+  System.out.println("\n1) Set-up the service client resource\n");
+  ClientResource service=new ClientResource("http://localhost:8111/");
+  System.out.println("\n2) Describe the application\n");
+  System.out.println(service.options().getText());
+  System.out.println("\n3) Describe the accounts resource\n");
+  System.out.println(service.getChild("/accounts/").options().getText());
+  ClientResource mailClient=new ClientResource("http://localhost:8111/accounts/chunkylover53/mails/123");
+  mailClient.getRequest().getCookies().add(new Cookie("Credentials","scott=tiger"));
+  Form form=new Form();
+  form.add("subject","Message to J??r??me");
+  form.add("content","Doh!\n\nAllo?");
+  mailClient.put(form).write(System.out);
+  mailClient=new ClientResource("http://localhost:8111/accounts/chunkylover53/feeds/xyz");
+  Feed atomFeed=mailClient.get(Feed.class);
+  System.out.println("\nAtom feed: " + atomFeed.getTitle() + "\n");
+  for (  Entry entry : atomFeed.getEntries()) {
+    System.out.println("Title  : " + entry.getTitle());
+    System.out.println("Summary: " + entry.getSummary());
+  }
+  SyndFeed rssFeed=mailClient.get(SyndFeed.class);
+  System.out.println("\nRSS feed: " + rssFeed.getTitle() + "\n");
+  @SuppressWarnings("unchecked") List<SyndEntry> entries=(List<SyndEntry>)rssFeed.getEntries();
+  for (  SyndEntry entry : entries) {
+    System.out.println("Title  : " + entry.getTitle());
+    System.out.println("Summary: " + entry.getDescription().getValue());
+  }
+}

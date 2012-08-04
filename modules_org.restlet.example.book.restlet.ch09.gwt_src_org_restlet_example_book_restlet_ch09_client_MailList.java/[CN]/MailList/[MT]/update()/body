@@ -1,0 +1,21 @@
+{
+  int count=MailItems.getMailItemCount();
+  int max=startIndex + VISIBLE_EMAIL_COUNT;
+  if (max > count) {
+    max=count;
+  }
+  navBar.update(startIndex,count,max);
+  int i=0;
+  for (; i < VISIBLE_EMAIL_COUNT; ++i) {
+    if (startIndex + i >= MailItems.getMailItemCount()) {
+      break;
+    }
+    MailItem item=MailItems.getMailItem(startIndex + i);
+    table.setText(i,0,item.sender);
+    table.setText(i,1,item.email);
+    table.setText(i,2,item.subject);
+  }
+  for (; i < VISIBLE_EMAIL_COUNT; ++i) {
+    table.removeRow(table.getRowCount() - 1);
+  }
+}

@@ -1,0 +1,9 @@
+{
+  Router router=new Router(getContext());
+  router.attach("/",RootServerResource.class);
+  router.attach("/accounts/",AccountsServerResource.class);
+  router.attach("/accounts/{accountId}",AccountServerResource.class);
+  ChallengeAuthenticator authenticator=new ChallengeAuthenticator(getContext(),ChallengeScheme.HTTP_BASIC,"My Realm");
+  authenticator.setNext(router);
+  return authenticator;
+}

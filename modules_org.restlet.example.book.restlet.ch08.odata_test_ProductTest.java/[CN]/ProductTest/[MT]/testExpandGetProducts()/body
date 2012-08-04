@@ -1,0 +1,11 @@
+{
+  OdataDemoService service=new OdataDemoService();
+  Query<Product> query=service.createProductQuery("/Products").expand("Category");
+  int count=0;
+  for (  Product product : query) {
+    System.out.println("- " + product.getId() + ", "+ product.getName());
+    System.out.println("    in " + product.getCategory().getId() + ", "+ product.getCategory().getName());
+    count++;
+  }
+  Assert.assertEquals(9,count);
+}

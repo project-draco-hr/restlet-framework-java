@@ -1,0 +1,28 @@
+{
+  Client client=new Client(new Context(),Protocol.HTTPS);
+  Series<Parameter> parameters=client.getContext().getParameters();
+  parameters.add("truststorePath","src/org/restlet/example/book/restlet/ch05/clientTrust.jks");
+  parameters.add("truststorePassword","password");
+  parameters.add("truststoreType","JKS");
+  ClientResource clientResource=new ClientResource("https://localhost:8183/accounts/chunkylover53/mails/123");
+  clientResource.setNext(client);
+  MailResource mailClient=clientResource.wrap(MailResource.class);
+  try {
+    mailClient.retrieve();
+  }
+ catch (  ResourceException re) {
+    if (Status.CLIENT_ERROR_UNAUTHORIZED.equals(re.getStatus())) {
+      ChallengeRequest digestChallenge=null;
+      for (      ChallengeRequest challengeRequest : clientResource.getChallengeRequests()) {
+        if (ChallengeScheme.HTTP_DIGEST.equals(challengeRequest.getScheme())) {
+          digestChallenge=challengeRequest;
+          break;
+        }
+      }
+      ChallengeResponse authentication=new ChallengeResponse(digestChallenge,clientResource.getResponse(),"chunkylover53","pwd");
+      clientResource.setChallengeResponse(authentication);
+    }
+  }
+  mailClient.store(mailClient.retrieve());
+  client.stop();
+}

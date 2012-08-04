@@ -1,0 +1,18 @@
+{
+  Client client=new Client(new Context(),Protocol.HTTPS);
+  Series<Parameter> parameters=client.getContext().getParameters();
+  parameters.add("keystorePath","src/org/restlet/example/book/restlet/ch05/clientKey.jks");
+  parameters.add("keystorePassword","password");
+  parameters.add("keystoreType","JKS");
+  parameters.add("keyPassword","password");
+  parameters.add("truststorePath","src/org/restlet/example/book/restlet/ch05/clientTrust.jks");
+  parameters.add("truststorePassword","password");
+  parameters.add("truststoreType","JKS");
+  ClientResource clientResource=new ClientResource("https://localhost:8183/accounts/chunkylover53/mails/123");
+  clientResource.setNext(client);
+  ChallengeResponse authentication=new ChallengeResponse(ChallengeScheme.HTTP_BASIC,"chunkylover53","pwd");
+  clientResource.setChallengeResponse(authentication);
+  MailResource mailClient=clientResource.wrap(MailResource.class);
+  mailClient.store(mailClient.retrieve());
+  client.stop();
+}

@@ -1,0 +1,28 @@
+{
+  Representation mailXsd=new ClientResource(LocalReference.createClapReference(getClass().getPackage()) + "/Mail.xsd").get();
+  mailRep.setSchema(mailXsd);
+  mailRep.setErrorHandler(new ErrorHandler(){
+    public void error(    SAXParseException exception) throws SAXException {
+      throw new ResourceException(exception);
+    }
+    public void fatalError(    SAXParseException exception) throws SAXException {
+      throw new ResourceException(exception);
+    }
+    public void warning(    SAXParseException exception) throws SAXException {
+      throw new ResourceException(exception);
+    }
+  }
+);
+  String rmepNs="http://www.rmep.org/namespaces/1.0";
+  mailRep.setNamespaceAware(true);
+  mailRep.getNamespaces().put("",rmepNs);
+  mailRep.getNamespaces().put("rmep",rmepNs);
+  String status=mailRep.getText("/:mail/:status");
+  String subject=mailRep.getText("/rmep:mail/:subject");
+  String content=mailRep.getText("/rmep:mail/rmep:content");
+  String accountRef=mailRep.getText("/:mail/rmep:accountRef");
+  System.out.println("Status: " + status);
+  System.out.println("Subject: " + subject);
+  System.out.println("Content: " + content);
+  System.out.println("Account URI: " + accountRef);
+}

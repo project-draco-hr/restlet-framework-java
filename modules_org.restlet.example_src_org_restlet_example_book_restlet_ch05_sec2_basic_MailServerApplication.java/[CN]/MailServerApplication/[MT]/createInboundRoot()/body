@@ -1,0 +1,10 @@
+{
+  Router router=new Router(getContext());
+  router.attach("/accounts/{accountId}/mails/{mailId}",MailServerResource.class);
+  ChallengeAuthenticator authenticator=new ChallengeAuthenticator(getContext(),ChallengeScheme.HTTP_BASIC,"My Realm");
+  MapVerifier verifier=new MapVerifier();
+  verifier.getLocalSecrets().put("chunkylover53","pwd".toCharArray());
+  authenticator.setVerifier(verifier);
+  authenticator.setNext(router);
+  return authenticator;
+}

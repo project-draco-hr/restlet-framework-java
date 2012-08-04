@@ -1,0 +1,12 @@
+{
+  AppendableRepresentation ar=new AppendableRepresentation();
+  ar.append("abcd");
+  ar.append("1234");
+  assertEquals("abcd1234",ar.getText());
+  ar.append('\n');
+  ar.write(System.out);
+  BioUtils.copy(ar.getStream(),System.out);
+  Writer writer=new OutputStreamWriter(System.out);
+  ar.write(writer);
+  BioUtils.copy(ar.getReader(),writer);
+}

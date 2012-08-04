@@ -1,0 +1,23 @@
+{
+  Router router=new Router(getContext());
+  router.attach("/",RootServerResource.class);
+  router.attach("/accounts/",AccountsServerResource.class);
+  router.attach("/accounts/{accountId}",AccountServerResource.class);
+  router.attach("/accounts/{accountId}/feeds/{feedId}",FeedServerResource.class);
+  router.attach("/accounts/{accountId}/mails/{mailId}",MailServerResource.class);
+  String rootUri="file:///" + System.getProperty("java.io.tmpdir");
+  Directory directory=new Directory(getContext(),rootUri);
+  directory.setListingAllowed(true);
+  router.attach("/static",directory);
+  String target="http://www.google.com/search?q=site:mysite.org+{keywords}";
+  Redirector redirector=new Redirector(getContext(),target,Redirector.MODE_CLIENT_TEMPORARY);
+  Extractor extractor=new Extractor(getContext(),redirector);
+  extractor.extractFromQuery("keywords","kwd",true);
+  router.attach("/search",extractor);
+  MapVerifier verifier=new MapVerifier();
+  verifier.getLocalSecrets().put("scott","tiger".toCharArray());
+  CookieAuthenticator authenticator=new CookieAuthenticator(getContext(),"Cookie Test");
+  authenticator.setVerifier(verifier);
+  authenticator.setNext(router);
+  return authenticator;
+}

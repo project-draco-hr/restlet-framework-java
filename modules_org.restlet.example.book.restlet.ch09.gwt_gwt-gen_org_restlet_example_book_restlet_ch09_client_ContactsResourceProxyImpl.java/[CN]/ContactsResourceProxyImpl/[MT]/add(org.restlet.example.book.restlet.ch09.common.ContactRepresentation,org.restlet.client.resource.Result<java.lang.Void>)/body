@@ -1,0 +1,18 @@
+{
+  Representation requestEntity=new ObjectRepresentation<org.restlet.example.book.restlet.ch09.common.ContactRepresentation>((SerializationStreamFactory)ContactsResourceProxyImpl.this,param1);
+  getClientResource().getRequest().setEntity(requestEntity);
+  getClientResource().getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.APPLICATION_JAVA_OBJECT_GWT));
+  getClientResource().setMethod(Method.POST);
+  getClientResource().setOnResponse(new Uniform(){
+    public void handle(    Request request,    Response response){
+      if (getClientResource().getStatus().isError()) {
+        callback.onFailure(new ResourceException(getClientResource().getStatus()));
+      }
+ else {
+        callback.onSuccess(null);
+      }
+    }
+  }
+);
+  getClientResource().handle();
+}

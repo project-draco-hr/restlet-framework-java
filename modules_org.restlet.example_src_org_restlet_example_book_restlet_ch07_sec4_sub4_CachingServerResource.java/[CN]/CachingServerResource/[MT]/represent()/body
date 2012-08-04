@@ -1,0 +1,11 @@
+{
+  Calendar cal=new GregorianCalendar(2012,4,17,10,10,10);
+  Representation result=new StringRepresentation("<a href=" + getReference() + ">"+ System.currentTimeMillis()+ "</a>");
+  result.setMediaType(MediaType.TEXT_HTML);
+  result.setModificationDate(cal.getTime());
+  cal.roll(Calendar.HOUR,3);
+  result.setExpirationDate(cal.getTime());
+  result.setTag(new Tag("xyz123"));
+  getResponse().getCacheDirectives().add(CacheDirective.publicInfo());
+  return result;
+}

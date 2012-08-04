@@ -1,0 +1,20 @@
+{
+  ClientResource resource=new ClientResource("http://localhost:8111/");
+  Representation rep=resource.get();
+  System.out.println(resource.getStatus());
+  resource.getConditions().setModifiedSince(rep.getModificationDate());
+  rep=resource.get();
+  System.out.println(resource.getStatus());
+  resource.getConditions().setModifiedSince(null);
+  resource.getConditions().getNoneMatch().add(new Tag("xyz123"));
+  rep=resource.get();
+  System.out.println(resource.getStatus());
+  resource.getConditions().getNoneMatch().clear();
+  resource.getConditions().getMatch().add(rep.getTag());
+  resource.put(rep);
+  System.out.println(resource.getStatus());
+  resource.getConditions().getMatch().clear();
+  resource.getConditions().getMatch().add(new Tag("abcd7890"));
+  resource.put(rep);
+  System.out.println(resource.getStatus());
+}

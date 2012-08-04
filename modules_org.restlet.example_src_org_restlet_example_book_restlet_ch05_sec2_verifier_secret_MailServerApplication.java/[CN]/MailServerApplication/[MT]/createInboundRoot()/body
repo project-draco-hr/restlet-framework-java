@@ -1,0 +1,8 @@
+{
+  Router router=new Router(getContext());
+  router.attach("/accounts/{accountId}/mails/{mailId}",MailServerResource.class);
+  ChallengeAuthenticator authenticator=new ChallengeAuthenticator(getContext(),ChallengeScheme.HTTP_BASIC,"My Realm");
+  authenticator.setVerifier(new SimpleSecretVerifier());
+  authenticator.setNext(router);
+  return authenticator;
+}

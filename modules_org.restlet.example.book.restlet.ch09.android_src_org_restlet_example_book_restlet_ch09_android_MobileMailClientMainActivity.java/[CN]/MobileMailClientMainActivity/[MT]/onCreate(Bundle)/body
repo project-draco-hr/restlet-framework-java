@@ -1,0 +1,30 @@
+{
+  super.onCreate(savedInstanceState);
+  setContentView(R.layout.activity_mobile_mail_client_main);
+  ListView emailList=getListView();
+  emailList.setTextFilterEnabled(true);
+  Engine.getInstance().getRegisteredClients().clear();
+  Engine.getInstance().getRegisteredClients().add(new HttpClientHelper(new Client(Protocol.HTTP)));
+  Engine.getInstance().getRegisteredConverters().add(new JacksonConverter());
+  AsyncTask<Void,Void,Void> task=new AsyncTask<Void,Void,Void>(){
+    @Override protected Void doInBackground(    Void... params){
+      ClientResource clientResource=new ClientResource("http://reia-ch09.appspot.com/accounts/chunkylover53/mails/");
+      MailsResource mailsResource=clientResource.wrap(MailsResource.class);
+      MailsRepresentation emails=mailsResource.retrieve();
+      final String[] subjects=new String[emails.getEmails().size()];
+      for (int i=0; i < emails.getEmails().size(); i++) {
+        System.out.println(emails.getEmails().get(i));
+        subjects[i]=emails.getEmails().get(i).getSubject();
+      }
+      runOnUiThread(new Runnable(){
+        public void run(){
+          setListAdapter(new ArrayAdapter<String>(MobileMailClientMainActivity.this,R.layout.activity_mobile_mail_client_main,R.id.list_item,subjects));
+        }
+      }
+);
+      return null;
+    }
+  }
+;
+  task.execute(null,null,null);
+}
