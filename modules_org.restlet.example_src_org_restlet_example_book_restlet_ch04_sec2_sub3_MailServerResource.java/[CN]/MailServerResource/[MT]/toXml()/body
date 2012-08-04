@@ -1,0 +1,30 @@
+{
+  SaxRepresentation result=new SaxRepresentation(){
+    public void write(    org.restlet.ext.xml.XmlWriter writer) throws IOException {
+      try {
+        writer.startDocument();
+        writer.startElement("mail");
+        writer.startElement("status");
+        writer.characters("received");
+        writer.endElement("status");
+        writer.startElement("subject");
+        writer.characters("Message to self");
+        writer.endElement("subject");
+        writer.startElement("content");
+        writer.characters("Doh!");
+        writer.endElement("content");
+        writer.startElement("accountRef");
+        writer.characters(new Reference(getReference(),"..").getTargetRef().toString());
+        writer.endElement("accountRef");
+        writer.endElement("mail");
+        writer.endDocument();
+      }
+ catch (      SAXException e) {
+        throw new IOException(e.getMessage());
+      }
+    }
+  }
+;
+  result.setNamespaceAware(true);
+  return result;
+}

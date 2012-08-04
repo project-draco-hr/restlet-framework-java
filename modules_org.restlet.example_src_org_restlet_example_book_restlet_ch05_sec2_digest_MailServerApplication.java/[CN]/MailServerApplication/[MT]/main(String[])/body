@@ -1,0 +1,11 @@
+{
+  Component mailServer=new Component();
+  Server server=mailServer.getServers().add(Protocol.HTTPS,8183);
+  Series<Parameter> parameters=server.getContext().getParameters();
+  parameters.add("keystorePath","src/org/restlet/example/book/restlet/ch05/serverKey.jks");
+  parameters.add("keystorePassword","password");
+  parameters.add("keystoreType","JKS");
+  parameters.add("keyPassword","password");
+  mailServer.getDefaultHost().attach(new MailServerApplication());
+  mailServer.start();
+}

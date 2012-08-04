@@ -1,0 +1,15 @@
+{
+  Graph result=null;
+  if (account != null) {
+    result=new Graph();
+    result.add(getReference(),FoafConstants.MBOX,new Literal("mailto:" + account.getEmailAddress()));
+    result.add(getReference(),FoafConstants.FIRST_NAME,new Literal(account.getFirstName()));
+    result.add(getReference(),FoafConstants.LAST_NAME,new Literal(account.getLastName()));
+    result.add(getReference(),FoafConstants.NICK,new Literal(account.getNickName()));
+    result.add(getReference(),FoafConstants.NAME,new Literal(account.getSenderName()));
+    for (    Contact contact : account.getContacts()) {
+      result.add(getReference(),FoafConstants.KNOWS,new Reference(getReference(),contact.getProfileRef()).getTargetRef());
+    }
+  }
+  return result;
+}

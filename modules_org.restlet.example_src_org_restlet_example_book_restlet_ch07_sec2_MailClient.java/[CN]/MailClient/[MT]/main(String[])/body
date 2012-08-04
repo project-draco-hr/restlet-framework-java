@@ -1,0 +1,16 @@
+{
+  ClientResource mailClient=new ClientResource("http://localhost:8111/accounts/chunkylover53/feeds/xyz");
+  Feed atomFeed=mailClient.get(Feed.class);
+  System.out.println("\nAtom feed: " + atomFeed.getTitle() + "\n");
+  for (  Entry entry : atomFeed.getEntries()) {
+    System.out.println("Title  : " + entry.getTitle());
+    System.out.println("Summary: " + entry.getSummary());
+  }
+  SyndFeed rssFeed=mailClient.get(SyndFeed.class);
+  System.out.println("\nRSS feed: " + rssFeed.getTitle() + "\n");
+  @SuppressWarnings("unchecked") List<SyndEntry> entries=(List<SyndEntry>)rssFeed.getEntries();
+  for (  SyndEntry entry : entries) {
+    System.out.println("Title  : " + entry.getTitle());
+    System.out.println("Summary: " + entry.getDescription().getValue());
+  }
+}

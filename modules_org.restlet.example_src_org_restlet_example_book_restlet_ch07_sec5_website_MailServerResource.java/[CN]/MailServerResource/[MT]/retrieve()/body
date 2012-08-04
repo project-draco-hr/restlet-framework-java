@@ -1,0 +1,10 @@
+{
+  String accountId=getAttribute("accountId");
+  String mailId=getAttribute("mailId");
+  String mailApiUri="riap://component/api/accounts/" + accountId + "/mails/"+ mailId;
+  ClientResource cr=new ClientResource(mailApiUri);
+  cr.setNext(getContext().getServerDispatcher());
+  MailRepresentation mail=cr.get(MailRepresentation.class);
+  Representation mailFtl=new ClientResource(LocalReference.createClapReference(getClass().getPackage()) + "/Mail.ftl").get();
+  return new TemplateRepresentation(mailFtl,mail,MediaType.TEXT_HTML);
+}

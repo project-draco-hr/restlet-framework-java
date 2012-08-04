@@ -1,0 +1,19 @@
+{
+  Cookie cookie=request.getCookies().getFirst("Credentials");
+  if (cookie != null) {
+    String[] credentials=cookie.getValue().split("=");
+    if (credentials.length == 2) {
+      String identifier=credentials[0];
+      String secret=credentials[1];
+      request.setChallengeResponse(new ChallengeResponse(ChallengeScheme.HTTP_COOKIE,identifier,secret));
+    }
+  }
+ else   if (Method.POST.equals(request.getMethod()) && request.getResourceRef().getQueryAsForm().getFirst("login") != null) {
+    Form credentials=new Form(request.getEntity());
+    String identifier=credentials.getFirstValue("identifier");
+    String secret=credentials.getFirstValue("secret");
+    request.setChallengeResponse(new ChallengeResponse(ChallengeScheme.HTTP_COOKIE,identifier,secret));
+    request.setMethod(Method.GET);
+  }
+  return super.beforeHandle(request,response);
+}

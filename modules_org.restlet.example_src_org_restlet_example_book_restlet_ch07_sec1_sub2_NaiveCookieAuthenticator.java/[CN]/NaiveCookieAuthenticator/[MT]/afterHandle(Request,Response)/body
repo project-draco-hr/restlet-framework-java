@@ -1,0 +1,14 @@
+{
+  super.afterHandle(request,response);
+  Cookie cookie=request.getCookies().getFirst("Credentials");
+  if (request.getClientInfo().isAuthenticated() && (cookie == null)) {
+    String identifier=request.getChallengeResponse().getIdentifier();
+    String secret=new String(request.getChallengeResponse().getSecret());
+    CookieSetting cookieSetting=new CookieSetting("Credentials",identifier + "=" + secret);
+    cookieSetting.setAccessRestricted(true);
+    cookieSetting.setPath("/");
+    cookieSetting.setComment("Unsecured cookie based authentication");
+    cookieSetting.setMaxAge(30);
+    response.getCookieSettings().add(cookieSetting);
+  }
+}

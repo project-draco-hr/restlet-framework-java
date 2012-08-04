@@ -1,0 +1,13 @@
+{
+  Router router=new Router(getContext());
+  router.attach("/",RootServerResource.class);
+  router.attach("/accounts/",AccountsServerResource.class);
+  router.attach("/accounts/{accountId}",AccountServerResource.class);
+  router.attach("/accounts/{accountId}/files",FilesServerResource.class);
+  RoleAuthorizer authorizer=new RoleAuthorizer();
+  authorizer.getAuthorizedRoles().add(getRole("CFO"));
+  authorizer.setNext(router);
+  ChallengeAuthenticator authenticator=new ChallengeAuthenticator(getContext(),ChallengeScheme.HTTP_BASIC,"My Realm");
+  authenticator.setNext(authorizer);
+  return authenticator;
+}

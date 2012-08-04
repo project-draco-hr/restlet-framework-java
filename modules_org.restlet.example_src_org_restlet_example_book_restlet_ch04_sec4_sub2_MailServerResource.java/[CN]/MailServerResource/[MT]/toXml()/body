@@ -1,0 +1,11 @@
+{
+  Mail mail=new Mail();
+  mail.setStatus("received");
+  mail.setSubject("Message to self");
+  mail.setContent("Doh!");
+  mail.setAccountRef(new Reference(getReference(),"..").getTargetRef().toString());
+  Map<String,Object> dataModel=new HashMap<String,Object>();
+  dataModel.put("mail",mail);
+  Representation mailVtl=new ClientResource(LocalReference.createClapReference(getClass().getPackage()) + "/Mail.vtl").get();
+  return new TemplateRepresentation(mailVtl,dataModel,MediaType.TEXT_HTML);
+}
