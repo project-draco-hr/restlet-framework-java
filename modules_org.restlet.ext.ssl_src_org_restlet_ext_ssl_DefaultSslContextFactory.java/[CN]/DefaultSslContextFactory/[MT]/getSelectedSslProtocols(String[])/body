@@ -2,7 +2,7 @@
   Set<String> resultSet=new HashSet<String>();
   if (supportedProtocols != null) {
     for (    String supportedProtocol : supportedProtocols) {
-      if ((getSslProtocol() == null) || supportedProtocol.startsWith(getSslProtocol())) {
+      if (((getEnabledProtocols() == null) || Arrays.asList(getEnabledProtocols()).contains(supportedProtocol)) && ((getDisabledProtocols() == null) || !Arrays.asList(getDisabledProtocols()).contains(supportedProtocol))) {
         resultSet.add(supportedProtocol);
       }
     }
