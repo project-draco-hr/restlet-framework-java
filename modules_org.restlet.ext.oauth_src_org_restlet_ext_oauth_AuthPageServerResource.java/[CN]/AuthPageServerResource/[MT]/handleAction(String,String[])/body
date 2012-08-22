@@ -1,20 +1,17 @@
 {
-  String sessionId=(String)getRequest().getAttributes().get(ClientCookieID);
-  if (sessionId == null)   sessionId=getCookies().getFirstValue(ClientCookieID);
-  ConcurrentMap<String,Object> attribs=getContext().getAttributes();
-  AuthSession session=(sessionId == null) ? null : (AuthSession)attribs.get(sessionId);
-  if ("Reject".equals(action)) {
-    setStatus(Status.CLIENT_ERROR_FORBIDDEN);
-    sendError(session,OAuthError.access_denied,session.getState(),"Rejected.",null);
+  AuthSession session=getAuthSession();
+  if (action.equals(ACTION_REJECT)) {
     getLogger().fine("Rejected.");
-    return;
+    throw new OAuthException(OAuthError.access_denied,"Rejected.",null);
   }
   getLogger().fine("Accepting scopes - in handleAction");
   Client client=session.getClient();
   String id=session.getScopeOwner();
   String redirUrl=session.getDynamicCallbackURI();
   getLogger().fine("OAuth2 get dynamic callback = " + redirUrl);
-  if (redirUrl == null || redirUrl.length() == 0)   redirUrl=client.getRedirectUri();
+  if (redirUrl == null || redirUrl.isEmpty()) {
+    redirUrl=client.getRedirectUri();
+  }
   String location=null;
   ResponseType flow=session.getAuthFlow();
   if (flow.equals(ResponseType.token)) {
@@ -23,9 +20,9 @@
  else   if (flow.equals(ResponseType.code)) {
     location=generateCode(id,client,redirUrl);
   }
-  AuthenticatedUser user=client.findUser(session.getScopeOwner());
+  AuthenticatedUser user=client.findUser(id);
   if (user == null) {
-    setStatus(Status.CLIENT_ERROR_NOT_FOUND,"Can't find User id : " + session.getScopeOwner());
+    throw new OAuthException(OAuthError.server_error,"authenticated_user not found",null);
   }
   user.revokeRoles();
   for (  String s : scopes) {

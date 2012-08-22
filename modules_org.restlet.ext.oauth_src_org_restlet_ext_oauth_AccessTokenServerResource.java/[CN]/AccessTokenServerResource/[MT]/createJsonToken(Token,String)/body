@@ -1,11 +1,15 @@
 {
   JSONObject body=new JSONObject();
   try {
+    body.put(TOKEN_TYPE,TOKEN_TYPE_BEARER);
     body.put(ACCESS_TOKEN,token.getToken());
-    if (token instanceof ExpireToken) {
-      ExpireToken et=(ExpireToken)token;
-      body.put(EXPIRES_IN,et.getExpirePeriod());
-      body.put(REFRESH_TOKEN,et.getRefreshToken());
+    long expiresIn=token.getExpirePeriod();
+    if (expiresIn != Token.UNLIMITED) {
+      body.put(EXPIRES_IN,expiresIn);
+      body.put(REFRESH_TOKEN,token.getRefreshToken());
+    }
+    if (scopes != null && !scopes.isEmpty()) {
+      body.put(SCOPE,scopes);
     }
   }
  catch (  JSONException e) {

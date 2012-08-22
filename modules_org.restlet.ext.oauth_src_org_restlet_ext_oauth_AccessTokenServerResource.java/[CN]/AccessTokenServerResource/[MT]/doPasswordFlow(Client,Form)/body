@@ -1,0 +1,14 @@
+{
+  AuthenticatedUser user=client.findUser(getUsername(params));
+  if (user == null) {
+    throw new OAuthException(OAuthError.invalid_request,"Authenticated user not found.",null);
+  }
+  String password=getPassword(params);
+  if (!SecretVerifier.compare(user.getPassword(),password.toCharArray())) {
+    throw new OAuthException(OAuthError.invalid_grant,"Password not correct.",null);
+  }
+  Token token=this.generator.generateToken(user,this.tokenTimeSec);
+  JSONObject body=createJsonToken(token,null);
+  addCacheDirective(getResponse(),CacheDirective.noStore());
+  return new JsonRepresentation(body);
+}

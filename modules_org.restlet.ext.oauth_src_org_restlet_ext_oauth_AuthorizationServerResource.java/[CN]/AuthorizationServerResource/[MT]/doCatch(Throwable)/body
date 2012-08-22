@@ -1,0 +1,24 @@
+{
+  final OAuthException oex;
+  if (t instanceof OAuthException) {
+    oex=(OAuthException)t;
+  }
+ else   if (t.getCause() instanceof OAuthException) {
+    oex=(OAuthException)t.getCause();
+  }
+ else {
+    oex=new OAuthException(OAuthError.server_error,t.getMessage(),null);
+  }
+  AuthSession session=getAuthSession();
+  if (session == null) {
+    Representation resp=getErrorPage(HttpOAuthHelper.getErrorPageTemplate(getContext()),oex);
+    getResponse().setEntity(resp);
+  }
+ else {
+    String redirectURI=session.getDynamicCallbackURI();
+    if (redirectURI == null) {
+      redirectURI=session.getClient().getRedirectUri();
+    }
+    sendError(redirectURI,oex,session.getState());
+  }
+}

@@ -1,0 +1,26 @@
+{
+  getLogger().fine("Grant request");
+  final Form params=new Form(input);
+  User clientCredential=getRequest().getClientInfo().getUser();
+  if (clientCredential == null) {
+    getLogger().warning("Client ID is missing! No Authenticator?");
+    throw new OAuthException(OAuthError.server_error,"No Client Credential.",null);
+  }
+  Client client=clients.findById(clientCredential.getIdentifier());
+  getLogger().fine("Requested by authenticated client " + client.getClientId());
+  final GrantType grantType=getGrantType(params);
+switch (grantType) {
+case authorization_code:
+    getLogger().info("Authorization Code Grant");
+  return doAuthCodeFlow(client,params);
+case password:
+getLogger().info("Resource Owner Password Credentials Grant");
+return doPasswordFlow(client,params);
+case refresh_token:
+getLogger().info("Refreshing an Access Token");
+return doRefreshFlow(client,params);
+default :
+getLogger().warning("Unsupported flow: " + grantType);
+throw new OAuthException(OAuthError.unsupported_grant_type,"Flow not supported",null);
+}
+}

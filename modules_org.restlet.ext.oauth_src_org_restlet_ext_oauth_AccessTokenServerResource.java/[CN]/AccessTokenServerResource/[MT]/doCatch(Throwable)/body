@@ -1,0 +1,14 @@
+{
+  final OAuthException oex;
+  if (t instanceof OAuthException) {
+    oex=(OAuthException)t;
+  }
+ else   if (t.getCause() instanceof OAuthException) {
+    oex=(OAuthException)t.getCause();
+  }
+ else {
+    oex=new OAuthException(OAuthError.server_error,t.getMessage(),null);
+  }
+  getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+  getResponse().setEntity(getErrorJsonDocument(oex));
+}

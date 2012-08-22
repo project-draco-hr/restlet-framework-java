@@ -1,0 +1,18 @@
+{
+  Token token=generator.findToken(getRefreshToken(params));
+  if ((token != null) && (token instanceof ExpireToken)) {
+    AuthenticatedUser user=token.getUser();
+    if (client.containsUser(user.getId())) {
+      generator.refreshToken((ExpireToken)token);
+      JSONObject body=createJsonToken(token,null);
+      addCacheDirective(getResponse(),CacheDirective.noStore());
+      return new JsonRepresentation(body);
+    }
+ else {
+      throw new OAuthException(OAuthError.unauthorized_client,"User does not match.",null);
+    }
+  }
+ else {
+    throw new OAuthException(OAuthError.invalid_grant,"Refresh token.",null);
+  }
+}
