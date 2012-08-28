@@ -7,8 +7,8 @@
   if (!SecretVerifier.compare(user.getPassword(),password.toCharArray())) {
     throw new OAuthException(OAuthError.invalid_grant,"Password not correct.",null);
   }
+  String[] requestedScope=getScope(params);
+  refreshUserScopesAndPersist(user,requestedScope);
   Token token=this.generator.generateToken(user,this.tokenTimeSec);
-  JSONObject body=createJsonToken(token,null);
-  addCacheDirective(getResponse(),CacheDirective.noStore());
-  return new JsonRepresentation(body);
+  return responseTokenRepresentation(token,Scopes.toString(requestedScope));
 }

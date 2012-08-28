@@ -1,0 +1,11 @@
+{
+  if (t instanceof OAuthException) {
+    return (OAuthException)t;
+  }
+ else   if (t.getCause() instanceof OAuthException) {
+    return (OAuthException)t.getCause();
+  }
+ else {
+    return new OAuthException(OAuthError.server_error,t.getMessage(),null);
+  }
+}

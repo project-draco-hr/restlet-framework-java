@@ -12,30 +12,49 @@
   if (redirUrl == null || redirUrl.isEmpty()) {
     redirUrl=client.getRedirectUri();
   }
-  String location=null;
-  ResponseType flow=session.getAuthFlow();
-  if (flow.equals(ResponseType.token)) {
-    location=generateAgentToken(id,client,redirUrl);
+  final AuthenticatedUser user;
+  if (client.containsUser(id)) {
+    user=client.findUser(id);
   }
- else   if (flow.equals(ResponseType.code)) {
-    location=generateCode(id,client,redirUrl);
+ else {
+    user=client.createUser(id);
   }
-  AuthenticatedUser user=client.findUser(id);
-  if (user == null) {
-    throw new OAuthException(OAuthError.server_error,"authenticated_user not found",null);
-  }
+  Set<String> scopeSet=new HashSet<String>();
+  scopeSet.addAll(Arrays.asList(scopes));
   user.revokeRoles();
-  for (  String s : scopes) {
+  for (  String s : scopeSet) {
     getLogger().fine("Adding scope = " + s + " to user = "+ id);
     user.addRole(Scopes.toRole(s),"");
   }
+  user.persist();
+  final Reference location=new Reference(redirUrl);
   String state=session.getState();
-  if (state != null && state.length() > 0) {
-    Reference stateful=new Reference(location);
-    stateful.addQueryParameter(OAuthServerResource.STATE,state);
-    location=stateful.toString();
+  if (state != null && !state.isEmpty()) {
+    location.addQueryParameter(STATE,state);
+  }
+  ResponseType flow=session.getAuthFlow();
+  if (flow.equals(ResponseType.token)) {
+    Token token=generator.generateToken(user,tokenTimeSec);
+    location.addQueryParameter(TOKEN_TYPE,TOKEN_TYPE_BEARER);
+    location.addQueryParameter(ACCESS_TOKEN,token.getToken());
+    long expiresIn=token.getExpirePeriod();
+    if (expiresIn != Token.UNLIMITED) {
+      location.addQueryParameter(EXPIRES_IN,Long.toString(expiresIn));
+    }
+    String[] granted=scopeSet.toArray(new String[0]);
+    if (!Arrays.equals(session.getRequestedScope(),granted)) {
+      location.addQueryParameter(SCOPE,Scopes.toString(granted));
+    }
+  }
+ else   if (flow.equals(ResponseType.code)) {
+    String code=generator.generateCode(user);
+    location.addQueryParameter(CODE,code);
   }
   session.setState(null);
-  user.persist();
+  if (flow.equals(ResponseType.token)) {
+    location.setFragment(location.getQuery());
+    location.setQuery("");
+  }
+  getLogger().fine("Redirecting to -> " + location);
   redirectTemporary(location);
 }
