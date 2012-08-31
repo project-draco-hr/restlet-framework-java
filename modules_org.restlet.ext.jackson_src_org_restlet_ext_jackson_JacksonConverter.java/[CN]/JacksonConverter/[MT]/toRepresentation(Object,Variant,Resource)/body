@@ -16,8 +16,14 @@
  else     if (VARIANT_JSON.isCompatible(target)) {
       result=create(target.getMediaType(),source);
     }
- else     if (VARIANT_XML.isCompatible(target)) {
+ else     if (VARIANT_APPLICATION_XML.isCompatible(target) || VARIANT_TEXT_XML.isCompatible(target)) {
       result=createXml(target.getMediaType(),source);
+    }
+ else     if (VARIANT_APPLICATION_YAML.isCompatible(target) || VARIANT_TEXT_YAML.isCompatible(target)) {
+      result=createYaml(target.getMediaType(),source);
+    }
+ else     if (VARIANT_TEXT_CSV.isCompatible(target)) {
+      result=createCsv(target.getMediaType(),source);
     }
   }
   return result;

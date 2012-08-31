@@ -23,8 +23,14 @@
  else     if (VARIANT_JSON.isCompatible(source)) {
       jacksonSource=create(source,target);
     }
- else     if (VARIANT_XML.isCompatible(source)) {
+ else     if (VARIANT_APPLICATION_XML.isCompatible(source) || VARIANT_TEXT_XML.isCompatible(source)) {
       jacksonSource=createXml(source,target);
+    }
+ else     if (VARIANT_APPLICATION_YAML.isCompatible(source) || VARIANT_TEXT_YAML.isCompatible(source)) {
+      jacksonSource=createYaml(source,target);
+    }
+ else     if (VARIANT_TEXT_CSV.isCompatible(source)) {
+      jacksonSource=createCsv(source,target);
     }
     if (jacksonSource != null) {
       if ((target != null) && JacksonRepresentation.class.isAssignableFrom(target)) {
