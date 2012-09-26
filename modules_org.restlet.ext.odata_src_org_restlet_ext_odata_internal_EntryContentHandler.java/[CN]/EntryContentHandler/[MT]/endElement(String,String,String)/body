@@ -2,22 +2,23 @@
   if (State.ASSOCIATION == getState()) {
     if (uri.equalsIgnoreCase(Feed.ATOM_NAMESPACE)) {
       if (localName.equals("feed")) {
-        inlineFeedHandler.endFeed(inlineFeed);
+        if (association.isToMany())         inlineFeedHandler.endFeed(inlineFeed);
       }
  else       if (localName.equals("link")) {
         if (association.isToMany()) {
-          inlineFeedHandler.endLink(inlineLink);
+          inlineFeedHandler.closeLink();
         }
  else {
-          inlineEntryHandler.endLink(inlineLink);
+          inlineEntryHandler.closeLink();
         }
+        return;
       }
  else       if (localName.equalsIgnoreCase("entry")) {
         if (association.isToMany()) {
           inlineFeedHandler.endEntry(inlineEntry);
         }
  else {
-          inlineEntryHandler.endEntry(inlineEntry);
+          inlineEntryHandler.closeEntry(inlineEntry);
         }
       }
  else       if (localName.equalsIgnoreCase("content")) {
