@@ -1,0 +1,21 @@
+{
+  String baseMessage="Should have fetched " + basePath;
+  Assert.assertNotNull(baseMessage,multilingual);
+  Assert.assertNotNull(baseMessage + "/literals",multilingual.getLiterals());
+  for (  Literal literal : multilingual.getLiterals()) {
+    Assert.assertNotNull(baseMessage + "/literals(?)",literal);
+    Language language=literal.getLanguage();
+    Assert.assertNotNull(String.format("%s/literals(%d)/language",baseMessage,literal.getId()),language);
+    Assert.assertTrue(String.format("%s/literals(%d)/language/@id should be greater than zero",basePath,literal.getId()),language.getId() > 0);
+    String languagePath=String.format("%s/literals(%d)/language(%d)",basePath,literal.getId(),language.getId());
+switch (language.getId()) {
+case 1:
+      Assert.assertTrue(languagePath + "/@localeCode shoule be \"el\"","el".equals(language.getLocaleCode()));
+    break;
+case 2:
+  Assert.assertTrue(languagePath + "/@localeCode shoule be \"en\"","en".equals(language.getLocaleCode()));
+Assert.assertTrue(languagePath + "/@name shoule be \"English\"","English".equals(language.getName()));
+break;
+}
+}
+}

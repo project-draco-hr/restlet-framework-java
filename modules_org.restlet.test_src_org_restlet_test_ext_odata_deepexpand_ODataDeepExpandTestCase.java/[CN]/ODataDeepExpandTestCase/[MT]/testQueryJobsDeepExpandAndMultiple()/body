@@ -1,0 +1,15 @@
+{
+  Query<Job> query=service.createJobQuery("/Job").expand("jobParts/description/literals/language,jobPosting/name/literals/language");
+  for (  Job job : query) {
+    String jobPostingPath=String.format("/Job(%d)/jobPosting",job.getId());
+    JobPosting jobPosting=job.getJobPosting();
+    Assert.assertNotNull("Should have fetched " + jobPostingPath,jobPosting);
+    assertFullExpansionOfMultilingualField(jobPosting.getName(),jobPostingPath + "/name");
+    if (job.getJobParts() != null) {
+      for (      JobPart jobPart : job.getJobParts()) {
+        String jobPartDescriptionPath=String.format("/Job(%d)/jobParts(%d)/description",job.getId(),jobPart.getId());
+        assertFullExpansionOfMultilingualField(jobPart.getDescription(),jobPartDescriptionPath);
+      }
+    }
+  }
+}
