@@ -1,0 +1,19 @@
+{
+  Router router=new Router(getContext());
+  router.attach("/authorize",AuthorizationServerResource.class);
+  router.attach(HttpOAuthHelper.getAuthPage(getContext()),AuthPageServerResource.class);
+  HttpOAuthHelper.setAuthPageTemplate("authorize.html",getContext());
+  HttpOAuthHelper.setAuthSkipApproved(true,getContext());
+  HttpOAuthHelper.setErrorPageTemplate("error.html",getContext());
+  router.attach(HttpOAuthHelper.getLoginPage(getContext()),LoginPageServerResource.class);
+  ChallengeAuthenticator clientAuthenticator=new ChallengeAuthenticator(getContext(),ChallengeScheme.HTTP_BASIC,"OAuth2Sample");
+  ClientVerifier clientVerifier=new ClientVerifier();
+  clientVerifier.setAcceptBodyMethod(true);
+  clientAuthenticator.setVerifier(clientVerifier);
+  clientAuthenticator.setNext(AccessTokenServerResource.class);
+  router.attach("/token",clientAuthenticator);
+  router.attach("/token_auth",TokenAuthServerResource.class);
+  final Directory resources=new Directory(getContext(),"clap://system/resources");
+  router.attach("",resources);
+  return router;
+}

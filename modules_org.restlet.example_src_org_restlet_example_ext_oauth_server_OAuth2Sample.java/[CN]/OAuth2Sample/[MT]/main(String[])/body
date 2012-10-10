@@ -1,0 +1,14 @@
+{
+  mongo=new Mongo("localhost",27017);
+  Component component=new Component();
+  component.getClients().add(Protocol.HTTP);
+  component.getClients().add(Protocol.HTTPS);
+  component.getClients().add(Protocol.RIAP);
+  component.getClients().add(Protocol.CLAP);
+  component.getServers().add(Protocol.HTTP,8080);
+  component.getDefaultHost().attach("/sample",new SampleApplication());
+  OAuth2ServerApplication app=new OAuth2ServerApplication();
+  component.getDefaultHost().attach("/oauth",app);
+  component.getInternalRouter().attach("/oauth",app);
+  component.start();
+}
