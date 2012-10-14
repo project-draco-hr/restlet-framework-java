@@ -1,0 +1,36 @@
+{
+  final CountDownLatch latch=new CountDownLatch(count);
+  final Uniform responseHandler=new Uniform(){
+    @Override public void handle(    Request request,    Response response){
+      String item=request.getResourceRef().getQueryAsForm().getFirstValue("item");
+      try {
+        assertEquals(item,Integer.toString(response.getAge()));
+        if (responseEntityExpected(request.getMethod())) {
+          assertEquals(Status.SUCCESS_OK,response.getStatus());
+          assertTrue(response.isEntityAvailable());
+          assertNotNull(response.getEntityAsText());
+        }
+ else {
+          assertEquals(Status.SUCCESS_NO_CONTENT,response.getStatus());
+          assertFalse(response.isEntityAvailable());
+        }
+      }
+  finally {
+        latch.countDown();
+      }
+    }
+  }
+;
+  Restlet client=context.getClientDispatcher();
+  for (int i=0; i < count; ++i) {
+    Representation rep=null;
+    if (requestEntityExpected(method)) {
+      rep=new StringRepresentation("Item: " + i);
+    }
+    Reference ref=new Reference("http://localhost:" + TEST_PORT + "/?item="+ i);
+    Request request=new Request(method,ref,rep);
+    request.setOnResponse(responseHandler);
+    client.handle(request);
+  }
+  latch.await();
+}

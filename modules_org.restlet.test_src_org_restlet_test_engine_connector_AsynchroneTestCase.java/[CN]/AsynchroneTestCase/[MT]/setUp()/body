@@ -1,0 +1,33 @@
+{
+  super.setUp();
+  clientComponent=new Component();
+  originComponent=new Component();
+  final Restlet trace=new Restlet(originComponent.getContext().createChildContext()){
+    @Override public void handle(    Request request,    Response response){
+      response.setAge(Integer.valueOf(request.getResourceRef().getQueryAsForm().getFirstValue("item")));
+      if (responseEntityExpected(request.getMethod())) {
+        String message="Resource URI:  " + request.getResourceRef() + '\n'+ "Base URI:      "+ request.getResourceRef().getBaseRef()+ '\n'+ "Remaining part: "+ request.getResourceRef().getRemainingPart()+ '\n'+ "Method name: "+ request.getMethod()+ '\n';
+        if (requestEntityExpected(request.getMethod())) {
+          message+=request.getEntityAsText();
+          request.getEntity().release();
+        }
+        response.setEntity(new StringRepresentation(message,MediaType.TEXT_PLAIN));
+        response.setStatus(Status.SUCCESS_OK);
+      }
+ else {
+        if (requestEntityExpected(request.getMethod()))         request.getEntityAsText();
+        response.setStatus(Status.SUCCESS_NO_CONTENT);
+      }
+    }
+  }
+;
+  originComponent.getDefaultHost().attach("",trace);
+  Server server=originComponent.getServers().add(Protocol.HTTP,TEST_PORT);
+  server.getContext().getParameters().add("maxQueued","-1");
+  Client client=clientComponent.getClients().add(Protocol.HTTP);
+  context=client.getContext();
+  context.getParameters().add("maxQueued","-1");
+  context.getParameters().add("maxConnectionsPerHost","6");
+  originComponent.start();
+  clientComponent.start();
+}
