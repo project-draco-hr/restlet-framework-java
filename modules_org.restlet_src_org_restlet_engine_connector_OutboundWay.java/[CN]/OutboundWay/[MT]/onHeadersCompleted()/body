@@ -1,0 +1,46 @@
+{
+  if (getLogger().isLoggable(Level.FINER)) {
+    getLogger().finer("Outbound message start line and headers sent");
+  }
+  if (getActualMessage().isEntityAvailable()) {
+    ConnectorService connectorService=ConnectorHelper.getConnectorService();
+    if (connectorService != null) {
+      connectorService.afterSend(getActualMessage().getEntity());
+    }
+    setMessageState(MessageState.BODY);
+    ReadableByteChannel rbc=getActualMessage().getEntity().getChannel();
+    if (rbc instanceof FileChannel) {
+      setEntityChannelType(EntityType.TRANSFERABLE);
+    }
+ else     if (rbc instanceof BlockableChannel) {
+      BlockableChannel bc=(BlockableChannel)rbc;
+      if (bc.isBlocking()) {
+        setEntityChannelType(EntityType.BLOCKING);
+      }
+ else {
+        setEntityChannelType(EntityType.NON_BLOCKING);
+      }
+    }
+ else     if (rbc instanceof SelectableChannel) {
+      SelectableChannel sc=(SelectableChannel)rbc;
+      if (sc.isBlocking()) {
+        setEntityChannelType(EntityType.BLOCKING);
+      }
+ else {
+        setEntityChannelType(EntityType.NON_BLOCKING);
+      }
+    }
+ else {
+      setEntityChannelType(EntityType.BLOCKING);
+    }
+    if (getActualMessage().getEntity().getAvailableSize() == Representation.UNKNOWN_SIZE) {
+      setEntityChannel(new ReadableChunkingChannel(rbc,getBuffer().capacity()));
+    }
+ else {
+      setEntityChannel(new ReadableSizedChannel(rbc,getActualMessage().getEntity().getAvailableSize()));
+    }
+  }
+ else {
+    setMessageState(MessageState.END);
+  }
+}
