@@ -1,0 +1,16 @@
+{
+  Class<? extends Object> clazz=value.getClass();
+  boolean isPrimitiveOrWrapped=clazz.isPrimitive() || ClassUtils.wrapperToPrimitive(clazz) != null;
+  if (isPrimitiveOrWrapped || clazz == String.class) {
+    return String.valueOf(value);
+  }
+  String representationAsText=null;
+  Representation representation=clientResource.getApplication().getConverterService().toRepresentation(value);
+  try {
+    representationAsText=representation.getText();
+  }
+ catch (  IOException exception) {
+    throw new WebApplicationException(exception);
+  }
+  return representationAsText;
+}
