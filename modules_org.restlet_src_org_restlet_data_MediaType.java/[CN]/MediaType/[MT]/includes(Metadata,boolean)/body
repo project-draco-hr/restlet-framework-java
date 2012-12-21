@@ -1,0 +1,28 @@
+{
+  boolean result=equals(ALL) || equals(included);
+  if (!result && (included instanceof MediaType)) {
+    MediaType includedMediaType=(MediaType)included;
+    if (getMainType().equals(includedMediaType.getMainType())) {
+      if (getSubType().equals(includedMediaType.getSubType())) {
+        if (ignoreParameters) {
+          result=true;
+        }
+ else {
+          result=true;
+          for (int i=0; result && i < getParameters().size(); i++) {
+            Parameter param=getParameters().get(i);
+            Parameter includedParam=includedMediaType.getParameters().getFirst(param.getName());
+            result=(includedParam != null && param.getValue().equals(includedParam.getValue()));
+          }
+        }
+      }
+ else       if (getSubType().equals("*")) {
+        result=true;
+      }
+ else       if (getSubType().startsWith("*+") && includedMediaType.getSubType().endsWith(getSubType().substring(2))) {
+        result=true;
+      }
+    }
+  }
+  return result;
+}

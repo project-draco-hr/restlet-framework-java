@@ -1,18 +1,3 @@
 {
-  boolean result=equals(ALL) || equals(included);
-  if (!result && (included instanceof MediaType)) {
-    MediaType includedMediaType=(MediaType)included;
-    if (getMainType().equals(includedMediaType.getMainType())) {
-      if (getSubType().equals(includedMediaType.getSubType())) {
-        result=true;
-      }
- else       if (getSubType().equals("*")) {
-        result=true;
-      }
- else       if (getSubType().startsWith("*+") && includedMediaType.getSubType().endsWith(getSubType().substring(2))) {
-        result=true;
-      }
-    }
-  }
-  return result;
+  return includes(included,true);
 }
