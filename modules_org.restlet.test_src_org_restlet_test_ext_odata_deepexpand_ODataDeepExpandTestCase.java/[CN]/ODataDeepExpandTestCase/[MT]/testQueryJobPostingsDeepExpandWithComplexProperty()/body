@@ -1,0 +1,10 @@
+{
+  Query<JobPosting> jobPostingQuery=service.createJobPostingQuery("/JobPosting").expand("name/literals/language").filter("benefits/transportationOffered eq true").top(10);
+  for (  JobPosting jobPosting : jobPostingQuery) {
+    String jobPostingPath=String.format("/JobPostings(%d)",jobPosting.getId());
+    assertFullExpansionOfMultilingualField(jobPosting.getName(),jobPostingPath + "/name");
+    Benefits benefits=jobPosting.getBenefits();
+    Assert.assertNotNull("jobPosting.benefits shouldn't be null",benefits);
+    Assert.assertTrue("jobPosting.benefits.transportationOffered should be true",benefits.getTransportationOffered());
+  }
+}

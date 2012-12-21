@@ -1,0 +1,19 @@
+{
+  if (Method.GET.equals(request.getMethod())) {
+    Form form=request.getResourceRef().getQueryAsForm();
+    String uri="/" + this.getClass().getPackage().getName().replace(".","/") + "/"+ file;
+    if (form.getFirstValue("$expand") != null) {
+      uri+=" expand " + form.getFirstValue("$expand").replace(",",", ").replace('/','-');
+    }
+    if (form.getFirstValue("$skiptoken") != null) {
+      uri+=form.getFirstValue("$skiptoken");
+    }
+    Response r=getContext().getClientDispatcher().handle(new Request(Method.GET,LocalReference.createClapReference(LocalReference.CLAP_CLASS,uri + ".xml")));
+    r.getEntity().setCharacterSet(getMetadataService().getDefaultCharacterSet());
+    response.setEntity(r.getEntity());
+    response.setStatus(r.getStatus());
+  }
+ else   if (!updatable) {
+    response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+  }
+}

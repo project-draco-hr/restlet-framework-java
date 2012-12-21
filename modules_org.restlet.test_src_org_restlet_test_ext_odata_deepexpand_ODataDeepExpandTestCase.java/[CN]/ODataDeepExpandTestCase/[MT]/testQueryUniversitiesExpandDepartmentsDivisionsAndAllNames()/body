@@ -1,0 +1,15 @@
+{
+  Query<University> query=service.createUniversityQuery("University").expand("name/literals/language,departments/name/literals/language,departments/divisions/name/literals/language");
+  for (  University university : query) {
+    String universityPath=String.format("/University(%d)",university.getId());
+    assertFullExpansionOfMultilingualField(university.getName(),universityPath + "/name");
+    for (    Department department : university.getDepartments()) {
+      String departmentPath=String.format("%s/departments(%d)",universityPath,department.getId());
+      assertFullExpansionOfMultilingualField(department.getName(),departmentPath + "/name");
+      for (      Division division : department.getDivisions()) {
+        String divisionPath=String.format("%s/divisions(%d)",departmentPath,division.getId());
+        assertFullExpansionOfMultilingualField(division.getName(),divisionPath + "/name");
+      }
+    }
+  }
+}
