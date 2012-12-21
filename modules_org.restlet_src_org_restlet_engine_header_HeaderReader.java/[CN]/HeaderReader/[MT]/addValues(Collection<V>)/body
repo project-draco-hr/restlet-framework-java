@@ -2,11 +2,15 @@
   try {
     skipSpaces();
     do {
+      int i=index;
       V nextValue=readValue();
       if (canAdd(nextValue,values)) {
         values.add(nextValue);
       }
       skipValueSeparator();
+      if (i == index) {
+        throw new IOException("The reading of one header initiates an infinite loop");
+      }
     }
  while (peek() != -1);
   }
