@@ -1,11 +1,21 @@
 {
-  this.states=new ArrayList<State>();
-  pushState(State.ENTRY);
-  eltPath=new ArrayList<String>();
-  try {
-    entity=(T)entityClass.newInstance();
-  }
- catch (  Exception e) {
-    getLogger().warning("Error when instantiating  class " + entityClass);
-  }
+  if (getState() != null) {
+switch (getState()) {
+case ASSOCIATION:
+      if (association.isToMany())       inlineFeedHandler.startEntry(entry);
+ else       inlineEntryHandler.startEntry(entry);
+    break;
+}
+}
+ else {
+this.states=new ArrayList<State>();
+pushState(State.ENTRY);
+eltPath=new ArrayList<String>();
+try {
+  entity=(T)entityClass.newInstance();
+}
+ catch (Exception e) {
+  getLogger().warning("Error when instantiating  class " + entityClass);
+}
+}
 }

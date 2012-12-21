@@ -3,7 +3,10 @@
     this.count=Integer.parseInt(sb.toString());
     parseCount=false;
   }
- else   if (parseEntry) {
+ else   if (parseEntry || (entryHandler != null && localName.equals("entry"))) {
     entryHandler.endElement(uri,localName,qName);
+  }
+  if (!parseEntry && uri.equals("http://www.w3.org/2005/Atom") && localName.equals("feed")) {
+    isInFeed=false;
   }
 }

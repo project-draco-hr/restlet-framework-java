@@ -1,11 +1,12 @@
 {
-  parseEntry=false;
-  entryHandler.endEntry(entry);
-  T entity=entryHandler.getEntity();
-  if (entity != null) {
-    entities.add(entity);
-  }
+  if (entryHandler.closeEntry(entry)) {
+    parseEntry=false;
+    T entity=entryHandler.getEntity();
+    if (entity != null) {
+      entities.add(entity);
+    }
  else {
-    getLogger().warning("Can't add a null entity.");
+      getLogger().warning("Can't add a null entity.");
+    }
   }
 }
