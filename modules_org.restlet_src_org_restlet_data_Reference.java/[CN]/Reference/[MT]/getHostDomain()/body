@@ -2,19 +2,20 @@
   String result=null;
   final String authority=getAuthority();
   if (authority != null) {
-    final int index1=authority.indexOf('@');
-    final int index2=authority.indexOf(':',(index1 == -1 ? 0 : index1));
-    if (index1 != -1) {
-      if (index2 != -1) {
-        result=authority.substring(index1 + 1,index2);
+    int indexUI=authority.indexOf('@');
+    int indexIPV6=authority.indexOf(']');
+    int indexP=authority.indexOf(':',(indexIPV6 == -1) ? indexUI : indexIPV6);
+    if (indexUI != -1) {
+      if (indexP != -1) {
+        result=authority.substring(indexUI + 1,indexP);
       }
  else {
-        result=authority.substring(index1 + 1);
+        result=authority.substring(indexUI + 1);
       }
     }
  else {
-      if (index2 != -1) {
-        result=authority.substring(0,index2);
+      if (indexP != -1) {
+        result=authority.substring(0,indexP);
       }
  else {
         result=authority;
