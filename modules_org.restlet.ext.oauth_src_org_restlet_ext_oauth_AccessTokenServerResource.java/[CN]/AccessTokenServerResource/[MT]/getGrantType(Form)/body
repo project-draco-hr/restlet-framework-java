@@ -1,0 +1,15 @@
+{
+  String typeString=params.getFirstValue(GRANT_TYPE);
+  getLogger().info("Type: " + typeString);
+  try {
+    GrantType type=Enum.valueOf(GrantType.class,typeString);
+    getLogger().fine("Found flow - " + type);
+    return type;
+  }
+ catch (  IllegalArgumentException iae) {
+    throw new OAuthException(OAuthError.unsupported_grant_type,"Unsupported flow",null);
+  }
+catch (  NullPointerException npe) {
+    throw new OAuthException(OAuthError.invalid_request,"No grant_type parameter found.",null);
+  }
+}

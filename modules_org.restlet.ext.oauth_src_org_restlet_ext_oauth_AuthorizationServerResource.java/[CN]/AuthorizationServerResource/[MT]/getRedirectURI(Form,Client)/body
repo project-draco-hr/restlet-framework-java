@@ -1,0 +1,13 @@
+{
+  String redirUri=params.getFirstValue(REDIR_URI);
+  if (redirUri == null || redirUri.isEmpty()) {
+    redirUri=client.getRedirectUri();
+    if (redirUri == null) {
+      throw new OAuthException(OAuthError.invalid_request,"Client MUST include a redirection URI.",null);
+    }
+  }
+ else   if (!redirUri.startsWith(client.getRedirectUri())) {
+    throw new OAuthException(OAuthError.invalid_request,"Callback URI does not match.",null);
+  }
+  return redirUri;
+}

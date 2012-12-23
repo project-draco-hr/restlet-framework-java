@@ -1,0 +1,25 @@
+{
+  Token token=generator.findToken(getRefreshToken(params));
+  if ((token != null) && (token instanceof ExpireToken)) {
+    AuthenticatedUser user=token.getUser();
+    if (client.containsUser(user.getId())) {
+      String scope=params.getFirstValue(SCOPE);
+      if (scope != null && !scope.isEmpty()) {
+        String[] requestedScopes=Scopes.parseScope(scope);
+        String[] grantedScopes=Scopes.parseScope(user.getGrantedRoles());
+        if (!Arrays.asList(grantedScopes).containsAll(Arrays.asList(requestedScopes))) {
+          throw new OAuthException(OAuthError.invalid_scope,"Requested scopes contains which is not originally granted by the resource owner.",null);
+        }
+        refreshUserScopesAndPersist(user,requestedScopes);
+      }
+      generator.refreshToken((ExpireToken)token);
+      return responseTokenRepresentation(token,scope);
+    }
+ else {
+      throw new OAuthException(OAuthError.unauthorized_client,"User does not match.",null);
+    }
+  }
+ else {
+    throw new OAuthException(OAuthError.invalid_grant,"Refresh token.",null);
+  }
+}

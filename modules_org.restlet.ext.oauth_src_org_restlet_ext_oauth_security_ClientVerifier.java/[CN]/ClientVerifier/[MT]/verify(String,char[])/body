@@ -1,0 +1,11 @@
+{
+  Client client=clients.findById(clientId);
+  if (client == null) {
+    return RESULT_UNKNOWN;
+  }
+  char[] s=client.getClientSecret().toCharArray();
+  if (!SecretVerifier.compare(s,clientSecret)) {
+    return RESULT_INVALID;
+  }
+  return RESULT_VALID;
+}

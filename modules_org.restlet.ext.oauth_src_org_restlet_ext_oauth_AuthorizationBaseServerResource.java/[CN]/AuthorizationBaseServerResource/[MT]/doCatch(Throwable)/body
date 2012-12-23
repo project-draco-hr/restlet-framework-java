@@ -1,0 +1,16 @@
+{
+  final OAuthException oex=OAuthException.toOAuthException(t);
+  AuthSession session=getAuthSession();
+  if (session == null) {
+    Representation resp=getErrorPage(HttpOAuthHelper.getErrorPageTemplate(getContext()),oex);
+    getResponse().setEntity(resp);
+  }
+ else {
+    String redirectURI=session.getDynamicCallbackURI();
+    if (redirectURI == null) {
+      redirectURI=session.getClient().getRedirectUri();
+    }
+    boolean fragment=session.getAuthFlow().equals(ResponseType.token);
+    sendError(redirectURI,oex,session.getState(),fragment);
+  }
+}
