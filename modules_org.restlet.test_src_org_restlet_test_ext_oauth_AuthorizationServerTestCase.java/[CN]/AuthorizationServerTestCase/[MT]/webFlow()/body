@@ -25,13 +25,6 @@
   ref=new Reference(getProt() + "://localhost:" + serverPort+ "/server/protected");
   cr=new ClientResource(ref);
   cr.setNext(this.reqClient);
-  OAuthForm form=new OAuthForm(client.getToken());
-  form.add("foo","bar");
-  r=cr.post(form.getWebRepresentation());
-  assertNotNull(r);
-  text=r.getText();
-  assertEquals("Response text test",text,"Dummy");
-  assertEquals("Response content type test",r.getMediaType(),MediaType.TEXT_PLAIN);
   cr.release();
   ref=new Reference(getProt() + "://localhost:" + serverPort+ "/server/protected");
   ref.addQueryParameter("oauth_token",client.getToken());

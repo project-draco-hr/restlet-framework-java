@@ -1,0 +1,20 @@
+{
+  Reference cb=new Reference(redirectURI);
+  cb.addQueryParameter(ERROR,ex.getError().name());
+  if (state != null && state.length() > 0) {
+    cb.addQueryParameter(STATE,state);
+  }
+  String description=ex.getErrorDescription();
+  if (description != null && description.length() > 0) {
+    cb.addQueryParameter(ERROR_DESC,description);
+  }
+  String errorUri=ex.getErrorURI();
+  if (errorUri != null && errorUri.length() > 0) {
+    cb.addQueryParameter(ERROR_URI,errorUri);
+  }
+  if (fragment) {
+    cb.setFragment(cb.getQuery());
+    cb.setQuery("");
+  }
+  redirectTemporary(cb);
+}

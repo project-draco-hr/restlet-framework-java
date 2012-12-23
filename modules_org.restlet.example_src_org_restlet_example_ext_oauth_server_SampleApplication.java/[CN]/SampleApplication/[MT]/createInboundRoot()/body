@@ -1,0 +1,8 @@
+{
+  Router router=new Router(getContext());
+  router.attach("/status",StatusServerResource.class);
+  ChallengeAuthenticator bearerAuthenticator=new ChallengeAuthenticator(getContext(),TokenVerifier.HTTP_BEARER,"OAuth2Sample");
+  bearerAuthenticator.setVerifier(new TokenVerifier(new Reference("riap://component/oauth/token_auth")));
+  bearerAuthenticator.setNext(router);
+  return bearerAuthenticator;
+}

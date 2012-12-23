@@ -1,0 +1,11 @@
+{
+  String scope=params.getFirstValue(SCOPE);
+  if (scope == null || scope.isEmpty()) {
+    Object defaultScope=getParameter("defaultScope",null);
+    if (defaultScope == null || defaultScope.toString().isEmpty()) {
+      throw new OAuthException(OAuthError.invalid_scope,"Scope has not provided.",null);
+    }
+    scope=defaultScope.toString();
+  }
+  return Scopes.parseScope(scope);
+}

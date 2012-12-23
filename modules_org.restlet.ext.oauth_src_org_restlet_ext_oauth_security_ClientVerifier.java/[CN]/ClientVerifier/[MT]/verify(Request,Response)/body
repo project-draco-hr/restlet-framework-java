@@ -1,0 +1,38 @@
+{
+  final String clientId;
+  final char[] clientSecret;
+  ChallengeResponse cr=request.getChallengeResponse();
+  if (cr == null) {
+    if (!isAcceptBodyMethod()) {
+      return RESULT_MISSING;
+    }
+    Form params=new Form(request.getEntity());
+    clientId=params.getFirstValue(OAuthServerResource.CLIENT_ID);
+    if (clientId == null || clientId.isEmpty()) {
+      return RESULT_MISSING;
+    }
+    String s=params.getFirstValue(OAuthServerResource.CLIENT_SECRET);
+    if (s == null || s.isEmpty()) {
+      clientSecret=new char[0];
+    }
+ else {
+      clientSecret=s.toCharArray();
+    }
+    request.setEntity(params.getWebRepresentation());
+  }
+ else {
+    if (!cr.getScheme().equals(ChallengeScheme.HTTP_BASIC)) {
+      return RESULT_UNSUPPORTED;
+    }
+    clientId=cr.getIdentifier();
+    clientSecret=cr.getSecret();
+  }
+  int result=verify(clientId,clientSecret);
+  if (result == RESULT_VALID) {
+    request.getClientInfo().setUser(new User(clientId));
+  }
+ else {
+    response.setEntity(OAuthServerResource.responseErrorRepresentation(new OAuthException(OAuthError.invalid_client,"Invalid client",null)));
+  }
+  return result;
+}
