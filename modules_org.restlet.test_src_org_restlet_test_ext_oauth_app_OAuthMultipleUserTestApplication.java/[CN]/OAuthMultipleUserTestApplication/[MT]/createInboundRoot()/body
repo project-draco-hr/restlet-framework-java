@@ -4,13 +4,13 @@
   attribs.put(OAuthServerResource.TOKEN_SERVER_TIME_SEC,timeout);
   attribs.put(OAuthServerResource.TOKEN_SERVER_MAX_TIME_SEC,timeout);
   Object[] params={new ScheduledThreadPoolExecutor(5)};
-  ClientStoreFactory.setClientStoreImpl(MemClientStore.class,params);
+  ClientStoreFactory.setClientStoreImpl(org.restlet.ext.oauth.internal.memory.MemClientStore.class,params);
   ClientStore<?> clientStore=ClientStoreFactory.getInstance();
   Client client=clientStore.createClient("client1234","secret1234",protocol + "://localhost:" + port+ "/");
   Map<String,String> verifierUsers=new HashMap<String,String>();
   for (int i=1; i < 10; i++) {
     AuthenticatedUser user=client.createUser("user" + i);
-    user.setPassword("pass" + i);
+    user.setPassword(("pass" + i).toCharArray());
     verifierUsers.put("user" + i,"pass" + i);
   }
   attribs.put(ClientStore.class.getCanonicalName(),clientStore);
@@ -20,7 +20,6 @@
   au.setNext(AuthorizationServerResource.class);
   router.attach("/authorize",au);
   router.attach("/access_token",AccessTokenServerResource.class);
-  router.attach("/validate",ValidationServerResource.class);
   router.attach("/auth_page",AuthPageServerResource.class);
   return router;
 }
