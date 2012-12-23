@@ -7,8 +7,8 @@
         if (attr != null) {
           feed.setBaseReference(new Reference(attr));
         }
-        inlineFeed=feed;
-        this.inlineFeedHandler.startFeed(feed);
+        if (association.isToMany())         this.inlineFeedHandler.startFeed(feed);
+ else         this.inlineEntryHandler.startFeed(feed);
       }
  else       if (localName.equals("link")) {
         Link link=new Link();
@@ -22,7 +22,6 @@
         link.setTitle(attrs.getValue("","title"));
         String attr=attrs.getValue("","length");
         link.setLength((attr == null) ? -1L : Long.parseLong(attr));
-        inlineLink=link;
         if (association.isToMany()) {
           inlineFeedHandler.startLink(link);
         }
@@ -52,7 +51,6 @@
  else {
           inlineEntryHandler.startContent(content);
         }
-        inlineContent=content;
       }
     }
     if (association.isToMany()) {

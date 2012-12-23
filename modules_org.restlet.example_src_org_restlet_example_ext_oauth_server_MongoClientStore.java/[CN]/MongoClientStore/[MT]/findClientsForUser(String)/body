@@ -1,0 +1,10 @@
+{
+  ArrayList list=new ArrayList();
+  DBCollection authUsers=OAuth2Sample.getDefaultDB().getCollection("authenticated_users");
+  DBCursor cursor=authUsers.find(new BasicDBObject("_id.user_id",userId));
+  while (cursor.hasNext()) {
+    DBObject authUser=cursor.next();
+    list.add(new MongoClient(clients.findOne(new BasicDBObject("_id",authUser.get("client_id")))));
+  }
+  return list;
+}

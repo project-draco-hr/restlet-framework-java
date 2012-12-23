@@ -1,0 +1,14 @@
+{
+  String typeString=params.getFirstValue(RESPONSE_TYPE);
+  try {
+    ResponseType type=Enum.valueOf(ResponseType.class,typeString);
+    getLogger().fine("Found flow - " + type);
+    return type;
+  }
+ catch (  IllegalArgumentException iae) {
+    throw new OAuthException(OAuthError.unsupported_response_type,"Unsupported flow",null);
+  }
+catch (  NullPointerException npe) {
+    throw new OAuthException(OAuthError.invalid_request,"No response_type parameter found.",null);
+  }
+}

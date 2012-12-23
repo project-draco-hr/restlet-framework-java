@@ -1,0 +1,15 @@
+{
+  boolean result=false;
+  if (iterator != null) {
+    result=iterator.hasNext();
+  }
+  if (!result && nextPage != null) {
+    Query<E> query=service.createQuery(nextPage.toString(),(Class<E>)entityClass);
+    iterator=query.iterator();
+    if (iterator != null) {
+      result=iterator.hasNext();
+    }
+    nextPage=null;
+  }
+  return result;
+}

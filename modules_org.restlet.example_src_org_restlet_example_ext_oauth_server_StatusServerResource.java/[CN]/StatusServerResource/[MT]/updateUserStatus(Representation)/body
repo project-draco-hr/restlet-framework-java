@@ -1,0 +1,14 @@
+{
+  JSONObject request=new JsonRepresentation(representation).getJsonObject();
+  Object status=request.get("status");
+  if (status == null) {
+    setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+    return null;
+  }
+  User user=getRequest().getClientInfo().getUser();
+  getLogger().info("updateUserStatus: " + user.getIdentifier());
+  OAuth2Sample.getDefaultDB().getCollection("users").update(new BasicDBObject("_id",user.getIdentifier()),new BasicDBObject("$set",new BasicDBObject("status",status.toString())));
+  JSONObject result=new JSONObject();
+  result.put("status",status);
+  return new JsonRepresentation(result);
+}

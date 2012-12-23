@@ -1,0 +1,12 @@
+{
+  Configuration config=new Configuration();
+  config.setTemplateLoader(new ContextTemplateLoader(getContext(),"clap:///"));
+  getLogger().fine("loading: " + errPage);
+  TemplateRepresentation response=new TemplateRepresentation(errPage,config,MediaType.TEXT_HTML);
+  HashMap<String,Object> data=new HashMap<String,Object>();
+  data.put(ERROR,ex.getError().name());
+  data.put(ERROR_DESC,ex.getErrorDescription());
+  data.put(ERROR_URI,ex.getErrorURI());
+  response.setDataModel(data);
+  return response;
+}

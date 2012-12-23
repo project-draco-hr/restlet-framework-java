@@ -1,0 +1,14 @@
+{
+  String clientId=params.getFirstValue(CLIENT_ID);
+  if (clientId == null || clientId.isEmpty()) {
+    getLogger().warning("Could not find client ID");
+    throw new OAuthException(OAuthError.invalid_request,"No client_id parameter found.",null);
+  }
+  Client client=clients.findById(clientId);
+  getLogger().fine("Client = " + client);
+  if (client == null) {
+    getLogger().warning("Need to register the client : " + clientId);
+    throw new OAuthException(OAuthError.invalid_request,"Need to register the client : " + clientId,null);
+  }
+  return client;
+}

@@ -1,0 +1,70 @@
+{
+  final JSONObject authRequest;
+  try {
+    ChallengeResponse cr=request.getChallengeResponse();
+    if (cr == null) {
+      String bearer=null;
+      if (acceptBodyMethod) {
+        bearer=getAccessTokenFromBody(request);
+      }
+      if (bearer == null && acceptQueryMethod) {
+        bearer=getAccessTokenFromQuery(request);
+        if (bearer != null) {
+          OAuthServerResource.addCacheDirective(response,CacheDirective.privateInfo());
+        }
+      }
+      if (bearer == null) {
+        return RESULT_MISSING;
+      }
+      logger.config("Verify: Bearer (Alternative)");
+      authRequest=createBearerAuthRequest(bearer);
+    }
+ else     if (cr.getScheme().equals(HTTP_BEARER)) {
+      logger.config("Verify: Bearer");
+      final String bearer=cr.getRawValue();
+      if (bearer == null || bearer.isEmpty()) {
+        return RESULT_MISSING;
+      }
+      authRequest=createBearerAuthRequest(bearer);
+    }
+ else {
+      return RESULT_UNSUPPORTED;
+    }
+  }
+ catch (  Exception ex) {
+    return RESULT_INVALID;
+  }
+  ClientResource authResource=new ClientResource(authReference);
+  JsonRepresentation jsonRepresentation;
+  JSONObject jsonResponse;
+  try {
+    logger.fine("Post auth request to auth resource...");
+    Representation resp=authResource.post(new JsonRepresentation(authRequest));
+    jsonRepresentation=new JsonRepresentation(resp);
+    jsonResponse=jsonRepresentation.getJsonObject();
+  }
+ catch (  Exception ex) {
+    logger.log(Level.SEVERE,null,ex);
+    return RESULT_INVALID;
+  }
+  if (jsonResponse.has(OAuthServerResource.ERROR)) {
+    try {
+      String error=jsonResponse.getString(OAuthServerResource.ERROR);
+      logger.warning(error);
+      logger.warning(jsonResponse.getString(OAuthServerResource.ERROR_DESC));
+    }
+ catch (    JSONException ex) {
+      logger.log(Level.SEVERE,null,ex);
+    }
+    return RESULT_INVALID;
+  }
+  try {
+    ClientInfo clientInfo=request.getClientInfo();
+    clientInfo.setUser(new User(jsonResponse.getString(OAuthServerResource.USERNAME)));
+    clientInfo.setRoles(Scopes.toRoles(jsonResponse.getString(OAuthServerResource.SCOPE)));
+  }
+ catch (  JSONException ex) {
+    return RESULT_INVALID;
+  }
+  return RESULT_VALID;
+}

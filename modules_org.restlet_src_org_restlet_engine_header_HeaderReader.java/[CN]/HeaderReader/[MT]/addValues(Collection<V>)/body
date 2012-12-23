@@ -1,14 +1,22 @@
 {
   try {
     skipSpaces();
+    boolean cont=true;
     do {
+      int i=index;
       V nextValue=readValue();
       if (canAdd(nextValue,values)) {
         values.add(nextValue);
       }
       skipValueSeparator();
+      if (index == -1) {
+        cont=false;
+      }
+ else       if (i == index) {
+        throw new IOException("The reading of one header initiates an infinite loop");
+      }
     }
- while (peek() != -1);
+ while (cont);
   }
  catch (  IOException ioe) {
     Context.getCurrentLogger().log(Level.INFO,"Unable to read a header",ioe);
