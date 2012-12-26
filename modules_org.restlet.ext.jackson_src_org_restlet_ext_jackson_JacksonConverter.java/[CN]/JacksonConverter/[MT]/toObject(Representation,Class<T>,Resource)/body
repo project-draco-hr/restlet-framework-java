@@ -1,44 +1,18 @@
 {
   Object result=null;
-  JacksonSmileRepresentation<?> bSource=null;
-  if (source instanceof JacksonSmileRepresentation) {
-    bSource=(JacksonSmileRepresentation<?>)source;
+  JacksonRepresentation<?> jacksonSource=null;
+  if (source instanceof JacksonRepresentation) {
+    jacksonSource=(JacksonRepresentation<?>)source;
   }
- else   if (VARIANT_JSON_SMILE.isCompatible(source)) {
-    bSource=createBinary(source,target);
+ else   if (VARIANT_JSON.isCompatible(source) || VARIANT_JSON_SMILE.isCompatible(source) || VARIANT_APPLICATION_XML.isCompatible(source)|| VARIANT_TEXT_XML.isCompatible(source)|| VARIANT_APPLICATION_YAML.isCompatible(source)|| VARIANT_TEXT_YAML.isCompatible(source)|| VARIANT_TEXT_CSV.isCompatible(source)) {
+    jacksonSource=create(source,target);
   }
-  if (bSource != null) {
-    if ((target != null) && JacksonSmileRepresentation.class.isAssignableFrom(target)) {
-      result=bSource;
+  if (jacksonSource != null) {
+    if ((target != null) && JacksonRepresentation.class.isAssignableFrom(target)) {
+      result=jacksonSource;
     }
  else {
-      result=bSource.getObject();
-    }
-  }
- else {
-    JacksonRepresentation<?> jacksonSource=null;
-    if (source instanceof JacksonRepresentation) {
-      jacksonSource=(JacksonRepresentation<?>)source;
-    }
- else     if (VARIANT_JSON.isCompatible(source)) {
-      jacksonSource=create(source,target);
-    }
- else     if (VARIANT_APPLICATION_XML.isCompatible(source) || VARIANT_TEXT_XML.isCompatible(source)) {
-      jacksonSource=createXml(source,target);
-    }
- else     if (VARIANT_APPLICATION_YAML.isCompatible(source) || VARIANT_TEXT_YAML.isCompatible(source)) {
-      jacksonSource=createYaml(source,target);
-    }
- else     if (VARIANT_TEXT_CSV.isCompatible(source)) {
-      jacksonSource=createCsv(source,target);
-    }
-    if (jacksonSource != null) {
-      if ((target != null) && JacksonRepresentation.class.isAssignableFrom(target)) {
-        result=jacksonSource;
-      }
- else {
-        result=jacksonSource.getObject();
-      }
+      result=jacksonSource.getObject();
     }
   }
   return (T)result;

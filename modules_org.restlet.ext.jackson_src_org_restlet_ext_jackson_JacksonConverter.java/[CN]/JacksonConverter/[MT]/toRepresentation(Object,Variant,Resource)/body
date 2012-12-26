@@ -3,27 +3,12 @@
   if (source instanceof JacksonRepresentation) {
     result=(JacksonRepresentation<?>)source;
   }
- else   if (source instanceof JacksonSmileRepresentation) {
-    result=(JacksonSmileRepresentation<?>)source;
-  }
  else {
     if (target.getMediaType() == null) {
       target.setMediaType(MediaType.APPLICATION_JSON);
     }
-    if (VARIANT_JSON_SMILE.isCompatible(target)) {
-      result=createBinary(target.getMediaType(),source);
-    }
- else     if (VARIANT_JSON.isCompatible(target)) {
+    if (VARIANT_JSON_SMILE.isCompatible(target) || VARIANT_JSON.isCompatible(target) || VARIANT_APPLICATION_XML.isCompatible(target)|| VARIANT_TEXT_XML.isCompatible(target)|| VARIANT_APPLICATION_YAML.isCompatible(target)|| VARIANT_TEXT_YAML.isCompatible(target)|| VARIANT_TEXT_CSV.isCompatible(target)) {
       result=create(target.getMediaType(),source);
-    }
- else     if (VARIANT_APPLICATION_XML.isCompatible(target) || VARIANT_TEXT_XML.isCompatible(target)) {
-      result=createXml(target.getMediaType(),source);
-    }
- else     if (VARIANT_APPLICATION_YAML.isCompatible(target) || VARIANT_TEXT_YAML.isCompatible(target)) {
-      result=createYaml(target.getMediaType(),source);
-    }
- else     if (VARIANT_TEXT_CSV.isCompatible(target)) {
-      result=createCsv(target.getMediaType(),source);
     }
   }
   return result;
