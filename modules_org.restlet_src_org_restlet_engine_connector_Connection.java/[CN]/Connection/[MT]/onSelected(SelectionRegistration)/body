@@ -9,10 +9,7 @@
  else {
         trace="Server ";
       }
-      getLogger().finer(trace + "connection (state | inbound | outbound): " + toString());
-      if (this.registration != null) {
-        getLogger().finer(trace + "NIO selection (interest | ready | cancelled): " + this.registration.toString());
-      }
+      getLogger().finer(trace + "connection (state | empty | registration): " + toString());
     }
     if (registration == null) {
       getLogger().warning("Connection with no registration selected: " + this);
@@ -40,18 +37,24 @@ synchronized (getOutboundWay().getBuffer().getLock()) {
         onError("Unable to establish a connection to " + getSocketAddress(),e,Status.CONNECTOR_ERROR_CONNECTION);
       }
     }
-    boolean readyFound;
+    boolean readyFound=false;
     do {
       readyFound=false;
 synchronized (getInboundWay().getBuffer().getLock()) {
         if (getInboundWay().getIoState() == IoState.READY) {
           readyFound=true;
+          if (getLogger().isLoggable(Level.FINEST)) {
+            getLogger().finest("Entering into a connection READY loop");
+          }
           getInboundWay().onSelected(getInboundWay().getRegistration());
         }
       }
 synchronized (getOutboundWay().getBuffer().getLock()) {
-        if (getInboundWay().getIoState() == IoState.READY) {
+        if (getOutboundWay().getIoState() == IoState.READY) {
           readyFound=true;
+          if (getLogger().isLoggable(Level.FINEST)) {
+            getLogger().finest("Entering into a connection READY loop");
+          }
           getOutboundWay().onSelected(getOutboundWay().getRegistration());
         }
       }
