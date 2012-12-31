@@ -13,7 +13,7 @@
           nextTask=getSslEngine().getDelegatedTask();
         }
         if (getLogger().isLoggable(Level.FINER)) {
-          getLogger().log(Level.FINER,"Done running delegated tasks. " + SslConnection.this.toString());
+          getLogger().log(Level.FINER,"Done running delegated tasks");
         }
         try {
           handleSslResult();
@@ -21,6 +21,7 @@
  catch (        IOException e) {
           getLogger().log(Level.INFO,"Unable to handle SSL handshake",e);
         }
+        getHelper().getController().wakeup();
       }
     }
 );
