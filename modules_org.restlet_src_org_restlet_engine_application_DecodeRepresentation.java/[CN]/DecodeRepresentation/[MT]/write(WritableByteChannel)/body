@@ -1,6 +1,8 @@
 {
   if (isDecoding()) {
-    write(NioUtils.getStream(writableChannel));
+    OutputStream os=NioUtils.getStream(writableChannel);
+    write(os);
+    os.flush();
   }
  else {
     getWrappedRepresentation().write(writableChannel);
