@@ -1,0 +1,10 @@
+{
+  String callback=request.getResourceRef().getQueryAsForm().getFirstValue("callback");
+  if (callback != null) {
+    Representation entity=response.getEntity();
+    if (entity != null && ("text".equals(entity.getMediaType().getMainType()) || MediaType.APPLICATION_JSON.equals(entity.getMediaType()))) {
+      response.setEntity(new JsonpRepresentation(callback,response.getStatus(),response.getEntity()));
+      response.setStatus(Status.SUCCESS_OK);
+    }
+  }
+}
