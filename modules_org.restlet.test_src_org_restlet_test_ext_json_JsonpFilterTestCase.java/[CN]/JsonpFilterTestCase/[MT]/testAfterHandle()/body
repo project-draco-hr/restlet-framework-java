@@ -1,0 +1,16 @@
+{
+  JsonpFilter filter=new JsonpFilter(null);
+  Reference ref=new Reference();
+  final String callback="callback";
+  ref.addQueryParameter(callback,"test");
+  Request request=new Request(Method.GET,ref);
+  Response response=new Response(request);
+  final String jsonString="{'attribute': value}";
+  response.setEntity(new JsonRepresentation(jsonString));
+  filter.afterHandle(request,response);
+  Representation actual=response.getEntity();
+  Representation expected=new JsonpRepresentation(callback,SUCCESS_OK,new JsonRepresentation(jsonString));
+  Assert.assertTrue(actual instanceof JsonpRepresentation);
+  Assert.assertEquals(expected,actual);
+  Assert.assertEquals(SUCCESS_OK,((JsonpRepresentation)actual).getStatus());
+}
