@@ -28,6 +28,9 @@
  else {
       resultObject=annotationInfo.getJavaMethod().invoke(this);
     }
+    if (resultObject != null) {
+      result=toRepresentation(resultObject,variant);
+    }
   }
  catch (  IllegalArgumentException e) {
     throw new ResourceException(e);
@@ -41,8 +44,8 @@ catch (  InvocationTargetException e) {
     }
     throw new ResourceException(e.getTargetException());
   }
-  if (resultObject != null) {
-    result=toRepresentation(resultObject,variant);
+catch (  IOException e) {
+    throw new ResourceException(e);
   }
   return result;
 }

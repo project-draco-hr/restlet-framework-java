@@ -4,23 +4,16 @@
   if ((source != null) && source.isAvailable() && (source.getSize() != 0)) {
     ConverterHelper ch=ConverterUtils.getBestHelper(source,target,resource);
     if (ch != null) {
-      try {
-        if (loggable && Context.getCurrentLogger().isLoggable(Level.FINE)) {
-          Context.getCurrentLogger().fine("The following converter was selected for the " + source + " representation: "+ ch);
-        }
-        result=ch.toObject(source,target,resource);
-        if (result instanceof Representation) {
-          Representation resultRepresentation=(Representation)result;
-          resultRepresentation.setCharacterSet(source.getCharacterSet());
-          resultRepresentation.setMediaType(source.getMediaType());
-          resultRepresentation.getEncodings().addAll(source.getEncodings());
-          resultRepresentation.getLanguages().addAll(source.getLanguages());
-        }
+      if (loggable && Context.getCurrentLogger().isLoggable(Level.FINE)) {
+        Context.getCurrentLogger().fine("The following converter was selected for the " + source + " representation: "+ ch);
       }
- catch (      Exception exception) {
-        if (loggable) {
-          Context.getCurrentLogger().log(Level.WARNING,"Unable to convert a " + source + " representation into an object of class "+ target.getCanonicalName(),exception);
-        }
+      result=ch.toObject(source,target,resource);
+      if (result instanceof Representation) {
+        Representation resultRepresentation=(Representation)result;
+        resultRepresentation.setCharacterSet(source.getCharacterSet());
+        resultRepresentation.setMediaType(source.getMediaType());
+        resultRepresentation.getEncodings().addAll(source.getEncodings());
+        resultRepresentation.getLanguages().addAll(source.getLanguages());
       }
     }
  else {
