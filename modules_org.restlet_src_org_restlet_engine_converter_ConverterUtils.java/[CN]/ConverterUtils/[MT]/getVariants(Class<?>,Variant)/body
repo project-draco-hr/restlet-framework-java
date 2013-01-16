@@ -2,7 +2,12 @@
   List<VariantInfo> result=null;
   for (  ConverterHelper ch : Engine.getInstance().getRegisteredConverters()) {
     if (ch != null) {
-      result=ch.addVariants(sourceClass,targetVariant,result);
+      try {
+        result=ch.addVariants(sourceClass,targetVariant,result);
+      }
+ catch (      IOException e) {
+        Context.getCurrentLogger().log(Level.FINE,"Unable get the variants of the " + ch + " converter helper.",e);
+      }
     }
   }
   return result;
