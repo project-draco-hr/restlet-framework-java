@@ -13,14 +13,30 @@
   String hostDomain=null;
   int hostPort=-1;
   if (host != null) {
-    int colonIndex=host.indexOf(':');
-    if (colonIndex != -1) {
-      hostDomain=host.substring(0,colonIndex);
-      hostPort=Integer.valueOf(host.substring(colonIndex + 1));
+    int rightSquareBracketIndex=host.indexOf(']');
+    boolean ipv4=(rightSquareBracketIndex == -1);
+    if (ipv4) {
+      int colonIndex=host.indexOf(':');
+      if (colonIndex != -1) {
+        hostDomain=host.substring(0,colonIndex);
+        hostPort=Integer.valueOf(host.substring(colonIndex + 1));
+      }
+ else {
+        hostDomain=host;
+        hostPort=getProtocol().getDefaultPort();
+      }
+      Context.getCurrentLogger().fine("HttpInboundRequest::setHeaders, IPv4 hostDomain: " + hostDomain + ", hostPort: "+ hostPort);
     }
  else {
-      hostDomain=host;
-      hostPort=getProtocol().getDefaultPort();
+      if (rightSquareBracketIndex + 1 < host.length()) {
+        hostDomain=host.substring(0,rightSquareBracketIndex + 1);
+        hostPort=Integer.valueOf(host.substring(rightSquareBracketIndex + 2));
+      }
+ else       if (rightSquareBracketIndex + 1 == host.length()) {
+        hostDomain=host;
+        hostPort=getProtocol().getDefaultPort();
+      }
+      Context.getCurrentLogger().fine("HttpInboundRequest::setHeaders, IPv6 hostDomain: " + hostDomain + ", hostPort: "+ hostPort);
     }
   }
  else {
