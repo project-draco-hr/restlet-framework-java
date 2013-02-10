@@ -1,5 +1,11 @@
 {
   try {
+    if (getMessage() != null) {
+      Response.setCurrent(getMessage());
+      Application.setCurrent((Application)getMessage().getAttributes().get("org.restlet.application"));
+      Context.setCurrent((Context)getMessage().getAttributes().get("org.restlet.context"));
+      VirtualHost.setCurrent((Integer)getMessage().getAttributes().get("org.restlet.virtualHost"));
+    }
     if (getIoState() != IoState.READY) {
       setIoState(IoState.PROCESSING);
     }

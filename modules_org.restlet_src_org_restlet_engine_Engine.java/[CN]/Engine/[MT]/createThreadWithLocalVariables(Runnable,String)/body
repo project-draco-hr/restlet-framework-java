@@ -1,0 +1,21 @@
+{
+  final Application currentApplication=Application.getCurrent();
+  final Context currentContext=Context.getCurrent();
+  final Integer currentVirtualHost=VirtualHost.getCurrent();
+  final Response currentResponse=Response.getCurrent();
+  return new Thread(new Runnable(){
+    @Override public void run(){
+      Response.setCurrent(currentResponse);
+      Context.setCurrent(currentContext);
+      VirtualHost.setCurrent(currentVirtualHost);
+      Application.setCurrent(currentApplication);
+      try {
+        runnable.run();
+      }
+  finally {
+        Engine.clearThreadLocalVariables();
+      }
+    }
+  }
+,name);
+}
