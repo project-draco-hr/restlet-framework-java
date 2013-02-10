@@ -1,13 +1,13 @@
 {
   String result=null;
-  final String part=isRelative() ? getRelativePart() : getSchemeSpecificPart();
+  String part=isRelative() ? getRelativePart() : getSchemeSpecificPart();
   if (part != null) {
     if (part.startsWith("//")) {
-      final int index1=part.indexOf('/',2);
+      int index1=part.indexOf('/',2);
       if (index1 != -1) {
-        final int index2=part.indexOf('?');
+        int index2=part.indexOf('?');
         if (index2 != -1) {
-          result=part.substring(index1,index2);
+          result=part.substring(Math.min(index1,index2),index2);
         }
  else {
           result=part.substring(index1);
@@ -17,7 +17,7 @@
       }
     }
  else {
-      final int index=part.indexOf('?');
+      int index=part.indexOf('?');
       if (index != -1) {
         result=part.substring(0,index);
       }
