@@ -6,6 +6,7 @@
   this.realms=new CopyOnWriteArrayList<Realm>();
   this.services=new ServiceList(getContext());
   if (Engine.getInstance() != null) {
+    this.services.add(new org.restlet.service.TaskService());
     this.helper=new ComponentHelper(this);
     Context childContext=getContext().createChildContext();
     this.defaultHost=new VirtualHost(childContext);
@@ -16,6 +17,5 @@
     getStatusService().setContext(childContext);
     this.clients.setContext(childContext);
     this.servers.setContext(childContext);
-    this.services.add(new org.restlet.service.TaskService());
   }
 }
