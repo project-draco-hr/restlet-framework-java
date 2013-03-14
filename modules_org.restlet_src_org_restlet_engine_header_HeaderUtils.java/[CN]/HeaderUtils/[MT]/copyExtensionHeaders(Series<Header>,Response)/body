@@ -1,0 +1,14 @@
+{
+  if (headers != null) {
+    Series<Header> extensionHeaders=(Series<Header>)response.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
+    if (extensionHeaders == null) {
+      extensionHeaders=new Series<Header>(Header.class);
+      response.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,extensionHeaders);
+    }
+    for (    Header header : headers) {
+      if (!STANDARD_HEADERS.contains(header.getName())) {
+        extensionHeaders.add(header);
+      }
+    }
+  }
+}
