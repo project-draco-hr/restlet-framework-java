@@ -1,0 +1,15 @@
+{
+  TokenResponse token=new TokenResponse();
+  token.accessToken=result.getString(ACCESS_TOKEN);
+  token.tokenType=result.getString(TOKEN_TYPE);
+  if (result.has(EXPIRES_IN)) {
+    token.expirePeriod=result.getInt(EXPIRES_IN);
+  }
+  if (result.has(REFRESH_TOKEN)) {
+    token.refreshToken=result.getString(REFRESH_TOKEN);
+  }
+  if (result.has(SCOPE)) {
+    token.scope=Scopes.parseScope(result.getString(SCOPE));
+  }
+  return token;
+}

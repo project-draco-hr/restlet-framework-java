@@ -2,5 +2,15 @@
   String sessionId=getCookies().getFirstValue(ClientCookieID);
   getLogger().fine("sessionId = " + sessionId);
   AuthSession session=(sessionId == null) ? null : (AuthSession)getContext().getAttributes().get(sessionId);
+  if (session == null) {
+    return null;
+  }
+  try {
+    session.updateActivity();
+  }
+ catch (  AuthSessionTimeoutException ex) {
+    getContext().getAttributes().remove(sessionId);
+    throw new OAuthException(OAuthError.server_error,"Session timeout",null);
+  }
   return session;
 }

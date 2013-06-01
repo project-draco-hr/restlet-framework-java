@@ -1,0 +1,10 @@
+{
+  User authenticatedClient=getRequest().getClientInfo().getUser();
+  if (authenticatedClient == null) {
+    getLogger().warning("Authenticated client_id is missing.");
+    return null;
+  }
+  Client client=clients.findById(authenticatedClient.getIdentifier());
+  getLogger().fine("Requested by authenticated client " + client.getClientId());
+  return client;
+}

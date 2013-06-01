@@ -1,0 +1,10 @@
+{
+  long currentTime=System.currentTimeMillis();
+  long lastActivity=((Number)getAttribute(LAST_ACTIVITY)).longValue();
+  long delta=currentTime - lastActivity;
+  if ((delta / 1000) >= getSessionTimeout()) {
+    throw new AuthSessionTimeoutException();
+  }
+  lastActivity=System.currentTimeMillis();
+  setAttribute(LAST_ACTIVITY,lastActivity);
+}

@@ -1,0 +1,10 @@
+{
+  Token token=(Token)getRequest().getAttributes().get(Token.class.getName());
+  if (token == null) {
+    return new StringRepresentation("Token not found!");
+  }
+  ProtectedClientResource contacts=new ProtectedClientResource("https://www.google.com/m8/feeds/contacts/default/full");
+  contacts.setUseBodyMethod(false);
+  contacts.setToken(token);
+  return contacts.get();
+}

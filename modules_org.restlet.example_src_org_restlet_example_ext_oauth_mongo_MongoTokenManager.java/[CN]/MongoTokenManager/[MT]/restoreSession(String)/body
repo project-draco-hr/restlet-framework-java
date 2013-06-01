@@ -1,0 +1,7 @@
+{
+  DBObject sessionObj=sessions.findOne(new BasicDBObject("_id",code));
+  if (sessionObj == null) {
+    throw new OAuthException(OAuthError.invalid_grant,"Invalid code.",null);
+  }
+  return AuthSession.toAuthSession(sessionObj.toMap());
+}

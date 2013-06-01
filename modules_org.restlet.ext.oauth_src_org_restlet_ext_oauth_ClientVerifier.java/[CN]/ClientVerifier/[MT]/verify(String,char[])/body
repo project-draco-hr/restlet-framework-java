@@ -1,9 +1,10 @@
 {
+  ClientManager clients=(ClientManager)context.getAttributes().get(ClientManager.class.getName());
   Client client=clients.findById(clientId);
   if (client == null) {
     return RESULT_UNKNOWN;
   }
-  char[] s=client.getClientSecret().toCharArray();
+  char[] s=client.getClientSecret();
   if (!SecretVerifier.compare(s,clientSecret)) {
     return RESULT_INVALID;
   }

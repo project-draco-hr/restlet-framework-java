@@ -1,0 +1,10 @@
+{
+  String sessionId=UUID.randomUUID().toString();
+  byte[] secret=new byte[20];
+  random.nextBytes(secret);
+  String state=Base64.encode(secret,false);
+  CookieSetting cs=new CookieSetting("_state",sessionId);
+  response.getCookieSettings().add(cs);
+  getContext().getAttributes().put(sessionId,state);
+  return state;
+}

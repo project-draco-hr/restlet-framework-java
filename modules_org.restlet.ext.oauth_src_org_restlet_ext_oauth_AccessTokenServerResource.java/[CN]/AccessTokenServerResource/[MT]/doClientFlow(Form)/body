@@ -1,0 +1,10 @@
+{
+  Client client=getAuthenticatedClient();
+  if (client == null || client.getClientType() != ClientType.CONFIDENTIAL) {
+    throw new OAuthException(OAuthError.invalid_client,"The client credentials grant type MUST only be used by confidential clients.",null);
+  }
+  ensureGrantTypeAllowed(client,GrantType.client_credentials);
+  String[] requestedScope=getScope(params);
+  Token token=tokens.generateToken(client,requestedScope);
+  return responseTokenRepresentation(token,requestedScope);
+}

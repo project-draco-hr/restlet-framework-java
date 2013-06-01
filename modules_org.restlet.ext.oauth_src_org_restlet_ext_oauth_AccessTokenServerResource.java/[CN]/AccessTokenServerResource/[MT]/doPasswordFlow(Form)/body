@@ -1,0 +1,23 @@
+{
+  Object users=getContext().getAttributes().get(ResourceOwnerManager.class.getName());
+  if (users == null) {
+    throw new OAuthException(OAuthError.unsupported_grant_type,"'password' flow is not supported.",null);
+  }
+  Client client=getAuthenticatedClient();
+  if (client == null) {
+    client=getClient(params);
+  }
+  ensureGrantTypeAllowed(client,GrantType.password);
+  String username=getUsername(params);
+  String password=getPassword(params);
+  String identifier;
+  try {
+    identifier=((ResourceOwnerManager)users).authenticate(username,password.toCharArray());
+  }
+ catch (  AuthenticationException ex) {
+    throw new OAuthException(OAuthError.invalid_grant,ex.getExplanation(),null);
+  }
+  String[] requestedScope=getScope(params);
+  Token token=tokens.generateToken(client,identifier,requestedScope);
+  return responseTokenRepresentation(token,requestedScope);
+}

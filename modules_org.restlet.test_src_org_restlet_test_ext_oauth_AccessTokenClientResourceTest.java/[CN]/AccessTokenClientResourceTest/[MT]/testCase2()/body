@@ -1,0 +1,10 @@
+{
+  AccessTokenClientResource tokenResource=new AccessTokenClientResource(new Reference(baseURI,"/oauth/token2"));
+  tokenResource.setClientCredentials(STUB_CLIENT_ID,STUB_CLIENT_SECRET);
+  Token token=tokenResource.requestToken(new OAuthParameters());
+  assertThat(token.getAccessToken(),is("bar"));
+  assertThat(token.getTokenType(),is(TOKEN_TYPE_BEARER));
+  assertThat(token.getExpirePeriod(),is(3600));
+  assertThat(token.getRefreshToken(),is("qux"));
+  assertThat(token.getScope(),is(arrayContainingInAnyOrder("a","b")));
+}

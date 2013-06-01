@@ -1,14 +1,19 @@
 {
-  String typeString=params.getFirstValue(RESPONSE_TYPE);
-  try {
-    ResponseType type=Enum.valueOf(ResponseType.class,typeString);
-    getLogger().fine("Found flow - " + type);
-    return type;
-  }
- catch (  IllegalArgumentException iae) {
-    throw new OAuthException(OAuthError.unsupported_response_type,"Unsupported flow",null);
-  }
-catch (  NullPointerException npe) {
+  String responseType=params.getFirstValue(RESPONSE_TYPE);
+  if (responseType == null || responseType.isEmpty()) {
     throw new OAuthException(OAuthError.invalid_request,"No response_type parameter found.",null);
   }
+  String[] typesString=Scopes.parseScope(responseType);
+  ResponseType[] types=new ResponseType[typesString.length];
+  for (int i=0; i < typesString.length; i++) {
+    try {
+      ResponseType type=Enum.valueOf(ResponseType.class,typesString[i]);
+      getLogger().fine("Found flow - " + type);
+      types[i]=type;
+    }
+ catch (    IllegalArgumentException iae) {
+      throw new OAuthException(OAuthError.unsupported_response_type,"Unsupported flow",null);
+    }
+  }
+  return types;
 }

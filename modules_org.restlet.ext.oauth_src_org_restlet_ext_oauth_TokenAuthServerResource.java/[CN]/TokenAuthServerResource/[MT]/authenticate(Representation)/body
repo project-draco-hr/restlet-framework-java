@@ -13,18 +13,13 @@
   String tokenType=call.getString(TOKEN_TYPE);
   final Token token;
   if (tokenType.equals(OAuthServerResource.TOKEN_TYPE_BEARER)) {
-    token=validateBearerToken(call);
+    token=tokens.validateToken(call.get(ACCESS_TOKEN).toString());
   }
  else {
     throw new OAuthException(OAuthError.invalid_request,"Unsupported token_type",null);
   }
-  AuthenticatedUser user=token.getUser();
-  if (user == null) {
-    throw new OAuthException(OAuthError.invalid_token,"AuthenticatedUser not found",null);
-  }
-  String scope=Scopes.toScope(user.getGrantedRoles());
   JSONObject resp=new JSONObject();
-  resp.put(USERNAME,user.getId());
-  resp.put(SCOPE,scope);
+  resp.put(USERNAME,((ServerToken)token).getUsername());
+  resp.put(SCOPE,Scopes.toString(token.getScope()));
   return new JsonRepresentation(resp);
 }

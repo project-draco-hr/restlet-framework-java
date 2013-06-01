@@ -5,19 +5,24 @@
   if (userId != null && !userId.isEmpty()) {
     String password=getQueryValue("password");
     getLogger().info("User=" + userId + ", Pass="+ password);
-    DBCollection users=OAuth2Sample.getDefaultDB().getCollection("users");
-    DBObject user=users.findOne(new BasicDBObject("_id",userId).append("password",password));
-    if (user != null) {
-      getLogger().info("Session: " + getAuthSession().getClient().getClientId());
-      getAuthSession().setScopeOwner(userId);
-      String uri=getQueryValue("continue");
-      getLogger().info("URI: " + uri);
-      redirectTemporary(uri);
-      return new EmptyRepresentation();
+    SampleUser sampleUser=OAuth2Sample.getSampleUserManager().findUserById(userId);
+    if (sampleUser == null) {
+      data.put("error","Authentication failed.");
+      data.put("error_description","ID is invalid.");
     }
  else {
-      data.put("error","Authentication failed.");
-      data.put("error_description","ID or Password is invalid.");
+      boolean result=SecretVerifier.compare(password.toCharArray(),sampleUser.getPassword());
+      if (result) {
+        getAuthSession().setScopeOwner(userId);
+        String uri=getQueryValue("continue");
+        getLogger().info("URI: " + uri);
+        redirectTemporary(uri);
+        return new EmptyRepresentation();
+      }
+ else {
+        data.put("error","Authentication failed.");
+        data.put("error_description","Password is invalid.");
+      }
     }
   }
   String continueURI=getQueryValue("continue");

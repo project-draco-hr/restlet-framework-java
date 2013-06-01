@@ -1,53 +1,31 @@
 {
   AuthSession session=getAuthSession();
+  session.setGrantedScope(grantedScope);
   if (action.equals(ACTION_REJECT)) {
     getLogger().fine("Rejected.");
     throw new OAuthException(OAuthError.access_denied,"Rejected.",null);
   }
   getLogger().fine("Accepting scopes - in handleAction");
-  Client client=session.getClient();
-  String id=session.getScopeOwner();
-  String redirUrl=session.getDynamicCallbackURI();
-  getLogger().fine("OAuth2 get dynamic callback = " + redirUrl);
-  if (redirUrl == null || redirUrl.isEmpty()) {
-    redirUrl=client.getRedirectUri();
-  }
-  final AuthenticatedUser user;
-  if (client.containsUser(id)) {
-    user=client.findUser(id);
-  }
- else {
-    user=client.createUser(id);
-  }
-  Set<String> scopeSet=new HashSet<String>();
-  scopeSet.addAll(Arrays.asList(scopes));
-  user.revokeRoles();
-  for (  String s : scopeSet) {
-    getLogger().fine("Adding scope = " + s + " to user = "+ id);
-    user.addRole(getRole(s),"");
-  }
-  user.persist();
-  final Reference location=new Reference(redirUrl);
+  Client client=clients.findById(session.getClientId());
+  String scopeOwner=session.getScopeOwner();
+  final Reference location=new Reference(session.getRedirectionURI().getURI());
   String state=session.getState();
   if (state != null && !state.isEmpty()) {
     location.addQueryParameter(STATE,state);
   }
   ResponseType flow=session.getAuthFlow();
   if (flow.equals(ResponseType.token)) {
-    Token token=generator.generateToken(user,tokenTimeSec);
-    location.addQueryParameter(TOKEN_TYPE,TOKEN_TYPE_BEARER);
-    location.addQueryParameter(ACCESS_TOKEN,token.getToken());
-    long expiresIn=token.getExpirePeriod();
-    if (expiresIn != Token.UNLIMITED) {
-      location.addQueryParameter(EXPIRES_IN,Long.toString(expiresIn));
-    }
-    String[] granted=scopeSet.toArray(new String[0]);
-    if (!Arrays.equals(session.getRequestedScope(),granted)) {
-      location.addQueryParameter(SCOPE,Scopes.toString(granted));
+    Token token=tokens.generateToken(client,scopeOwner,grantedScope);
+    location.addQueryParameter(TOKEN_TYPE,token.getTokenType());
+    location.addQueryParameter(ACCESS_TOKEN,token.getAccessToken());
+    location.addQueryParameter(EXPIRES_IN,Integer.toString(token.getExpirePeriod()));
+    String[] scope=token.getScope();
+    if (!Scopes.isIdentical(scope,session.getRequestedScope())) {
+      location.addQueryParameter(SCOPE,Scopes.toString(scope));
     }
   }
  else   if (flow.equals(ResponseType.code)) {
-    String code=generator.generateCode(user);
+    String code=tokens.storeSession(session);
     location.addQueryParameter(CODE,code);
   }
   session.setState(null);

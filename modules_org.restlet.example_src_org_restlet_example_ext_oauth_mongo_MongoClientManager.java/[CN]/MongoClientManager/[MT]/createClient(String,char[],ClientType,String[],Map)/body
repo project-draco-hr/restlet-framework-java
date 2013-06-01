@@ -1,0 +1,33 @@
+{
+  BasicDBObject client=new BasicDBObject("_id",clientId);
+  if (clientSecret != null) {
+    client.put(MongoClient.CLIENT_SECRET,String.copyValueOf(clientSecret));
+  }
+switch (clientType) {
+case PUBLIC:
+    client.put(MongoClient.CLIENT_TYPE,"public");
+  break;
+case CONFIDENTIAL:
+client.put(MongoClient.CLIENT_TYPE,"confidential");
+break;
+}
+if (redirectURIs != null && redirectURIs.length > 0) {
+client.put(MongoClient.REDIRECT_URIS,Arrays.asList(redirectURIs));
+}
+Object[] supportedFlows=(Object[])properties.remove(Client.PROPERTY_SUPPORTED_FLOWS);
+List responseTypes=new ArrayList();
+List grantTypes=new ArrayList();
+for (Object flow : supportedFlows) {
+if (flow instanceof ResponseType) {
+responseTypes.add(flow.toString());
+}
+ else if (flow instanceof GrantType) {
+grantTypes.add(flow.toString());
+}
+}
+client.put(MongoClient.ALLOWED_RESPONSE_TYPES,responseTypes);
+client.put(MongoClient.ALLOWED_GRANT_TYPES,grantTypes);
+client.put(MongoClient.PROPERTIES,properties);
+clients.insert(client);
+return new MongoClient(client);
+}

@@ -1,0 +1,12 @@
+{
+  ClientVerifier verifier=new ClientVerifier(context);
+  verifier.setAcceptBodyMethod(false);
+  Request request=new Request();
+  request.setChallengeResponse(null);
+  Form form=new Form();
+  form.set(CLIENT_ID,STUB_CLIENT_ID);
+  form.set(CLIENT_SECRET,STUB_CLIENT_SECRET);
+  request.setEntity(form.getWebRepresentation());
+  int result=verifier.verify(request,new Response(request));
+  assertThat(result,is(Verifier.RESULT_MISSING));
+}

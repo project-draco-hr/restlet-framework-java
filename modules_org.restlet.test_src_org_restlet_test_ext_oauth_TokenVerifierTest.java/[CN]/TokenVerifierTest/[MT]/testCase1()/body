@@ -1,0 +1,13 @@
+{
+  TokenVerifier verifier=new TokenVerifier(tokenAuthURI);
+  verifier.setAcceptBodyMethod(false);
+  verifier.setAcceptQueryMethod(false);
+  Request request=new Request();
+  request.setMethod(Method.GET);
+  request.setChallengeResponse(null);
+  Reference ref=new Reference("http://localhost:8080/dummy");
+  ref.addQueryParameter(ACCESS_TOKEN,STUB_ACCESS_TOKEN);
+  request.setOriginalRef(ref);
+  int result=verifier.verify(request,new Response(request));
+  assertThat(result,is(Verifier.RESULT_MISSING));
+}

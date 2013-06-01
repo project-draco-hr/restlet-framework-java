@@ -1,0 +1,24 @@
+{
+  getLogger().fine("Came back after authorization code = " + code);
+  final AccessTokenClientResource tokenResource;
+  String endpoint=getTokenURI();
+  if (endpoint.contains("graph.facebook.com")) {
+    tokenResource=new FacebookAccessTokenClientResource(new Reference(endpoint));
+  }
+ else {
+    tokenResource=new AccessTokenClientResource(new Reference(endpoint));
+    tokenResource.setAuthenticationMethod(basicSecret ? ChallengeScheme.HTTP_BASIC : null);
+  }
+  tokenResource.setClientCredentials(getClientId(),getClientSecret());
+  if (cc != null) {
+    tokenResource.setNext(cc);
+  }
+  OAuthParameters tokenRequest=createTokenRequest(code);
+  try {
+    getLogger().fine("Sending access form : " + tokenRequest);
+    return tokenResource.requestToken(tokenRequest);
+  }
+  finally {
+    tokenResource.release();
+  }
+}

@@ -1,0 +1,12 @@
+{
+  TokenVerifier verifier=new TokenVerifier(tokenAuthURI);
+  Request request=new Request();
+  ChallengeResponse cr=new ChallengeResponse(ChallengeScheme.HTTP_OAUTH_BEARER);
+  cr.setRawValue(STUB_ACCESS_TOKEN);
+  request.setChallengeResponse(cr);
+  int result=verifier.verify(request,new Response(request));
+  assertThat(result,is(Verifier.RESULT_VALID));
+  ClientInfo info=request.getClientInfo();
+  assertThat(info.getUser().getIdentifier(),is("testuser"));
+  assertThat(Scopes.parseScope(info.getRoles()),is(arrayContainingInAnyOrder("a","b")));
+}

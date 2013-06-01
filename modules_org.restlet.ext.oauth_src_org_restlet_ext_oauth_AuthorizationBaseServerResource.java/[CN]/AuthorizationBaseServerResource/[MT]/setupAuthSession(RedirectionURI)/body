@@ -1,0 +1,10 @@
+{
+  getLogger().fine("Base ref = " + getReference().getParentRef());
+  AuthSession session=AuthSession.newAuthSession();
+  session.setRedirectionURI(redirectUri);
+  CookieSetting cs=new CookieSetting(ClientCookieID,session.getId());
+  getCookieSettings().add(cs);
+  getLogger().fine("Setting cookie in SetupSession - " + session.getId());
+  getContext().getAttributes().put(session.getId(),session);
+  return session;
+}

@@ -1,0 +1,40 @@
+{
+  MemoryToken token=findTokenByRefreshToken(refreshToken);
+  if (token == null) {
+    throw new OAuthException(OAuthError.invalid_grant,"Invalid refresh token.",null);
+  }
+  if (!token.getClientId().equals(client.getClientId())) {
+    throw new OAuthException(OAuthError.invalid_grant,"The refresh token was not issued to the client.",null);
+  }
+  String[] newScope;
+  if (scope == null || scope.length == 0) {
+    newScope=token.getScope();
+  }
+ else {
+    String[] previousScope=token.getScope();
+    if (!Arrays.asList(previousScope).containsAll(Arrays.asList(scope))) {
+      throw new OAuthException(OAuthError.invalid_scope,"The requested scope is exceeds the scope granted by the resource owner.",null);
+    }
+    newScope=scope;
+  }
+  MemoryToken newToken=new MemoryToken();
+  newToken.setClientId(client.getClientId());
+  newToken.setUsername(token.getUsername());
+  newToken.setScope(newScope);
+  newToken.setExpirePeriod(token.getExpirePeriod());
+  newToken.setTokenType(OAuthResourceDefs.TOKEN_TYPE_BEARER);
+  newToken.setAccessToken(generateRawToken());
+  if (isUpdateRefreshToken()) {
+    newToken.setRefreshToken(generateRawToken());
+  }
+ else {
+    newToken.setRefreshToken(token.getRefreshToken());
+  }
+synchronized (this) {
+    if (tokens.remove(token.getAccessToken()) != null) {
+      tokens.put(newToken.getAccessToken(),newToken);
+      return newToken;
+    }
+  }
+  return null;
+}

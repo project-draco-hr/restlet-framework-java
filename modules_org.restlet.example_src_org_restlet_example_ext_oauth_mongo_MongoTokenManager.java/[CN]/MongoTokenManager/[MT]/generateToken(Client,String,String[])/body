@@ -1,0 +1,20 @@
+{
+  DBObject token=tokens.findOne(createQuery(client,username));
+  if (token == null) {
+    token=new BasicDBObject();
+    token.put(CLIENT_ID,client.getClientId());
+    if (username != null) {
+      token.put(USERNAME,username);
+    }
+  }
+  token.put(SCOPE,Arrays.asList(scope));
+  token.put(EXPIRES_IN,getExpirePeriod());
+  token.put(TOKEN_TYPE,TOKEN_TYPE_BEARER);
+  token.put(ACCESS_TOKEN,generateRawToken());
+  token.put(REFRESH_TOKEN,generateRawToken());
+  token.put(MongoToken.TIMESTAMP,(int)(System.currentTimeMillis() / 1000));
+  tokens.ensureIndex(new BasicDBObject(ACCESS_TOKEN,"1"),new BasicDBObject("unique",true));
+  tokens.ensureIndex(new BasicDBObject(REFRESH_TOKEN,"1"),new BasicDBObject("unique",true));
+  tokens.save(token);
+  return new MongoToken(token);
+}

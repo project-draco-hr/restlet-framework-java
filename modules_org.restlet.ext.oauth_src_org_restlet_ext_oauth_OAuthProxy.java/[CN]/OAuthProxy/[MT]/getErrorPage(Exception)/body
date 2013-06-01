@@ -1,0 +1,23 @@
+{
+  StringBuilder sb=new StringBuilder();
+  sb.append("<html><body><pre>");
+  if (ex instanceof OAuthException) {
+    OAuthException oex=(OAuthException)ex;
+    sb.append("OAuth2 error detected.\n");
+    sb.append("Error : ").append(oex.getError());
+    if (oex.getErrorDescription() != null) {
+      sb.append("Error description : ").append(oex.getErrorDescription());
+    }
+    if (oex.getErrorURI() != null) {
+      sb.append("<a href=\"");
+      sb.append(oex.getErrorURI());
+      sb.append("\">Error Description</a>");
+    }
+  }
+ else {
+    sb.append("General error detected.\n");
+    sb.append("Error : ").append(ex.getMessage());
+  }
+  sb.append("</pre></body></html>");
+  return new StringRepresentation(sb.toString(),MediaType.TEXT_HTML);
+}

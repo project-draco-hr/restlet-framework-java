@@ -1,131 +1,33 @@
 {
-  Boolean auth=false;
   request.setCacheDirectives(no);
-  String redirectUri=request.getResourceRef().toUrl().toString();
-  Form query=new Form(request.getOriginalRef().getQuery());
-  String error=query.getFirstValue(OAuthServerResource.ERROR);
-  if ((error != null) && (error.length() > 0)) {
-    Representation repr=new EmptyRepresentation();
-    String desc=query.getFirstValue(OAuthServerResource.ERROR_DESC);
-    String uri=query.getFirstValue(OAuthServerResource.ERROR_URI);
-    if ((desc != null) || (uri != null)) {
-      StringBuilder sb=new StringBuilder();
-      sb.append("<html><body><pre>");
-      sb.append("OAuth2 error detected.\n");
-      if (desc != null) {
-        sb.append("Error description : ").append(desc);
-      }
-      if (uri != null) {
-        sb.append("<a href=\"");
-        sb.append(uri);
-        sb.append("\">Error Description</a>");
-      }
-      sb.append("</pre></body></html>");
-      repr=new StringRepresentation(sb.toString(),MediaType.TEXT_HTML);
+  Form params=new Form(request.getOriginalRef().getQuery());
+  getLogger().fine("Incomming request query = " + params);
+  try {
+    String error=params.getFirstValue(ERROR);
+    if (error != null && !error.isEmpty()) {
+      validateState(request,params);
+      return sendErrorPage(response,OAuthException.toOAuthException(params));
     }
-    OAuthError ec=OAuthError.valueOf(error);
-switch (ec) {
-case invalid_request:
-      response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,error);
-    response.setEntity(repr);
-  break;
-case invalid_client:
-response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,error);
-response.setEntity(repr);
-break;
-case unauthorized_client:
-response.setStatus(Status.CLIENT_ERROR_FORBIDDEN,error);
-response.setEntity(repr);
-break;
-case access_denied:
-response.setStatus(Status.CLIENT_ERROR_FORBIDDEN,error);
-response.setEntity(repr);
-break;
-case unsupported_response_type:
-response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,error);
-response.setEntity(repr);
-break;
-case invalid_scope:
-response.setStatus(Status.CLIENT_ERROR_FORBIDDEN,error);
-response.setEntity(repr);
-break;
-default :
-getLogger().warning("Unhandled error response type. " + ec.name());
-}
-return STOP;
-}
-String code=query.getFirstValue(OAuthServerResource.CODE);
-getLogger().fine("Incomming request query = " + query);
-if (code == null) {
-Form form=new Form();
-form.add(OAuthServerResource.RESPONSE_TYPE,ResponseType.code.name());
-form.add(OAuthServerResource.CLIENT_ID,this.params.getClientId());
-form.add(OAuthServerResource.REDIR_URI,redirectUri);
-form.add(OAuthServerResource.SCOPE,Scopes.toScope(this.params.getRoles()));
-try {
-form.encode();
-}
- catch (IOException ioe) {
-getLogger().warning(ioe.getMessage());
-}
-String q=form.getQueryString();
-Reference redirRef=new Reference(this.params.getBaseRef(),this.params.getAuthorizePath(),q,null);
-getLogger().fine("Redirecting to : " + redirRef.toUri());
-response.setCacheDirectives(no);
-response.redirectTemporary(redirRef);
-getLogger().fine("After Redirecting to : " + redirRef.toUri());
-}
- else {
-getLogger().fine("Came back after SNS code = " + code);
-ClientResource tokenResource=new CookieCopyClientResource(this.params.getBaseRef() + this.params.getAccessTokenPath());
-if (this.cc != null) {
-tokenResource.setNext(this.cc);
-}
-Form form=new Form();
-form.add(OAuthServerResource.GRANT_TYPE,GrantType.authorization_code.name());
-String redir=request.getResourceRef().getHostIdentifier() + request.getResourceRef().getPath();
-form.add(OAuthServerResource.REDIR_URI,redir);
-if (this.basicSecret) {
-ChallengeResponse authentication=new ChallengeResponse(ChallengeScheme.HTTP_BASIC);
-authentication.setDigestAlgorithm("NONE");
-String basic=this.params.getClientId() + ':' + this.params.getClientSecret();
-authentication.setRawValue(Base64.encode(basic.getBytes(),false));
-tokenResource.setChallengeResponse(authentication);
-}
- else {
-form.add(OAuthServerResource.CLIENT_ID,this.params.getClientId());
-form.add(OAuthServerResource.CLIENT_SECRET,this.params.getClientSecret());
-}
-form.add(OAuthServerResource.CODE,code);
-getLogger().fine("Sending access form : " + form.getQueryString() + " to : "+ tokenResource.getReference());
-try {
-Representation input=form.getWebRepresentation();
-tokenResource.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.APPLICATION_JSON));
-Representation body=tokenResource.post(input);
-if (tokenResource.getStatus().isSuccess()) {
-OAuthUser authUser=OAuthUser.createJson(request.getClientInfo().getUser(),body);
-if (authUser != null) {
-request.getClientInfo().setUser(authUser);
-request.getClientInfo().setAuthenticated(true);
-getLogger().fine("storing to context = : " + getContext());
-auth=true;
-}
-}
-getLogger().fine("Before sns release");
-body.release();
-}
- catch (ResourceException re) {
-getLogger().warning("Could not find token resource.");
-}
-tokenResource.release();
-}
-if (auth) {
-return CONTINUE;
-}
- else {
-if (response.getStatus().isSuccess() || response.getStatus().isServerError()) {
-response.setStatus(Status.CLIENT_ERROR_FORBIDDEN);
-}
-return STOP;
-}
+    String code=params.getFirstValue(CODE);
+    if (code != null && !code.isEmpty()) {
+      validateState(request,params);
+      Token token=requestToken(code);
+      request.getAttributes().put(Token.class.getName(),token);
+      return CONTINUE;
+    }
+  }
+ catch (  Exception ex) {
+    if (!(ex instanceof OAuthException)) {
+      getLogger().log(Level.SEVERE,"OAuthProxy error",ex);
+    }
+    return sendErrorPage(response,ex);
+  }
+  OAuthParameters authRequest=createAuthorizationRequest();
+  authRequest.state(setupState(response));
+  Reference redirRef=authRequest.toReference(getAuthorizationURI());
+  getLogger().fine("Redirecting to : " + redirRef.toUri());
+  response.setCacheDirectives(no);
+  response.redirectTemporary(redirRef);
+  getLogger().fine("After Redirecting to : " + redirRef.toUri());
+  return STOP;
 }

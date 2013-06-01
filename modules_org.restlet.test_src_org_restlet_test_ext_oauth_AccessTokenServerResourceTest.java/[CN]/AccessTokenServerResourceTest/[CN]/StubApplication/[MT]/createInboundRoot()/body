@@ -1,0 +1,10 @@
+{
+  Router router=new Router(getContext());
+  getContext().getAttributes().put(TokenManager.class.getName(),new StubTokenManager());
+  getContext().getAttributes().put(ClientManager.class.getName(),new StubClientManager());
+  getContext().getAttributes().put(ResourceOwnerManager.class.getName(),new StubResourceOwnerManager());
+  DummyAuthenticator authenticator=new DummyAuthenticator(getContext());
+  authenticator.setNext(AccessTokenServerResource.class);
+  router.attach("/token",authenticator);
+  return router;
+}

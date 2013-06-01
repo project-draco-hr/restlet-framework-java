@@ -1,13 +1,13 @@
 {
   User user=getRequest().getClientInfo().getUser();
   getLogger().info("getUserStatus: " + user.getIdentifier());
-  DBObject userObj=OAuth2Sample.getDefaultDB().getCollection("users").findOne(new BasicDBObject("_id",user.getIdentifier()));
-  if (userObj == null) {
+  SampleUser sampleUser=OAuth2Sample.getSampleUserManager().findUserById(user.getIdentifier());
+  if (sampleUser == null) {
     setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
     return null;
   }
   JSONObject result=new JSONObject();
-  Object status=userObj.get("status");
+  Object status=sampleUser.getStatus();
   if (status != null) {
     result.put("status",status);
   }
