@@ -14,11 +14,24 @@
           Context.setCurrent(currentContext);
           VirtualHost.setCurrent(currentVirtualHost);
           Application.setCurrent(currentApplication);
-          try {
-            runnable.run();
-          }
+          if (runnable instanceof ContextualRunnable) {
+            ClassLoader tccl=Thread.currentThread().getContextClassLoader();
+            try {
+              Thread.currentThread().setContextClassLoader(((ContextualRunnable)runnable).getContextClassLoader());
+              runnable.run();
+            }
   finally {
-            Engine.clearThreadLocalVariables();
+              Engine.clearThreadLocalVariables();
+              Thread.currentThread().setContextClassLoader(tccl);
+            }
+          }
+ else {
+            try {
+              runnable.run();
+            }
+  finally {
+              Engine.clearThreadLocalVariables();
+            }
           }
         }
       }

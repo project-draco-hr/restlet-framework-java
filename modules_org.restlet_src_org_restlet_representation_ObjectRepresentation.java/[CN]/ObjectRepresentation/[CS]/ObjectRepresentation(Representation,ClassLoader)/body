@@ -1,0 +1,37 @@
+{
+  super(MediaType.APPLICATION_JAVA_OBJECT);
+  if (serializedRepresentation.getMediaType().equals(MediaType.APPLICATION_JAVA_OBJECT)) {
+    setMediaType(MediaType.APPLICATION_JAVA_OBJECT);
+    InputStream is=serializedRepresentation.getStream();
+    ObjectInputStream ois=null;
+    if (classLoader != null) {
+      ois=new ObjectInputStream(is){
+        @Override protected Class<?> resolveClass(        java.io.ObjectStreamClass desc) throws java.io.IOException, java.lang.ClassNotFoundException {
+          return Class.forName(desc.getName(),false,classLoader);
+        }
+      }
+;
+    }
+ else {
+      ois=new ObjectInputStream(is);
+    }
+    this.object=(T)ois.readObject();
+    if (is.read() != -1) {
+      throw new IOException("The input stream has not been fully read.");
+    }
+    ois.close();
+  }
+ else   if (serializedRepresentation.getMediaType().equals(MediaType.APPLICATION_JAVA_OBJECT_XML)) {
+    setMediaType(MediaType.APPLICATION_JAVA_OBJECT_XML);
+    InputStream is=serializedRepresentation.getStream();
+    java.beans.XMLDecoder decoder=new java.beans.XMLDecoder(is);
+    this.object=(T)decoder.readObject();
+    if (is.read() != -1) {
+      throw new IOException("The input stream has not been fully read.");
+    }
+    decoder.close();
+  }
+ else {
+    throw new IllegalArgumentException("The serialized representation must have this media type: " + MediaType.APPLICATION_JAVA_OBJECT.toString() + " or this one: "+ MediaType.APPLICATION_JAVA_OBJECT_XML.toString());
+  }
+}
