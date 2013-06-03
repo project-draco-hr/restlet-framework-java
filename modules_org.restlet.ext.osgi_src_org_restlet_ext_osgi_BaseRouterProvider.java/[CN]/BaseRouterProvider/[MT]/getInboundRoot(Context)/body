@@ -1,0 +1,10 @@
+{
+  if (router == null) {
+    router=createRouter(context);
+    for (    ResourceProvider resourceProvider : resourceProviders)     attachResource(resourceProvider);
+    for (    DirectoryProvider directoryProvider : directoryProviders)     attachDirectory(directoryProvider);
+    if (defaultRestletProvider != null)     router.attachDefault(defaultRestletProvider.getInboundRoot(context));
+  }
+  Restlet inboundRoot=super.getInboundRoot(context);
+  return inboundRoot != null ? inboundRoot : router;
+}
