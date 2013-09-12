@@ -7,8 +7,8 @@
     throw new OAuthException(OAuthError.invalid_grant,"The refresh token was not issued to the client.",null);
   }
   if (scope != null && scope.length != 0) {
-    List newScopeList=Arrays.asList(scope);
-    if (!((List)token.get(SCOPE)).containsAll(newScopeList)) {
+    List<String> newScopeList=Arrays.asList(scope);
+    if (!((List<String>)token.get(SCOPE)).containsAll(newScopeList)) {
       throw new OAuthException(OAuthError.invalid_scope,"The requested scope is exceeds the scope granted by the resource owner.",null);
     }
     token.put(SCOPE,newScopeList);
