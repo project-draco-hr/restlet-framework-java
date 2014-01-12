@@ -1,0 +1,14 @@
+{
+  this.server=HttpServer.create(new InetSocketAddress(getHelped().getPort()),0);
+  server.createContext("/",new HttpHandler(){
+    @Override public void handle(    HttpExchange httpExchange) throws IOException {
+      HttpServerHelper.this.handle(new HttpExchangeCall(getHelped(),httpExchange));
+    }
+  }
+);
+  server.setExecutor(null);
+  server.start();
+  setConfidential(false);
+  setEphemeralPort(server.getAddress().getPort());
+  super.start();
+}

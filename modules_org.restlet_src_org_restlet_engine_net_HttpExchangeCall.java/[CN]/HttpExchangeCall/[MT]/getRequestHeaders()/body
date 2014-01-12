@@ -1,0 +1,13 @@
+{
+  final Series<Header> result=super.getRequestHeaders();
+  if (!this.requestHeadersAdded) {
+    final Headers headers=this.exchange.getRequestHeaders();
+    for (    String name : headers.keySet()) {
+      for (      String value : (List<String>)headers.get(name)) {
+        result.add(name,value);
+      }
+    }
+    this.requestHeadersAdded=true;
+  }
+  return result;
+}

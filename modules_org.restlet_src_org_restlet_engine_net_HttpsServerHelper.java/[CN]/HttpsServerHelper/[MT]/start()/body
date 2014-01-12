@@ -1,0 +1,34 @@
+{
+  SslContextFactory sslContextFactory=SslUtils.getSslContextFactory(this);
+  SSLContext sslContext=sslContextFactory.createSslContext();
+  String addr=getHelped().getAddress();
+  if (addr != null) {
+    InetAddress iaddr=InetAddress.getByName(addr);
+    setAddress(new InetSocketAddress(iaddr,getHelped().getPort()));
+  }
+ else {
+    int port=getHelped().getPort();
+    if (port > 0) {
+      setAddress(new InetSocketAddress(getHelped().getPort()));
+    }
+  }
+  this.server=HttpsServer.create(new InetSocketAddress(getHelped().getPort()),0);
+  final SSLParameters sslParams=sslContext.getDefaultSSLParameters();
+  server.setHttpsConfigurator(new HttpsConfigurator(sslContext){
+    public void configure(    HttpsParameters params){
+      params.setSSLParameters(sslParams);
+    }
+  }
+);
+  server.createContext("/",new HttpHandler(){
+    @Override public void handle(    HttpExchange httpExchange) throws IOException {
+      HttpsServerHelper.this.handle(new HttpExchangeCall(getHelped(),httpExchange));
+    }
+  }
+);
+  server.setExecutor(null);
+  server.start();
+  setConfidential(false);
+  setEphemeralPort(server.getAddress().getPort());
+  super.start();
+}
