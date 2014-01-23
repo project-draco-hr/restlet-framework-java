@@ -50,7 +50,7 @@
     }
     setOriginalRef(getResourceRef().getTargetRef());
   }
-  String dateHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(HeaderConstants.HEADER_DATE);
+  String dateHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(HeaderConstants.HEADER_DATE,true);
   Date date=null;
   if (dateHeader != null) {
     date=DateUtils.parse(dateHeader);
@@ -59,7 +59,7 @@
     date=new Date();
   }
   setDate(date);
-  String maxForwardsHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(HeaderConstants.HEADER_MAX_FORWARDS);
+  String maxForwardsHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(HeaderConstants.HEADER_MAX_FORWARDS,true);
   if (maxForwardsHeader != null) {
     try {
       setMaxForwards(Integer.parseInt(maxForwardsHeader));
@@ -68,15 +68,15 @@
       Context.getCurrentLogger().info("Unable to parse the Max-Forwards header: " + maxForwardsHeader);
     }
   }
-  String callIdHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_CALL_ID);
+  String callIdHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_CALL_ID,true);
   if (callIdHeader != null) {
     setCallId(callIdHeader);
   }
-  String callSeqHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_CALL_SEQ);
+  String callSeqHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_CALL_SEQ,true);
   if (callSeqHeader != null) {
     setCommandSequence(callSeqHeader);
   }
-  String toHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_TO);
+  String toHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_TO,true);
   if (toHeader != null) {
     try {
       setTo(new AddressReader(toHeader).readValue());
@@ -85,7 +85,7 @@
       e.printStackTrace();
     }
   }
-  String fromHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(HeaderConstants.HEADER_FROM);
+  String fromHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(HeaderConstants.HEADER_FROM,true);
   if (fromHeader != null) {
     try {
       setFrom(new AddressReader(fromHeader).readValue());
@@ -94,10 +94,10 @@
       e.printStackTrace();
     }
   }
-  String mimeVersionHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_MIME_VERSION);
+  String mimeVersionHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_MIME_VERSION,true);
   setMimeVersion(mimeVersionHeader);
-  String organizationHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_ORGANIZATION);
+  String organizationHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_ORGANIZATION,true);
   setOrganization(organizationHeader);
-  String subjectHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_SUBJECT);
+  String subjectHeader=(getHeaders() == null) ? null : getHeaders().getFirstValue(SipConstants.HEADER_SUBJECT,true);
   setSubject(subjectHeader);
 }
