@@ -1,6 +1,13 @@
 {
+  AnnotationInfo annotationInfo;
   try {
-    return put(getConverterService().applyPatch(get(),entity));
+    annotationInfo=getAnnotation(Method.PATCH);
+    if (annotationInfo != null) {
+      return doHandle(Method.PATCH,getQuery(),entity);
+    }
+ else {
+      return put(getConverterService().applyPatch(get(),entity));
+    }
   }
  catch (  IOException e) {
     throw new ResourceException(e);

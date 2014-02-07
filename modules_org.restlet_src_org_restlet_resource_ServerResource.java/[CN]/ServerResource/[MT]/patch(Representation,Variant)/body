@@ -1,8 +1,15 @@
 {
+  Representation result=null;
   try {
-    return put(getConverterService().applyPatch(get(),entity),variant);
+    if (variant instanceof VariantInfo) {
+      result=doHandle(((VariantInfo)variant).getAnnotationInfo(),variant);
+    }
+ else {
+      result=put(getConverterService().applyPatch(get(),entity),variant);
+    }
   }
  catch (  IOException e) {
     throw new ResourceException(e);
   }
+  return result;
 }
