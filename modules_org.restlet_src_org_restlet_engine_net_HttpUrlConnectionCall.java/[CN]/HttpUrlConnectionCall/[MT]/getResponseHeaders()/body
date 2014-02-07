@@ -1,25 +1,25 @@
 {
   Series<Header> result=super.getResponseHeaders();
   if (!this.responseHeadersAdded) {
-    int i=1;
-    String headerName=getConnection().getHeaderFieldKey(i);
-    String headerValue=getConnection().getHeaderField(i);
-    while (headerName != null) {
-      result.add(headerName,headerValue);
-      i++;
-      if (Edition.CURRENT != Edition.GAE) {
+    boolean loop=true;
+    int i=0;
+    String headerName=null;
+    String headerValue=null;
+    while (loop) {
+      try {
         headerName=getConnection().getHeaderFieldKey(i);
         headerValue=getConnection().getHeaderField(i);
       }
- else {
-        try {
-          headerName=getConnection().getHeaderFieldKey(i);
-          headerValue=getConnection().getHeaderField(i);
-        }
- catch (        java.util.NoSuchElementException e) {
-          headerName=null;
-        }
+ catch (      java.util.NoSuchElementException e) {
+        headerName=null;
       }
+      if (headerName != null) {
+        result.add(headerName,headerValue);
+      }
+ else {
+        loop=(i == 0);
+      }
+      i++;
     }
     this.responseHeadersAdded=true;
   }
