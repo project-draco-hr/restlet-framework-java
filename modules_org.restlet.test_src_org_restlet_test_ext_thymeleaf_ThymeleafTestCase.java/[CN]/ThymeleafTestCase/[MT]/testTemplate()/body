@@ -1,0 +1,10 @@
+{
+  TemplateResolver templateResolver=new ClassLoaderTemplateResolver();
+  templateResolver.setPrefix("org/restlet/test/ext/thymeleaf/");
+  templateResolver.setSuffix(".html");
+  templateResolver.setCacheTTLMs(3600000L);
+  final Map<String,Object> map=new TreeMap<String,Object>();
+  map.put("welcome","Hello, world");
+  final String result=new TemplateRepresentation("test",TemplateRepresentation.createTemplateEngine(templateResolver),Locale.getDefault(),map,MediaType.TEXT_PLAIN).getText();
+  assertTrue(result.contains("Hello, world"));
+}

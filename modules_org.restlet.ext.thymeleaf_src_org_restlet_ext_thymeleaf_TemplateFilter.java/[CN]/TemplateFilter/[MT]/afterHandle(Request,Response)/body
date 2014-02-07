@@ -1,0 +1,22 @@
+{
+  if (response.isEntityAvailable() && response.getEntity().getEncodings().contains(THYMELEAF)) {
+    try {
+      final TemplateRepresentation representation=new TemplateRepresentation((TemplateRepresentation)response.getEntity(),getLocale(),response.getEntity().getMediaType());
+      if ((this.mapDataModel == null) && (this.resolverDataModel == null)) {
+        representation.setDataModel(request,response);
+      }
+ else {
+        if (this.mapDataModel == null) {
+          representation.setDataModel(this.resolverDataModel);
+        }
+ else {
+          representation.setDataModel(this.mapDataModel);
+        }
+      }
+      response.setEntity(representation);
+    }
+ catch (    IOException e) {
+      response.setStatus(Status.SERVER_ERROR_INTERNAL,e);
+    }
+  }
+}
