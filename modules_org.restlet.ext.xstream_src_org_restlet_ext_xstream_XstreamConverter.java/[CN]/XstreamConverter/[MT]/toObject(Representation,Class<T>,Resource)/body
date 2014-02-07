@@ -1,9 +1,11 @@
 {
-  Object result=null;
+  T result=null;
   XstreamRepresentation<?> xstreamSource=null;
   if (source instanceof XstreamRepresentation) {
     xstreamSource=(XstreamRepresentation<?>)source;
-    if (target != null)     xstreamSource.getXstream().processAnnotations(target);
+    if (target != null) {
+      xstreamSource.getXstream().processAnnotations(target);
+    }
   }
  else   if (VARIANT_JSON.isCompatible(source)) {
     xstreamSource=create(source,target);
@@ -13,11 +15,11 @@
   }
   if (xstreamSource != null) {
     if ((target != null) && XstreamRepresentation.class.isAssignableFrom(target)) {
-      result=xstreamSource;
+      result=target.cast(xstreamSource);
     }
  else {
-      result=xstreamSource.getObject();
+      result=(T)xstreamSource.getObject();
     }
   }
-  return (T)result;
+  return result;
 }

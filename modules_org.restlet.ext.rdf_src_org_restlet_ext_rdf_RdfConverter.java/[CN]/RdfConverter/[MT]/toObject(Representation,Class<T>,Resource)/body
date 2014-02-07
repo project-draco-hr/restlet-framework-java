@@ -1,10 +1,17 @@
 {
-  Object result=null;
+  RdfRepresentation rdfSource=null;
   if (source instanceof RdfRepresentation) {
-    result=((RdfRepresentation)source).getGraph();
+    rdfSource=(RdfRepresentation)source;
   }
  else {
-    result=(new RdfRepresentation(source)).getGraph();
+    rdfSource=new RdfRepresentation(source);
   }
-  return target.cast(result);
+  T result=null;
+  if (target == null) {
+    result=(T)rdfSource.getGraph();
+  }
+ else   if (source instanceof RdfRepresentation) {
+    result=target.cast(rdfSource.getGraph());
+  }
+  return result;
 }

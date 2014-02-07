@@ -1,12 +1,16 @@
 {
-  Object result=null;
-  if (ApplicationInfo.class.isAssignableFrom(target)) {
-    if (source instanceof WadlRepresentation) {
-      result=((WadlRepresentation)source).getApplication();
-    }
+  WadlRepresentation wadlSource=null;
+  if (source instanceof WadlRepresentation) {
+    wadlSource=(WadlRepresentation)source;
+  }
  else {
-      result=new WadlRepresentation(source).getApplication();
+    wadlSource=new WadlRepresentation(source);
+  }
+  T result=null;
+  if (target != null) {
+    if (ApplicationInfo.class.isAssignableFrom(target)) {
+      result=target.cast(wadlSource.getApplication());
     }
   }
-  return target.cast(result);
+  return result;
 }

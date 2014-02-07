@@ -1,15 +1,20 @@
 {
-  Object result=null;
-  if (JaxbRepresentation.class.isAssignableFrom(target)) {
-    result=new JaxbRepresentation<T>(source,target);
+  JaxbRepresentation<?> jaxbSource=null;
+  if (source instanceof JaxbRepresentation) {
+    jaxbSource=(JaxbRepresentation<?>)source;
+  }
+ else {
+    jaxbSource=new JaxbRepresentation<T>(source,target);
+  }
+  T result=null;
+  if (target == null) {
+    result=(T)jaxbSource.getObject();
+  }
+ else   if (JaxbRepresentation.class.isAssignableFrom(target)) {
+    result=target.cast(jaxbSource);
   }
  else   if (isJaxbRootElementClass(target)) {
-    result=new JaxbRepresentation<T>(source,target).getObject();
+    result=target.cast(jaxbSource.getObject());
   }
- else   if (target == null) {
-    if (source instanceof JaxbRepresentation<?>) {
-      result=((JaxbRepresentation<?>)source).getObject();
-    }
-  }
-  return target.cast(result);
+  return result;
 }
