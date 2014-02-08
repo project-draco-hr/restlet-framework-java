@@ -1,27 +1,39 @@
 {
-  Component component=null;
   Client warClient=createWarClient(new Context(),getServletConfig());
-  Response response=warClient.handle(new Request(Method.GET,"war:///WEB-INF/restlet.xml"));
-  if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
-    component=new Component(response.getEntity());
-  }
-  if (component == null) {
-    String componentClassName=getInitParameter(COMPONENT_KEY,null);
-    if (componentClassName != null) {
-      try {
-        Class<?> targetClass=loadClass(componentClassName);
-        component=(Component)targetClass.newInstance();
-      }
- catch (      ClassNotFoundException e) {
-        log("[Restlet] ServerServlet couldn't find the target class. Please check that your classpath includes " + componentClassName,e);
-      }
-catch (      InstantiationException e) {
-        log("[Restlet] ServerServlet couldn't instantiate the target class. Please check this class has an empty constructor " + componentClassName,e);
-      }
-catch (      IllegalAccessException e) {
-        log("[Restlet] ServerServlet couldn't instantiate the target class. Please check that you have to proper access rights to " + componentClassName,e);
-      }
+  String componentClassName=getInitParameter(COMPONENT_KEY,null);
+  Class<?> targetClass=Component.class;
+  Component component=null;
+  if (componentClassName != null) {
+    try {
+      targetClass=loadClass(componentClassName);
     }
+ catch (    ClassNotFoundException e) {
+      log("[Restlet] ServerServlet couldn't find the target component class. Please check that your classpath includes " + componentClassName,e);
+    }
+  }
+  Response response=warClient.handle(new Request(Method.GET,"war:///WEB-INF/restlet.xml"));
+  try {
+    log("[Restlet] ServerServlet: component class is " + componentClassName);
+    if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
+      @SuppressWarnings("unchecked") Constructor<? extends Component> ctor=((Class<? extends Component>)targetClass).getConstructor(Representation.class);
+      log("[Restlet] ServerServlet: configuring component from war:///WEB-INF/restlet.xml");
+      component=(Component)ctor.newInstance(response.getEntity());
+    }
+ else {
+      component=(Component)targetClass.newInstance();
+    }
+  }
+ catch (  IllegalAccessException e) {
+    log("[Restlet] ServerServlet couldn't instantiate the target class. Please check that you have proper access rights to " + componentClassName,e);
+  }
+catch (  InvocationTargetException e) {
+    log("[Restlet] ServerServlet encountered an exception instantiating the target class " + componentClassName,e.getTargetException());
+  }
+catch (  InstantiationException e) {
+    log(String.format("[Restlet] ServerServlet couldn't instantiate the target class. Please check that %s has %s.",componentClassName,((response.getStatus().isSuccess()) ? "a constructor taking a Representation as single parameter" : "an empty constructor")),e);
+  }
+catch (  NoSuchMethodException e) {
+    log(String.format("[Restlet] ServerServlet couldn't instantiate the target class. Please check that %s has %s.",componentClassName,((response.getStatus().isSuccess()) ? "a constructor taking Representation as single parameter" : "an empty constructor")),e);
   }
   if (component == null) {
     component=new Component();
