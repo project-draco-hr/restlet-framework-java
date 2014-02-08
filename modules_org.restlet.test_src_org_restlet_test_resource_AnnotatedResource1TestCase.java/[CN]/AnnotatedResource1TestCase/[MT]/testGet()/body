@@ -11,6 +11,8 @@
   assertEquals("<MyBean><description>myDescription</description><name>myName</name></MyBean>",result);
   result=clientResource.get(MediaType.APPLICATION_JSON).getText();
   assertEquals("{\"description\":\"myDescription\",\"name\":\"myName\"}",result);
+  ObjectRepresentation.VARIANT_OBJECT_XML_SUPPORTED=true;
   result=clientResource.get(MediaType.APPLICATION_JAVA_OBJECT_XML).getText();
   assertTrue(result.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") && result.contains("<java version=\""));
+  ObjectRepresentation.VARIANT_OBJECT_XML_SUPPORTED=false;
 }
