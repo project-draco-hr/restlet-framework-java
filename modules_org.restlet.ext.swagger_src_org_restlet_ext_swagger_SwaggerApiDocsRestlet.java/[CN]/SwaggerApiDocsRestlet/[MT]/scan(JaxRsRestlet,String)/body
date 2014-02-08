@@ -1,0 +1,13 @@
+{
+  List<DocumentationEndPoint> retVal=new ArrayList<DocumentationEndPoint>();
+  Set<Class<?>> classes=jaxRsRestlet.getRootResourceClasses();
+  for (  Class<?> klazz : classes) {
+    Api apiAnnotation=klazz.getAnnotation(Api.class);
+    Path pathAnnotation=klazz.getAnnotation(Path.class);
+    if (apiAnnotation != null && pathAnnotation != null) {
+      DocumentationEndPoint ep=new DocumentationEndPoint(apiAnnotation.value(),apiAnnotation.description());
+      retVal.add(ep);
+    }
+  }
+  return retVal;
+}

@@ -1,0 +1,46 @@
+{
+  super.handle(request,response);
+  String baseRef=request.getResourceRef().getBaseRef().toString(false,false);
+  String resourcePath=request.getResourceRef().toString(false,false).substring(baseRef.length());
+  if (resourcePath.isEmpty() || resourcePath.equals("/")) {
+    Documentation documentation=new Documentation();
+    documentation.setApiVersion(apiVersion);
+    documentation.setSwaggerVersion(swaggerVersion);
+    documentation.setBasePath(basePath);
+    SwaggerRestletIterable crawler=new SwaggerRestletIterable(apiInboundRoot);
+    for (    Restlet restlet : crawler) {
+      if (restlet instanceof JaxRsRestlet) {
+        JaxRsRestlet jaxRsRestlet=(JaxRsRestlet)restlet;
+        Collection<DocumentationEndPoint> endPoints=scan(jaxRsRestlet,crawler.getCurrentPath());
+        for (        DocumentationEndPoint endPoint : endPoints) {
+          endPoint.setPath(jsonPath + "/" + endPoint.getPath());
+          documentation.addApi(endPoint);
+        }
+      }
+    }
+    response.setEntity(new JacksonRepresentation<Documentation>(documentation));
+    return;
+  }
+ else {
+    if (resourcePath.startsWith("/"))     resourcePath=resourcePath.substring(1);
+    SwaggerRestletIterable crawler=new SwaggerRestletIterable(apiInboundRoot);
+    for (    Restlet restlet : crawler) {
+      if (restlet instanceof JaxRsRestlet) {
+        JaxRsRestlet jaxRsRestlet=(JaxRsRestlet)restlet;
+        Class<?> klazz=findJaxRsClass(jaxRsRestlet,resourcePath);
+        if (klazz != null) {
+          SwaggerJaxRsResourceGenerator generator=new SwaggerJaxRsResourceGenerator();
+          generator.setup(klazz,crawler.getCurrentPath());
+          Documentation documentation=generator.parse();
+          documentation.setApiVersion(apiVersion);
+          documentation.setSwaggerVersion(swaggerVersion);
+          documentation.setBasePath(basePath);
+          documentation.setResourcePath(resourcePath);
+          response.setEntity(new JacksonRepresentation<Documentation>(documentation));
+          return;
+        }
+      }
+    }
+  }
+  response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+}

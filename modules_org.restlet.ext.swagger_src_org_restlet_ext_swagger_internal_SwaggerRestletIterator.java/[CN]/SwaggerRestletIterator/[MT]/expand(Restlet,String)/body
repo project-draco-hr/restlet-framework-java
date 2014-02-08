@@ -1,0 +1,20 @@
+{
+  Map<Restlet,String> retVal=new LinkedHashMap<Restlet,String>();
+  if (restlet instanceof Filter) {
+    Filter filter=(Filter)restlet;
+    retVal.put(filter.getNext(),currentPath);
+  }
+ else   if (restlet instanceof Router) {
+    Router router=(Router)restlet;
+    RouteList routeList=router.getRoutes();
+    for (    Route route : routeList) {
+      if (route instanceof TemplateRoute) {
+        TemplateRoute templateRoute=(org.restlet.routing.TemplateRoute)route;
+        String templatePattern=templateRoute.getTemplate().getPattern();
+        String path=SwaggerUtils.cleanSlashes(currentPath + templatePattern + "/");
+        retVal.put(templateRoute.getNext(),path);
+      }
+    }
+  }
+  return retVal;
+}

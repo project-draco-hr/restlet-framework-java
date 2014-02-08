@@ -1,0 +1,43 @@
+{
+  String methodPath=resourcePath;
+  Path pathAnnotation=method.getAnnotation(Path.class);
+  if (pathAnnotation != null) {
+    methodPath+=pathAnnotation.value() + "/";
+  }
+  methodPath=SwaggerUtils.cleanSlashes(methodPath);
+  Annotation httpMthodAnnotation=method.getAnnotation(httpMethodClass);
+  ApiOperation apiOperationAnnotation=method.getAnnotation(ApiOperation.class);
+  if (httpMthodAnnotation != null && apiOperationAnnotation != null) {
+    DocumentationEndPoint endPoint=getApi(methodPath);
+    DocumentationOperation op=new DocumentationOperation();
+    op.setHttpMethod(httpMthodAnnotation.annotationType().getSimpleName());
+    op.setSummary(apiOperationAnnotation.value());
+    op.setNotes(apiOperationAnnotation.notes());
+    op.setTags(SwaggerUtils.toObjectList(apiOperationAnnotation.tags()));
+    op.setNickname(method.getName());
+    ApiErrors apiErrors=method.getAnnotation(ApiErrors.class);
+    if (apiErrors != null) {
+      for (      ApiError apiError : apiErrors.value()) {
+        DocumentationError error=getDocumentationError(apiError);
+        if (error != null) {
+          op.addErrorResponse(error);
+        }
+      }
+    }
+    DocumentationError error=getDocumentationError(method.getAnnotation(ApiError.class));
+    if (error != null) {
+      op.addErrorResponse(error);
+    }
+    Class<?> returnType=method.getReturnType();
+    if (returnType != null) {
+      op.setResponseClass(returnType.getSimpleName());
+      if (!returnType.isPrimitive()) {
+        DocumentationObject documentationObject=new DocumentationObject();
+        models.put(returnType.getSimpleName(),documentationObject.toDocumentationSchema());
+      }
+    }
+    op.setParameters(parseParameters(method));
+    endPoint.addOperation(op);
+    endPoint.setDescription(apiOperationAnnotation.value());
+  }
+}

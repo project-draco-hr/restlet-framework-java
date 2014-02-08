@@ -1,0 +1,17 @@
+{
+  List<DocumentationParameter> retVal=new ArrayList<DocumentationParameter>();
+  ApiParamsImplicit implicitParams=method.getAnnotation(ApiParamsImplicit.class);
+  if (implicitParams != null) {
+    for (    ApiParamImplicit implicitParam : implicitParams.value()) {
+      addApiParamImplicit(retVal,implicitParam);
+    }
+  }
+  ApiParamImplicit implicitParam=method.getAnnotation(ApiParamImplicit.class);
+  addApiParamImplicit(retVal,implicitParam);
+  Class<?>[] parameterTypes=method.getParameterTypes();
+  int cnt=0;
+  for (  Annotation[] annotation : method.getParameterAnnotations()) {
+    processJaxRsParam(retVal,annotation,parameterTypes[cnt++]);
+  }
+  return retVal;
+}
