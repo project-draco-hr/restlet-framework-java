@@ -4,10 +4,10 @@
   String resourcePath=request.getResourceRef().toString(false,false).substring(baseRef.length());
   if (resourcePath.isEmpty() || resourcePath.equals("/")) {
     Documentation documentation=new Documentation();
-    documentation.setApiVersion(apiVersion);
+    documentation.setApiVersion(version);
     documentation.setSwaggerVersion(swaggerVersion);
     documentation.setBasePath(basePath);
-    SwaggerRestletIterable crawler=new SwaggerRestletIterable(apiInboundRoot);
+    SwaggerRestletIterable crawler=new SwaggerRestletIterable(inboundRoot);
     for (    Restlet restlet : crawler) {
       if (restlet instanceof JaxRsRestlet) {
         JaxRsRestlet jaxRsRestlet=(JaxRsRestlet)restlet;
@@ -22,17 +22,19 @@
     return;
   }
  else {
-    if (resourcePath.startsWith("/"))     resourcePath=resourcePath.substring(1);
-    SwaggerRestletIterable crawler=new SwaggerRestletIterable(apiInboundRoot);
+    if (resourcePath.startsWith("/")) {
+      resourcePath=resourcePath.substring(1);
+    }
+    SwaggerRestletIterable crawler=new SwaggerRestletIterable(inboundRoot);
     for (    Restlet restlet : crawler) {
       if (restlet instanceof JaxRsRestlet) {
         JaxRsRestlet jaxRsRestlet=(JaxRsRestlet)restlet;
-        Class<?> klazz=findJaxRsClass(jaxRsRestlet,resourcePath);
-        if (klazz != null) {
+        Class<?> clazz=findJaxRsClass(jaxRsRestlet,resourcePath);
+        if (clazz != null) {
           SwaggerJaxRsResourceGenerator generator=new SwaggerJaxRsResourceGenerator();
-          generator.setup(klazz,crawler.getCurrentPath());
+          generator.setup(clazz,crawler.getCurrentPath());
           Documentation documentation=generator.parse();
-          documentation.setApiVersion(apiVersion);
+          documentation.setApiVersion(version);
           documentation.setSwaggerVersion(swaggerVersion);
           documentation.setBasePath(basePath);
           documentation.setResourcePath(resourcePath);
