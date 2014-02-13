@@ -14,5 +14,14 @@
  else {
     sslSocketFactory=SSLSocketFactory.getSocketFactory();
   }
+  if (getHostnameVerifier() != null) {
+    try {
+      X509HostnameVerifier hostnameVerifier=(X509HostnameVerifier)Engine.loadClass(getHostnameVerifier()).newInstance();
+      sslSocketFactory.setHostnameVerifier(hostnameVerifier);
+    }
+ catch (    Exception e) {
+      getLogger().log(Level.WARNING,"An error occurred during the instantiation of the hostname verifier.",e);
+    }
+  }
   schemeRegistry.register(new Scheme("https",443,sslSocketFactory));
 }
