@@ -1,0 +1,11 @@
+{
+  SwaggerApplication result=null;
+  if (!getClients().contains(wadlRef.getSchemeProtocol())) {
+    getClients().add(wadlRef.getSchemeProtocol());
+  }
+  final Response response=getContext().getClientDispatcher().handle(new Request(Method.GET,wadlRef));
+  if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
+    result=attach(response.getEntity());
+  }
+  return result;
+}

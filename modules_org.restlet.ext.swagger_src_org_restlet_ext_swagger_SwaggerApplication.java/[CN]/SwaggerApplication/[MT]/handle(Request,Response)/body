@@ -1,0 +1,15 @@
+{
+  Reference rr=request.getResourceRef().clone();
+  super.handle(request,response);
+  request.setResourceRef(rr);
+  String rp=rr.getRemainingPart(false,false);
+  if (canDescribe(rp,request,response)) {
+    if (!rr.getBaseRef().getIdentifier().endsWith("/")) {
+      rr.setBaseRef(rr.getBaseRef() + "/");
+    }
+    response.setEntity(swaggerRepresent(request,response));
+    if (response.isEntityAvailable()) {
+      response.setStatus(Status.SUCCESS_OK);
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  DocumentationEndPoint result=null;
+  if (restlet instanceof SwaggerDescribable) {
+    result=((SwaggerDescribable)restlet).getDocumentationEndPoint(Documentation);
+    result.setPath(path);
+  }
+ else   if (restlet instanceof Finder) {
+    result=getEndPoint(Documentation,(Finder)restlet,path,request,response);
+  }
+ else   if (restlet instanceof Router) {
+    result=new DocumentationEndPoint();
+    result.setPath(path);
+  }
+ else   if (restlet instanceof Filter) {
+    result=getEndPoint(Documentation,(Filter)restlet,path,request,response);
+  }
+  return result;
+}

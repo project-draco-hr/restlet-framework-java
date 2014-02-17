@@ -1,0 +1,30 @@
+{
+  super(context);
+  this.autoDescribing=false;
+  try {
+    SwaggerRepresentation swaggerRep=null;
+    if (rep instanceof SwaggerRepresentation) {
+      swaggerRep=(SwaggerRepresentation)rep;
+    }
+ else {
+      swaggerRep=new SwaggerRepresentation(rep);
+    }
+    final Router root=new Router(getContext());
+    this.router=root;
+    setInboundRoot(root);
+    if (swaggerRep.getDocumentation() != null) {
+      if (swaggerRep.getDocumentation().getApis() != null) {
+        for (        DocumentationEndPoint endPoint : swaggerRep.getDocumentation().getApis()) {
+          attachResource(endPoint,null,this.router);
+        }
+        setBaseRef(new Reference(swaggerRep.getDocumentation().getBasePath()));
+      }
+      if (!swaggerRep.getDocumentation().getModels().isEmpty()) {
+        setName(swaggerRep.getDocumentation().getModels().get(0).getName());
+      }
+    }
+  }
+ catch (  Exception e) {
+    getLogger().log(Level.WARNING,"Error during the attachment of the Swagger application",e);
+  }
+}
