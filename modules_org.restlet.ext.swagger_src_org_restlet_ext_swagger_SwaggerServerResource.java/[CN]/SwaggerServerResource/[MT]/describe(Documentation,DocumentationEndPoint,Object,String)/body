@@ -22,21 +22,20 @@
     }
   }
   Method.sort(methodsList);
-  List<DocumentationOperation> methods=info.getOperations();
   DocumentationOperation methodInfo;
   for (  Method method : methodsList) {
     methodInfo=new DocumentationOperation();
-    methods.add(methodInfo);
+    info.addOperation(methodInfo);
     methodInfo.setNickname(method.getName());
     if (resource instanceof ServerResource) {
       if (resource instanceof SwaggerServerResource) {
         SwaggerServerResource wsResource=(SwaggerServerResource)resource;
         if (wsResource.canDescribe(method)) {
-          wsResource.describeMethod(method,methodInfo);
+          wsResource.describeMethod(documentation,method,methodInfo);
         }
       }
  else {
-        describeAnnotations(methodInfo,(ServerResource)resource);
+        describeAnnotations(documentation,methodInfo,(ServerResource)resource);
       }
     }
   }
@@ -46,7 +45,7 @@
     title=((SwaggerServerResource)resource).getName();
     textContent=((SwaggerServerResource)resource).getDescription();
   }
-  if ((title != null) && !"".equals(title)) {
+  if ((title != null) && !title.isEmpty()) {
     info.setDescription(title);
   }
  else {
