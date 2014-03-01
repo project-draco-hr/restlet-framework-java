@@ -82,12 +82,12 @@
           tmp=new File(file.getCanonicalPath() + "." + getTemporaryExtension());
           Range range=request.getRanges().get(0);
           if (tmp.exists() && !isResumeUpload()) {
-            BioUtils.delete(tmp);
+            IoUtils.delete(tmp);
           }
           if (!tmp.exists()) {
             InputStream in=new FileInputStream(file);
             OutputStream out=new FileOutputStream(tmp);
-            BioUtils.copy(in,out);
+            IoUtils.copy(in,out);
             out.flush();
             out.close();
           }
@@ -104,7 +104,7 @@
             raf.seek(range.getIndex());
           }
           if (request.isEntityAvailable()) {
-            BioUtils.copy(request.getEntity().getStream(),raf);
+            IoUtils.copy(request.getEntity().getStream(),raf);
           }
         }
  catch (        IOException ioe) {
@@ -131,7 +131,7 @@
           tmp=File.createTempFile("restlet-upload","bin");
           if (request.isEntityAvailable()) {
             fos=new FileOutputStream(tmp);
-            BioUtils.copy(request.getEntity().getStream(),fos);
+            IoUtils.copy(request.getEntity().getStream(),fos);
           }
         }
  catch (        IOException ioe) {
@@ -154,11 +154,11 @@
       }
       if (error) {
         if (tmp.exists() && !isResumeUpload()) {
-          BioUtils.delete(tmp);
+          IoUtils.delete(tmp);
         }
         return;
       }
-      if (tmp.exists() && BioUtils.delete(file)) {
+      if (tmp.exists() && IoUtils.delete(file)) {
         boolean renameSuccessful=false;
         if (tmp.renameTo(file)) {
           if (request.getEntity() == null) {
@@ -174,10 +174,10 @@
             try {
               InputStream in=new FileInputStream(tmp);
               OutputStream out=new FileOutputStream(file);
-              BioUtils.copy(in,out);
+              IoUtils.copy(in,out);
               out.close();
               renameSuccessful=true;
-              BioUtils.delete(tmp);
+              IoUtils.delete(tmp);
             }
  catch (            Exception e) {
               renameSuccessful=false;
@@ -193,7 +193,7 @@
         getLogger().log(Level.WARNING,"Unable to delete the existing file");
         response.setStatus(new Status(Status.SERVER_ERROR_INTERNAL,"Unable to delete the existing file"));
         if (tmp.exists() && !isResumeUpload()) {
-          BioUtils.delete(tmp);
+          IoUtils.delete(tmp);
         }
       }
     }
@@ -222,7 +222,7 @@
             raf.seek(range.getIndex());
           }
           if (request.isEntityAvailable()) {
-            BioUtils.copy(request.getEntity().getStream(),raf);
+            IoUtils.copy(request.getEntity().getStream(),raf);
           }
         }
  catch (        FileNotFoundException fnfe) {
@@ -254,7 +254,7 @@ catch (        IOException ioe) {
             }
  else {
               fos=new FileOutputStream(file);
-              BioUtils.copy(request.getEntity().getStream(),fos);
+              IoUtils.copy(request.getEntity().getStream(),fos);
               response.setStatus(Status.SUCCESS_CREATED);
             }
           }

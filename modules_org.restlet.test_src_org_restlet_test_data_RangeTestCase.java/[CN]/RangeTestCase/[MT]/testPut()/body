@@ -2,7 +2,7 @@
   if (!SystemUtils.isWindows()) {
     Request request;
     Response response;
-    BioUtils.delete(testDir,true);
+    IoUtils.delete(testDir,true);
     Client client=new Client(new Context(),Protocol.HTTP);
     client.getContext().getParameters().add("tracing","true");
     request=new Request(Method.PUT,"http://localhost:" + TEST_PORT + "/testPut/essai.txt");
@@ -69,7 +69,7 @@
     response=client.handle(request);
     assertEquals(Status.SUCCESS_PARTIAL_CONTENT,response.getStatus());
     assertEquals("20000998",response.getEntity().getText());
-    BioUtils.delete(testDir,true);
+    IoUtils.delete(testDir,true);
     client.stop();
   }
 }
