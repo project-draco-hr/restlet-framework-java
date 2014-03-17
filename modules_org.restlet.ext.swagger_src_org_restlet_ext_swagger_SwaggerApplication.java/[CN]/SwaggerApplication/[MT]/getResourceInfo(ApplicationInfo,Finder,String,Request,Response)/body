@@ -1,0 +1,21 @@
+{
+  ResourceInfo result=null;
+  Object resource=null;
+  Application.setCurrent(this);
+  if (finder instanceof Directory) {
+    resource=finder;
+  }
+ else {
+    ServerResource sr=finder.find(request,response);
+    if (sr != null) {
+      sr.init(getContext(),request,response);
+      sr.updateAllowedMethods();
+      resource=sr;
+    }
+  }
+  if (resource != null) {
+    result=new ResourceInfo();
+    ResourceInfo.describe(applicationInfo,result,resource,path);
+  }
+  return result;
+}

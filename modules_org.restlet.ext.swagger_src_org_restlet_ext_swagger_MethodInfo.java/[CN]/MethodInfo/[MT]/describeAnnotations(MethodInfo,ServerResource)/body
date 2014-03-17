@@ -1,0 +1,52 @@
+{
+  MetadataService metadataService=resource.getMetadataService();
+  List<AnnotationInfo> annotations=resource.isAnnotated() ? AnnotationUtils.getInstance().getAnnotations(resource.getClass()) : null;
+  if (annotations != null && metadataService != null) {
+    for (    AnnotationInfo annotationInfo : annotations) {
+      try {
+        if (info.getName().equals(annotationInfo.getRestletMethod())) {
+          Class<?>[] classes=annotationInfo.getJavaInputTypes();
+          List<Variant> requestVariants=annotationInfo.getRequestVariants(resource.getMetadataService(),resource.getConverterService());
+          if (requestVariants != null) {
+            for (            Variant variant : requestVariants) {
+              if ((variant.getMediaType() != null) && ((info.getRequest() == null) || !info.getRequest().getRepresentations().contains(variant))) {
+                RepresentationInfo representationInfo=null;
+                if (info.getRequest() == null) {
+                  info.setRequest(new RequestInfo());
+                }
+                if (resource instanceof SwaggerServerResource) {
+                  representationInfo=((SwaggerServerResource)resource).describe(info,info.getRequest(),classes[0],variant);
+                }
+ else {
+                  representationInfo=new RepresentationInfo(variant);
+                }
+                info.getRequest().getRepresentations().add(representationInfo);
+              }
+            }
+          }
+          Class<?> outputClass=annotationInfo.getJavaOutputType();
+          if (outputClass != null) {
+            List<Variant> responseVariants=annotationInfo.getResponseVariants(resource.getMetadataService(),resource.getConverterService());
+            if (responseVariants != null) {
+              for (              Variant variant : responseVariants) {
+                if ((variant.getMediaType() != null) && !info.getResponse().getRepresentations().contains(variant)) {
+                  RepresentationInfo representationInfo=null;
+                  if (resource instanceof SwaggerServerResource) {
+                    representationInfo=((SwaggerServerResource)resource).describe(info,info.getResponse(),outputClass,variant);
+                  }
+ else {
+                    representationInfo=new RepresentationInfo(variant);
+                  }
+                  info.getResponse().getRepresentations().add(representationInfo);
+                }
+              }
+            }
+          }
+        }
+      }
+ catch (      IOException e) {
+        throw new ResourceException(e);
+      }
+    }
+  }
+}

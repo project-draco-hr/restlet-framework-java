@@ -3,24 +3,23 @@
   this.autoDescribing=false;
   try {
     SwaggerRepresentation swaggerRep=null;
-    if (rep instanceof SwaggerRepresentation) {
-      swaggerRep=(SwaggerRepresentation)rep;
+    if (swagger instanceof SwaggerRepresentation) {
+      swaggerRep=(SwaggerRepresentation)swagger;
     }
  else {
-      swaggerRep=new SwaggerRepresentation(rep);
     }
     final Router root=new Router(getContext());
     this.router=root;
     setInboundRoot(root);
-    if (swaggerRep.getDocumentation() != null) {
-      if (swaggerRep.getDocumentation().getApis() != null) {
-        for (        DocumentationEndPoint endPoint : swaggerRep.getDocumentation().getApis()) {
-          attachResource(endPoint,null,this.router);
+    if (swaggerRep.getApplication() != null) {
+      if (swaggerRep.getApplication().getResources() != null) {
+        for (        final ResourceInfo resource : swaggerRep.getApplication().getResources().getResources()) {
+          attachResource(resource,null,this.router);
         }
-        setBaseRef(new Reference(swaggerRep.getDocumentation().getBasePath()));
+        setBaseRef(swaggerRep.getApplication().getResources().getBaseRef());
       }
-      if (!swaggerRep.getDocumentation().getModels().isEmpty()) {
-        setName(swaggerRep.getDocumentation().getModels().get(0).getName());
+      if (!swaggerRep.getApplication().getDocumentations().isEmpty()) {
+        setName(swaggerRep.getApplication().getDocumentations().get(0).getTitle());
       }
     }
   }

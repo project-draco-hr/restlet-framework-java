@@ -1,15 +1,26 @@
 {
   Representation result=null;
   if (variant != null) {
-    Documentation documentation=getDocumentation(request,response);
+    ApplicationInfo applicationInfo=getApplicationInfo(request,response);
+    DocumentationInfo doc=null;
+    if ((getName() != null) && !"".equals(getName())) {
+      if (applicationInfo.getDocumentations().isEmpty()) {
+        doc=new DocumentationInfo();
+        applicationInfo.getDocumentations().add(doc);
+      }
+ else {
+        doc=applicationInfo.getDocumentations().get(0);
+      }
+      doc.setTitle(getName());
+    }
+    if ((doc != null) && (getDescription() != null) && !"".equals(getDescription())) {
+      doc.setTextContent(getDescription());
+    }
     if (MediaType.APPLICATION_JSON.equals(variant.getMediaType())) {
-      result=createJsonRepresentation(documentation);
+      result=createSwaggerRepresentation(applicationInfo);
     }
  else     if (MediaType.TEXT_HTML.equals(variant.getMediaType())) {
-      result=createXmlRepresentation(documentation);
-    }
- else     if (MediaType.TEXT_HTML.equals(variant.getMediaType())) {
-      result=createHtmlRepresentation(documentation);
+      result=createHtmlRepresentation(applicationInfo);
     }
   }
   return result;

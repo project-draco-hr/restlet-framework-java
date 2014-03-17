@@ -1,0 +1,16 @@
+{
+  Representation result=null;
+  if (variant != null) {
+    ResourceInfo resource=new ResourceInfo();
+    describe(resource);
+    ApplicationInfo application=resource.createApplication();
+    describe(application);
+    if (MediaType.APPLICATION_JSON.equals(variant.getMediaType())) {
+      result=createSwaggerRepresentation(application);
+    }
+ else     if (MediaType.TEXT_HTML.equals(variant.getMediaType())) {
+      result=createHtmlRepresentation(application);
+    }
+  }
+  return result;
+}

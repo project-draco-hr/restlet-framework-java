@@ -1,0 +1,30 @@
+{
+  Series<? extends NamedValue<String>> result=null;
+  if (parameterInfo.getFixed() != null) {
+    result=new Series<Parameter>(Parameter.class);
+    result.add(parameterInfo.getName(),parameterInfo.getFixed());
+  }
+ else   if (ParameterStyle.HEADER.equals(parameterInfo.getStyle())) {
+    result=getHeaders().subList(parameterInfo.getName());
+  }
+ else   if (ParameterStyle.TEMPLATE.equals(parameterInfo.getStyle())) {
+    Object parameter=getRequest().getAttributes().get(parameterInfo.getName());
+    if (parameter != null) {
+      result=new Series<Parameter>(Parameter.class);
+      result.add(parameterInfo.getName(),Reference.decode((String)parameter));
+    }
+  }
+ else   if (ParameterStyle.MATRIX.equals(parameterInfo.getStyle())) {
+    result=getMatrix().subList(parameterInfo.getName());
+  }
+ else   if (ParameterStyle.QUERY.equals(parameterInfo.getStyle())) {
+    result=getQuery().subList(parameterInfo.getName());
+  }
+ else   if (ParameterStyle.PLAIN.equals(parameterInfo.getStyle())) {
+  }
+  if (result == null && parameterInfo.getDefaultValue() != null) {
+    result=new Series<Parameter>(Parameter.class);
+    result.add(parameterInfo.getName(),parameterInfo.getDefaultValue());
+  }
+  return result;
+}
