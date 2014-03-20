@@ -1,0 +1,16 @@
+{
+  final int period=getLowResourceMonitorPeriod();
+  if (period > 0) {
+    final LowResourceMonitor lowResourceMonitor=new LowResourceMonitor(server);
+    lowResourceMonitor.setMonitoredConnectors(Arrays.asList(server.getConnectors()));
+    lowResourceMonitor.setPeriod(period);
+    lowResourceMonitor.setMonitorThreads(getLowResourceMonitorThreads());
+    lowResourceMonitor.setMaxMemory(getLowResourceMonitorMaxMemory());
+    lowResourceMonitor.setMaxConnections(getLowResourceMonitorMaxConnections());
+    lowResourceMonitor.setLowResourcesIdleTimeout(getLowResourceMonitorIdleTimeout());
+    lowResourceMonitor.setStopTimeout(getLowResourceMonitorStopTimeout());
+    server.addBean(lowResourceMonitor);
+    return lowResourceMonitor;
+  }
+  return null;
+}

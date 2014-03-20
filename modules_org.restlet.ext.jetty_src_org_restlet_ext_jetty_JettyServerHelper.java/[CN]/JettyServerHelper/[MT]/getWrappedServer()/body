@@ -1,14 +1,4 @@
 {
-  if (this.wrappedServer == null) {
-    this.wrappedServer=new WrappedServer(this);
-    QueuedThreadPool btp=new QueuedThreadPool();
-    btp.setMaxIdleTimeMs(getThreadMaxIdleTimeMs());
-    btp.setMaxThreads(getMaxThreads());
-    btp.setMinThreads(getMinThreads());
-    getWrappedServer().setThreadPool(btp);
-    if (getGracefulShutdown() > 0) {
-      getWrappedServer().setGracefulShutdown(getGracefulShutdown());
-    }
-  }
+  if (this.wrappedServer == null)   this.wrappedServer=createServer();
   return this.wrappedServer;
 }

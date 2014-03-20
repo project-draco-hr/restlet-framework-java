@@ -1,9 +1,8 @@
 {
-  if (this.connector == null) {
-    this.connector=createConnector();
-    configure(this.connector);
-    getWrappedServer().addConnector(this.connector);
-  }
-  getWrappedServer().start();
-  setEphemeralPort(this.connector.getLocalPort());
+  super.start();
+  final org.eclipse.jetty.server.Server server=getWrappedServer();
+  final ServerConnector connector=(ServerConnector)server.getConnectors()[0];
+  getLogger().info("Starting the Jetty " + getProtocols() + " server on port "+ getHelped().getPort());
+  server.start();
+  setEphemeralPort(connector.getLocalPort());
 }

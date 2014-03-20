@@ -1,0 +1,14 @@
+{
+  final Series<Header> result=super.getRequestHeaders();
+  if (!this.requestHeadersAdded) {
+    for (Enumeration<String> names=getChannel().getRequest().getHeaderNames(); names.hasMoreElements(); ) {
+      final String headerName=names.nextElement();
+      for (Enumeration<String> values=getChannel().getRequest().getHeaders(headerName); values.hasMoreElements(); ) {
+        final String headerValue=values.nextElement();
+        result.add(headerName,headerValue);
+      }
+    }
+    this.requestHeadersAdded=true;
+  }
+  return result;
+}
