@@ -1,21 +1,21 @@
 {
   Representation result=null;
-  InputStream ris=getServletContext().getResourceAsStream(path);
-  if (ris != null) {
-    result=new InputRepresentation(ris,defaultMediaType);
-    String realPath=getServletContext().getRealPath(path);
-    if (realPath != null) {
-      File file=new File(realPath);
-      if (file != null) {
-        result.setModificationDate(new Date(file.lastModified()));
+  try {
+    URL resource=getServletContext().getResource(path);
+    if (resource != null) {
+      URLConnection connection=resource.openConnection();
+      result=new InputRepresentation(connection.getInputStream(),defaultMediaType);
+      result.setModificationDate(new Date(connection.getLastModified()));
+      if (timeToLive == 0) {
+        result.setExpirationDate(null);
+      }
+ else       if (timeToLive > 0) {
+        result.setExpirationDate(new Date(System.currentTimeMillis() + (1000L * timeToLive)));
       }
     }
-    if (timeToLive == 0) {
-      result.setExpirationDate(null);
-    }
- else     if (timeToLive > 0) {
-      result.setExpirationDate(new Date(System.currentTimeMillis() + (1000L * timeToLive)));
-    }
+  }
+ catch (  IOException e) {
+    Context.getCurrentLogger().log(Level.WARNING,"Error getting the WAR resource.",e);
   }
   return result;
 }
