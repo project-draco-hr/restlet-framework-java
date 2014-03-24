@@ -1,0 +1,13 @@
+{
+  super.setUp();
+  Guice.createInjector(new TestModule(),new SelfInjectingServerResourceModule());
+  this.client=new Client(Protocol.HTTP);
+  if (component == null) {
+    component=new Component();
+    component.getServers().add(Protocol.HTTP,TEST_PORT);
+    component.getDefaultHost().attachDefault(new TestApplication());
+  }
+  if (!this.component.isStarted()) {
+    this.component.start();
+  }
+}
