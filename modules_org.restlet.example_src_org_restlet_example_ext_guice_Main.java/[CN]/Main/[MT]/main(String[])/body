@@ -1,0 +1,15 @@
+{
+  if (args.length > 0) {
+    if ("explicit".startsWith(args[0])) {
+      mode=Mode.EXPLICIT_INJECTOR;
+    }
+ else     if (!"auto".startsWith(args[0])) {
+      System.out.println("Call with prefix of 'auto' (default) or 'explicit'");
+      System.exit(1);
+    }
+  }
+  Component component=new Component();
+  component.getServers().add(Protocol.HTTP,8182);
+  component.getDefaultHost().attach(new Main());
+  component.start();
+}
