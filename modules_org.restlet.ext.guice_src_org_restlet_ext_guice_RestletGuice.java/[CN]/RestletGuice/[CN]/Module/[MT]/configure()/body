@@ -1,0 +1,16 @@
+{
+  if (injector != null) {
+    throw new IllegalStateException("can't reconfigure with existing Injector");
+  }
+  if (!alreadyBound.get()) {
+    alreadyBound.set(true);
+    bind(FinderFactory.class).toInstance(this);
+    bind(Application.class).toProvider(newApplicationProvider());
+    bind(Context.class).toProvider(newContextProvider());
+    bind(Request.class).toProvider(newRequestProvider());
+    bind(Response.class).toProvider(newResponseProvider());
+  }
+  for (  com.google.inject.Module module : modules) {
+    install(module);
+  }
+}
