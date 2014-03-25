@@ -1,0 +1,11 @@
+{
+  super.setUp();
+  Injector injector=Guice.createInjector(new TestModule(),new SelfInjectingServerResourceModule());
+  this.client=new Client(Protocol.HTTP);
+  if (component == null) {
+    component=injector.getInstance(MyComponent.class);
+  }
+  if (!this.component.isStarted()) {
+    this.component.start();
+  }
+}
