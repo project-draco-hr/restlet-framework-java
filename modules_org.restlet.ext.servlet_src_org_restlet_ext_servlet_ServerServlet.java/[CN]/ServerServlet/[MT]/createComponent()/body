@@ -1,7 +1,7 @@
 {
   Client warClient=createWarClient(new Context(),getServletConfig());
   String componentClassName=getInitParameter(COMPONENT_KEY,null);
-  Class<?> targetClass=Component.class;
+  Class<?> targetClass=null;
   Component component=null;
   if (componentClassName != null) {
     try {
@@ -15,12 +15,14 @@
   try {
     log("[Restlet] ServerServlet: component class is " + componentClassName);
     if (response.getStatus().isSuccess() && response.isEntityAvailable()) {
-      @SuppressWarnings("unchecked") Constructor<? extends Component> ctor=((Class<? extends Component>)targetClass).getConstructor(Representation.class);
-      log("[Restlet] ServerServlet: configuring component from war:///WEB-INF/restlet.xml");
-      component=(Component)ctor.newInstance(response.getEntity());
-    }
+      if (targetClass != null) {
+        @SuppressWarnings("unchecked") Constructor<? extends Component> ctor=((Class<? extends Component>)targetClass).getConstructor(Representation.class);
+        log("[Restlet] ServerServlet: configuring component from war:///WEB-INF/restlet.xml");
+        component=(Component)ctor.newInstance(response.getEntity());
+      }
  else {
-      component=(Component)targetClass.newInstance();
+        component=new Component(response.getEntity());
+      }
     }
   }
  catch (  IllegalAccessException e) {
