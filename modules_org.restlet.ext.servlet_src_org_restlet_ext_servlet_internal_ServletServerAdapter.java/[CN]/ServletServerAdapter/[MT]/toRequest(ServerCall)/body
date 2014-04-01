@@ -1,0 +1,24 @@
+{
+  final HttpRequest result=super.toRequest(httpCall);
+  Form matrixForm=result.getResourceRef().getMatrixAsForm();
+  if (matrixForm.removeAll("jsessionid",true)) {
+    String lastSegment=result.getResourceRef().getLastSegment();
+    final int matrixIndex=lastSegment.indexOf(';');
+    if (matrixForm.isEmpty()) {
+      lastSegment=lastSegment.substring(0,matrixIndex);
+    }
+ else {
+      lastSegment=lastSegment.substring(0,matrixIndex + 1) + matrixForm.getMatrixString();
+    }
+    result.getResourceRef().setLastSegment(lastSegment);
+  }
+  if (httpCall instanceof ServletCall) {
+    ServletCall servletCall=(ServletCall)httpCall;
+    String attributeName;
+    for (final Enumeration<String> namesEnum=servletCall.getRequest().getAttributeNames(); namesEnum.hasMoreElements(); ) {
+      attributeName=namesEnum.nextElement();
+      result.getAttributes().put(attributeName,servletCall.getRequest().getAttribute(attributeName));
+    }
+  }
+  return result;
+}
