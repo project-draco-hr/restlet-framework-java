@@ -1,0 +1,62 @@
+{
+  if ((path != null) && path.startsWith("/")) {
+    path=path.substring(1);
+  }
+  info.setPath(path);
+  List<Method> methodsList=new ArrayList<Method>();
+  if (resource instanceof ServerResource) {
+    ((ServerResource)resource).updateAllowedMethods();
+    methodsList.addAll(((ServerResource)resource).getAllowedMethods());
+    if (resource instanceof ApisparkServerResource) {
+      info.setParameters(((ApisparkServerResource)resource).describeParameters());
+      if (applicationInfo != null) {
+        ((ApisparkServerResource)resource).describe(applicationInfo);
+      }
+    }
+  }
+ else   if (resource instanceof Directory) {
+    Directory directory=(Directory)resource;
+    methodsList.add(Method.GET);
+    if (directory.isModifiable()) {
+      methodsList.add(Method.DELETE);
+      methodsList.add(Method.PUT);
+    }
+  }
+  Method.sort(methodsList);
+  List<MethodInfo> methods=info.getMethods();
+  MethodInfo methodInfo;
+  for (  Method method : methodsList) {
+    methodInfo=new MethodInfo();
+    methods.add(methodInfo);
+    methodInfo.setName(method);
+    if (resource instanceof ServerResource) {
+      if (resource instanceof ApisparkServerResource) {
+        ApisparkServerResource wsResource=(ApisparkServerResource)resource;
+        if (wsResource.canDescribe(method)) {
+          wsResource.describeMethod(method,methodInfo);
+        }
+      }
+ else {
+        MethodInfo.describeAnnotations(methodInfo,(ServerResource)resource);
+      }
+    }
+  }
+  String title=null;
+  String textContent=null;
+  if (resource instanceof ApisparkServerResource) {
+    title=((ApisparkServerResource)resource).getName();
+    textContent=((ApisparkServerResource)resource).getDescription();
+  }
+  if ((title != null) && !"".equals(title)) {
+    DocumentationInfo doc=null;
+    if (info.getDocumentations().isEmpty()) {
+      doc=new DocumentationInfo();
+      info.getDocumentations().add(doc);
+    }
+ else {
+      info.getDocumentations().get(0);
+    }
+    doc.setTitle(title);
+    doc.setTextContent(textContent);
+  }
+}

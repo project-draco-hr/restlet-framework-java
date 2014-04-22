@@ -1,0 +1,113 @@
+{
+  Documentation result=null;
+  if (application != null) {
+    result=new Documentation();
+    result.setVersion(application.getVersion());
+    Contract contract=new Contract();
+    result.setContract(contract);
+    contract.setDescription(toString(application.getDocumentations()));
+    contract.setName(application.getName());
+    contract.setRepresentations(new ArrayList<Representation>());
+    for (    RepresentationInfo ri : application.getRepresentations()) {
+      Representation rep=new Representation();
+      rep.setDescription(toString(ri.getDocumentations()));
+      rep.setName(ri.getIdentifier());
+      Variant variant=new Variant();
+      variant.setDataType(ri.getMediaType().getName());
+      rep.setVariants(new ArrayList<Variant>());
+      rep.getVariants().add(variant);
+      rep.setProperties(new ArrayList<Property>());
+      for (int i=0; i < ri.getParameters().size(); i++) {
+        ParameterInfo pi=ri.getParameters().get(i);
+        Property property=new Property();
+        property.setName(pi.getName());
+        property.setDescription(toString(pi.getDocumentations()));
+        property.setType(pi.getType());
+        rep.getProperties().add(property);
+      }
+      contract.getRepresentations().add(rep);
+    }
+    contract.setResources(new ArrayList<Resource>());
+    for (    ResourceInfo ri : application.getResources().getResources()) {
+      Resource resource=new Resource();
+      resource.setDescription(toString(ri.getDocumentations()));
+      resource.setName(ri.getIdentifier());
+      resource.setResourcePath(ri.getPath());
+      resource.setOperations(new ArrayList<Operation>());
+      int i=0;
+      for (      MethodInfo mi : ri.getMethods()) {
+        Operation operation=new Operation();
+        operation.setDescription(toString(mi.getDocumentations()));
+        operation.setName(mi.getName().getName());
+        operation.setMethod(new Method());
+        operation.getMethod().setDescription(mi.getName().getDescription());
+        operation.getMethod().setName(mi.getName().getName());
+        operation.setHeaders(new ArrayList<Parameter>());
+        operation.setPathVariables(new ArrayList<PathVariable>());
+        operation.setQueryParameters(new ArrayList<Parameter>());
+        if (mi.getRequest() != null && mi.getRequest().getParameters() != null) {
+          for (          ParameterInfo pi : mi.getRequest().getParameters()) {
+            if (ParameterStyle.HEADER.equals(pi.getStyle())) {
+              Parameter parameter=new Parameter();
+              parameter.setAllowMultiple(pi.isRepeating());
+              parameter.setDefaultValue(pi.getDefaultValue());
+              parameter.setDescription(toString(pi.getDocumentations()));
+              parameter.setName(pi.getName());
+              parameter.setPossibleValues(new ArrayList<String>());
+              parameter.setRequired(pi.isRequired());
+              operation.getHeaders().add(parameter);
+            }
+ else             if (ParameterStyle.TEMPLATE.equals(pi.getStyle())) {
+              PathVariable pathVariable=new PathVariable();
+              pathVariable.setDescription(toString(pi.getDocumentations()));
+              pathVariable.setName(pi.getName());
+              operation.getPathVariables().add(pathVariable);
+            }
+ else             if (ParameterStyle.QUERY.equals(pi.getStyle())) {
+              Parameter parameter=new Parameter();
+              parameter.setAllowMultiple(pi.isRepeating());
+              parameter.setDefaultValue(pi.getDefaultValue());
+              parameter.setDescription(toString(pi.getDocumentations()));
+              parameter.setName(pi.getName());
+              parameter.setPossibleValues(new ArrayList<String>());
+              parameter.setRequired(pi.isRequired());
+              operation.getHeaders().add(parameter);
+            }
+          }
+        }
+        if (mi.getRequest() != null && mi.getRequest().getRepresentations() != null && !mi.getRequest().getRepresentations().isEmpty()) {
+          Body body=new Body();
+          body.setRepresentation(mi.getRequest().getRepresentations().get(0).getIdentifier());
+          operation.setInRepresentation(body);
+        }
+        if (mi.getResponses() != null && !mi.getResponses().isEmpty()) {
+          operation.setResponses(new ArrayList<Response>());
+          Body body=new Body();
+          operation.setOutRepresentation(body);
+          for (          ResponseInfo rio : mi.getResponses()) {
+            if (!rio.getStatuses().isEmpty()) {
+              Status status=rio.getStatuses().get(0);
+              Response response=new Response();
+              response.setBody(body);
+              response.setCode(status.getCode());
+              response.setDescription(toString(rio.getDocumentations()));
+              response.setMessage(status.getDescription());
+              operation.getResponses().add(response);
+            }
+          }
+        }
+        resource.getOperations().add(operation);
+      }
+      contract.getResources().add(resource);
+    }
+    java.util.List<String> protocols=new ArrayList<String>();
+    for (    ConnectorHelper<Server> helper : Engine.getInstance().getRegisteredServers()) {
+      for (      Protocol protocol : helper.getProtocols()) {
+        if (!protocols.contains(protocol.getName())) {
+          protocols.add(protocol.getName());
+        }
+      }
+    }
+  }
+  return result;
+}

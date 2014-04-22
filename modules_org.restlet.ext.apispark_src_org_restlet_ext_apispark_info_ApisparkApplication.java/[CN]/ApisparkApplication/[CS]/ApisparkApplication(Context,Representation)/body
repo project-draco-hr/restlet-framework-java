@@ -1,0 +1,29 @@
+{
+  super(context);
+  this.autoDescribing=false;
+  try {
+    ApisparkRepresentation apisparkRep=null;
+    if (apispark instanceof ApisparkRepresentation) {
+      apisparkRep=(ApisparkRepresentation)apispark;
+    }
+ else {
+    }
+    final Router root=new Router(getContext());
+    this.router=root;
+    setInboundRoot(root);
+    if (apisparkRep.getApplication() != null) {
+      if (apisparkRep.getApplication().getResources() != null) {
+        for (        final ResourceInfo resource : apisparkRep.getApplication().getResources().getResources()) {
+          attachResource(resource,null,this.router);
+        }
+        setBaseRef(apisparkRep.getApplication().getResources().getBaseRef());
+      }
+      if (!apisparkRep.getApplication().getDocumentations().isEmpty()) {
+        setName(apisparkRep.getApplication().getDocumentations().get(0).getTitle());
+      }
+    }
+  }
+ catch (  Exception e) {
+    getLogger().log(Level.WARNING,"Error during the attachment of the APISpark application",e);
+  }
+}
