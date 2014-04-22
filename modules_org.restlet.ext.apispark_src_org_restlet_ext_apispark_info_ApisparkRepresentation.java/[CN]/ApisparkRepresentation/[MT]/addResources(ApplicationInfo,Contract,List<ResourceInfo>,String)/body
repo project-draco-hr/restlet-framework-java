@@ -4,13 +4,31 @@
     resource.setDescription(toString(ri.getDocumentations()));
     resource.setName(ri.getIdentifier());
     if (basePath != null) {
-      resource.setResourcePath(basePath + ri.getPath());
+      if (basePath.endsWith("/")) {
+        if (ri.getPath().startsWith("/")) {
+          resource.setResourcePath(basePath + ri.getPath().substring(1));
+        }
+ else {
+          resource.setResourcePath(basePath + ri.getPath());
+        }
+      }
+ else {
+        if (ri.getPath().startsWith("/")) {
+          resource.setResourcePath(basePath + ri.getPath());
+        }
+ else {
+          resource.setResourcePath(basePath + "/" + ri.getPath());
+        }
+      }
     }
  else {
       resource.setResourcePath(ri.getPath());
     }
     if (!ri.getChildResources().isEmpty()) {
-      addResources(application,contract,ri.getChildResources(),ri.getPath());
+      addResources(application,contract,ri.getChildResources(),resource.getResourcePath());
+    }
+    if (ri.getMethods().isEmpty()) {
+      continue;
     }
     resource.setOperations(new ArrayList<Operation>());
     for (    MethodInfo mi : ri.getMethods()) {
