@@ -25,10 +25,19 @@
       resource.setResourcePath(ri.getPath());
     }
     if (!ri.getChildResources().isEmpty()) {
-      addResources(application,contract,ri.getChildResources(),resource.getResourcePath());
+      addResources(application,contract,ri.getChildResources(),resource.getResourcePath(),mapReps);
     }
     if (ri.getMethods().isEmpty()) {
       continue;
+    }
+    resource.setPathVariables(new ArrayList<PathVariable>());
+    for (    ParameterInfo pi : ri.getParameters()) {
+      if (ParameterStyle.TEMPLATE.equals(pi.getStyle())) {
+        PathVariable pathVariable=new PathVariable();
+        pathVariable.setDescription(toString(pi.getDocumentations()));
+        pathVariable.setName(pi.getName());
+        resource.getPathVariables().add(pathVariable);
+      }
     }
     resource.setOperations(new ArrayList<Operation>());
     for (    MethodInfo mi : ri.getMethods()) {
@@ -39,7 +48,6 @@
       operation.getMethod().setDescription(mi.getName().getDescription());
       operation.getMethod().setName(mi.getName().getName());
       operation.setHeaders(new ArrayList<Parameter>());
-      operation.setPathVariables(new ArrayList<PathVariable>());
       operation.setQueryParameters(new ArrayList<Parameter>());
       if (mi.getRequest() != null && mi.getRequest().getParameters() != null) {
         for (        ParameterInfo pi : mi.getRequest().getParameters()) {
@@ -52,12 +60,6 @@
             parameter.setPossibleValues(new ArrayList<String>());
             parameter.setRequired(pi.isRequired());
             operation.getHeaders().add(parameter);
-          }
- else           if (ParameterStyle.TEMPLATE.equals(pi.getStyle())) {
-            PathVariable pathVariable=new PathVariable();
-            pathVariable.setDescription(toString(pi.getDocumentations()));
-            pathVariable.setName(pi.getName());
-            operation.getPathVariables().add(pathVariable);
           }
  else           if (ParameterStyle.QUERY.equals(pi.getStyle())) {
             Parameter parameter=new Parameter();
@@ -72,6 +74,7 @@
         }
       }
       if (mi.getRequest() != null && mi.getRequest().getRepresentations() != null && !mi.getRequest().getRepresentations().isEmpty()) {
+        addRepresentations(mapReps,mi.getRequest().getRepresentations());
         Body body=new Body();
         body.setRepresentation(mi.getRequest().getRepresentations().get(0).getIdentifier());
         operation.setInRepresentation(body);
@@ -79,8 +82,12 @@
       if (mi.getResponses() != null && !mi.getResponses().isEmpty()) {
         operation.setResponses(new ArrayList<Response>());
         Body body=new Body();
+        if (!mi.getResponse().getRepresentations().isEmpty()) {
+          body.setRepresentation(mi.getResponse().getRepresentations().get(0).getIdentifier());
+        }
         operation.setOutRepresentation(body);
         for (        ResponseInfo rio : mi.getResponses()) {
+          addRepresentations(mapReps,rio.getRepresentations());
           if (!rio.getStatuses().isEmpty()) {
             Status status=rio.getStatuses().get(0);
             Response response=new Response();

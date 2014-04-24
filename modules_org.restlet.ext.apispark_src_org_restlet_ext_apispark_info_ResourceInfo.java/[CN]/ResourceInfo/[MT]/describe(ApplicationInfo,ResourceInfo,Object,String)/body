@@ -3,6 +3,13 @@
     path=path.substring(1);
   }
   info.setPath(path);
+  if (path != null) {
+    Template template=new Template(path);
+    for (    String variable : template.getVariableNames()) {
+      ParameterInfo param=new ParameterInfo(variable,ParameterStyle.TEMPLATE,(String)null);
+      info.getParameters().add(param);
+    }
+  }
   List<Method> methodsList=new ArrayList<Method>();
   if (resource instanceof ServerResource) {
     ((ServerResource)resource).updateAllowedMethods();

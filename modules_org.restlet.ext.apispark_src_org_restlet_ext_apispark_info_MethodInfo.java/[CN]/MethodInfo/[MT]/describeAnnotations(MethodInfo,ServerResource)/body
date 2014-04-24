@@ -6,6 +6,7 @@
       try {
         if (info.getName().equals(annotationInfo.getRestletMethod())) {
           Class<?>[] classes=annotationInfo.getJavaInputTypes();
+          Class<?> inputClass=(classes != null && classes.length > 0) ? classes[0] : null;
           List<Variant> requestVariants=annotationInfo.getRequestVariants(resource.getMetadataService(),resource.getConverterService());
           if (requestVariants != null) {
             for (            Variant variant : requestVariants) {
@@ -15,10 +16,10 @@
                   info.setRequest(new RequestInfo());
                 }
                 if (resource instanceof ApisparkServerResource) {
-                  representationInfo=((ApisparkServerResource)resource).describe(info,info.getRequest(),classes[0],variant);
+                  representationInfo=((ApisparkServerResource)resource).describe(info,info.getRequest(),inputClass,variant);
                 }
  else {
-                  representationInfo=new RepresentationInfo(variant);
+                  representationInfo=RepresentationInfo.describe(info,inputClass,variant);
                 }
                 info.getRequest().getRepresentations().add(representationInfo);
               }
@@ -35,7 +36,7 @@
                     representationInfo=((ApisparkServerResource)resource).describe(info,info.getResponse(),outputClass,variant);
                   }
  else {
-                    representationInfo=new RepresentationInfo(variant);
+                    representationInfo=RepresentationInfo.describe(info,outputClass,variant);
                   }
                   info.getResponse().getRepresentations().add(representationInfo);
                 }

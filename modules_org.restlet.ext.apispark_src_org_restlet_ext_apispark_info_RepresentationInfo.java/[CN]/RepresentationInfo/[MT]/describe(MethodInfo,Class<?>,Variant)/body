@@ -1,0 +1,21 @@
+{
+  RepresentationInfo result=null;
+  if (representationClass != null) {
+    result=new RepresentationInfo(variant);
+    result.setIdentifier(representationClass.getSimpleName());
+    if (Representation.class.isAssignableFrom(representationClass)) {
+      result.setRaw(true);
+    }
+ else {
+      for (      Field field : ReflectUtils.getAllDeclaredFields(representationClass)) {
+        if (!"serialVersionUID".equals(field.getName())) {
+          Property property=new Property();
+          property.setName(field.getName());
+          property.setType(field.getType().getSimpleName());
+          result.getProperties().add(property);
+        }
+      }
+    }
+  }
+  return result;
+}

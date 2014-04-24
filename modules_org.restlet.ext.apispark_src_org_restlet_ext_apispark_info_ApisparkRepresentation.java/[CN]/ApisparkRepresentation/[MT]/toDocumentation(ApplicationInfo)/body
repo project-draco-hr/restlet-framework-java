@@ -10,28 +10,9 @@
     result.setContract(contract);
     contract.setDescription(toString(application.getDocumentations()));
     contract.setName(application.getName());
-    contract.setRepresentations(new ArrayList<Representation>());
-    for (    RepresentationInfo ri : application.getRepresentations()) {
-      Representation rep=new Representation();
-      rep.setDescription(toString(ri.getDocumentations()));
-      rep.setName(ri.getIdentifier());
-      Variant variant=new Variant();
-      variant.setDataType(ri.getMediaType().getName());
-      rep.setVariants(new ArrayList<Variant>());
-      rep.getVariants().add(variant);
-      rep.setProperties(new ArrayList<Property>());
-      for (int i=0; i < ri.getParameters().size(); i++) {
-        ParameterInfo pi=ri.getParameters().get(i);
-        Property property=new Property();
-        property.setName(pi.getName());
-        property.setDescription(toString(pi.getDocumentations()));
-        property.setType(pi.getType());
-        rep.getProperties().add(property);
-      }
-      contract.getRepresentations().add(rep);
-    }
     contract.setResources(new ArrayList<Resource>());
-    addResources(application,contract,application.getResources().getResources(),result.getEndpoint());
+    Map<String,RepresentationInfo> mapReps=new HashMap<String,RepresentationInfo>();
+    addResources(application,contract,application.getResources().getResources(),result.getEndpoint(),mapReps);
     java.util.List<String> protocols=new ArrayList<String>();
     for (    ConnectorHelper<Server> helper : Engine.getInstance().getRegisteredServers()) {
       for (      Protocol protocol : helper.getProtocols()) {
@@ -39,6 +20,24 @@
           protocols.add(protocol.getName());
         }
       }
+    }
+    contract.setRepresentations(new ArrayList<Representation>());
+    for (    RepresentationInfo ri : application.getRepresentations()) {
+      if (!mapReps.containsKey(ri.getIdentifier())) {
+        mapReps.put(ri.getIdentifier(),ri);
+      }
+    }
+    for (    RepresentationInfo ri : mapReps.values()) {
+      Representation rep=new Representation();
+      rep.setDescription(toString(ri.getDocumentations()));
+      rep.setName(ri.getIdentifier());
+      Variant variant=new Variant();
+      variant.setDataType(ri.getMediaType().getName());
+      rep.setVariants(new ArrayList<Variant>());
+      rep.getVariants().add(variant);
+      rep.setProperties(ri.getProperties());
+      rep.setRaw(ri.isRaw());
+      contract.getRepresentations().add(rep);
     }
   }
   return result;
