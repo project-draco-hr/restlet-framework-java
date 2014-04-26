@@ -1,7 +1,7 @@
 {
-  Documentation result=null;
+  Definition result=null;
   if (application != null) {
-    result=new Documentation();
+    result=new Definition();
     result.setVersion(application.getVersion());
     if (application.getResources().getBaseRef() != null) {
       result.setEndpoint(application.getResources().getBaseRef().toString());
@@ -10,6 +10,10 @@
     result.setContract(contract);
     contract.setDescription(toString(application.getDocumentations()));
     contract.setName(application.getName());
+    if (contract.getName() == null || contract.getName().isEmpty()) {
+      contract.setName(application.getClass().getName());
+      Context.getCurrentLogger().log(Level.WARNING,"Please provide a name to your application, used " + contract.getName() + " by default.");
+    }
     contract.setResources(new ArrayList<Resource>());
     Map<String,RepresentationInfo> mapReps=new HashMap<String,RepresentationInfo>();
     addResources(application,contract,application.getResources().getResources(),result.getEndpoint(),mapReps);
