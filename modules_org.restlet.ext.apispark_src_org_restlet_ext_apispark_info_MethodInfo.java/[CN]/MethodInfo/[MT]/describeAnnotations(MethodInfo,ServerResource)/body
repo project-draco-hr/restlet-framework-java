@@ -11,16 +11,10 @@
           if (requestVariants != null) {
             for (            Variant variant : requestVariants) {
               if ((variant.getMediaType() != null) && ((info.getRequest() == null) || !info.getRequest().getRepresentations().contains(variant))) {
-                RepresentationInfo representationInfo=null;
                 if (info.getRequest() == null) {
                   info.setRequest(new RequestInfo());
                 }
-                if (resource instanceof ApisparkServerResource) {
-                  representationInfo=((ApisparkServerResource)resource).describe(info,info.getRequest(),inputClass,variant);
-                }
- else {
-                  representationInfo=RepresentationInfo.describe(info,inputClass,variant);
-                }
+                RepresentationInfo representationInfo=RepresentationInfo.describe(info,inputClass,variant);
                 info.getRequest().getRepresentations().add(representationInfo);
               }
             }
@@ -31,13 +25,7 @@
             if (responseVariants != null) {
               for (              Variant variant : responseVariants) {
                 if ((variant.getMediaType() != null) && !info.getResponse().getRepresentations().contains(variant)) {
-                  RepresentationInfo representationInfo=null;
-                  if (resource instanceof ApisparkServerResource) {
-                    representationInfo=((ApisparkServerResource)resource).describe(info,info.getResponse(),outputClass,variant);
-                  }
- else {
-                    representationInfo=RepresentationInfo.describe(info,outputClass,variant);
-                  }
+                  RepresentationInfo representationInfo=RepresentationInfo.describe(info,outputClass,variant);
                   info.getResponse().getRepresentations().add(representationInfo);
                 }
               }

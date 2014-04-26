@@ -14,12 +14,6 @@
   if (resource instanceof ServerResource) {
     ((ServerResource)resource).updateAllowedMethods();
     methodsList.addAll(((ServerResource)resource).getAllowedMethods());
-    if (resource instanceof ApisparkServerResource) {
-      info.setParameters(((ApisparkServerResource)resource).describeParameters());
-      if (applicationInfo != null) {
-        ((ApisparkServerResource)resource).describe(applicationInfo);
-      }
-    }
   }
  else   if (resource instanceof Directory) {
     Directory directory=(Directory)resource;
@@ -37,24 +31,12 @@
     methods.add(methodInfo);
     methodInfo.setName(method);
     if (resource instanceof ServerResource) {
-      if (resource instanceof ApisparkServerResource) {
-        ApisparkServerResource wsResource=(ApisparkServerResource)resource;
-        if (wsResource.canDescribe(method)) {
-          wsResource.describeMethod(method,methodInfo);
-        }
-      }
- else {
-        MethodInfo.describeAnnotations(methodInfo,(ServerResource)resource);
-      }
+      MethodInfo.describeAnnotations(methodInfo,(ServerResource)resource);
     }
   }
   String title=null;
   String textContent=null;
-  if (resource instanceof ApisparkServerResource) {
-    title=((ApisparkServerResource)resource).getName();
-    textContent=((ApisparkServerResource)resource).getDescription();
-  }
-  if ((title != null) && !"".equals(title)) {
+  if ((title != null) && !title.isEmpty()) {
     DocumentationInfo doc=null;
     if (info.getDocumentations().isEmpty()) {
       doc=new DocumentationInfo();

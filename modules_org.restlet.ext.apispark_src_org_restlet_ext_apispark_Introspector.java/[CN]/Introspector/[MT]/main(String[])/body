@@ -1,0 +1,48 @@
+{
+  String ulogin=null;
+  String upwd=null;
+  String serviceUrl=null;
+  String application=null;
+  for (int i=0; i < (args.length); i++) {
+    if ("-h".equals(args[i])) {
+      printHelp();
+      System.exit(0);
+    }
+ else     if ("-u".equals(args[i])) {
+      ulogin=getParameter(args,++i);
+    }
+ else     if ("-p".equals(args[i])) {
+      upwd=getParameter(args,++i);
+    }
+ else     if ("-s".equals(args[i])) {
+      serviceUrl=getParameter(args,++i);
+    }
+ else {
+      application=args[i];
+    }
+  }
+  if (isEmpty(serviceUrl)) {
+    serviceUrl="https://apispark.com/definitions";
+  }
+  if (isEmpty(ulogin) || isEmpty(upwd) || isEmpty(application)) {
+    printHelp();
+    System.exit(1);
+  }
+  Class<?> clazz=null;
+  try {
+    clazz=Class.forName(application);
+    if (Application.class.isAssignableFrom(clazz)) {
+      Application app=(Application)clazz.getConstructor().newInstance();
+      Introspector i=new Introspector(app);
+      ClientResource cr=new ClientResource(serviceUrl);
+      cr.setChallengeResponse(ChallengeScheme.HTTP_BASIC,ulogin,upwd);
+      cr.post(i.getDefinition(),MediaType.APPLICATION_JSON);
+      System.out.println(cr.getLocationRef());
+    }
+  }
+ catch (  Exception e) {
+  }
+  if (clazz == null) {
+    System.out.println("Please provide a valid application class name.");
+  }
+}

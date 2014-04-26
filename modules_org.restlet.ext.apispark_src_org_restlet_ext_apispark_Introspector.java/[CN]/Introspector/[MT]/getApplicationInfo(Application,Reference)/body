@@ -1,0 +1,17 @@
+{
+  ApplicationInfo applicationInfo=new ApplicationInfo();
+  if ((application.getName() != null) && !application.getName().isEmpty()) {
+    DocumentationInfo doc=null;
+    if (applicationInfo.getDocumentations().isEmpty()) {
+      doc=new DocumentationInfo();
+      applicationInfo.getDocumentations().add(doc);
+    }
+ else {
+      doc=applicationInfo.getDocumentations().get(0);
+    }
+    doc.setTitle(application.getName());
+  }
+  applicationInfo.getResources().setBaseRef(baseRef);
+  applicationInfo.getResources().setResources(getResourceInfos(applicationInfo,getNextRouter(application.getInboundRoot())));
+  return applicationInfo;
+}
