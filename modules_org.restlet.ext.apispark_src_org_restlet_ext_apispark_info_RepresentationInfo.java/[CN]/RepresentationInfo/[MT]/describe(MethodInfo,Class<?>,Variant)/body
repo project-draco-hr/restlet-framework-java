@@ -3,7 +3,7 @@
   if (representationClass != null) {
     result=new RepresentationInfo(variant);
     result.setIdentifier(representationClass.getSimpleName());
-    if (Representation.class.isAssignableFrom(representationClass)) {
+    if (Representation.class.isAssignableFrom(representationClass) || (representationClass.getPackage().getName().startsWith("java.") || representationClass.getPackage().getName().startsWith("javax."))) {
       result.setRaw(true);
     }
  else {
@@ -12,6 +12,13 @@
           Property property=new Property();
           property.setName(field.getName());
           property.setType(field.getType().getSimpleName());
+          property.setMinOccurs(0);
+          if (ReflectUtils.isListType(field.getType())) {
+            property.setMaxOccurs(-1);
+          }
+ else {
+            property.setMaxOccurs(1);
+          }
           result.getProperties().add(property);
         }
       }
