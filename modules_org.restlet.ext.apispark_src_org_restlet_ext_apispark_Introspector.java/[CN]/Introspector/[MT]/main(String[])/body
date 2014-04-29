@@ -2,7 +2,10 @@
   String ulogin=null;
   String upwd=null;
   String serviceUrl=null;
-  String application=null;
+  String appName=null;
+  String compName=null;
+  String definitionUrl=null;
+  LOGGER.fine("Get parameters");
   for (int i=0; i < (args.length); i++) {
     if ("-h".equals(args[i])) {
       printHelp();
@@ -17,33 +20,53 @@
  else     if ("-s".equals(args[i])) {
       serviceUrl=getParameter(args,++i);
     }
+ else     if ("-c".equals(args[i])) {
+      compName=getParameter(args,++i);
+    }
+ else     if ("-d".equals(args[i])) {
+      definitionUrl=getParameter(args,++i);
+    }
  else {
-      application=args[i];
+      appName=args[i];
     }
   }
+  LOGGER.fine("Check parameters");
   if (isEmpty(serviceUrl)) {
     serviceUrl="https://apispark.com/definitions";
   }
-  if (isEmpty(ulogin) || isEmpty(upwd) || isEmpty(application)) {
+  if (isEmpty(ulogin) || isEmpty(upwd) || isEmpty(appName)) {
     printHelp();
     System.exit(1);
   }
-  Class<?> clazz=null;
-  try {
-    clazz=Class.forName(application);
-    if (Application.class.isAssignableFrom(clazz)) {
-      Application app=(Application)clazz.getConstructor().newInstance();
-      Introspector i=new Introspector(app);
+  Application application=getApplication(appName);
+  Component component=getComponent(compName);
+  if (application != null) {
+    LOGGER.fine("Instantiate introspector");
+    Introspector i=new Introspector(component,application);
+    try {
       ClientResource cr=new ClientResource(serviceUrl);
       cr.setChallengeResponse(ChallengeScheme.HTTP_BASIC,ulogin,upwd);
-      cr.post(i.getDefinition(),MediaType.APPLICATION_JSON);
+      LOGGER.fine("Generate documentation");
+      Definition definition=i.getDefinition();
+      LOGGER.fine("Send documentation");
+      cr.post(definition,MediaType.APPLICATION_JSON);
+      LOGGER.fine("Display result");
       System.out.println(cr.getLocationRef());
     }
+ catch (    ResourceException e) {
+      if (e.getStatus().isConnectorError()) {
+        LOGGER.severe("Cannot reach the remote service, could you check your network connection?");
+        LOGGER.severe("Could you check that the following service is up?" + serviceUrl);
+      }
+ else       if (e.getStatus().isClientError()) {
+        LOGGER.severe("Check that you provide valid credentials.");
+      }
+ else       if (e.getStatus().isServerError()) {
+        LOGGER.severe("The server side encounters some issues, please try later.");
+      }
+    }
   }
- catch (  Exception e) {
-    e.printStackTrace();
-  }
-  if (clazz == null) {
-    System.out.println("Please provide a valid application class name.");
+ else {
+    LOGGER.severe("Please provide a valid application class name.");
   }
 }
