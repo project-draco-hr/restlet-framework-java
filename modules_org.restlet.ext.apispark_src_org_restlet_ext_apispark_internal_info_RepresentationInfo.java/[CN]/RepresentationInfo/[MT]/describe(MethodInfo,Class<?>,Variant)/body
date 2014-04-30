@@ -2,16 +2,25 @@
   RepresentationInfo result=null;
   if (representationClass != null) {
     result=new RepresentationInfo(variant);
-    result.setIdentifier(representationClass.getSimpleName());
-    if (Representation.class.isAssignableFrom(representationClass) || (representationClass.getPackage().getName().startsWith("java.") || representationClass.getPackage().getName().startsWith("javax."))) {
+    result.setIdentifier(representationClass.getName());
+    result.setName(representationClass.getSimpleName());
+    if (Representation.class.isAssignableFrom(representationClass) || isJdkClass(representationClass)) {
       result.setRaw(true);
     }
  else {
+      if (representationClass.getSuperclass() != null && !isJdkClass(representationClass.getSuperclass())) {
+        result.setParentType(representationClass.getSuperclass().getName());
+      }
       for (      Field field : ReflectUtils.getAllDeclaredFields(representationClass)) {
         if (!"serialVersionUID".equals(field.getName())) {
           Property property=new Property();
           property.setName(field.getName());
-          property.setType(field.getType().getSimpleName());
+          if (isJdkClass(field.getType())) {
+            property.setType(field.getType().getSimpleName());
+          }
+ else {
+            property.setType(field.getType().getName());
+          }
           property.setMinOccurs(0);
           if (ReflectUtils.isListType(field.getType())) {
             property.setMaxOccurs(-1);
