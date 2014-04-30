@@ -61,7 +61,18 @@
         cr.put(definition,MediaType.APPLICATION_JSON);
       }
       LOGGER.fine("Display result");
-      System.out.println(cr.getLocationRef());
+      System.out.println("Process achevied.");
+      if (cr.getLocationRef() != null) {
+        System.out.println(cr.getLocationRef());
+      }
+      if (cr.getResponseEntity() != null && cr.getResponseEntity().isAvailable()) {
+        try {
+          cr.getResponseEntity().write(System.out);
+        }
+ catch (        IOException e) {
+          LOGGER.warning("Request successfully achieved by the server, but it's response cannot be printed");
+        }
+      }
     }
  catch (    ResourceException e) {
       if (e.getStatus().isConnectorError()) {
