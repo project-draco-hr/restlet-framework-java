@@ -4,7 +4,7 @@
   String serviceUrl=null;
   String appName=null;
   String compName=null;
-  String definitionUrl=null;
+  String definitionId=null;
   LOGGER.fine("Get parameters");
   for (int i=0; i < (args.length); i++) {
     if ("-h".equals(args[i])) {
@@ -24,7 +24,7 @@
       compName=getParameter(args,++i);
     }
  else     if ("-d".equals(args[i])) {
-      definitionUrl=getParameter(args,++i);
+      definitionId=getParameter(args,++i);
     }
  else {
       appName=args[i];
@@ -51,8 +51,15 @@
       cr.setChallengeResponse(ChallengeScheme.HTTP_BASIC,ulogin,upwd);
       LOGGER.fine("Generate documentation");
       Definition definition=i.getDefinition();
-      LOGGER.fine("Send documentation");
-      cr.post(definition,MediaType.APPLICATION_JSON);
+      if (definitionId == null) {
+        LOGGER.fine("Create a new documentation");
+        cr.post(definition,MediaType.APPLICATION_JSON);
+      }
+ else {
+        cr.addSegment(definitionId);
+        LOGGER.fine("Update the documentation of " + cr.getReference().toString());
+        cr.put(definition,MediaType.APPLICATION_JSON);
+      }
       LOGGER.fine("Display result");
       System.out.println(cr.getLocationRef());
     }

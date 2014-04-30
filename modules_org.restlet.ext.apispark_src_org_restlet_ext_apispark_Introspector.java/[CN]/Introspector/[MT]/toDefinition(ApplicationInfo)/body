@@ -32,6 +32,21 @@
       }
     }
     for (    RepresentationInfo ri : mapReps.values()) {
+      String parentType=ri.getParentType();
+      while (parentType != null) {
+        if (!mapReps.containsKey(parentType)) {
+          try {
+            RepresentationInfo r=RepresentationInfo.introspect(Class.forName(ri.getParentType()),null);
+            mapReps.put(r.getIdentifier(),r);
+          }
+ catch (          ClassNotFoundException e) {
+            LOGGER.warning("Cannot locate class " + ri.getParentType() + ", referenced by class "+ ri.getIdentifier());
+          }
+        }
+        parentType=mapReps.get(parentType).getParentType();
+      }
+    }
+    for (    RepresentationInfo ri : mapReps.values()) {
       Representation rep=new Representation();
       rep.setDescription(toString(ri.getDocumentations()));
       rep.setName(ri.getName());
