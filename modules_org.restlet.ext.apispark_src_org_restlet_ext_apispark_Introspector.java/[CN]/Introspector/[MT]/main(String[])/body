@@ -32,7 +32,10 @@
   }
   LOGGER.fine("Check parameters");
   if (isEmpty(serviceUrl)) {
-    serviceUrl="https://apispark.com/definitions";
+    serviceUrl="https://apispark.com/";
+  }
+  if (!serviceUrl.endsWith("/")) {
+    serviceUrl+="/";
   }
   if (isEmpty(ulogin) || isEmpty(upwd) || isEmpty(appName)) {
     printHelp();
@@ -44,7 +47,7 @@
     LOGGER.fine("Instantiate introspector");
     Introspector i=new Introspector(component,application);
     try {
-      ClientResource cr=new ClientResource(serviceUrl);
+      ClientResource cr=new ClientResource(serviceUrl + "definitions");
       cr.setChallengeResponse(ChallengeScheme.HTTP_BASIC,ulogin,upwd);
       LOGGER.fine("Generate documentation");
       Definition definition=i.getDefinition();
@@ -56,7 +59,7 @@
  catch (    ResourceException e) {
       if (e.getStatus().isConnectorError()) {
         LOGGER.severe("Cannot reach the remote service, could you check your network connection?");
-        LOGGER.severe("Could you check that the following service is up?" + serviceUrl);
+        LOGGER.severe("Could you check that the following service is up? " + serviceUrl);
       }
  else       if (e.getStatus().isClientError()) {
         LOGGER.severe("Check that you provide valid credentials.");
