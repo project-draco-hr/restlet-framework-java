@@ -1,0 +1,17 @@
+{
+  for (  Method method : jaxRsClass.getMethods()) {
+    processMethod(method,GET.class);
+    processMethod(method,PUT.class);
+    processMethod(method,POST.class);
+    processMethod(method,DELETE.class);
+    processMethod(method,HEAD.class);
+  }
+  for (  Entry<String,DocumentationEndPoint> entry : apis.entrySet()) {
+    DocumentationEndPoint ep=entry.getValue();
+    documentation.addApi(ep);
+  }
+  for (  Entry<String,DocumentationSchema> entry : models.entrySet()) {
+    documentation.addModel(entry.getKey(),entry.getValue());
+  }
+  return documentation;
+}
