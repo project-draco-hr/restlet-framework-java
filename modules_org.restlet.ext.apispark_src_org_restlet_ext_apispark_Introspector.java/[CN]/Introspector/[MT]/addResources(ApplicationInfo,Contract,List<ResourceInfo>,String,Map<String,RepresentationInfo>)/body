@@ -1,6 +1,5 @@
 {
   for (  ResourceInfo ri : resources) {
-    LOGGER.info("Resource " + ri.getIdentifier() + " added.");
     Resource resource=new Resource();
     resource.setDescription(toString(ri.getDocumentations()));
     resource.setName(ri.getIdentifier());
@@ -28,7 +27,9 @@
     if (!ri.getChildResources().isEmpty()) {
       addResources(application,contract,ri.getChildResources(),resource.getResourcePath(),mapReps);
     }
+    LOGGER.info("Resource " + ri.getPath() + " added.");
     if (ri.getMethods().isEmpty()) {
+      LOGGER.warning("Resource " + ri.getIdentifier() + " has no methods.");
       continue;
     }
     resource.setPathVariables(new ArrayList<PathVariable>());
