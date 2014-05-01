@@ -62,16 +62,17 @@
       }
       LOGGER.fine("Display result");
       System.out.println("Process successfully achieved.");
-      if (cr.getLocationRef() != null) {
-        System.out.println(cr.getLocationRef());
-      }
       if (cr.getResponseEntity() != null && cr.getResponseEntity().isAvailable()) {
         try {
           cr.getResponseEntity().write(System.out);
+          System.out.println();
         }
  catch (        IOException e) {
           LOGGER.warning("Request successfully achieved by the server, but it's response cannot be printed");
         }
+      }
+      if (cr.getLocationRef() != null) {
+        System.out.println("Your API documentation is accessible at this URL: " + cr.getLocationRef());
       }
     }
  catch (    ResourceException e) {
