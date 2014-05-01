@@ -1,0 +1,17 @@
+{
+  final Request request=new Request();
+  final Response response=new Response(request);
+  request.setResourceRef(resourceRef);
+  request.setOriginalRef(request.getResourceRef().getTargetRef());
+  request.getResourceRef().setBaseRef(baseRef);
+  request.setMethod(method);
+  if (acceptedMetadata != null) {
+    request.getClientInfo().accept(acceptedMetadata);
+  }
+  if (Method.PUT.equals(method)) {
+    request.setEntity(entity);
+  }
+  application.handle(request,response);
+  Logger.getLogger(DirectoryTestCase.class.getName()).info("[test, status]=[" + testCode + ", "+ response.getStatus()+ "]");
+  return response;
+}
