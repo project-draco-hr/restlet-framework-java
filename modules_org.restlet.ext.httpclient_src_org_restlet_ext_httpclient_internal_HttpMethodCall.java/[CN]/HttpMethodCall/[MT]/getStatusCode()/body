@@ -1,3 +1,6 @@
 {
-  return (getHttpResponse() == null) ? null : getHttpResponse().getStatusLine().getStatusCode();
+  if (getHttpResponse() != null && getHttpResponse().getStatusLine() != null) {
+    return getHttpResponse().getStatusLine().getStatusCode();
+  }
+  return Status.CONNECTOR_ERROR_COMMUNICATION.getCode();
 }
