@@ -19,6 +19,14 @@
               }
             }
           }
+          if (annotationInfo.getQuery() != null) {
+            Form form=new Form(annotationInfo.getQuery());
+            for (            Parameter parameter : form) {
+              ParameterInfo pi=new ParameterInfo(parameter.getName(),true,null,ParameterStyle.QUERY,"Value: " + parameter.getValue());
+              pi.setDefaultValue(parameter.getValue());
+              info.getParameters().add(pi);
+            }
+          }
           Class<?> outputClass=annotationInfo.getJavaOutputType();
           if (outputClass != null) {
             List<Variant> responseVariants=annotationInfo.getResponseVariants(resource.getMetadataService(),resource.getConverterService());
