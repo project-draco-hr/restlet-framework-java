@@ -10,7 +10,7 @@
  else {
     for (Iterator<Connection<Client>> iterator=getConnections().iterator(); !foundConn && iterator.hasNext(); ) {
       Connection<Client> currConn=iterator.next();
-      if (socketAddress.equals(currConn.getSocketAddress()) && (request.isConfidential() == currConn.isConfidential())) {
+      if (socketAddress.equals(currConn.getSocketAddress())) {
         if (currConn.isAvailable()) {
           result=currConn;
           foundConn=true;
@@ -48,7 +48,7 @@
       if (getLogger().isLoggable(Level.FINE)) {
         getLogger().log(Level.FINE,"Creating a new client connection to: " + socketAddress);
       }
-      result=checkout(request.isConfidential(),createSocketChannel(socketAddress),getController(),socketAddress);
+      result=checkout(createSocketChannel(request.isConfidential(),socketAddress),getController(),socketAddress);
       getConnections().add(result);
     }
   }
