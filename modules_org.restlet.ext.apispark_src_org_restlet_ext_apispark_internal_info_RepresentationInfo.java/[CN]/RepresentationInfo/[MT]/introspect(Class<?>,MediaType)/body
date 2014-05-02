@@ -1,20 +1,20 @@
 {
   RepresentationInfo result=new RepresentationInfo(mediaType);
-  result.setType(representationClass);
-  result.setIdentifier(representationClass.getName());
-  result.setName(representationClass.getSimpleName());
-  if (Representation.class.isAssignableFrom(representationClass) || ReflectUtils.isJdkClass(representationClass)) {
+  result.setType(clazz);
+  result.setIdentifier(clazz.getName());
+  result.setName(clazz.getSimpleName());
+  if (Representation.class.isAssignableFrom(clazz) || ReflectUtils.isJdkClass(clazz)) {
     result.setRaw(true);
   }
  else {
-    if (representationClass.getSuperclass() != null && !ReflectUtils.isJdkClass(representationClass.getSuperclass())) {
-      result.setParentType(representationClass.getSuperclass());
+    if (clazz.getSuperclass() != null && !ReflectUtils.isJdkClass(clazz.getSuperclass())) {
+      result.setParentType(clazz.getSuperclass());
     }
-    for (    Field field : ReflectUtils.getAllDeclaredFields(representationClass)) {
+    for (    Field field : ReflectUtils.getAllDeclaredFields(clazz)) {
       if (!"serialVersionUID".equals(field.getName())) {
         PropertyInfo property=new PropertyInfo();
         property.setName(field.getName());
-        property.setType(field.getType());
+        property.setType(ReflectUtils.getSimpleClass(field));
         property.setMinOccurs(0);
         if (ReflectUtils.isListType(field.getType())) {
           property.setMaxOccurs(-1);
