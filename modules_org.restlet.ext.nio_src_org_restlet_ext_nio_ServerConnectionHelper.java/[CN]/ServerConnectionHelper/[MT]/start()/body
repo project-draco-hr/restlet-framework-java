@@ -1,7 +1,9 @@
 {
   this.serverSocketChannel=createServerSocketChannel();
   setEphemeralPort(this.serverSocketChannel.socket());
-  getLogger().info("Starting the internal " + getProtocols() + " server on port "+ getHelped().getActualPort());
+  getLogger().info("Starting the Restlet NIO " + getProtocols() + " server on port "+ getHelped().getActualPort());
+  SslContextFactory factory=SslUtils.getSslContextFactory(this);
+  setSslContext(factory.createSslContext());
   super.start();
   try {
     getController().await();
