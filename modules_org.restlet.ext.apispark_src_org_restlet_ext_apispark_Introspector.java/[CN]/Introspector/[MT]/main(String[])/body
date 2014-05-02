@@ -1,0 +1,94 @@
+{
+  String ulogin=null;
+  String upwd=null;
+  String serviceUrl=null;
+  String appName=null;
+  String compName=null;
+  String definitionId=null;
+  LOGGER.fine("Get parameters");
+  for (int i=0; i < (args.length); i++) {
+    if ("-h".equals(args[i])) {
+      printHelp();
+      System.exit(0);
+    }
+ else     if ("-u".equals(args[i])) {
+      ulogin=getParameter(args,++i);
+    }
+ else     if ("-p".equals(args[i])) {
+      upwd=getParameter(args,++i);
+    }
+ else     if ("-s".equals(args[i])) {
+      serviceUrl=getParameter(args,++i);
+    }
+ else     if ("-c".equals(args[i])) {
+      compName=getParameter(args,++i);
+    }
+ else     if ("-d".equals(args[i])) {
+      definitionId=getParameter(args,++i);
+    }
+ else {
+      appName=args[i];
+    }
+  }
+  LOGGER.fine("Check parameters");
+  if (isEmpty(serviceUrl)) {
+    serviceUrl="https://apispark.com/";
+  }
+  if (!serviceUrl.endsWith("/")) {
+    serviceUrl+="/";
+  }
+  if (isEmpty(ulogin) || isEmpty(upwd) || isEmpty(appName)) {
+    printHelp();
+    System.exit(1);
+  }
+  Application application=getApplication(appName);
+  Component component=getComponent(compName);
+  if (application != null) {
+    LOGGER.fine("Instantiate introspector");
+    Introspector i=new Introspector(component,application);
+    try {
+      ClientResource cr=new ClientResource(serviceUrl + "definitions");
+      cr.setChallengeResponse(ChallengeScheme.HTTP_BASIC,ulogin,upwd);
+      LOGGER.fine("Generate documentation");
+      Definition definition=i.getDefinition();
+      if (definitionId == null) {
+        LOGGER.fine("Create a new documentation");
+        cr.post(definition,MediaType.APPLICATION_JSON);
+      }
+ else {
+        cr.addSegment(definitionId);
+        LOGGER.fine("Update the documentation of " + cr.getReference().toString());
+        cr.put(definition,MediaType.APPLICATION_JSON);
+      }
+      LOGGER.fine("Display result");
+      System.out.println("Process successfully achieved.");
+      if (cr.getResponseEntity() != null && cr.getResponseEntity().isAvailable()) {
+        try {
+          cr.getResponseEntity().write(System.out);
+          System.out.println();
+        }
+ catch (        IOException e) {
+          LOGGER.warning("Request successfully achieved by the server, but it's response cannot be printed");
+        }
+      }
+      if (cr.getLocationRef() != null) {
+        System.out.println("Your Web API documentation is accessible at this URL: " + cr.getLocationRef());
+      }
+    }
+ catch (    ResourceException e) {
+      if (e.getStatus().isConnectorError()) {
+        LOGGER.severe("Cannot reach the remote service, could you check your network connection?");
+        LOGGER.severe("Could you check that the following service is up? " + serviceUrl);
+      }
+ else       if (e.getStatus().isClientError()) {
+        LOGGER.severe("Check that you provide valid credentials, or valid service url.");
+      }
+ else       if (e.getStatus().isServerError()) {
+        LOGGER.severe("The server side encounters some issues, please try later.");
+      }
+    }
+  }
+ else {
+    LOGGER.severe("Please provide a valid application class name.");
+  }
+}

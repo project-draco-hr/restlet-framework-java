@@ -1,0 +1,30 @@
+{
+  RepresentationInfo result=new RepresentationInfo(mediaType);
+  result.setType(representationClass);
+  result.setIdentifier(representationClass.getName());
+  result.setName(representationClass.getSimpleName());
+  if (Representation.class.isAssignableFrom(representationClass) || ReflectUtils.isJdkClass(representationClass)) {
+    result.setRaw(true);
+  }
+ else {
+    if (representationClass.getSuperclass() != null && !ReflectUtils.isJdkClass(representationClass.getSuperclass())) {
+      result.setParentType(representationClass.getSuperclass());
+    }
+    for (    Field field : ReflectUtils.getAllDeclaredFields(representationClass)) {
+      if (!"serialVersionUID".equals(field.getName())) {
+        PropertyInfo property=new PropertyInfo();
+        property.setName(field.getName());
+        property.setType(field.getType());
+        property.setMinOccurs(0);
+        if (ReflectUtils.isListType(field.getType())) {
+          property.setMaxOccurs(-1);
+        }
+ else {
+          property.setMaxOccurs(1);
+        }
+        result.getProperties().add(property);
+      }
+    }
+  }
+  return result;
+}

@@ -1,0 +1,37 @@
+{
+  if ((path != null) && path.startsWith("/")) {
+    path=path.substring(1);
+  }
+  info.setPath(path);
+  if (path != null) {
+    Template template=new Template(path);
+    for (    String variable : template.getVariableNames()) {
+      ParameterInfo param=new ParameterInfo(variable,ParameterStyle.TEMPLATE,(String)null);
+      info.getParameters().add(param);
+    }
+  }
+  List<Method> methodsList=new ArrayList<Method>();
+  if (resource instanceof ServerResource) {
+    ((ServerResource)resource).updateAllowedMethods();
+    methodsList.addAll(((ServerResource)resource).getAllowedMethods());
+  }
+ else   if (resource instanceof Directory) {
+    Directory directory=(Directory)resource;
+    methodsList.add(Method.GET);
+    if (directory.isModifiable()) {
+      methodsList.add(Method.DELETE);
+      methodsList.add(Method.PUT);
+    }
+  }
+  Method.sort(methodsList);
+  List<MethodInfo> methods=info.getMethods();
+  MethodInfo methodInfo;
+  for (  Method method : methodsList) {
+    methodInfo=new MethodInfo();
+    methods.add(methodInfo);
+    methodInfo.setMethod(method);
+    if (resource instanceof ServerResource) {
+      MethodInfo.describeAnnotations(methodInfo,(ServerResource)resource);
+    }
+  }
+}

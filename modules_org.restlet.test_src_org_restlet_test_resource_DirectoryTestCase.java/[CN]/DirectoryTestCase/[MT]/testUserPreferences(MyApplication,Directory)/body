@@ -1,0 +1,26 @@
+{
+  directory.setModifiable(true);
+  final File testDirectory=new File(this.testDir,"nego");
+  testDirectory.mkdir();
+  final String testDirectoryUrl=this.webSiteURL.concat(testDirectory.getName());
+  final String testFileUrl=testDirectoryUrl.concat("/test");
+  final String testTxtFileUrl=testDirectoryUrl.concat("/test.txt");
+  final String testFrTxtFileUrl=testDirectoryUrl.concat("/test.fr.txt");
+  final String testEsTxtFileUrl=testDirectoryUrl.concat("/test.es.txt");
+  Response response=handle(application,webSiteURL,testFrTxtFileUrl,Method.PUT,new StringRepresentation("fr"),"nego-1");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_CREATED));
+  response=handle(application,webSiteURL,testEsTxtFileUrl,Method.PUT,new StringRepresentation("es"),"nego-1");
+  assertTrue(response.getStatus().equals(Status.SUCCESS_CREATED));
+  response=handle(application,webSiteURL,testFileUrl,Method.GET,null,"nego-2",Language.SPANISH);
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  assertEquals("es",response.getEntityAsText());
+  response=handle(application,webSiteURL,testFileUrl,Method.GET,null,"nego-2",Language.FRENCH);
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  assertEquals("fr",response.getEntityAsText());
+  response=handle(application,webSiteURL,testTxtFileUrl,Method.GET,null,"nego-3",Language.SPANISH);
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  assertEquals("es",response.getEntityAsText());
+  response=handle(application,webSiteURL,testTxtFileUrl,Method.GET,null,"nego-3",Language.FRENCH);
+  assertTrue(response.getStatus().equals(Status.SUCCESS_OK));
+  assertEquals("fr",response.getEntityAsText());
+}
