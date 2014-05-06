@@ -3,26 +3,33 @@
     Resource resource=new Resource();
     resource.setDescription(toString(ri.getDocumentations()));
     resource.setName(ri.getIdentifier());
-    if (basePath != null) {
-      if (basePath.endsWith("/")) {
-        if (ri.getPath().startsWith("/")) {
-          resource.setResourcePath(basePath + ri.getPath().substring(1));
+    if (ri.getPath() != null) {
+      if (basePath != null) {
+        if (basePath.endsWith("/")) {
+          if (ri.getPath().startsWith("/")) {
+            resource.setResourcePath(basePath + ri.getPath().substring(1));
+          }
+ else {
+            resource.setResourcePath(basePath + ri.getPath());
+          }
         }
  else {
-          resource.setResourcePath(basePath + ri.getPath());
+          if (ri.getPath().startsWith("/")) {
+            resource.setResourcePath(basePath + ri.getPath());
+          }
+ else {
+            resource.setResourcePath(basePath + "/" + ri.getPath());
+          }
         }
       }
  else {
         if (ri.getPath().startsWith("/")) {
-          resource.setResourcePath(basePath + ri.getPath());
+          resource.setResourcePath(ri.getPath());
         }
  else {
-          resource.setResourcePath(basePath + "/" + ri.getPath());
+          resource.setResourcePath("/" + ri.getPath());
         }
       }
-    }
- else {
-      resource.setResourcePath(ri.getPath());
     }
     if (!ri.getChildResources().isEmpty()) {
       addResources(application,contract,ri.getChildResources(),resource.getResourcePath(),mapReps);
