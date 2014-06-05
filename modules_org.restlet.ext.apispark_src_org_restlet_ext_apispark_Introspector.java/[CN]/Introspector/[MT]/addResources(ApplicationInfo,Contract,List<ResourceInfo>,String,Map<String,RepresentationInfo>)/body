@@ -55,6 +55,21 @@
       operation.setDescription(toString(mi.getDocumentations()));
       operation.setName(mi.getMethod().getName());
       operation.setMethod(mi.getMethod().getName());
+      String mediaType;
+      if (mi.getRequest() != null && mi.getRequest().getRepresentations() != null) {
+        List<RepresentationInfo> consumed=mi.getRequest().getRepresentations();
+        for (        RepresentationInfo reprInfo : consumed) {
+          mediaType=reprInfo.getMediaType().getName();
+          operation.getConsumes().add(mediaType);
+        }
+      }
+      if (mi.getResponse() != null && mi.getResponse().getRepresentations() != null) {
+        List<RepresentationInfo> produced=mi.getResponse().getRepresentations();
+        for (        RepresentationInfo reprInfo : produced) {
+          mediaType=reprInfo.getMediaType().getName();
+          operation.getProduces().add(mediaType);
+        }
+      }
       operation.setHeaders(new ArrayList<Header>());
       operation.setQueryParameters(new ArrayList<QueryParameter>());
       if (mi.getRequest() != null) {
