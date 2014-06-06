@@ -5,33 +5,36 @@
     if (isAnnotated() && hasAnnotations()) {
       List<Variant> annoVariants=null;
       method=(Method.HEAD.equals(method)) ? Method.GET : method;
-      for (      MethodAnnotationInfo annotationInfo : getAnnotations()) {
+      for (      AnnotationInfo annotationInfo : getAnnotations()) {
         try {
-          if (annotationInfo.isCompatible(method,getQuery(),getRequestEntity(),getMetadataService(),getConverterService())) {
-            annoVariants=annotationInfo.getResponseVariants(getMetadataService(),getConverterService());
-            if (annoVariants != null) {
-              float score=0.5f;
-              if ((getRequest().getEntity() != null) && getRequest().getEntity().isAvailable()) {
-                MediaType emt=getRequest().getEntity().getMediaType();
-                List<MediaType> amts=getMetadataService().getAllMediaTypes(annotationInfo.getInput());
-                if (amts != null) {
-                  for (                  MediaType amt : amts) {
-                    if (amt.equals(emt)) {
-                      score=1.0f;
-                    }
- else                     if (amt.includes(emt)) {
-                      score=Math.max(0.8f,score);
-                    }
- else                     if (amt.isCompatible(emt)) {
-                      score=Math.max(0.6f,score);
+          if (annotationInfo instanceof MethodAnnotationInfo) {
+            MethodAnnotationInfo methodAnnotationInfo=(MethodAnnotationInfo)annotationInfo;
+            if (methodAnnotationInfo.isCompatible(method,getQuery(),getRequestEntity(),getMetadataService(),getConverterService())) {
+              annoVariants=methodAnnotationInfo.getResponseVariants(getMetadataService(),getConverterService());
+              if (annoVariants != null) {
+                float score=0.5f;
+                if ((getRequest().getEntity() != null) && getRequest().getEntity().isAvailable()) {
+                  MediaType emt=getRequest().getEntity().getMediaType();
+                  List<MediaType> amts=getMetadataService().getAllMediaTypes(methodAnnotationInfo.getInput());
+                  if (amts != null) {
+                    for (                    MediaType amt : amts) {
+                      if (amt.equals(emt)) {
+                        score=1.0f;
+                      }
+ else                       if (amt.includes(emt)) {
+                        score=Math.max(0.8f,score);
+                      }
+ else                       if (amt.isCompatible(emt)) {
+                        score=Math.max(0.6f,score);
+                      }
                     }
                   }
                 }
-              }
-              for (              Variant v : annoVariants) {
-                VariantInfo vi=new VariantInfo(v,annotationInfo);
-                vi.setInputScore(score);
-                result.add(vi);
+                for (                Variant v : annoVariants) {
+                  VariantInfo vi=new VariantInfo(v,methodAnnotationInfo);
+                  vi.setInputScore(score);
+                  result.add(vi);
+                }
               }
             }
           }

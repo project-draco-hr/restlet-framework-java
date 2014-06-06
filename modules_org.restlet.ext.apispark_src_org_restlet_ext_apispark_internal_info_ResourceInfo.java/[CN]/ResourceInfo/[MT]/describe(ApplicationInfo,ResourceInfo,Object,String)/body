@@ -30,13 +30,16 @@
   for (  Method method : methodsList) {
     if (resource instanceof ServerResource) {
       ServerResource sr=(ServerResource)resource;
-      List<MethodAnnotationInfo> annotations=sr.isAnnotated() ? AnnotationUtils.getInstance().getAnnotations(resource.getClass()) : null;
-      for (      MethodAnnotationInfo annotationInfo : annotations) {
-        if (method.equals(annotationInfo.getRestletMethod())) {
-          methodInfo=new MethodInfo();
-          methods.add(methodInfo);
-          methodInfo.setMethod(method);
-          MethodInfo.describeAnnotation(methodInfo,annotationInfo,sr);
+      List<AnnotationInfo> annotations=sr.isAnnotated() ? AnnotationUtils.getInstance().getAnnotations(resource.getClass()) : null;
+      for (      AnnotationInfo annotationInfo : annotations) {
+        if (annotationInfo instanceof MethodAnnotationInfo) {
+          MethodAnnotationInfo mai=(MethodAnnotationInfo)annotationInfo;
+          if (method.equals(mai.getRestletMethod())) {
+            methodInfo=new MethodInfo();
+            methods.add(methodInfo);
+            methodInfo.setMethod(method);
+            MethodInfo.describeAnnotation(methodInfo,mai,sr);
+          }
         }
       }
     }

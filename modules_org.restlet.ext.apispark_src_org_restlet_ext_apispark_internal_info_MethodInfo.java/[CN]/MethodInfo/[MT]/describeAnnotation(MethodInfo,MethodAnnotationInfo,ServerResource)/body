@@ -3,11 +3,14 @@
   if (metadataService != null) {
     MethodAnnotationInfo ai=annotation;
     if (ai == null) {
-      List<MethodAnnotationInfo> annotations=resource.isAnnotated() ? AnnotationUtils.getInstance().getAnnotations(resource.getClass()) : null;
-      for (      MethodAnnotationInfo annotationInfo : annotations) {
-        if (info.getMethod().equals(annotationInfo.getRestletMethod())) {
-          ai=annotationInfo;
-          break;
+      List<AnnotationInfo> annotations=resource.isAnnotated() ? AnnotationUtils.getInstance().getAnnotations(resource.getClass()) : null;
+      for (      AnnotationInfo annotationInfo : annotations) {
+        if (annotationInfo instanceof MethodAnnotationInfo) {
+          MethodAnnotationInfo mai=(MethodAnnotationInfo)annotationInfo;
+          if (info.getMethod().equals(mai.getRestletMethod())) {
+            ai=mai;
+            break;
+          }
         }
       }
     }

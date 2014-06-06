@@ -1,10 +1,13 @@
 {
   getAllowedMethods().clear();
-  List<MethodAnnotationInfo> annotations=getAnnotations();
+  List<AnnotationInfo> annotations=getAnnotations();
   if (annotations != null) {
-    for (    MethodAnnotationInfo annotationInfo : annotations) {
-      if (!getAllowedMethods().contains(annotationInfo.getRestletMethod())) {
-        getAllowedMethods().add(annotationInfo.getRestletMethod());
+    for (    AnnotationInfo annotationInfo : annotations) {
+      if (annotationInfo instanceof MethodAnnotationInfo) {
+        MethodAnnotationInfo methodAnnotationInfo=(MethodAnnotationInfo)annotationInfo;
+        if (!getAllowedMethods().contains(methodAnnotationInfo.getRestletMethod())) {
+          getAllowedMethods().add(methodAnnotationInfo.getRestletMethod());
+        }
       }
     }
   }
