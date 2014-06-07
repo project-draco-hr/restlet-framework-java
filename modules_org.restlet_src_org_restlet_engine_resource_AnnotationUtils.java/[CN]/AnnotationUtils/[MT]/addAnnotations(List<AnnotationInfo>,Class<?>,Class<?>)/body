@@ -4,14 +4,15 @@
     if (result == null) {
       result=new CopyOnWriteArrayList<AnnotationInfo>();
     }
+    addStatusAnnotationDescriptors(result,clazz,initialClass);
     if (clazz.isInterface()) {
       for (      java.lang.reflect.Method javaMethod : clazz.getMethods()) {
-        addAnnotationDescriptors(result,clazz,initialClass,javaMethod);
+        addMethodAnnotationDescriptors(result,clazz,initialClass,javaMethod);
       }
     }
  else {
       for (      java.lang.reflect.Method javaMethod : clazz.getDeclaredMethods()) {
-        addAnnotationDescriptors(result,clazz,initialClass,javaMethod);
+        addMethodAnnotationDescriptors(result,clazz,initialClass,javaMethod);
       }
     }
     Class<?>[] interfaces=clazz.getInterfaces();

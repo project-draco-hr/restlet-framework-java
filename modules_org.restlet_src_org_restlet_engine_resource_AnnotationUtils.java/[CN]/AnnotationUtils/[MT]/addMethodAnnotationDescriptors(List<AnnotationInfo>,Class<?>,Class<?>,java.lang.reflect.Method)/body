@@ -1,8 +1,5 @@
 {
   List<AnnotationInfo> result=descriptors;
-  if (result == null) {
-    result=new CopyOnWriteArrayList<AnnotationInfo>();
-  }
   for (  Annotation annotation : javaMethod.getAnnotations()) {
     Annotation methodAnnotation=annotation.annotationType().getAnnotation(org.restlet.engine.connector.Method.class);
     Method restletMethod=getRestletMethod(annotation,methodAnnotation);
@@ -17,7 +14,10 @@
           value=null;
         }
       }
-      result.add(new MethodAnnotationInfo(initialResourceClass,restletMethod,javaMethod,value));
+      if (result == null) {
+        result=new CopyOnWriteArrayList<AnnotationInfo>();
+      }
+      result.add(new MethodAnnotationInfo(initialClass,restletMethod,javaMethod,value));
     }
   }
   return result;

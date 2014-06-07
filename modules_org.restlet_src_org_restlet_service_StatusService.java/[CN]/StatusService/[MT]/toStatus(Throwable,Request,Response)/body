@@ -10,7 +10,13 @@
     }
   }
  else {
-    result=new Status(Status.SERVER_ERROR_INTERNAL,throwable);
+    StatusAnnotationInfo sai=AnnotationUtils.getInstance().getStatusAnnotationInfo(throwable.getClass());
+    if (sai != null) {
+      result=new Status(sai.getStatus(),throwable);
+    }
+ else {
+      result=new Status(Status.SERVER_ERROR_INTERNAL,throwable);
+    }
   }
   return result;
 }
