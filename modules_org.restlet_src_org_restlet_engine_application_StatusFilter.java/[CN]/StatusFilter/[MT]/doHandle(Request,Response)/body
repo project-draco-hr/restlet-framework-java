@@ -2,9 +2,25 @@
   try {
     super.doHandle(request,response);
   }
- catch (  Throwable t) {
-    getLogger().log(Level.WARNING,"Exception or error caught in status service",t);
-    response.setStatus(getStatus(t,request,response));
+ catch (  Throwable throwable) {
+    Level level=Level.INFO;
+    Status status=getStatusService().toStatus(throwable,request,response);
+    if (status.isServerError()) {
+      level=Level.WARNING;
+    }
+ else     if (status.isConnectorError()) {
+      level=Level.INFO;
+    }
+ else     if (status.isClientError()) {
+      level=Level.FINE;
+    }
+    getLogger().log(level,"Exception or error caught by status service",throwable);
+    if (response != null) {
+      response.setStatus(status);
+      if ((response.getEntity() == null) || isOverwriting()) {
+        response.setEntity(getStatusService().toRepresentation(status,throwable,request,response,getApplication().getConverterService()));
+      }
+    }
   }
   return CONTINUE;
 }
