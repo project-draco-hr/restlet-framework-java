@@ -1,0 +1,28 @@
+{
+  boolean remote=address.startsWith("http");
+  boolean apisparkAddress=apisparkAddress(address);
+  ResourceListing resourceListing=new ResourceListing();
+  Map<String,ApiDeclaration> apis=new HashMap<String,ApiDeclaration>();
+  if (remote) {
+    resourceListing=createAuthenticatedClientResource(address,userName,password,apisparkAddress).get(ResourceListing.class);
+    for (    ResourceDeclaration api : resourceListing.getApis()) {
+      apis.put(api.getPath(),createAuthenticatedClientResource(address + api.getPath(),userName,password,apisparkAddress).get(ApiDeclaration.class));
+    }
+  }
+ else {
+    File resourceListingFile=new File(address);
+    ObjectMapper om=new ObjectMapper();
+    try {
+      resourceListing=om.readValue(resourceListingFile,ResourceListing.class);
+      String basePath=resourceListingFile.getParent();
+      LOGGER.log(Level.INFO,"Base path: " + basePath);
+      for (      ResourceDeclaration api : resourceListing.getApis()) {
+        apis.put(api.getPath(),createAuthenticatedClientResource(basePath + api.getPath(),userName,password,false).get(ApiDeclaration.class));
+      }
+    }
+ catch (    IOException e) {
+      LOGGER.log(Level.SEVERE,"Cannot read file",e);
+    }
+  }
+  return convert(resourceListing,apis);
+}
