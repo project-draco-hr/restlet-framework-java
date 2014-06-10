@@ -9,19 +9,31 @@
     rwadef.setLicense(swagDec.getInfo().getLicenseUrl());
     Contract rwadContract=new Contract();
     rwadContract.setName(swagDec.getInfo().getTitle());
+    LOGGER.info("Contract " + rwadContract.getName() + " added.");
     rwadContract.setDescription(swagDec.getInfo().getDescription());
     rwadef.setContract(rwadContract);
     Resource rwadResource;
     for (    Entry<String,ApiDeclaration> entry : apis.entrySet()) {
       ApiDeclaration swagApiResourceDec=entry.getValue();
-      List<String> apiProduces=swagApiResourceDec.getProduces();
-      List<String> apiConsumes=swagApiResourceDec.getConsumes();
+      List<String> apiProduces=new ArrayList<String>();
+      List<String> apiConsumes=new ArrayList<String>();
+      if (swagApiResourceDec.getProduces() != null) {
+        apiProduces=swagApiResourceDec.getProduces();
+      }
+      if (swagApiResourceDec.getConsumes() != null) {
+        apiConsumes=swagApiResourceDec.getConsumes();
+      }
       for (      ResourceDeclaration api : swagApiResourceDec.getApis()) {
         declaredPathVariables=new ArrayList<String>();
         rwadResource=new Resource();
         rwadResource.setResourcePath(api.getPath());
         Operation rwadOperation;
         for (        ResourceOperationDeclaration swagOperation : api.getOperations()) {
+          String methodName=swagOperation.getMethod();
+          if (methodName.equals("OPTIONS") || methodName.equals("PATCH")) {
+            LOGGER.info("Method " + methodName + " ignored.");
+            continue;
+          }
           rwadOperation=new Operation();
           rwadOperation.setMethod(swagOperation.getMethod());
           rwadOperation.setName(swagOperation.getNickname());
@@ -113,6 +125,7 @@
           }
           rwadOperation.setDescription(swagOperation.getSummary());
           rwadResource.getOperations().add(rwadOperation);
+          LOGGER.info("Method " + methodName + " added.");
           Iterator<Entry<String,ModelDeclaration>> representationsIt=swagApiResourceDec.getModels().entrySet().iterator();
           while (representationsIt.hasNext()) {
             Entry<String,ModelDeclaration> representationPair=representationsIt.next();
@@ -123,7 +136,6 @@
             if (!declaredTypes.contains(representationPair.getKey())) {
               declaredTypes.add(representationPair.getKey());
               Representation rwadRepr=new Representation();
-              rwadRepr.setProperties(new ArrayList<Property>());
               rwadRepr.setName(representationPair.getKey());
               rwadRepr.setDescription(swagRepresentation.getDescription());
               Iterator<Entry<String,TypePropertyDeclaration>> propertiesIt=representationPair.getValue().getProperties().entrySet().iterator();
@@ -158,8 +170,10 @@
                 rwadProperty.setMax(swagProperty.getMinimum());
                 rwadProperty.setUniqueItems(swagProperty.isUniqueItems());
                 rwadRepr.getProperties().add(rwadProperty);
+                LOGGER.info("Property " + rwadProperty.getName() + " added.");
               }
               rwadContract.getRepresentations().add(rwadRepr);
+              LOGGER.info("Representation " + rwadRepr.getName() + " added.");
             }
           }
           Iterator<Entry<String,List<String>>> subtypesIt=subtypes.entrySet().iterator();
@@ -173,15 +187,17 @@
           }
         }
         rwadef.getContract().getResources().add(rwadResource);
+        LOGGER.info("Resource " + api.getPath() + " added.");
       }
       if (rwadef.getEndpoint() == null) {
         rwadef.setEndpoint(swagApiResourceDec.getBasePath());
       }
     }
+    LOGGER.info("Definition successfully retrieved from Swagger definition");
     return rwadef;
   }
  catch (  ResourceException e) {
-    e.printStackTrace();
+    LOGGER.severe("Impossible to read your API definition, check your Swagger file compliance" + e);
   }
   return null;
 }

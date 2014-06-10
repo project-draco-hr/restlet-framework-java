@@ -4,8 +4,10 @@
   ResourceListing resourceListing=new ResourceListing();
   Map<String,ApiDeclaration> apis=new HashMap<String,ApiDeclaration>();
   if (remote) {
+    LOGGER.info("Reading file: " + address);
     resourceListing=createAuthenticatedClientResource(address,userName,password,apisparkAddress).get(ResourceListing.class);
     for (    ResourceDeclaration api : resourceListing.getApis()) {
+      LOGGER.info("Reading file: " + address + api.getPath());
       apis.put(api.getPath(),createAuthenticatedClientResource(address + api.getPath(),userName,password,apisparkAddress).get(ApiDeclaration.class));
     }
   }
@@ -15,9 +17,10 @@
     try {
       resourceListing=om.readValue(resourceListingFile,ResourceListing.class);
       String basePath=resourceListingFile.getParent();
-      LOGGER.log(Level.INFO,"Base path: " + basePath);
+      LOGGER.info("Base path: " + basePath);
       for (      ResourceDeclaration api : resourceListing.getApis()) {
-        apis.put(api.getPath(),createAuthenticatedClientResource(basePath + api.getPath(),userName,password,false).get(ApiDeclaration.class));
+        LOGGER.info("Reading file " + basePath + api.getPath());
+        apis.put(api.getPath(),om.readValue(new File(basePath + api.getPath()),ApiDeclaration.class));
       }
     }
  catch (    IOException e) {
