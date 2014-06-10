@@ -1,0 +1,21 @@
+{
+  Documentation documentation=null;
+  SwaggerRestletIterable crawler=new SwaggerRestletIterable(apiInboundRoot);
+  for (  Restlet restlet : crawler) {
+    JaxRsRestlet jaxRsRestlet=getNextJaxRsRestlet(restlet);
+    if (restlet != null) {
+      Class<?> clazz=findJaxRsClass(jaxRsRestlet,resourcePath);
+      if (clazz != null) {
+        SwaggerJaxRsResourceGenerator generator=new SwaggerJaxRsResourceGenerator();
+        generator.setup(clazz,crawler.getCurrentPath());
+        documentation=generator.parse();
+        documentation.setApiVersion(getApiVersion());
+        documentation.setSwaggerVersion(getSwaggerVersion());
+        documentation.setBasePath(getBasePath());
+        documentation.setResourcePath(resourcePath);
+        break;
+      }
+    }
+  }
+  return documentation;
+}
