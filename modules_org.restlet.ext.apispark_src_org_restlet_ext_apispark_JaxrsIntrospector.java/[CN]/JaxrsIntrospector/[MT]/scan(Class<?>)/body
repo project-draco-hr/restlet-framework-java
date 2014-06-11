@@ -1,0 +1,27 @@
+{
+  System.out.println(clazz);
+  Consumes c=clazz.getAnnotation(Consumes.class);
+  if (c != null) {
+    System.out.println("consumes " + c.value());
+  }
+  Encoded e=clazz.getAnnotation(Encoded.class);
+  System.out.println("encoded " + e);
+  Path path=clazz.getAnnotation(Path.class);
+  if (path != null) {
+    System.out.println("path " + path.value());
+  }
+  Produces p=clazz.getAnnotation(Produces.class);
+  if (p != null) {
+    System.out.println("produces " + p.value());
+  }
+  Field[] fields=clazz.getDeclaredFields();
+  if (fields != null) {
+    for (    Field field : fields) {
+      scanField(field);
+    }
+  }
+  Method[] methods=clazz.getDeclaredMethods();
+  for (  Method method : methods) {
+    scan(method);
+  }
+}

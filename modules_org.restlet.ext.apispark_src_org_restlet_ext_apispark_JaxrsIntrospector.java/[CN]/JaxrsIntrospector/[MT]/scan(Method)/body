@@ -1,0 +1,81 @@
+{
+  Consumes consumes=method.getAnnotation(Consumes.class);
+  if (consumes != null) {
+    System.out.println("consumes " + consumes.value());
+  }
+  CookieParam cookieparam=method.getAnnotation(CookieParam.class);
+  if (cookieparam != null) {
+    System.out.println("cookieparam " + cookieparam.value());
+  }
+  DefaultValue defaultvalue=method.getAnnotation(DefaultValue.class);
+  if (defaultvalue != null) {
+    System.out.println("defaultvalue " + defaultvalue.value());
+  }
+  DELETE delete=method.getAnnotation(DELETE.class);
+  if (delete != null) {
+    System.out.println("delete " + delete);
+  }
+  Encoded encoded=method.getAnnotation(Encoded.class);
+  System.out.println("encoded " + encoded);
+  FormParam formparam=method.getAnnotation(FormParam.class);
+  if (formparam != null) {
+    System.out.println("formparam " + formparam.value());
+  }
+  GET get=method.getAnnotation(GET.class);
+  if (get != null) {
+    System.out.println("get " + get);
+  }
+  HEAD head=method.getAnnotation(HEAD.class);
+  if (head != null) {
+    System.out.println("head " + head);
+  }
+  HeaderParam headerparam=method.getAnnotation(HeaderParam.class);
+  if (headerparam != null) {
+    System.out.println("headerparam " + headerparam.value());
+  }
+  HttpMethod httpmethod=method.getAnnotation(HttpMethod.class);
+  if (httpmethod != null) {
+    System.out.println("httpmethod " + httpmethod.value());
+  }
+  MatrixParam matrixparam=method.getAnnotation(MatrixParam.class);
+  if (matrixparam != null) {
+    System.out.println("matrixparam " + matrixparam.value());
+  }
+  OPTIONS options=method.getAnnotation(OPTIONS.class);
+  if (options != null) {
+    System.out.println("options " + options);
+  }
+  Path path=method.getAnnotation(Path.class);
+  if (path != null) {
+    System.out.println("path " + path.value());
+  }
+  PathParam pathparam=method.getAnnotation(PathParam.class);
+  if (pathparam != null) {
+    System.out.println("pathparam " + pathparam.value());
+  }
+  POST post=method.getAnnotation(POST.class);
+  if (post != null) {
+    System.out.println("post " + post);
+  }
+  Produces produces=method.getAnnotation(Produces.class);
+  if (produces != null) {
+    System.out.println("produces " + produces.value());
+  }
+  PUT put=method.getAnnotation(PUT.class);
+  if (put != null) {
+    System.out.println("put " + put);
+  }
+  QueryParam queryparam=method.getAnnotation(QueryParam.class);
+  if (queryparam != null) {
+    System.out.println("queryparam " + queryparam.value());
+  }
+  Annotation[][] parameterAnnotations=method.getParameterAnnotations();
+  Class<?>[] parameterTypes=method.getParameterTypes();
+  int i=0;
+  for (  Annotation[] annotations : parameterAnnotations) {
+    Class<?> parameterType=parameterTypes[i++];
+    for (    Annotation annotation : annotations) {
+      scanParameter(annotation,parameterType);
+    }
+  }
+}
