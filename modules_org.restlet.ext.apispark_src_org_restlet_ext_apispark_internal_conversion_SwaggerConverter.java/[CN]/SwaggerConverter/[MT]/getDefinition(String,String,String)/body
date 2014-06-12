@@ -1,4 +1,11 @@
 {
+  Pattern p=Pattern.compile("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+  if (address == null) {
+    throw new SwaggerConversionException("url","You did not provide any URL");
+  }
+  if (!p.matcher(address).matches()) {
+    throw new SwaggerConversionException("url","You did not provide a valid URL");
+  }
   boolean remote=address.startsWith("http");
   boolean apisparkAddress=apisparkAddress(address);
   ResourceListing resourceListing=new ResourceListing();
@@ -8,7 +15,7 @@
     resourceListing=createAuthenticatedClientResource(address,userName,password,apisparkAddress).get(ResourceListing.class);
     for (    ResourceDeclaration api : resourceListing.getApis()) {
       LOGGER.info("Reading file: " + address + api.getPath());
-      apis.put(api.getPath(),createAuthenticatedClientResource(address + api.getPath(),userName,password,apisparkAddress).get(ApiDeclaration.class));
+      apis.put(api.getPath().replaceAll("/",""),createAuthenticatedClientResource(address + api.getPath(),userName,password,apisparkAddress).get(ApiDeclaration.class));
     }
   }
  else {

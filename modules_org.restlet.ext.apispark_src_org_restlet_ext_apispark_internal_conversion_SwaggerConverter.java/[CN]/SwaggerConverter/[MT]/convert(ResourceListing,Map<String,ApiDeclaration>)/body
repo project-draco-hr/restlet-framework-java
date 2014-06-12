@@ -1,19 +1,20 @@
 {
+  validateFiles(resourceListing,apiDeclarations);
   List<String> declaredTypes=new ArrayList<String>();
   List<String> declaredPathVariables;
   Map<String,List<String>> subtypes=new HashMap<String,List<String>>();
   try {
     Definition rwadef=new Definition();
-    rwadef.setVersion(swagDec.getApiVersion());
-    rwadef.setContact(swagDec.getInfo().getContact());
-    rwadef.setLicense(swagDec.getInfo().getLicenseUrl());
+    rwadef.setVersion(resourceListing.getApiVersion());
+    rwadef.setContact(resourceListing.getInfo().getContact());
+    rwadef.setLicense(resourceListing.getInfo().getLicenseUrl());
     Contract rwadContract=new Contract();
-    rwadContract.setName(swagDec.getInfo().getTitle());
+    rwadContract.setName(resourceListing.getInfo().getTitle());
     LOGGER.info("Contract " + rwadContract.getName() + " added.");
-    rwadContract.setDescription(swagDec.getInfo().getDescription());
+    rwadContract.setDescription(resourceListing.getInfo().getDescription());
     rwadef.setContract(rwadContract);
     Resource rwadResource;
-    for (    Entry<String,ApiDeclaration> entry : apis.entrySet()) {
+    for (    Entry<String,ApiDeclaration> entry : apiDeclarations.entrySet()) {
       ApiDeclaration swagApiResourceDec=entry.getValue();
       List<String> apiProduces=new ArrayList<String>();
       List<String> apiConsumes=new ArrayList<String>();
@@ -30,7 +31,7 @@
         Operation rwadOperation;
         for (        ResourceOperationDeclaration swagOperation : api.getOperations()) {
           String methodName=swagOperation.getMethod();
-          if (methodName.equals("OPTIONS") || methodName.equals("PATCH")) {
+          if ("OPTIONS".equals(methodName) || "PATCH".equals(methodName)) {
             LOGGER.info("Method " + methodName + " ignored.");
             continue;
           }
@@ -196,8 +197,8 @@
     LOGGER.info("Definition successfully retrieved from Swagger definition");
     return rwadef;
   }
- catch (  ResourceException e) {
-    LOGGER.severe("Impossible to read your API definition, check your Swagger file compliance" + e);
+ catch (  Exception e) {
+    LOGGER.severe("Impossible to read your API definition, check your Swagger specs compliance" + e);
+    throw new SwaggerConversionException("compliance","Impossible to read your API definition, check your Swagger specs compliance");
   }
-  return null;
 }
