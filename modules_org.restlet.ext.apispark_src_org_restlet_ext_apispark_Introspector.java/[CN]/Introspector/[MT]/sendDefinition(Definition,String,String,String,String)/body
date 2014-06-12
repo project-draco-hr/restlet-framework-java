@@ -1,14 +1,14 @@
 {
   try {
-    ClientResource cr=new ClientResource(serviceUrl + "definitions");
+    ClientResource cr=new ClientResource(serviceUrl);
     cr.setChallengeResponse(ChallengeScheme.HTTP_BASIC,ulogin,upwd);
-    LOGGER.fine("Generate documentation");
     if (definitionId == null) {
+      cr.addSegment("definitions");
       LOGGER.fine("Create a new documentation");
       cr.post(definition,MediaType.APPLICATION_JSON);
     }
  else {
-      cr.addSegment(definitionId);
+      cr.addSegment("apis").addSegment(definitionId).addSegment("definitions");
       LOGGER.fine("Update the documentation of " + cr.getReference().toString());
       cr.put(definition,MediaType.APPLICATION_JSON);
     }
