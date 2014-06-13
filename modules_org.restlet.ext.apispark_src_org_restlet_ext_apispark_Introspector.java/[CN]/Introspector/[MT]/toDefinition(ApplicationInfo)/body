@@ -77,9 +77,6 @@
       }
     }
     for (    RepresentationInfo ri : mapReps.values()) {
-      if (ReflectUtils.isJdkClass(ri.getType())) {
-        continue;
-      }
       LOGGER.info("Representation " + ri.getName() + " added.");
       Representation rep=new Representation();
       rep.setDescription(toString(ri.getDocumentations()));
@@ -102,7 +99,7 @@
         p.setUniqueItems(pi.isUniqueItems());
         rep.getProperties().add(p);
       }
-      rep.setRaw(ri.isRaw());
+      rep.setRaw(ri.isRaw() || ReflectUtils.isJdkClass(ri.getType()));
       contract.getRepresentations().add(rep);
     }
   }
