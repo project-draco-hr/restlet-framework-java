@@ -1,16 +1,9 @@
 {
-  List<String> listedApis=new ArrayList<String>();
-  for (  ResourceDeclaration resourceDeclaration : resourceListing.getApis()) {
-    listedApis.add(resourceDeclaration.getPath().replaceAll("/",""));
+  int mappedFiles=resourceListing.getApis().size();
+  if (mappedFiles < apiDeclarations.size()) {
+    throw new SwaggerConversionException("file","One of your API declarations is not mapped in your resource listing");
   }
-  for (  Entry<String,ApiDeclaration> entry : apiDeclarations.entrySet()) {
-    if (!listedApis.contains(entry.getKey())) {
-      throw new SwaggerConversionException("file","The file " + entry.getKey() + " is not mapped in your resource listing");
-    }
-  }
-  for (  String listedApi : listedApis) {
-    if (!apiDeclarations.containsKey(listedApi)) {
-      throw new SwaggerConversionException("file","The file " + listedApi + " is missing");
-    }
+  if (mappedFiles > apiDeclarations.size()) {
+    throw new SwaggerConversionException("file","Some API declarations are missing");
   }
 }

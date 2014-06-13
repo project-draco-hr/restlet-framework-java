@@ -1,20 +1,17 @@
 {
-  Pattern p=Pattern.compile("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
   if (address == null) {
     throw new SwaggerConversionException("url","You did not provide any URL");
   }
-  if (!p.matcher(address).matches()) {
-    throw new SwaggerConversionException("url","You did not provide a valid URL");
-  }
-  boolean remote=address.startsWith("http");
+  Pattern p=Pattern.compile("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+  boolean remote=p.matcher(address).matches();
   boolean apisparkAddress=apisparkAddress(address);
   ResourceListing resourceListing=new ResourceListing();
   Map<String,ApiDeclaration> apis=new HashMap<String,ApiDeclaration>();
   if (remote) {
-    LOGGER.info("Reading file: " + address);
+    LOGGER.log(Level.FINE,"Reading file: " + address);
     resourceListing=createAuthenticatedClientResource(address,userName,password,apisparkAddress).get(ResourceListing.class);
     for (    ResourceDeclaration api : resourceListing.getApis()) {
-      LOGGER.info("Reading file: " + address + api.getPath());
+      LOGGER.log(Level.FINE,"Reading file: " + address + api.getPath());
       apis.put(api.getPath().replaceAll("/",""),createAuthenticatedClientResource(address + api.getPath(),userName,password,apisparkAddress).get(ApiDeclaration.class));
     }
   }
@@ -24,14 +21,14 @@
     try {
       resourceListing=om.readValue(resourceListingFile,ResourceListing.class);
       String basePath=resourceListingFile.getParent();
-      LOGGER.info("Base path: " + basePath);
+      LOGGER.log(Level.FINE,"Base path: " + basePath);
       for (      ResourceDeclaration api : resourceListing.getApis()) {
-        LOGGER.info("Reading file " + basePath + api.getPath());
+        LOGGER.log(Level.FINE,"Reading file " + basePath + api.getPath());
         apis.put(api.getPath(),om.readValue(new File(basePath + api.getPath()),ApiDeclaration.class));
       }
     }
  catch (    IOException e) {
-      LOGGER.log(Level.SEVERE,"Cannot read file",e);
+      throw new SwaggerConversionException("file",e.getMessage());
     }
   }
   return convert(resourceListing,apis);
