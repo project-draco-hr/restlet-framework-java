@@ -2,9 +2,10 @@
   String ulogin=null;
   String upwd=null;
   String serviceUrl=null;
-  String appName=null;
+  String defSource=null;
   String compName=null;
   String definitionId=null;
+  String language=null;
   LOGGER.fine("Get parameters");
   for (int i=0; i < (args.length); i++) {
     if ("-h".equals(args[i])) {
@@ -26,8 +27,11 @@
  else     if ("-d".equals(args[i])) {
       definitionId=getParameter(args,++i);
     }
+ else     if ("-l".equals(args[i])) {
+      language=getParameter(args,++i).toLowerCase();
+    }
  else {
-      appName=args[i];
+      defSource=args[i];
     }
   }
   LOGGER.fine("Check parameters");
@@ -37,58 +41,33 @@
   if (!serviceUrl.endsWith("/")) {
     serviceUrl+="/";
   }
-  if (isEmpty(ulogin) || isEmpty(upwd) || isEmpty(appName)) {
+  if (isEmpty(ulogin) || isEmpty(upwd) || isEmpty(defSource)) {
     printHelp();
     System.exit(1);
   }
-  Application application=getApplication(appName);
-  Component component=getComponent(compName);
+  Application application=null;
+  Component component=null;
+  Definition definition=null;
+  if (language == null) {
+    application=getApplication(defSource);
+    component=getComponent(compName);
+  }
   if (application != null) {
     LOGGER.fine("Instantiate introspector");
     Introspector i=new Introspector(component,application);
-    try {
-      ClientResource cr=new ClientResource(serviceUrl + "definitions");
-      cr.setChallengeResponse(ChallengeScheme.HTTP_BASIC,ulogin,upwd);
-      LOGGER.fine("Generate documentation");
-      Definition definition=i.getDefinition();
-      if (definitionId == null) {
-        LOGGER.fine("Create a new documentation");
-        cr.post(definition,MediaType.APPLICATION_JSON);
-      }
- else {
-        cr.addSegment(definitionId);
-        LOGGER.fine("Update the documentation of " + cr.getReference().toString());
-        cr.put(definition,MediaType.APPLICATION_JSON);
-      }
-      LOGGER.fine("Display result");
-      System.out.println("Process successfully achieved.");
-      if (cr.getResponseEntity() != null && cr.getResponseEntity().isAvailable()) {
-        try {
-          cr.getResponseEntity().write(System.out);
-          System.out.println();
-        }
- catch (        IOException e) {
-          LOGGER.warning("Request successfully achieved by the server, but it's response cannot be printed");
-        }
-      }
-      if (cr.getLocationRef() != null) {
-        System.out.println("Your Web API documentation is accessible at this URL: " + cr.getLocationRef());
-      }
+    LOGGER.fine("Generate documentation");
+    definition=i.getDefinition();
+    sendDefinition(definition,definitionId,ulogin,upwd,serviceUrl);
+  }
+ else   if (language != null) {
+    if (language.equals("swagger")) {
+      definition=new SwaggerConverter().getDefinition(defSource,ulogin,upwd);
     }
- catch (    ResourceException e) {
-      if (e.getStatus().isConnectorError()) {
-        LOGGER.severe("Cannot reach the remote service, could you check your network connection?");
-        LOGGER.severe("Could you check that the following service is up? " + serviceUrl);
-      }
- else       if (e.getStatus().isClientError()) {
-        LOGGER.severe("Check that you provide valid credentials, or valid service url.");
-      }
- else       if (e.getStatus().isServerError()) {
-        LOGGER.severe("The server side encounters some issues, please try later.");
-      }
+    if (definition != null) {
+      sendDefinition(definition,definitionId,ulogin,upwd,serviceUrl);
     }
   }
  else {
-    LOGGER.severe("Please provide a valid application class name.");
+    LOGGER.severe("Please provide a valid application class name or definition URL.");
   }
 }
