@@ -1,4 +1,5 @@
 {
+  Engine.register();
   String ulogin=null;
   String upwd=null;
   String serviceUrl=null;
@@ -6,7 +7,8 @@
   String compName=null;
   String definitionId=null;
   String language=null;
-  LOGGER.fine("Get parameters");
+  boolean verbose=false;
+  LOGGER.info("Get parameters");
   for (int i=0; i < (args.length); i++) {
     if ("-h".equals(args[i])) {
       printHelp();
@@ -30,11 +32,21 @@
  else     if ("-l".equals(args[i])) {
       language=getParameter(args,++i).toLowerCase();
     }
+ else     if ("-v".equals(args[i])) {
+      verbose=true;
+    }
  else {
       defSource=args[i];
     }
   }
-  LOGGER.fine("Check parameters");
+  Engine.setLogLevel(verbose ? Level.FINE : Level.INFO);
+  Engine.getLogger("").getHandlers()[0].setFilter(new java.util.logging.Filter(){
+    public boolean isLoggable(    LogRecord record){
+      return record.getLoggerName().startsWith("org.restlet.ext.apispark");
+    }
+  }
+);
+  LOGGER.info("Check parameters");
   if (isEmpty(serviceUrl)) {
     serviceUrl="https://apispark.com/";
   }
@@ -53,9 +65,9 @@
     component=getComponent(compName);
   }
   if (application != null) {
-    LOGGER.fine("Instantiate introspector");
-    Introspector i=new Introspector(component,application);
-    LOGGER.fine("Generate documentation");
+    LOGGER.info("Instantiate introspector");
+    Introspector i=new Introspector(component,application,verbose);
+    LOGGER.info("Generate documentation");
     definition=i.getDefinition();
     sendDefinition(definition,definitionId,ulogin,upwd,serviceUrl);
   }
