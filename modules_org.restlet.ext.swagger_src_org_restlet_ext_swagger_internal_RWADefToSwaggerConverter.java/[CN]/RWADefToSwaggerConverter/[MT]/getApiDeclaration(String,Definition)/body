@@ -1,0 +1,136 @@
+{
+  ApiDeclaration result=new ApiDeclaration();
+  result.setBasePath(def.getEndpoint());
+  result.setSwaggerVersion(SwaggerVersion);
+  result.setApiVersion(def.getVersion());
+  result.setResourcePath("/" + category);
+  Set<String> usedModels=new HashSet<String>();
+  for (  Resource resource : def.getContract().getResources()) {
+    if (!resource.getResourcePath().startsWith("/" + category)) {
+      continue;
+    }
+    ResourceDeclaration rd=new ResourceDeclaration();
+    rd.setPath(resource.getResourcePath());
+    rd.setDescription(resource.getDescription());
+    for (    Operation operation : resource.getOperations()) {
+      ResourceOperationDeclaration rod=new ResourceOperationDeclaration();
+      rod.setMethod(operation.getMethod());
+      rod.setSummary(operation.getDescription());
+      rod.setNickname(operation.getName());
+      rod.setProduces(operation.getProduces());
+      rod.setConsumes(operation.getConsumes());
+      ResourceOperationParameterDeclaration ropd;
+      for (      PathVariable pv : resource.getPathVariables()) {
+        ropd=new ResourceOperationParameterDeclaration();
+        ropd.setParamType("path");
+        ropd.setType("string");
+        ropd.setRequired(true);
+        ropd.setName(pv.getName());
+        ropd.setAllowMultiple(false);
+        ropd.setDescription(pv.getDescription());
+        rod.getParameters().add(ropd);
+      }
+      Body inRepr=operation.getOutRepresentation();
+      ropd=new ResourceOperationParameterDeclaration();
+      ropd.setParamType("body");
+      ropd.setRequired(true);
+      if (inRepr.isArray()) {
+        ropd.setType("array");
+        if (isPrimitiveType(inRepr.getRepresentation())) {
+          ropd.getItems().setType(inRepr.getRepresentation());
+        }
+ else {
+          ropd.getItems().setRef(inRepr.getRepresentation());
+        }
+      }
+ else {
+        ropd.setType(inRepr.getRepresentation());
+      }
+      if (inRepr.getRepresentation() != null) {
+        usedModels.add(inRepr.getRepresentation());
+      }
+      rod.getParameters().add(ropd);
+      Body outRepr=operation.getOutRepresentation();
+      if (outRepr.isArray()) {
+        rod.setType("array");
+        if (isPrimitiveType(outRepr.getRepresentation())) {
+          rod.getItems().setType(outRepr.getRepresentation());
+        }
+ else {
+          rod.getItems().setRef(outRepr.getRepresentation());
+        }
+      }
+ else {
+        rod.setType(outRepr.getRepresentation());
+      }
+      if (outRepr.getRepresentation() != null) {
+        usedModels.add(outRepr.getRepresentation());
+      }
+      for (      QueryParameter qp : operation.getQueryParameters()) {
+        ropd=new ResourceOperationParameterDeclaration();
+        ropd.setParamType("query");
+        ropd.setType("string");
+        ropd.setName(qp.getName());
+        ropd.setAllowMultiple(true);
+        ropd.setDescription(qp.getDescription());
+        ropd.setEnum_(qp.getPossibleValues());
+        ropd.setDefaultValue(qp.getDefaultValue());
+        rod.getParameters().add(ropd);
+      }
+      for (      Response response : operation.getResponses()) {
+        ResponseMessageDeclaration rmd=new ResponseMessageDeclaration();
+        rmd.setCode(response.getCode());
+        rmd.setMessage(response.getMessage());
+        rmd.setResponseModel(response.getBody().getRepresentation());
+        rod.getResponseMessages().add(rmd);
+      }
+      rd.getOperations().add(rod);
+    }
+    result.getApis().add(rd);
+  }
+  result.setModels(new HashMap<String,ModelDeclaration>());
+  Iterator<String> iterator=usedModels.iterator();
+  while (iterator.hasNext()) {
+    String model=iterator.next();
+    Representation repr=getRepresentationByName(model,def.getContract());
+    ModelDeclaration md=new ModelDeclaration();
+    md.setId(model);
+    md.setDescription(repr.getDescription());
+    for (    Property prop : repr.getProperties()) {
+      if (prop.isRequired()) {
+        md.getRequired().add(prop.getName());
+      }
+      if (!isPrimitiveType(prop.getType()) && !usedModels.contains(prop.getType())) {
+        usedModels.add(prop.getType());
+        iterator=usedModels.iterator();
+      }
+      TypePropertyDeclaration tpd=new TypePropertyDeclaration();
+      tpd.setDescription(prop.getDescription());
+      tpd.setEnum_(prop.getPossibleValues());
+      if (prop.getMaxOccurs() > 1 || prop.getMaxOccurs() == -1) {
+        tpd.setType("array");
+        tpd.setItems(new ItemsDeclaration());
+        if (isPrimitiveType(prop.getType())) {
+          tpd.getItems().setType(prop.getType());
+        }
+ else {
+          tpd.getItems().setRef(prop.getType());
+        }
+      }
+ else {
+        if (isPrimitiveType(prop.getType())) {
+          tpd.setType(prop.getType());
+        }
+ else {
+          tpd.setRef(prop.getType());
+        }
+      }
+      tpd.setMaximum(prop.getMax());
+      tpd.setMinimum(prop.getMin());
+      tpd.setUniqueItems(prop.isUniqueItems());
+      md.getProperties().put(prop.getName(),tpd);
+    }
+    result.getModels().put(md.getId(),md);
+  }
+  return result;
+}
