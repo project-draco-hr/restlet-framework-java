@@ -1,0 +1,116 @@
+{
+  boolean valueComputed=false;
+  if (annotation instanceof CookieParam) {
+    valueComputed=true;
+    CookieParam myAnnotation=(CookieParam)annotation;
+    if (myAnnotation != null) {
+      System.out.println("cookieparam " + myAnnotation.value());
+      ParameterInfo pi=new ParameterInfo(myAnnotation.value(),ParameterStyle.COOKIE,"Cookie parameter: " + myAnnotation.value());
+      method.getRequest().getParameters().add(pi);
+    }
+    System.out.println("param: " + parameterType.getName());
+  }
+ else   if (annotation instanceof DefaultValue) {
+    DefaultValue defaultvalue=(DefaultValue)annotation;
+    System.out.println("param: " + parameterType.getName());
+    if (defaultvalue != null) {
+      System.out.println("defaultvalue " + defaultvalue.value());
+    }
+  }
+ else   if (annotation instanceof Encoded) {
+    Encoded encoded=(Encoded)annotation;
+    System.out.println("encoded " + encoded);
+    System.out.println("param: " + parameterType.getName());
+  }
+ else   if (annotation instanceof FormParam) {
+    valueComputed=true;
+    FormParam formparam=(FormParam)annotation;
+    if (formparam != null) {
+      System.out.println("formparam " + formparam.value());
+      RepresentationInfo ri=null;
+      for (      RepresentationInfo r : method.getRequest().getRepresentations()) {
+        if (r.getMediaType().equals(MediaType.APPLICATION_WWW_FORM)) {
+          ri=r;
+          break;
+        }
+      }
+      if (ri == null) {
+        ri=new RepresentationInfo();
+        ri.setIdentifier(method.getMethod().getName());
+        ri.setName(method.getMethod().getName());
+        ri.setMediaType(MediaType.APPLICATION_WWW_FORM);
+        method.getRequest().getRepresentations().add(ri);
+      }
+      ParameterInfo pi=new ParameterInfo(formparam.value(),ParameterStyle.PLAIN,"body parameter: " + formparam.value());
+      method.getParameters().add(pi);
+    }
+  }
+ else   if (annotation instanceof HeaderParam) {
+    valueComputed=true;
+    HeaderParam headerparam=(HeaderParam)annotation;
+    if (headerparam != null) {
+      System.out.println("headerparam " + headerparam.value());
+      System.out.println("param: " + parameterType.getName());
+      ParameterInfo pi=new ParameterInfo(headerparam.value(),ParameterStyle.HEADER,"header parameter: " + headerparam.value());
+      method.getParameters().add(pi);
+    }
+  }
+ else   if (annotation instanceof MatrixParam) {
+    valueComputed=true;
+    MatrixParam matrixparam=(MatrixParam)annotation;
+    if (matrixparam != null) {
+      System.out.println("matrixparam " + matrixparam.value());
+      System.out.println("param: " + parameterType.getName());
+      ParameterInfo pi=new ParameterInfo(matrixparam.value(),ParameterStyle.MATRIX,"matrix parameter: " + matrixparam.value());
+      method.getParameters().add(pi);
+    }
+  }
+ else   if (annotation instanceof PathParam) {
+    valueComputed=true;
+    PathParam pathparam=(PathParam)annotation;
+    if (pathparam != null) {
+      System.out.println("pathparam " + pathparam.value());
+      System.out.println("param: " + parameterType.getName());
+      boolean found=false;
+      for (      ParameterInfo pi : resource.getParameters()) {
+        if (pi.getName().equals(pathparam.value())) {
+          found=true;
+          break;
+        }
+      }
+      if (!found) {
+        ParameterInfo pi=new ParameterInfo(pathparam.value(),ParameterStyle.TEMPLATE,"Path parameter: " + pathparam.value());
+        resource.getParameters().add(pi);
+      }
+    }
+  }
+ else   if (annotation instanceof QueryParam) {
+    valueComputed=true;
+    QueryParam queryparam=(QueryParam)annotation;
+    if (queryparam != null) {
+      System.out.println("queryparam " + queryparam.value());
+      ParameterInfo pi=new ParameterInfo(queryparam.value(),ParameterStyle.QUERY,"Query parameter: " + queryparam.value());
+      method.getParameters().add(pi);
+    }
+    System.out.println("param: " + parameterType.getName());
+  }
+ else   if (annotation instanceof javax.ws.rs.core.Context) {
+    valueComputed=true;
+    javax.ws.rs.core.Context context=(javax.ws.rs.core.Context)annotation;
+    System.out.println("context: " + context);
+  }
+  if (!valueComputed) {
+    if (consumes != null && parameterType != null && !Void.class.equals(parameterType)) {
+      System.out.println("consumes " + consumes.value());
+      for (      String consume : consumes.value()) {
+        Variant variant=new Variant(MediaType.valueOf(consume));
+        RepresentationInfo representationInfo=null;
+        representationInfo=RepresentationInfo.describe(method,parameterType,variant);
+        if (method.getRequest() == null) {
+          method.setRequest(new RequestInfo());
+        }
+        method.getRequest().getRepresentations().add(representationInfo);
+      }
+    }
+  }
+}

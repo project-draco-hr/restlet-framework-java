@@ -46,6 +46,13 @@
       cr.setChallengeResponse(ChallengeScheme.HTTP_BASIC,ulogin,upwd);
       LOGGER.fine("Generate documentation");
       Definition definition=i.getDefinition();
+      JacksonRepresentation<Definition> jr=new JacksonRepresentation<Definition>(definition);
+      try {
+        jr.write(System.out);
+      }
+ catch (      IOException e1) {
+        e1.printStackTrace();
+      }
       if (definitionId == null) {
         LOGGER.fine("Create a new documentation");
         cr.post(definition,MediaType.APPLICATION_JSON);
