@@ -3,41 +3,14 @@
     Resource resource=new Resource();
     resource.setDescription(toString(ri.getDocumentations()));
     resource.setName(ri.getIdentifier());
-    if (ri.getPath() != null) {
-      if (basePath != null) {
-        if (basePath.endsWith("/")) {
-          if (ri.getPath().startsWith("/")) {
-            resource.setResourcePath(basePath + ri.getPath().substring(1));
-          }
- else {
-            resource.setResourcePath(basePath + ri.getPath());
-          }
-        }
- else {
-          if (ri.getPath().startsWith("/")) {
-            resource.setResourcePath(basePath + ri.getPath());
-          }
- else {
-            resource.setResourcePath(basePath + "/" + ri.getPath());
-          }
-        }
-      }
- else {
-        if (ri.getPath().startsWith("/")) {
-          resource.setResourcePath(ri.getPath());
-        }
- else {
-          resource.setResourcePath("/" + ri.getPath());
-        }
-      }
+    if (ri.getPath() == null) {
+      resource.setResourcePath("/");
     }
-    if (!ri.getChildResources().isEmpty()) {
-      addResources(application,contract,ri.getChildResources(),resource.getResourcePath(),mapReps);
+ else     if (!ri.getPath().startsWith("/")) {
+      resource.setResourcePath("/" + ri.getPath());
     }
-    LOGGER.fine("Resource " + ri.getPath() + " added.");
-    if (ri.getMethods().isEmpty()) {
-      LOGGER.warning("Resource " + ri.getIdentifier() + " has no methods.");
-      continue;
+ else {
+      resource.setResourcePath(ri.getPath());
     }
     resource.setPathVariables(new ArrayList<PathVariable>());
     for (    ParameterInfo pi : ri.getParameters()) {
@@ -47,6 +20,14 @@
         pathVariable.setName(pi.getName());
         resource.getPathVariables().add(pathVariable);
       }
+    }
+    if (!ri.getChildResources().isEmpty()) {
+      addResources(application,contract,ri.getChildResources(),resource.getResourcePath(),mapReps);
+    }
+    LOGGER.fine("Resource " + ri.getPath() + " added.");
+    if (ri.getMethods().isEmpty()) {
+      LOGGER.warning("Resource " + ri.getIdentifier() + " has no methods.");
+      continue;
     }
     resource.setOperations(new ArrayList<Operation>());
     for (    MethodInfo mi : ri.getMethods()) {
