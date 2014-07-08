@@ -34,7 +34,7 @@
     if (!ri.getChildResources().isEmpty()) {
       addResources(application,contract,ri.getChildResources(),resource.getResourcePath(),mapReps);
     }
-    LOGGER.info("Resource " + ri.getPath() + " added.");
+    LOGGER.fine("Resource " + ri.getPath() + " added.");
     if (ri.getMethods().isEmpty()) {
       LOGGER.warning("Resource " + ri.getIdentifier() + " has no methods.");
       continue;
@@ -50,10 +50,15 @@
     }
     resource.setOperations(new ArrayList<Operation>());
     for (    MethodInfo mi : ri.getMethods()) {
-      LOGGER.info("Method " + mi.getMethod().getName() + " added.");
+      String methodName=mi.getMethod().getName();
+      if ("OPTIONS".equals(methodName) || "PATCH".equals(methodName)) {
+        LOGGER.fine("Method " + methodName + " ignored.");
+        continue;
+      }
+      LOGGER.fine("Method " + methodName + " added.");
       Operation operation=new Operation();
       operation.setDescription(toString(mi.getDocumentations()));
-      operation.setName(mi.getMethod().getName());
+      operation.setName(methodName);
       operation.setMethod(mi.getMethod().getName());
       String mediaType;
       if (mi.getRequest() != null && mi.getRequest().getRepresentations() != null) {

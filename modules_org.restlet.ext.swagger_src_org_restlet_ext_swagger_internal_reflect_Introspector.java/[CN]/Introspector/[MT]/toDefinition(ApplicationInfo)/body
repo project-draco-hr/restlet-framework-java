@@ -14,7 +14,7 @@
       contract.setName(application.getClass().getName());
       LOGGER.log(Level.WARNING,"Please provide a name to your application, used " + contract.getName() + " by default.");
     }
-    LOGGER.info("Contract " + contract.getName() + " added.");
+    LOGGER.fine("Contract " + contract.getName() + " added.");
     contract.setResources(new ArrayList<Resource>());
     Map<String,RepresentationInfo> mapReps=new HashMap<String,RepresentationInfo>();
     addResources(application,contract,application.getResources().getResources(),result.getEndpoint(),mapReps);
@@ -22,7 +22,7 @@
     for (    ConnectorHelper<Server> helper : Engine.getInstance().getRegisteredServers()) {
       for (      Protocol protocol : helper.getProtocols()) {
         if (!protocols.contains(protocol.getName())) {
-          LOGGER.info("Protocol " + protocol.getName() + " added.");
+          LOGGER.fine("Protocol " + protocol.getName() + " added.");
           protocols.add(protocol.getName());
         }
       }
@@ -77,16 +77,13 @@
       }
     }
     for (    RepresentationInfo ri : mapReps.values()) {
-      if (ReflectUtils.isJdkClass(ri.getType())) {
-        continue;
-      }
-      LOGGER.info("Representation " + ri.getName() + " added.");
+      LOGGER.fine("Representation " + ri.getName() + " added.");
       Representation rep=new Representation();
       rep.setDescription(toString(ri.getDocumentations()));
       rep.setName(ri.getName());
       rep.setProperties(new ArrayList<Property>());
       for (      PropertyInfo pi : ri.getProperties()) {
-        LOGGER.info("Property " + pi.getName() + " added.");
+        LOGGER.fine("Property " + pi.getName() + " added.");
         Property p=new Property();
         p.setDefaultValue(pi.getDefaultValue());
         p.setDescription(pi.getDescription());
@@ -102,7 +99,7 @@
         p.setUniqueItems(pi.isUniqueItems());
         rep.getProperties().add(p);
       }
-      rep.setRaw(ri.isRaw());
+      rep.setRaw(ri.isRaw() || ReflectUtils.isJdkClass(ri.getType()));
       contract.getRepresentations().add(rep);
     }
   }
