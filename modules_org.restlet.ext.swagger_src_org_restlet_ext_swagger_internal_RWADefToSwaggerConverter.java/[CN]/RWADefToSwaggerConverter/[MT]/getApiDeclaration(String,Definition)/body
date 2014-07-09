@@ -1,8 +1,9 @@
 {
   ApiDeclaration result=new ApiDeclaration();
-  result.setBasePath(def.getEndpoint());
+  result.setApiVersion(def.getVersion() == null ? "1.0" : def.getVersion());
+  result.setBasePath(def.getEndpoint() == null ? "http://localhost:9000/v1" : def.getEndpoint());
+  result.setInfo(new ApiInfo());
   result.setSwaggerVersion(SwaggerVersion);
-  result.setApiVersion(def.getVersion());
   result.setResourcePath("/" + category);
   Set<String> usedModels=new HashSet<String>();
   for (  Resource resource : def.getContract().getResources()) {
@@ -39,7 +40,7 @@
           ropd.setType("File");
         }
  else {
-          ropd.setType(inRepr.getRepresentation());
+          ropd.setType(swaggerizeType(inRepr.getRepresentation()));
         }
         if (inRepr.getRepresentation() != null) {
           usedModels.add(inRepr.getRepresentation());
@@ -47,22 +48,25 @@
         rod.getParameters().add(ropd);
       }
       Body outRepr=operation.getOutRepresentation();
-      if (outRepr != null) {
+      if (outRepr != null && outRepr.getRepresentation() != null) {
         if (outRepr.isArray()) {
           rod.setType("array");
           if (isPrimitiveType(outRepr.getRepresentation())) {
-            rod.getItems().setType(outRepr.getRepresentation());
+            rod.getItems().setType(swaggerizeType(outRepr.getRepresentation()));
           }
  else {
             rod.getItems().setRef(outRepr.getRepresentation());
           }
         }
  else {
-          rod.setType(outRepr.getRepresentation());
+          rod.setType(swaggerizeType(outRepr.getRepresentation()));
         }
         if (outRepr.getRepresentation() != null) {
           usedModels.add(outRepr.getRepresentation());
         }
+      }
+ else {
+        rod.setType("void");
       }
       for (      QueryParameter qp : operation.getQueryParameters()) {
         ropd=new ResourceOperationParameterDeclaration();
@@ -112,7 +116,7 @@
         tpd.setType("array");
         tpd.setItems(new ItemsDeclaration());
         if (isPrimitiveType(prop.getType())) {
-          tpd.getItems().setType(prop.getType());
+          tpd.getItems().setType(swaggerizeType(prop.getType()));
         }
  else {
           tpd.getItems().setRef(prop.getType());
@@ -120,7 +124,7 @@
       }
  else {
         if (isPrimitiveType(prop.getType())) {
-          tpd.setType(prop.getType());
+          tpd.setType(swaggerizeType(prop.getType()));
         }
  else {
           tpd.setRef(prop.getType());
