@@ -1,0 +1,229 @@
+{
+  validateFiles(resourceListing,apiDeclarations);
+  boolean containsRawTypes=false;
+  List<String> declaredTypes=new ArrayList<String>();
+  List<String> declaredPathVariables;
+  Map<String,List<String>> subtypes=new HashMap<String,List<String>>();
+  try {
+    Definition rwadef=new Definition();
+    rwadef.setVersion(resourceListing.getApiVersion());
+    rwadef.setContact(resourceListing.getInfo().getContact());
+    rwadef.setLicense(resourceListing.getInfo().getLicenseUrl());
+    Contract rwadContract=new Contract();
+    rwadContract.setName(resourceListing.getInfo().getTitle());
+    LOGGER.log(Level.FINE,"Contract " + rwadContract.getName() + " added.");
+    rwadContract.setDescription(resourceListing.getInfo().getDescription());
+    rwadef.setContract(rwadContract);
+    Resource rwadResource;
+    for (    Entry<String,ApiDeclaration> entry : apiDeclarations.entrySet()) {
+      ApiDeclaration swagApiResourceDec=entry.getValue();
+      List<String> apiProduces=new ArrayList<String>();
+      List<String> apiConsumes=new ArrayList<String>();
+      if (swagApiResourceDec.getProduces() != null) {
+        apiProduces=swagApiResourceDec.getProduces();
+      }
+      if (swagApiResourceDec.getConsumes() != null) {
+        apiConsumes=swagApiResourceDec.getConsumes();
+      }
+      for (      ResourceDeclaration api : swagApiResourceDec.getApis()) {
+        declaredPathVariables=new ArrayList<String>();
+        rwadResource=new Resource();
+        rwadResource.setResourcePath(api.getPath());
+        Operation rwadOperation;
+        for (        ResourceOperationDeclaration swagOperation : api.getOperations()) {
+          String methodName=swagOperation.getMethod();
+          if ("OPTIONS".equals(methodName) || "PATCH".equals(methodName)) {
+            LOGGER.log(Level.FINE,"Method " + methodName + " ignored.");
+            continue;
+          }
+          rwadOperation=new Operation();
+          rwadOperation.setMethod(swagOperation.getMethod());
+          rwadOperation.setName(swagOperation.getNickname());
+          Representation rwadFile;
+          for (          String produced : apiProduces.isEmpty() ? swagOperation.getProduces() : apiProduces) {
+            if (!containsRawTypes && produced.equals("multipart/form-data")) {
+              rwadFile=new Representation();
+              rwadFile.setName("File");
+              rwadFile.setRaw(true);
+              containsRawTypes=true;
+              rwadContract.getRepresentations().add(rwadFile);
+            }
+            rwadOperation.getProduces().add(produced);
+          }
+          for (          String consumed : apiConsumes.isEmpty() ? swagOperation.getConsumes() : apiConsumes) {
+            if (!containsRawTypes && consumed.equals("multipart/form-data")) {
+              rwadFile=new Representation();
+              rwadFile.setName("File");
+              rwadFile.setRaw(true);
+              containsRawTypes=true;
+              rwadContract.getRepresentations().add(rwadFile);
+            }
+            rwadOperation.getConsumes().add(consumed);
+          }
+          Body rwadOutRepr=new Body();
+          if (swagOperation.getType().equals("array")) {
+            LOGGER.log(Level.FINER,"Operation: " + swagOperation.getNickname() + " returns an array");
+            rwadOutRepr.setArray(true);
+            if (swagOperation.getItems() != null && swagOperation.getItems().getType() != null) {
+              rwadOutRepr.setRepresentation(swagOperation.getItems().getType());
+            }
+ else {
+              rwadOutRepr.setRepresentation(swagOperation.getItems().getRef());
+            }
+          }
+ else {
+            LOGGER.log(Level.FINER,"Operation: " + swagOperation.getNickname() + " returns a single Representation");
+            rwadOutRepr.setArray(false);
+            if (swagOperation.getType() != null) {
+              rwadOutRepr.setRepresentation(swagOperation.getType());
+            }
+ else {
+              rwadOutRepr.setRepresentation(swagOperation.getRef());
+            }
+          }
+          rwadOperation.setOutRepresentation(rwadOutRepr);
+          Response success=new Response();
+          success.setCode(200);
+          success.setBody(rwadOutRepr);
+          success.setDescription("Success");
+          success.setMessage("The request has succeeded");
+          success.setName("Success");
+          rwadOperation.getResponses().add(success);
+          for (          ResourceOperationParameterDeclaration swagPathVariable : getParametersByType(swagOperation,"path")) {
+            if (!declaredPathVariables.contains(swagPathVariable.getName())) {
+              declaredPathVariables.add(swagPathVariable.getName());
+              PathVariable rwadPathVariable=new PathVariable();
+              rwadPathVariable.setName(swagPathVariable.getName());
+              rwadPathVariable.setDescription(swagPathVariable.getDescription());
+              rwadPathVariable.setArray(swagPathVariable.isAllowMultiple());
+              rwadResource.getPathVariables().add(rwadPathVariable);
+            }
+          }
+          List<ResourceOperationParameterDeclaration> swagBodyParams;
+          if (!(swagBodyParams=getParametersByType(swagOperation,"body")).isEmpty()) {
+            Body rwadInRepr=new Body();
+            ResourceOperationParameterDeclaration swagBodyParam=swagBodyParams.get(0);
+            if (swagBodyParam.getType().equals("array")) {
+              rwadInRepr.setArray(true);
+              if (swagBodyParam.getItems() != null && swagBodyParam.getItems().getType() != null) {
+                rwadInRepr.setRepresentation(swagBodyParam.getItems().getType());
+              }
+ else {
+                rwadInRepr.setRepresentation(swagBodyParam.getItems().getRef());
+              }
+            }
+ else {
+              rwadInRepr.setArray(false);
+              rwadInRepr.setRepresentation(swagBodyParam.getType());
+            }
+            rwadOperation.setInRepresentation(rwadInRepr);
+          }
+          for (          ResourceOperationParameterDeclaration swagQueryParam : getParametersByType(swagOperation,"query")) {
+            QueryParameter rwadQueryParam=new QueryParameter();
+            rwadQueryParam.setName(swagQueryParam.getName());
+            rwadQueryParam.setDescription(swagQueryParam.getDescription());
+            rwadQueryParam.setRequired(swagQueryParam.isRequired());
+            rwadQueryParam.setAllowMultiple(swagQueryParam.isAllowMultiple());
+            rwadQueryParam.setDefaultValue(swagQueryParam.getDefaultValue());
+            if (swagQueryParam.getEnum_() != null && !swagQueryParam.getEnum_().isEmpty()) {
+              rwadQueryParam.setPossibleValues(new ArrayList<String>());
+              for (              String value : swagQueryParam.getEnum_()) {
+                rwadQueryParam.getPossibleValues().add(value);
+              }
+            }
+            rwadOperation.getQueryParameters().add(rwadQueryParam);
+          }
+          if (swagOperation.getResponseMessages() != null) {
+            for (            ResponseMessageDeclaration swagResponse : swagOperation.getResponseMessages()) {
+              Response rwadResponse=new Response();
+              Body body=new Body();
+              body.setRepresentation(swagResponse.getResponseModel());
+              rwadResponse.setBody(body);
+              rwadResponse.setName("Error " + swagResponse.getCode());
+              rwadResponse.setCode(swagResponse.getCode());
+              rwadResponse.setMessage(swagResponse.getMessage());
+              rwadOperation.getResponses().add(rwadResponse);
+            }
+          }
+          rwadOperation.setDescription(swagOperation.getSummary());
+          rwadResource.getOperations().add(rwadOperation);
+          LOGGER.log(Level.FINE,"Method " + methodName + " added.");
+          Iterator<Entry<String,ModelDeclaration>> representationsIt=swagApiResourceDec.getModels().entrySet().iterator();
+          while (representationsIt.hasNext()) {
+            Entry<String,ModelDeclaration> representationPair=representationsIt.next();
+            ModelDeclaration swagRepresentation=representationPair.getValue();
+            if (swagRepresentation.getSubTypes() != null && !swagRepresentation.getSubTypes().isEmpty()) {
+              subtypes.put(swagRepresentation.getId(),swagRepresentation.getSubTypes());
+            }
+            if (!declaredTypes.contains(representationPair.getKey())) {
+              declaredTypes.add(representationPair.getKey());
+              Representation rwadRepr=new Representation();
+              rwadRepr.setName(representationPair.getKey());
+              rwadRepr.setDescription(swagRepresentation.getDescription());
+              Iterator<Entry<String,TypePropertyDeclaration>> propertiesIt=representationPair.getValue().getProperties().entrySet().iterator();
+              while (propertiesIt.hasNext()) {
+                Entry<String,TypePropertyDeclaration> propertiesPair=propertiesIt.next();
+                TypePropertyDeclaration swagProperty=propertiesPair.getValue();
+                Property rwadProperty=new Property();
+                rwadProperty.setName(propertiesPair.getKey());
+                if (swagProperty.getType() != null && !swagProperty.getType().equals("array")) {
+                  rwadProperty.setType(swagProperty.getType());
+                }
+ else                 if (swagProperty.getType() != null && swagProperty.getType().equals("array")) {
+                  rwadProperty.setType(swagProperty.getItems().getType() != null ? swagProperty.getItems().getType() : swagProperty.getItems().getRef());
+                }
+ else                 if (swagProperty.getRef() != null) {
+                  rwadProperty.setType(swagProperty.getRef());
+                }
+                if (swagRepresentation.getRequired() != null) {
+                  rwadProperty.setMinOccurs(swagRepresentation.getRequired().contains(propertiesPair.getKey()) ? 1 : 0);
+                }
+ else {
+                  rwadProperty.setMinOccurs(0);
+                }
+                if (swagProperty.getType() != null) {
+                  rwadProperty.setMaxOccurs(swagProperty.getType().equals("array") ? -1 : 1);
+                }
+ else {
+                  rwadProperty.setMaxOccurs(1);
+                }
+                rwadProperty.setDescription(swagProperty.getDescription());
+                rwadProperty.setMin(swagProperty.getMinimum());
+                rwadProperty.setMax(swagProperty.getMinimum());
+                rwadProperty.setUniqueItems(swagProperty.isUniqueItems());
+                rwadRepr.getProperties().add(rwadProperty);
+                LOGGER.log(Level.FINE,"Property " + rwadProperty.getName() + " added.");
+              }
+              rwadContract.getRepresentations().add(rwadRepr);
+              LOGGER.log(Level.FINE,"Representation " + rwadRepr.getName() + " added.");
+            }
+          }
+          Iterator<Entry<String,List<String>>> subtypesIt=subtypes.entrySet().iterator();
+          while (subtypesIt.hasNext()) {
+            Entry<String,List<String>> subtypesPair=subtypesIt.next();
+            List<String> subtypesOf=subtypesPair.getValue();
+            for (            String subtypeOf : subtypesOf) {
+              Representation repr=getRepresentationByName(subtypeOf,rwadContract);
+              repr.setParentType(subtypesPair.getKey());
+            }
+          }
+        }
+        rwadef.getContract().getResources().add(rwadResource);
+        LOGGER.log(Level.FINE,"Resource " + api.getPath() + " added.");
+      }
+      if (rwadef.getEndpoint() == null) {
+        rwadef.setEndpoint(swagApiResourceDec.getBasePath());
+      }
+    }
+    LOGGER.log(Level.FINE,"Definition successfully retrieved from Swagger definition");
+    return rwadef;
+  }
+ catch (  Exception e) {
+    if (e instanceof FileNotFoundException) {
+      throw new SwaggerConversionException("file",((FileNotFoundException)e).getMessage());
+    }
+ else {
+      throw new SwaggerConversionException("compliance","Impossible to read your API definition, check your Swagger specs compliance");
+    }
+  }
+}
