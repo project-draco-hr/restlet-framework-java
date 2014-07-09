@@ -86,11 +86,14 @@
     }
     result.getApis().add(rd);
   }
-  result.setModels(new HashMap<String,ModelDeclaration>());
+  result.setModels(new TreeMap<String,ModelDeclaration>());
   Iterator<String> iterator=usedModels.iterator();
   while (iterator.hasNext()) {
     String model=iterator.next();
     Representation repr=getRepresentationByName(model,def.getContract());
+    if (repr == null || isPrimitiveType(model)) {
+      continue;
+    }
     ModelDeclaration md=new ModelDeclaration();
     md.setId(model);
     md.setDescription(repr.getDescription());
@@ -130,5 +133,11 @@
     }
     result.getModels().put(md.getId(),md);
   }
+  Collections.sort(result.getApis(),new Comparator<ResourceDeclaration>(){
+    @Override public int compare(    ResourceDeclaration o1,    ResourceDeclaration o2){
+      return o1.getPath().compareTo(o2.getPath());
+    }
+  }
+);
   return result;
 }
