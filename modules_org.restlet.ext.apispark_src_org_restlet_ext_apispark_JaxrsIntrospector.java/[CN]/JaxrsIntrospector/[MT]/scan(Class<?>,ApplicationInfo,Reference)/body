@@ -1,28 +1,25 @@
 {
   info.getResources().setBaseRef(baseRef);
-  System.out.println(clazz);
+  List<CookieParam> cookieparamList=new ArrayList<CookieParam>();
+  List<FormParam> formparamList=new ArrayList<FormParam>();
+  List<HeaderParam> headerparamList=new ArrayList<HeaderParam>();
+  List<MatrixParam> matrixparamList=new ArrayList<MatrixParam>();
+  List<PathParam> pathparamList=new ArrayList<PathParam>();
+  List<QueryParam> queryparamList=new ArrayList<QueryParam>();
+  List<javax.ws.rs.core.Context> contextList=new ArrayList<javax.ws.rs.core.Context>();
   Consumes c=clazz.getAnnotation(Consumes.class);
-  if (c != null) {
-    System.out.println("consumes " + c.value());
-  }
   Encoded e=clazz.getAnnotation(Encoded.class);
   System.out.println("encoded " + e);
   Path path=clazz.getAnnotation(Path.class);
-  if (path != null) {
-    System.out.println("path " + path.value());
-  }
   Produces p=clazz.getAnnotation(Produces.class);
-  if (p != null) {
-    System.out.println("produces " + p.value());
-  }
   Field[] fields=clazz.getDeclaredFields();
   if (fields != null) {
     for (    Field field : fields) {
-      scanField(field);
+      scan(field,cookieparamList,formparamList,headerparamList,matrixparamList,pathparamList,queryparamList,contextList);
     }
   }
   Method[] methods=clazz.getDeclaredMethods();
   for (  Method method : methods) {
-    scan(method,info,c,e,path,p);
+    scan(method,info,path,c,p,cookieparamList,formparamList,headerparamList,matrixparamList,pathparamList,queryparamList,contextList);
   }
 }

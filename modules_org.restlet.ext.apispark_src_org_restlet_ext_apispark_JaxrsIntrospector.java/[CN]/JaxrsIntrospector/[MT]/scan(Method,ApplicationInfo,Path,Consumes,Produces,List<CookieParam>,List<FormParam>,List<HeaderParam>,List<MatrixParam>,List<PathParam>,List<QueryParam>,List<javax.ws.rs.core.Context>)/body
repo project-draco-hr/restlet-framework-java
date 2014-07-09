@@ -1,5 +1,8 @@
 {
   MethodInfo mi=new MethodInfo();
+  if (!formparamList.isEmpty()) {
+    addRepresentation(mi,formparamList.get(0));
+  }
   Path path=method.getAnnotation(Path.class);
   String fullPath=getPath(cPath,path);
   ResourceInfo resource=null;
@@ -18,6 +21,7 @@
   resource.getMethods().add(mi);
   PathParam pathparam=method.getAnnotation(PathParam.class);
   if (pathparam != null) {
+    pathparamList.add(pathparam);
     ParameterInfo pi=new ParameterInfo(pathparam.value(),ParameterStyle.TEMPLATE,"Path parameter: " + pathparam.value());
     pi.setRequired(true);
     resource.getParameters().add(pi);
@@ -41,31 +45,24 @@
   }
   CookieParam cookieparam=method.getAnnotation(CookieParam.class);
   if (cookieparam != null) {
-    System.out.println("cookieparam " + cookieparam.value());
     ParameterInfo pi=new ParameterInfo(cookieparam.value(),ParameterStyle.COOKIE,"Cookie parameter: " + cookieparam.value());
     mi.getParameters().add(pi);
   }
   Encoded encoded=method.getAnnotation(Encoded.class);
-  System.out.println("encoded " + encoded);
   FormParam formparam=method.getAnnotation(FormParam.class);
-  if (formparam != null) {
-    System.out.println("formparam " + formparam.value());
-  }
+  addRepresentation(mi,formparam);
   HeaderParam headerparam=method.getAnnotation(HeaderParam.class);
   if (headerparam != null) {
-    System.out.println("headerparam " + headerparam.value());
     ParameterInfo pi=new ParameterInfo(headerparam.value(),ParameterStyle.HEADER,"Header parameter: " + cookieparam.value());
     mi.getParameters().add(pi);
   }
   MatrixParam matrixparam=method.getAnnotation(MatrixParam.class);
   if (matrixparam != null) {
-    System.out.println("matrixparam " + matrixparam.value());
     ParameterInfo pi=new ParameterInfo(matrixparam.value(),ParameterStyle.MATRIX,"Matrix parameter: " + cookieparam.value());
     mi.getParameters().add(pi);
   }
   QueryParam queryparam=method.getAnnotation(QueryParam.class);
   if (queryparam != null) {
-    System.out.println("queryparam " + queryparam.value());
     ParameterInfo pi=new ParameterInfo(queryparam.value(),ParameterStyle.QUERY,"Query parameter: " + cookieparam.value());
     mi.getParameters().add(pi);
   }
@@ -81,31 +78,24 @@
   PUT put=method.getAnnotation(PUT.class);
   HttpMethod httpmethod=method.getAnnotation(HttpMethod.class);
   if (delete != null) {
-    System.out.println("delete " + delete);
     mi.setMethod(org.restlet.data.Method.DELETE);
   }
  else   if (get != null) {
-    System.out.println("get " + get);
     mi.setMethod(org.restlet.data.Method.GET);
   }
  else   if (head != null) {
-    System.out.println("head " + head);
     mi.setMethod(org.restlet.data.Method.HEAD);
   }
  else   if (httpmethod != null) {
-    System.out.println("httpmethod " + httpmethod.value());
     mi.setMethod(org.restlet.data.Method.valueOf(httpmethod.value()));
   }
  else   if (options != null) {
-    System.out.println("options " + options);
     mi.setMethod(org.restlet.data.Method.OPTIONS);
   }
  else   if (post != null) {
-    System.out.println("post " + post);
     mi.setMethod(org.restlet.data.Method.POST);
   }
  else   if (put != null) {
-    System.out.println("put " + put);
     mi.setMethod(org.restlet.data.Method.PUT);
   }
   Produces produces=method.getAnnotation(Produces.class);
@@ -114,7 +104,6 @@
   }
   Class<?> outputClass=method.getReturnType();
   if (produces != null && outputClass != null && !Void.class.equals(outputClass)) {
-    System.out.println("produces " + produces.value());
     for (    String produce : produces.value()) {
       Variant variant=new Variant(MediaType.valueOf(produce));
       RepresentationInfo representationInfo=null;
@@ -135,17 +124,13 @@
   if (consumes == null) {
     consumes=cConsumes;
   }
-  if (consumes != null) {
-    System.out.println("consumes " + consumes.value());
-    consumes.value();
-  }
   Annotation[][] parameterAnnotations=method.getParameterAnnotations();
   Class<?>[] parameterTypes=method.getParameterTypes();
   int i=0;
   for (  Annotation[] annotations : parameterAnnotations) {
     Class<?> parameterType=parameterTypes[i++];
     for (    Annotation annotation : annotations) {
-      scanParameter(annotation,parameterType,info,resource,mi,consumes);
+      scan(annotation,parameterType,info,resource,mi,consumes);
     }
   }
 }
