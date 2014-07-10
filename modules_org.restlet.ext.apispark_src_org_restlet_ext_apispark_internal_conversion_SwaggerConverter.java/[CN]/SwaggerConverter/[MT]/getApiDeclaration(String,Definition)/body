@@ -1,7 +1,7 @@
 {
   ApiDeclaration result=new ApiDeclaration();
-  result.setApiVersion(def.getVersion() == null ? "1.0" : def.getVersion());
-  result.setBasePath(def.getEndpoint() == null ? "http://localhost:9000/v1" : def.getEndpoint());
+  result.setApiVersion(def.getVersion());
+  result.setBasePath(def.getEndpoint());
   result.setInfo(new ApiInfo());
   result.setSwaggerVersion(SWAGGER_VERSION);
   result.setResourcePath("/" + category);
@@ -94,7 +94,7 @@
   Iterator<String> iterator=usedModels.iterator();
   while (iterator.hasNext()) {
     String model=iterator.next();
-    Representation repr=getRepresentationByName(model,def.getContract());
+    Representation repr=getRepresentationByName(def.getContract(),model);
     if (repr == null || isPrimitiveType(model)) {
       continue;
     }

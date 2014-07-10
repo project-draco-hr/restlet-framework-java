@@ -4,7 +4,7 @@
   }
   Pattern p=Pattern.compile("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
   boolean remote=p.matcher(address).matches();
-  boolean apisparkAddress=apisparkAddress(address);
+  boolean apisparkAddress=isApisparkUrl(address);
   ResourceListing resourceListing=new ResourceListing();
   Map<String,ApiDeclaration> apis=new HashMap<String,ApiDeclaration>();
   if (remote) {
@@ -31,5 +31,5 @@
       throw new SwaggerConversionException("file",e.getMessage());
     }
   }
-  return convert(resourceListing,apis);
+  return SwaggerConverter.convert(resourceListing,apis);
 }
