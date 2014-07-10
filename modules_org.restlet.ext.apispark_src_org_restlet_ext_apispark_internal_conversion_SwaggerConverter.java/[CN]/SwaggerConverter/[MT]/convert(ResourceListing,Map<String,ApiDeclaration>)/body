@@ -139,7 +139,7 @@
               Body body=new Body();
               body.setRepresentation(swagResponse.getResponseModel());
               rwadResponse.setBody(body);
-              rwadResponse.setName(Status.valueOf(swagResponse.getCode()).getReasonPhrase());
+              rwadResponse.setName("Error " + swagResponse.getCode());
               rwadResponse.setCode(swagResponse.getCode());
               rwadResponse.setMessage(swagResponse.getMessage());
               rwadOperation.getResponses().add(rwadResponse);
@@ -203,7 +203,7 @@
             Entry<String,List<String>> subtypesPair=subtypesIt.next();
             List<String> subtypesOf=subtypesPair.getValue();
             for (            String subtypeOf : subtypesOf) {
-              Representation repr=getRepresentationByName(subtypeOf,rwadContract);
+              Representation repr=getRepresentationByName(rwadContract,subtypeOf);
               repr.setParentType(subtypesPair.getKey());
             }
           }
