@@ -1,12 +1,8 @@
 {
   ClientResource cr=new ClientResource(url);
   cr.accept(MediaType.APPLICATION_JSON);
-  if (apisparkAddress) {
-    LOGGER.log(Level.FINER,"Internal source: " + userName + " "+ password);
+  if (!isEmpty(userName) && !isEmpty(password)) {
     cr.setChallengeResponse(ChallengeScheme.HTTP_BASIC,userName,password);
-  }
- else {
-    LOGGER.log(Level.FINER,"External source");
   }
   return cr;
 }
