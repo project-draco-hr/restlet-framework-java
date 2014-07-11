@@ -1,0 +1,34 @@
+{
+  Representation result=new Representation();
+  result.setName(name);
+  result.setDescription(model.getDescription());
+  for (  Entry<String,TypePropertyDeclaration> swagProperties : model.getProperties().entrySet()) {
+    TypePropertyDeclaration swagProperty=swagProperties.getValue();
+    Property property=new Property();
+    property.setName(swagProperties.getKey());
+    boolean isArray="array".equals(swagProperty.getType());
+    if (isArray) {
+      property.setType(swagProperty.getItems().getType() != null ? swagProperty.getItems().getType() : swagProperty.getItems().getRef());
+    }
+ else     if (swagProperty.getType() != null) {
+      property.setType(swagProperty.getType());
+    }
+ else     if (swagProperty.getRef() != null) {
+      property.setType(swagProperty.getRef());
+    }
+    if (model.getRequired() != null) {
+      property.setMinOccurs(model.getRequired().contains(swagProperties.getKey()) ? 1 : 0);
+    }
+ else {
+      property.setMinOccurs(0);
+    }
+    property.setMaxOccurs(isArray ? -1 : 1);
+    property.setDescription(swagProperty.getDescription());
+    property.setMin(swagProperty.getMinimum());
+    property.setMax(swagProperty.getMaximum());
+    property.setUniqueItems(swagProperty.isUniqueItems());
+    result.getProperties().add(property);
+    LOGGER.log(Level.FINE,"Property " + property.getName() + " added.");
+  }
+  return result;
+}

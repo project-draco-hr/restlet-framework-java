@@ -1,12 +1,13 @@
 {
   String segment=null;
   if (path != null) {
-    segment="/";
-    for (    String part : path.split("/")) {
-      if (part != null && !part.isEmpty()) {
-        segment+=part;
-        break;
-      }
+    int start=(path.startsWith("/")) ? 1 : 0;
+    int index=path.indexOf("/",start);
+    if (index != -1) {
+      segment="/" + path.substring(start,index);
+    }
+ else {
+      segment="/" + path.substring(start);
     }
   }
   return segment;
