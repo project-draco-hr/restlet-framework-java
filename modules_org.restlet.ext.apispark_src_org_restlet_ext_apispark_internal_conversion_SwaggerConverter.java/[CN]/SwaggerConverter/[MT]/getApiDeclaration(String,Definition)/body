@@ -80,10 +80,15 @@
         rod.getParameters().add(ropd);
       }
       for (      Response response : operation.getResponses()) {
+        if (Status.isSuccess(response.getCode())) {
+          continue;
+        }
         ResponseMessageDeclaration rmd=new ResponseMessageDeclaration();
         rmd.setCode(response.getCode());
         rmd.setMessage(response.getMessage());
-        rmd.setResponseModel(response.getBody().getRepresentation());
+        if (response.getBody() != null) {
+          rmd.setResponseModel(response.getBody().getRepresentation());
+        }
         rod.getResponseMessages().add(rmd);
       }
       rd.getOperations().add(rod);
