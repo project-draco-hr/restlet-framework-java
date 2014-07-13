@@ -108,6 +108,7 @@
         addRepresentations(mapReps,mi.getRequest().getRepresentations());
         Body body=new Body();
         body.setRepresentation(mi.getRequest().getRepresentations().get(0).getName());
+        body.setArray(mi.getRequest().getRepresentations().get(0).isCollection());
         operation.setInRepresentation(body);
       }
       if (mi.getResponses() != null && !mi.getResponses().isEmpty()) {
@@ -115,6 +116,7 @@
         Body body=new Body();
         if (!mi.getResponse().getRepresentations().isEmpty()) {
           body.setRepresentation(mi.getResponse().getRepresentations().get(0).getName());
+          body.setArray(mi.getResponse().getRepresentations().get(0).isCollection());
         }
         operation.setOutRepresentation(body);
         for (        ResponseInfo rio : mi.getResponses()) {

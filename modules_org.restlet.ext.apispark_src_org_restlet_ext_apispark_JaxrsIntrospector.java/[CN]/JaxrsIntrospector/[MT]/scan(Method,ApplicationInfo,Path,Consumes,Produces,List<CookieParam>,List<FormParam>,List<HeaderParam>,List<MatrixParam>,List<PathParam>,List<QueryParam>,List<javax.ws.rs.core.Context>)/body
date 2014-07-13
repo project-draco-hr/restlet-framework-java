@@ -1,7 +1,7 @@
 {
   MethodInfo mi=new MethodInfo();
-  if (!formparamList.isEmpty()) {
-    addRepresentation(mi,formparamList.get(0));
+  for (  FormParam formparam : formparamList) {
+    addRepresentation(mi,formparam);
   }
   Path path=method.getAnnotation(Path.class);
   String fullPath=getPath(cPath,path);
@@ -115,7 +115,7 @@
         representationInfo.setRaw(true);
       }
  else {
-        representationInfo=RepresentationInfo.describe(mi,outputClass,variant);
+        representationInfo=RepresentationInfo.describe(mi,outputClass,method.getGenericReturnType(),variant);
       }
       mi.getResponse().getRepresentations().add(representationInfo);
     }
@@ -128,9 +128,8 @@
   Class<?>[] parameterTypes=method.getParameterTypes();
   int i=0;
   for (  Annotation[] annotations : parameterAnnotations) {
-    Class<?> parameterType=parameterTypes[i++];
-    for (    Annotation annotation : annotations) {
-      scan(annotation,parameterType,info,resource,mi,consumes);
-    }
+    Class<?> parameterType=parameterTypes[i];
+    scan(annotations,parameterType,method.getGenericParameterTypes()[i],info,resource,mi,consumes);
+    i++;
   }
 }

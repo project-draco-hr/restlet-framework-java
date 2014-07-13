@@ -35,8 +35,19 @@
     }
     List<RepresentationInfo> toBeAdded=new ArrayList<RepresentationInfo>();
     for (    RepresentationInfo ri : mapReps.values()) {
-      Class<?> parentType=ri.getParentType();
-      if (ri.getParentType() != null && !mapReps.containsKey(parentType.getName())) {
+      if (ri.isRaw()) {
+        continue;
+      }
+      if (ri.isCollection() && !mapReps.containsKey(ri.getType().getName())) {
+        RepresentationInfo r=new RepresentationInfo(ri.getMediaType());
+        r.setType(ri.getType());
+        toBeAdded.add(r);
+      }
+      Class<?> parentType=ri.getType().getSuperclass();
+      if (parentType != null && ReflectUtils.isJdkClass(parentType)) {
+        parentType=null;
+      }
+      if (parentType != null && !mapReps.containsKey(parentType.getName())) {
         RepresentationInfo r=new RepresentationInfo(ri.getMediaType());
         r.setType(parentType);
         toBeAdded.add(r);
@@ -55,11 +66,14 @@
       toBeAdded.clear();
       for (int i=0; i < tab.length; i++) {
         RepresentationInfo current=tab[i];
-        if (!ReflectUtils.isJdkClass(current.getType())) {
+        if (!current.isRaw() && !ReflectUtils.isJdkClass(current.getType())) {
           if (!mapReps.containsKey(current.getName())) {
-            RepresentationInfo ri=RepresentationInfo.introspect(current.getType(),current.getMediaType());
+            RepresentationInfo ri=RepresentationInfo.introspect(current.getType(),null,current.getMediaType());
             mapReps.put(ri.getIdentifier(),ri);
-            Class<?> parentType=ri.getParentType();
+            Class<?> parentType=ri.getType().getSuperclass();
+            if (parentType != null && ReflectUtils.isJdkClass(parentType)) {
+              parentType=null;
+            }
             if (parentType != null && !mapReps.containsKey(parentType.getName())) {
               RepresentationInfo r=new RepresentationInfo(ri.getMediaType());
               r.setType(parentType);

@@ -17,15 +17,14 @@
     if (ai != null) {
       try {
         Class<?>[] classes=ai.getJavaInputTypes();
-        Class<?> inputClass=(classes != null && classes.length > 0) ? classes[0] : null;
         List<Variant> requestVariants=ai.getRequestVariants(resource.getMetadataService(),resource.getConverterService());
-        if (requestVariants != null) {
+        if (classes != null && classes.length > 0 && requestVariants != null) {
           for (          Variant variant : requestVariants) {
             if ((variant.getMediaType() != null) && ((info.getRequest() == null) || !info.getRequest().getRepresentations().contains(variant))) {
               if (info.getRequest() == null) {
                 info.setRequest(new RequestInfo());
               }
-              RepresentationInfo representationInfo=RepresentationInfo.describe(info,inputClass,variant);
+              RepresentationInfo representationInfo=RepresentationInfo.describe(info,ai.getJavaMethod().getParameterTypes()[0],ai.getJavaMethod().getGenericParameterTypes()[0],variant);
               info.getRequest().getRepresentations().add(representationInfo);
             }
           }
@@ -44,7 +43,7 @@
           if (responseVariants != null) {
             for (            Variant variant : responseVariants) {
               if ((variant.getMediaType() != null) && !info.getResponse().getRepresentations().contains(variant)) {
-                RepresentationInfo representationInfo=RepresentationInfo.describe(info,outputClass,variant);
+                RepresentationInfo representationInfo=RepresentationInfo.describe(info,ai.getJavaMethod().getReturnType(),ai.getJavaMethod().getGenericReturnType(),variant);
                 info.getResponse().getRepresentations().add(representationInfo);
               }
             }
