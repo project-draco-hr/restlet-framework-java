@@ -1,12 +1,12 @@
 {
   ApiDeclaration result=new ApiDeclaration();
-  result.setApiVersion(def.getVersion());
-  result.setBasePath(def.getEndpoint());
+  result.setApiVersion(definition.getVersion());
+  result.setBasePath(definition.getEndpoint());
   result.setInfo(new ApiInfo());
   result.setSwaggerVersion(SWAGGER_VERSION);
   result.setResourcePath("/" + category);
   Set<String> usedModels=new HashSet<String>();
-  for (  Resource resource : def.getContract().getResources()) {
+  for (  Resource resource : definition.getContract().getResources()) {
     if (!resource.getResourcePath().startsWith("/" + category)) {
       continue;
     }
@@ -36,11 +36,11 @@
         ropd=new ResourceOperationParameterDeclaration();
         ropd.setParamType("body");
         ropd.setRequired(true);
-        if (inRepr.getRepresentation().equals("Representation")) {
+        if ("Representation".equals(inRepr.getRepresentation())) {
           ropd.setType("File");
         }
  else {
-          ropd.setType(swaggerizeType(inRepr.getRepresentation()));
+          ropd.setType(toSwaggerType(inRepr.getRepresentation()));
         }
         if (inRepr.getRepresentation() != null) {
           usedModels.add(inRepr.getRepresentation());
@@ -52,18 +52,16 @@
         if (outRepr.isArray()) {
           rod.setType("array");
           if (isPrimitiveType(outRepr.getRepresentation())) {
-            rod.getItems().setType(swaggerizeType(outRepr.getRepresentation()));
+            rod.getItems().setType(toSwaggerType(outRepr.getRepresentation()));
           }
  else {
             rod.getItems().setRef(outRepr.getRepresentation());
           }
         }
  else {
-          rod.setType(swaggerizeType(outRepr.getRepresentation()));
+          rod.setType(toSwaggerType(outRepr.getRepresentation()));
         }
-        if (outRepr.getRepresentation() != null) {
-          usedModels.add(outRepr.getRepresentation());
-        }
+        usedModels.add(outRepr.getRepresentation());
       }
  else {
         rod.setType("void");
@@ -99,7 +97,7 @@
   Iterator<String> iterator=usedModels.iterator();
   while (iterator.hasNext()) {
     String model=iterator.next();
-    Representation repr=getRepresentationByName(def.getContract(),model);
+    Representation repr=getRepresentationByName(definition.getContract(),model);
     if (repr == null || isPrimitiveType(model)) {
       continue;
     }
@@ -121,7 +119,7 @@
         tpd.setType("array");
         tpd.setItems(new ItemsDeclaration());
         if (isPrimitiveType(prop.getType())) {
-          tpd.getItems().setType(swaggerizeType(prop.getType()));
+          tpd.getItems().setType(toSwaggerType(prop.getType()));
         }
  else {
           tpd.getItems().setRef(prop.getType());
@@ -129,7 +127,7 @@
       }
  else {
         if (isPrimitiveType(prop.getType())) {
-          tpd.setType(swaggerizeType(prop.getType()));
+          tpd.setType(toSwaggerType(prop.getType()));
         }
  else {
           tpd.setRef(prop.getType());
