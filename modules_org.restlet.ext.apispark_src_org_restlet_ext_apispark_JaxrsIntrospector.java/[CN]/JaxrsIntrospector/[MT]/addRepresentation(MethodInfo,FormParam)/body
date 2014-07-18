@@ -1,5 +1,5 @@
 {
-  if (formparam != null) {
+  if (formParam != null) {
     RepresentationInfo ri=null;
     for (    RepresentationInfo r : method.getRequest().getRepresentations()) {
       if (r.getMediaType().equals(MediaType.APPLICATION_WWW_FORM)) {
@@ -9,12 +9,12 @@
     }
     if (ri == null) {
       ri=new RepresentationInfo();
-      ri.setIdentifier(method.getMethod().getName());
+      ri.setIdentifier(method.getMethod().getName() + "Form");
       ri.setName(method.getMethod().getName());
       ri.setMediaType(MediaType.APPLICATION_WWW_FORM);
       method.getRequest().getRepresentations().add(ri);
     }
-    ParameterInfo pi=new ParameterInfo(formparam.value(),ParameterStyle.PLAIN,"body parameter: " + formparam.value());
+    ParameterInfo pi=new ParameterInfo(formParam.value(),ParameterStyle.PLAIN,"body parameter: " + formParam.value());
     method.getParameters().add(pi);
   }
 }

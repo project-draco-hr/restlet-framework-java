@@ -1,7 +1,7 @@
 {
   MethodInfo mi=new MethodInfo();
-  if (!formparamList.isEmpty()) {
-    addRepresentation(mi,formparamList.get(0));
+  for (  FormParam formParam : formParams) {
+    addRepresentation(mi,formParam);
   }
   Path path=method.getAnnotation(Path.class);
   String fullPath=getPath(cPath,path);
@@ -19,10 +19,10 @@
     info.getResources().getResources().add(resource);
   }
   resource.getMethods().add(mi);
-  PathParam pathparam=method.getAnnotation(PathParam.class);
-  if (pathparam != null) {
-    pathparamList.add(pathparam);
-    ParameterInfo pi=new ParameterInfo(pathparam.value(),ParameterStyle.TEMPLATE,"Path parameter: " + pathparam.value());
+  PathParam pathParam=method.getAnnotation(PathParam.class);
+  if (pathParam != null) {
+    pathParams.add(pathParam);
+    ParameterInfo pi=new ParameterInfo(pathParam.value(),ParameterStyle.TEMPLATE,"Path parameter: " + pathParam.value());
     pi.setRequired(true);
     resource.getParameters().add(pi);
   }
@@ -43,32 +43,27 @@
       }
     }
   }
-  CookieParam cookieparam=method.getAnnotation(CookieParam.class);
-  if (cookieparam != null) {
-    ParameterInfo pi=new ParameterInfo(cookieparam.value(),ParameterStyle.COOKIE,"Cookie parameter: " + cookieparam.value());
+  CookieParam cookieParam=method.getAnnotation(CookieParam.class);
+  if (cookieParam != null) {
+    ParameterInfo pi=new ParameterInfo(cookieParam.value(),ParameterStyle.COOKIE,"Cookie parameter: " + cookieParam.value());
     mi.getParameters().add(pi);
   }
-  Encoded encoded=method.getAnnotation(Encoded.class);
-  FormParam formparam=method.getAnnotation(FormParam.class);
-  addRepresentation(mi,formparam);
-  HeaderParam headerparam=method.getAnnotation(HeaderParam.class);
-  if (headerparam != null) {
-    ParameterInfo pi=new ParameterInfo(headerparam.value(),ParameterStyle.HEADER,"Header parameter: " + cookieparam.value());
+  FormParam formParam=method.getAnnotation(FormParam.class);
+  addRepresentation(mi,formParam);
+  HeaderParam headerParam=method.getAnnotation(HeaderParam.class);
+  if (headerParam != null) {
+    ParameterInfo pi=new ParameterInfo(headerParam.value(),ParameterStyle.HEADER,"Header parameter: " + cookieParam.value());
     mi.getParameters().add(pi);
   }
-  MatrixParam matrixparam=method.getAnnotation(MatrixParam.class);
-  if (matrixparam != null) {
-    ParameterInfo pi=new ParameterInfo(matrixparam.value(),ParameterStyle.MATRIX,"Matrix parameter: " + cookieparam.value());
+  MatrixParam matrixParam=method.getAnnotation(MatrixParam.class);
+  if (matrixParam != null) {
+    ParameterInfo pi=new ParameterInfo(matrixParam.value(),ParameterStyle.MATRIX,"Matrix parameter: " + cookieParam.value());
     mi.getParameters().add(pi);
   }
-  QueryParam queryparam=method.getAnnotation(QueryParam.class);
-  if (queryparam != null) {
-    ParameterInfo pi=new ParameterInfo(queryparam.value(),ParameterStyle.QUERY,"Query parameter: " + cookieparam.value());
+  QueryParam queryParam=method.getAnnotation(QueryParam.class);
+  if (queryParam != null) {
+    ParameterInfo pi=new ParameterInfo(queryParam.value(),ParameterStyle.QUERY,"Query parameter: " + cookieParam.value());
     mi.getParameters().add(pi);
-  }
-  DefaultValue defaultvalue=method.getAnnotation(DefaultValue.class);
-  if (defaultvalue != null) {
-    System.out.println("defaultvalue " + defaultvalue.value());
   }
   DELETE delete=method.getAnnotation(DELETE.class);
   GET get=method.getAnnotation(GET.class);
@@ -76,7 +71,7 @@
   OPTIONS options=method.getAnnotation(OPTIONS.class);
   POST post=method.getAnnotation(POST.class);
   PUT put=method.getAnnotation(PUT.class);
-  HttpMethod httpmethod=method.getAnnotation(HttpMethod.class);
+  HttpMethod httpMethod=method.getAnnotation(HttpMethod.class);
   if (delete != null) {
     mi.setMethod(org.restlet.data.Method.DELETE);
   }
@@ -86,8 +81,8 @@
  else   if (head != null) {
     mi.setMethod(org.restlet.data.Method.HEAD);
   }
- else   if (httpmethod != null) {
-    mi.setMethod(org.restlet.data.Method.valueOf(httpmethod.value()));
+ else   if (httpMethod != null) {
+    mi.setMethod(org.restlet.data.Method.valueOf(httpMethod.value()));
   }
  else   if (options != null) {
     mi.setMethod(org.restlet.data.Method.OPTIONS);
