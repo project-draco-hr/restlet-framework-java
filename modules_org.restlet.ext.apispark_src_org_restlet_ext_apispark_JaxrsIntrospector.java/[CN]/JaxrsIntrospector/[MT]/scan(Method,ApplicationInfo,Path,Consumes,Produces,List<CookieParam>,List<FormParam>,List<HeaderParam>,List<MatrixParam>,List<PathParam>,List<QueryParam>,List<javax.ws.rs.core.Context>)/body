@@ -110,7 +110,7 @@
         representationInfo.setRaw(true);
       }
  else {
-        representationInfo=RepresentationInfo.describe(mi,outputClass,variant);
+        representationInfo=RepresentationInfo.describe(mi,outputClass,method.getGenericReturnType(),variant);
       }
       mi.getResponse().getRepresentations().add(representationInfo);
     }
@@ -123,9 +123,12 @@
   Class<?>[] parameterTypes=method.getParameterTypes();
   int i=0;
   for (  Annotation[] annotations : parameterAnnotations) {
-    Class<?> parameterType=parameterTypes[i++];
-    for (    Annotation annotation : annotations) {
-      scan(annotation,parameterType,info,resource,mi,consumes);
-    }
+    Class<?> parameterType=parameterTypes[i];
+    scan(annotations,parameterType,method.getGenericParameterTypes()[i],info,resource,mi,consumes);
+    i++;
+  }
+  if (mi.getResponse().getStatuses().isEmpty()) {
+    mi.getResponse().getStatuses().add(Status.SUCCESS_OK);
+    mi.getResponse().setDocumentation("Success");
   }
 }

@@ -1,15 +1,21 @@
 {
   RepresentationInfo result=new RepresentationInfo(mediaType);
-  result.setType(clazz);
-  result.setIdentifier(clazz.getName());
-  result.setName(clazz.getSimpleName());
-  if (org.restlet.representation.Representation.class.isAssignableFrom(clazz) || ReflectUtils.isJdkClass(clazz)) {
+  result.setCollection(ReflectUtils.isListType(clazz));
+  Class<?> c=ReflectUtils.getSimpleClass(type);
+  result.setType((c == null) ? clazz : c);
+  boolean generic=c != null && !c.getCanonicalName().equals(clazz.getCanonicalName());
+  if (generic) {
+    result.setIdentifier(clazz.getName() + c.getName());
+    result.setName(clazz.getSimpleName() + c.getSimpleName());
+  }
+ else {
+    result.setIdentifier(result.getType().getName());
+    result.setName(result.getType().getSimpleName());
+  }
+  if (org.restlet.representation.Representation.class.isAssignableFrom(clazz) || ReflectUtils.isJdkClass(c)) {
     result.setRaw(true);
   }
  else {
-    if (clazz.getSuperclass() != null && !ReflectUtils.isJdkClass(clazz.getSuperclass())) {
-      result.setParentType(clazz.getSuperclass());
-    }
     for (    Field field : ReflectUtils.getAllDeclaredFields(clazz)) {
       if (!"serialVersionUID".equals(field.getName())) {
         PropertyInfo property=new PropertyInfo();
