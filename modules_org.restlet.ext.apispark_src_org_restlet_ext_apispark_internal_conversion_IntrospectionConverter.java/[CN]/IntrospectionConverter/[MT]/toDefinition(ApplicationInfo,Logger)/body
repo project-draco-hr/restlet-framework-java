@@ -111,7 +111,13 @@
         p.setName(pi.getName());
         p.setPossibleValues(pi.getPossibleValues());
         if (pi.getType() != null) {
-          p.setType(pi.getType().getSimpleName());
+          String type=pi.getType().getSimpleName();
+          if (isPrimitiveType(type)) {
+            p.setType(convertPrimitiveTypes(pi.getType().getSimpleName()));
+          }
+ else {
+            p.setType(type);
+          }
         }
         p.setUniqueItems(pi.isUniqueItems());
         rep.getProperties().add(p);
