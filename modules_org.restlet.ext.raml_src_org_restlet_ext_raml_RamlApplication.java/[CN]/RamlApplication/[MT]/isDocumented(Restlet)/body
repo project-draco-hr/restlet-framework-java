@@ -1,0 +1,20 @@
+{
+  boolean documented=false;
+  Router router=null;
+  if (current instanceof Router) {
+    router=(Router)current;
+    for (    Route route : router.getRoutes()) {
+      if (isDocumented(route.getNext())) {
+        documented=true;
+        break;
+      }
+    }
+  }
+ else   if (current instanceof Filter) {
+    documented=isDocumented(((Filter)current).getNext());
+  }
+ else   if (current instanceof RamlSpecificationRestlet) {
+    documented=true;
+  }
+  return documented;
+}
