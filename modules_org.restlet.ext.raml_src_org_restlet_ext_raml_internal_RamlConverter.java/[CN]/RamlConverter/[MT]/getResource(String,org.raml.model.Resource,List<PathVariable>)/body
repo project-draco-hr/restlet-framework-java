@@ -1,0 +1,20 @@
+{
+  List<Resource> rwadResources=new ArrayList<Resource>();
+  Resource rwadResource=new Resource();
+  rwadResource.setDescription(resource.getDescription());
+  rwadResource.setName(resourceName);
+  rwadResource.setResourcePath(resource.getUri());
+  rwadResource.setPathVariables(getPathVariables(resource));
+  rwadResource.getPathVariables().addAll(rootPathVariables);
+  for (  Entry<ActionType,Action> entry : resource.getActions().entrySet()) {
+    Action action=entry.getValue();
+    Operation operation=new Operation();
+    operation.setDescription(action.getDescription());
+    operation.setMethod(entry.getKey().name().toString());
+  }
+  rwadResources.add(rwadResource);
+  for (  Entry<String,org.raml.model.Resource> entry : resource.getResources().entrySet()) {
+    rwadResources.addAll(getResource(processResourceName(entry.getValue().getUri()),entry.getValue(),rootPathVariables));
+  }
+  return rwadResources;
+}
