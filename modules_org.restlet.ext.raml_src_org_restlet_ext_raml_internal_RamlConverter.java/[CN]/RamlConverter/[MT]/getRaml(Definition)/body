@@ -1,7 +1,135 @@
 {
   Raml raml=new Raml();
-  raml=new RamlDocumentBuilder().build("file:///home/cyp/Bureau/hello_world.raml");
-  org.raml.model.Resource resource=raml.getResource("/products");
-  System.out.println(resource.getActions().get(ActionType.POST));
+  ObjectMapper m=new ObjectMapper();
+  if (definition.getVersion() != null) {
+    raml.setVersion("v" + definition.getVersion());
+  }
+  raml.setBaseUri(definition.getEndpoint() == null ? "http://introspected.com" : definition.getEndpoint());
+  raml.setTitle(definition.getContract().getName());
+  raml.setResources(new HashMap<String,org.raml.model.Resource>());
+  org.raml.model.Resource ramlResource;
+  org.raml.model.Resource parentResource;
+  List<String> paths=new ArrayList<String>();
+  for (  Resource resource : definition.getContract().getResources()) {
+    ramlResource=new org.raml.model.Resource();
+    if (resource.getName() != null) {
+      ramlResource.setDisplayName(resource.getName());
+    }
+ else {
+      ramlResource.setDisplayName(RamlUtils.processResourceName(resource.getResourcePath()));
+    }
+    ramlResource.setDescription(resource.getDescription());
+    parentResource=RamlUtils.getParentResource(paths,resource.getResourcePath(),raml);
+    if (parentResource != null) {
+      ramlResource.setParentResource(parentResource);
+      ramlResource.setParentUri(parentResource.getParentUri() + parentResource.getRelativeUri());
+      ramlResource.setRelativeUri(RamlUtils.cutBasePath(ramlResource.getParentUri(),resource.getResourcePath()));
+      if (parentResource.getResources() == null) {
+        parentResource.setResources(new HashMap<String,org.raml.model.Resource>());
+      }
+      parentResource.getResources().put(ramlResource.getRelativeUri(),ramlResource);
+    }
+ else {
+      ramlResource.setParentUri("");
+      ramlResource.setRelativeUri(resource.getResourcePath());
+    }
+    UriParameter uiParam=new UriParameter();
+    ramlResource.setUriParameters(new HashMap<String,UriParameter>());
+    for (    PathVariable pathVariable : resource.getPathVariables()) {
+      uiParam.setDisplayName(pathVariable.getName());
+      uiParam.setDescription(pathVariable.getDescription());
+      uiParam.setRepeat(pathVariable.isArray());
+      uiParam.setType(RamlUtils.getParamType(pathVariable.getType()));
+      ramlResource.getUriParameters().put(pathVariable.getName(),uiParam);
+    }
+    Action action=new Action();
+    ramlResource.setActions(new HashMap<ActionType,Action>());
+    MimeType mimeType;
+    for (    Operation operation : resource.getOperations()) {
+      action.setDescription(operation.getDescription());
+      action.setResource(ramlResource);
+      mimeType=new MimeType();
+      if (operation.getInRepresentation() != null) {
+        mimeType.setType(operation.getInRepresentation().getRepresentation());
+        SimpleTypeSchema inRepresentationSchema=null;
+        if (RamlUtils.isPrimitiveType(operation.getInRepresentation().getRepresentation())) {
+          Property inRepresentationPrimitive=new Property();
+          inRepresentationPrimitive.setName("");
+          inRepresentationPrimitive.setType(operation.getInRepresentation().getRepresentation());
+          inRepresentationSchema=RamlUtils.generatePrimitiveSchema(inRepresentationPrimitive);
+        }
+ else {
+          inRepresentationSchema=new ObjectSchema();
+          inRepresentationSchema.set$ref(operation.getInRepresentation().getRepresentation());
+        }
+        try {
+          mimeType.setSchema(m.writeValueAsString(inRepresentationSchema));
+        }
+ catch (        JsonProcessingException e) {
+          e.printStackTrace();
+        }
+        action.setBody(new HashMap<String,MimeType>());
+        for (        String mediaType : operation.getConsumes()) {
+          action.getBody().put(mediaType,mimeType);
+        }
+      }
+      org.raml.model.parameter.QueryParameter ramlQueryParameter;
+      action.setQueryParameters(new HashMap<String,org.raml.model.parameter.QueryParameter>());
+      for (      QueryParameter queryParameter : operation.getQueryParameters()) {
+        ramlQueryParameter=new org.raml.model.parameter.QueryParameter();
+        ramlQueryParameter.setDisplayName(queryParameter.getName());
+        ramlQueryParameter.setType(RamlUtils.getParamType(queryParameter.getType()));
+        ramlQueryParameter.setDescription(queryParameter.getDescription());
+        ramlQueryParameter.setRequired(queryParameter.isRequired());
+        ramlQueryParameter.setDefaultValue(queryParameter.getDefaultValue());
+        ramlQueryParameter.setRepeat(queryParameter.isAllowMultiple());
+        action.getQueryParameters().put(queryParameter.getName(),ramlQueryParameter);
+      }
+      org.raml.model.Response ramlResponse=new org.raml.model.Response();
+      action.setResponses(new HashMap<String,org.raml.model.Response>());
+      for (      Response response : operation.getResponses()) {
+        ramlResponse.setDescription(response.getDescription());
+        ramlResponse.setBody(new HashMap<String,MimeType>());
+        mimeType.setType(response.getBody().getRepresentation());
+        if (Status.isSuccess(response.getCode()) && operation.getOutRepresentation() != null && operation.getOutRepresentation().getRepresentation() != null) {
+          SimpleTypeSchema outRepresentationSchema=null;
+          if (RamlUtils.isPrimitiveType(operation.getOutRepresentation().getRepresentation())) {
+            Property outRepresentationPrimitive=new Property();
+            outRepresentationPrimitive.setName("");
+            outRepresentationPrimitive.setType(operation.getOutRepresentation().getRepresentation());
+            outRepresentationSchema=RamlUtils.generatePrimitiveSchema(outRepresentationPrimitive);
+          }
+ else {
+            outRepresentationSchema=new ObjectSchema();
+            outRepresentationSchema.set$ref(operation.getOutRepresentation().getRepresentation());
+          }
+          try {
+            mimeType.setSchema(m.writeValueAsString(outRepresentationSchema));
+          }
+ catch (          JsonProcessingException e) {
+            e.printStackTrace();
+          }
+        }
+        for (        String mediaType : operation.getProduces()) {
+          ramlResponse.getBody().put(mediaType,mimeType);
+        }
+        action.getResponses().put("" + response.getCode(),ramlResponse);
+      }
+      ramlResource.getActions().put(RamlUtils.getActionType(operation.getMethod()),action);
+    }
+    paths.add(resource.getResourcePath());
+    raml.getResources().put(ramlResource.getRelativeUri(),ramlResource);
+  }
+  raml.setSchemas(new ArrayList<Map<String,String>>());
+  Map<String,String> schemas=new HashMap<String,String>();
+  raml.getSchemas().add(schemas);
+  for (  Representation representation : definition.getContract().getRepresentations()) {
+    try {
+      schemas.put(representation.getName(),m.writeValueAsString(RamlUtils.generateSchema(representation)));
+    }
+ catch (    JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
   return raml;
 }

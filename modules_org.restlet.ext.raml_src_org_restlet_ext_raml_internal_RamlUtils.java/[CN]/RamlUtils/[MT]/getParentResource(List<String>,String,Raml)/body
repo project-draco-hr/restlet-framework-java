@@ -1,0 +1,15 @@
+{
+  List<String> parentPaths=new ArrayList<String>();
+  parentPaths.addAll(paths);
+  parentPaths.add(resourcePath);
+  Collections.sort(parentPaths);
+  int index=parentPaths.indexOf(resourcePath);
+  String parentPath;
+  if (index != 0) {
+    parentPath=parentPaths.get(index - 1);
+    if (resourcePath.startsWith(parentPath)) {
+      return getResourceByCompletePath(raml,parentPath);
+    }
+  }
+  return null;
+}
