@@ -17,6 +17,12 @@
       if (property.getMaxOccurs() != 1) {
         ArraySchema array=new ArraySchema();
         array.setTitle(property.getName());
+        if (property.getMinOccurs() > 0) {
+          array.setRequired(true);
+        }
+        if (property.isUniqueItems()) {
+          array.setUniqueItems(true);
+        }
         if (isPrimitiveType(property.getType())) {
           Property prop=new Property();
           prop.setName(property.getName());
@@ -25,7 +31,7 @@
         }
  else {
           SimpleTypeSchema reference=new ObjectSchema();
-          reference.set$ref(property.getType());
+          reference.set$ref("#/schemas/" + property.getType());
           array.setItemsSchema(reference);
         }
         objectSchema.getProperties().put(array.getTitle(),array);
@@ -33,10 +39,16 @@
  else       if (!isPrimitiveType(property.getType())) {
         propertySchema=new ObjectSchema();
         propertySchema.setTitle(property.getName());
+        if (property.getMinOccurs() > 0) {
+          propertySchema.setRequired(true);
+        }
         objectSchema.getProperties().put(propertySchema.getTitle(),propertySchema);
       }
  else {
         SimpleTypeSchema primitive=generatePrimitiveSchema(property);
+        if (property.getMinOccurs() > 0) {
+          primitive.setRequired(true);
+        }
         if (property.getDefaultValue() != null) {
           primitive.setDefault(property.getDefaultValue());
         }
