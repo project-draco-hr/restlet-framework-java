@@ -29,34 +29,34 @@
       uiParam.setType(RamlUtils.getParamType(pathVariable.getType()));
       ramlResource.getUriParameters().put(pathVariable.getName(),uiParam);
     }
-    Action action=new Action();
+    Action action;
     ramlResource.setActions(new HashMap<ActionType,Action>());
-    MimeType mimeType;
+    MimeType ramlInRepresentation;
     for (    Operation operation : resource.getOperations()) {
+      action=new Action();
       action.setDescription(operation.getDescription());
       action.setResource(ramlResource);
-      mimeType=new MimeType();
+      ramlInRepresentation=new MimeType();
       if (operation.getInRepresentation() != null) {
-        mimeType.setType(operation.getInRepresentation().getRepresentation());
-        SimpleTypeSchema inRepresentationSchema=null;
+        ramlInRepresentation.setType(operation.getInRepresentation().getRepresentation());
         if (RamlUtils.isPrimitiveType(operation.getInRepresentation().getRepresentation())) {
           Property inRepresentationPrimitive=new Property();
           inRepresentationPrimitive.setName("");
           inRepresentationPrimitive.setType(operation.getInRepresentation().getRepresentation());
-          inRepresentationSchema=RamlUtils.generatePrimitiveSchema(inRepresentationPrimitive);
+          SimpleTypeSchema inRepresentationSchema=RamlUtils.generatePrimitiveSchema(inRepresentationPrimitive);
           try {
-            mimeType.setSchema(m.writeValueAsString(inRepresentationSchema));
+            ramlInRepresentation.setSchema(m.writeValueAsString(inRepresentationSchema));
           }
  catch (          JsonProcessingException e) {
             e.printStackTrace();
           }
         }
  else {
-          mimeType.setSchema(operation.getInRepresentation().getRepresentation());
+          ramlInRepresentation.setSchema(operation.getInRepresentation().getRepresentation());
         }
         action.setBody(new HashMap<String,MimeType>());
         for (        String mediaType : operation.getConsumes()) {
-          action.getBody().put(mediaType,mimeType);
+          action.getBody().put(mediaType,ramlInRepresentation);
         }
       }
       org.raml.model.parameter.QueryParameter ramlQueryParameter;
@@ -71,32 +71,33 @@
         ramlQueryParameter.setRepeat(queryParameter.isAllowMultiple());
         action.getQueryParameters().put(queryParameter.getName(),ramlQueryParameter);
       }
+      MimeType ramlOutRepresentation;
       org.raml.model.Response ramlResponse=new org.raml.model.Response();
       action.setResponses(new HashMap<String,org.raml.model.Response>());
       for (      Response response : operation.getResponses()) {
+        ramlResponse=new org.raml.model.Response();
         ramlResponse.setDescription(response.getDescription());
         ramlResponse.setBody(new HashMap<String,MimeType>());
-        mimeType.setType(response.getBody().getRepresentation());
+        ramlOutRepresentation=new MimeType();
         if (Status.isSuccess(response.getCode()) && operation.getOutRepresentation() != null && operation.getOutRepresentation().getRepresentation() != null) {
-          SimpleTypeSchema outRepresentationSchema=null;
           if (RamlUtils.isPrimitiveType(operation.getOutRepresentation().getRepresentation())) {
             Property outRepresentationPrimitive=new Property();
             outRepresentationPrimitive.setName("");
             outRepresentationPrimitive.setType(operation.getOutRepresentation().getRepresentation());
-            outRepresentationSchema=RamlUtils.generatePrimitiveSchema(outRepresentationPrimitive);
+            SimpleTypeSchema outRepresentationSchema=RamlUtils.generatePrimitiveSchema(outRepresentationPrimitive);
             try {
-              mimeType.setSchema(m.writeValueAsString(outRepresentationSchema));
+              ramlOutRepresentation.setSchema(m.writeValueAsString(outRepresentationSchema));
             }
  catch (            JsonProcessingException e) {
               e.printStackTrace();
             }
           }
  else {
-            mimeType.setSchema(operation.getOutRepresentation().getRepresentation());
+            ramlOutRepresentation.setSchema(operation.getOutRepresentation().getRepresentation());
           }
         }
         for (        String mediaType : operation.getProduces()) {
-          ramlResponse.getBody().put(mediaType,mimeType);
+          ramlResponse.getBody().put(mediaType,ramlOutRepresentation);
         }
         action.getResponses().put("" + response.getCode(),ramlResponse);
       }
