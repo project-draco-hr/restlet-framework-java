@@ -8,7 +8,6 @@
   raml.setTitle(definition.getContract().getName());
   raml.setResources(new HashMap<String,org.raml.model.Resource>());
   org.raml.model.Resource ramlResource;
-  org.raml.model.Resource parentResource;
   List<String> paths=new ArrayList<String>();
   for (  Resource resource : definition.getContract().getResources()) {
     ramlResource=new org.raml.model.Resource();
@@ -19,20 +18,8 @@
       ramlResource.setDisplayName(RamlUtils.processResourceName(resource.getResourcePath()));
     }
     ramlResource.setDescription(resource.getDescription());
-    parentResource=RamlUtils.getParentResource(paths,resource.getResourcePath(),raml);
-    if (parentResource != null) {
-      ramlResource.setParentResource(parentResource);
-      ramlResource.setParentUri(parentResource.getParentUri() + parentResource.getRelativeUri());
-      ramlResource.setRelativeUri(RamlUtils.cutBasePath(ramlResource.getParentUri(),resource.getResourcePath()));
-      if (parentResource.getResources() == null) {
-        parentResource.setResources(new HashMap<String,org.raml.model.Resource>());
-      }
-      parentResource.getResources().put(ramlResource.getRelativeUri(),ramlResource);
-    }
- else {
-      ramlResource.setParentUri("");
-      ramlResource.setRelativeUri(resource.getResourcePath());
-    }
+    ramlResource.setParentUri("");
+    ramlResource.setRelativeUri(resource.getResourcePath());
     UriParameter uiParam=new UriParameter();
     ramlResource.setUriParameters(new HashMap<String,UriParameter>());
     for (    PathVariable pathVariable : resource.getPathVariables()) {
