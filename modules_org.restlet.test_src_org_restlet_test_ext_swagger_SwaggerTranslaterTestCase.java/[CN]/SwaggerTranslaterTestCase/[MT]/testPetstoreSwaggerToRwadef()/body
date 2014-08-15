@@ -14,7 +14,7 @@
     if (savedRepresentation != null) {
       assertEquals(savedRepresentation.getDescription(),translatedRepresentation.getDescription());
       assertEquals(savedRepresentation.getName(),translatedRepresentation.getName());
-      assertEquals(savedRepresentation.getParentType(),translatedRepresentation.getParentType());
+      assertEquals(savedRepresentation.getExtendedType(),translatedRepresentation.getExtendedType());
       assertEquals(savedRepresentation.isRaw(),translatedRepresentation.isRaw());
       Property savedProperty;
       for (      Property translatedProperty : translatedRepresentation.getProperties()) {
@@ -28,7 +28,7 @@
           assertEquals(savedProperty.getMin(),translatedProperty.getMin());
           assertEquals(savedProperty.getMinOccurs(),translatedProperty.getMinOccurs());
           assertEquals(savedProperty.getName(),translatedProperty.getName());
-          assertEquals(savedProperty.getPossibleValues(),translatedProperty.getPossibleValues());
+          assertEquals(savedProperty.getEnumeration(),translatedProperty.getEnumeration());
           assertEquals(savedProperty.isUniqueItems(),translatedProperty.isUniqueItems());
           assertEquals(savedProperty.getType(),translatedProperty.getType());
         }
@@ -63,19 +63,19 @@
           assertEquals(savedOperation.getName(),translatedOperation.getName());
           assertEquals(savedOperation.getConsumes(),translatedOperation.getConsumes());
           assertEquals(savedOperation.getProduces(),translatedOperation.getProduces());
-          Body savedInRepresentation=savedOperation.getInRepresentation();
-          Body translatedInRepresentation=translatedOperation.getInRepresentation();
+          Entity savedInRepresentation=savedOperation.getInRepresentation();
+          Entity translatedInRepresentation=translatedOperation.getInRepresentation();
           assertEquals(true,(savedInRepresentation == null) == (translatedInRepresentation == null));
           if (translatedInRepresentation != null) {
             assertEquals(savedInRepresentation.isArray(),translatedInRepresentation.isArray());
-            assertEquals(savedInRepresentation.getRepresentation(),translatedInRepresentation.getRepresentation());
+            assertEquals(savedInRepresentation.getType(),translatedInRepresentation.getType());
           }
-          Body savedOutRepresentation=savedOperation.getOutRepresentation();
-          Body translatedOutRepresentation=translatedOperation.getOutRepresentation();
+          Entity savedOutRepresentation=savedOperation.getOutRepresentation();
+          Entity translatedOutRepresentation=translatedOperation.getOutRepresentation();
           assertEquals(true,(savedOutRepresentation == null) == (translatedOutRepresentation == null));
           if (translatedOutRepresentation != null) {
             assertEquals(savedOutRepresentation.isArray(),translatedOutRepresentation.isArray());
-            assertEquals(savedOutRepresentation.getRepresentation(),translatedOutRepresentation.getRepresentation());
+            assertEquals(savedOutRepresentation.getType(),translatedOutRepresentation.getType());
           }
           Response savedResponse;
           for (          Response translatedResponse : translatedOperation.getResponses()) {
@@ -86,12 +86,12 @@
               assertEquals(savedResponse.getDescription(),translatedResponse.getDescription());
               assertEquals(savedResponse.getMessage(),translatedResponse.getMessage());
               assertEquals(savedResponse.getName(),translatedResponse.getName());
-              Body savedResponseBody=savedResponse.getBody();
-              Body translatedResponseBody=translatedResponse.getBody();
+              Entity savedResponseBody=savedResponse.getEntity();
+              Entity translatedResponseBody=translatedResponse.getEntity();
               assertEquals(true,(savedResponseBody == null) == (translatedResponseBody == null));
               if (translatedResponseBody != null) {
                 assertEquals(savedResponseBody.isArray(),translatedResponseBody.isArray());
-                assertEquals(savedResponseBody.getRepresentation(),translatedResponseBody.getRepresentation());
+                assertEquals(savedResponseBody.getType(),translatedResponseBody.getType());
               }
             }
           }
@@ -104,7 +104,7 @@
               assertEquals(savedQueryParameter.getDefaultValue(),translatedQueryParameter.getDefaultValue());
               assertEquals(savedQueryParameter.getDescription(),translatedQueryParameter.getDescription());
               assertEquals(savedQueryParameter.getName(),translatedQueryParameter.getName());
-              assertEquals(savedQueryParameter.getPossibleValues(),translatedQueryParameter.getPossibleValues());
+              assertEquals(savedQueryParameter.getEnumeration(),translatedQueryParameter.getEnumeration());
               assertEquals(savedQueryParameter.isRequired(),translatedQueryParameter.isRequired());
             }
           }
