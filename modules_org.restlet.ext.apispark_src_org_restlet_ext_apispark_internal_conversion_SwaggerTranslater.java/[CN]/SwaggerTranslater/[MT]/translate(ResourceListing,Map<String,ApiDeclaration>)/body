@@ -51,31 +51,31 @@
             }
             operation.getConsumes().add(consumed);
           }
-          Body rwadOutRepr=new Body();
+          Entity rwadOutRepr=new Entity();
           if ("array".equals(swagOperation.getType())) {
             LOGGER.log(Level.FINER,"Operation: " + swagOperation.getNickname() + " returns an array");
             rwadOutRepr.setArray(true);
             if (swagOperation.getItems().getType() != null) {
-              rwadOutRepr.setRepresentation(swagOperation.getItems().getType());
+              rwadOutRepr.setType(swagOperation.getItems().getType());
             }
  else {
-              rwadOutRepr.setRepresentation(swagOperation.getItems().getRef());
+              rwadOutRepr.setType(swagOperation.getItems().getRef());
             }
           }
  else {
             LOGGER.log(Level.FINER,"Operation: " + swagOperation.getNickname() + " returns a single Representation");
             rwadOutRepr.setArray(false);
             if (swagOperation.getType() != null) {
-              rwadOutRepr.setRepresentation(swagOperation.getType());
+              rwadOutRepr.setType(swagOperation.getType());
             }
  else {
-              rwadOutRepr.setRepresentation(swagOperation.getRef());
+              rwadOutRepr.setType(swagOperation.getRef());
             }
           }
           operation.setOutRepresentation(rwadOutRepr);
           Response success=new Response();
           success.setCode(Status.SUCCESS_OK.getCode());
-          success.setBody(rwadOutRepr);
+          success.setEntity(rwadOutRepr);
           success.setDescription("Success");
           success.setMessage(Status.SUCCESS_OK.getDescription());
           success.setName("Success");
@@ -90,7 +90,7 @@
             }
  else             if ("body".equals(param.getParamType())) {
               if (operation.getInRepresentation() == null) {
-                Body rwadInRepr=toBody(param);
+                Entity rwadInRepr=toEntity(param);
                 operation.setInRepresentation(rwadInRepr);
               }
             }
@@ -102,9 +102,9 @@
           if (swagOperation.getResponseMessages() != null) {
             for (            ResponseMessageDeclaration swagResponse : swagOperation.getResponseMessages()) {
               Response response=new Response();
-              Body body=new Body();
-              body.setRepresentation(swagResponse.getResponseModel());
-              response.setBody(body);
+              Entity entity=new Entity();
+              entity.setType(swagResponse.getResponseModel());
+              response.setEntity(entity);
               response.setName("Error " + swagResponse.getCode());
               response.setCode(swagResponse.getCode());
               response.setMessage(swagResponse.getMessage());
@@ -129,7 +129,7 @@
             List<String> subtypesOf=subtypesPair.getValue();
             for (            String subtypeOf : subtypesOf) {
               Representation repr=getRepresentationByName(contract,subtypeOf);
-              repr.setParentType(subtypesPair.getKey());
+              repr.setExtendedType(subtypesPair.getKey());
             }
           }
         }

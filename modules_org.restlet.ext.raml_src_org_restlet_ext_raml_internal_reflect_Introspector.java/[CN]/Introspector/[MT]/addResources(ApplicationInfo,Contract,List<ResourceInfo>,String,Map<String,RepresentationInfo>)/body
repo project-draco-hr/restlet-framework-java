@@ -66,7 +66,7 @@
             header.setDefaultValue(pi.getDefaultValue());
             header.setDescription(toString(pi.getDocumentations(),pi.getDefaultValue()));
             header.setName(pi.getName());
-            header.setPossibleValues(new ArrayList<String>());
+            header.setEnumeration(new ArrayList<String>());
             header.setRequired(pi.isRequired());
             operation.getHeaders().add(header);
           }
@@ -76,7 +76,7 @@
             queryParameter.setDefaultValue(pi.getDefaultValue());
             queryParameter.setDescription(toString(pi.getDocumentations(),pi.getDefaultValue()));
             queryParameter.setName(pi.getName());
-            queryParameter.setPossibleValues(new ArrayList<String>());
+            queryParameter.setEnumeration(new ArrayList<String>());
             queryParameter.setRequired(pi.isRequired());
             operation.getQueryParameters().add(queryParameter);
           }
@@ -89,7 +89,7 @@
           header.setDefaultValue(pi.getDefaultValue());
           header.setDescription(toString(pi.getDocumentations(),pi.getDefaultValue()));
           header.setName(pi.getName());
-          header.setPossibleValues(new ArrayList<String>());
+          header.setEnumeration(new ArrayList<String>());
           header.setRequired(pi.isRequired());
           operation.getHeaders().add(header);
         }
@@ -99,32 +99,32 @@
           queryParameter.setDefaultValue(pi.getDefaultValue());
           queryParameter.setDescription(toString(pi.getDocumentations(),pi.getDefaultValue()));
           queryParameter.setName(pi.getName());
-          queryParameter.setPossibleValues(new ArrayList<String>());
+          queryParameter.setEnumeration(new ArrayList<String>());
           queryParameter.setRequired(pi.isRequired());
           operation.getQueryParameters().add(queryParameter);
         }
       }
       if (mi.getRequest() != null && mi.getRequest().getRepresentations() != null && !mi.getRequest().getRepresentations().isEmpty()) {
         addRepresentations(mapReps,mi.getRequest().getRepresentations());
-        Body body=new Body();
-        body.setRepresentation(mi.getRequest().getRepresentations().get(0).getType().getSimpleName());
-        body.setArray(mi.getRequest().getRepresentations().get(0).isCollection());
-        operation.setInRepresentation(body);
+        Entity entity=new Entity();
+        entity.setType(mi.getRequest().getRepresentations().get(0).getType().getSimpleName());
+        entity.setArray(mi.getRequest().getRepresentations().get(0).isCollection());
+        operation.setInRepresentation(entity);
       }
       if (mi.getResponses() != null && !mi.getResponses().isEmpty()) {
         operation.setResponses(new ArrayList<Response>());
-        Body body=new Body();
+        Entity entity=new Entity();
         if (!mi.getResponse().getRepresentations().isEmpty()) {
-          body.setRepresentation(mi.getResponse().getRepresentations().get(0).getType().getSimpleName());
-          body.setArray(mi.getResponse().getRepresentations().get(0).isCollection());
+          entity.setType(mi.getResponse().getRepresentations().get(0).getType().getSimpleName());
+          entity.setArray(mi.getResponse().getRepresentations().get(0).isCollection());
         }
-        operation.setOutRepresentation(body);
+        operation.setOutRepresentation(entity);
         for (        ResponseInfo rio : mi.getResponses()) {
           addRepresentations(mapReps,rio.getRepresentations());
           if (!rio.getStatuses().isEmpty()) {
             Status status=rio.getStatuses().get(0);
             Response response=new Response();
-            response.setBody(body);
+            response.setEntity(entity);
             response.setCode(status.getCode());
             response.setName(toString(rio.getDocumentations()));
             response.setDescription(toString(rio.getDocumentations()));

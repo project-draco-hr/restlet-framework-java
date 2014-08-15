@@ -37,11 +37,11 @@
       action.setResource(ramlResource);
       ramlInRepresentation=new MimeType();
       if (operation.getInRepresentation() != null) {
-        ramlInRepresentation.setType(operation.getInRepresentation().getRepresentation());
-        if (RamlUtils.isPrimitiveType(operation.getInRepresentation().getRepresentation())) {
+        ramlInRepresentation.setType(operation.getInRepresentation().getType());
+        if (RamlUtils.isPrimitiveType(operation.getInRepresentation().getType())) {
           Property inRepresentationPrimitive=new Property();
           inRepresentationPrimitive.setName("");
-          inRepresentationPrimitive.setType(operation.getInRepresentation().getRepresentation());
+          inRepresentationPrimitive.setType(operation.getInRepresentation().getType());
           SimpleTypeSchema inRepresentationSchema=RamlUtils.generatePrimitiveSchema(inRepresentationPrimitive);
           try {
             ramlInRepresentation.setSchema(m.writeValueAsString(inRepresentationSchema));
@@ -51,7 +51,7 @@
           }
         }
  else {
-          ramlInRepresentation.setSchema(operation.getInRepresentation().getRepresentation());
+          ramlInRepresentation.setSchema(operation.getInRepresentation().getType());
         }
         action.setBody(new HashMap<String,MimeType>());
         for (        String mediaType : operation.getConsumes()) {
@@ -77,11 +77,11 @@
         ramlResponse.setDescription(response.getDescription());
         ramlResponse.setBody(new HashMap<String,MimeType>());
         ramlOutRepresentation=new MimeType();
-        if (Status.isSuccess(response.getCode()) && operation.getOutRepresentation() != null && operation.getOutRepresentation().getRepresentation() != null) {
-          if (RamlUtils.isPrimitiveType(operation.getOutRepresentation().getRepresentation())) {
+        if (Status.isSuccess(response.getCode()) && operation.getOutRepresentation() != null && operation.getOutRepresentation().getType() != null) {
+          if (RamlUtils.isPrimitiveType(operation.getOutRepresentation().getType())) {
             Property outRepresentationPrimitive=new Property();
             outRepresentationPrimitive.setName("");
-            outRepresentationPrimitive.setType(operation.getOutRepresentation().getRepresentation());
+            outRepresentationPrimitive.setType(operation.getOutRepresentation().getType());
             SimpleTypeSchema outRepresentationSchema=RamlUtils.generatePrimitiveSchema(outRepresentationPrimitive);
             try {
               ramlOutRepresentation.setSchema(m.writeValueAsString(outRepresentationSchema));
@@ -91,7 +91,7 @@
             }
           }
  else {
-            ramlOutRepresentation.setSchema(operation.getOutRepresentation().getRepresentation());
+            ramlOutRepresentation.setSchema(operation.getOutRepresentation().getType());
           }
         }
         for (        String mediaType : operation.getProduces()) {

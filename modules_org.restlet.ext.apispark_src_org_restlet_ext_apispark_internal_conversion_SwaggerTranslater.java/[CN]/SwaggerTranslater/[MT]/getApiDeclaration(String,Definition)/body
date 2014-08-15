@@ -31,37 +31,37 @@
         ropd.setDescription(pv.getDescription());
         rod.getParameters().add(ropd);
       }
-      Body inRepr=operation.getInRepresentation();
+      Entity inRepr=operation.getInRepresentation();
       if (inRepr != null) {
         ropd=new ResourceOperationParameterDeclaration();
         ropd.setParamType("body");
         ropd.setRequired(true);
-        if ("Representation".equals(inRepr.getRepresentation())) {
+        if ("Representation".equals(inRepr.getType())) {
           ropd.setType("File");
         }
  else {
-          ropd.setType(toSwaggerType(inRepr.getRepresentation()));
+          ropd.setType(toSwaggerType(inRepr.getType()));
         }
-        if (inRepr.getRepresentation() != null) {
-          usedModels.add(inRepr.getRepresentation());
+        if (inRepr.getType() != null) {
+          usedModels.add(inRepr.getType());
         }
         rod.getParameters().add(ropd);
       }
-      Body outRepr=operation.getOutRepresentation();
-      if (outRepr != null && outRepr.getRepresentation() != null) {
+      Entity outRepr=operation.getOutRepresentation();
+      if (outRepr != null && outRepr.getType() != null) {
         if (outRepr.isArray()) {
           rod.setType("array");
-          if (isPrimitiveType(outRepr.getRepresentation())) {
-            rod.getItems().setType(toSwaggerType(outRepr.getRepresentation()));
+          if (isPrimitiveType(outRepr.getType())) {
+            rod.getItems().setType(toSwaggerType(outRepr.getType()));
           }
  else {
-            rod.getItems().setRef(outRepr.getRepresentation());
+            rod.getItems().setRef(outRepr.getType());
           }
         }
  else {
-          rod.setType(toSwaggerType(outRepr.getRepresentation()));
+          rod.setType(toSwaggerType(outRepr.getType()));
         }
-        usedModels.add(outRepr.getRepresentation());
+        usedModels.add(outRepr.getType());
       }
  else {
         rod.setType("void");
@@ -73,7 +73,7 @@
         ropd.setName(qp.getName());
         ropd.setAllowMultiple(true);
         ropd.setDescription(qp.getDescription());
-        ropd.setEnum_(qp.getPossibleValues());
+        ropd.setEnum_(qp.getEnumeration());
         ropd.setDefaultValue(qp.getDefaultValue());
         rod.getParameters().add(ropd);
       }
@@ -84,8 +84,8 @@
         ResponseMessageDeclaration rmd=new ResponseMessageDeclaration();
         rmd.setCode(response.getCode());
         rmd.setMessage(response.getMessage());
-        if (response.getBody() != null) {
-          rmd.setResponseModel(response.getBody().getRepresentation());
+        if (response.getEntity() != null) {
+          rmd.setResponseModel(response.getEntity().getType());
         }
         rod.getResponseMessages().add(rmd);
       }
@@ -114,7 +114,7 @@
       }
       TypePropertyDeclaration tpd=new TypePropertyDeclaration();
       tpd.setDescription(prop.getDescription());
-      tpd.setEnum_(prop.getPossibleValues());
+      tpd.setEnum_(prop.getEnumeration());
       if (prop.getMaxOccurs() > 1 || prop.getMaxOccurs() == -1) {
         tpd.setType("array");
         tpd.setItems(new ItemsDeclaration());
