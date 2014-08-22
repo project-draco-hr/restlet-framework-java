@@ -1,0 +1,17 @@
+{
+  final OAuthException oex=OAuthException.toOAuthException(t);
+  AuthSession session=null;
+  try {
+    session=getAuthSession();
+  }
+ catch (  OAuthException ignore) {
+  }
+  if (session == null || session.getAuthFlow() == null) {
+    Representation resp=getErrorPage(HttpOAuthHelper.getErrorPageTemplate(getContext()),oex);
+    getResponse().setEntity(resp);
+  }
+ else {
+    boolean fragment=session.getAuthFlow().equals(ResponseType.token);
+    sendError(session.getRedirectionURI().getURI(),oex,session.getState(),fragment);
+  }
+}

@@ -1,11 +1,17 @@
 {
   RepresentationInfo result=null;
-  AnnotationInfo annotationInfo=getAnnotation(Method.GET);
-  if (annotationInfo != null) {
-    result=doHandle(annotationInfo,null);
-  }
+  MethodAnnotationInfo annotationInfo;
+  try {
+    annotationInfo=getAnnotation(Method.GET);
+    if (annotationInfo != null) {
+      result=doHandle(annotationInfo,null);
+    }
  else {
-    result=getInfo();
+      result=getInfo();
+    }
+  }
+ catch (  IOException e) {
+    throw new ResourceException(e);
   }
   return result;
 }

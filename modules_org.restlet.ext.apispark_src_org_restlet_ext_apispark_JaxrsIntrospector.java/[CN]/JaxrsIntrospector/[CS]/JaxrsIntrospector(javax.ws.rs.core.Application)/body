@@ -1,0 +1,12 @@
+{
+  definition=IntrospectionConverter.toDefinition(getApplicationInfo(application,null),LOGGER);
+  if (definition != null) {
+    LOGGER.fine("Look for the endpoint.");
+    String endpoint=null;
+    ApplicationPath ap=application.getClass().getAnnotation(ApplicationPath.class);
+    if (ap != null) {
+      endpoint=ap.value();
+    }
+    definition.setEndpoint(endpoint);
+  }
+}

@@ -2,7 +2,9 @@
   if (State.ASSOCIATION == getState()) {
     if (uri.equalsIgnoreCase(Feed.ATOM_NAMESPACE)) {
       if (localName.equals("feed")) {
-        if (association.isToMany())         inlineFeedHandler.endFeed(inlineFeed);
+        if (association.isToMany()) {
+          inlineFeedHandler.endFeed(inlineFeed);
+        }
       }
  else       if (localName.equals("link")) {
         if (association.isToMany()) {
@@ -19,6 +21,14 @@
         }
  else {
           inlineEntryHandler.closeEntry(inlineEntry);
+        }
+      }
+ else       if (localName.equalsIgnoreCase("content")) {
+        if (association.isToMany()) {
+          inlineFeedHandler.endContent(inlineContent);
+        }
+ else {
+          inlineEntryHandler.endContent(inlineContent);
         }
       }
     }

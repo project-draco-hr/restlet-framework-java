@@ -1,0 +1,10 @@
+{
+  Client client=super.getClient(params);
+  if (client.getClientType() == Client.ClientType.CONFIDENTIAL) {
+    throw new OAuthException(OAuthError.invalid_client,"Unauthenticated confidential client.",null);
+  }
+ else   if (client.getClientSecret() != null) {
+    throw new OAuthException(OAuthError.invalid_client,"Unauthenticated public client.",null);
+  }
+  return client;
+}

@@ -1,0 +1,15 @@
+{
+  Client client=getAuthenticatedClient();
+  if (client == null) {
+    client=getClient(params);
+  }
+  ensureGrantTypeAllowed(client,GrantType.refresh_token);
+  String refreshToken=getRefreshToken(params);
+  String[] requestedScope=null;
+  String scope=params.getFirstValue(SCOPE);
+  if (scope != null && !scope.isEmpty()) {
+    requestedScope=Scopes.parseScope(scope);
+  }
+  Token token=tokens.refreshToken(client,refreshToken,requestedScope);
+  return responseTokenRepresentation(token,requestedScope);
+}

@@ -1,0 +1,80 @@
+{
+  Engine.register();
+  String ulogin=null;
+  String upwd=null;
+  String serviceUrl=null;
+  String defSource=null;
+  String compName=null;
+  String definitionId=null;
+  String language=null;
+  LOGGER.fine("Get parameters");
+  for (int i=0; i < (args.length); i++) {
+    if ("-h".equals(args[i])) {
+      printHelp();
+      System.exit(0);
+    }
+ else     if ("-u".equals(args[i])) {
+      ulogin=getParameter(args,++i);
+    }
+ else     if ("-p".equals(args[i])) {
+      upwd=getParameter(args,++i);
+    }
+ else     if ("-s".equals(args[i])) {
+      serviceUrl=getParameter(args,++i);
+    }
+ else     if ("-c".equals(args[i])) {
+      compName=getParameter(args,++i);
+    }
+ else     if ("-d".equals(args[i])) {
+      definitionId=getParameter(args,++i);
+    }
+ else     if ("-l".equals(args[i])) {
+      language=getParameter(args,++i).toLowerCase();
+    }
+ else     if ("-v".equals(args[i])) {
+      Engine.setLogLevel(Level.FINE);
+    }
+ else {
+      defSource=args[i];
+    }
+  }
+  Engine.getLogger("").getHandlers()[0].setFilter(new java.util.logging.Filter(){
+    public boolean isLoggable(    LogRecord record){
+      return record.getLoggerName().startsWith("org.restlet.ext.apispark");
+    }
+  }
+);
+  LOGGER.fine("Check parameters");
+  if (isEmpty(serviceUrl)) {
+    serviceUrl="https://apispark.com/";
+  }
+  if (!serviceUrl.endsWith("/")) {
+    serviceUrl+="/";
+  }
+  if (isEmpty(ulogin) || isEmpty(upwd) || isEmpty(defSource)) {
+    printHelp();
+    System.exit(1);
+  }
+  Application application=null;
+  Component component=null;
+  Definition definition=null;
+  if (language == null) {
+    application=getApplication(defSource);
+    component=getComponent(compName);
+  }
+  if (application != null) {
+    LOGGER.info("Instantiate introspector");
+    Introspector i=new Introspector(component,application);
+    LOGGER.info("Generate documentation");
+    definition=i.getDefinition();
+  }
+ else   if ("swagger".equals(language)) {
+    definition=SwaggerUtils.getDefinition(defSource,ulogin,upwd);
+  }
+  if (definition != null) {
+    sendDefinition(definition,definitionId,ulogin,upwd,serviceUrl,LOGGER);
+  }
+ else {
+    LOGGER.severe("Please provide a valid application class name or definition URL.");
+  }
+}

@@ -1,0 +1,10 @@
+{
+  ClientResource resource=new ClientResource(tokenAuthURI);
+  JSONObject request=new JSONObject();
+  request.put(TOKEN_TYPE,TOKEN_TYPE_BEARER);
+  request.put(ACCESS_TOKEN,STUB_ACCESS_TOKEN);
+  JSONObject response=new JsonRepresentation(resource.post(new JsonRepresentation(request))).getJsonObject();
+  assertFalse(response.has(ERROR));
+  assertThat(response.getString(USERNAME),is(STUB_USERNAME));
+  assertThat(Scopes.parseScope(response.getString(SCOPE)),is(arrayContainingInAnyOrder("a","b")));
+}

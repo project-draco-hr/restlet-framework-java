@@ -1,0 +1,23 @@
+{
+  info.getResources().setBaseRef(baseRef);
+  List<CookieParam> cookieParams=new ArrayList<CookieParam>();
+  List<FormParam> formParams=new ArrayList<FormParam>();
+  List<HeaderParam> headerParams=new ArrayList<HeaderParam>();
+  List<MatrixParam> matrixParams=new ArrayList<MatrixParam>();
+  List<PathParam> pathParams=new ArrayList<PathParam>();
+  List<QueryParam> queryParams=new ArrayList<QueryParam>();
+  List<javax.ws.rs.core.Context> contextList=new ArrayList<javax.ws.rs.core.Context>();
+  Consumes c=clazz.getAnnotation(Consumes.class);
+  Path path=clazz.getAnnotation(Path.class);
+  Produces p=clazz.getAnnotation(Produces.class);
+  Field[] fields=ReflectUtils.getAllDeclaredFields(clazz);
+  if (fields != null) {
+    for (    Field field : fields) {
+      scan(field,cookieParams,formParams,headerParams,matrixParams,pathParams,queryParams,contextList);
+    }
+  }
+  Method[] methods=clazz.getDeclaredMethods();
+  for (  Method method : methods) {
+    scan(method,info,path,c,p,cookieParams,formParams,headerParams,matrixParams,pathParams,queryParams,contextList);
+  }
+}

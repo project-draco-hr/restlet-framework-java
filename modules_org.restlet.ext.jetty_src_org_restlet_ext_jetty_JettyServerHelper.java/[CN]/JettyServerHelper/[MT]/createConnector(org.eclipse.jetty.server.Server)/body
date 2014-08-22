@@ -1,0 +1,18 @@
+{
+  final HttpConfiguration configuration=createConfiguration();
+  final ConnectionFactory[] connectionFactories=createConnectionFactories(configuration);
+  final int acceptors=getConnectorAcceptors();
+  final int selectors=getConnectorSelectors();
+  final Executor executor=getConnectorExecutor();
+  final Scheduler scheduler=getConnectorScheduler();
+  final ByteBufferPool byteBufferPool=getConnectorByteBufferPool();
+  final ServerConnector connector=new ServerConnector(server,executor,scheduler,byteBufferPool,acceptors,selectors,connectionFactories);
+  final String address=getHelped().getAddress();
+  if (address != null)   connector.setHost(address);
+  connector.setPort(getHelped().getPort());
+  connector.setAcceptQueueSize(getConnectorAcceptQueueSize());
+  connector.setIdleTimeout(getConnectorIdleTimeout());
+  connector.setSoLingerTime(getConnectorSoLingerTime());
+  connector.setStopTimeout(getConnectorStopTimeout());
+  return connector;
+}

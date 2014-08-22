@@ -1,0 +1,78 @@
+{
+  String[] disabledCipherSuitesArray=helperParameters.getValuesArray("disabledCipherSuites");
+  Set<String> disabledCipherSuites=new HashSet<String>();
+  for (  String disabledCipherSuiteSeries : disabledCipherSuitesArray) {
+    for (    String disabledCipherSuite : disabledCipherSuiteSeries.split(" ")) {
+      disabledCipherSuites.add(disabledCipherSuite);
+    }
+  }
+  if (disabledCipherSuites.size() > 0) {
+    disabledCipherSuitesArray=new String[disabledCipherSuites.size()];
+    disabledCipherSuites.toArray(disabledCipherSuitesArray);
+    setDisabledCipherSuites(disabledCipherSuitesArray);
+  }
+ else {
+    setDisabledCipherSuites(null);
+  }
+  String[] disabledProtocolsArray=helperParameters.getValuesArray("disabledProtocols");
+  Set<String> disabledProtocols=new HashSet<String>();
+  for (  String disabledProtocolsSeries : disabledProtocolsArray) {
+    for (    String disabledProtocol : disabledProtocolsSeries.split(" ")) {
+      disabledProtocols.add(disabledProtocol);
+    }
+  }
+  if (disabledProtocols.size() > 0) {
+    disabledProtocolsArray=new String[disabledProtocols.size()];
+    disabledProtocols.toArray(disabledProtocolsArray);
+    setDisabledProtocols(disabledProtocolsArray);
+  }
+ else {
+    setDisabledProtocols(null);
+  }
+  String[] enabledCipherSuitesArray=helperParameters.getValuesArray("enabledCipherSuites");
+  Set<String> enabledCipherSuites=new HashSet<String>();
+  for (  String enabledCipherSuiteSeries : enabledCipherSuitesArray) {
+    for (    String enabledCipherSuite : enabledCipherSuiteSeries.split(" ")) {
+      enabledCipherSuites.add(enabledCipherSuite);
+    }
+  }
+  if (enabledCipherSuites.size() > 0) {
+    enabledCipherSuitesArray=new String[enabledCipherSuites.size()];
+    enabledCipherSuites.toArray(enabledCipherSuitesArray);
+    setEnabledCipherSuites(enabledCipherSuitesArray);
+  }
+ else {
+    setEnabledCipherSuites(null);
+  }
+  String[] enabledProtocolsArray=helperParameters.getValuesArray("enabledProtocols");
+  Set<String> enabledProtocols=new HashSet<String>();
+  for (  String enabledProtocolSeries : enabledProtocolsArray) {
+    for (    String enabledProtocol : enabledProtocolSeries.split(" ")) {
+      enabledProtocols.add(enabledProtocol);
+    }
+  }
+  if (enabledProtocols.size() > 0) {
+    enabledProtocolsArray=new String[enabledProtocols.size()];
+    enabledProtocols.toArray(enabledProtocolsArray);
+    setEnabledProtocols(enabledProtocolsArray);
+  }
+ else {
+    setEnabledProtocols(null);
+  }
+  setKeyManagerAlgorithm(helperParameters.getFirstValue("keyManagerAlgorithm",true,System.getProperty("ssl.KeyManagerFactory.algorithm","SunX509")));
+  setKeyStorePassword(helperParameters.getFirstValue("keyStorePassword",true,System.getProperty("javax.net.ssl.keyStorePassword","")));
+  setKeyStoreKeyPassword(helperParameters.getFirstValue("keyPassword",true,System.getProperty("javax.net.ssl.keyPassword")));
+  if (this.keyStoreKeyPassword == null) {
+    this.keyStoreKeyPassword=this.keyStorePassword;
+  }
+  setKeyStorePath(helperParameters.getFirstValue("keyStorePath",true,System.getProperty("javax.net.ssl.keyStore")));
+  setKeyStoreType(helperParameters.getFirstValue("keyStoreType",true,System.getProperty("javax.net.ssl.keyStoreType")));
+  setNeedClientAuthentication(Boolean.parseBoolean(helperParameters.getFirstValue("needClientAuthentication",true,"false")));
+  setProtocol(helperParameters.getFirstValue("protocol",true,"TLS"));
+  setSecureRandomAlgorithm(helperParameters.getFirstValue("secureRandomAlgorithm",true));
+  setTrustManagerAlgorithm(helperParameters.getFirstValue("trustManagerAlgorithm",true,System.getProperty("ssl.TrustManagerFactory.algorithm","SunX509")));
+  setTrustStorePassword(helperParameters.getFirstValue("trustStorePassword",true,System.getProperty("javax.net.ssl.trustStorePassword")));
+  setTrustStorePath(helperParameters.getFirstValue("trustStorePath",true,System.getProperty("javax.net.ssl.trustStore")));
+  setTrustStoreType(helperParameters.getFirstValue("trustStoreType",true,System.getProperty("javax.net.ssl.trustStoreType")));
+  setWantClientAuthentication(Boolean.parseBoolean(helperParameters.getFirstValue("wantClientAuthentication",true,"false")));
+}

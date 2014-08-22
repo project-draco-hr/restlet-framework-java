@@ -1,0 +1,24 @@
+{
+  List<AnnotationInfo> result=descriptors;
+  for (  Annotation annotation : javaMethod.getAnnotations()) {
+    Annotation methodAnnotation=annotation.annotationType().getAnnotation(org.restlet.engine.connector.Method.class);
+    Method restletMethod=getRestletMethod(annotation,methodAnnotation);
+    if (restletMethod != null) {
+      String toString=annotation.toString();
+      int startIndex=annotation.annotationType().getCanonicalName().length() + 8;
+      int endIndex=toString.length() - 1;
+      String value=null;
+      if (endIndex > startIndex) {
+        value=toString.substring(startIndex,endIndex);
+        if ("".equals(value)) {
+          value=null;
+        }
+      }
+      if (result == null) {
+        result=new CopyOnWriteArrayList<AnnotationInfo>();
+      }
+      result.add(new MethodAnnotationInfo(initialClass,restletMethod,javaMethod,value));
+    }
+  }
+  return result;
+}

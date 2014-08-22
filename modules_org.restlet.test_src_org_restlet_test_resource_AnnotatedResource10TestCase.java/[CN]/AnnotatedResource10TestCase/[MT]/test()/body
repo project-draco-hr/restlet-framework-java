@@ -1,12 +1,11 @@
 {
-  client=new Client(Protocol.HTTP);
-  Request request=new Request(Method.GET,uri);
-  Response response=client.handle(request);
+  Request request=createRequest(Method.GET);
+  Response response=handle(request);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   assertEquals("asText",response.getEntity().getText());
   response.getEntity().release();
-  request=new Request(Method.POST,uri);
-  response=client.handle(request);
+  request=createRequest(Method.POST);
+  response=handle(request);
   assertEquals(Status.SUCCESS_OK,response.getStatus());
   assertEquals("accept",response.getEntity().getText());
   response.getEntity().release();

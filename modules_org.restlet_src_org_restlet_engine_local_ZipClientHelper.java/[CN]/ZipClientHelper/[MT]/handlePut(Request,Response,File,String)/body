@@ -67,7 +67,7 @@
             }
  else {
               zipOut.putNextEntry(e);
-              BioUtils.copy(new BufferedInputStream(zipFile.getInputStream(e)),zipOut);
+              IoUtils.copy(new BufferedInputStream(zipFile.getInputStream(e)),zipOut);
               zipOut.closeEntry();
             }
           }
@@ -85,14 +85,14 @@
             if (zipOut != null)             zipOut.close();
           }
         }
-        if (!(BioUtils.delete(file) && writeTo.renameTo(file))) {
+        if (!(IoUtils.delete(file) && writeTo.renameTo(file))) {
           if (!file.exists())           file.createNewFile();
           FileInputStream fis=null;
           FileOutputStream fos=null;
           try {
             fis=new FileInputStream(writeTo);
             fos=new FileOutputStream(file);
-            BioUtils.copy(fis,fos);
+            IoUtils.copy(fis,fos);
             response.setStatus(Status.SUCCESS_OK);
           }
   finally {

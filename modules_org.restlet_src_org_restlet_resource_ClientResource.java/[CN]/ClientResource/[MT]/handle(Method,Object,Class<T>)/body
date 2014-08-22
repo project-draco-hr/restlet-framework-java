@@ -8,8 +8,14 @@
   request.setMethod(method);
   request.setClientInfo(clientInfo);
   if (entity != null) {
-    List<? extends Variant> entityVariants=cs.getVariants(entity.getClass(),null);
-    request.setEntity(toRepresentation(entity,getConnegService().getPreferredVariant(entityVariants,request,getMetadataService())));
+    List<? extends Variant> entityVariants;
+    try {
+      entityVariants=cs.getVariants(entity.getClass(),null);
+      request.setEntity(toRepresentation(entity,getConnegService().getPreferredVariant(entityVariants,request,getMetadataService())));
+    }
+ catch (    IOException e) {
+      throw new ResourceException(e);
+    }
   }
  else {
     request.setEntity(null);

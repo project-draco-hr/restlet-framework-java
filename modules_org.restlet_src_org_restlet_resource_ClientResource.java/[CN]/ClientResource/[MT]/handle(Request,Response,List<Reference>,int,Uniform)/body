@@ -1,11 +1,13 @@
 {
   if (next != null) {
-    Representation entity=request.getEntity();
-    if (isRequestEntityBuffering() && (entity != null) && (entity.isTransient() || (entity.getSize() == Representation.UNKNOWN_SIZE))&& entity.isAvailable()) {
-      request.setEntity(new org.restlet.engine.io.BufferingRepresentation(entity));
+    if (isRequestEntityBuffering()) {
+      request.bufferEntity();
     }
     next.handle(request,response);
-    if (isFollowingRedirects() && response.getStatus().isRedirection() && (response.getLocationRef() != null)) {
+    if (isRetryOnError() && response.getStatus().isRecoverableError() && request.getMethod().isIdempotent()&& (retryAttempt < getRetryAttempts())&& ((request.getEntity() == null) || request.getEntity().isAvailable())) {
+      retry(request,response,references,retryAttempt,next);
+    }
+ else     if (isFollowingRedirects() && response.getStatus().isRedirection() && (response.getLocationRef() != null)) {
       boolean doRedirection=false;
       if (request.getMethod().isSafe()) {
         doRedirection=true;
@@ -27,12 +29,8 @@
         getLogger().fine("Unable to redirect the client call after a response" + response);
       }
     }
- else     if (isRetryOnError() && response.getStatus().isRecoverableError() && request.getMethod().isIdempotent()&& (retryAttempt < getRetryAttempts())&& ((request.getEntity() == null) || request.getEntity().isAvailable())) {
-      retry(request,response,references,retryAttempt,next);
-    }
-    entity=response.getEntity();
-    if (isResponseEntityBuffering() && (entity != null) && (entity.isTransient() || (entity.getSize() == Representation.UNKNOWN_SIZE))&& entity.isAvailable()) {
-      response.setEntity(new org.restlet.engine.io.BufferingRepresentation(entity));
+    if (isResponseEntityBuffering()) {
+      response.bufferEntity();
     }
   }
  else {

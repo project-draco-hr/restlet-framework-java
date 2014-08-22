@@ -1,0 +1,12 @@
+{
+  if (t instanceof OAuthException) {
+    return (OAuthException)t;
+  }
+ else   if (t.getCause() instanceof OAuthException) {
+    return (OAuthException)t.getCause();
+  }
+ else {
+    Logger.getLogger(OAuthException.class.getName()).log(Level.SEVERE,"Internal Server Error",t);
+    return new OAuthException(OAuthError.server_error,t.getMessage(),null);
+  }
+}

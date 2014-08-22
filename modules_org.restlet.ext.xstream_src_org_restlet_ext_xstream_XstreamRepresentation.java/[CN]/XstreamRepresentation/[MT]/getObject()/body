@@ -8,7 +8,12 @@
     if (this.targetClass != null) {
       getXstream().processAnnotations(this.targetClass);
     }
-    result=(T)getXstream().fromXML(this.representation.getStream());
+    try {
+      result=(T)getXstream().fromXML(this.representation.getStream());
+    }
+ catch (    ForbiddenClassException fce) {
+      throw new IllegalArgumentException("SECURITY WARNING: The usage of XstreamRepresentation when " + "deserializing representations from unstrusted " + "sources can lead to malicious attacks. As pointed "+ "here (http://xstream.codehaus.org/security.html), "+ "it is possible to force the JVM to execute unwanted "+ "Java code described inside the representation."+ "Thus, the support of such format has been "+ "restricted by default to basic data types such as "+ "primitive types, subclasses of the java.util.Collection "+ "class (cf http://xstream.codehaus.org/security.html#framework). "+ "You can override this behavior by setting your own XStream facade "+ "object (see XStreamRepresentation#setXStream method).",fce);
+    }
   }
   return result;
 }

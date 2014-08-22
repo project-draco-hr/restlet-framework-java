@@ -3,8 +3,11 @@
   List<AnnotationInfo> annotations=getAnnotations();
   if (annotations != null) {
     for (    AnnotationInfo annotationInfo : annotations) {
-      if (!getAllowedMethods().contains(annotationInfo.getRestletMethod())) {
-        getAllowedMethods().add(annotationInfo.getRestletMethod());
+      if (annotationInfo instanceof MethodAnnotationInfo) {
+        MethodAnnotationInfo methodAnnotationInfo=(MethodAnnotationInfo)annotationInfo;
+        if (!getAllowedMethods().contains(methodAnnotationInfo.getRestletMethod())) {
+          getAllowedMethods().add(methodAnnotationInfo.getRestletMethod());
+        }
       }
     }
   }

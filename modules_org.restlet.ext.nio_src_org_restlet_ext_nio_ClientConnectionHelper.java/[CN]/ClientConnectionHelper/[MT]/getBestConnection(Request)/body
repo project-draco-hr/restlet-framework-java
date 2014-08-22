@@ -1,0 +1,56 @@
+{
+  Connection<Client> result=null;
+  int hostConnectionCount=0;
+  int bestScore=Integer.MAX_VALUE;
+  boolean foundConn=false;
+  InetSocketAddress socketAddress=getSocketAddress(request);
+  if (socketAddress == null) {
+    getLogger().log(Level.WARNING,"Unable to create a socket address related to the request.");
+  }
+ else {
+    for (Iterator<Connection<Client>> iterator=getConnections().iterator(); !foundConn && iterator.hasNext(); ) {
+      Connection<Client> currConn=iterator.next();
+      if (socketAddress.equals(currConn.getSocketAddress())) {
+        if (currConn.isAvailable()) {
+          result=currConn;
+          foundConn=true;
+        }
+ else         if (currConn.getState().compareTo(ConnectionState.OPEN) <= 0) {
+          int currScore=currConn.getLoadScore();
+          if (bestScore > currScore) {
+            bestScore=currScore;
+            result=currConn;
+          }
+          hostConnectionCount++;
+        }
+      }
+    }
+    if (foundConn) {
+      getLogger().log(Level.FINE,"Reusing an existing client connection to: " + socketAddress);
+    }
+ else     if ((getMaxTotalConnections() != -1) && (getConnections().size() >= getMaxTotalConnections())) {
+      if (result == null) {
+        getLogger().log(Level.WARNING,"Unable to create a new connection. Maximum total number of connections reached!");
+      }
+ else {
+        getLogger().log(Level.FINE,"Enqueue Request to an existing client connection to: " + socketAddress);
+      }
+    }
+ else     if ((getMaxConnectionsPerHost() != -1) && (hostConnectionCount >= getMaxConnectionsPerHost())) {
+      if (result == null) {
+        getLogger().log(Level.WARNING,"Unable to create a new connection. Maximum number of connections reached for host: " + socketAddress);
+      }
+ else {
+        getLogger().log(Level.FINE,"Enqueue Request to an existing client connection to: " + socketAddress);
+      }
+    }
+ else {
+      if (getLogger().isLoggable(Level.FINE)) {
+        getLogger().log(Level.FINE,"Creating a new client connection to: " + socketAddress);
+      }
+      result=checkout(createSocketChannel(request.isConfidential(),socketAddress),getController(),socketAddress);
+      getConnections().add(result);
+    }
+  }
+  return result;
+}

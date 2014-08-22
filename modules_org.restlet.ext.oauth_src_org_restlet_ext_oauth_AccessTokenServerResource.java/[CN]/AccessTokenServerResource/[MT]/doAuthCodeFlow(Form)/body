@@ -1,0 +1,26 @@
+{
+  Client client=getAuthenticatedClient();
+  if (client == null) {
+    client=getClient(params);
+  }
+  ensureGrantTypeAllowed(client,GrantType.authorization_code);
+  String code=getCode(params);
+  AuthSession session=tokens.restoreSession(code);
+  if (!client.getClientId().equals(session.getClientId())) {
+    throw new OAuthException(OAuthError.invalid_grant,"The code was not issued to the client.",null);
+  }
+  try {
+    session.updateActivity();
+  }
+ catch (  AuthSessionTimeoutException ex) {
+    throw new OAuthException(OAuthError.invalid_grant,"Code expired.",null);
+  }
+  if (session.getRedirectionURI().isDynamicConfigured()) {
+    String redirectURI=getRedirectURI(params);
+    if (!redirectURI.equals(session.getRedirectionURI().getURI())) {
+      throw new OAuthException(OAuthError.invalid_grant,"The redirect_uri is not identical to the one included in the initial authorization request.",null);
+    }
+  }
+  Token token=tokens.generateToken(client,session.getScopeOwner(),session.getGrantedScope());
+  return responseTokenRepresentation(token,session.getRequestedScope());
+}

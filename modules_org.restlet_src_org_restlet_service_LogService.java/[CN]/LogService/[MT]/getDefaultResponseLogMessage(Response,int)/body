@@ -47,11 +47,17 @@
       sb.append((response.getEntity().getSize() == -1) ? "-" : Long.toString(response.getEntity().getSize()));
     }
     sb.append('\t');
-    if (request.getEntity() == null) {
-      sb.append('0');
-    }
+    try {
+      if (request.getEntity() == null) {
+        sb.append('0');
+      }
  else {
-      sb.append((request.getEntity().getSize() == -1) ? "-" : Long.toString(request.getEntity().getSize()));
+        sb.append((request.getEntity().getSize() == -1) ? "-" : Long.toString(request.getEntity().getSize()));
+      }
+    }
+ catch (    Throwable t) {
+      Engine.getLogger(LogService.class).log(Level.SEVERE,"Cannot retrieve size of request's entity",t);
+      sb.append("-");
     }
     sb.append('\t');
     sb.append(duration);

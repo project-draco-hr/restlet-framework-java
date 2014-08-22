@@ -1,0 +1,13 @@
+{
+  definition=IntrospectionConverter.toDefinition(getApplicationInfo(application,null),LOGGER);
+  if (component != null && definition != null) {
+    LOGGER.fine("Look for the endpoint.");
+    String endpoint=null;
+    endpoint=getEndpoint(component.getDefaultHost(),application);
+    for (int i=0; endpoint == null && i < component.getHosts().size(); i++) {
+      VirtualHost virtualHost=component.getHosts().get(i);
+      endpoint=getEndpoint(virtualHost,application);
+    }
+    definition.setEndpoint(endpoint);
+  }
+}

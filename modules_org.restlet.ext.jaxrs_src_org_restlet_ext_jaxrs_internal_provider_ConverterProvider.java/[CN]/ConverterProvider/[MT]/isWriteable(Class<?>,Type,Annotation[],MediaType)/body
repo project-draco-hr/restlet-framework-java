@@ -1,5 +1,11 @@
 {
-  Variant targetVariant=new Variant(new org.restlet.data.MediaType(mediaType.toString()));
-  List<? extends Variant> variants=getConverterService().getVariants(type,targetVariant);
+  List<? extends Variant> variants;
+  try {
+    Variant targetVariant=new Variant(new org.restlet.data.MediaType(mediaType.toString()));
+    variants=getConverterService().getVariants(type,targetVariant);
+  }
+ catch (  IOException e) {
+    throw new ResourceException(e);
+  }
   return (variants != null) && !variants.isEmpty();
 }

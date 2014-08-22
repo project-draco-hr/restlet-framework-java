@@ -1,0 +1,24 @@
+{
+  DBObject token=tokens.findOne(new BasicDBObject(REFRESH_TOKEN,refreshToken));
+  if (token == null) {
+    throw new OAuthException(OAuthError.invalid_grant,"Invalid refresh token.",null);
+  }
+  if (!token.get(CLIENT_ID).equals(client.getClientId())) {
+    throw new OAuthException(OAuthError.invalid_grant,"The refresh token was not issued to the client.",null);
+  }
+  if (scope != null && scope.length != 0) {
+    List<String> newScopeList=Arrays.asList(scope);
+    if (!((List<String>)token.get(SCOPE)).containsAll(newScopeList)) {
+      throw new OAuthException(OAuthError.invalid_scope,"The requested scope is exceeds the scope granted by the resource owner.",null);
+    }
+    token.put(SCOPE,newScopeList);
+  }
+  token.put(ACCESS_TOKEN,generateRawToken());
+  if (isUpdateRefreshToken()) {
+    token.put(REFRESH_TOKEN,generateRawToken());
+  }
+  tokens.ensureIndex(new BasicDBObject(ACCESS_TOKEN,"1"),new BasicDBObject("unique",true));
+  tokens.ensureIndex(new BasicDBObject(REFRESH_TOKEN,"1"),new BasicDBObject("unique",true));
+  tokens.save(token);
+  return new MongoToken(token);
+}

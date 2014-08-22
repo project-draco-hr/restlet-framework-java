@@ -5,6 +5,7 @@
     String acceptCharset=getHttpCall().getRequestHeaders().getValues(HeaderConstants.HEADER_ACCEPT_CHARSET);
     String acceptEncoding=getHttpCall().getRequestHeaders().getValues(HeaderConstants.HEADER_ACCEPT_ENCODING);
     String acceptLanguage=getHttpCall().getRequestHeaders().getValues(HeaderConstants.HEADER_ACCEPT_LANGUAGE);
+    String acceptPatch=getHttpCall().getRequestHeaders().getValues(HeaderConstants.HEADER_ACCEPT_PATCH);
     String expect=getHttpCall().getRequestHeaders().getValues(HeaderConstants.HEADER_EXPECT);
     try {
       PreferenceReader.addCharacterSets(acceptCharset,result);
@@ -31,13 +32,19 @@
       this.context.getLogger().log(Level.INFO,e.getMessage());
     }
     try {
+      PreferenceReader.addPatches(acceptPatch,result);
+    }
+ catch (    Exception e) {
+      this.context.getLogger().log(Level.INFO,e.getMessage());
+    }
+    try {
       ExpectationReader.addValues(expect,result);
     }
  catch (    Exception e) {
       this.context.getLogger().log(Level.INFO,e.getMessage());
     }
     result.setAgent(getHttpCall().getRequestHeaders().getValues(HeaderConstants.HEADER_USER_AGENT));
-    result.setFrom(getHttpCall().getRequestHeaders().getFirstValue(HeaderConstants.HEADER_FROM));
+    result.setFrom(getHttpCall().getRequestHeaders().getFirstValue(HeaderConstants.HEADER_FROM,true));
     result.setAddress(getHttpCall().getClientAddress());
     result.setPort(getHttpCall().getClientPort());
     if (getHttpCall().getUserPrincipal() != null) {

@@ -1,0 +1,18 @@
+{
+  if (getHelper().getLogger().isLoggable(Level.FINER)) {
+    getHelper().getLogger().log(Level.FINER,"NIO controller about to sleep " + sleepTime + " ms, selecting among "+ getSelector().keys().size()+ " keys...\n");
+  }
+  int selectCount=getSelector().select(sleepTime);
+  if (selectCount > 0) {
+    if (getHelper().getLogger().isLoggable(Level.FINER)) {
+      getHelper().getLogger().log(Level.FINER,"NIO controller selected " + selectCount + " key(s) !");
+    }
+    for (Iterator<SelectionKey> keys=getSelector().selectedKeys().iterator(); keys.hasNext(); ) {
+      onSelected(keys.next());
+      keys.remove();
+    }
+  }
+ else   if (getHelper().getLogger().isLoggable(Level.FINER)) {
+    getHelper().getLogger().log(Level.FINER,"NIO controlled selected no key");
+  }
+}

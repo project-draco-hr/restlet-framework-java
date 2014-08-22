@@ -1,0 +1,11 @@
+{
+  DBObject token=tokens.findOne(new BasicDBObject(ACCESS_TOKEN,accessToken));
+  if (token == null) {
+    throw new OAuthException(OAuthError.invalid_token,"The access token revoked.",null);
+  }
+  MongoToken tokenImpl=new MongoToken(token);
+  if (tokenImpl.isExpired()) {
+    throw new OAuthException(OAuthError.invalid_token,"The access token expired.",null);
+  }
+  return tokenImpl;
+}

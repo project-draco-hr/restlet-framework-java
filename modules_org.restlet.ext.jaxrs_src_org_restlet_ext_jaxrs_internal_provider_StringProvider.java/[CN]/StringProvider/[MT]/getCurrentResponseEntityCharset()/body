@@ -1,7 +1,15 @@
 {
-  Representation entity=Response.getCurrent().getEntity();
-  if (entity == null)   return null;
-  CharacterSet characterSet=entity.getCharacterSet();
-  if (characterSet == null)   return null;
-  return characterSet.toString();
+  String result=null;
+  Response rsp=Response.getCurrent();
+  if (rsp == null) {
+    Context.getCurrentLogger().warning("Unable to find the current response");
+  }
+ else {
+    Representation entity=Response.getCurrent().getEntity();
+    if (entity == null)     return null;
+    CharacterSet characterSet=entity.getCharacterSet();
+    if (characterSet == null)     return null;
+    result=characterSet.toString();
+  }
+  return result;
 }

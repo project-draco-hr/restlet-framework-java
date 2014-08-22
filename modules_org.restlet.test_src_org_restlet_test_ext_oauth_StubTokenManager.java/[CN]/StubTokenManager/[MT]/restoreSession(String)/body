@@ -1,0 +1,12 @@
+{
+  if (!code.equals(STUB_CODE)) {
+    throw new OAuthException(OAuthError.invalid_grant,"Invalid code.",null);
+  }
+  AuthSession session=AuthSession.newAuthSession();
+  session.setRedirectionURI(new RedirectionURI("http://localhost:8080/dummy"));
+  session.setClientId(STUB_CLIENT_ID);
+  session.setScopeOwner(STUB_USERNAME);
+  session.setRequestedScope(Scopes.parseScope("a b c"));
+  session.setGrantedScope(Scopes.parseScope("a b"));
+  return session;
+}

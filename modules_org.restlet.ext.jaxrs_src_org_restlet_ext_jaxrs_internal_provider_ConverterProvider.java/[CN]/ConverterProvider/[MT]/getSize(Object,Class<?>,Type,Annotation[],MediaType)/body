@@ -1,5 +1,11 @@
 {
-  Variant targetVariant=new Variant(new org.restlet.data.MediaType(mediaType.toString()));
-  Representation representation=getConverterService().toRepresentation(object,targetVariant,null);
+  Representation representation=null;
+  try {
+    Variant targetVariant=new Variant(new org.restlet.data.MediaType(mediaType.toString()));
+    representation=getConverterService().toRepresentation(object,targetVariant,null);
+  }
+ catch (  IOException e) {
+    Context.getCurrentLogger().log(Level.FINE,"Unable to get the size",e);
+  }
   return (representation == null) ? -1 : representation.getSize();
 }

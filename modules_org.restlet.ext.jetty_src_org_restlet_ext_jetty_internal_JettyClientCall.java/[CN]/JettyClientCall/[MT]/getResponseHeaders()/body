@@ -1,0 +1,14 @@
+{
+  final Series<Header> result=super.getResponseHeaders();
+  if (!this.responseHeadersAdded) {
+    final HttpResponse httpResponse=getHttpResponse();
+    if (httpResponse != null) {
+      final HttpFields headers=httpResponse.getHeaders();
+      if (headers != null) {
+        for (        HttpField header : headers)         result.add(header.getName(),header.getValue());
+      }
+    }
+    this.responseHeadersAdded=true;
+  }
+  return result;
+}

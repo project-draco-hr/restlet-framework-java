@@ -55,7 +55,13 @@
       property=p;
     }
     property.setDefaultValue(attrs.getValue("Default"));
-    property.setNullable(Boolean.parseBoolean(attrs.getValue("Nullable")));
+    String nullable=attrs.getValue("Nullable");
+    if (nullable == null) {
+      property.setNullable(true);
+    }
+ else {
+      property.setNullable(Boolean.parseBoolean(nullable));
+    }
     if ("fixed".equalsIgnoreCase(attrs.getValue("ConcurrencyMode"))) {
       property.setConcurrent(true);
     }

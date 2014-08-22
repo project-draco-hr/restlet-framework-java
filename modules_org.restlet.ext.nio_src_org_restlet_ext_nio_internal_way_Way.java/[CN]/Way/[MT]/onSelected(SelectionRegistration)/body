@@ -1,0 +1,37 @@
+{
+  try {
+    if (getMessage() != null) {
+      Response.setCurrent(getMessage());
+      Application.setCurrent((Application)getMessage().getAttributes().get("org.restlet.application"));
+      Context.setCurrent((Context)getMessage().getAttributes().get("org.restlet.context"));
+      VirtualHost.setCurrent((Integer)getMessage().getAttributes().get("org.restlet.virtualHost"));
+    }
+    if (getIoState() != IoState.READY) {
+      setIoState(IoState.PROCESSING);
+    }
+    if (getLogger().isLoggable(Level.FINER)) {
+      if (this instanceof InboundWay) {
+        getLogger().log(Level.FINER,"Processing IO for inbound way: " + this);
+      }
+ else {
+        getLogger().log(Level.FINER,"Processing IO for outbound way: " + this);
+      }
+    }
+    int drained=processIoBuffer();
+    if ((drained == -1) && (getConnection().getState() == ConnectionState.CLOSING)) {
+      getBuffer().clear();
+    }
+ else     if ((getIoState() == IoState.PROCESSING)) {
+      onPostProcessing();
+    }
+  }
+ catch (  Exception e) {
+    getConnection().onError("Error while processing a connection",e,Status.CONNECTOR_ERROR_COMMUNICATION);
+  }
+  if (this instanceof InboundWay) {
+    getLogger().log(Level.FINER,"Inbound way selected. Done for : " + this);
+  }
+ else {
+    getLogger().log(Level.FINER,"Outbound way selected. Done for : " + this);
+  }
+}

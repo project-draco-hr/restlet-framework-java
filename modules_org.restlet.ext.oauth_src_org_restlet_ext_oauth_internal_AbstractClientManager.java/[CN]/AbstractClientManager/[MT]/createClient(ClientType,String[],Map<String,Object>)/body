@@ -1,0 +1,27 @@
+{
+  if (properties == null) {
+    properties=new HashMap<String,Object>();
+  }
+  Object flows=properties.get(Client.PROPERTY_SUPPORTED_FLOWS);
+  if (flows == null) {
+    flows=defaultSupportedFlow.get(clientType);
+    properties.put(Client.PROPERTY_SUPPORTED_FLOWS,flows);
+  }
+  if (clientType == ClientType.PUBLIC || (clientType == ClientType.CONFIDENTIAL && Arrays.asList((Object[])flows).contains(ResponseType.token))) {
+    if (redirectURIs == null || redirectURIs.length == 0) {
+      throw new IllegalArgumentException("RedirectionURI(s) required.");
+    }
+  }
+  String clientId=UUID.randomUUID().toString();
+  char[] clientSecret=null;
+  if (clientType == ClientType.CONFIDENTIAL || (clientType == ClientType.PUBLIC && isIssueClientSecretToPublicClients())) {
+    if (count++ > RESEED_CLIENTS) {
+      count=0;
+      random.setSeed(random.generateSeed(20));
+    }
+    byte[] secret=new byte[20];
+    random.nextBytes(secret);
+    clientSecret=Base64.encode(secret,false).toCharArray();
+  }
+  return createClient(clientId,clientSecret,clientType,redirectURIs,properties);
+}

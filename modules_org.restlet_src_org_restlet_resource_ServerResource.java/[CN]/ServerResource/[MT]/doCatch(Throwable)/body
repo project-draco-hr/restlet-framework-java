@@ -1,6 +1,6 @@
 {
   Level level=Level.INFO;
-  Status status=getStatusService().getStatus(throwable,this);
+  Status status=getStatusService().toStatus(throwable,this);
   if (status.isServerError()) {
     level=Level.WARNING;
   }
@@ -13,5 +13,8 @@
   getLogger().log(level,"Exception or error caught in server resource",throwable);
   if (getResponse() != null) {
     getResponse().setStatus(status);
+    if (getResponseEntity() == null) {
+      getResponse().setEntity(getStatusService().toRepresentation(status,throwable,this));
+    }
   }
 }

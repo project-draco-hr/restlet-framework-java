@@ -1,0 +1,9 @@
+{
+  setupBodyClientCredentials(parameters);
+  Representation input=parameters.toRepresentation();
+  Form result=new Form(post(input));
+  if (result.getFirstValue(ERROR) != null) {
+    throw OAuthException.toOAuthException(result);
+  }
+  return FacebookTokenResponse.parseResponse(result);
+}

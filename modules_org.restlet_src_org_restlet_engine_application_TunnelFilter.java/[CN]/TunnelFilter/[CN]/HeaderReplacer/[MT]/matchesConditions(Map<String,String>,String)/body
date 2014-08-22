@@ -1,0 +1,12 @@
+{
+  boolean checked=true;
+  for (Iterator<Entry<String,String>> iterator=getAgentAttributes().entrySet().iterator(); checked && iterator.hasNext(); ) {
+    Entry<String,String> entry=iterator.next();
+    String attribute=agentAttributes.get(entry.getKey());
+    checked=(attribute != null && attribute.equalsIgnoreCase(entry.getValue()));
+  }
+  if (checked && getHeaderOld() != null) {
+    checked=getHeaderOld().equals(headerOld);
+  }
+  return checked;
+}

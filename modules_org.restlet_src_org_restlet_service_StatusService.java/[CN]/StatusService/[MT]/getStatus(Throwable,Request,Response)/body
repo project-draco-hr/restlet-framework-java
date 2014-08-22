@@ -1,16 +1,3 @@
 {
-  Status result=null;
-  if (throwable instanceof ResourceException) {
-    ResourceException re=(ResourceException)throwable;
-    if (re.getCause() != null) {
-      result=new Status(re.getStatus(),re.getCause());
-    }
- else {
-      result=re.getStatus();
-    }
-  }
- else {
-    result=new Status(Status.SERVER_ERROR_INTERNAL,throwable);
-  }
-  return result;
+  return toStatus(throwable,request,response);
 }

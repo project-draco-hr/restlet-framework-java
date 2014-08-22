@@ -3,7 +3,18 @@
     throw new IllegalArgumentException();
   }
   List<org.restlet.representation.Variant> restletVariants=Converter.toRestletVariants(variants);
-  org.restlet.representation.Variant bestRestlVar=this.request.getClientInfo().getPreferredVariant(restletVariants);
+  ConnegService connegService=null;
+  MetadataService metadataService=null;
+  org.restlet.Application app=org.restlet.Application.getCurrent();
+  if (app == null) {
+    connegService=new org.restlet.service.ConnegService();
+    metadataService=new MetadataService();
+  }
+ else {
+    connegService=app.getConnegService();
+    metadataService=app.getMetadataService();
+  }
+  org.restlet.representation.Variant bestRestlVar=connegService.getPreferredVariant(restletVariants,this.request,metadataService);
   Variant bestVariant=Converter.toJaxRsVariant(bestRestlVar);
   Set<Dimension> dimensions=this.response.getDimensions();
   if (bestRestlVar.getCharacterSet() != null) {

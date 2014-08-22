@@ -1,0 +1,12 @@
+{
+  Response message=getMessage();
+  if (message != null) {
+    Request request=message.getRequest();
+    if (request.isExpectingResponse()) {
+      Queue<Response> inboundMessages=((HttpClientInboundWay)getConnection().getInboundWay()).getMessages();
+      inboundMessages.add(message);
+      getConnection().getInboundWay().setMessageState(MessageState.START);
+    }
+  }
+  super.onHeadersCompleted();
+}

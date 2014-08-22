@@ -1,0 +1,38 @@
+{
+  Method method=AnnotatedResource09TestCase.USNI;
+  String text="text";
+  Form form=new Form();
+  form.add("key","value");
+  Request request=createRequest(method);
+  Response response=getClient().handle(request);
+  assertTrue(response.getStatus().isSuccess());
+  releaseResponse(response);
+  request=createRequest(method);
+  request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.TEXT_HTML));
+  response=handle(request);
+  assertEquals(MediaType.TEXT_HTML,response.getEntity().getMediaType());
+  releaseResponse(response);
+  request=createRequest(method);
+  request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.TEXT_PLAIN));
+  response=handle(request);
+  assertEquals(MediaType.TEXT_PLAIN,response.getEntity().getMediaType());
+  releaseResponse(response);
+  request=createRequest(method);
+  request.setEntity(text,MediaType.TEXT_PLAIN);
+  request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.TEXT_HTML));
+  response=handle(request);
+  assertEquals(MediaType.TEXT_HTML,response.getEntity().getMediaType());
+  assertEquals("usni-html+txt",response.getEntity().getText());
+  request=createRequest(method);
+  request.setEntity(form.getWebRepresentation());
+  request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.TEXT_HTML));
+  response=handle(request);
+  assertEquals(MediaType.TEXT_HTML,response.getEntity().getMediaType());
+  assertEquals("usni-html+form",response.getEntity().getText());
+  request=createRequest(method);
+  request.setEntity(text,MediaType.TEXT_PLAIN);
+  request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.TEXT_PLAIN));
+  response=handle(request);
+  assertEquals(MediaType.TEXT_PLAIN,response.getEntity().getMediaType());
+  assertEquals("usni-string+text",response.getEntity().getText());
+}

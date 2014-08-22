@@ -1,0 +1,20 @@
+{
+  userManager=new SampleUserManager();
+  userManager.addUser("alice").setPassword("abcdef".toCharArray());
+  userManager.addUser("bob").setPassword("123456".toCharArray());
+  clientManager=new MemoryClientManager();
+  Client client=clientManager.createClient(ClientType.CONFIDENTIAL,null,null);
+  System.out.println("SampleClient: client_id=" + client.getClientId() + ", client_secret="+ String.copyValueOf(client.getClientSecret()));
+  tokenManager=new MemoryTokenManager();
+  Component component=new Component();
+  component.getClients().add(Protocol.HTTP);
+  component.getClients().add(Protocol.HTTPS);
+  component.getClients().add(Protocol.RIAP);
+  component.getClients().add(Protocol.CLAP);
+  component.getServers().add(Protocol.HTTP,8080);
+  component.getDefaultHost().attach("/sample",new SampleApplication());
+  OAuth2ServerApplication app=new OAuth2ServerApplication();
+  component.getDefaultHost().attach("/oauth",app);
+  component.getInternalRouter().attach("/oauth",app);
+  component.start();
+}

@@ -1,0 +1,13 @@
+{
+  ClientResource cr=new ClientResource("clap://class/org/restlet/test/ext/jackson/jacksonBomb.xml");
+  Representation xmlRep=cr.get();
+  xmlRep.setMediaType(MediaType.APPLICATION_XML);
+  boolean error=false;
+  try {
+    new JacksonRepresentation<Customer>(xmlRep,Customer.class).getObject();
+  }
+ catch (  Exception e) {
+    error=true;
+  }
+  assertTrue(error);
+}

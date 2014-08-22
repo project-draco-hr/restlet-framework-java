@@ -3,15 +3,15 @@
   try {
     execute();
     result=entities.iterator();
-    nextPage=null;
+    setNextPage(null);
     for (    Link link : getFeed().getLinks()) {
       if (Relation.NEXT.equals(link.getRel())) {
-        nextPage=link.getHref();
+        setNextPage(link.getHref());
         break;
       }
     }
-    if (nextPage != null) {
-      result=new EntryIterator<T>(this.service,result,nextPage,entityClass);
+    if (getNextPage() != null) {
+      result=new EntryIterator<T>(this.service,result,getNextPage(),entityClass);
     }
   }
  catch (  Exception e) {

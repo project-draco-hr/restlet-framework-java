@@ -52,7 +52,11 @@
         entityHeaderFound=true;
       }
  else       if (header.getName().equalsIgnoreCase(HeaderConstants.HEADER_CONTENT_MD5)) {
-        result.setDigest(new org.restlet.data.Digest(org.restlet.data.Digest.ALGORITHM_MD5,org.restlet.engine.util.Base64.decode(header.getValue())));
+        String base64hash=header.getValue();
+        if (base64hash.length() == 22) {
+          base64hash+="==";
+        }
+        result.setDigest(new org.restlet.data.Digest(org.restlet.data.Digest.ALGORITHM_MD5,org.restlet.engine.util.Base64.decode(base64hash)));
         entityHeaderFound=true;
       }
     }

@@ -1,0 +1,134 @@
+{
+  MethodInfo mi=new MethodInfo();
+  for (  FormParam formParam : formParams) {
+    addRepresentation(mi,formParam);
+  }
+  Path path=method.getAnnotation(Path.class);
+  String fullPath=getPath(cPath,path);
+  ResourceInfo resource=null;
+  for (  ResourceInfo ri : info.getResources().getResources()) {
+    if (fullPath.equals(ri.getPath())) {
+      resource=ri;
+      break;
+    }
+  }
+  if (resource == null) {
+    resource=new ResourceInfo();
+    resource.setIdentifier(fullPath);
+    resource.setPath(fullPath);
+    info.getResources().getResources().add(resource);
+  }
+  resource.getMethods().add(mi);
+  PathParam pathParam=method.getAnnotation(PathParam.class);
+  if (pathParam != null) {
+    pathParams.add(pathParam);
+    ParameterInfo pi=new ParameterInfo(pathParam.value(),ParameterStyle.TEMPLATE,"Path parameter: " + pathParam.value());
+    pi.setRequired(true);
+    resource.getParameters().add(pi);
+  }
+ else {
+    Template template=new Template(fullPath);
+    for (    String var : template.getVariableNames()) {
+      boolean found=false;
+      for (      ParameterInfo pi : resource.getParameters()) {
+        if (pi.getStyle().equals(ParameterStyle.TEMPLATE) && var.equals(pi.getName())) {
+          found=true;
+          break;
+        }
+      }
+      if (!found) {
+        ParameterInfo pi=new ParameterInfo(var,ParameterStyle.TEMPLATE,"Path parameter: " + var);
+        pi.setRequired(true);
+        resource.getParameters().add(pi);
+      }
+    }
+  }
+  CookieParam cookieParam=method.getAnnotation(CookieParam.class);
+  if (cookieParam != null) {
+    ParameterInfo pi=new ParameterInfo(cookieParam.value(),ParameterStyle.COOKIE,"Cookie parameter: " + cookieParam.value());
+    mi.getParameters().add(pi);
+  }
+  FormParam formParam=method.getAnnotation(FormParam.class);
+  addRepresentation(mi,formParam);
+  HeaderParam headerParam=method.getAnnotation(HeaderParam.class);
+  if (headerParam != null) {
+    ParameterInfo pi=new ParameterInfo(headerParam.value(),ParameterStyle.HEADER,"Header parameter: " + cookieParam.value());
+    mi.getParameters().add(pi);
+  }
+  MatrixParam matrixParam=method.getAnnotation(MatrixParam.class);
+  if (matrixParam != null) {
+    ParameterInfo pi=new ParameterInfo(matrixParam.value(),ParameterStyle.MATRIX,"Matrix parameter: " + cookieParam.value());
+    mi.getParameters().add(pi);
+  }
+  QueryParam queryParam=method.getAnnotation(QueryParam.class);
+  if (queryParam != null) {
+    ParameterInfo pi=new ParameterInfo(queryParam.value(),ParameterStyle.QUERY,"Query parameter: " + cookieParam.value());
+    mi.getParameters().add(pi);
+  }
+  DELETE delete=method.getAnnotation(DELETE.class);
+  GET get=method.getAnnotation(GET.class);
+  HEAD head=method.getAnnotation(HEAD.class);
+  OPTIONS options=method.getAnnotation(OPTIONS.class);
+  POST post=method.getAnnotation(POST.class);
+  PUT put=method.getAnnotation(PUT.class);
+  HttpMethod httpMethod=method.getAnnotation(HttpMethod.class);
+  if (delete != null) {
+    mi.setMethod(org.restlet.data.Method.DELETE);
+  }
+ else   if (get != null) {
+    mi.setMethod(org.restlet.data.Method.GET);
+  }
+ else   if (head != null) {
+    mi.setMethod(org.restlet.data.Method.HEAD);
+  }
+ else   if (httpMethod != null) {
+    mi.setMethod(org.restlet.data.Method.valueOf(httpMethod.value()));
+  }
+ else   if (options != null) {
+    mi.setMethod(org.restlet.data.Method.OPTIONS);
+  }
+ else   if (post != null) {
+    mi.setMethod(org.restlet.data.Method.POST);
+  }
+ else   if (put != null) {
+    mi.setMethod(org.restlet.data.Method.PUT);
+  }
+  Produces produces=method.getAnnotation(Produces.class);
+  if (produces == null) {
+    produces=cProduces;
+  }
+  Class<?> outputClass=method.getReturnType();
+  if (produces != null && outputClass != null && !Void.class.equals(outputClass)) {
+    for (    String produce : produces.value()) {
+      Variant variant=new Variant(MediaType.valueOf(produce));
+      RepresentationInfo representationInfo=null;
+      if (javax.ws.rs.core.Response.class.isAssignableFrom(outputClass)) {
+        representationInfo=new RepresentationInfo(variant);
+        representationInfo.setType(org.restlet.representation.Representation.class);
+        representationInfo.setIdentifier(representationInfo.getType().getCanonicalName());
+        representationInfo.setName(representationInfo.getType().getSimpleName());
+        representationInfo.setRaw(true);
+      }
+ else {
+        representationInfo=RepresentationInfo.describe(mi,outputClass,method.getGenericReturnType(),variant);
+      }
+      mi.getResponse().getRepresentations().add(representationInfo);
+    }
+  }
+  Consumes consumes=method.getAnnotation(Consumes.class);
+  if (consumes == null) {
+    consumes=cConsumes;
+  }
+  Annotation[][] parameterAnnotations=method.getParameterAnnotations();
+  Class<?>[] parameterTypes=method.getParameterTypes();
+  int i=0;
+  for (  Annotation[] annotations : parameterAnnotations) {
+    Class<?> parameterType=parameterTypes[i];
+    scan(annotations,parameterType,method.getGenericParameterTypes()[i],info,resource,mi,consumes);
+    i++;
+  }
+  if (mi.getResponse().getStatuses().isEmpty()) {
+    mi.getResponse().getStatuses().add(Status.SUCCESS_OK);
+    mi.getResponse().setDocumentation("Success");
+  }
+}

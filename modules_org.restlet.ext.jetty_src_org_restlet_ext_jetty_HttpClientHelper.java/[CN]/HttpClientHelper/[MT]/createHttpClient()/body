@@ -1,0 +1,35 @@
+{
+  SslContextFactory sslContextFactory=null;
+  try {
+    sslContextFactory=new RestletSslContextFactory(org.restlet.engine.ssl.SslUtils.getSslContextFactory(this));
+  }
+ catch (  Exception e) {
+    getLogger().log(Level.WARNING,"Unable to create the SSL context factory.",e);
+  }
+  HttpClient httpClient=new HttpClient(sslContextFactory);
+  httpClient.setAddressResolutionTimeout(getAddressResolutionTimeout());
+  httpClient.setBindAddress(getBindAddress());
+  httpClient.setConnectTimeout(getConnectTimeout());
+  CookieStore cookieStore=getCookieStore();
+  if (cookieStore != null) {
+    httpClient.setCookieStore(cookieStore);
+  }
+  httpClient.setDispatchIO(isDispatchIO());
+  httpClient.setExecutor(getExecutor());
+  httpClient.setFollowRedirects(isFollowRedirects());
+  httpClient.setIdleTimeout(getIdleTimeout());
+  httpClient.setMaxConnectionsPerDestination(getMaxConnectionsPerDestination());
+  httpClient.setMaxRedirects(getMaxRedirects());
+  httpClient.setMaxRequestsQueuedPerDestination(getMaxRequestsQueuedPerDestination());
+  httpClient.setRequestBufferSize(getRequestBufferSize());
+  httpClient.setResponseBufferSize(getResponseBufferSize());
+  httpClient.setScheduler(getScheduler());
+  httpClient.setStopTimeout(getStopTimeout());
+  httpClient.setStrictEventOrdering(isStrictEventOrdering());
+  httpClient.setTCPNoDelay(isTcpNoDelay());
+  String userAgentField=getUserAgentField();
+  if (userAgentField != null) {
+    httpClient.setUserAgentField(new HttpField(HttpHeader.USER_AGENT,userAgentField));
+  }
+  return httpClient;
+}

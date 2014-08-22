@@ -1,0 +1,8 @@
+{
+  Customer customer=createCustomer();
+  JacksonRepresentation<Customer> rep=new JacksonRepresentation<Customer>(MediaType.APPLICATION_XML,customer);
+  String text=rep.getText();
+  assertEquals("<Customer><firstName>Foo</firstName><lastName>Bar</lastName><invoices><invoices><date>1356533333882</date><amount>12456</amount><paid>false</paid></invoices><invoices><date>1356533333882</date><amount>7890</amount><paid>true</paid></invoices></invoices></Customer>",text);
+  rep=new JacksonRepresentation<Customer>(new StringRepresentation(text,rep.getMediaType()),Customer.class);
+  verify(customer,rep.getObject());
+}

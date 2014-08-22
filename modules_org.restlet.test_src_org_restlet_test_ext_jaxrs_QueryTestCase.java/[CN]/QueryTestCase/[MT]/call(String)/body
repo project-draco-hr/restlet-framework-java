@@ -1,0 +1,17 @@
+{
+  Representation entity=new StringRepresentation("hi",MediaType.APPLICATION_JSON);
+  ClientResource cr=new ClientResource(uri);
+  Representation responseEntity=cr.post(entity);
+  assertEquals(Status.SUCCESS_OK,cr.getStatus());
+  assertEquals("hi",responseEntity.getText());
+  entity=new StringRepresentation("hi",MediaType.APPLICATION_XML);
+  try {
+    cr.post(entity);
+  }
+ catch (  ResourceException re) {
+    assertEquals(Status.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE,re.getStatus());
+  }
+ finally {
+    cr.release();
+  }
+}

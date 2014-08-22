@@ -1,0 +1,15 @@
+{
+  super(context,connection,methodName,resourceUri,protocol);
+  List<Certificate> clientCertificates=getConnection().getSslClientCertificates();
+  if (clientCertificates != null) {
+    getClientInfo().setCertificates(clientCertificates);
+  }
+  String cipherSuite=getConnection().getSslCipherSuite();
+  if (cipherSuite != null) {
+    getClientInfo().setCipherSuite(cipherSuite);
+  }
+  Integer keySize=getConnection().getSslKeySize();
+  if (keySize != null) {
+    getAttributes().put(HeaderConstants.ATTRIBUTE_HTTPS_KEY_SIZE,keySize);
+  }
+}

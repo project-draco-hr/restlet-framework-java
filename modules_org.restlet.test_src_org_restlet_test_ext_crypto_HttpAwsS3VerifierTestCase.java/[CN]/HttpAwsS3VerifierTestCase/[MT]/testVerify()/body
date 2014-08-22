@@ -1,6 +1,6 @@
 {
   Request request=createRequest();
-  @SuppressWarnings("unchecked") Series<Header> headers=(Series<Header>)request.getAttributes().get(ATTRIBUTES_HEADERS);
+  @SuppressWarnings("unchecked") Series<Header> headers=(Series<Header>)request.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
   Assert.assertEquals(Verifier.RESULT_MISSING,awsVerifier.verify(request,null));
   ChallengeResponse cr=new ChallengeResponse(ChallengeScheme.HTTP_AWS_S3);
   request.setChallengeResponse(cr);
@@ -11,7 +11,7 @@
   sig=AwsUtils.getS3Signature(request,ACCESS_KEY.toCharArray());
   cr.setRawValue(ACCESS_ID + ":" + sig);
   Assert.assertEquals(Verifier.RESULT_VALID,awsVerifier.verify(request,null));
-  headers.removeAll(HeaderConstants.HEADER_DATE);
+  headers.removeAll(HeaderConstants.HEADER_DATE,true);
   Assert.assertEquals(Verifier.RESULT_INVALID,awsVerifier.verify(request,null));
   headers.add(HeaderConstants.HEADER_DATE,"Tue, 27 Mar 1999 19:36:42 +0000");
   Assert.assertEquals(Verifier.RESULT_STALE,awsVerifier.verify(request,null));

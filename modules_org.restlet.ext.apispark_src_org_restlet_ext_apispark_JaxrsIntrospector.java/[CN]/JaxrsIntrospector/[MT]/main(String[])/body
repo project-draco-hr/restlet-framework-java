@@ -1,0 +1,54 @@
+{
+  String ulogin=null;
+  String upwd=null;
+  String serviceUrl=null;
+  String appName=null;
+  String definitionId=null;
+  LOGGER.fine("Get parameters");
+  for (int i=0; i < (args.length); i++) {
+    if ("-h".equals(args[i])) {
+      printHelp();
+      System.exit(0);
+    }
+ else     if ("-u".equals(args[i])) {
+      ulogin=getParameter(args,++i);
+    }
+ else     if ("-p".equals(args[i])) {
+      upwd=getParameter(args,++i);
+    }
+ else     if ("-s".equals(args[i])) {
+      serviceUrl=getParameter(args,++i);
+    }
+ else     if ("-d".equals(args[i])) {
+      definitionId=getParameter(args,++i);
+    }
+ else {
+      appName=args[i];
+    }
+  }
+  LOGGER.fine("Check parameters");
+  if (isEmpty(serviceUrl)) {
+    serviceUrl="https://apispark.com/";
+  }
+  if (!serviceUrl.endsWith("/")) {
+    serviceUrl+="/";
+  }
+  if (isEmpty(ulogin) || isEmpty(upwd) || isEmpty(appName)) {
+    printHelp();
+    System.exit(1);
+  }
+  javax.ws.rs.core.Application application=getApplication(appName);
+  Definition definition=null;
+  if (application != null) {
+    LOGGER.fine("Instantiate introspector");
+    JaxrsIntrospector i=new JaxrsIntrospector(application);
+    LOGGER.info("Generate documentation");
+    definition=i.getDefinition();
+  }
+  if (definition != null) {
+    sendDefinition(definition,definitionId,ulogin,upwd,serviceUrl,LOGGER);
+  }
+ else {
+    LOGGER.severe("Please provide a valid application class name.");
+  }
+}

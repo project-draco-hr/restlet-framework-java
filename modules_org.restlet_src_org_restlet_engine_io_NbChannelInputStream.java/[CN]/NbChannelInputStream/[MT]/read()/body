@@ -1,15 +1,12 @@
 {
-  int result=0;
-  Object[] args=new Object[1];
-  int bytesDrained=getBuffer().process(this,1,args);
-  if (bytesDrained == -1) {
-    result=-1;
-  }
- else   if (bytesDrained == 1) {
-    result=((Integer)args[0]).intValue();
-  }
- else {
-    Context.getCurrentLogger().warning("Only one byte was needed but " + bytesDrained + " were drained.");
+  int result=-1;
+  if (!this.endReached) {
+    if (!this.byteBuffer.hasRemaining()) {
+      refill();
+    }
+    if (!this.endReached) {
+      result=this.byteBuffer.get() & 0xff;
+    }
   }
   return result;
 }

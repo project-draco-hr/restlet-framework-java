@@ -1,44 +1,38 @@
 {
-  String sessionId=(String)getRequest().getAttributes().get(ClientCookieID);
-  if (sessionId == null)   sessionId=getCookies().getFirstValue(ClientCookieID);
-  ConcurrentMap<String,Object> attribs=getContext().getAttributes();
-  AuthSession session=(sessionId == null) ? null : (AuthSession)attribs.get(sessionId);
-  if ("Reject".equals(action)) {
-    setStatus(Status.CLIENT_ERROR_FORBIDDEN);
-    sendError(session,OAuthError.access_denied,session.getState(),"Rejected.",null);
+  AuthSession session=getAuthSession();
+  session.setGrantedScope(grantedScope);
+  if (action.equals(ACTION_REJECT)) {
     getLogger().fine("Rejected.");
-    return;
+    throw new OAuthException(OAuthError.access_denied,"Rejected.",null);
   }
   getLogger().fine("Accepting scopes - in handleAction");
-  Client client=session.getClient();
-  String id=session.getScopeOwner();
-  String redirUrl=session.getDynamicCallbackURI();
-  getLogger().fine("OAuth2 get dynamic callback = " + redirUrl);
-  if (redirUrl == null || redirUrl.length() == 0)   redirUrl=client.getRedirectUri();
-  String location=null;
+  Client client=clients.findById(session.getClientId());
+  String scopeOwner=session.getScopeOwner();
+  final Reference location=new Reference(session.getRedirectionURI().getURI());
+  String state=session.getState();
+  if (state != null && !state.isEmpty()) {
+    location.addQueryParameter(STATE,state);
+  }
   ResponseType flow=session.getAuthFlow();
   if (flow.equals(ResponseType.token)) {
-    location=generateAgentToken(id,client,redirUrl);
+    Token token=tokens.generateToken(client,scopeOwner,grantedScope);
+    location.addQueryParameter(TOKEN_TYPE,token.getTokenType());
+    location.addQueryParameter(ACCESS_TOKEN,token.getAccessToken());
+    location.addQueryParameter(EXPIRES_IN,Integer.toString(token.getExpirePeriod()));
+    String[] scope=token.getScope();
+    if (!Scopes.isIdentical(scope,session.getRequestedScope())) {
+      location.addQueryParameter(SCOPE,Scopes.toString(scope));
+    }
   }
  else   if (flow.equals(ResponseType.code)) {
-    location=generateCode(id,client,redirUrl);
-  }
-  AuthenticatedUser user=client.findUser(session.getScopeOwner());
-  if (user == null) {
-    setStatus(Status.CLIENT_ERROR_NOT_FOUND,"Can't find User id : " + session.getScopeOwner());
-  }
-  user.revokeRoles();
-  for (  String s : scopes) {
-    getLogger().fine("Adding scope = " + s + " to user = "+ id);
-    user.addRole(Scopes.toRole(s),"");
-  }
-  String state=session.getState();
-  if (state != null && state.length() > 0) {
-    Reference stateful=new Reference(location);
-    stateful.addQueryParameter(OAuthServerResource.STATE,state);
-    location=stateful.toString();
+    String code=tokens.storeSession(session);
+    location.addQueryParameter(CODE,code);
   }
   session.setState(null);
-  user.persist();
+  if (flow.equals(ResponseType.token)) {
+    location.setFragment(location.getQuery());
+    location.setQuery("");
+  }
+  getLogger().fine("Redirecting to -> " + location);
   redirectTemporary(location);
 }

@@ -1,11 +1,17 @@
 {
   Representation result=null;
-  AnnotationInfo annotationInfo=getAnnotation(Method.GET);
-  if (annotationInfo != null) {
-    result=doHandle(annotationInfo,null);
-  }
+  MethodAnnotationInfo annotationInfo;
+  try {
+    annotationInfo=getAnnotation(Method.GET);
+    if (annotationInfo != null) {
+      result=doHandle(annotationInfo,null);
+    }
  else {
-    doError(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+      doError(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+    }
+  }
+ catch (  IOException e) {
+    throw new ResourceException(e);
   }
   return result;
 }

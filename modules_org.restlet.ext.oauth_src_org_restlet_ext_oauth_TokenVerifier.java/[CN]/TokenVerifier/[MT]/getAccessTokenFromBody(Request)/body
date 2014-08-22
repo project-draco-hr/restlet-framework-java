@@ -1,0 +1,18 @@
+{
+  Method method=request.getMethod();
+  if (method.equals(Method.GET)) {
+    return null;
+  }
+  Representation entity=request.getEntity();
+  if (entity != null && !MediaType.APPLICATION_WWW_FORM.equals(entity.getMediaType())) {
+    return null;
+  }
+  Form form=new Form(request.getEntity());
+  final String token=form.getFirstValue(OAuthServerResource.ACCESS_TOKEN);
+  if (token == null || token.isEmpty()) {
+    return null;
+  }
+  request.setEntity(form.getWebRepresentation());
+  logger.fine("Found Bearer Token in Body.");
+  return token;
+}

@@ -1,0 +1,27 @@
+{
+  Series<Header> result=super.getResponseHeaders();
+  if (!this.responseHeadersAdded) {
+    boolean loop=true;
+    int i=0;
+    String headerName=null;
+    String headerValue=null;
+    while (loop) {
+      try {
+        headerName=getConnection().getHeaderFieldKey(i);
+        headerValue=getConnection().getHeaderField(i);
+      }
+ catch (      java.util.NoSuchElementException e) {
+        headerName=null;
+      }
+      if (headerName != null) {
+        result.add(headerName,headerValue);
+      }
+ else {
+        loop=(i == 0);
+      }
+      i++;
+    }
+    this.responseHeadersAdded=true;
+  }
+  return result;
+}

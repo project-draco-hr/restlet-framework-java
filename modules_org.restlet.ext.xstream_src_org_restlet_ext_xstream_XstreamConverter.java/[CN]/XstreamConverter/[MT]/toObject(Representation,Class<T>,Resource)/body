@@ -1,9 +1,11 @@
 {
-  Object result=null;
+  T result=null;
   XstreamRepresentation<?> xstreamSource=null;
   if (source instanceof XstreamRepresentation) {
     xstreamSource=(XstreamRepresentation<?>)source;
-    if (target != null)     xstreamSource.getXstream().processAnnotations(target);
+    if (target != null) {
+      xstreamSource.getXstream().processAnnotations(target);
+    }
   }
  else   if (VARIANT_JSON.isCompatible(source)) {
     xstreamSource=create(source,target);
@@ -12,12 +14,17 @@
     xstreamSource=create(source,target);
   }
   if (xstreamSource != null) {
-    if ((target != null) && XstreamRepresentation.class.isAssignableFrom(target)) {
-      result=xstreamSource;
-    }
+    try {
+      if ((target != null) && XstreamRepresentation.class.isAssignableFrom(target)) {
+        result=target.cast(xstreamSource);
+      }
  else {
-      result=xstreamSource.getObject();
+        result=(T)xstreamSource.getObject();
+      }
+    }
+ catch (    IllegalArgumentException iae) {
+      throw new IOException("SECURITY WARNING: The usage of XstreamRepresentation when " + "deserializing representations from unstrusted " + "sources can lead to malicious attacks. As pointed "+ "here (http://xstream.codehaus.org/security.html), "+ "it is possible to force the JVM to execute unwanted "+ "Java code described inside the representation."+ "Thus, the support of such format has been "+ "restricted by default to basic data types such as "+ "primitive types, subclasses of the java.util.Collection "+ "class (cf http://xstream.codehaus.org/security.html#framework). "+ "You can enhance this behavior by overriding the "+ "org.restlet.ext.xstream.XStreamConverter#createXstream(MediaType, Class<T>) method "+ "and provide this new converter helper to the Restlet Engine "+ "(see org.restlet.engine.Engine#getRegisteredConverters method).",iae);
     }
   }
-  return (T)result;
+  return result;
 }

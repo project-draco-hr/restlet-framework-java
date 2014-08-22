@@ -1,0 +1,13 @@
+{
+  JSONObject call=new JsonRepresentation(input).getJsonObject();
+  if (call.getString(ACCESS_TOKEN).equals(STUB_ACCESS_TOKEN)) {
+    JSONObject resp=new JSONObject();
+    resp.put(USERNAME,"testuser");
+    resp.put(SCOPE,"a b");
+    return new JsonRepresentation(resp);
+  }
+ else {
+    OAuthException oex=new OAuthException(OAuthError.invalid_token,"Invalid Token",null);
+    return new JsonRepresentation(oex.createErrorDocument());
+  }
+}

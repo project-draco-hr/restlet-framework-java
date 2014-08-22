@@ -1,0 +1,15 @@
+{
+  ArrayList<Header> headers=new ArrayList<Header>();
+  String md5hash="aaaaaaaaaaaaaaaa";
+  String encodedWithPadding=Base64.encode(md5hash.getBytes(),false);
+  String encodedNoPadding=encodedWithPadding.substring(0,22);
+  Header header=new Header(HeaderConstants.HEADER_CONTENT_MD5,encodedWithPadding);
+  headers.add(header);
+  Representation rep=HeaderUtils.extractEntityHeaders(headers,null);
+  assertEquals(rep.getDigest().getAlgorithm(),org.restlet.data.Digest.ALGORITHM_MD5);
+  assertEquals(new String(rep.getDigest().getValue()),md5hash);
+  header.setValue(encodedNoPadding);
+  rep=HeaderUtils.extractEntityHeaders(headers,null);
+  assertEquals(rep.getDigest().getAlgorithm(),org.restlet.data.Digest.ALGORITHM_MD5);
+  assertEquals(new String(rep.getDigest().getValue()),md5hash);
+}

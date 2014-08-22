@@ -1,0 +1,19 @@
+{
+  if (authenticationScheme == null) {
+    setupBodyClientCredentials(parameters);
+  }
+ else {
+    setChallengeResponse(authenticationScheme,clientId,clientSecret);
+  }
+  Representation input=parameters.toRepresentation();
+  getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(MediaType.APPLICATION_JSON));
+  JSONObject result=new JsonRepresentation(post(input)).getJsonObject();
+  if (result.has(ERROR)) {
+    throw OAuthException.toOAuthException(result);
+  }
+  TokenResponse token=TokenResponse.parseResponse(result);
+  if (token.scope == null) {
+    token.scope=Scopes.parseScope(parameters.toForm().getFirstValue(SCOPE));
+  }
+  return token;
+}

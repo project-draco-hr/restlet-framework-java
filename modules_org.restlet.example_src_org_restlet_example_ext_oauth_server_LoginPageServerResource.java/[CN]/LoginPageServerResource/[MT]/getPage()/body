@@ -1,0 +1,33 @@
+{
+  getLogger().info("Get Login");
+  String userId=getQueryValue("user_id");
+  HashMap<String,Object> data=new HashMap<String,Object>();
+  if (userId != null && !userId.isEmpty()) {
+    String password=getQueryValue("password");
+    getLogger().info("User=" + userId + ", Pass="+ password);
+    SampleUser sampleUser=OAuth2Sample.getSampleUserManager().findUserById(userId);
+    if (sampleUser == null) {
+      data.put("error","Authentication failed.");
+      data.put("error_description","ID is invalid.");
+    }
+ else {
+      boolean result=SecretVerifier.compare(password.toCharArray(),sampleUser.getPassword());
+      if (result) {
+        getAuthSession().setScopeOwner(userId);
+        String uri=getQueryValue("continue");
+        getLogger().info("URI: " + uri);
+        redirectTemporary(uri);
+        return new EmptyRepresentation();
+      }
+ else {
+        data.put("error","Authentication failed.");
+        data.put("error_description","Password is invalid.");
+      }
+    }
+  }
+  String continueURI=getQueryValue("continue");
+  TemplateRepresentation response=getLoginPage("login.html");
+  data.put("continue",continueURI);
+  response.setDataModel(data);
+  return response;
+}

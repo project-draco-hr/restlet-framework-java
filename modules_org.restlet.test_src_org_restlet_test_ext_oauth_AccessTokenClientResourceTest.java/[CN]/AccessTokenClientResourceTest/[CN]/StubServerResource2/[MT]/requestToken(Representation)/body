@@ -1,0 +1,16 @@
+{
+  ChallengeResponse cr=getChallengeResponse();
+  assertThat(cr.getScheme(),is(equalTo(ChallengeScheme.HTTP_BASIC)));
+  assertThat(cr.getIdentifier(),is(equalTo(STUB_CLIENT_ID)));
+  assertThat(cr.getSecret(),is(equalTo(STUB_CLIENT_SECRET.toCharArray())));
+  Form form=new Form(input);
+  assertThat(form.getFirstValue(CLIENT_ID),is(nullValue()));
+  assertThat(form.getFirstValue(CLIENT_SECRET),is(nullValue()));
+  JSONObject response=new JSONObject();
+  response.put(ACCESS_TOKEN,"bar");
+  response.put(TOKEN_TYPE,TOKEN_TYPE_BEARER);
+  response.put(EXPIRES_IN,3600);
+  response.put(REFRESH_TOKEN,"qux");
+  response.put(SCOPE,"a b");
+  return new JsonRepresentation(response);
+}

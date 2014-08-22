@@ -1,0 +1,9 @@
+{
+  String paramName=((PathParam)annotation).value();
+  String existingPath=Reference.decode(request.getResourceRef().getPath());
+  String simplePathParam=String.format("{%s}",paramName);
+  if (existingPath.contains(simplePathParam)) {
+    existingPath=existingPath.replace(simplePathParam,Reference.encode(representationAsText));
+  }
+  request.getResourceRef().setPath(existingPath);
+}

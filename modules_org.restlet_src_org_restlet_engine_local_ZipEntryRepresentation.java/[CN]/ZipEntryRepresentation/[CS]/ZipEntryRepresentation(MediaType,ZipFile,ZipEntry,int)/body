@@ -1,0 +1,16 @@
+{
+  super(mediaType);
+  this.zipFile=zipFile;
+  this.entry=entry;
+  Disposition disposition=new Disposition();
+  disposition.setFilename(entry.getName());
+  this.setDisposition(disposition);
+  setSize(entry.getSize());
+  setModificationDate(new Date(entry.getTime()));
+  if (timeToLive == 0) {
+    setExpirationDate(null);
+  }
+ else   if (timeToLive > 0) {
+    setExpirationDate(new Date(System.currentTimeMillis() + (1000L * timeToLive)));
+  }
+}

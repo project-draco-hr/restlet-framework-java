@@ -1,0 +1,51 @@
+{
+  Representation result=null;
+  Class<?>[] parameterTypes=annotationInfo.getJavaInputTypes();
+  Object resultObject=null;
+  try {
+    if (parameterTypes.length > 0) {
+      List<Object> parameters=new ArrayList<Object>();
+      Object parameter=null;
+      for (      Class<?> parameterType : parameterTypes) {
+        if (Variant.class.equals(parameterType)) {
+          parameters.add(variant);
+        }
+ else {
+          if (getRequestEntity() != null && getRequestEntity().isAvailable() && getRequestEntity().getSize() != 0) {
+            parameter=toObject(getRequestEntity(),parameterType);
+            if (parameter == null) {
+              throw new ResourceException(Status.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE);
+            }
+          }
+ else {
+            parameter=null;
+          }
+          parameters.add(parameter);
+        }
+      }
+      resultObject=annotationInfo.getJavaMethod().invoke(this,parameters.toArray());
+    }
+ else {
+      resultObject=annotationInfo.getJavaMethod().invoke(this);
+    }
+    if (resultObject != null) {
+      result=toRepresentation(resultObject,variant);
+    }
+  }
+ catch (  IllegalArgumentException e) {
+    throw new ResourceException(e);
+  }
+catch (  IllegalAccessException e) {
+    throw new ResourceException(e);
+  }
+catch (  InvocationTargetException e) {
+    if (e.getTargetException() instanceof ResourceException) {
+      throw (ResourceException)e.getTargetException();
+    }
+    throw new ResourceException(e.getTargetException());
+  }
+catch (  IOException e) {
+    throw new ResourceException(e);
+  }
+  return result;
+}

@@ -1,0 +1,52 @@
+{
+  AuthSession session=getAuthSession();
+  if (session != null) {
+    return doPostAuthorization(session,clients.findById(session.getClientId()));
+  }
+  final Client client;
+  final RedirectionURI redirectURI;
+  try {
+    client=getClient(params);
+    redirectURI=getRedirectionURI(params,client);
+  }
+ catch (  OAuthException ex) {
+    return getErrorPage(HttpOAuthHelper.getErrorPageTemplate(getContext()),ex);
+  }
+catch (  Exception ex) {
+    OAuthException oex=new OAuthException(OAuthError.server_error,ex.getMessage(),null);
+    return getErrorPage(HttpOAuthHelper.getErrorPageTemplate(getContext()),oex);
+  }
+  session=setupAuthSession(redirectURI);
+  try {
+    ResponseType[] responseTypes=getResponseType(params);
+    if (responseTypes.length != 1) {
+      throw new OAuthException(OAuthError.unsupported_response_type,"Extension response types are not supported.",null);
+    }
+    if (!client.isResponseTypeAllowed(responseTypes[0])) {
+      throw new OAuthException(OAuthError.unauthorized_client,"Unauthorized response type.",null);
+    }
+    session.setAuthFlow(responseTypes[0]);
+    session.setClientId(client.getClientId());
+    String[] scope=getScope(params);
+    session.setRequestedScope(scope);
+    String state=getState(params);
+    if (state != null && !state.isEmpty()) {
+      session.setState(state);
+    }
+  }
+ catch (  OAuthException ex) {
+    ungetAuthSession();
+    throw ex;
+  }
+  User scopeOwner=getRequest().getClientInfo().getUser();
+  if (scopeOwner != null) {
+    session.setScopeOwner(scopeOwner.getIdentifier());
+  }
+  if (session.getScopeOwner() == null) {
+    Reference ref=new Reference("." + HttpOAuthHelper.getLoginPage(getContext()));
+    ref.addQueryParameter("continue",getRequest().getOriginalRef().toString(true,false));
+    redirectTemporary(ref.toString());
+    return new EmptyRepresentation();
+  }
+  return doPostAuthorization(session,client);
+}

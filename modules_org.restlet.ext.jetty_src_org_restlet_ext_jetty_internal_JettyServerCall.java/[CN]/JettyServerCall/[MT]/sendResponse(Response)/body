@@ -1,0 +1,18 @@
+{
+  for (Iterator<Header> iter=getResponseHeaders().iterator(); iter.hasNext(); ) {
+    Header header=iter.next();
+    getChannel().getResponse().addHeader(header.getName(),header.getValue());
+  }
+  if (Status.isError(getStatusCode()) && (response.getEntity() == null)) {
+    try {
+      getChannel().getResponse().sendError(getStatusCode(),getReasonPhrase());
+    }
+ catch (    IOException ioe) {
+      getLogger().log(Level.WARNING,"Unable to set the response error status",ioe);
+    }
+  }
+ else {
+    getChannel().getResponse().setStatus(getStatusCode());
+    super.sendResponse(response);
+  }
+}

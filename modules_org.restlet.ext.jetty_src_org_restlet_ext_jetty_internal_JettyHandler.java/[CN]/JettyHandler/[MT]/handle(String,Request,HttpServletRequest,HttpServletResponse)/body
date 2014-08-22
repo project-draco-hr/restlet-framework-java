@@ -1,5 +1,6 @@
 {
-  final Request baseRequest=(servletRequest instanceof Request) ? (Request)servletRequest : AbstractHttpConnection.getCurrentConnection().getRequest();
-  this.helper.handle(new JettyCall(this.helper.getHelped(),AbstractHttpConnection.getCurrentConnection()));
+  final HttpChannel<?> channel=HttpChannel.getCurrentHttpChannel();
+  final Request baseRequest=(servletRequest instanceof Request) ? (Request)servletRequest : channel.getRequest();
+  this.helper.handle(new JettyServerCall(this.helper.getHelped(),channel));
   baseRequest.setHandled(true);
 }

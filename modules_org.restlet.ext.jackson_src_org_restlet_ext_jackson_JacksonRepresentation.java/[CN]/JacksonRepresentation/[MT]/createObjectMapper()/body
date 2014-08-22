@@ -1,5 +1,39 @@
 {
-  JsonFactory jsonFactory=new JsonFactory();
-  jsonFactory.configure(Feature.AUTO_CLOSE_TARGET,false);
-  return new ObjectMapper(jsonFactory);
+  ObjectMapper result=null;
+  if (MediaType.APPLICATION_JSON.isCompatible(getMediaType())) {
+    JsonFactory jsonFactory=new JsonFactory();
+    jsonFactory.configure(Feature.AUTO_CLOSE_TARGET,false);
+    result=new ObjectMapper(jsonFactory);
+  }
+ else   if (MediaType.APPLICATION_JSON_SMILE.isCompatible(getMediaType())) {
+    SmileFactory smileFactory=new SmileFactory();
+    smileFactory.configure(Feature.AUTO_CLOSE_TARGET,false);
+    result=new ObjectMapper(smileFactory);
+  }
+ else   if (MediaType.APPLICATION_XML.isCompatible(getMediaType()) || MediaType.TEXT_XML.isCompatible(getMediaType())) {
+    XMLInputFactory xif=XMLInputFactory.newFactory();
+    xif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES,isExpandingEntityRefs());
+    xif.setProperty(XMLInputFactory.SUPPORT_DTD,isExpandingEntityRefs());
+    xif.setProperty(XMLInputFactory.IS_VALIDATING,isValidatingDtd());
+    XMLOutputFactory xof=XMLOutputFactory.newFactory();
+    XmlFactory xmlFactory=new XmlFactory(xif,xof);
+    xmlFactory.configure(Feature.AUTO_CLOSE_TARGET,false);
+    result=new XmlMapper(xmlFactory);
+  }
+ else   if (MediaType.APPLICATION_YAML.isCompatible(getMediaType()) || MediaType.TEXT_YAML.isCompatible(getMediaType())) {
+    YAMLFactory yamlFactory=new YAMLFactory();
+    yamlFactory.configure(Feature.AUTO_CLOSE_TARGET,false);
+    result=new ObjectMapper(yamlFactory);
+  }
+ else   if (MediaType.TEXT_CSV.isCompatible(getMediaType())) {
+    CsvFactory csvFactory=new CsvFactory();
+    csvFactory.configure(Feature.AUTO_CLOSE_TARGET,false);
+    result=new CsvMapper(csvFactory);
+  }
+ else {
+    JsonFactory jsonFactory=new JsonFactory();
+    jsonFactory.configure(Feature.AUTO_CLOSE_TARGET,false);
+    result=new ObjectMapper(jsonFactory);
+  }
+  return result;
 }

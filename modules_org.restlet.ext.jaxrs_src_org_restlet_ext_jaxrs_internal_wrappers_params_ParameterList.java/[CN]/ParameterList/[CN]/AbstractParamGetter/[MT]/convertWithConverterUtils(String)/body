@@ -1,15 +1,15 @@
 {
   Object result=null;
-  Representation source=this.tlContext.get().getRequest().getEntity();
-  if ((source != null) && source.isAvailable() && (source.getSize() != 0)) {
-    ConverterHelper converterHelper=ConverterUtils.getBestHelper(this.tlContext.get().getRequest().getEntity(),this.convertTo,null);
-    List<VariantInfo> variants=converterHelper.getVariants(this.convertTo);
-    for (int i=0; result == null && i < variants.size(); i++) {
-      try {
+  if (this.tlContext.get().getRequest().getEntity() != null && paramValue != null) {
+    try {
+      ConverterHelper converterHelper=ConverterUtils.getBestHelper(this.tlContext.get().getRequest().getEntity(),this.convertTo,null);
+      List<VariantInfo> variants=converterHelper.getVariants(this.convertTo);
+      for (int i=0; result == null && i < variants.size(); i++) {
         result=converterHelper.toObject(new StringRepresentation(paramValue,variants.get(i).getMediaType()),this.convertTo,null);
       }
- catch (      Exception exception) {
-      }
+    }
+ catch (    Exception exception) {
+      exception.printStackTrace();
     }
   }
   return result;

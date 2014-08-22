@@ -1,0 +1,13 @@
+{
+  JsonpFilter filter=new JsonpFilter(null);
+  Reference ref=new Reference();
+  final String callback="callback";
+  ref.addQueryParameter(callback,"test");
+  Request request=new Request(Method.GET,ref);
+  Response response=new Response(request);
+  final DomRepresentation expected=new DomRepresentation(MediaType.APPLICATION_XML);
+  response.setEntity(expected);
+  filter.afterHandle(request,response);
+  Representation actual=response.getEntity();
+  Assert.assertEquals(expected,actual);
+}

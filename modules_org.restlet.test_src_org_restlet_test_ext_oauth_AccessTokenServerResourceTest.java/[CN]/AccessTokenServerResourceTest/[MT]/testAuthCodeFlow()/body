@@ -1,0 +1,13 @@
+{
+  Form request=new Form();
+  request.add(GRANT_TYPE,GrantType.authorization_code.name());
+  request.add(CODE,STUB_CODE);
+  ClientResource resource=new ClientResource(tokenURI);
+  JSONObject response=new JsonRepresentation(resource.post(request.getWebRepresentation())).getJsonObject();
+  assertThat(resource.getResponseCacheDirectives(),is(contains(CacheDirective.noStore())));
+  assertThat(response.getString(TOKEN_TYPE),is(TOKEN_TYPE_BEARER));
+  assertThat(response.getString(ACCESS_TOKEN),is(STUB_ACCESS_TOKEN));
+  assertThat(response.getString(REFRESH_TOKEN),is(STUB_REFRESH_TOKEN));
+  assertThat(response.get(EXPIRES_IN),is(instanceOf(Number.class)));
+  assertThat(Scopes.parseScope(response.getString(SCOPE)),is(arrayContainingInAnyOrder("a","b")));
+}

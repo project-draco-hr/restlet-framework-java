@@ -1,0 +1,12 @@
+{
+  ObjectReader result=null;
+  if (MediaType.TEXT_CSV.isCompatible(getMediaType())) {
+    CsvMapper csvMapper=(CsvMapper)getObjectMapper();
+    CsvSchema csvSchema=createCsvSchema(csvMapper);
+    result=csvMapper.reader(getObjectClass()).with(csvSchema);
+  }
+ else {
+    result=getObjectMapper().reader(getObjectClass());
+  }
+  return result;
+}

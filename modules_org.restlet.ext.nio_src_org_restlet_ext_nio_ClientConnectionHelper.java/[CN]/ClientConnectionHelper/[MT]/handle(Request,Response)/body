@@ -1,0 +1,20 @@
+{
+  try {
+    if (getLogger().isLoggable(Level.FINE)) {
+      getLogger().log(Level.FINE,"Handling client request: " + request);
+    }
+    if ((request != null) && request.isSynchronous() && request.isExpectingResponse()) {
+      CountDownLatch latch=new CountDownLatch(1);
+      request.getAttributes().put(CONNECTOR_LATCH,latch);
+      addOutboundMessage(response);
+      latch.await();
+    }
+ else {
+      addOutboundMessage(response);
+    }
+  }
+ catch (  Exception e) {
+    getLogger().log(Level.INFO,"Error while handling a " + request.getProtocol().getName() + " client request",e);
+    response.setStatus(Status.CONNECTOR_ERROR_INTERNAL,e);
+  }
+}

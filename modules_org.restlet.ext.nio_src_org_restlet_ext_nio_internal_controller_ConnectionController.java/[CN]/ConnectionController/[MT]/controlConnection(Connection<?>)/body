@@ -1,0 +1,21 @@
+{
+  if (getHelper().getLogger().isLoggable(Level.FINEST)) {
+    getHelper().getLogger().log(Level.FINEST,"Connection status: " + conn);
+  }
+  if (conn.getState() == ConnectionState.CLOSED) {
+    getHelper().getConnections().remove(conn);
+    getHelper().checkin(conn);
+  }
+ else   if ((conn.getState() == ConnectionState.CLOSING) && conn.isEmpty()) {
+    conn.close(false);
+  }
+ else   if (conn.hasTimedOut()) {
+    conn.onTimeOut();
+  }
+ else   if (conn.updateState()) {
+    getUpdatedRegistrations().add(conn.getRegistration());
+  }
+ else   if (conn.isReady()) {
+    conn.onSelected(conn.getRegistration());
+  }
+}

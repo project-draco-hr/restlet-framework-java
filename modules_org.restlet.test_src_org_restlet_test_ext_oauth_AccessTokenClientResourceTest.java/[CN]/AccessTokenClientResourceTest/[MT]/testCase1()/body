@@ -1,0 +1,17 @@
+{
+  AccessTokenClientResource tokenResource=new AccessTokenClientResource(new Reference(baseURI,"/oauth/token1"));
+  tokenResource.setClientCredentials(STUB_CLIENT_ID,STUB_CLIENT_SECRET);
+  tokenResource.setAuthenticationMethod(null);
+  Token token=tokenResource.requestToken(new OAuthParameters());
+  assertThat(token.getAccessToken(),is("foo"));
+  assertThat(token.getTokenType(),is(TOKEN_TYPE_BEARER));
+  try {
+    int exp=token.getExpirePeriod();
+    fail("expires_in is included: " + exp);
+  }
+ catch (  IllegalStateException ex) {
+    assertTrue(true);
+  }
+  assertNull(token.getRefreshToken());
+  assertThat(token.getScope(),is(arrayWithSize(0)));
+}

@@ -2,7 +2,9 @@
   if (State.ASSOCIATION == getState() && inlineLink != null) {
     String propertyName=ReflectUtils.normalize(inlineLink.getTitle());
     if (association.isToMany()) {
-      if (inlineFeedHandler.closeLink())       return true;
+      if (inlineFeedHandler.closeLink()) {
+        return true;
+      }
       try {
         ReflectUtils.setProperty(entity,propertyName,association.isToMany(),inlineFeedHandler.getEntities().iterator(),ReflectUtils.getSimpleClass(entity,propertyName));
       }
@@ -12,7 +14,9 @@
       inlineFeedHandler=null;
     }
  else {
-      if (inlineEntryHandler.closeLink())       return true;
+      if (inlineEntryHandler.closeLink()) {
+        return true;
+      }
       try {
         ReflectUtils.invokeSetter(entity,propertyName,inlineEntryHandler.getEntity());
       }
@@ -24,9 +28,6 @@
     popState();
     association=null;
     return true;
-  }
-  if (eltPath != null) {
-    if (!eltPath.isEmpty())     eltPath.remove(eltPath.size() - 1);
   }
   return getState() != null;
 }

@@ -4,6 +4,8 @@
   if (component != null) {
     Server server=new Server(component.getContext().createChildContext(),(List<Protocol>)null,this.getLocalAddr(request),this.getLocalPort(request),component);
     result=new HttpServerHelper(server);
+    Context serverContext=server.getContext();
+    serverContext.getParameters().add("adapter","org.restlet.ext.servlet.internal.ServletServerAdapter");
     String uriPattern=this.getContextPath(request) + request.getServletPath();
     if (isDefaultComponent()) {
       if (getApplication() != null) {

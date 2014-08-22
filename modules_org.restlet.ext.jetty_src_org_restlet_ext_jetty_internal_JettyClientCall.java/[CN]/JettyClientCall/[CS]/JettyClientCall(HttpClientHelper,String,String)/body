@@ -1,0 +1,12 @@
+{
+  super(helper,method,requestUri);
+  this.clientHelper=helper;
+  if (requestUri.startsWith("http")) {
+    this.httpRequest=(HttpRequest)helper.getHttpClient().newRequest(requestUri);
+    this.httpRequest.method(method);
+    setConfidential(this.httpRequest.getURI().getScheme().equalsIgnoreCase(Protocol.HTTPS.getSchemeName()));
+  }
+ else {
+    throw new IllegalArgumentException("Only HTTP or HTTPS resource URIs are allowed here");
+  }
+}

@@ -1,0 +1,10 @@
+{
+  MemoryToken token=tokens.get(accessToken);
+  if (token == null) {
+    throw new OAuthException(OAuthError.invalid_token,"The access token revoked.",null);
+  }
+  if (token.isExpired()) {
+    throw new OAuthException(OAuthError.invalid_token,"The access token expired.",null);
+  }
+  return token;
+}

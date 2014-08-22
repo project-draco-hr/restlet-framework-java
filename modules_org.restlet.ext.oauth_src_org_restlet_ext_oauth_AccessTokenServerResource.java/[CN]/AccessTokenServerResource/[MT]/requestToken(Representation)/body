@@ -1,0 +1,22 @@
+{
+  getLogger().fine("Grant request");
+  final Form params=new Form(input);
+  final GrantType grantType=getGrantType(params);
+switch (grantType) {
+case authorization_code:
+    getLogger().info("Authorization Code Grant");
+  return doAuthCodeFlow(params);
+case password:
+getLogger().info("Resource Owner Password Credentials Grant");
+return doPasswordFlow(params);
+case client_credentials:
+getLogger().info("Client Credentials Grantt");
+return doClientFlow(params);
+case refresh_token:
+getLogger().info("Refreshing an Access Token");
+return doRefreshFlow(params);
+default :
+getLogger().warning("Unsupported flow: " + grantType);
+throw new OAuthException(OAuthError.unsupported_grant_type,"Flow not supported",null);
+}
+}

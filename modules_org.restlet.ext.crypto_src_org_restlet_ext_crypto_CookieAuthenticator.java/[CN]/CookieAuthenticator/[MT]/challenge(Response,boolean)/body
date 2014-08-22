@@ -1,3 +1,14 @@
 {
-  super.challenge(response,stale);
+  if (getLoginFormPath() == null) {
+    super.challenge(response,stale);
+  }
+ else {
+    Reference ref=response.getRequest().getResourceRef();
+    String redirectQueryName=getRedirectQueryName();
+    String redirectQueryValue=ref.getQueryAsForm().getFirstValue(redirectQueryName,"");
+    if ("".equals(redirectQueryValue)) {
+      redirectQueryValue=new Reference(getLoginFormPath()).addQueryParameter(redirectQueryName,ref.toString()).toString();
+    }
+    response.redirectSeeOther(redirectQueryValue);
+  }
 }

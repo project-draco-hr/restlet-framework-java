@@ -1,0 +1,22 @@
+{
+  Status result=null;
+  if (throwable instanceof ResourceException) {
+    ResourceException re=(ResourceException)throwable;
+    if (re.getCause() != null) {
+      result=new Status(re.getStatus(),re.getCause());
+    }
+ else {
+      result=re.getStatus();
+    }
+  }
+ else {
+    org.restlet.engine.resource.StatusAnnotationInfo sai=org.restlet.engine.resource.AnnotationUtils.getInstance().getStatusAnnotationInfo(throwable.getClass());
+    if (sai != null) {
+      result=new Status(sai.getStatus(),throwable);
+    }
+ else {
+      result=new Status(Status.SERVER_ERROR_INTERNAL,throwable);
+    }
+  }
+  return result;
+}
