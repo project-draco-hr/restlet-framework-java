@@ -1,0 +1,13 @@
+{
+  Query<Job> query=service.createJobQuery("/Job").expand("jobParts/description/literals/language,jobPosting/name/literals/language");
+  for (  Job job : query) {
+    Assert.assertNotNull("Failed to parse date, resulting to null value",job.getStartDate());
+    Assert.assertNotNull("Failed to parse date, resulting to null value",job.getEndDate());
+    if (job.getJobParts() != null) {
+      for (      JobPart jobPart : job.getJobParts()) {
+        Assert.assertNotNull("Failed to parse date, resulting to null value",jobPart.getStartDate());
+        Assert.assertNotNull("Failed to parse date, resulting to null value",jobPart.getEndDate());
+      }
+    }
+  }
+}
