@@ -1,6 +1,6 @@
 {
   if (swaggerUrl == null) {
-    throw new SwaggerConversionException("url","You did not provide any URL");
+    throw new TranslationException("url","You did not provide any URL");
   }
   Pattern p=Pattern.compile("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
   boolean remote=p.matcher(swaggerUrl).matches();
@@ -27,8 +27,8 @@
       }
     }
  catch (    IOException e) {
-      throw new SwaggerConversionException("file",e.getMessage());
+      throw new TranslationException("file",e.getMessage());
     }
   }
-  return SwaggerConverter.convert(resourceListing,apis);
+  return SwaggerTranslater.translate(resourceListing,apis);
 }

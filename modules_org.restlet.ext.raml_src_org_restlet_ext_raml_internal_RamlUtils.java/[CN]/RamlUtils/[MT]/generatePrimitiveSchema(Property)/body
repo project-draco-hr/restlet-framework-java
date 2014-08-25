@@ -1,0 +1,38 @@
+{
+  SimpleTypeSchema result=null;
+  String name=property.getName();
+  String type=(property.getType() != null) ? property.getType().toLowerCase() : null;
+  if (RamlUtils.integerTypesList.contains(type)) {
+    IntegerSchema integerSchema=new IntegerSchema();
+    integerSchema.setTitle(name);
+    if (property.getMin() != null) {
+      integerSchema.setMinimum(Double.parseDouble(property.getMin()));
+    }
+    if (property.getMax() != null) {
+      integerSchema.setMaximum(Double.parseDouble(property.getMax()));
+    }
+    result=integerSchema;
+  }
+ else   if (RamlUtils.numericTypesList.contains(type)) {
+    NumberSchema numberSchema=new NumberSchema();
+    numberSchema.setTitle(name);
+    if (property.getMin() != null) {
+      numberSchema.setMinimum(Double.parseDouble(property.getMin()));
+    }
+    if (property.getMax() != null) {
+      numberSchema.setMaximum(Double.parseDouble(property.getMax()));
+    }
+    result=numberSchema;
+  }
+ else   if ("boolean".equals(type)) {
+    BooleanSchema booleanSchema=new BooleanSchema();
+    booleanSchema.setTitle(name);
+    result=booleanSchema;
+  }
+ else   if ("string".equals(type) || "date".equals(type)) {
+    StringSchema stringSchema=new StringSchema();
+    stringSchema.setTitle(name);
+    result=stringSchema;
+  }
+  return result;
+}

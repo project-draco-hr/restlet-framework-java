@@ -1,0 +1,125 @@
+{
+  Raml raml=new Raml();
+  ObjectMapper m=new ObjectMapper();
+  if (definition.getVersion() != null) {
+    raml.setVersion(definition.getVersion());
+  }
+  if (definition.getEndpoint() != null) {
+    raml.setBaseUri(definition.getEndpoint());
+  }
+  raml.setTitle(definition.getContract().getName());
+  raml.setResources(new HashMap<String,org.raml.model.Resource>());
+  org.raml.model.Resource ramlResource;
+  List<String> paths=new ArrayList<String>();
+  for (  Resource resource : definition.getContract().getResources()) {
+    ramlResource=new org.raml.model.Resource();
+    if (resource.getName() != null) {
+      ramlResource.setDisplayName(resource.getName());
+    }
+ else {
+      ramlResource.setDisplayName(RamlUtils.processResourceName(resource.getResourcePath()));
+    }
+    ramlResource.setDescription(resource.getDescription());
+    ramlResource.setParentUri("");
+    ramlResource.setRelativeUri(resource.getResourcePath());
+    UriParameter uiParam=new UriParameter();
+    ramlResource.setUriParameters(new HashMap<String,UriParameter>());
+    for (    PathVariable pathVariable : resource.getPathVariables()) {
+      uiParam.setDisplayName(pathVariable.getName());
+      uiParam.setDescription(pathVariable.getDescription());
+      uiParam.setRepeat(pathVariable.isArray());
+      uiParam.setType(RamlUtils.getParamType(pathVariable.getType()));
+      ramlResource.getUriParameters().put(pathVariable.getName(),uiParam);
+    }
+    Action action;
+    ramlResource.setActions(new HashMap<ActionType,Action>());
+    MimeType ramlInRepresentation;
+    for (    Operation operation : resource.getOperations()) {
+      action=new Action();
+      action.setDescription(operation.getDescription());
+      action.setResource(ramlResource);
+      ramlInRepresentation=new MimeType();
+      if (operation.getInRepresentation() != null) {
+        ramlInRepresentation.setType(operation.getInRepresentation().getType());
+        if (RamlUtils.isPrimitiveType(operation.getInRepresentation().getType())) {
+          Property inRepresentationPrimitive=new Property();
+          inRepresentationPrimitive.setName("");
+          inRepresentationPrimitive.setType(operation.getInRepresentation().getType());
+          SimpleTypeSchema inRepresentationSchema=RamlUtils.generatePrimitiveSchema(inRepresentationPrimitive);
+          try {
+            ramlInRepresentation.setSchema(m.writeValueAsString(inRepresentationSchema));
+          }
+ catch (          JsonProcessingException e) {
+            LOGGER.log(Level.WARNING,"Error when setting mime type schema.",e);
+          }
+        }
+ else {
+          ramlInRepresentation.setSchema(operation.getInRepresentation().getType());
+        }
+        action.setBody(new HashMap<String,MimeType>());
+        for (        String mediaType : operation.getConsumes()) {
+          action.getBody().put(mediaType,ramlInRepresentation);
+        }
+      }
+      org.raml.model.parameter.QueryParameter ramlQueryParameter;
+      action.setQueryParameters(new HashMap<String,org.raml.model.parameter.QueryParameter>());
+      for (      QueryParameter queryParameter : operation.getQueryParameters()) {
+        ramlQueryParameter=new org.raml.model.parameter.QueryParameter();
+        ramlQueryParameter.setDisplayName(queryParameter.getName());
+        ramlQueryParameter.setDescription(queryParameter.getDescription());
+        ramlQueryParameter.setRequired(queryParameter.isRequired());
+        ramlQueryParameter.setDefaultValue(queryParameter.getDefaultValue());
+        ramlQueryParameter.setRepeat(queryParameter.isAllowMultiple());
+        action.getQueryParameters().put(queryParameter.getName(),ramlQueryParameter);
+      }
+      MimeType ramlOutRepresentation;
+      org.raml.model.Response ramlResponse=new org.raml.model.Response();
+      action.setResponses(new HashMap<String,org.raml.model.Response>());
+      for (      Response response : operation.getResponses()) {
+        ramlResponse=new org.raml.model.Response();
+        ramlResponse.setDescription(response.getDescription());
+        ramlResponse.setBody(new HashMap<String,MimeType>());
+        ramlOutRepresentation=new MimeType();
+        if (Status.isSuccess(response.getCode()) && operation.getOutRepresentation() != null && operation.getOutRepresentation().getType() != null) {
+          if (RamlUtils.isPrimitiveType(operation.getOutRepresentation().getType())) {
+            Property outRepresentationPrimitive=new Property();
+            outRepresentationPrimitive.setName("");
+            outRepresentationPrimitive.setType(operation.getOutRepresentation().getType());
+            SimpleTypeSchema outRepresentationSchema=RamlUtils.generatePrimitiveSchema(outRepresentationPrimitive);
+            try {
+              ramlOutRepresentation.setSchema(m.writeValueAsString(outRepresentationSchema));
+            }
+ catch (            JsonProcessingException e) {
+              LOGGER.log(Level.WARNING,"Error when setting mime type schema.",e);
+            }
+          }
+ else {
+            ramlOutRepresentation.setSchema(operation.getOutRepresentation().getType());
+          }
+        }
+        for (        String mediaType : operation.getProduces()) {
+          ramlResponse.getBody().put(mediaType,ramlOutRepresentation);
+        }
+        action.getResponses().put(Integer.toString(response.getCode()),ramlResponse);
+      }
+      ramlResource.getActions().put(RamlUtils.getActionType(operation.getMethod()),action);
+    }
+    paths.add(resource.getResourcePath());
+    raml.getResources().put(ramlResource.getRelativeUri(),ramlResource);
+  }
+  raml.setSchemas(new ArrayList<Map<String,String>>());
+  Map<String,String> schemas=new HashMap<String,String>();
+  raml.getSchemas().add(schemas);
+  for (  Representation representation : definition.getContract().getRepresentations()) {
+    if (RamlUtils.isPrimitiveType(representation.getName())) {
+      continue;
+    }
+    try {
+      schemas.put(representation.getName(),m.writeValueAsString(RamlUtils.generateSchema(representation)));
+    }
+ catch (    JsonProcessingException e) {
+      LOGGER.log(Level.WARNING,"Error when putting mime type schema for representation: " + representation.getName(),e);
+    }
+  }
+  return raml;
+}

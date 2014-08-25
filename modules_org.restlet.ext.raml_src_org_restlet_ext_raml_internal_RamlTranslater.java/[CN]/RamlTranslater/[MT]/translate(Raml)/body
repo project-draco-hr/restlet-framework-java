@@ -1,0 +1,29 @@
+{
+  Definition def=new Definition();
+  if (raml.getVersion() != null) {
+    def.setVersion(raml.getVersion().substring(1));
+    def.setEndpoint(raml.getBaseUri().replace("{version}",raml.getVersion()));
+  }
+ else {
+    def.setEndpoint(raml.getBaseUri());
+  }
+  def.setContract(new Contract());
+  def.getContract().setName(raml.getTitle());
+  List<PathVariable> rootPathVariables=new ArrayList<PathVariable>();
+  for (  Entry<String,UriParameter> entry : raml.getBaseUriParameters().entrySet()) {
+    rootPathVariables.add(getPathVariable(entry.getKey(),entry.getValue()));
+  }
+  for (  Map<String,String> schema : raml.getSchemas()) {
+    for (    Entry<String,String> entry : schema.entrySet()) {
+      Representation representation=new Representation();
+      representation.setName(entry.getKey());
+      representation.setDescription(entry.getValue());
+      def.getContract().getRepresentations().add(representation);
+    }
+  }
+  for (  Entry<String,org.raml.model.Resource> entry : raml.getResources().entrySet()) {
+    org.raml.model.Resource resource=entry.getValue();
+    def.getContract().getResources().addAll(getResource(RamlUtils.processResourceName(resource.getUri()),resource,rootPathVariables));
+  }
+  return def;
+}

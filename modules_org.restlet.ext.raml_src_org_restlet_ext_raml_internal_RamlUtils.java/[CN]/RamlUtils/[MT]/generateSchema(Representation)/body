@@ -1,0 +1,53 @@
+{
+  SimpleTypeSchema propertySchema;
+  ObjectSchema objectSchema;
+  objectSchema=new ObjectSchema();
+  objectSchema.setTitle(representation.getName());
+  objectSchema.setDescription(representation.getDescription());
+  if (!representation.isRaw()) {
+    if (representation.getExtendedType() != null) {
+      JsonSchema[] extended=new JsonSchema[1];
+      SimpleTypeSchema typeExtended=new ObjectSchema();
+      typeExtended.set$ref(representation.getExtendedType());
+      extended[0]=typeExtended;
+      objectSchema.setExtends(extended);
+    }
+    objectSchema.setProperties(new HashMap<String,JsonSchema>());
+    for (    Property property : representation.getProperties()) {
+      if (property.getMaxOccurs() != 1) {
+        ArraySchema array=new ArraySchema();
+        array.setTitle(property.getName());
+        array.setRequired(property.getMinOccurs() > 0);
+        array.setUniqueItems(property.isUniqueItems());
+        if (isPrimitiveType(property.getType())) {
+          Property prop=new Property();
+          prop.setName(property.getName());
+          prop.setType(property.getType());
+          array.setItemsSchema(generatePrimitiveSchema(prop));
+        }
+ else {
+          SimpleTypeSchema reference=new ObjectSchema();
+          reference.set$ref("#/schemas/" + property.getType());
+          array.setItemsSchema(reference);
+        }
+        objectSchema.getProperties().put(array.getTitle(),array);
+      }
+ else       if (!isPrimitiveType(property.getType())) {
+        propertySchema=new ObjectSchema();
+        propertySchema.setTitle(property.getName());
+        propertySchema.set$ref("#/schemas/" + property.getType());
+        propertySchema.setRequired(property.getMinOccurs() > 0);
+        objectSchema.getProperties().put(propertySchema.getTitle(),propertySchema);
+      }
+ else {
+        SimpleTypeSchema primitive=generatePrimitiveSchema(property);
+        primitive.setRequired(property.getMinOccurs() > 0);
+        if (property.getDefaultValue() != null) {
+          primitive.setDefault(property.getDefaultValue());
+        }
+        objectSchema.getProperties().put(property.getName(),primitive);
+      }
+    }
+  }
+  return objectSchema;
+}

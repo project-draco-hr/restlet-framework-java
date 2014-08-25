@@ -1,0 +1,10 @@
+{
+  List<PathVariable> pathVariables=new ArrayList<PathVariable>();
+  for (  Entry<String,UriParameter> entry : resource.getUriParameters().entrySet()) {
+    pathVariables.add(getPathVariable(entry.getKey(),entry.getValue()));
+  }
+  if (resource.getParentResource() != null) {
+    pathVariables.addAll(getPathVariables(resource.getParentResource()));
+  }
+  return pathVariables;
+}

@@ -1,0 +1,13 @@
+{
+  List<Field> fields=new ArrayList<Field>();
+  Class currentType=type;
+  while (currentType != null) {
+    Field[] currentFields=currentType.getDeclaredFields();
+    Collections.addAll(fields,currentFields);
+    currentType=currentType.getSuperclass();
+    if (currentType != null && currentType.equals(Object.class)) {
+      currentType=null;
+    }
+  }
+  return fields.toArray(new Field[fields.size()]);
+}
