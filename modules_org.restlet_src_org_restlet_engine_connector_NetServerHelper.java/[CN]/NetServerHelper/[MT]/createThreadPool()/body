@@ -1,0 +1,23 @@
+{
+  int maxThreads=getMaxThreads();
+  int minThreads=getMinThreads();
+  BlockingQueue<Runnable> queue=null;
+  if (getMaxQueued() == 0) {
+    queue=new SynchronousQueue<Runnable>();
+  }
+ else   if (getMaxQueued() < 0) {
+    queue=new LinkedBlockingQueue<Runnable>();
+  }
+ else {
+    queue=new ArrayBlockingQueue<Runnable>(getMaxQueued());
+  }
+  ThreadPoolExecutor result=new ThreadPoolExecutor(minThreads,maxThreads,getMaxThreadIdleTimeMs(),TimeUnit.MILLISECONDS,queue,new LoggingThreadFactory(getLogger(),true));
+  result.setRejectedExecutionHandler(new RejectedExecutionHandler(){
+    public void rejectedExecution(    Runnable r,    ThreadPoolExecutor executor){
+      getLogger().warning("Unable to run the following server-side task: " + r);
+    }
+  }
+);
+  result.prestartAllCoreThreads();
+  return result;
+}
