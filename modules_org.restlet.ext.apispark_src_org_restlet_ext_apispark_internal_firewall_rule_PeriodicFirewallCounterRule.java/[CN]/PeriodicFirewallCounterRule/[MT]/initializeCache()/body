@@ -1,0 +1,9 @@
+{
+  CacheLoader<String,PeriodicCounter> loader=new CacheLoader<String,PeriodicCounter>(){
+    public PeriodicCounter load(    String key){
+      return initializeCounter();
+    }
+  }
+;
+  cache=CacheBuilder.newBuilder().expireAfterAccess(2 * period,TimeUnit.SECONDS).build(loader);
+}

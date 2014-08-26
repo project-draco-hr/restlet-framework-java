@@ -1,0 +1,14 @@
+{
+  if (stopwatch.elapsed(TimeUnit.SECONDS) > period) {
+    Context.getCurrentLogger().log(Level.FINE,"Period reinitialized.");
+    stopwatch.reset();
+    stopwatch.start();
+    value=0;
+  }
+  value++;
+  CounterResult counterResult=new CounterResult();
+  counterResult.setConsumed(value);
+  counterResult.setElapsed(stopwatch.elapsed(TimeUnit.SECONDS));
+  counterResult.setReset(System.currentTimeMillis() / 1000L + period - stopwatch.elapsed(TimeUnit.SECONDS));
+  return counterResult;
+}

@@ -1,0 +1,11 @@
+{
+  Series<Header> headers=(Series<Header>)response.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
+  if (headers == null) {
+    headers=new Series<Header>(Header.class);
+  }
+  headers.set("X-RateLimit-Remaining",Integer.toString(getLimit(request,counterResult.getCountedValue()) - counterResult.getConsumed()));
+  headers.set("X-RateLimit-Limit",Integer.toString(getLimit(request,counterResult.getCountedValue())));
+  headers.set("X-RateLimit-Reset",Long.toString(counterResult.getReset()));
+  response.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,headers);
+  return super.handle(request,response,counterResult);
+}
