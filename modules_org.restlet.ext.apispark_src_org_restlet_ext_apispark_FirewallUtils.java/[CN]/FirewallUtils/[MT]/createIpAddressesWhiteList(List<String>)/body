@@ -1,0 +1,9 @@
+{
+  FirewallCounterRule rule=new ConcurrentFirewallCounterRule(new IpAddressCountingPolicy());
+  Map<String,Integer> map=new HashMap<String,Integer>();
+  for (  String ip : whiteList) {
+    map.put(ip,Integer.MAX_VALUE);
+  }
+  rule.addHandler(new BlockingHandler(new PerValueLimitPolicy(map,0)));
+  return rule;
+}
