@@ -1,0 +1,47 @@
+{
+  if (path != null) {
+    StringBuilder sb=new StringBuilder();
+    char next;
+    boolean inVariable=false;
+    boolean endVariable=false;
+    StringBuilder varBuffer=null;
+    for (int i=0; i < path.length(); i++) {
+      next=path.charAt(i);
+      if (inVariable) {
+        if (next == '}') {
+          if (varBuffer.length() == 0) {
+            LOGGER.warning("Empty pattern variables are not allowed : " + path);
+          }
+ else {
+            sb.append(varBuffer.toString());
+            varBuffer=new StringBuilder();
+          }
+          endVariable=false;
+          inVariable=false;
+          sb.append(next);
+        }
+ else         if (endVariable) {
+          continue;
+        }
+ else         if (Reference.isUnreserved(next)) {
+          varBuffer.append(next);
+        }
+ else         if (next == ':') {
+          endVariable=true;
+        }
+      }
+ else {
+        sb.append(next);
+        if (next == '{') {
+          inVariable=true;
+          varBuffer=new StringBuilder();
+        }
+ else         if (next == '}') {
+          LOGGER.warning("An invalid character was detected inside a pattern variable : " + path);
+        }
+      }
+    }
+    return sb.toString();
+  }
+  return null;
+}
