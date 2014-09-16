@@ -5,17 +5,18 @@
   }
   Path path=method.getAnnotation(Path.class);
   String fullPath=getPath(cPath,path);
+  String cleanPath=cleanPath(fullPath);
   ResourceInfo resource=null;
   for (  ResourceInfo ri : info.getResources().getResources()) {
-    if (fullPath.equals(ri.getPath())) {
+    if (cleanPath.equals(ri.getPath())) {
       resource=ri;
       break;
     }
   }
   if (resource == null) {
     resource=new ResourceInfo();
-    resource.setIdentifier(fullPath);
-    resource.setPath(fullPath);
+    resource.setIdentifier(cleanPath);
+    resource.setPath(cleanPath);
     info.getResources().getResources().add(resource);
   }
   resource.getMethods().add(mi);
@@ -27,7 +28,7 @@
     resource.getParameters().add(pi);
   }
  else {
-    Template template=new Template(fullPath);
+    Template template=new Template(cleanPath);
     for (    String var : template.getVariableNames()) {
       boolean found=false;
       for (      ParameterInfo pi : resource.getParameters()) {
