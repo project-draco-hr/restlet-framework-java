@@ -15,9 +15,9 @@
     ServerResource sr=(ServerResource)resource;
     sr.updateAllowedMethods();
     methodsList.addAll(sr.getAllowedMethods());
-    if (sr instanceof DocumentedServerResouce) {
-      info.setDescription(sr.getDescription());
-      info.setName(sr.getName());
+    if (sr instanceof DocumentedServerResource) {
+      info.setDescription(((DocumentedServerResource)sr).getDescription());
+      info.setName(((DocumentedServerResource)sr).getName());
     }
   }
  else   if (resource instanceof Directory) {
@@ -43,8 +43,9 @@
             methods.add(methodInfo);
             methodInfo.setMethod(method);
             MethodInfo.describeAnnotation(methodInfo,mai,sr);
-          }
-          if (sr instanceof DocumentedServerResouce) {
+            if (sr instanceof DocumentedServerResource) {
+              ((DocumentedServerResource)sr).describe(methodInfo,mai);
+            }
           }
         }
       }
