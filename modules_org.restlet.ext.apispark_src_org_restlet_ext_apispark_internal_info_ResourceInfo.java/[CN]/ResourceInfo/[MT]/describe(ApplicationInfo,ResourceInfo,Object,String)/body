@@ -15,6 +15,10 @@
     ServerResource sr=(ServerResource)resource;
     sr.updateAllowedMethods();
     methodsList.addAll(sr.getAllowedMethods());
+    if (sr instanceof DocumentedServerResouce) {
+      info.setDescription(sr.getDescription());
+      info.setName(sr.getName());
+    }
   }
  else   if (resource instanceof Directory) {
     Directory directory=(Directory)resource;
@@ -39,6 +43,8 @@
             methods.add(methodInfo);
             methodInfo.setMethod(method);
             MethodInfo.describeAnnotation(methodInfo,mai,sr);
+          }
+          if (sr instanceof DocumentedServerResouce) {
           }
         }
       }
