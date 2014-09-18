@@ -5,8 +5,12 @@
   String serviceUrl=null;
   String defSource=null;
   String compName=null;
-  String definitionId=null;
+  String descriptorId=null;
   String language=null;
+  String versionId=null;
+  String updateStrategy=null;
+  boolean newVersion=false;
+  boolean create=false;
   LOGGER.fine("Get parameters");
   for (int i=0; i < (args.length); i++) {
     if ("-h".equals(args[i])) {
@@ -25,18 +29,42 @@
  else     if ("-c".equals(args[i]) || "--component".equals(args[i])) {
       compName=getParameter(args,++i);
     }
- else     if ("-d".equals(args[i]) || "--definition".equals(args[i])) {
-      definitionId=getParameter(args,++i);
+ else     if ("-d".equals(args[i]) || "--descriptor".equals(args[i])) {
+      descriptorId=getParameter(args,++i);
+    }
+ else     if ("-v".equals(args[i]) || "--version".equals(args[i])) {
+      versionId=getParameter(args,++i);
+    }
+ else     if ("-u".equals(args[i]) || "--updateStrategy".equals(args[i])) {
+      updateStrategy=getParameter(args,++i).toLowerCase();
+    }
+ else     if ("-n".equals(args[i]) || "--newVersion".equals(args[i])) {
+      newVersion=true;
+    }
+ else     if ("-C".equals(args[i]) || "--create".equals(args[i])) {
+      create=true;
     }
  else     if ("-l".equals(args[i]) || "--language".equals(args[i])) {
       language=getParameter(args,++i).toLowerCase();
     }
- else     if ("-v".equals(args[i]) || "--verbose".equals(args[i])) {
+ else     if ("-V".equals(args[i]) || "--verbose".equals(args[i])) {
       Engine.setLogLevel(Level.FINE);
     }
  else {
       defSource=args[i];
     }
+  }
+  if (newVersion && create) {
+    LOGGER.severe("You can't use newVersion and create at the same time. Use parameter --help for help.");
+  }
+ else   if (create && updateStrategy != null) {
+    LOGGER.severe("You can't use create and updateStrategy at the same time. Use parameter --help for help.");
+  }
+ else   if (newVersion && updateStrategy != null) {
+    LOGGER.severe("You can't use newVersion and updateStrategy at the same time. Use parameter --help for help.");
+  }
+ else   if (!newVersion && updateStrategy == null) {
+    create=true;
   }
   Engine.getLogger("").getHandlers()[0].setFilter(new java.util.logging.Filter(){
     public boolean isLoggable(    LogRecord record){
@@ -91,7 +119,7 @@
     definition=SwaggerUtils.getDefinition(defSource,ulogin,upwd);
   }
   if (definition != null) {
-    sendDefinition(definition,definitionId,ulogin,upwd,serviceUrl,LOGGER);
+    sendDefinition(definition,descriptorId,versionId,ulogin,upwd,serviceUrl,updateStrategy,create,newVersion,LOGGER);
   }
  else {
     LOGGER.severe("Please provide a valid application class name or definition URL.");

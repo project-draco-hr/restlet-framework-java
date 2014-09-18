@@ -14,15 +14,29 @@
   try {
     ClientResource cr=new ClientResource(serviceUrl);
     cr.setChallengeResponse(ChallengeScheme.HTTP_BASIC,ulogin,upwd);
-    if (definitionId == null) {
-      cr.addSegment("definitions");
-      LOGGER.info("Create a new documentation");
+    if (create) {
+      cr.addSegment("apis");
+      LOGGER.info("Create a new descriptor");
       cr.post(definition,MediaType.APPLICATION_JSON);
     }
+ else     if (newVersion) {
+      cr.addSegment("apis").addSegment(descriptorId).addSegment("versions");
+      LOGGER.info("Create a new version of the descriptor " + descriptorId);
+      cr.post(definition,MediaType.APPLICATION_JSON);
+    }
+ else     if (STRATEGIES.contains(updateStrategy)) {
+      cr.addSegment("apis").addSegment(descriptorId).addSegment("versions").addSegment(versionId);
+      LOGGER.info("Update version " + versionId + " of descriptor "+ descriptorId+ " with strategy "+ updateStrategy);
+      cr.addQueryParameter("strategy",updateStrategy);
+      if ("add".equals(updateStrategy)) {
+        cr.put(definition,MediaType.APPLICATION_JSON);
+      }
+ else       if ("reset".equals(updateStrategy)) {
+        cr.put(definition,MediaType.APPLICATION_JSON);
+      }
+    }
  else {
-      cr.addSegment("apis").addSegment(definitionId).addSegment("definitions");
-      LOGGER.info("Update the documentation of " + cr.getReference().toString());
-      cr.put(definition,MediaType.APPLICATION_JSON);
+      LOGGER.severe("the information you gave is not understandable. Use parameter --help for help.");
     }
     LOGGER.fine("Display result");
     System.out.println("Process successfully achieved.");
