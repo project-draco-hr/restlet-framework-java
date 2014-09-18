@@ -1,0 +1,15 @@
+{
+  Pattern p=Pattern.compile("([a-z]*)://([^:^/]*)(:([0-9]*))?([a-zA-Z0-9+&@#/%=~_|]*)");
+  Matcher m=p.matcher(url);
+  if (m.matches()) {
+    domain=m.group(2);
+    protocol=new Protocol(m.group(1));
+    basePath=m.group(5);
+    if (m.group(4) != null) {
+      port=Integer.parseInt(m.group(4));
+    }
+ else {
+      port=80;
+    }
+  }
+}

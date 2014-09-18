@@ -3,8 +3,9 @@
   if (application != null) {
     result=new Definition();
     result.setVersion(application.getVersion());
-    if (application.getResources().getBaseRef() != null) {
-      result.setEndpoint(application.getResources().getBaseRef().toString());
+    Reference ref=application.getResources().getBaseRef();
+    if (ref != null) {
+      result.getEndpoints().add(new Endpoint(ref.getHostDomain(),ref.getHostPort(),ref.getSchemeProtocol(),ref.getPath(),null));
     }
     Contract contract=new Contract();
     result.setContract(contract);
@@ -17,7 +18,7 @@
     LOGGER.fine("Contract " + contract.getName() + " added.");
     contract.setResources(new ArrayList<Resource>());
     Map<String,RepresentationInfo> mapReps=new HashMap<String,RepresentationInfo>();
-    addResources(application,contract,application.getResources().getResources(),result.getEndpoint(),mapReps);
+    addResources(application,contract,application.getResources().getResources(),result.getEndpoints().get(0).getUrl(),mapReps);
     java.util.List<String> protocols=new ArrayList<String>();
     for (    ConnectorHelper<Server> helper : Engine.getInstance().getRegisteredServers()) {
       for (      Protocol protocol : helper.getProtocols()) {

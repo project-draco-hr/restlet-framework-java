@@ -2,7 +2,12 @@
   Definition savedDefinition=new JacksonRepresentation<Definition>(new FileRepresentation(new File("src/org/restlet/test/ext/raml/Petstore.rwadef"),MediaType.APPLICATION_JSON),Definition.class).getObject();
   Definition translatedDefinition=SwaggerUtils.getDefinition("http://petstore.swagger.wordnik.com/api/api-docs","","");
   assertEquals(savedDefinition.getContact(),translatedDefinition.getContact());
-  assertEquals(savedDefinition.getEndpoint(),translatedDefinition.getEndpoint());
+  Endpoint savedEndpoint=savedDefinition.getEndpoints().get(0);
+  Endpoint translatedEndpoint=translatedDefinition.getEndpoints().get(0);
+  assertEquals(savedEndpoint.getPort(),translatedEndpoint.getPort());
+  assertEquals(savedEndpoint.getProtocol(),translatedEndpoint.getProtocol());
+  assertEquals(savedEndpoint.getDomain(),translatedEndpoint.getDomain());
+  assertEquals(savedEndpoint.getBasePath(),translatedEndpoint.getBasePath());
   assertEquals(savedDefinition.getLicense(),translatedDefinition.getLicense());
   assertEquals(savedDefinition.getVersion(),translatedDefinition.getVersion());
   assertEquals(savedDefinition.getContract().getDescription(),translatedDefinition.getContract().getDescription());

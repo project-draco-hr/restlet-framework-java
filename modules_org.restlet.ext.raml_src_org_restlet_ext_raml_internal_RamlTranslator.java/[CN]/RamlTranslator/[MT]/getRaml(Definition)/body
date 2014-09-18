@@ -4,11 +4,11 @@
   if (definition.getVersion() != null) {
     raml.setVersion(definition.getVersion());
   }
-  if (definition.getEndpoint() != null) {
-    raml.setBaseUri(definition.getEndpoint());
+  if (!definition.getEndpoints().isEmpty()) {
+    raml.setBaseUri(definition.getEndpoints().get(0).getUrl());
   }
  else {
-    raml.setBaseUri("http://example.com");
+    raml.setBaseUri(new Endpoint("example.com",80,Protocol.HTTP,"/v1",ChallengeScheme.HTTP_BASIC).getUrl());
   }
   raml.setTitle(definition.getContract().getName());
   raml.setResources(new HashMap<String,org.raml.model.Resource>());
