@@ -7,6 +7,9 @@
     if (ref != null) {
       result.getEndpoints().add(new Endpoint(ref.getHostDomain(),ref.getHostPort(),ref.getSchemeProtocol(),ref.getPath(),null));
     }
+ else {
+      result.getEndpoints().add(new Endpoint("",80,Protocol.HTTP,"example.com",application.getAuthenticationProtocol()));
+    }
     Contract contract=new Contract();
     result.setContract(contract);
     contract.setDescription(toString(application.getDocumentations()));
@@ -18,7 +21,7 @@
     LOGGER.fine("Contract " + contract.getName() + " added.");
     contract.setResources(new ArrayList<Resource>());
     Map<String,RepresentationInfo> mapReps=new HashMap<String,RepresentationInfo>();
-    addResources(application,contract,application.getResources().getResources(),result.getEndpoints().get(0).getUrl(),mapReps);
+    addResources(application,contract,application.getResources().getResources(),(result.getEndpoints().isEmpty() ? "" : result.getEndpoints().get(0).getUrl()),mapReps);
     java.util.List<String> protocols=new ArrayList<String>();
     for (    ConnectorHelper<Server> helper : Engine.getInstance().getRegisteredServers()) {
       for (      Protocol protocol : helper.getProtocols()) {
@@ -133,5 +136,11 @@
     }
   }
 );
+  try {
+    System.out.println(new ObjectMapper().writeValueAsString(result));
+  }
+ catch (  JsonProcessingException e) {
+    e.printStackTrace();
+  }
   return result;
 }
