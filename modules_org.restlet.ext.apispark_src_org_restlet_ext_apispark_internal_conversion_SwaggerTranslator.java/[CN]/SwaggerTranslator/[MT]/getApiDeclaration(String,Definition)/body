@@ -1,8 +1,14 @@
 {
   ApiDeclaration result=new ApiDeclaration();
   result.setApiVersion(definition.getVersion());
-  Endpoint endpoint=definition.getEndpoints().get(0);
-  result.setBasePath(endpoint.getUrl());
+  Endpoint endpoint;
+  if (!definition.getEndpoints().isEmpty()) {
+    endpoint=definition.getEndpoints().get(0);
+    result.setBasePath(endpoint.getUrl());
+  }
+ else {
+    endpoint=new Endpoint("http://example.com");
+  }
   AuthorizationsDeclaration authorizations=new AuthorizationsDeclaration();
   if (ChallengeScheme.HTTP_BASIC.equals((endpoint.getAuthenticationProtocol()))) {
     authorizations.setBasicAuth(new BasicAuthorizationDeclaration());
