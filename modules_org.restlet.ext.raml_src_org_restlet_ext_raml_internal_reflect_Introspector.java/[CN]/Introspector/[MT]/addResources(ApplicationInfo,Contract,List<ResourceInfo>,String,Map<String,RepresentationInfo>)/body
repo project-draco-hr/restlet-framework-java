@@ -1,7 +1,7 @@
 {
   for (  ResourceInfo ri : resources) {
     Resource resource=new Resource();
-    resource.setDescription(toString(ri.getDocumentations()));
+    resource.setDescription(ri.getDescription());
     resource.setName(ri.getIdentifier());
     resource.setAuthenticationProtocol(ri.getAuthenticationProtocol());
     if (ri.getPath() == null) {
@@ -17,7 +17,7 @@
     for (    ParameterInfo pi : ri.getParameters()) {
       if (ParameterStyle.TEMPLATE.equals(pi.getStyle())) {
         PathVariable pathVariable=new PathVariable();
-        pathVariable.setDescription(toString(pi.getDocumentations()));
+        pathVariable.setDescription(pi.getDescription());
         pathVariable.setName(pi.getName());
         resource.getPathVariables().add(pathVariable);
       }
@@ -39,8 +39,13 @@
       }
       LOGGER.fine("Method " + methodName + " added.");
       Operation operation=new Operation();
-      operation.setDescription(toString(mi.getDocumentations()));
-      operation.setName(methodName);
+      operation.setDescription(mi.getDescription());
+      if (mi.getName() != null && !"".equals(mi.getName())) {
+        operation.setName(mi.getName());
+      }
+ else {
+        operation.setName(mi.getAnnotation().getJavaMethod().getName());
+      }
       operation.setMethod(mi.getMethod().getName());
       String mediaType;
       if (mi.getRequest() != null && mi.getRequest().getRepresentations() != null) {
@@ -65,7 +70,7 @@
             Header header=new Header();
             header.setAllowMultiple(pi.isRepeating());
             header.setDefaultValue(pi.getDefaultValue());
-            header.setDescription(toString(pi.getDocumentations(),pi.getDefaultValue()));
+            header.setDescription(toString(pi.getDescription(),pi.getDefaultValue()));
             header.setName(pi.getName());
             header.setEnumeration(new ArrayList<String>());
             header.setRequired(pi.isRequired());
@@ -75,7 +80,7 @@
             QueryParameter queryParameter=new QueryParameter();
             queryParameter.setAllowMultiple(pi.isRepeating());
             queryParameter.setDefaultValue(pi.getDefaultValue());
-            queryParameter.setDescription(toString(pi.getDocumentations(),pi.getDefaultValue()));
+            queryParameter.setDescription(toString(pi.getDescription(),pi.getDefaultValue()));
             queryParameter.setName(pi.getName());
             queryParameter.setEnumeration(new ArrayList<String>());
             queryParameter.setRequired(pi.isRequired());
@@ -88,7 +93,7 @@
           Header header=new Header();
           header.setAllowMultiple(pi.isRepeating());
           header.setDefaultValue(pi.getDefaultValue());
-          header.setDescription(toString(pi.getDocumentations(),pi.getDefaultValue()));
+          header.setDescription(toString(pi.getDescription(),pi.getDefaultValue()));
           header.setName(pi.getName());
           header.setEnumeration(new ArrayList<String>());
           header.setRequired(pi.isRequired());
@@ -98,7 +103,7 @@
           QueryParameter queryParameter=new QueryParameter();
           queryParameter.setAllowMultiple(pi.isRepeating());
           queryParameter.setDefaultValue(pi.getDefaultValue());
-          queryParameter.setDescription(toString(pi.getDocumentations(),pi.getDefaultValue()));
+          queryParameter.setDescription(toString(pi.getDescription(),pi.getDefaultValue()));
           queryParameter.setName(pi.getName());
           queryParameter.setEnumeration(new ArrayList<String>());
           queryParameter.setRequired(pi.isRequired());
@@ -127,8 +132,8 @@
             Response response=new Response();
             response.setEntity(entity);
             response.setCode(status.getCode());
-            response.setName(toString(rio.getDocumentations()));
-            response.setDescription(toString(rio.getDocumentations()));
+            response.setName(rio.getDescription());
+            response.setDescription(rio.getDescription());
             response.setMessage(status.getDescription());
             operation.getResponses().add(response);
           }

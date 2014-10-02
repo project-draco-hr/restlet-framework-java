@@ -15,6 +15,10 @@
     ServerResource sr=(ServerResource)resource;
     sr.updateAllowedMethods();
     methodsList.addAll(sr.getAllowedMethods());
+    if (sr instanceof DocumentedServerResource) {
+      info.setDescription(((DocumentedServerResource)sr).getDescription());
+      info.setName(((DocumentedServerResource)sr).getName());
+    }
   }
  else   if (resource instanceof Directory) {
     Directory directory=(Directory)resource;
@@ -38,7 +42,11 @@
             methodInfo=new MethodInfo();
             methods.add(methodInfo);
             methodInfo.setMethod(method);
+            methodInfo.setAnnotation(annotationInfo);
             MethodInfo.describeAnnotation(methodInfo,mai,sr);
+            if (sr instanceof DocumentedServerResource) {
+              ((DocumentedServerResource)sr).describe(methodInfo,mai);
+            }
           }
         }
       }
