@@ -13,10 +13,14 @@
     result.getInfo().setTitle(definition.getContract().getName());
     result.getInfo().setDescription(definition.getContract().getDescription());
   }
+  Section section=definition.getContract().getSection(Section.DEFAULT);
+  if (section == null) {
+    section=new Section();
+  }
   List<String> addedApis=new ArrayList<String>();
-  if (definition.getContract() != null && definition.getContract().getResources() != null) {
+  if (definition.getContract() != null && section.getResources() != null) {
     result.setApis(new ArrayList<ResourceDeclaration>());
-    for (    Resource resource : definition.getContract().getResources()) {
+    for (    Resource resource : section.getResources()) {
       ResourceDeclaration rd=new ResourceDeclaration();
       rd.setDescription(resource.getDescription());
       rd.setPath(ReflectUtils.getFirstSegment(resource.getResourcePath()));

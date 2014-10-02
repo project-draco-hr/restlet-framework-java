@@ -37,7 +37,8 @@
   raml.setResources(new HashMap<String,org.raml.model.Resource>());
   org.raml.model.Resource ramlResource;
   List<String> paths=new ArrayList<String>();
-  for (  Resource resource : definition.getContract().getResources()) {
+  Section section=definition.getContract().getSection(Section.DEFAULT);
+  for (  Resource resource : section.getResources()) {
     ramlResource=new org.raml.model.Resource();
     if (resource.getName() != null) {
       ramlResource.setDisplayName(resource.getName());
@@ -136,7 +137,7 @@
   raml.setSchemas(new ArrayList<Map<String,String>>());
   Map<String,String> schemas=new HashMap<String,String>();
   raml.getSchemas().add(schemas);
-  for (  Representation representation : definition.getContract().getRepresentations()) {
+  for (  Representation representation : section.getRepresentations()) {
     if (RamlUtils.isPrimitiveType(representation.getName())) {
       continue;
     }

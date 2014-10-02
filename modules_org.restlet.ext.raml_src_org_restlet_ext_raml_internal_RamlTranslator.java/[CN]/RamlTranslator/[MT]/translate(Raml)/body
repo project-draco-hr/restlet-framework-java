@@ -7,6 +7,9 @@
   }
   def.setContract(new Contract());
   def.getContract().setName(raml.getTitle());
+  Section section=new Section();
+  section.setName(Section.DEFAULT);
+  def.getContract().getSections().add(section);
   List<PathVariable> rootPathVariables=new ArrayList<PathVariable>();
   for (  Entry<String,UriParameter> entry : raml.getBaseUriParameters().entrySet()) {
     rootPathVariables.add(getPathVariable(entry.getKey(),entry.getValue()));
@@ -16,12 +19,12 @@
       Representation representation=new Representation();
       representation.setName(entry.getKey());
       representation.setDescription(entry.getValue());
-      def.getContract().getRepresentations().add(representation);
+      section.getRepresentations().add(representation);
     }
   }
   for (  Entry<String,org.raml.model.Resource> entry : raml.getResources().entrySet()) {
     org.raml.model.Resource resource=entry.getValue();
-    def.getContract().getResources().addAll(getResource(RamlUtils.processResourceName(resource.getUri()),resource,rootPathVariables));
+    section.getResources().addAll(getResource(RamlUtils.processResourceName(resource.getUri()),resource,rootPathVariables));
   }
   return def;
 }

@@ -18,10 +18,14 @@
   }
   result.setInfo(new ApiInfo());
   result.setSwaggerVersion(SWAGGER_VERSION);
-  result.setResourcePath("/" + category);
+  result.setResourcePath("/" + sectionName);
   Set<String> usedModels=new HashSet<String>();
-  for (  Resource resource : definition.getContract().getResources()) {
-    if (!resource.getResourcePath().startsWith("/" + category)) {
+  Section section=definition.getContract().getSection(Section.DEFAULT);
+  if (section == null) {
+    section=new Section();
+  }
+  for (  Resource resource : section.getResources()) {
+    if (!resource.getResourcePath().startsWith("/" + sectionName)) {
       continue;
     }
     ResourceDeclaration rd=new ResourceDeclaration();
@@ -111,7 +115,7 @@
   Iterator<String> iterator=usedModels.iterator();
   while (iterator.hasNext()) {
     String model=iterator.next();
-    Representation repr=getRepresentationByName(definition.getContract(),model);
+    Representation repr=section.getRepresentation(model);
     if (repr == null || isPrimitiveType(model)) {
       continue;
     }

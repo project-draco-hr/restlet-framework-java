@@ -4,6 +4,8 @@
   List<String> declaredTypes=new ArrayList<String>();
   List<String> declaredPathVariables;
   Map<String,List<String>> subtypes=new HashMap<String,List<String>>();
+  Section section=new Section();
+  section.setName(Section.DEFAULT);
   try {
     Definition definition=new Definition();
     definition.setVersion(resourceListing.getApiVersion());
@@ -13,6 +15,7 @@
     contract.setName(resourceListing.getInfo().getTitle());
     LOGGER.log(Level.FINE,"Contract " + contract.getName() + " added.");
     contract.setDescription(resourceListing.getInfo().getDescription());
+    contract.getSections().add(section);
     definition.setContract(contract);
     Resource resource;
     for (    Entry<String,ApiDeclaration> entry : apiDeclarations.entrySet()) {
@@ -37,7 +40,7 @@
               representation.setName("File");
               representation.setRaw(true);
               containsRawTypes=true;
-              contract.getRepresentations().add(representation);
+              section.getRepresentations().add(representation);
             }
             operation.getProduces().add(produced);
           }
@@ -47,7 +50,7 @@
               representation.setName("File");
               representation.setRaw(true);
               containsRawTypes=true;
-              contract.getRepresentations().add(representation);
+              section.getRepresentations().add(representation);
             }
             operation.getConsumes().add(consumed);
           }
@@ -121,19 +124,19 @@
             if (!declaredTypes.contains(modelEntry.getKey())) {
               declaredTypes.add(modelEntry.getKey());
               Representation rwadRepr=toRepresentation(model,modelEntry.getKey());
-              contract.getRepresentations().add(rwadRepr);
+              section.getRepresentations().add(rwadRepr);
               LOGGER.log(Level.FINE,"Representation " + modelEntry.getKey() + " added.");
             }
           }
           for (          Entry<String,List<String>> subtypesPair : subtypes.entrySet()) {
             List<String> subtypesOf=subtypesPair.getValue();
             for (            String subtypeOf : subtypesOf) {
-              Representation repr=getRepresentationByName(contract,subtypeOf);
+              Representation repr=section.getRepresentation(subtypeOf);
               repr.setExtendedType(subtypesPair.getKey());
             }
           }
         }
-        definition.getContract().getResources().add(resource);
+        section.getResources().add(resource);
         LOGGER.log(Level.FINE,"Resource " + api.getPath() + " added.");
       }
       if (definition.getEndpoints().isEmpty()) {

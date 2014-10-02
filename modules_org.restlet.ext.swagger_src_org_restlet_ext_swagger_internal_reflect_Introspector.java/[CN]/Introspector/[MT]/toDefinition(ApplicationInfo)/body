@@ -19,7 +19,16 @@
       LOGGER.log(Level.WARNING,"Please provide a name to your application, used " + contract.getName() + " by default.");
     }
     LOGGER.fine("Contract " + contract.getName() + " added.");
-    contract.setResources(new ArrayList<Resource>());
+    Section section=new Section();
+    if (contract.getSections().isEmpty()) {
+      section=new Section();
+      section.setName("All resources");
+      contract.getSections().add(section);
+    }
+ else {
+      section=contract.getSections().get(0);
+    }
+    section.setResources(new ArrayList<Resource>());
     Map<String,RepresentationInfo> mapReps=new HashMap<String,RepresentationInfo>();
     addResources(application,contract,application.getResources().getResources(),(result.getEndpoints().isEmpty() ? "" : result.getEndpoints().get(0).computeUrl()),mapReps);
     java.util.List<String> protocols=new ArrayList<String>();
@@ -31,7 +40,7 @@
         }
       }
     }
-    contract.setRepresentations(new ArrayList<Representation>());
+    section.setRepresentations(new ArrayList<Representation>());
     for (    RepresentationInfo ri : application.getRepresentations()) {
       if (!mapReps.containsKey(ri.getIdentifier())) {
         mapReps.put(ri.getIdentifier(),ri);
@@ -121,21 +130,10 @@
         rep.getProperties().add(p);
       }
       rep.setRaw(ri.isRaw() || ReflectUtils.isJdkClass(ri.getType()));
-      contract.getRepresentations().add(rep);
+      section.getRepresentations().add(rep);
     }
   }
-  Collections.sort(result.getContract().getRepresentations(),new Comparator<Representation>(){
-    @Override public int compare(    Representation o1,    Representation o2){
-      return o1.getName().compareTo(o2.getName());
-    }
-  }
-);
-  Collections.sort(result.getContract().getResources(),new Comparator<Resource>(){
-    @Override public int compare(    Resource o1,    Resource o2){
-      return o1.getResourcePath().compareTo(o2.getResourcePath());
-    }
-  }
-);
+  IntrospectionUtils.sortDefinition(result);
   try {
     System.out.println(new ObjectMapper().writeValueAsString(result));
   }
