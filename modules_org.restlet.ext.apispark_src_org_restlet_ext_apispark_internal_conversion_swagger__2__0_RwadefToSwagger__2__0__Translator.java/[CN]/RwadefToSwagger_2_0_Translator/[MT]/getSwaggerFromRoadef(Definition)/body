@@ -1,130 +1,15 @@
 {
+  Assert.notNull(definition);
+  Assert.notNull(definition.getContract());
+  Assert.hasLength(definition.getContract().getName());
+  Assert.notEmpty(definition.getEndpoints());
+  Assert.notNull(definition.getContract().getResources());
+  Assert.notNull(definition.getContract().getRepresentations());
   Swagger swagger=new Swagger();
-  swagger.setSwagger(SWAGGER_VERSION);
-  Info infoSwagger=new Info();
-  swagger.setInfo(infoSwagger);
-  infoSwagger.setVersion(definition.getVersion());
-  Contact contact=new Contact();
-  contact.setName(definition.getContact());
-  infoSwagger.setContact(contact);
-  License license=new License();
-  license.setUrl(definition.getLicense());
-  infoSwagger.setLicense(license);
-  if (definition.getContract() != null) {
-    infoSwagger.setTitle(definition.getContract().getName());
-    infoSwagger.setDescription(definition.getContract().getDescription());
-  }
-  if (!definition.getEndpoints().isEmpty()) {
-    Endpoint endpoint=definition.getEndpoints().get(0);
-    swagger.setBasePath(endpoint.getBasePath());
-  }
- else {
-  }
-  if ((definition.getContract() != null) && (definition.getContract().getResources() != null)) {
-    for (    Resource resourceRwadef : definition.getContract().getResources()) {
-      Path pathSwagger=new Path();
-      swagger.path(resourceRwadef.getResourcePath(),pathSwagger);
-      if (resourceRwadef.getOperations() != null) {
-        for (        Operation operationRwadef : resourceRwadef.getOperations()) {
-          com.wordnik.swagger.models.Operation operationSwagger=new com.wordnik.swagger.models.Operation();
-          pathSwagger.set(operationRwadef.getMethod(),operationSwagger);
-          operationSwagger.setOperationId(operationRwadef.getName());
-          operationSwagger.setProduces(operationRwadef.getProduces());
-          operationSwagger.setConsumes(operationRwadef.getConsumes());
-          operationSwagger.setDescription(operationRwadef.getDescription());
-          if (resourceRwadef.getPathVariables() != null) {
-            for (            PathVariable pathVariableRwadef : resourceRwadef.getPathVariables()) {
-              PathParameter pathParameterSwagger=new PathParameter();
-              operationSwagger.addParameter(pathParameterSwagger);
-              pathParameterSwagger.setType(toSwaggerType(pathVariableRwadef.getType()));
-              pathParameterSwagger.setRequired(true);
-              pathParameterSwagger.setName(pathVariableRwadef.getName());
-              pathParameterSwagger.setDescription(pathVariableRwadef.getDescription());
-            }
-          }
-          Entity inRepr=operationRwadef.getInRepresentation();
-          if (inRepr != null) {
-            BodyParameter bodyParameterSwagger=new BodyParameter();
-            operationSwagger.addParameter(bodyParameterSwagger);
-            ModelImpl schema=new ModelImpl();
-            bodyParameterSwagger.setSchema(schema);
-            if ("Representation".equals(inRepr.getType())) {
-              schema.setType("file");
-            }
- else {
-              schema.setType(toSwaggerType(inRepr.getType()));
-            }
-          }
-          if (operationRwadef.getQueryParameters() != null) {
-            for (            QueryParameter queryParameterRwadef : operationRwadef.getQueryParameters()) {
-              com.wordnik.swagger.models.parameters.QueryParameter queryParameterSwagger=new com.wordnik.swagger.models.parameters.QueryParameter();
-              operationSwagger.addParameter(queryParameterSwagger);
-              queryParameterSwagger.setRequired(false);
-              queryParameterSwagger.setType(toSwaggerType(queryParameterRwadef.getType()));
-              queryParameterSwagger.setName(queryParameterRwadef.getName());
-              queryParameterSwagger.setDescription(queryParameterRwadef.getDescription());
-            }
-          }
-          if (operationRwadef.getResponses() != null) {
-            for (            Response responseRwadef : operationRwadef.getResponses()) {
-              com.wordnik.swagger.models.Response responseSwagger=new com.wordnik.swagger.models.Response();
-              operationSwagger.addResponse(String.valueOf(responseRwadef.getCode()),responseSwagger);
-              responseSwagger.setDescription(responseRwadef.getDescription());
-              if ((responseRwadef.getEntity() != null) && (responseRwadef.getEntity().getType() != null)) {
-                Entity entity=responseRwadef.getEntity();
-                if (entity.isArray()) {
-                  ArrayProperty arrayProperty=new ArrayProperty();
-                  arrayProperty.setItems(newPropertyForType(entity.getType()));
-                  responseSwagger.setSchema(arrayProperty);
-                }
- else {
-                  responseSwagger.setSchema(newPropertyForType(entity.getType()));
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  if ((definition.getContract() != null) && (definition.getContract().getRepresentations() != null)) {
-    for (    Representation representationRwadef : definition.getContract().getRepresentations()) {
-      if (isPrimitiveType(representationRwadef.getName())) {
-        continue;
-      }
-      ModelImpl modelSwagger=new ModelImpl();
-      modelSwagger.setName(representationRwadef.getName());
-      swagger.addDefinition(modelSwagger.getName(),modelSwagger);
-      if (representationRwadef.getProperties() != null) {
-        for (        Property propertyRwadef : representationRwadef.getProperties()) {
-          com.wordnik.swagger.models.properties.Property propertySwagger;
-          if ((propertyRwadef.getMaxOccurs() != null) && ((propertyRwadef.getMaxOccurs() > 1) || (propertyRwadef.getMaxOccurs() == -1))) {
-            ArrayProperty arrayProperty=new ArrayProperty();
-            arrayProperty.setItems(newPropertyForType(propertyRwadef.getType()));
-            propertySwagger=arrayProperty;
-          }
- else {
-            propertySwagger=newPropertyForType(propertyRwadef.getType());
-          }
-          modelSwagger.property(propertyRwadef.getName(),propertySwagger);
-          propertySwagger.setName(propertyRwadef.getName());
-          if (propertySwagger instanceof AbstractNumericProperty) {
-            AbstractNumericProperty abstractNumericProperty=(AbstractNumericProperty)propertySwagger;
-            try {
-              abstractNumericProperty.setMinimum(Double.valueOf(propertyRwadef.getMin()));
-            }
- catch (            NumberFormatException e) {
-            }
-            try {
-              abstractNumericProperty.setMaximum(Double.valueOf(propertyRwadef.getMax()));
-            }
- catch (            NumberFormatException e) {
-            }
-          }
-          propertySwagger.setDescription(propertyRwadef.getDescription());
-        }
-      }
-    }
-  }
+  swagger.setSwagger(SWAGGER_2_0_VERSION);
+  fillMainAttributes(definition,swagger);
+  fillInfo(definition,swagger);
+  fillPaths(definition,swagger);
+  fillDefinitions(definition,swagger);
   return swagger;
 }

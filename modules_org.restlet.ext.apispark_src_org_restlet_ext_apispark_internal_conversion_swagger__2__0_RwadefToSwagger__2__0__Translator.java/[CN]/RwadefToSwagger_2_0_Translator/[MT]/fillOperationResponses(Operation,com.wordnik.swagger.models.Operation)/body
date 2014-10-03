@@ -1,0 +1,20 @@
+{
+  for (  Response reponse : operation.getResponses()) {
+    com.wordnik.swagger.models.Response responseSwagger=new com.wordnik.swagger.models.Response();
+    responseSwagger.setDescription(reponse.getDescription());
+    if (reponse.getEntity() != null) {
+      Entity entity=reponse.getEntity();
+      if ("file".equals(entity.getType().toLowerCase())) {
+      }
+ else       if (entity.isArray()) {
+        ArrayProperty arrayProperty=new ArrayProperty();
+        arrayProperty.setItems(newPropertyForType(entity.getType()));
+        responseSwagger.setSchema(arrayProperty);
+      }
+ else {
+        responseSwagger.setSchema(newPropertyForType(entity.getType()));
+      }
+    }
+    operationSwagger.addResponse(String.valueOf(reponse.getCode()),responseSwagger);
+  }
+}

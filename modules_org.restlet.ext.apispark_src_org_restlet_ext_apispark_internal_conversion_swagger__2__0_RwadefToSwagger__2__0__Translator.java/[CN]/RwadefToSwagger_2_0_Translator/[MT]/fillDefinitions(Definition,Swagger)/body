@@ -1,0 +1,39 @@
+{
+  for (  Representation representationRwadef : definition.getContract().getRepresentations()) {
+    if (isPrimitiveType(representationRwadef.getName())) {
+      continue;
+    }
+    ModelImpl modelSwagger=new ModelImpl();
+    modelSwagger.setName(representationRwadef.getName());
+    swagger.addDefinition(modelSwagger.getName(),modelSwagger);
+    if (representationRwadef.getProperties() != null) {
+      for (      Property propertyRwadef : representationRwadef.getProperties()) {
+        com.wordnik.swagger.models.properties.Property propertySwagger;
+        if (propertyRwadef.getMaxOccurs() != null && ((propertyRwadef.getMaxOccurs() > 1) || (propertyRwadef.getMaxOccurs() == -1))) {
+          ArrayProperty arrayProperty=new ArrayProperty();
+          arrayProperty.setItems(newPropertyForType(propertyRwadef.getType()));
+          propertySwagger=arrayProperty;
+        }
+ else {
+          propertySwagger=newPropertyForType(propertyRwadef.getType());
+        }
+        modelSwagger.property(propertyRwadef.getName(),propertySwagger);
+        propertySwagger.setName(propertyRwadef.getName());
+        if (propertySwagger instanceof AbstractNumericProperty) {
+          AbstractNumericProperty abstractNumericProperty=(AbstractNumericProperty)propertySwagger;
+          try {
+            abstractNumericProperty.setMinimum(Double.valueOf(propertyRwadef.getMin()));
+          }
+ catch (          NumberFormatException e) {
+          }
+          try {
+            abstractNumericProperty.setMaximum(Double.valueOf(propertyRwadef.getMax()));
+          }
+ catch (          NumberFormatException e) {
+          }
+        }
+        propertySwagger.setDescription(propertyRwadef.getDescription());
+      }
+    }
+  }
+}
