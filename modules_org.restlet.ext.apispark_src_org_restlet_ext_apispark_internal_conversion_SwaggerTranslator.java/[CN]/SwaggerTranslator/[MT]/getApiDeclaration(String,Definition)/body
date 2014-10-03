@@ -65,7 +65,12 @@
         }
         rod.getParameters().add(ropd);
       }
-      Entity outRepr=operation.getOutRepresentation();
+      Entity outRepr=null;
+      for (      Response response : operation.getResponses()) {
+        if (Status.isSuccess(response.getCode())) {
+          outRepr=response.getEntity();
+        }
+      }
       if (outRepr != null && outRepr.getType() != null) {
         if (outRepr.isArray()) {
           rod.setType("array");
