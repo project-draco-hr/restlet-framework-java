@@ -2,10 +2,11 @@
   Swagger swagger=new Swagger();
   swagger.setSwagger(SWAGGER_VERSION);
   Info infoSwagger=new Info();
+  swagger.setInfo(infoSwagger);
+  infoSwagger.setVersion(definition.getVersion());
   Contact contact=new Contact();
   contact.setName(definition.getContact());
   infoSwagger.setContact(contact);
-  infoSwagger.setVersion(definition.getVersion());
   License license=new License();
   license.setUrl(definition.getLicense());
   infoSwagger.setLicense(license);
@@ -22,7 +23,7 @@
   if ((definition.getContract() != null) && (definition.getContract().getResources() != null)) {
     for (    Resource resourceRwadef : definition.getContract().getResources()) {
       Path pathSwagger=new Path();
-      swagger.getPaths().put(resourceRwadef.getResourcePath(),pathSwagger);
+      swagger.path(resourceRwadef.getResourcePath(),pathSwagger);
       if (resourceRwadef.getOperations() != null) {
         for (        Operation operationRwadef : resourceRwadef.getOperations()) {
           com.wordnik.swagger.models.Operation operationSwagger=new com.wordnik.swagger.models.Operation();
