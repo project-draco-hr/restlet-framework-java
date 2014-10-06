@@ -9,8 +9,12 @@
   try {
     Definition definition=new Definition();
     definition.setVersion(resourceListing.getApiVersion());
-    definition.setContact(resourceListing.getInfo().getContact());
-    definition.setLicense(resourceListing.getInfo().getLicenseUrl());
+    Contact contact=new Contact();
+    contact.setEmail(resourceListing.getInfo().getContact());
+    definition.setContact(contact);
+    License license=new License();
+    license.setUrl(resourceListing.getInfo().getLicenseUrl());
+    definition.setLicense(license);
     Contract contract=new Contract();
     contract.setName(resourceListing.getInfo().getTitle());
     LOGGER.log(Level.FINE,"Contract " + contract.getName() + " added.");
