@@ -28,7 +28,7 @@
  else {
       section=contract.getSections().get(0);
     }
-    section.setResources(new ArrayList<Resource>());
+    contract.setResources(new ArrayList<Resource>());
     Map<String,RepresentationInfo> mapReps=new HashMap<String,RepresentationInfo>();
     addResources(application,contract,application.getResources().getResources(),(result.getEndpoints().isEmpty() ? "" : result.getEndpoints().get(0).computeUrl()),mapReps);
     java.util.List<String> protocols=new ArrayList<String>();
@@ -40,7 +40,7 @@
         }
       }
     }
-    section.setRepresentations(new ArrayList<Representation>());
+    contract.setRepresentations(new ArrayList<Representation>());
     for (    RepresentationInfo ri : application.getRepresentations()) {
       if (!mapReps.containsKey(ri.getIdentifier())) {
         mapReps.put(ri.getIdentifier(),ri);
@@ -108,10 +108,10 @@
         continue;
       }
       LOGGER.fine("Representation " + ri.getName() + " added.");
-      Representation rep=new Representation();
-      rep.setDescription(ri.getDescription());
-      rep.setName(ri.getName());
-      rep.setProperties(new ArrayList<Property>());
+      Representation representation=new Representation();
+      representation.setDescription(ri.getDescription());
+      representation.setName(ri.getName());
+      representation.setProperties(new ArrayList<Property>());
       for (      PropertyInfo pi : ri.getProperties()) {
         LOGGER.fine("Property " + pi.getName() + " added.");
         Property p=new Property();
@@ -127,10 +127,11 @@
           p.setType(pi.getType().getSimpleName());
         }
         p.setUniqueItems(pi.isUniqueItems());
-        rep.getProperties().add(p);
+        representation.getProperties().add(p);
       }
-      rep.setRaw(ri.isRaw() || ReflectUtils.isJdkClass(ri.getType()));
-      section.getRepresentations().add(rep);
+      representation.setRaw(ri.isRaw() || ReflectUtils.isJdkClass(ri.getType()));
+      representation.getSections().add(section.getName());
+      contract.getRepresentations().add(representation);
     }
   }
   IntrospectionUtils.sortDefinition(result);

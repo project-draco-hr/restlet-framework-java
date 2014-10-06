@@ -40,7 +40,8 @@
               representation.setName("File");
               representation.setRaw(true);
               containsRawTypes=true;
-              section.getRepresentations().add(representation);
+              representation.getSections().add(section.getName());
+              contract.getRepresentations().add(representation);
             }
             operation.getProduces().add(produced);
           }
@@ -50,7 +51,8 @@
               representation.setName("File");
               representation.setRaw(true);
               containsRawTypes=true;
-              section.getRepresentations().add(representation);
+              representation.getSections().add(section.getName());
+              contract.getRepresentations().add(representation);
             }
             operation.getConsumes().add(consumed);
           }
@@ -122,20 +124,22 @@
             }
             if (!declaredTypes.contains(modelEntry.getKey())) {
               declaredTypes.add(modelEntry.getKey());
-              Representation rwadRepr=toRepresentation(model,modelEntry.getKey());
-              section.getRepresentations().add(rwadRepr);
+              representation=toRepresentation(model,modelEntry.getKey());
+              representation.getSections().add(section.getName());
+              contract.getRepresentations().add(representation);
               LOGGER.log(Level.FINE,"Representation " + modelEntry.getKey() + " added.");
             }
           }
           for (          Entry<String,List<String>> subtypesPair : subtypes.entrySet()) {
             List<String> subtypesOf=subtypesPair.getValue();
             for (            String subtypeOf : subtypesOf) {
-              Representation repr=section.getRepresentation(subtypeOf);
-              repr.setExtendedType(subtypesPair.getKey());
+              representation=contract.getRepresentation(subtypeOf);
+              representation.setExtendedType(subtypesPair.getKey());
             }
           }
         }
-        section.getResources().add(resource);
+        resource.getSections().add(section.getName());
+        contract.getResources().add(resource);
         LOGGER.log(Level.FINE,"Resource " + api.getPath() + " added.");
       }
       if (definition.getEndpoints().isEmpty()) {

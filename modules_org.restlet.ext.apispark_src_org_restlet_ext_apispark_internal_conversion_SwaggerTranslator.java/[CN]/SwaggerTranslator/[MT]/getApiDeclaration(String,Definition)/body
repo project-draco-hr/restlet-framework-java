@@ -24,7 +24,8 @@
   if (section == null) {
     section=new Section();
   }
-  for (  Resource resource : section.getResources()) {
+  Contract contract=definition.getContract();
+  for (  Resource resource : contract.getResources()) {
     if (!resource.getResourcePath().startsWith("/" + sectionName)) {
       continue;
     }
@@ -120,7 +121,7 @@
   Iterator<String> iterator=usedModels.iterator();
   while (iterator.hasNext()) {
     String model=iterator.next();
-    Representation repr=section.getRepresentation(model);
+    Representation repr=contract.getRepresentation(model);
     if (repr == null || isPrimitiveType(model)) {
       continue;
     }

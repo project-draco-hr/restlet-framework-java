@@ -4,6 +4,7 @@
   if (definition.getVersion() != null) {
     raml.setVersion(definition.getVersion());
   }
+  Contract contract=definition.getContract();
   Endpoint endpoint=definition.getEndpoints().get(0);
   if (!definition.getEndpoints().isEmpty()) {
     raml.setBaseUri(endpoint.computeUrl());
@@ -33,12 +34,12 @@
     }
     raml.getSecuritySchemes().add(securitySchemes);
   }
-  raml.setTitle(definition.getContract().getName());
+  raml.setTitle(contract.getName());
   raml.setResources(new HashMap<String,org.raml.model.Resource>());
   org.raml.model.Resource ramlResource;
   List<String> paths=new ArrayList<String>();
-  Section section=definition.getContract().getSection(Section.DEFAULT);
-  for (  Resource resource : section.getResources()) {
+  Section section=contract.getSection(Section.DEFAULT);
+  for (  Resource resource : contract.getResources()) {
     ramlResource=new org.raml.model.Resource();
     if (resource.getName() != null) {
       ramlResource.setDisplayName(resource.getName());
@@ -137,7 +138,7 @@
   raml.setSchemas(new ArrayList<Map<String,String>>());
   Map<String,String> schemas=new HashMap<String,String>();
   raml.getSchemas().add(schemas);
-  for (  Representation representation : section.getRepresentations()) {
+  for (  Representation representation : contract.getRepresentations()) {
     if (RamlUtils.isPrimitiveType(representation.getName())) {
       continue;
     }

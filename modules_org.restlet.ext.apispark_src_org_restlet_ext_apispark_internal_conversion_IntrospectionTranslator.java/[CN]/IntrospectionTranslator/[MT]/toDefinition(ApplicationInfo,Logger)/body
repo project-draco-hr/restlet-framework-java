@@ -106,10 +106,10 @@
         continue;
       }
       logger.fine("Representation " + ri.getName() + " added.");
-      Representation rep=new Representation();
-      rep.setDescription(toString(ri.getDescription()));
-      rep.setName(ri.getName());
-      rep.setProperties(new ArrayList<Property>());
+      Representation representation=new Representation();
+      representation.setDescription(toString(ri.getDescription()));
+      representation.setName(ri.getName());
+      representation.setProperties(new ArrayList<Property>());
       for (      PropertyInfo pi : ri.getProperties()) {
         logger.fine("Property " + pi.getName() + " added.");
         Property p=new Property();
@@ -131,10 +131,11 @@
           }
         }
         p.setUniqueItems(pi.isUniqueItems());
-        rep.getProperties().add(p);
+        representation.getProperties().add(p);
       }
-      rep.setRaw(ri.isRaw() || ReflectUtils.isJdkClass(ri.getType()));
-      section.getRepresentations().add(rep);
+      representation.setRaw(ri.isRaw() || ReflectUtils.isJdkClass(ri.getType()));
+      representation.getSections().add(section.getName());
+      contract.getRepresentations().add(representation);
     }
   }
   IntrospectionUtils.sortDefinition(result);
