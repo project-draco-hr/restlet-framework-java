@@ -10,8 +10,10 @@
   assertEquals(savedEndpoint.getBasePath(),translatedEndpoint.getBasePath());
   assertEquals(savedDefinition.getLicense(),translatedDefinition.getLicense());
   assertEquals(savedDefinition.getVersion(),translatedDefinition.getVersion());
-  assertEquals(savedDefinition.getContract().getDescription(),translatedDefinition.getContract().getDescription());
-  assertEquals(savedDefinition.getContract().getName(),translatedDefinition.getContract().getName());
+  Contract savedContract=savedDefinition.getContract();
+  Contract translatedContract=translatedDefinition.getContract();
+  assertEquals(savedContract.getDescription(),translatedContract.getDescription());
+  assertEquals(savedContract.getName(),translatedContract.getName());
   Representation savedRepresentation;
   for (  Representation translatedRepresentation : translatedDefinition.getContract().getRepresentations()) {
     savedRepresentation=savedDefinition.getContract().getRepresentation(translatedRepresentation.getName());
@@ -75,8 +77,14 @@
             assertEquals(savedInRepresentation.isArray(),translatedInRepresentation.isArray());
             assertEquals(savedInRepresentation.getType(),translatedInRepresentation.getType());
           }
-          Entity savedOutRepresentation=savedOperation.getOutRepresentation();
-          Entity translatedOutRepresentation=translatedOperation.getOutRepresentation();
+          Entity savedOutRepresentation=null;
+          if (savedOperation.getResponse(200) != null) {
+            savedOutRepresentation=savedOperation.getResponse(200).getEntity();
+          }
+          Entity translatedOutRepresentation=null;
+          if (translatedOperation.getResponse(200) != null) {
+            translatedOutRepresentation=translatedOperation.getResponse(200).getEntity();
+          }
           assertEquals(true,(savedOutRepresentation == null) == (translatedOutRepresentation == null));
           if (translatedOutRepresentation != null) {
             assertEquals(savedOutRepresentation.isArray(),translatedOutRepresentation.isArray());
