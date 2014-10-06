@@ -4,6 +4,7 @@
     String method=operation.getMethod().toLowerCase();
     Path setResult=pathSwagger.set(method,operationSwagger);
     if (setResult == null) {
+      return;
     }
     String description=operation.getDescription();
     operationSwagger.setSummary(StringUtils.substring(description,0,120));
@@ -11,7 +12,7 @@
     operationSwagger.setOperationId(operation.getName());
     operationSwagger.setConsumes(operation.getConsumes());
     operationSwagger.setProduces(operation.getProduces());
-    fillOperationParameters(resource,operation,operationSwagger);
-    fillOperationResponses(operation,operationSwagger);
+    fillOperationParameters(definition,resource,operation,operationSwagger);
+    fillOperationResponses(definition,operation,operationSwagger);
   }
 }

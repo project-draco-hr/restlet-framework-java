@@ -4,7 +4,14 @@
     responseSwagger.setDescription(reponse.getDescription());
     if (reponse.getEntity() != null) {
       Entity entity=reponse.getEntity();
-      if ("file".equals(entity.getType().toLowerCase())) {
+      final Representation representation=definition.getContract().getRepresentation(entity.getType());
+      if (representation != null && representation.isRaw()) {
+        com.wordnik.swagger.models.properties.AbstractProperty fileProperty=new AbstractProperty(){
+        }
+;
+        fileProperty.setType("file");
+        fileProperty.setDescription(representation.getDescription());
+        responseSwagger.setSchema(fileProperty);
       }
  else       if (entity.isArray()) {
         ArrayProperty arrayProperty=new ArrayProperty();
