@@ -60,7 +60,7 @@
             }
             operation.getConsumes().add(consumed);
           }
-          Entity rwadOutRepr=new Entity();
+          PayLoad rwadOutRepr=new PayLoad();
           if ("array".equals(swagOperation.getType())) {
             LOGGER.log(Level.FINER,"Operation: " + swagOperation.getNickname() + " returns an array");
             rwadOutRepr.setArray(true);
@@ -97,9 +97,9 @@
               }
             }
  else             if ("body".equals(param.getParamType())) {
-              if (operation.getInRepresentation() == null) {
-                Entity rwadInRepr=toEntity(param);
-                operation.setInRepresentation(rwadInRepr);
+              if (operation.getInputPayLoad() == null) {
+                PayLoad rwadInRepr=toEntity(param);
+                operation.setInputPayLoad(rwadInRepr);
               }
             }
  else             if ("query".equals(param.getParamType())) {
@@ -110,7 +110,7 @@
           if (swagOperation.getResponseMessages() != null) {
             for (            ResponseMessageDeclaration swagResponse : swagOperation.getResponseMessages()) {
               Response response=new Response();
-              Entity entity=new Entity();
+              PayLoad entity=new PayLoad();
               entity.setType(swagResponse.getResponseModel());
               response.setEntity(entity);
               response.setName("Error " + swagResponse.getCode());
