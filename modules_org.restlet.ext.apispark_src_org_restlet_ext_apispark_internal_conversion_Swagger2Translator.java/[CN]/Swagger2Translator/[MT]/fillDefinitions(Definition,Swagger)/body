@@ -1,0 +1,38 @@
+{
+  for (  Representation representation : definition.getContract().getRepresentations()) {
+    if (representation.isRaw() || isPrimitiveType(representation.getName())) {
+      continue;
+    }
+    ModelImpl modelSwagger=new ModelImpl();
+    modelSwagger.setName(representation.getName());
+    modelSwagger.setDescription(representation.getDescription());
+    for (    Property property : representation.getProperties()) {
+      com.wordnik.swagger.models.properties.Property propertySwagger;
+      if (property.getMaxOccurs() != null && (property.getMaxOccurs() > 1 || property.getMaxOccurs() == -1)) {
+        ArrayProperty arrayProperty=new ArrayProperty();
+        arrayProperty.setItems(newPropertyForType(property.getType()));
+        propertySwagger=arrayProperty;
+      }
+ else {
+        propertySwagger=newPropertyForType(property.getType());
+      }
+      propertySwagger.setName(property.getName());
+      propertySwagger.setDescription(property.getDescription());
+      if (propertySwagger instanceof AbstractNumericProperty) {
+        AbstractNumericProperty abstractNumericProperty=(AbstractNumericProperty)propertySwagger;
+        try {
+          abstractNumericProperty.setMinimum(Double.valueOf(property.getMin()));
+        }
+ catch (        NumberFormatException e) {
+        }
+        try {
+          abstractNumericProperty.setMaximum(Double.valueOf(property.getMax()));
+        }
+ catch (        NumberFormatException e) {
+        }
+      }
+      modelSwagger.property(property.getName(),propertySwagger);
+    }
+    swagger.addDefinition(modelSwagger.getName(),modelSwagger);
+  }
+}

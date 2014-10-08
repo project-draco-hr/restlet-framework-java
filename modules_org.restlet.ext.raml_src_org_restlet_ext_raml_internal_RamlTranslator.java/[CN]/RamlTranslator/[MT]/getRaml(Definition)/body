@@ -107,11 +107,11 @@
         ramlResponse.setDescription(response.getDescription());
         ramlResponse.setBody(new HashMap<String,MimeType>());
         ramlOutRepresentation=new MimeType();
-        if (Status.isSuccess(response.getCode()) && response.getEntity() != null && response.getEntity().getType() != null) {
-          if (RamlUtils.isPrimitiveType(response.getEntity().getType())) {
+        if (Status.isSuccess(response.getCode()) && response.getOutputPayLoad() != null && response.getOutputPayLoad().getType() != null) {
+          if (RamlUtils.isPrimitiveType(response.getOutputPayLoad().getType())) {
             Property outRepresentationPrimitive=new Property();
             outRepresentationPrimitive.setName("");
-            outRepresentationPrimitive.setType(response.getEntity().getType());
+            outRepresentationPrimitive.setType(response.getOutputPayLoad().getType());
             SimpleTypeSchema outRepresentationSchema=RamlUtils.generatePrimitiveSchema(outRepresentationPrimitive);
             try {
               ramlOutRepresentation.setSchema(m.writeValueAsString(outRepresentationSchema));
@@ -121,7 +121,7 @@
             }
           }
  else {
-            ramlOutRepresentation.setSchema(response.getEntity().getType());
+            ramlOutRepresentation.setSchema(response.getOutputPayLoad().getType());
           }
         }
         for (        String mediaType : operation.getProduces()) {

@@ -1,0 +1,27 @@
+{
+  for (  Response reponse : operation.getResponses()) {
+    com.wordnik.swagger.models.Response responseSwagger=new com.wordnik.swagger.models.Response();
+    responseSwagger.setDescription(reponse.getDescription());
+    if (reponse.getOutputPayLoad() != null) {
+      PayLoad entity=reponse.getOutputPayLoad();
+      final Representation representation=definition.getContract().getRepresentation(entity.getType());
+      if (representation != null && representation.isRaw()) {
+        com.wordnik.swagger.models.properties.AbstractProperty fileProperty=new AbstractProperty(){
+        }
+;
+        fileProperty.setType("file");
+        fileProperty.setDescription(representation.getDescription());
+        responseSwagger.setSchema(fileProperty);
+      }
+ else       if (entity.isArray()) {
+        ArrayProperty arrayProperty=new ArrayProperty();
+        arrayProperty.setItems(newPropertyForType(entity.getType()));
+        responseSwagger.setSchema(arrayProperty);
+      }
+ else {
+        responseSwagger.setSchema(newPropertyForType(entity.getType()));
+      }
+    }
+    operationSwagger.addResponse(String.valueOf(reponse.getCode()),responseSwagger);
+  }
+}
