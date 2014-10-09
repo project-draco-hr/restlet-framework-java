@@ -10,22 +10,30 @@
     endpoint=new Endpoint("http://example.com");
   }
   AuthorizationsDeclaration authorizations=new AuthorizationsDeclaration();
-  if (ChallengeScheme.HTTP_BASIC.equals((endpoint.getAuthenticationProtocol()))) {
+  if (ChallengeScheme.HTTP_BASIC.getName().equals((endpoint.getAuthenticationProtocol()))) {
     authorizations.setBasicAuth(new BasicAuthorizationDeclaration());
   }
- else   if (ChallengeScheme.HTTP_OAUTH.equals((endpoint.getAuthenticationProtocol())) || ChallengeScheme.HTTP_OAUTH_BEARER.equals((endpoint.getAuthenticationProtocol())) || ChallengeScheme.HTTP_OAUTH_MAC.equals((endpoint.getAuthenticationProtocol()))) {
+ else   if (ChallengeScheme.HTTP_OAUTH.getName().equals((endpoint.getAuthenticationProtocol())) || ChallengeScheme.HTTP_OAUTH_BEARER.getName().equals((endpoint.getAuthenticationProtocol())) || ChallengeScheme.HTTP_OAUTH_MAC.getName().equals((endpoint.getAuthenticationProtocol()))) {
     authorizations.setOauth2(new OAuth2AuthorizationDeclaration());
   }
   result.setInfo(new ApiInfo());
   result.setSwaggerVersion(SWAGGER_VERSION);
   result.setResourcePath("/" + sectionName);
   Set<String> usedModels=new HashSet<String>();
-  Section section=definition.getContract().getSection(Section.DEFAULT);
-  if (section == null) {
-    section=new Section();
-  }
   Contract contract=definition.getContract();
+  List<Resource> resources=contract.getResources();
+  boolean allResources=contract.getSections().isEmpty();
   for (  Resource resource : contract.getResources()) {
+    if (allResources) {
+      resources.add(resource);
+    }
+ else {
+      if (resource.getSections().contains(sectionName)) {
+        resources.add(resource);
+      }
+    }
+  }
+  for (  Resource resource : resources) {
     if (!resource.getResourcePath().startsWith("/" + sectionName)) {
       continue;
     }

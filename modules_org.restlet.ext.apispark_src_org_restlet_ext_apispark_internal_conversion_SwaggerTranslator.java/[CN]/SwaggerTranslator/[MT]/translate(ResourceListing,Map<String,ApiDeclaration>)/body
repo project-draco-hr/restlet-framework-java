@@ -4,8 +4,6 @@
   List<String> declaredTypes=new ArrayList<String>();
   List<String> declaredPathVariables;
   Map<String,List<String>> subtypes=new HashMap<String,List<String>>();
-  Section section=new Section();
-  section.setName(Section.DEFAULT);
   try {
     Definition definition=new Definition();
     definition.setVersion(resourceListing.getApiVersion());
@@ -19,13 +17,15 @@
     contract.setName(resourceListing.getInfo().getTitle());
     LOGGER.log(Level.FINE,"Contract " + contract.getName() + " added.");
     contract.setDescription(resourceListing.getInfo().getDescription());
-    contract.getSections().add(section);
     definition.setContract(contract);
     Resource resource;
     for (    Entry<String,ApiDeclaration> entry : apiDeclarations.entrySet()) {
       ApiDeclaration swagApiDeclaration=entry.getValue();
       List<String> apiProduces=swagApiDeclaration.getProduces();
       List<String> apiConsumes=swagApiDeclaration.getConsumes();
+      Section section=new Section();
+      section.setName(entry.getKey());
+      section.setDescription(resourceListing.getApi("/" + entry.getKey()).getDescription());
       for (      ResourceDeclaration api : swagApiDeclaration.getApis()) {
         declaredPathVariables=new ArrayList<String>();
         resource=new Resource();
@@ -150,13 +150,13 @@
         Endpoint endpoint=new Endpoint(swagApiDeclaration.getBasePath());
         definition.getEndpoints().add(endpoint);
         if (resourceListing.getAuthorizations().getBasicAuth() != null) {
-          endpoint.setAuthenticationProtocol(ChallengeScheme.HTTP_BASIC.getTechnicalName());
+          endpoint.setAuthenticationProtocol(ChallengeScheme.HTTP_BASIC.getName());
         }
  else         if (resourceListing.getAuthorizations().getOauth2() != null) {
-          endpoint.setAuthenticationProtocol(ChallengeScheme.HTTP_OAUTH.getTechnicalName());
+          endpoint.setAuthenticationProtocol(ChallengeScheme.HTTP_OAUTH.getName());
         }
  else         if (resourceListing.getAuthorizations().getApiKey() != null) {
-          endpoint.setAuthenticationProtocol(ChallengeScheme.CUSTOM.getTechnicalName());
+          endpoint.setAuthenticationProtocol(ChallengeScheme.CUSTOM.getName());
         }
       }
     }

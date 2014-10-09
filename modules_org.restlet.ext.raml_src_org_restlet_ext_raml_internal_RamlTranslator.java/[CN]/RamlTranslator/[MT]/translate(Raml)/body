@@ -8,9 +8,6 @@
   Contract contract=new Contract();
   definition.setContract(contract);
   contract.setName(raml.getTitle());
-  Section section=new Section();
-  section.setName(Section.DEFAULT);
-  contract.getSections().add(section);
   List<PathVariable> rootPathVariables=new ArrayList<PathVariable>();
   for (  Entry<String,UriParameter> entry : raml.getBaseUriParameters().entrySet()) {
     rootPathVariables.add(getPathVariable(entry.getKey(),entry.getValue()));
@@ -20,7 +17,6 @@
       Representation representation=new Representation();
       representation.setName(entry.getKey());
       representation.setDescription(entry.getValue());
-      representation.getSections().add(section.getName());
       contract.getRepresentations().add(representation);
     }
   }

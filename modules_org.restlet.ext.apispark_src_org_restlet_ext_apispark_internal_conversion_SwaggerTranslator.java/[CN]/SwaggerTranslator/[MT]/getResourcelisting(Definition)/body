@@ -13,21 +13,32 @@
     result.getInfo().setTitle(definition.getContract().getName());
     result.getInfo().setDescription(definition.getContract().getDescription());
   }
-  Section section=definition.getContract().getSection(Section.DEFAULT);
-  if (section == null) {
-    section=new Section();
-  }
   Contract contract=definition.getContract();
+  boolean allResources=contract.getSections().isEmpty();
   List<String> addedApis=new ArrayList<String>();
   if (definition.getContract() != null && contract.getResources() != null) {
     result.setApis(new ArrayList<ResourceDeclaration>());
     for (    Resource resource : contract.getResources()) {
       ResourceDeclaration rd=new ResourceDeclaration();
-      rd.setDescription(resource.getDescription());
-      rd.setPath(ReflectUtils.getFirstSegment(resource.getResourcePath()));
-      if (!addedApis.contains(rd.getPath())) {
-        addedApis.add(rd.getPath());
-        result.getApis().add(rd);
+      if (allResources) {
+        rd.setDescription(resource.getDescription());
+        rd.setPath(ReflectUtils.getFirstSegment(resource.getResourcePath()));
+        if (!addedApis.contains(rd.getPath())) {
+          addedApis.add(rd.getPath());
+          result.getApis().add(rd);
+        }
+      }
+ else {
+        for (        String sectionName : resource.getSections()) {
+          Section section=contract.getSection(sectionName);
+          rd=new ResourceDeclaration();
+          rd.setDescription(section.getDescription());
+          rd.setPath("/" + sectionName);
+          if (!addedApis.contains(rd.getPath())) {
+            addedApis.add(rd.getPath());
+            result.getApis().add(rd);
+          }
+        }
       }
     }
   }
