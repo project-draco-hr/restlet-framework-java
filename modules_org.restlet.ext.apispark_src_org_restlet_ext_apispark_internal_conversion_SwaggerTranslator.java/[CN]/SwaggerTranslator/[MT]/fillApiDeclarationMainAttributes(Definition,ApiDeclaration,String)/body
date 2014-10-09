@@ -1,0 +1,22 @@
+{
+  apiDeclaration.setApiVersion(definition.getVersion());
+  Endpoint endpoint;
+  if (!definition.getEndpoints().isEmpty()) {
+    endpoint=definition.getEndpoints().get(0);
+    apiDeclaration.setBasePath(endpoint.computeUrl());
+  }
+ else {
+    endpoint=new Endpoint("http://example.com");
+  }
+  AuthorizationsDeclaration authorizations=new AuthorizationsDeclaration();
+  if (ChallengeScheme.HTTP_BASIC.getName().equals((endpoint.getAuthenticationProtocol()))) {
+    authorizations.setBasicAuth(new BasicAuthorizationDeclaration());
+    apiDeclaration.setAuthorizations(authorizations);
+  }
+ else   if (ChallengeScheme.HTTP_OAUTH.getName().equals((endpoint.getAuthenticationProtocol())) || ChallengeScheme.HTTP_OAUTH_BEARER.getName().equals((endpoint.getAuthenticationProtocol())) || ChallengeScheme.HTTP_OAUTH_MAC.getName().equals((endpoint.getAuthenticationProtocol()))) {
+    authorizations.setOauth2(new OAuth2AuthorizationDeclaration());
+  }
+  apiDeclaration.setInfo(new ApiInfo());
+  apiDeclaration.setSwaggerVersion(SWAGGER_VERSION);
+  apiDeclaration.setResourcePath("/" + sectionName);
+}

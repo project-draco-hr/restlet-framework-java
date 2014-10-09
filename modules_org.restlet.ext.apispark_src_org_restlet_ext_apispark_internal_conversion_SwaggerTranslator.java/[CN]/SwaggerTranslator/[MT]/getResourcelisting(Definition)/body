@@ -1,52 +1,6 @@
 {
   ResourceListing result=new ResourceListing();
-  result.setApiVersion(definition.getVersion());
-  result.setInfo(new ApiInfo());
-  result.setSwaggerVersion(SWAGGER_VERSION);
-  if (definition.getContact() != null) {
-    result.getInfo().setContact(definition.getContact().getEmail());
-  }
-  if (definition.getLicense() != null) {
-    result.getInfo().setLicenseUrl(definition.getLicense().getUrl());
-  }
-  if (definition.getContract() != null) {
-    result.getInfo().setTitle(definition.getContract().getName());
-    result.getInfo().setDescription(definition.getContract().getDescription());
-  }
-  Contract contract=definition.getContract();
-  boolean allResources=contract.getSections().isEmpty();
-  List<String> addedApis=new ArrayList<String>();
-  if (definition.getContract() != null && contract.getResources() != null) {
-    result.setApis(new ArrayList<ResourceDeclaration>());
-    for (    Resource resource : contract.getResources()) {
-      ResourceDeclaration rd=new ResourceDeclaration();
-      if (allResources) {
-        rd.setDescription(resource.getDescription());
-        rd.setPath(ReflectUtils.getFirstSegment(resource.getResourcePath()));
-        if (!addedApis.contains(rd.getPath())) {
-          addedApis.add(rd.getPath());
-          result.getApis().add(rd);
-        }
-      }
- else {
-        for (        String sectionName : resource.getSections()) {
-          Section section=contract.getSection(sectionName);
-          rd=new ResourceDeclaration();
-          rd.setDescription(section.getDescription());
-          rd.setPath("/" + sectionName);
-          if (!addedApis.contains(rd.getPath())) {
-            addedApis.add(rd.getPath());
-            result.getApis().add(rd);
-          }
-        }
-      }
-    }
-  }
-  Collections.sort(result.getApis(),new Comparator<ResourceDeclaration>(){
-    @Override public int compare(    ResourceDeclaration o1,    ResourceDeclaration o2){
-      return o1.getPath().compareTo(o2.getPath());
-    }
-  }
-);
+  fillResourceListingMainAttributes(definition,result);
+  fillResourceListingApis(definition,result);
   return result;
 }

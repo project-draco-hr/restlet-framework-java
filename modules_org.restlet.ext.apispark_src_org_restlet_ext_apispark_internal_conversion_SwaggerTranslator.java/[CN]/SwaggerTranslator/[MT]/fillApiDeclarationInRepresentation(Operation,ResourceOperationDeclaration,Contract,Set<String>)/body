@@ -1,0 +1,21 @@
+{
+  ResourceOperationParameterDeclaration ropd;
+  PayLoad inRepr=operation.getInputPayLoad();
+  if (inRepr != null) {
+    Representation representation=contract.getRepresentation(inRepr.getType());
+    ropd=new ResourceOperationParameterDeclaration();
+    ropd.setParamType("body");
+    ropd.setName("body");
+    ropd.setRequired(true);
+    if (representation != null && representation.isRaw()) {
+      ropd.setType("File");
+    }
+ else {
+      ropd.setType(toSwaggerType(inRepr.getType()));
+    }
+    if (inRepr.getType() != null) {
+      usedModels.add(inRepr.getType());
+    }
+    rod.getParameters().add(ropd);
+  }
+}

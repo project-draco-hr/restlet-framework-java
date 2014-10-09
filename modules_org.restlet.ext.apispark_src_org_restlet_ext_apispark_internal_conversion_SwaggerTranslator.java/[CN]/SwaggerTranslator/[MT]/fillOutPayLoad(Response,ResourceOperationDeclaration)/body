@@ -1,0 +1,24 @@
+{
+  PayLoad rwadOutRepr=new PayLoad();
+  if ("array".equals(swaggerOperation.getType())) {
+    LOGGER.log(Level.FINER,"Operation: " + swaggerOperation.getNickname() + " returns an array");
+    rwadOutRepr.setArray(true);
+    if (swaggerOperation.getItems().getType() != null) {
+      rwadOutRepr.setType(swaggerOperation.getItems().getType());
+    }
+ else {
+      rwadOutRepr.setType(swaggerOperation.getItems().getRef());
+    }
+  }
+ else {
+    LOGGER.log(Level.FINER,"Operation: " + swaggerOperation.getNickname() + " returns a single Representation");
+    rwadOutRepr.setArray(false);
+    if (swaggerOperation.getType() != null) {
+      rwadOutRepr.setType(swaggerOperation.getType());
+    }
+ else {
+      rwadOutRepr.setType(swaggerOperation.getRef());
+    }
+  }
+  success.setOutputPayLoad(rwadOutRepr);
+}

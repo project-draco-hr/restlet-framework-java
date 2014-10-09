@@ -1,0 +1,28 @@
+{
+  listing.setApiVersion(definition.getVersion());
+  listing.setInfo(new ApiInfo());
+  listing.setSwaggerVersion(SWAGGER_VERSION);
+  if (definition.getContact() != null) {
+    listing.getInfo().setContact(definition.getContact().getEmail());
+  }
+  if (definition.getLicense() != null) {
+    listing.getInfo().setLicenseUrl(definition.getLicense().getUrl());
+  }
+  if (definition.getContract() != null) {
+    listing.getInfo().setTitle(definition.getContract().getName());
+    listing.getInfo().setDescription(definition.getContract().getDescription());
+  }
+  if (!definition.getEndpoints().isEmpty()) {
+    String authenticationProtocol=definition.getEndpoints().get(0).getAuthenticationProtocol();
+    if (authenticationProtocol != null) {
+      AuthorizationsDeclaration authorizations=new AuthorizationsDeclaration();
+      if (ChallengeScheme.HTTP_BASIC.getName().equals(authenticationProtocol)) {
+        authorizations.setBasicAuth(new BasicAuthorizationDeclaration());
+        listing.setAuthorizations(authorizations);
+      }
+ else       if (ChallengeScheme.HTTP_OAUTH.getName().equals(authenticationProtocol) || ChallengeScheme.HTTP_OAUTH_BEARER.getName().equals(authenticationProtocol) || ChallengeScheme.HTTP_OAUTH_MAC.getName().equals(authenticationProtocol)) {
+        authorizations.setOauth2(new OAuth2AuthorizationDeclaration());
+      }
+    }
+  }
+}

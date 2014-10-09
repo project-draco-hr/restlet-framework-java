@@ -1,0 +1,16 @@
+{
+  for (  Operation operation : resource.getOperations()) {
+    ResourceOperationDeclaration rod=new ResourceOperationDeclaration();
+    rod.setMethod(operation.getMethod());
+    rod.setSummary(operation.getDescription());
+    rod.setNickname(operation.getName());
+    rod.setProduces(operation.getProduces());
+    rod.setConsumes(operation.getConsumes());
+    fillApiDeclarationPathVariables(resource,rod);
+    fillApiDeclarationQueryParameters(operation,rod);
+    fillApiDeclarationInRepresentation(operation,rod,contract,usedModels);
+    fillApiDeclarationOutRepresentation(operation,rod,contract,usedModels);
+    fillApiDeclarationResponses(operation,rod);
+    rd.getOperations().add(rod);
+  }
+}

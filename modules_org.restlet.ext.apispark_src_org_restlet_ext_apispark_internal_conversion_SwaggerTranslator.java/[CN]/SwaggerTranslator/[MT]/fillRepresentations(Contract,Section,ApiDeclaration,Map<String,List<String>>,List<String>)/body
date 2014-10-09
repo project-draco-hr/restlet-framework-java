@@ -1,0 +1,16 @@
+{
+  Representation representation;
+  for (  Entry<String,ModelDeclaration> modelEntry : apiDeclaration.getModels().entrySet()) {
+    ModelDeclaration model=modelEntry.getValue();
+    if (model.getSubTypes() != null && !model.getSubTypes().isEmpty()) {
+      subtypes.put(model.getId(),model.getSubTypes());
+    }
+    if (!declaredTypes.contains(modelEntry.getKey())) {
+      declaredTypes.add(modelEntry.getKey());
+      representation=toRepresentation(model,modelEntry.getKey());
+      representation.getSections().add(section.getName());
+      contract.getRepresentations().add(representation);
+      LOGGER.log(Level.FINE,"Representation " + modelEntry.getKey() + " added.");
+    }
+  }
+}

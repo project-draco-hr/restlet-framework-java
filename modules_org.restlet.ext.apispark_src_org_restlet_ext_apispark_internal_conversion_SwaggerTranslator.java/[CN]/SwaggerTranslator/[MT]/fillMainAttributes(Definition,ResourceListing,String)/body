@@ -1,0 +1,27 @@
+{
+  definition.setVersion(listing.getApiVersion());
+  Contact contact=new Contact();
+  contact.setEmail(listing.getInfo().getContact());
+  definition.setContact(contact);
+  License license=new License();
+  license.setUrl(listing.getInfo().getLicenseUrl());
+  definition.setLicense(license);
+  Contract contract=new Contract();
+  contract.setName(listing.getInfo().getTitle());
+  LOGGER.log(Level.FINE,"Contract " + contract.getName() + " added.");
+  contract.setDescription(listing.getInfo().getDescription());
+  definition.setContract(contract);
+  if (definition.getEndpoints().isEmpty()) {
+    Endpoint endpoint=new Endpoint(basePath);
+    definition.getEndpoints().add(endpoint);
+    if (listing.getAuthorizations().getBasicAuth() != null) {
+      endpoint.setAuthenticationProtocol(ChallengeScheme.HTTP_BASIC.getName());
+    }
+ else     if (listing.getAuthorizations().getOauth2() != null) {
+      endpoint.setAuthenticationProtocol(ChallengeScheme.HTTP_OAUTH.getName());
+    }
+ else     if (listing.getAuthorizations().getApiKey() != null) {
+      endpoint.setAuthenticationProtocol(ChallengeScheme.CUSTOM.getName());
+    }
+  }
+}

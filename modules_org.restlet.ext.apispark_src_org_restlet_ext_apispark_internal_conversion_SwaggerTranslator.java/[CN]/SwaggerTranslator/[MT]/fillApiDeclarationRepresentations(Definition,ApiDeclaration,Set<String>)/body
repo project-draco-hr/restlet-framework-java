@@ -1,0 +1,50 @@
+{
+  Contract contract=definition.getContract();
+  apiDeclaration.setModels(new TreeMap<String,ModelDeclaration>());
+  Iterator<String> iterator=usedModels.iterator();
+  while (iterator.hasNext()) {
+    String model=iterator.next();
+    Representation repr=contract.getRepresentation(model);
+    if (repr == null || isPrimitiveType(model)) {
+      continue;
+    }
+    ModelDeclaration md=new ModelDeclaration();
+    md.setId(model);
+    md.setDescription(repr.getDescription());
+    for (    Property prop : repr.getProperties()) {
+      if (prop.getMinOccurs() > 0) {
+        md.getRequired().add(prop.getName());
+      }
+      if (!isPrimitiveType(prop.getType()) && !usedModels.contains(prop.getType())) {
+        usedModels.add(prop.getType());
+        iterator=usedModels.iterator();
+      }
+      TypePropertyDeclaration tpd=new TypePropertyDeclaration();
+      tpd.setDescription(prop.getDescription());
+      tpd.setEnum_(prop.getEnumeration());
+      if (prop.getMaxOccurs() > 1 || prop.getMaxOccurs() == -1) {
+        tpd.setType("array");
+        tpd.setItems(new ItemsDeclaration());
+        if (isPrimitiveType(prop.getType())) {
+          tpd.getItems().setType(toSwaggerType(prop.getType()));
+        }
+ else {
+          tpd.getItems().setRef(prop.getType());
+        }
+      }
+ else {
+        if (isPrimitiveType(prop.getType())) {
+          tpd.setType(toSwaggerType(prop.getType()));
+        }
+ else {
+          tpd.setRef(prop.getType());
+        }
+      }
+      tpd.setMaximum(prop.getMax());
+      tpd.setMinimum(prop.getMin());
+      tpd.setUniqueItems(prop.isUniqueItems());
+      md.getProperties().put(prop.getName(),tpd);
+    }
+    apiDeclaration.getModels().put(md.getId(),md);
+  }
+}

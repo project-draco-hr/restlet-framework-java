@@ -1,0 +1,35 @@
+{
+  List<String> apiProduces=apiDeclaration.getProduces();
+  List<String> apiConsumes=apiDeclaration.getConsumes();
+  List<String> declaredTypes=new ArrayList<String>();
+  Map<String,List<String>> subtypes=new HashMap<String,List<String>>();
+  Representation representation;
+  Operation operation;
+  for (  ResourceOperationDeclaration swaggerOperation : api.getOperations()) {
+    String methodName=swaggerOperation.getMethod();
+    operation=new Operation();
+    operation.setMethod(swaggerOperation.getMethod());
+    operation.setName(swaggerOperation.getNickname());
+    operation.setDescription(swaggerOperation.getSummary());
+    fillVariants(contract,section,operation,swaggerOperation,apiProduces,apiConsumes);
+    Response success=new Response();
+    success.setCode(Status.SUCCESS_OK.getCode());
+    success.setDescription("Success");
+    success.setMessage(Status.SUCCESS_OK.getDescription());
+    success.setName("Success");
+    fillOutPayLoad(success,swaggerOperation);
+    operation.getResponses().add(success);
+    fillParameters(resource,operation,swaggerOperation,declaredPathVariables);
+    fillResponseMessages(operation,swaggerOperation);
+    resource.getOperations().add(operation);
+    LOGGER.log(Level.FINE,"Method " + methodName + " added.");
+    fillRepresentations(contract,section,apiDeclaration,subtypes,declaredTypes);
+    for (    Entry<String,List<String>> subtypesPair : subtypes.entrySet()) {
+      List<String> subtypesOf=subtypesPair.getValue();
+      for (      String subtypeOf : subtypesOf) {
+        representation=contract.getRepresentation(subtypeOf);
+        representation.setExtendedType(subtypesPair.getKey());
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  for (  ResourceOperationParameterDeclaration param : swaggerOperation.getParameters()) {
+    if ("path".equals(param.getParamType())) {
+      if (!declaredPathVariables.contains(param.getName())) {
+        declaredPathVariables.add(param.getName());
+        PathVariable pathVariable=toPathVariable(param);
+        resource.getPathVariables().add(pathVariable);
+      }
+    }
+ else     if ("body".equals(param.getParamType())) {
+      if (operation.getInputPayLoad() == null) {
+        PayLoad rwadInRepr=toEntity(param);
+        operation.setInputPayLoad(rwadInRepr);
+      }
+    }
+ else     if ("query".equals(param.getParamType())) {
+      QueryParameter rwadQueryParam=toQueryParameter(param);
+      operation.getQueryParameters().add(rwadQueryParam);
+    }
+  }
+}
