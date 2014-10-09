@@ -1,0 +1,39 @@
+{
+  @SuppressWarnings("unchecked") Series<Header> headers=(Series<Header>)response.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
+  if (headers == null) {
+    headers=new Series<Header>(Header.class);
+    response.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,headers);
+  }
+  headers.set("Access-Control-Allow-Origin",allowOrigin);
+  if (allowCredentials) {
+    headers.set("Access-Control-Allow-Credentials","true");
+  }
+  if (allowOnlyRequestedMethods) {
+    if (request == null) {
+      throw new RuntimeException("If allowOnlyRequestedMethods is true, it requires the request parameter");
+    }
+    String accessControlRequestMethods=request.getHeaders().getValues("Access-Control-Allow-Methods");
+    if (accessControlRequestMethods != null) {
+      headers.set("Access-Control-Allow-Methods",accessControlRequestMethods);
+    }
+  }
+ else {
+    if (allowMethods != null) {
+      headers.set("Access-Control-Allow-Methods",allowMethods);
+    }
+  }
+  if (exposeOnlyRequestedHeader) {
+    if (request == null) {
+      throw new RuntimeException("If exposeOnlyRequestedHeader is true, it requires the request parameter");
+    }
+    String accessControlRequestHeaders=request.getHeaders().getValues("Access-Control-Request-Headers");
+    if (accessControlRequestHeaders != null) {
+      headers.set("Access-Control-Expose-Headers",accessControlRequestHeaders);
+    }
+  }
+ else {
+    if (exposeHeaders != null) {
+      headers.set("Access-Control-Expose-Headers",exposeHeaders);
+    }
+  }
+}
