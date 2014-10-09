@@ -1,7 +1,8 @@
 {
   for (  PathVariable pathVariable : resource.getPathVariables()) {
     PathParameter pathParameterSwagger=new PathParameter();
-    pathParameterSwagger.setType(toSwaggerType(pathVariable.getType()));
+    pathParameterSwagger.setType(SwaggerUtils.toSwaggerType(pathVariable.getType()).getType());
+    pathParameterSwagger.setFormat(SwaggerUtils.toSwaggerType(pathVariable.getType()).getFormat());
     pathParameterSwagger.setName(pathVariable.getName());
     pathParameterSwagger.setDescription(pathVariable.getDescription());
     operationSwagger.addParameter(pathParameterSwagger);
@@ -27,7 +28,7 @@
  else {
         if (isPrimitiveType(inRepr.getType())) {
           ModelImpl modelImpl=new ModelImpl();
-          modelImpl.setType(toSwaggerType(inRepr.getType()));
+          modelImpl.setType(inRepr.getType());
           bodyParameterSwagger.setSchema(modelImpl);
         }
  else {
@@ -47,7 +48,8 @@
       queryParameterSwagger.setItems(newPropertyForType(queryParameter.getType()));
     }
  else {
-      queryParameterSwagger.setType(toSwaggerType(queryParameter.getType()));
+      queryParameterSwagger.setType(SwaggerUtils.toSwaggerType(queryParameter.getType()).getType());
+      queryParameterSwagger.setFormat(SwaggerUtils.toSwaggerType(queryParameter.getType()).getFormat());
     }
     queryParameterSwagger.setName(queryParameter.getName());
     queryParameterSwagger.setDescription(queryParameter.getDescription());
@@ -56,7 +58,8 @@
   for (  Header header : operation.getHeaders()) {
     HeaderParameter headerParameterSwagger=new HeaderParameter();
     headerParameterSwagger.setRequired(header.isRequired());
-    headerParameterSwagger.setType(toSwaggerType(header.getType()));
+    headerParameterSwagger.setType(SwaggerUtils.toSwaggerType(header.getType()).getType());
+    headerParameterSwagger.setFormat(SwaggerUtils.toSwaggerType(header.getType()).getFormat());
     headerParameterSwagger.setName(header.getName());
     headerParameterSwagger.setDescription(header.getDescription());
     operationSwagger.addParameter(headerParameterSwagger);
