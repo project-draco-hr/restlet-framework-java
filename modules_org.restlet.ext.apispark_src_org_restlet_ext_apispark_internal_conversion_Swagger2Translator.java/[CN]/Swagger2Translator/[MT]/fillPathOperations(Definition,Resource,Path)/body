@@ -1,14 +1,15 @@
 {
   for (  Operation operation : resource.getOperations()) {
     com.wordnik.swagger.models.Operation operationSwagger=new com.wordnik.swagger.models.Operation();
-    resource.getSections().addAll(operationSwagger.getTags());
+    operationSwagger.setTags(new ArrayList<String>());
+    operationSwagger.getTags().addAll(resource.getSections());
     String method=operation.getMethod().toLowerCase();
     Path setResult=pathSwagger.set(method,operationSwagger);
     if (setResult == null) {
       return;
     }
     String description=operation.getDescription();
-    operationSwagger.setSummary(StringUtils.substring(description,0,120));
+    operationSwagger.setSummary(description.length() > 120 ? description.substring(0,120) : description);
     operationSwagger.setDescription(description);
     operationSwagger.setOperationId(operation.getName());
     operationSwagger.setConsumes(operation.getConsumes());
