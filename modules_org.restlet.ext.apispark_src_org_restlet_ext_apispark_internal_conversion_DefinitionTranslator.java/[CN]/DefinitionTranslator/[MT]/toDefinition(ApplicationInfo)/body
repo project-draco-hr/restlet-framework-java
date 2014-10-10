@@ -8,20 +8,19 @@
       result.getEndpoints().add(new Endpoint(ref.getHostDomain(),ref.getHostPort(),ref.getSchemeProtocol().getSchemeName(),ref.getPath(),null));
     }
  else {
-      result.getEndpoints().add(new Endpoint("",80,Protocol.HTTP.getSchemeName(),"example.com",application.getAuthenticationProtocol().getName()));
+      result.getEndpoints().add(new Endpoint("example.com",80,Protocol.HTTP.getSchemeName(),"/v1",ChallengeScheme.HTTP_BASIC.getName()));
     }
     Contract contract=new Contract();
     result.setContract(contract);
-    contract.setDescription(application.getDescription());
+    contract.setDescription(toString(application.getDescription()));
     contract.setName(application.getName());
     if (contract.getName() == null || contract.getName().isEmpty()) {
       contract.setName(application.getClass().getName());
       LOGGER.log(Level.WARNING,"Please provide a name to your application, used " + contract.getName() + " by default.");
     }
     LOGGER.fine("Contract " + contract.getName() + " added.");
-    contract.setResources(new ArrayList<Resource>());
     Map<String,RepresentationInfo> mapReps=new HashMap<String,RepresentationInfo>();
-    addResources(application,contract,application.getResources().getResources(),(result.getEndpoints().isEmpty() ? "" : result.getEndpoints().get(0).computeUrl()),mapReps);
+    addResources(application,contract,application.getResources().getResources(),result.getEndpoints().get(0).computeUrl(),mapReps);
     java.util.List<String> protocols=new ArrayList<String>();
     for (    ConnectorHelper<Server> helper : Engine.getInstance().getRegisteredServers()) {
       for (      Protocol protocol : helper.getProtocols()) {
@@ -31,7 +30,6 @@
         }
       }
     }
-    contract.setRepresentations(new ArrayList<Representation>());
     for (    RepresentationInfo ri : application.getRepresentations()) {
       if (!mapReps.containsKey(ri.getIdentifier())) {
         mapReps.put(ri.getIdentifier(),ri);
@@ -100,7 +98,7 @@
       }
       LOGGER.fine("Representation " + ri.getName() + " added.");
       Representation representation=new Representation();
-      representation.setDescription(ri.getDescription());
+      representation.setDescription(toString(ri.getDescription()));
       representation.setName(ri.getName());
       representation.setProperties(new ArrayList<Property>());
       for (      PropertyInfo pi : ri.getProperties()) {
@@ -115,7 +113,13 @@
         p.setName(pi.getName());
         p.setEnumeration(pi.getEnumeration());
         if (pi.getType() != null) {
-          p.setType(pi.getType().getSimpleName());
+          String type=pi.getType().getSimpleName();
+          if (isPrimitiveType(type)) {
+            p.setType(convertPrimitiveTypes(pi.getType().getSimpleName()));
+          }
+ else {
+            p.setType(type);
+          }
         }
         p.setUniqueItems(pi.isUniqueItems());
         representation.getProperties().add(p);
@@ -125,11 +129,5 @@
     }
   }
   IntrospectionUtils.sortDefinition(result);
-  try {
-    System.out.println(new ObjectMapper().writeValueAsString(result));
-  }
- catch (  JsonProcessingException e) {
-    e.printStackTrace();
-  }
   return result;
 }

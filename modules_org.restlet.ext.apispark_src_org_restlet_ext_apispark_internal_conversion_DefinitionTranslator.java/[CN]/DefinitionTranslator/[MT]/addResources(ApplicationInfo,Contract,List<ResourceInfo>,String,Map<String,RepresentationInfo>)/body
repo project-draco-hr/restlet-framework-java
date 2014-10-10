@@ -7,13 +7,11 @@
     if (ri.getPath() == null) {
       resource.setResourcePath("/");
     }
+ else     if (!ri.getPath().startsWith("/")) {
+      resource.setResourcePath("/" + ri.getPath());
+    }
  else {
-      if (!ri.getPath().startsWith("/")) {
-        resource.setResourcePath("/" + ri.getPath());
-      }
- else {
-        resource.setResourcePath(ri.getPath());
-      }
+      resource.setResourcePath(ri.getPath());
     }
     resource.setPathVariables(new ArrayList<PathVariable>());
     for (    ParameterInfo pi : ri.getParameters()) {
@@ -25,24 +23,29 @@
       }
     }
     if (!ri.getChildResources().isEmpty()) {
-      addResources(application,contract,ri.getChildResources(),resource.getResourcePath(),mapReps,logger);
+      addResources(application,contract,ri.getChildResources(),resource.getResourcePath(),mapReps);
     }
-    logger.fine("Resource " + ri.getPath() + " added.");
+    LOGGER.fine("Resource " + ri.getPath() + " added.");
     if (ri.getMethods().isEmpty()) {
-      logger.warning("Resource " + ri.getName() + " has no methods.");
+      LOGGER.warning("Resource " + ri.getName() + " has no methods.");
       continue;
     }
     resource.setOperations(new ArrayList<Operation>());
     for (    MethodInfo mi : ri.getMethods()) {
       String methodName=mi.getMethod().getName();
       if ("OPTIONS".equals(methodName) || "PATCH".equals(methodName)) {
-        logger.fine("Method " + methodName + " ignored.");
+        LOGGER.fine("Method " + methodName + " ignored.");
         continue;
       }
-      logger.fine("Method " + methodName + " added.");
+      LOGGER.fine("Method " + methodName + " added.");
       Operation operation=new Operation();
       operation.setDescription(mi.getDescription());
-      operation.setName(mi.getName());
+      if (mi.getName() != null && !"".equals(mi.getName())) {
+        operation.setName(mi.getName());
+      }
+ else {
+        operation.setName(mi.getAnnotation().getJavaMethod().getName());
+      }
       operation.setMethod(mi.getMethod().getName());
       String mediaType;
       if (mi.getRequest() != null && mi.getRequest().getRepresentations() != null) {
