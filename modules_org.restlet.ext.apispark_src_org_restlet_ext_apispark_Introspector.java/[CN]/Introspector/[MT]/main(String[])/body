@@ -83,40 +83,40 @@
     printHelp();
     System.exit(1);
   }
-  Application application=null;
-  Component component=null;
-  Definition definition=null;
-  javax.ws.rs.core.Application a=null;
+  Definition definition;
   if (language == null) {
-    Class<?> clazz=null;
+    Class<?> clazz;
     try {
       clazz=Class.forName(defSource);
-      if (Application.class.isAssignableFrom(clazz)) {
-        application=getApplication(defSource);
-        component=getComponent(compName);
-      }
- else       if (clazz != null) {
-        a=JaxrsIntrospector.getApplication(defSource);
-      }
     }
  catch (    ClassNotFoundException e) {
       LOGGER.log(Level.SEVERE,"Cannot locate the application class.",e);
+      throw new RuntimeException("Cannot locate the application class.",e);
+    }
+    if (Application.class.isAssignableFrom(clazz)) {
+      Application application=ApplicationIntrospector.getApplication(defSource);
+      Component component=ComponentIntrospector.getComponent(compName);
+      ApplicationIntrospector applicationIntrospector=new ApplicationIntrospector(component,application);
+      definition=applicationIntrospector.getDefinition();
+    }
+ else     if (clazz != null) {
+      javax.ws.rs.core.Application jaxrsApplication=JaxrsIntrospector.getApplication(defSource);
+      JaxrsIntrospector jaxrsIntrospector=new JaxrsIntrospector(jaxrsApplication);
+      definition=jaxrsIntrospector.getDefinition();
+    }
+ else {
+      LOGGER.log(Level.SEVERE,"Class " + defSource + " is not supported");
+      throw new RuntimeException("Class " + defSource + " is not supported");
     }
   }
-  if (application != null) {
-    LOGGER.info("Instantiate introspector");
-    Introspector i=new Introspector(component,application);
-    LOGGER.info("Generate documentation");
-    definition=i.getDefinition();
-  }
- else   if (a != null) {
-    LOGGER.fine("Instantiate introspector");
-    JaxrsIntrospector i=new JaxrsIntrospector(a);
-    LOGGER.info("Generate documentation");
-    definition=i.getDefinition();
-  }
- else   if ("swagger".equals(language)) {
-    definition=SwaggerUtils.getDefinition(defSource,ulogin,upwd);
+ else {
+    if ("swagger".equals(language)) {
+      definition=SwaggerUtils.getDefinition(defSource,ulogin,upwd);
+    }
+ else {
+      LOGGER.log(Level.SEVERE,"Language " + language + " is not supported");
+      throw new RuntimeException("Language " + language + " is not supported");
+    }
   }
   if (definition != null) {
     sendDefinition(definition,descriptorId,versionId,ulogin,upwd,serviceUrl,updateStrategy,create,newVersion,LOGGER);

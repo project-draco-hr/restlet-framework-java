@@ -1,0 +1,13 @@
+{
+  ApplicationInfo applicationInfo=getApplicationInfo(application,null);
+  definition=DefinitionTranslator.toDefinition(applicationInfo,LOGGER);
+  if (definition != null) {
+    LOGGER.fine("Look for the endpoint.");
+    Endpoint endpoint=null;
+    ApplicationPath ap=application.getClass().getAnnotation(ApplicationPath.class);
+    if (ap != null) {
+      endpoint=new Endpoint(ap.value());
+    }
+    definition.getEndpoints().add(endpoint);
+  }
+}

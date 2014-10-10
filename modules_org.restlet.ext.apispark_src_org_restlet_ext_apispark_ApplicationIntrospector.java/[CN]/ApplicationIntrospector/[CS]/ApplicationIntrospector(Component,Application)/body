@@ -1,0 +1,17 @@
+{
+  ApplicationInfo applicationInfo=getApplicationInfo(application,null);
+  definition=DefinitionTranslator.toDefinition(applicationInfo,LOGGER);
+  if (component != null && definition != null) {
+    LOGGER.fine("Look for the endpoint.");
+    Endpoint endpoint=ComponentIntrospector.getEndpoint(component.getDefaultHost(),application);
+    if (endpoint != null) {
+      definition.getEndpoints().add(endpoint);
+    }
+    for (    VirtualHost virtualHost : component.getHosts()) {
+      endpoint=ComponentIntrospector.getEndpoint(virtualHost,application);
+      if (endpoint != null) {
+        definition.getEndpoints().add(endpoint);
+      }
+    }
+  }
+}
