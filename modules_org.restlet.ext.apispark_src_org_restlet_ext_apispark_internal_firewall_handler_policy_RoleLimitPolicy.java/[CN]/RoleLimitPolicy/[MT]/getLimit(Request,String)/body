@@ -1,10 +1,13 @@
 {
-  int result=defaultLimit;
+  int result=0;
   List<Role> roles=request.getClientInfo().getRoles();
   for (  Role role : roles) {
     if (limitsPerRole.containsKey(role.getName()) && (limitsPerRole.get(role.getName()) > result)) {
       result=limitsPerRole.get(role.getName());
     }
+  }
+  if (result == 0) {
+    result=defaultLimit;
   }
   return result;
 }
