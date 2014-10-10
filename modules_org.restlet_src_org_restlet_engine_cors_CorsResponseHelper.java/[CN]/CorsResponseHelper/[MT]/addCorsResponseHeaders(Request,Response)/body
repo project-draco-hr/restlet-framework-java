@@ -22,18 +22,18 @@
       headers.set("Access-Control-Allow-Methods",allowMethods);
     }
   }
-  if (exposeOnlyRequestedHeader) {
+  if (allowOnlyRequestedHeader) {
     if (request == null) {
-      throw new RuntimeException("If exposeOnlyRequestedHeader is true, it requires the request parameter");
+      throw new RuntimeException("If allowOnlyRequestedHeader is true, it requires the request parameter");
     }
     String accessControlRequestHeaders=request.getHeaders().getValues("Access-Control-Request-Headers");
     if (accessControlRequestHeaders != null) {
-      headers.set("Access-Control-Expose-Headers",accessControlRequestHeaders);
+      headers.set("Access-Control-Allow-Headers",accessControlRequestHeaders);
     }
   }
  else {
-    if (exposeHeaders != null) {
-      headers.set("Access-Control-Expose-Headers",exposeHeaders);
+    if (allowHeaders != null) {
+      headers.set("Access-Control-Allow-Headers",allowHeaders);
     }
   }
 }
