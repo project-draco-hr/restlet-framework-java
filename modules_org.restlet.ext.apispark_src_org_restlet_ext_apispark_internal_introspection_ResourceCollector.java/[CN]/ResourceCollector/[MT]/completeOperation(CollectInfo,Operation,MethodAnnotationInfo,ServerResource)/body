@@ -3,9 +3,10 @@
   Class<?>[] inputClasses=mai.getJavaMethod().getParameterTypes();
   if (inputClasses != null && inputClasses.length > 0) {
     Class<?> inputClass=inputClasses[0];
-    RepresentationCollector.addRepresentation(collectInfo,inputClass,mai.getJavaMethod().getGenericParameterTypes()[0]);
+    Type inputType=mai.getJavaMethod().getGenericParameterTypes()[0];
+    RepresentationCollector.addRepresentation(collectInfo,inputClass,inputType);
     PayLoad inputEntity=new PayLoad();
-    inputEntity.setType(inputClass.getSimpleName());
+    inputEntity.setType(ReflectUtils.getSimpleClass(inputType).getName());
     inputEntity.setArray(ReflectUtils.isListType(inputClass));
     operation.setInputPayLoad(inputEntity);
     if (metadataService != null) {
@@ -42,10 +43,11 @@
   }
   Response response=new Response();
   Class<?> outputClass=mai.getJavaMethod().getReturnType();
+  Type outputType=mai.getJavaMethod().getGenericReturnType();
   if (outputClass != Void.TYPE) {
-    RepresentationCollector.addRepresentation(collectInfo,outputClass,mai.getJavaMethod().getGenericReturnType());
+    RepresentationCollector.addRepresentation(collectInfo,outputClass,outputType);
     PayLoad outputEntity=new PayLoad();
-    outputEntity.setType(outputClass.getSimpleName());
+    outputEntity.setType(ReflectUtils.getSimpleClass(outputType).getName());
     outputEntity.setArray(ReflectUtils.isListType(outputClass));
     response.setOutputPayLoad(outputEntity);
   }
