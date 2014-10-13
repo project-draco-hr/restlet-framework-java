@@ -1,0 +1,37 @@
+{
+  Definition definition=new Definition();
+  Contract contract=new Contract();
+  contract.setDescription(StringUtils.nullToEmpty(application.getDescription()));
+  if (StringUtils.isNullOrEmpty(application.getName())) {
+    LOGGER.log(Level.WARNING,"Please provide a name to your application, used " + contract.getName() + " by default.");
+    contract.setName(application.getClass().getName());
+  }
+ else {
+    contract.setName(application.getName());
+  }
+  definition.setContract(contract);
+  CollectInfo collectInfo=new CollectInfo();
+  RestletCollector.collect(collectInfo,"",application.getInboundRoot(),null);
+  contract.setResources(collectInfo.getResources());
+  contract.setRepresentations(collectInfo.getRepresentations());
+  if (component != null) {
+    LOGGER.fine("Look for the endpoint.");
+    Endpoint endpoint=ComponentIntrospector.getEndpoint(component.getDefaultHost(),application);
+    if (endpoint != null) {
+      definition.getEndpoints().add(endpoint);
+    }
+    for (    VirtualHost virtualHost : component.getHosts()) {
+      endpoint=ComponentIntrospector.getEndpoint(virtualHost,application);
+      if (endpoint != null) {
+        definition.getEndpoints().add(endpoint);
+      }
+    }
+  }
+ else {
+    String scheme=collectInfo.getSchemes().isEmpty() ? null : collectInfo.getSchemes().get(0).getName();
+    Endpoint endpoint=new Endpoint("example.com",80,Protocol.HTTP.getSchemeName(),"/v1",scheme);
+    definition.getEndpoints().add(endpoint);
+  }
+  IntrospectionUtils.sortDefinition(definition);
+  return definition;
+}

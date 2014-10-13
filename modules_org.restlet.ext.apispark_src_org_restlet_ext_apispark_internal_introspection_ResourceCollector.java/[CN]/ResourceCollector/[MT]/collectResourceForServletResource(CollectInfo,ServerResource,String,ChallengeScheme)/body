@@ -1,0 +1,36 @@
+{
+  Resource resource=getResource(sr,basePath,scheme);
+  ArrayList<Operation> operations=new ArrayList<Operation>();
+  Set<Method> uniqueMethods=new HashSet<Method>();
+  List<AnnotationInfo> annotations=sr.isAnnotated() ? AnnotationUtils.getInstance().getAnnotations(sr.getClass()) : null;
+  if (annotations != null) {
+    for (    AnnotationInfo annotationInfo : annotations) {
+      if (annotationInfo instanceof MethodAnnotationInfo) {
+        MethodAnnotationInfo methodAnnotationInfo=(MethodAnnotationInfo)annotationInfo;
+        Method method=methodAnnotationInfo.getRestletMethod();
+        if ("OPTIONS".equals(method.getName()) || "PATCH".equals(method.getName())) {
+          LOGGER.fine("Method " + method.getName() + " ignored.");
+          continue;
+        }
+        Operation operation=getOperationFromMethod(method);
+        if (StringUtils.isNullOrEmpty(operation.getName())) {
+          LOGGER.warning("Java method " + methodAnnotationInfo.getJavaMethod().getName() + " has no Method name.");
+          operation.setName(methodAnnotationInfo.getJavaMethod().getName());
+        }
+        completeOperation(collectInfo,operation,methodAnnotationInfo,sr);
+        operations.add(operation);
+      }
+    }
+    if (!operations.isEmpty()) {
+      sortOperationsByMethod(operations);
+      resource.setOperations(operations);
+      collectInfo.addResource(resource);
+    }
+ else {
+      LOGGER.warning("Resource " + resource.getName() + " has no methods.");
+    }
+  }
+ else {
+    LOGGER.warning("Resource " + resource.getName() + " has no methods.");
+  }
+}

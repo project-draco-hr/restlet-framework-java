@@ -1,0 +1,76 @@
+{
+  MetadataService metadataService=sr.getMetadataService();
+  Class<?>[] inputClasses=mai.getJavaMethod().getParameterTypes();
+  if (inputClasses != null && inputClasses.length > 0) {
+    Class<?> inputClass=inputClasses[0];
+    RepresentationCollector.addRepresentation(collectInfo,inputClass,mai.getJavaMethod().getGenericParameterTypes()[0]);
+    PayLoad inputEntity=new PayLoad();
+    inputEntity.setType(inputClass.getSimpleName());
+    inputEntity.setArray(ReflectUtils.isListType(inputClass));
+    operation.setInputPayLoad(inputEntity);
+    if (metadataService != null) {
+      try {
+        List<Variant> requestVariants=mai.getRequestVariants(metadataService,sr.getConverterService());
+        if (requestVariants == null || requestVariants.isEmpty()) {
+          LOGGER.warning("Method has no requested variant: " + mai);
+          return;
+        }
+        for (        Variant variant : requestVariants) {
+          if (variant.getMediaType() == null) {
+            LOGGER.warning("Variant has no media type: " + variant);
+            continue;
+          }
+          operation.getConsumes().add(variant.getMediaType().getName());
+        }
+      }
+ catch (      IOException e) {
+        throw new ResourceException(e);
+      }
+    }
+  }
+  if (mai.getQuery() != null) {
+    Form form=new Form(mai.getQuery());
+    for (    org.restlet.data.Parameter parameter : form) {
+      QueryParameter queryParameter=new QueryParameter();
+      queryParameter.setName(parameter.getName());
+      queryParameter.setRequired(true);
+      queryParameter.setDescription(StringUtils.isNullOrEmpty(parameter.getValue()) ? "" : "Value: " + parameter.getValue());
+      queryParameter.setDefaultValue(parameter.getValue());
+      queryParameter.setAllowMultiple(false);
+      operation.getQueryParameters().add(queryParameter);
+    }
+  }
+  Response response=new Response();
+  Class<?> outputClass=mai.getJavaMethod().getReturnType();
+  if (outputClass != Void.TYPE) {
+    RepresentationCollector.addRepresentation(collectInfo,outputClass,mai.getJavaMethod().getGenericReturnType());
+    PayLoad outputEntity=new PayLoad();
+    outputEntity.setType(outputClass.getSimpleName());
+    outputEntity.setArray(ReflectUtils.isListType(outputClass));
+    response.setOutputPayLoad(outputEntity);
+  }
+  response.setCode(Status.SUCCESS_OK.getCode());
+  response.setName("Success");
+  response.setDescription("");
+  response.setMessage(Status.SUCCESS_OK.getDescription());
+  operation.getResponses().add(response);
+  if (metadataService != null) {
+    try {
+      List<Variant> responseVariants=mai.getResponseVariants(metadataService,sr.getConverterService());
+      if (responseVariants == null || responseVariants.isEmpty()) {
+        LOGGER.warning("Method has no response variant: " + mai);
+        return;
+      }
+      for (      Variant variant : responseVariants) {
+        if (variant.getMediaType() == null) {
+          LOGGER.warning("Variant has no media type: " + variant);
+          continue;
+        }
+        operation.getProduces().add(variant.getMediaType().getName());
+      }
+    }
+ catch (    IOException e) {
+      throw new ResourceException(e);
+    }
+  }
+}
