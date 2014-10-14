@@ -1,5 +1,28 @@
 {
   MetadataService metadataService=sr.getMetadataService();
+  Response response;
+  Class<?>[] thrownClasses=mai.getJavaMethod().getExceptionTypes();
+  if (thrownClasses != null) {
+    for (    Class<?> thrownClass : thrownClasses) {
+      try {
+        StatusAnnotationInfo statusAnnotation=AnnotationUtils.getInstance().getStatusAnnotationInfo(thrownClass);
+        if (statusAnnotation != null) {
+          int statusCode=Integer.parseInt(statusAnnotation.getAnnotationValue());
+          RepresentationCollector.addRepresentation(collectInfo,thrownClass,ReflectUtils.getSimpleClass(thrownClass));
+          response=new Response();
+          response.setCode(statusCode);
+          response.setMessage("Error " + statusCode);
+          PayLoad outputPayLoad=new PayLoad();
+          outputPayLoad.setType(thrownClass.getSimpleName());
+          response.setOutputPayLoad(outputPayLoad);
+          operation.getResponses().add(response);
+        }
+      }
+ catch (      NumberFormatException e) {
+        LOGGER.severe("Annotation value for thrown class: " + thrownClass.getSimpleName() + " is not a valid HTTP status code.");
+      }
+    }
+  }
   Class<?>[] inputClasses=mai.getJavaMethod().getParameterTypes();
   if (inputClasses != null && inputClasses.length > 0) {
     Class<?> inputClass=inputClasses[0];
@@ -41,7 +64,7 @@
       operation.getQueryParameters().add(queryParameter);
     }
   }
-  Response response=new Response();
+  response=new Response();
   Class<?> outputClass=mai.getJavaMethod().getReturnType();
   Type outputType=mai.getJavaMethod().getGenericReturnType();
   if (outputClass != Void.TYPE) {

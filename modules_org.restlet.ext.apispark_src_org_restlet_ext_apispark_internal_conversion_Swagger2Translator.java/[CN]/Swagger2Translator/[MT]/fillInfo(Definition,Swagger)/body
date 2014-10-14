@@ -4,9 +4,23 @@
   infoSwagger.setDescription(definition.getContract().getDescription());
   infoSwagger.setVersion(definition.getVersion());
   Contact contactSwagger=new Contact();
-  contactSwagger.setName(definition.getContact().getName());
-  contactSwagger.setEmail(definition.getContact().getEmail());
-  contactSwagger.setUrl(definition.getContact().getUrl());
+  if (definition.getContact() != null) {
+    contactSwagger.setName(definition.getContact().getName());
+    contactSwagger.setEmail(definition.getContact().getEmail());
+    contactSwagger.setUrl(definition.getContact().getUrl());
+  }
   infoSwagger.setContact(contactSwagger);
+  License licenseSwagger=new License();
+  if (definition.getLicense() != null) {
+    if (!StringUtils.isNullOrEmpty(definition.getLicense().getName())) {
+      org.restlet.ext.apispark.internal.model.License license=definition.getLicense();
+      licenseSwagger.setName(license.getName());
+      licenseSwagger.setUrl(license.getUrl());
+      infoSwagger.setLicense(licenseSwagger);
+    }
+ else     if (!StringUtils.isNullOrEmpty(definition.getLicense().getUrl())) {
+      LOGGER.warning("You must specify a license name");
+    }
+  }
   swagger.setInfo(infoSwagger);
 }

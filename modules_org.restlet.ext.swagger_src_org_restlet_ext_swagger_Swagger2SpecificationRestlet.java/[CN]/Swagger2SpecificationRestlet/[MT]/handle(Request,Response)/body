@@ -2,13 +2,7 @@
   super.handle(request,response);
   corsResponseHelper.addCorsResponseHeaderIfCorsRequest(request,response);
   if (Method.GET.equals(request.getMethod())) {
-    Object resource=request.getAttributes().get("resource");
-    if (resource instanceof String) {
-      response.setEntity(getApiDeclaration((String)resource));
-    }
- else {
-      response.setEntity(getResourceListing());
-    }
+    response.setEntity(getSwagger());
   }
  else {
     response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
