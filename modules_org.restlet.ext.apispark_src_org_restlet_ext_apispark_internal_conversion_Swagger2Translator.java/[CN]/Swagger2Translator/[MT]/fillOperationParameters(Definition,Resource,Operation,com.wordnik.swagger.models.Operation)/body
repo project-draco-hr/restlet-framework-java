@@ -1,8 +1,9 @@
 {
   for (  PathVariable pathVariable : resource.getPathVariables()) {
     PathParameter pathParameterSwagger=new PathParameter();
-    pathParameterSwagger.setType(SwaggerUtils.toSwaggerType(pathVariable.getType()).getType());
-    pathParameterSwagger.setFormat(SwaggerUtils.toSwaggerType(pathVariable.getType()).getFormat());
+    SwaggerUtils.SwaggerTypeFormat swaggerTypeFormat=SwaggerUtils.toSwaggerType(pathVariable.getType());
+    pathParameterSwagger.setType(swaggerTypeFormat.getType());
+    pathParameterSwagger.setFormat(swaggerTypeFormat.getFormat());
     pathParameterSwagger.setName(pathVariable.getName());
     pathParameterSwagger.setDescription(pathVariable.getDescription());
     operationSwagger.addParameter(pathParameterSwagger);
@@ -14,7 +15,7 @@
     Representation representation=definition.getContract().getRepresentation(inRepr.getType());
     if (representation != null && representation.isRaw()) {
       ModelImpl modelImpl=new ModelImpl();
-      modelImpl.setType("file");
+      modelImpl.setType(representation.getIdentifier());
       modelImpl.setDescription(representation.getDescription());
       bodyParameterSwagger.setSchema(modelImpl);
     }
@@ -26,7 +27,7 @@
         bodyParameterSwagger.setSchema(arrayModel);
       }
  else {
-        if (isPrimitiveType(inRepr.getType())) {
+        if (Types.isPrimitiveType(inRepr.getType())) {
           ModelImpl modelImpl=new ModelImpl();
           modelImpl.setType(inRepr.getType());
           bodyParameterSwagger.setSchema(modelImpl);
