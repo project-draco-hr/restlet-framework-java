@@ -1,0 +1,68 @@
+{
+  for (  PathVariable pathVariable : resource.getPathVariables()) {
+    PathParameter pathParameterSwagger=new PathParameter();
+    SwaggerTypeFormat swaggerTypeFormat=SwaggerTypes.toSwaggerType(pathVariable.getType());
+    pathParameterSwagger.setType(swaggerTypeFormat.getType());
+    pathParameterSwagger.setFormat(swaggerTypeFormat.getFormat());
+    pathParameterSwagger.setName(pathVariable.getName());
+    pathParameterSwagger.setDescription(pathVariable.getDescription());
+    operationSwagger.addParameter(pathParameterSwagger);
+  }
+  if (operation.getInputPayLoad() != null) {
+    BodyParameter bodyParameterSwagger=new BodyParameter();
+    bodyParameterSwagger.setName("body");
+    PayLoad inRepr=operation.getInputPayLoad();
+    Representation representation=definition.getContract().getRepresentation(inRepr.getType());
+    if (representation != null && representation.isRaw()) {
+      ModelImpl modelImpl=new ModelImpl();
+      modelImpl.setType(representation.getIdentifier());
+      modelImpl.setDescription(representation.getDescription());
+      bodyParameterSwagger.setSchema(modelImpl);
+    }
+ else {
+      if (inRepr.isArray()) {
+        ArrayModel arrayModel=new ArrayModel();
+        arrayModel.setType("array");
+        arrayModel.setItems(newPropertyForType(inRepr.getType()));
+        bodyParameterSwagger.setSchema(arrayModel);
+      }
+ else {
+        if (Types.isPrimitiveType(inRepr.getType())) {
+          ModelImpl modelImpl=new ModelImpl();
+          modelImpl.setType(inRepr.getType());
+          bodyParameterSwagger.setSchema(modelImpl);
+        }
+ else {
+          RefModel refModel=new RefModel();
+          refModel.set$ref(inRepr.getType());
+          bodyParameterSwagger.setSchema(refModel);
+        }
+      }
+    }
+    operationSwagger.addParameter(bodyParameterSwagger);
+  }
+  for (  QueryParameter queryParameter : operation.getQueryParameters()) {
+    com.wordnik.swagger.models.parameters.QueryParameter queryParameterSwagger=new com.wordnik.swagger.models.parameters.QueryParameter();
+    queryParameterSwagger.setRequired(queryParameter.isRequired());
+    if (queryParameter.isAllowMultiple()) {
+      queryParameterSwagger.setType("array");
+      queryParameterSwagger.setItems(newPropertyForType(queryParameter.getType()));
+    }
+ else {
+      queryParameterSwagger.setType(SwaggerTypes.toSwaggerType(queryParameter.getType()).getType());
+      queryParameterSwagger.setFormat(SwaggerTypes.toSwaggerType(queryParameter.getType()).getFormat());
+    }
+    queryParameterSwagger.setName(queryParameter.getName());
+    queryParameterSwagger.setDescription(queryParameter.getDescription());
+    operationSwagger.addParameter(queryParameterSwagger);
+  }
+  for (  Header header : operation.getHeaders()) {
+    HeaderParameter headerParameterSwagger=new HeaderParameter();
+    headerParameterSwagger.setRequired(header.isRequired());
+    headerParameterSwagger.setType(SwaggerTypes.toSwaggerType(header.getType()).getType());
+    headerParameterSwagger.setFormat(SwaggerTypes.toSwaggerType(header.getType()).getFormat());
+    headerParameterSwagger.setName(header.getName());
+    headerParameterSwagger.setDescription(header.getDescription());
+    operationSwagger.addParameter(headerParameterSwagger);
+  }
+}

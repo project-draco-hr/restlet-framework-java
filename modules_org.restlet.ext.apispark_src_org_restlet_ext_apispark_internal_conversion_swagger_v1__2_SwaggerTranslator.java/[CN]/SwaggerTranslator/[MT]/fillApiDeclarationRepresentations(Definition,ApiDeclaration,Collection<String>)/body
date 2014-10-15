@@ -1,0 +1,53 @@
+{
+  Contract contract=definition.getContract();
+  apiDeclaration.setModels(new TreeMap<String,ModelDeclaration>());
+  List<String> usedModelsList=new ArrayList<String>(usedModels);
+  for (int i=0; i < usedModelsList.size(); i++) {
+    String model=usedModelsList.get(i);
+    Representation repr=contract.getRepresentation(model);
+    if (repr == null || Types.isPrimitiveType(model)) {
+      continue;
+    }
+    ModelDeclaration md=new ModelDeclaration();
+    md.setId(model);
+    md.setDescription(repr.getDescription());
+    for (    Property prop : repr.getProperties()) {
+      if (prop.getMinOccurs() > 0) {
+        md.getRequired().add(prop.getName());
+      }
+      if (!Types.isPrimitiveType(prop.getType()) && !usedModelsList.contains(prop.getType())) {
+        usedModelsList.add(prop.getType());
+      }
+      TypePropertyDeclaration tpd=new TypePropertyDeclaration();
+      tpd.setDescription(prop.getDescription());
+      tpd.setEnum_(prop.getEnumeration());
+      if (prop.getMaxOccurs() > 1 || prop.getMaxOccurs() == -1) {
+        tpd.setType("array");
+        tpd.setItems(new ItemsDeclaration());
+        if (Types.isPrimitiveType(prop.getType())) {
+          SwaggerTypeFormat swaggerTypeFormat=SwaggerTypes.toSwaggerType(prop.getType());
+          tpd.getItems().setType(swaggerTypeFormat.getType());
+          tpd.setFormat(swaggerTypeFormat.getFormat());
+        }
+ else {
+          tpd.getItems().setRef(prop.getType());
+        }
+      }
+ else {
+        if (Types.isPrimitiveType(prop.getType())) {
+          SwaggerTypeFormat swaggerTypeFormat=SwaggerTypes.toSwaggerType(prop.getType());
+          tpd.setType(swaggerTypeFormat.getType());
+          tpd.setFormat(swaggerTypeFormat.getFormat());
+        }
+ else {
+          tpd.setRef(prop.getType());
+        }
+      }
+      tpd.setMaximum(prop.getMax());
+      tpd.setMinimum(prop.getMin());
+      tpd.setUniqueItems(prop.isUniqueItems());
+      md.getProperties().put(prop.getName(),tpd);
+    }
+    apiDeclaration.getModels().put(md.getId(),md);
+  }
+}

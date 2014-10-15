@@ -1,0 +1,15 @@
+{
+  ResourceOperationParameterDeclaration ropd;
+  for (  PathVariable pv : resource.getPathVariables()) {
+    ropd=new ResourceOperationParameterDeclaration();
+    ropd.setParamType("path");
+    SwaggerTypeFormat swaggerTypeFormat=SwaggerTypes.toSwaggerType(pv.getType());
+    ropd.setType(swaggerTypeFormat.getType());
+    ropd.setFormat(swaggerTypeFormat.getFormat());
+    ropd.setRequired(true);
+    ropd.setName(pv.getName());
+    ropd.setAllowMultiple(false);
+    ropd.setDescription(pv.getDescription());
+    rod.getParameters().add(ropd);
+  }
+}

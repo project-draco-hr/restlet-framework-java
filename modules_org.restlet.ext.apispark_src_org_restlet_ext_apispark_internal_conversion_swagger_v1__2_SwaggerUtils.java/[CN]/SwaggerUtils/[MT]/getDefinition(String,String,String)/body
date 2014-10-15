@@ -1,0 +1,34 @@
+{
+  if (swaggerUrl == null) {
+    throw new TranslationException("url","You did not provide any URL");
+  }
+  Pattern p=Pattern.compile("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+  boolean remote=p.matcher(swaggerUrl).matches();
+  ResourceListing resourceListing;
+  Map<String,ApiDeclaration> apis=new HashMap<String,ApiDeclaration>();
+  if (remote) {
+    LOGGER.log(Level.FINE,"Reading file: " + swaggerUrl);
+    resourceListing=createAuthenticatedClientResource(swaggerUrl,userName,password).get(ResourceListing.class);
+    for (    ResourceDeclaration api : resourceListing.getApis()) {
+      LOGGER.log(Level.FINE,"Reading file: " + swaggerUrl + api.getPath());
+      apis.put(api.getPath(),createAuthenticatedClientResource(swaggerUrl + api.getPath(),userName,password).get(ApiDeclaration.class));
+    }
+  }
+ else {
+    File resourceListingFile=new File(swaggerUrl);
+    ObjectMapper om=new ObjectMapper();
+    try {
+      resourceListing=om.readValue(resourceListingFile,ResourceListing.class);
+      String basePath=resourceListingFile.getParent();
+      LOGGER.log(Level.FINE,"Base path: " + basePath);
+      for (      ResourceDeclaration api : resourceListing.getApis()) {
+        LOGGER.log(Level.FINE,"Reading file " + basePath + api.getPath());
+        apis.put(api.getPath(),om.readValue(new File(basePath + api.getPath()),ApiDeclaration.class));
+      }
+    }
+ catch (    IOException e) {
+      throw new TranslationException("file",e.getMessage());
+    }
+  }
+  return SwaggerTranslator.translate(resourceListing,apis);
+}
