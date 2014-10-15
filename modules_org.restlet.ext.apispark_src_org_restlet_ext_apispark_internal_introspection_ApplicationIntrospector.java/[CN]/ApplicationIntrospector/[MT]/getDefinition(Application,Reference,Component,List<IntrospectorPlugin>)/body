@@ -18,6 +18,10 @@
   contract.setResources(collectInfo.getResources());
   contract.setRepresentations(collectInfo.getRepresentations());
   String scheme=collectInfo.getSchemes().isEmpty() ? null : collectInfo.getSchemes().get(0).getName();
+  if (baseRef != null) {
+    Endpoint endpoint=new Endpoint(baseRef.getHostDomain(),baseRef.getHostPort(),baseRef.getSchemeProtocol().getSchemeName(),baseRef.getPath(),scheme);
+    definition.getEndpoints().add(endpoint);
+  }
   if (component != null) {
     LOGGER.fine("Look for the endpoint.");
     Endpoint endpoint=ComponentIntrospector.getEndpoint(component.getDefaultHost(),application,scheme);
@@ -31,7 +35,7 @@
       }
     }
   }
- else {
+  if (definition.getEndpoints().isEmpty()) {
     Endpoint endpoint=new Endpoint("example.com",80,Protocol.HTTP.getSchemeName(),"/v1",scheme);
     definition.getEndpoints().add(endpoint);
   }
