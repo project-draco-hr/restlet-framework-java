@@ -1,0 +1,13 @@
+{
+  ObjectMapper objectMapper=new ObjectMapper();
+  ResourceListing resourceListing=objectMapper.readValue(getClass().getResource("api-docs.json"),ResourceListing.class);
+  ApiDeclaration petApiDeclaration=objectMapper.readValue(getClass().getResource("pet.json"),ApiDeclaration.class);
+  ApiDeclaration storeApiDeclaration=objectMapper.readValue(getClass().getResource("store.json"),ApiDeclaration.class);
+  ApiDeclaration userApiDeclaration=objectMapper.readValue(getClass().getResource("user.json"),ApiDeclaration.class);
+  Map<String,ApiDeclaration> apiDeclarations=new HashMap<String,ApiDeclaration>();
+  apiDeclarations.put("/pet",petApiDeclaration);
+  apiDeclarations.put("/store",storeApiDeclaration);
+  apiDeclarations.put("/user",userApiDeclaration);
+  Definition translatedDefinition=SwaggerTranslator.translate(resourceListing,apiDeclarations);
+  comparePetstoreDefinition(translatedDefinition);
+}

@@ -1,14 +1,13 @@
 {
   Definition savedDefinition=new JacksonRepresentation<Definition>(new FileRepresentation(getClass().getResource("Petstore.rwadef").getFile(),MediaType.APPLICATION_JSON),Definition.class).getObject();
-  Definition translatedDefinition=SwaggerUtils.getDefinition("http://petstore.swagger.wordnik.com/api/api-docs","","");
-  assertEquals(savedDefinition.getContact(),translatedDefinition.getContact());
+  assertEquals(savedDefinition.getContact().getEmail(),translatedDefinition.getContact().getEmail());
   Endpoint savedEndpoint=savedDefinition.getEndpoints().get(0);
   Endpoint translatedEndpoint=translatedDefinition.getEndpoints().get(0);
   assertEquals(savedEndpoint.getPort(),translatedEndpoint.getPort());
   assertEquals(savedEndpoint.getProtocol(),translatedEndpoint.getProtocol());
   assertEquals(savedEndpoint.getDomain(),translatedEndpoint.getDomain());
   assertEquals(savedEndpoint.getBasePath(),translatedEndpoint.getBasePath());
-  assertEquals(savedDefinition.getLicense(),translatedDefinition.getLicense());
+  assertEquals(savedDefinition.getLicense().getUrl(),translatedDefinition.getLicense().getUrl());
   assertEquals(savedDefinition.getVersion(),translatedDefinition.getVersion());
   Contract savedContract=savedDefinition.getContract();
   Contract translatedContract=translatedDefinition.getContract();
