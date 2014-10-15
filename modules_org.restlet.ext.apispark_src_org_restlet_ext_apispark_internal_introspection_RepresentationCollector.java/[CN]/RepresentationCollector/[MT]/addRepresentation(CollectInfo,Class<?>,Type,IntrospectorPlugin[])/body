@@ -19,6 +19,11 @@
   }
  else {
     representation.setIdentifier(Types.convertPrimitiveType(representationType));
+    String packageName=clazz.getPackage().getName();
+    representation.getSections().add(packageName);
+    if (collectInfo.getSection(packageName) == null) {
+      collectInfo.addSection(new Section(packageName));
+    }
     representation.setName(representationType.getSimpleName());
   }
   boolean isRaw=isFile || ReflectUtils.isJdkClass(representationType);
@@ -34,6 +39,7 @@
         property.setName(field.getName());
         property.setDescription("");
         Class<?> fieldType=ReflectUtils.getSimpleClass(field);
+        addRepresentation(collectInfo,fieldType,field.getGenericType(),introspectorPlugins);
         property.setType(Types.convertPrimitiveType(fieldType));
         property.setMinOccurs(0);
         boolean isCollection=ReflectUtils.isListType(field.getType());
@@ -47,7 +53,7 @@
     for (    IntrospectorPlugin introspectorPlugin : introspectorPlugins) {
       introspectorPlugin.processRepresentation(representation,representationType);
     }
-    collectInfo.addRepresentation(representation.getIdentifier(),representation);
+    collectInfo.addRepresentation(representation);
   }
   return representation.getIdentifier();
 }

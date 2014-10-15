@@ -1,0 +1,41 @@
+{
+  Resource resource=new Resource();
+  resource.setResourcePath(basePath);
+  if (restlet instanceof DocumentedResource) {
+    DocumentedResource documentedServerResource=(DocumentedResource)restlet;
+    resource.setName(documentedServerResource.getResourceName());
+    resource.setDescription(documentedServerResource.getResourceDescription());
+    for (    String identifier : documentedServerResource.getResourceSections()) {
+      if (collectInfo.getSection(identifier) == null) {
+        collectInfo.addSection(new Section(identifier));
+      }
+    }
+    resource.setSections(documentedServerResource.getResourceSections());
+  }
+ else {
+    String sectionName=restlet.getClass().getPackage().getName();
+    if (collectInfo.getSection(sectionName) == null) {
+      Section section=new Section(sectionName);
+      collectInfo.addSection(section);
+    }
+    resource.getSections().add(sectionName);
+  }
+  if (StringUtils.isNullOrEmpty(resource.getName())) {
+    String name=restlet.getClass().getSimpleName();
+    String suffix="ServerResource";
+    if (name.endsWith(suffix) && name.length() > suffix.length()) {
+      name=name.substring(0,name.length() - suffix.length());
+    }
+    resource.setName(name);
+  }
+  Template template=new Template(basePath);
+  for (  String variable : template.getVariableNames()) {
+    PathVariable pathVariable=new PathVariable();
+    pathVariable.setName(variable);
+    resource.getPathVariables().add(pathVariable);
+  }
+  if (scheme != null) {
+    resource.setAuthenticationProtocol(scheme.getName());
+  }
+  return resource;
+}

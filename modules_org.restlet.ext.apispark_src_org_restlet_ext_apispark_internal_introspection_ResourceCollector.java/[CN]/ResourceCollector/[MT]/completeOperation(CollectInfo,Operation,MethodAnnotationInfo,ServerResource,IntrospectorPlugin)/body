@@ -8,13 +8,9 @@
         StatusAnnotationInfo statusAnnotation=AnnotationUtils.getInstance().getStatusAnnotationInfo(thrownClass);
         if (statusAnnotation != null) {
           int statusCode=Integer.parseInt(statusAnnotation.getAnnotationValue());
-          RepresentationCollector.addRepresentation(collectInfo,thrownClass,ReflectUtils.getSimpleClass(thrownClass),introspectorPlugins);
           response=new Response();
           response.setCode(statusCode);
           response.setMessage("Error " + statusCode);
-          PayLoad outputPayLoad=new PayLoad();
-          outputPayLoad.setType(thrownClass.getSimpleName());
-          response.setOutputPayLoad(outputPayLoad);
           operation.getResponses().add(response);
         }
       }
