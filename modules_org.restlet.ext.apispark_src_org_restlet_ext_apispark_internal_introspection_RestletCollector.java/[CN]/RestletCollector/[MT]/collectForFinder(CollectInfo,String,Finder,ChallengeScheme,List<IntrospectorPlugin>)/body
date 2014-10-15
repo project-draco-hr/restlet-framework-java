@@ -1,0 +1,14 @@
+{
+  if (finder instanceof Directory) {
+    ResourceCollector.collectResourceForDirectory(collectInfo,(Directory)finder,basePath,scheme,introspectorPlugins);
+  }
+ else {
+    ServerResource serverResource=finder.find(null,null);
+    if (serverResource != null) {
+      ResourceCollector.collectResourceForServletResource(collectInfo,serverResource,basePath,scheme,introspectorPlugins);
+    }
+ else {
+      LOGGER.fine("Finder has no server resource. Class " + finder.getClass());
+    }
+  }
+}

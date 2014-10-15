@@ -1,0 +1,14 @@
+{
+  Resource resource=getResource(directory,basePath,scheme);
+  ArrayList<Operation> operations=new ArrayList<Operation>();
+  operations.add(getOperationFromMethod(Method.GET));
+  if (directory.isModifiable()) {
+    operations.add(getOperationFromMethod(Method.DELETE));
+    operations.add(getOperationFromMethod(Method.PUT));
+  }
+  resource.setOperations(operations);
+  for (  IntrospectorPlugin introspectorPlugin : introspectorPlugins) {
+    introspectorPlugin.processResource(resource,directory);
+  }
+  collectInfo.addResource(resource);
+}

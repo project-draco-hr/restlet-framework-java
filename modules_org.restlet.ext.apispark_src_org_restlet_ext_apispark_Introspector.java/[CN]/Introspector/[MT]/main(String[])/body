@@ -9,6 +9,7 @@
   String language=null;
   String versionId=null;
   String updateStrategy=null;
+  List<IntrospectorPlugin> introspectorPlugins=new ArrayList<IntrospectorPlugin>();
   boolean newVersion=false;
   boolean create=false;
   LOGGER.fine("Get parameters");
@@ -46,6 +47,11 @@
     }
  else     if ("-l".equals(args[i]) || "--language".equals(args[i])) {
       language=getParameter(args,++i).toLowerCase();
+    }
+ else     if ("-i".equals(args[i]) || "--introspector-plugins".equals(args[i])) {
+      String introspectorPluginClass=getParameter(args,++i);
+      IntrospectorPlugin introspectorPlugin=ReflectUtils.newInstance(introspectorPluginClass,IntrospectorPlugin.class);
+      introspectorPlugins.add(introspectorPlugin);
     }
  else     if ("-V".equals(args[i]) || "--verbose".equals(args[i])) {
       Engine.setLogLevel(Level.FINE);
@@ -96,7 +102,7 @@
     if (Application.class.isAssignableFrom(clazz)) {
       Application application=ApplicationIntrospector.getApplication(defSource);
       Component component=ComponentIntrospector.getComponent(compName);
-      definition=ApplicationIntrospector.getDefinition(application,null,component);
+      definition=ApplicationIntrospector.getDefinition(application,null,component,introspectorPlugins);
     }
  else     if (clazz != null) {
       javax.ws.rs.core.Application jaxrsApplication=JaxrsIntrospector.getApplication(defSource);

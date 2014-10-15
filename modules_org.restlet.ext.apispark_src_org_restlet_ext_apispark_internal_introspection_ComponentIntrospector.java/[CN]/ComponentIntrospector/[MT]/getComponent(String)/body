@@ -1,20 +1,3 @@
 {
-  if (className == null) {
-    return null;
-  }
-  try {
-    Class<?> clazz=Class.forName(className);
-    if (Component.class.isAssignableFrom(clazz)) {
-      return (Component)clazz.getConstructor().newInstance();
-    }
- else {
-      throw new RuntimeException(className + " does not seem to a valid subclass of " + Component.class.getName()+ " class.");
-    }
-  }
- catch (  ClassNotFoundException e) {
-    throw new RuntimeException("Cannot locate the component class.",e);
-  }
-catch (  Exception e) {
-    throw new RuntimeException("Cannot instantiate the component class. " + "Check that the component class has an empty constructor.",e);
-  }
+  return ReflectUtils.newInstance(className,Component.class);
 }

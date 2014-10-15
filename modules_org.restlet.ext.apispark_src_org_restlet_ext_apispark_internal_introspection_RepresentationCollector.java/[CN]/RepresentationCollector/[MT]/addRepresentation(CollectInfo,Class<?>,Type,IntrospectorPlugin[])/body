@@ -1,0 +1,53 @@
+{
+  Representation representation=new Representation();
+  representation.setDescription("");
+  Class<?> c=ReflectUtils.getSimpleClass(type);
+  Class<?> representationType=(c == null) ? clazz : c;
+  boolean generic=c != null && !c.getCanonicalName().equals(clazz.getCanonicalName());
+  boolean isList=ReflectUtils.isListType(clazz);
+  if (generic || isList) {
+    addRepresentation(collectInfo,representationType,representationType.getGenericSuperclass(),introspectorPlugins);
+    return null;
+  }
+  if (Types.isPrimitiveType(representationType) || ReflectUtils.isJdkClass(representationType)) {
+    return null;
+  }
+  boolean isFile=org.restlet.representation.Representation.class.isAssignableFrom(clazz);
+  if (isFile) {
+    representation.setIdentifier("file");
+    representation.setName("file");
+  }
+ else {
+    representation.setIdentifier(Types.convertPrimitiveType(representationType));
+    representation.setName(representationType.getSimpleName());
+  }
+  boolean isRaw=isFile || ReflectUtils.isJdkClass(representationType);
+  representation.setRaw(isRaw);
+  boolean notInCache=collectInfo.getRepresentation(representation.getIdentifier()) == null;
+  if (notInCache) {
+    if (!isRaw) {
+      for (      Field field : ReflectUtils.getAllDeclaredFields(representationType)) {
+        if ("serialVersionUID".equals(field.getName())) {
+          continue;
+        }
+        Property property=new Property();
+        property.setName(field.getName());
+        property.setDescription("");
+        Class<?> fieldType=ReflectUtils.getSimpleClass(field);
+        property.setType(Types.convertPrimitiveType(fieldType));
+        property.setMinOccurs(0);
+        boolean isCollection=ReflectUtils.isListType(field.getType());
+        property.setMaxOccurs(isCollection ? -1 : 1);
+        for (        IntrospectorPlugin introspectorPlugin : introspectorPlugins) {
+          introspectorPlugin.processProperty(property,field);
+        }
+        representation.getProperties().add(property);
+      }
+    }
+    for (    IntrospectorPlugin introspectorPlugin : introspectorPlugins) {
+      introspectorPlugin.processRepresentation(representation,representationType);
+    }
+    collectInfo.addRepresentation(representation.getIdentifier(),representation);
+  }
+  return representation.getIdentifier();
+}

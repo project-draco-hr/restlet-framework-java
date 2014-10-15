@@ -1,0 +1,16 @@
+{
+  if (operation.getResponses() == null) {
+    operation.setResponses(new ArrayList<Response>());
+  }
+  Response response=new Response();
+  response.setCode(apiResponse.code());
+  if (!StringUtils.isNullOrEmpty(apiResponse.message())) {
+    response.setDescription(apiResponse.message());
+  }
+  if (apiResponse.response() != null) {
+    PayLoad payLoad=new PayLoad();
+    payLoad.setType(Types.convertPrimitiveType(apiResponse.response()));
+    response.setOutputPayLoad(payLoad);
+  }
+  operation.getResponses().add(response);
+}
