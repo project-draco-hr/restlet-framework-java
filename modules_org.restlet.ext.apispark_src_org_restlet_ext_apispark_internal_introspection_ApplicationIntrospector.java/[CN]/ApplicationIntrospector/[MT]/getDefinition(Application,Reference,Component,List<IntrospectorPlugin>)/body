@@ -21,6 +21,7 @@
   RestletCollector.collect(collectInfo,"",application.getInboundRoot(),null,introspectorPlugins);
   contract.setResources(collectInfo.getResources());
   contract.setRepresentations(collectInfo.getRepresentations());
+  contract.setSections(collectInfo.getSections());
   String scheme=collectInfo.getSchemes().isEmpty() ? null : collectInfo.getSchemes().get(0).getName();
   if (baseRef != null) {
     Endpoint endpoint=new Endpoint(baseRef.getHostDomain(),baseRef.getHostPort(),baseRef.getSchemeProtocol().getSchemeName(),baseRef.getPath(),scheme);
@@ -44,7 +45,8 @@
     Endpoint endpoint=new Endpoint("example.com",80,Protocol.HTTP.getSchemeName(),"/v1",scheme);
     definition.getEndpoints().add(endpoint);
   }
-  IntrospectionUtils.sortDefinition(definition);
+  sortDefinition(definition);
+  updateRepresentationsSectionsFromResources(definition);
   for (  IntrospectorPlugin introspectorPlugin : introspectorPlugins) {
     introspectorPlugin.processDefinition(definition,application);
   }
