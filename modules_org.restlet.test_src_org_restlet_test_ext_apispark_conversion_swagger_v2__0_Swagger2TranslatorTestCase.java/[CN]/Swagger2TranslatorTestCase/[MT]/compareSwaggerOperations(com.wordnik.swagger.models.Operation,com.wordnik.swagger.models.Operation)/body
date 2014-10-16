@@ -1,0 +1,43 @@
+{
+  if (savedOperation != null || translatedOperation != null) {
+    assertNotNull(savedOperation);
+    assertNotNull(translatedOperation);
+    assertEquals(savedOperation.getDescription(),translatedOperation.getDescription());
+    assertEquals(savedOperation.getOperationId(),translatedOperation.getOperationId());
+    assertEquals(savedOperation.getSummary(),translatedOperation.getSummary());
+    List<String> savedConsumes=savedOperation.getConsumes();
+    List<String> translatedConsumes=translatedOperation.getConsumes();
+    compareStringLists(savedConsumes,translatedConsumes);
+    List<String> savedProduces=savedOperation.getProduces();
+    List<String> translatedProduces=translatedOperation.getProduces();
+    compareStringLists(savedProduces,translatedProduces);
+    List<com.wordnik.swagger.models.parameters.Parameter> savedParameters=savedOperation.getParameters();
+    List<com.wordnik.swagger.models.parameters.Parameter> translatedParameters=translatedOperation.getParameters();
+    if (savedParameters != null || translatedParameters != null) {
+      assertNotNull(savedParameters);
+      assertNotNull(translatedParameters);
+      for (      com.wordnik.swagger.models.parameters.Parameter savedParameter : savedParameters) {
+        com.wordnik.swagger.models.parameters.Parameter translatedParameter=getParameterFromList(translatedParameters,savedParameter.getName());
+        assertNotNull(savedParameter);
+        assertNotNull(translatedParameter);
+        compareSwaggerParameters(savedParameter,translatedParameter);
+      }
+    }
+    Map<String,com.wordnik.swagger.models.Response> savedResponses=savedOperation.getResponses();
+    Map<String,com.wordnik.swagger.models.Response> translatedResponses=translatedOperation.getResponses();
+    if (savedResponses != null || translatedResponses != null) {
+      assertNotNull(savedResponses);
+      assertNotNull(translatedResponses);
+      for (      Entry<String,com.wordnik.swagger.models.Response> entry : savedResponses.entrySet()) {
+        com.wordnik.swagger.models.Response savedResponse=savedResponses.get(entry.getKey());
+        com.wordnik.swagger.models.Response translatedResponse=translatedResponses.get(entry.getKey());
+        assertNotNull(savedResponse);
+        assertNotNull(translatedResponse);
+        compareSwaggerResponses(savedResponse,translatedResponse);
+      }
+    }
+    List<String> savedTags=savedOperation.getTags();
+    List<String> translatedTags=translatedOperation.getTags();
+    compareStringLists(savedTags,translatedTags);
+  }
+}

@@ -1,0 +1,31 @@
+{
+  compareSwaggerMainAttributes(savedSwagger,translatedSwagger);
+  Info savedInfo=savedSwagger.getInfo();
+  Info translatedInfo=translatedSwagger.getInfo();
+  compareSwaggerInfo(savedInfo,translatedInfo);
+  Contact savedContact=savedInfo.getContact();
+  Contact translatedContact=translatedInfo.getContact();
+  compareSwaggerContact(savedContact,translatedContact);
+  com.wordnik.swagger.models.License savedLicense=savedInfo.getLicense();
+  com.wordnik.swagger.models.License translatedLicense=translatedInfo.getLicense();
+  assertEquals(savedLicense.getUrl(),translatedLicense.getUrl());
+  assertEquals(savedLicense.getName(),translatedLicense.getName());
+  Map<String,Model> savedModels=savedSwagger.getDefinitions();
+  Map<String,Model> translatedModels=translatedSwagger.getDefinitions();
+  for (  Entry<String,Model> entry : savedModels.entrySet()) {
+    Model savedModel=savedModels.get(entry.getKey());
+    Model translatedModel=translatedModels.get(entry.getKey());
+    assertNotNull(savedModel);
+    assertNotNull(translatedModel);
+    compareSwaggerModels(savedModel,translatedModel);
+  }
+  Map<String,Path> savedPaths=savedSwagger.getPaths();
+  Map<String,Path> translatedPaths=translatedSwagger.getPaths();
+  for (  Entry<String,Path> entry : savedPaths.entrySet()) {
+    Path savedPath=savedPaths.get(entry.getKey());
+    Path translatedPath=translatedPaths.get(entry.getKey());
+    assertNotNull(savedPath);
+    assertNotNull(translatedPath);
+    compareSwaggerPaths(savedPath,translatedPath);
+  }
+}
