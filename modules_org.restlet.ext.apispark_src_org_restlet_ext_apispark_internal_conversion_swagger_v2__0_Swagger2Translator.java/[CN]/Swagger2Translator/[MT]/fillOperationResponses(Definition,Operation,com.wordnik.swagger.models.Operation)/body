@@ -1,9 +1,9 @@
 {
-  for (  Response reponse : operation.getResponses()) {
+  for (  Response response : operation.getResponses()) {
     com.wordnik.swagger.models.Response responseSwagger=new com.wordnik.swagger.models.Response();
-    responseSwagger.setDescription(reponse.getDescription());
-    if (reponse.getOutputPayLoad() != null) {
-      PayLoad entity=reponse.getOutputPayLoad();
+    responseSwagger.setDescription(response.getDescription());
+    if (response.getOutputPayLoad() != null && response.getOutputPayLoad().getType() != null) {
+      PayLoad entity=response.getOutputPayLoad();
       final Representation representation=definition.getContract().getRepresentation(entity.getType());
       if (representation != null && representation.isRaw()) {
         FileProperty fileProperty=new FileProperty();
@@ -19,6 +19,6 @@
         responseSwagger.setSchema(newPropertyForType(entity.getType()));
       }
     }
-    operationSwagger.addResponse(String.valueOf(reponse.getCode()),responseSwagger);
+    operationSwagger.addResponse(String.valueOf(response.getCode()),responseSwagger);
   }
 }
