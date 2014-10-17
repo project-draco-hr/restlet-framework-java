@@ -1,6 +1,7 @@
 {
   Definition savedDefinition=new JacksonRepresentation<Definition>(new FileRepresentation(getClass().getResource("refImpl.rwadef").getFile(),MediaType.APPLICATION_JSON),Definition.class).getObject();
   Swagger translatedSwagger=Swagger2Translator.getSwagger(savedDefinition);
-  Swagger savedSwagger=new SwaggerLoader().read("src/org/restlet/test/ext/apispark/conversion/swagger/v2_0/refImpl.swagger");
+  URL refImpl=getClass().getResource("refImpl.swagger");
+  Swagger savedSwagger=new SwaggerLoader().read(refImpl.getFile());
   compareSwaggerBeans(savedSwagger,translatedSwagger);
 }
