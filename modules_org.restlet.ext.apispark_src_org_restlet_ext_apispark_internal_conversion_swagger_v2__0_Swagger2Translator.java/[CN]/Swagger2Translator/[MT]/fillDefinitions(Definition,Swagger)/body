@@ -3,6 +3,10 @@
     if (representation.isRaw() || Types.isPrimitiveType(representation.getName())) {
       continue;
     }
+    if (org.restlet.engine.util.StringUtils.isNullOrEmpty(representation.getIdentifier())) {
+      LOGGER.warning("A representation should have an identifier:" + representation.getName());
+      continue;
+    }
     ModelImpl modelSwagger=new ModelImpl();
     modelSwagger.setName(representation.getIdentifier());
     modelSwagger.setDescription(representation.getDescription());
