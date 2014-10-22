@@ -9,7 +9,7 @@
   if (remote) {
     LOGGER.log(Level.FINE,"Reading file: " + swaggerUrl);
     resourceListing=createAuthenticatedClientResource(swaggerUrl,userName,password).get(ResourceListing.class);
-    for (    ResourceDeclaration api : resourceListing.getApis()) {
+    for (    ResourceListingApi api : resourceListing.getApis()) {
       LOGGER.log(Level.FINE,"Reading file: " + swaggerUrl + api.getPath());
       apis.put(api.getPath(),createAuthenticatedClientResource(swaggerUrl + api.getPath(),userName,password).get(ApiDeclaration.class));
     }
@@ -21,7 +21,7 @@
       resourceListing=om.readValue(resourceListingFile,ResourceListing.class);
       String basePath=resourceListingFile.getParent();
       LOGGER.log(Level.FINE,"Base path: " + basePath);
-      for (      ResourceDeclaration api : resourceListing.getApis()) {
+      for (      ResourceListingApi api : resourceListing.getApis()) {
         LOGGER.log(Level.FINE,"Reading file " + basePath + api.getPath());
         apis.put(api.getPath(),om.readValue(new File(basePath + api.getPath()),ApiDeclaration.class));
       }

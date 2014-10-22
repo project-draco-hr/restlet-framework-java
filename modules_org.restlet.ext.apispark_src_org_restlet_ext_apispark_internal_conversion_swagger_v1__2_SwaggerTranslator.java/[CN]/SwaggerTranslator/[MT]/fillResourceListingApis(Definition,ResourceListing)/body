@@ -3,10 +3,10 @@
   boolean allResources=contract.getSections().isEmpty();
   List<String> addedApis=new ArrayList<String>();
   if (definition.getContract() != null && contract.getResources() != null) {
-    listing.setApis(new ArrayList<ResourceDeclaration>());
+    listing.setApis(new ArrayList<ResourceListingApi>());
     for (    Resource resource : contract.getResources()) {
-      ResourceDeclaration rd=new ResourceDeclaration();
       if (allResources) {
+        ResourceListingApi rd=new ResourceListingApi();
         rd.setDescription(resource.getDescription());
         rd.setPath(ReflectUtils.getFirstSegment(resource.getResourcePath()));
         if (!addedApis.contains(rd.getPath())) {
@@ -17,7 +17,7 @@
  else {
         for (        String sectionName : resource.getSections()) {
           Section section=contract.getSection(sectionName);
-          rd=new ResourceDeclaration();
+          ResourceListingApi rd=new ResourceListingApi();
           rd.setDescription(section.getDescription());
           rd.setPath("/" + sectionName);
           if (!addedApis.contains(rd.getPath())) {
@@ -28,8 +28,8 @@
       }
     }
   }
-  Collections.sort(listing.getApis(),new Comparator<ResourceDeclaration>(){
-    @Override public int compare(    ResourceDeclaration o1,    ResourceDeclaration o2){
+  Collections.sort(listing.getApis(),new Comparator<ResourceListingApi>(){
+    @Override public int compare(    ResourceListingApi o1,    ResourceListingApi o2){
       return o1.getPath().compareTo(o2.getPath());
     }
   }
