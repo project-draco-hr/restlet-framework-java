@@ -25,7 +25,7 @@
     Type inputType=mai.getJavaMethod().getGenericParameterTypes()[0];
     RepresentationCollector.addRepresentation(collectInfo,inputClass,inputType,introspectorPlugins);
     PayLoad inputEntity=new PayLoad();
-    inputEntity.setType(ReflectUtils.getSimpleClass(inputType).getName());
+    inputEntity.setType(Types.convertPrimitiveType(ReflectUtils.getSimpleClass(inputType)));
     inputEntity.setArray(ReflectUtils.isListType(inputClass));
     operation.setInputPayLoad(inputEntity);
     if (metadataService != null) {
@@ -66,7 +66,7 @@
   if (outputClass != Void.TYPE) {
     RepresentationCollector.addRepresentation(collectInfo,outputClass,outputType,introspectorPlugins);
     PayLoad outputEntity=new PayLoad();
-    outputEntity.setType(ReflectUtils.getSimpleClass(outputType).getName());
+    outputEntity.setType(Types.convertPrimitiveType(ReflectUtils.getSimpleClass(outputType)));
     outputEntity.setArray(ReflectUtils.isListType(outputClass));
     response.setOutputPayLoad(outputEntity);
   }
