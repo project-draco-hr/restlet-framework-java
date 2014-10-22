@@ -1,0 +1,10 @@
+{
+  Set<Method> result=super.getAccessControlRequestMethod();
+  if (!accessControlRequestMethodAdded) {
+    for (    String header : getHeaders().getValuesArray(HeaderConstants.HEADER_ACCESS_CONTROL_REQUEST_METHOD,true)) {
+      new MethodReader(header).addValues(result);
+    }
+    accessControlRequestMethodAdded=true;
+  }
+  return result;
+}
