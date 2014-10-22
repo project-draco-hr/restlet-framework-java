@@ -1,39 +1,34 @@
 {
-  @SuppressWarnings("unchecked") Series<Header> headers=(Series<Header>)response.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
-  if (headers == null) {
-    headers=new Series<Header>(Header.class);
-    response.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,headers);
-  }
-  headers.set("Access-Control-Allow-Origin",allowOrigin);
+  response.setAccessControlAllowOrigin(allowOrigin);
   if (allowCredentials) {
-    headers.set("Access-Control-Allow-Credentials","true");
+    response.setAccessControlAllowCredential(true);
   }
-  if (allowOnlyRequestedMethods) {
+  if (allowOnlyRequestedMethod) {
     if (request == null) {
-      throw new RuntimeException("If allowOnlyRequestedMethods is true, it requires the request parameter");
+      throw new RuntimeException("If allowOnlyRequestedMethod is true, it requires the request parameter");
     }
-    String accessControlRequestMethods=request.getHeaders().getValues("Access-Control-Request-Methods");
-    if (accessControlRequestMethods != null) {
-      headers.set("Access-Control-Allow-Methods",accessControlRequestMethods);
+    Set<Method> accessControlRequestMethods=request.getAccessControlRequestMethod();
+    if (!accessControlRequestMethods.isEmpty()) {
+      response.setAccessControlAllowMethods(accessControlRequestMethods);
     }
   }
  else {
     if (allowMethods != null) {
-      headers.set("Access-Control-Allow-Methods",allowMethods);
+      response.setAccessControlAllowMethods(allowMethods);
     }
   }
-  if (allowOnlyRequestedHeader) {
+  if (allowOnlyRequestedHeaders) {
     if (request == null) {
-      throw new RuntimeException("If allowOnlyRequestedHeader is true, it requires the request parameter");
+      throw new RuntimeException("If allowOnlyRequestedHeaders is true, it requires the request parameter");
     }
-    String accessControlRequestHeaders=request.getHeaders().getValues("Access-Control-Request-Headers");
-    if (accessControlRequestHeaders != null) {
-      headers.set("Access-Control-Allow-Headers",accessControlRequestHeaders);
+    Set<HeaderName> accessControlRequestHeaders=request.getAccessControlRequestHeaders();
+    if (!accessControlRequestHeaders.isEmpty()) {
+      response.setAccessControlAllowHeaders(accessControlRequestHeaders);
     }
   }
  else {
     if (allowHeaders != null) {
-      headers.set("Access-Control-Allow-Headers",allowHeaders);
+      response.setAccessControlAllowHeaders(allowHeaders);
     }
   }
 }
