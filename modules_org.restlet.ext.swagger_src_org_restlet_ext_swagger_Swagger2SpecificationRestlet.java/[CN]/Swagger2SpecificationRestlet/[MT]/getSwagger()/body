@@ -1,3 +1,6 @@
 {
-  return new JacksonRepresentation<Swagger>(Swagger2Translator.getSwagger(getDefinition()));
+  JacksonRepresentation<Swagger> swaggerJacksonRepresentation=new JacksonRepresentation<Swagger>(Swagger2Translator.getSwagger(getDefinition()));
+  ObjectMapper objectMapper=swaggerJacksonRepresentation.getObjectMapper();
+  objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+  return swaggerJacksonRepresentation;
 }
