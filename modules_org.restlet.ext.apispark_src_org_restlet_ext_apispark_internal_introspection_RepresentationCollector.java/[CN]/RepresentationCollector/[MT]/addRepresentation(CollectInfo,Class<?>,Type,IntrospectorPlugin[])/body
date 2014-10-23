@@ -30,6 +30,7 @@
   representation.setRaw(isRaw);
   boolean notInCache=collectInfo.getRepresentation(representation.getIdentifier()) == null;
   if (notInCache) {
+    collectInfo.addRepresentation(representation);
     if (!isRaw) {
       for (      Field field : ReflectUtils.getAllDeclaredFields(representationType)) {
         if ("serialVersionUID".equals(field.getName())) {
@@ -53,7 +54,6 @@
     for (    IntrospectorPlugin introspectorPlugin : introspectorPlugins) {
       introspectorPlugin.processRepresentation(representation,representationType);
     }
-    collectInfo.addRepresentation(representation);
   }
   return representation.getIdentifier();
 }
