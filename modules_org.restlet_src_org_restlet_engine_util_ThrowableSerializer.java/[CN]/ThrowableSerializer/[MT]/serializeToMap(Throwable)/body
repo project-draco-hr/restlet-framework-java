@@ -1,0 +1,14 @@
+{
+  try {
+    BeanInfo beanInfo=getBeanInfo(throwable);
+    Map<String,Object> properties=new HashMap<String,Object>();
+    PropertyDescriptor[] propertyDescriptors=beanInfo.getPropertyDescriptors();
+    for (    PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+      properties.put(propertyDescriptor.getName(),propertyDescriptor.getReadMethod().invoke(throwable));
+    }
+    return properties;
+  }
+ catch (  Exception e) {
+    throw new RuntimeException("Could not serialize properties of class " + throwable.getCause(),e);
+  }
+}
