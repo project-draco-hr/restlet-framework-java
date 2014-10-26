@@ -1,0 +1,36 @@
+{
+  Representation result=null;
+  if (converterService != null && connegService != null && metadataService != null) {
+    Map<String,Object> representationMap=null;
+    Throwable cause=throwable != null ? throwable : status.getThrowable();
+    if (cause != null) {
+      org.restlet.engine.resource.StatusAnnotationInfo sai=org.restlet.engine.resource.AnnotationUtils.getInstance().getStatusAnnotationInfo(cause.getClass());
+      if (sai != null && sai.isSerializeProperties()) {
+        try {
+          representationMap=ThrowableSerializer.serializeToMap(cause);
+        }
+ catch (        Exception e) {
+          Context.getCurrentLogger().log(Level.WARNING,"Could not serialize throwable class " + cause.getClass(),e);
+        }
+      }
+    }
+    if (representationMap == null) {
+      representationMap=new LinkedHashMap<String,Object>();
+      representationMap.put("code",status.getCode());
+      representationMap.put("reasonPhrase",status.getReasonPhrase());
+      representationMap.put("description",status.getDescription());
+    }
+    List<VariantInfo> variants=ConverterUtils.getVariants(representationMap.getClass(),null);
+    if (!variants.contains(VARIANT_HTML)) {
+      variants.add(VARIANT_HTML);
+    }
+    Variant variant=connegService.getPreferredVariant(variants,request,metadataService);
+    try {
+      result=converterService.toRepresentation(representationMap,variant);
+    }
+ catch (    IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+  return result;
+}

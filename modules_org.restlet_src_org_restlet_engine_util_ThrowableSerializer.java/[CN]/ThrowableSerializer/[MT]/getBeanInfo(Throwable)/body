@@ -1,0 +1,11 @@
+{
+  BeanInfo result=cache.get(throwable.getClass());
+  if (result == null) {
+    result=Introspector.getBeanInfo(throwable.getClass(),Throwable.class,Introspector.IGNORE_ALL_BEANINFO);
+    BeanInfo prev=cache.putIfAbsent(throwable.getClass(),result);
+    if (prev != null) {
+      result=prev;
+    }
+  }
+  return result;
+}
