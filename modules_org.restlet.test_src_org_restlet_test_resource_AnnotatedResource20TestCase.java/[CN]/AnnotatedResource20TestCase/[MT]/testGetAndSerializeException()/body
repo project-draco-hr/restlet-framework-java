@@ -8,5 +8,12 @@
   }
 catch (  ResourceException e) {
     assertEquals(400,e.getStatus().getCode());
+    Representation responseEntity=clientResource.getResponseEntity();
+    assertTrue(JacksonRepresentation.class.isAssignableFrom(responseEntity.getClass()));
+    JacksonRepresentation jacksonRepresentation=(JacksonRepresentation)responseEntity;
+    Object entity=jacksonRepresentation.getObject();
+    assertTrue(Map.class.isAssignableFrom(entity.getClass()));
+    Map<String,Object> map=(Map<String,Object>)entity;
+    assertEquals("my custom error",map.get("customProperty"));
   }
 }
