@@ -32,21 +32,20 @@
   if (notInCache) {
     collectInfo.addRepresentation(representation);
     if (!isRaw) {
-      for (      Field field : ReflectUtils.getAllDeclaredFields(representationType)) {
-        if ("serialVersionUID".equals(field.getName())) {
-          continue;
-        }
+      BeanInfo beanInfo=BeanInfoUtils.getBeanInfo(representationType);
+      for (      PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
+        Class<?> propertyClazz=pd.getReadMethod().getReturnType();
+        Type propertyType=pd.getReadMethod().getGenericReturnType();
         Property property=new Property();
-        property.setName(field.getName());
+        property.setName(pd.getName());
         property.setDescription("");
-        Class<?> fieldType=ReflectUtils.getSimpleClass(field);
-        addRepresentation(collectInfo,fieldType,field.getGenericType(),introspectorPlugins);
-        property.setType(Types.convertPrimitiveType(fieldType));
+        property.setType(Types.convertPrimitiveType(ReflectUtils.getSimpleClass(propertyType)));
         property.setMinOccurs(0);
-        boolean isCollection=ReflectUtils.isListType(field.getType());
+        boolean isCollection=ReflectUtils.isListType(propertyClazz);
         property.setMaxOccurs(isCollection ? -1 : 1);
+        addRepresentation(collectInfo,propertyClazz,propertyType,introspectorPlugins);
         for (        IntrospectorPlugin introspectorPlugin : introspectorPlugins) {
-          introspectorPlugin.processProperty(property,field);
+          introspectorPlugin.processProperty(property,pd.getReadMethod());
         }
         representation.getProperties().add(property);
       }
