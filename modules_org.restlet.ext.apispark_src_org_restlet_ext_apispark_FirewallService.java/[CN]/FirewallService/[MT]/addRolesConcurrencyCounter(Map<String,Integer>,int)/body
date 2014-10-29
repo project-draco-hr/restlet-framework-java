@@ -1,3 +1,5 @@
 {
-  FirewallUtils.addRolesConcurrencyCounter(firewall,limitsPerRole,defaultLimit);
+  FirewallCounterRule rule=new ConcurrentFirewallCounterRule(new UserCountingPolicy());
+  rule.addHandler(new BlockingHandler(new RoleLimitPolicy(limitsPerRole,defaultLimit)));
+  add(rule);
 }

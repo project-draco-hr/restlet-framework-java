@@ -1,3 +1,9 @@
 {
-  FirewallUtils.addIpAddressesBlackList(firewall,blackList);
+  FirewallCounterRule rule=new ConcurrentFirewallCounterRule(new IpAddressCountingPolicy());
+  Map<String,Integer> map=new HashMap<String,Integer>();
+  for (  String ip : blackList) {
+    map.put(ip,0);
+  }
+  rule.addHandler(new BlockingHandler(new PerValueLimitPolicy(map,Integer.MAX_VALUE)));
+  add(rule);
 }

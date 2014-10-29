@@ -45,13 +45,13 @@
   }
 );
   LOGGER.fine("Check parameters");
-  if (isEmpty(serviceUrl)) {
+  if (IntrospectionUtils.isEmpty(serviceUrl)) {
     serviceUrl="https://apispark.com/";
   }
   if (!serviceUrl.endsWith("/")) {
     serviceUrl+="/";
   }
-  if (isEmpty(ulogin) || isEmpty(upwd) || isEmpty(defSource)) {
+  if (IntrospectionUtils.isEmpty(ulogin) || IntrospectionUtils.isEmpty(upwd) || IntrospectionUtils.isEmpty(defSource)) {
     printHelp();
     System.exit(1);
   }
@@ -68,7 +68,7 @@
         component=getComponent(compName);
       }
  else       if (clazz != null) {
-        a=JaxrsIntrospector.getApplication(defSource);
+        a=IntrospectionUtils.getApplication(defSource);
       }
     }
  catch (    ClassNotFoundException e) {
@@ -83,7 +83,7 @@
   }
  else   if (a != null) {
     LOGGER.fine("Instantiate introspector");
-    JaxrsIntrospector i=new JaxrsIntrospector(a);
+    JaxRsIntrospector2 i=new JaxRsIntrospector2(a);
     LOGGER.info("Generate documentation");
     definition=i.getDefinition();
   }
@@ -91,7 +91,7 @@
     definition=SwaggerUtils.getDefinition(defSource,ulogin,upwd);
   }
   if (definition != null) {
-    sendDefinition(definition,definitionId,ulogin,upwd,serviceUrl,LOGGER);
+    IntrospectionUtils.sendDefinition(definition,definitionId,ulogin,upwd,serviceUrl,LOGGER);
   }
  else {
     LOGGER.severe("Please provide a valid application class name or definition URL.");

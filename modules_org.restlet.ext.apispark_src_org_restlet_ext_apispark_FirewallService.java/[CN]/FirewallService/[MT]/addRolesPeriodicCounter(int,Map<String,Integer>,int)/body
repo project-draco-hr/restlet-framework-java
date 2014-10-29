@@ -1,3 +1,5 @@
 {
-  FirewallUtils.addRolesPeriodicCounter(firewall,period,limitsPerRole,defaultLimit);
+  FirewallCounterRule rule=new PeriodicFirewallCounterRule(period,new UserCountingPolicy());
+  rule.addHandler(new BlockingHandler(new RoleLimitPolicy(limitsPerRole,defaultLimit)));
+  add(rule);
 }
