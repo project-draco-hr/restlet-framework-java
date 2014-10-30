@@ -1,22 +1,19 @@
 {
-  Status result=null;
+  Status result;
+  Status defaultStatus=Status.SERVER_ERROR_INTERNAL;
+  Throwable t=throwable;
   if (throwable instanceof ResourceException) {
-    ResourceException re=(ResourceException)throwable;
-    if (re.getCause() != null && re.getCause() != throwable) {
-      result=toStatus(re.getCause(),request,response);
-    }
- else {
-      result=re.getStatus();
+    defaultStatus=((ResourceException)throwable).getStatus();
+    if (throwable.getCause() != null && throwable.getCause() != throwable) {
+      t=throwable.getCause();
     }
   }
+  org.restlet.engine.resource.StatusAnnotationInfo sai=org.restlet.engine.resource.AnnotationUtils.getInstance().getStatusAnnotationInfo(t.getClass());
+  if (sai != null) {
+    result=new Status(sai.getStatus(),t);
+  }
  else {
-    org.restlet.engine.resource.StatusAnnotationInfo sai=org.restlet.engine.resource.AnnotationUtils.getInstance().getStatusAnnotationInfo(throwable.getClass());
-    if (sai != null) {
-      result=new Status(sai.getStatus(),throwable);
-    }
- else {
-      result=new Status(Status.SERVER_ERROR_INTERNAL,throwable);
-    }
+    result=new Status(defaultStatus,t);
   }
   return result;
 }
