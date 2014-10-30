@@ -1,34 +1,41 @@
 {
-  response.setAccessControlAllowOrigin(allowOrigin);
+  String origin=request.getHeaders().getFirstValue("Origin",true);
+  if (origin == null) {
+    return;
+  }
+  if (!allowOrigins.contains("*") && !allowOrigins.contains(origin)) {
+    return;
+  }
+  boolean isPreflightRequest=Method.OPTIONS.equals(request.getMethod());
+  if (isPreflightRequest) {
+    Method accessControlRequestMethod=request.getAccessControlRequestMethod();
+    if (accessControlRequestMethod == null) {
+      return;
+    }
+    Method requestedMethod=request.getAccessControlRequestMethod();
+    if (requestedMethod == null) {
+      return;
+    }
+    if (!allowOnlyRequestedMethod && (allowMethods == null || !allowMethods.contains(requestedMethod))) {
+      return;
+    }
+    Set<String> requestedHeaders=request.getAccessControlRequestHeaders();
+    if (requestedHeaders == null) {
+      requestedHeaders=SetUtils.newHashSet();
+    }
+    if (!allowOnlyRequestedHeaders && (allowHeaders == null || !isAllHeadersAllowed(allowHeaders,requestedHeaders))) {
+      return;
+    }
+    response.setAccessControlAllowMethods(SetUtils.newHashSet(requestedMethod));
+    response.setAccessControlAllowHeaders(requestedHeaders);
+  }
+ else {
+    if (exposeHeaders != null && !exposeHeaders.isEmpty()) {
+      response.setAccessControlExposeHeaders(exposeHeaders);
+    }
+  }
   if (allowCredentials) {
     response.setAccessControlAllowCredential(true);
   }
-  if (allowOnlyRequestedMethod) {
-    if (request == null) {
-      throw new RuntimeException("If allowOnlyRequestedMethod is true, it requires the request parameter");
-    }
-    Set<Method> accessControlRequestMethods=request.getAccessControlRequestMethod();
-    if (!accessControlRequestMethods.isEmpty()) {
-      response.setAccessControlAllowMethods(accessControlRequestMethods);
-    }
-  }
- else {
-    if (allowMethods != null) {
-      response.setAccessControlAllowMethods(allowMethods);
-    }
-  }
-  if (allowOnlyRequestedHeaders) {
-    if (request == null) {
-      throw new RuntimeException("If allowOnlyRequestedHeaders is true, it requires the request parameter");
-    }
-    Set<String> accessControlRequestHeaders=request.getAccessControlRequestHeaders();
-    if (!accessControlRequestHeaders.isEmpty()) {
-      response.setAccessControlAllowHeaders(accessControlRequestHeaders);
-    }
-  }
- else {
-    if (allowHeaders != null) {
-      response.setAccessControlAllowHeaders(allowHeaders);
-    }
-  }
+  response.setAccessControlAllowOrigin(origin);
 }
