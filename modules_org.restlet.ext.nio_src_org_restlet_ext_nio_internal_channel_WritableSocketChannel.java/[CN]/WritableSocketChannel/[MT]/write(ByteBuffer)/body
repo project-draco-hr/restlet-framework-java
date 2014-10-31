@@ -1,7 +1,9 @@
 {
   int count=0;
-  while (src.hasRemaining()) {
+  int nbLoops=0;
+  while (src.hasRemaining() && nbLoops < src.capacity()) {
     count+=getWrappedChannel().write(src);
+    nbLoops++;
   }
   return count;
 }
