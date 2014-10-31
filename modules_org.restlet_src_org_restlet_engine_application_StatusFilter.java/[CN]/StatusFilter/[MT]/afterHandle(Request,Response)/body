@@ -3,6 +3,16 @@
     response.setStatus(Status.SUCCESS_OK);
   }
   if (response.getStatus().isError() && ((response.getEntity() == null) || isOverwriting())) {
-    response.setEntity(toRepresentation(response.getStatus(),null,request,response));
+    Representation representation=null;
+    try {
+      representation=getStatusService().toRepresentation(response.getStatus(),request,response);
+    }
+ catch (    Exception e) {
+      getLogger().log(Level.WARNING,"Unable to get the custom status representation",e);
+    }
+    if (representation == null) {
+      representation=getDefaultRepresentation(response.getStatus(),request,response);
+    }
+    response.setEntity(representation);
   }
 }
