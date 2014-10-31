@@ -3,9 +3,10 @@
   Engine.getInstance().getRegisteredConverters().clear();
   Engine.getInstance().getRegisteredConverters().add(new JacksonConverter());
   Engine.getInstance().registerDefaultConverters();
-  Finder finder=new Finder();
-  finder.setTargetClass(MyServerResource20.class);
+  Application application=new Application();
+  application.setInboundRoot(MyServerResource20.class);
   this.clientResource=new ClientResource("http://local");
-  this.clientResource.setNext(finder);
+  this.clientResource.accept(MediaType.APPLICATION_JSON);
+  this.clientResource.setNext(application);
   this.myResource=clientResource.wrap(MyResource20.class);
 }

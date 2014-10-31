@@ -1,8 +1,21 @@
 {
   try {
     myResource.represent();
+    fail("Should fail");
   }
- catch (  MyException e) {
-    assertNotNull(e.getDate());
+ catch (  MyException01 e) {
+    fail("Exception should be caught by client resource");
+  }
+catch (  ResourceException e) {
+    assertEquals(400,e.getStatus().getCode());
+    Representation responseEntity=clientResource.getResponseEntity();
+    if (responseEntity instanceof JacksonRepresentation) {
+      assertTrue(JacksonRepresentation.class.isAssignableFrom(responseEntity.getClass()));
+      JacksonRepresentation jacksonRepresentation=(JacksonRepresentation)responseEntity;
+      Object entity=jacksonRepresentation.getObject();
+      assertTrue(StatusRepresentation.class.isAssignableFrom(entity.getClass()));
+      StatusRepresentation statusRepresentation=(StatusRepresentation)entity;
+      assertEquals(400,statusRepresentation.getCode());
+    }
   }
 }
