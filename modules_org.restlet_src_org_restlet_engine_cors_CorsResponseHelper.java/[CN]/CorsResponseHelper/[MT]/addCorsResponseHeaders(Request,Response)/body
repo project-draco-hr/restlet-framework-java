@@ -1,0 +1,55 @@
+{
+  String origin=request.getHeaders().getFirstValue("Origin",true);
+  if (origin == null) {
+    return;
+  }
+  Set<Method> allowedMethods=new HashSet<>(response.getAllowedMethods());
+  response.getAllowedMethods().clear();
+  if (!allowedOrigins.contains("*") && !allowedOrigins.contains(origin)) {
+    LOGGER.fine("Origin " + origin + " not allowed for CORS request");
+    return;
+  }
+  boolean isPreflightRequest=Method.OPTIONS.equals(request.getMethod());
+  if (isPreflightRequest) {
+    if (Status.SUCCESS_OK.equals(response.getStatus()) || Status.SUCCESS_NO_CONTENT.equals(response.getStatus()) || Status.CLIENT_ERROR_METHOD_NOT_ALLOWED.equals(response.getStatus())) {
+      response.setStatus(Status.SUCCESS_OK);
+    }
+ else {
+      LOGGER.fine("The CORS preflight request failed in server resource.");
+      return;
+    }
+    Method requestedMethod=request.getAccessControlRequestMethod();
+    if (requestedMethod == null) {
+      LOGGER.fine("A CORS preflight request should specified header 'Access-Control-Request-Method'");
+      return;
+    }
+    if (!allowedMethods.contains(requestedMethod)) {
+      LOGGER.fine("The CORS preflight request ask for methods not allowed in header 'Access-Control-Request-Method'");
+      return;
+    }
+    Set<String> requestedHeaders=request.getAccessControlRequestHeaders();
+    if (requestedHeaders == null) {
+      requestedHeaders=SetUtils.newHashSet();
+    }
+    if (!allowAllRequestedHeaders && (allowedHeaders == null || !isAllHeadersAllowed(allowedHeaders,requestedHeaders))) {
+      LOGGER.fine("The CORS preflight request ask for headers not allowed in header 'Access-Control-Request-Headers'");
+      return;
+    }
+    response.setAccessControlAllowMethods(allowedMethods);
+    response.setAccessControlAllowHeaders(requestedHeaders);
+  }
+ else {
+    if (exposedHeaders != null && !exposedHeaders.isEmpty()) {
+      response.setAccessControlExposeHeaders(exposedHeaders);
+    }
+  }
+  if (allowedCredentials) {
+    response.setAccessControlAllowCredential(true);
+  }
+  if (!allowedCredentials && allowedOrigins.contains("*")) {
+    response.setAccessControlAllowOrigin("*");
+  }
+ else {
+    response.setAccessControlAllowOrigin(origin);
+  }
+}

@@ -33,6 +33,18 @@
       addHeader(HeaderConstants.HEADER_WWW_AUTHENTICATE,org.restlet.engine.security.AuthenticatorUtils.formatRequest(challengeRequest,response,headers),headers);
     }
   }
+  if (response.getAccessControlAllowCredential() != null) {
+    addHeader(HeaderConstants.HEADER_ACCESS_CONTROL_ALLOW_CREDENTIAL,response.getAccessControlAllowCredential().toString(),headers);
+  }
+  if (response.getAccessControlAllowHeaders() != null) {
+    addHeader(HeaderConstants.HEADER_ACCESS_CONTROL_ALLOW_HEADERS,StringWriter.write(response.getAccessControlAllowHeaders()),headers);
+  }
+  if (response.getAccessControlAllowOrigin() != null) {
+    addHeader(HeaderConstants.HEADER_ACCESS_CONTROL_ALLOW_ORIGIN,response.getAccessControlAllowOrigin(),headers);
+  }
+  if (response.getAccessControlAllowMethods() != null) {
+    addHeader(HeaderConstants.HEADER_ACCESS_CONTROL_ALLOW_METHODS,MethodWriter.write(response.getAccessControlAllowMethods()),headers);
+  }
   if (response.getAuthenticationInfo() != null) {
     addHeader(HeaderConstants.HEADER_AUTHENTICATION_INFO,org.restlet.engine.security.AuthenticatorUtils.formatAuthenticationInfo(response.getAuthenticationInfo()),headers);
   }

@@ -1,0 +1,12 @@
+{
+  Set<Method> a=this.accessControlAllowMethods;
+  if (a == null) {
+synchronized (this) {
+      a=this.accessControlAllowMethods;
+      if (a == null) {
+        this.accessControlAllowMethods=a=new CopyOnWriteArraySet<Method>();
+      }
+    }
+  }
+  return a;
+}

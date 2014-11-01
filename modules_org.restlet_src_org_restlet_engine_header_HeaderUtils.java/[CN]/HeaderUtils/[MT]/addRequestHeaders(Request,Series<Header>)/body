@@ -69,6 +69,12 @@
   if (clientInfo.getExpectations().size() > 0) {
     addHeader(HeaderConstants.HEADER_ACCEPT_ENCODING,PreferenceWriter.write(clientInfo.getAcceptedEncodings()),headers);
   }
+  if (request.getAccessControlRequestHeaders() != null) {
+    addHeader(HeaderConstants.HEADER_ACCESS_CONTROL_REQUEST_HEADERS,StringWriter.write(request.getAccessControlRequestHeaders()),headers);
+  }
+  if (request.getAccessControlRequestMethod() != null) {
+    addHeader(HeaderConstants.HEADER_ACCESS_CONTROL_REQUEST_METHOD,request.getAccessControlRequestMethod().getName(),headers);
+  }
   if (request.getCookies().size() > 0) {
     addHeader(HeaderConstants.HEADER_COOKIE,CookieWriter.write(request.getCookies()),headers);
   }
