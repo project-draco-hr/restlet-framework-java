@@ -1,0 +1,47 @@
+{
+  Resource resource=new Resource();
+  resource.setResourcePath(basePath);
+  if (restlet instanceof Directory) {
+    Directory directory=(Directory)restlet;
+    resource.setName(directory.getName());
+    resource.setDescription(directory.getDescription());
+  }
+  if (restlet instanceof ServerResource) {
+    ServerResource serverResource=(ServerResource)restlet;
+    resource.setName(serverResource.getName());
+    resource.setDescription(serverResource.getDescription());
+  }
+  if (restlet instanceof DocumentedResource) {
+    DocumentedResource documentedServerResource=(DocumentedResource)restlet;
+    resource.setSections(documentedServerResource.getSections());
+  }
+ else {
+    String sectionName=restlet.getClass().getPackage().getName();
+    resource.getSections().add(sectionName);
+  }
+  if (StringUtils.isNullOrEmpty(resource.getName())) {
+    String name=restlet.getClass().getSimpleName();
+    if (name.endsWith(SUFFIX_SERVER_RESOURCE) && name.length() > SUFFIX_SERVER_RESOURCE.length()) {
+      name=name.substring(0,name.length() - SUFFIX_SERVER_RESOURCE.length());
+    }
+    if (name.endsWith(SUFFIX_RESOURCE) && name.length() > SUFFIX_RESOURCE.length()) {
+      name=name.substring(0,name.length() - SUFFIX_RESOURCE.length());
+    }
+    resource.setName(name);
+  }
+  for (  String section : resource.getSections()) {
+    if (collectInfo.getSection(section) == null) {
+      collectInfo.addSection(new Section(section));
+    }
+  }
+  Template template=new Template(basePath);
+  for (  String variable : template.getVariableNames()) {
+    PathVariable pathVariable=new PathVariable();
+    pathVariable.setName(variable);
+    resource.getPathVariables().add(pathVariable);
+  }
+  if (scheme != null) {
+    resource.setAuthenticationProtocol(scheme.getName());
+  }
+  return resource;
+}

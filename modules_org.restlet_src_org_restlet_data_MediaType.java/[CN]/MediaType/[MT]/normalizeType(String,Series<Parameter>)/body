@@ -18,22 +18,28 @@
     subType=normalizeToken(name.substring(slashIndex + 1));
   }
   if (parameters != null && !parameters.isEmpty()) {
-    if (params == null) {
-      params=new StringBuilder();
-    }
-    HeaderWriter<Parameter> hw=new HeaderWriter<Parameter>(){
-      @Override public HeaderWriter<Parameter> append(      Parameter value){
-        return appendExtension(value);
+    try {
+      if (params == null) {
+        params=new StringBuilder();
       }
-    }
+      HeaderWriter<Parameter> hw=new HeaderWriter<Parameter>(){
+        @Override public HeaderWriter<Parameter> append(        Parameter value){
+          return appendExtension(value);
+        }
+      }
 ;
-    for (int i=0; i < parameters.size(); i++) {
-      Parameter p=parameters.get(i);
-      hw.appendParameterSeparator();
-      hw.appendSpace();
-      hw.append(p);
+      for (int i=0; i < parameters.size(); i++) {
+        Parameter p=parameters.get(i);
+        hw.appendParameterSeparator();
+        hw.appendSpace();
+        hw.append(p);
+      }
+      params.append(hw.toString());
+      hw.close();
     }
-    params.append(hw.toString());
+ catch (    IOException e) {
+      Context.getCurrentLogger().log(Level.INFO,"Unable to parse the media type parameter",e);
+    }
   }
   return (params == null) ? mainType + '/' + subType : mainType + '/' + subType+ params.toString();
 }

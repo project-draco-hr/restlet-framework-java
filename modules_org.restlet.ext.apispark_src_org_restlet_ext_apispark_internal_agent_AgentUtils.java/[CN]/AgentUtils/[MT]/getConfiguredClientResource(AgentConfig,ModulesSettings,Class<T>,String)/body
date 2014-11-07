@@ -1,0 +1,11 @@
+{
+  String path=agentConfig.getAgentServicePath() + "/agent" + "/cells/"+ agentConfig.getCellId()+ "/versions/"+ agentConfig.getCellVersion()+ resourcePath;
+  ClientResource clientResource=new ClientResource(path);
+  clientResource.setChallengeResponse(ChallengeScheme.HTTP_BASIC,agentConfig.getAgentUsername(),agentConfig.getAgentSecretKey());
+  Series<Header> headers=clientResource.getRequest().getHeaders();
+  headers.add(AgentConstants.REQUEST_HEADER_CONNECTOR_AGENT_VERSION,AgentConfig.AGENT_VERSION);
+  if (modulesSettings != null) {
+    headers.add(AgentConstants.REQUEST_HEADER_CONNECTOR_CELL_REVISION,modulesSettings.getCellRevision());
+  }
+  return clientResource.wrap(resourceClass);
+}

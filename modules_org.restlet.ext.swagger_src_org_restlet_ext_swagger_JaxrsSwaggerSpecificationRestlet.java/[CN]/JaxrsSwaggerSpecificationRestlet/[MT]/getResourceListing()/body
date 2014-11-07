@@ -1,0 +1,45 @@
+{
+  Documentation documentation=new Documentation();
+  documentation.setApiVersion(getApiVersion());
+  documentation.setSwaggerVersion(getSwaggerVersion());
+  documentation.setBasePath(getBasePath());
+  SwaggerRestletIterable crawler=new SwaggerRestletIterable(getApplication());
+  for (  Restlet restlet : crawler) {
+    JaxRsRestlet jaxRsRestlet=getNextJaxRsRestlet(restlet);
+    if (restlet != null) {
+      Collection<DocumentationEndPoint> endPoints=scan(jaxRsRestlet,crawler.getCurrentPath());
+      for (      DocumentationEndPoint endPoint : endPoints) {
+        if (endPoint.getPath() != null) {
+          if (getJsonPath() != null) {
+            if (getJsonPath().endsWith("/")) {
+              if (endPoint.getPath() != null && endPoint.getPath().startsWith("/")) {
+                endPoint.setPath(getJsonPath() + endPoint.getPath().substring(1));
+              }
+ else {
+                endPoint.setPath(getJsonPath() + endPoint.getPath());
+              }
+            }
+ else {
+              if (endPoint.getPath() != null && endPoint.getPath().startsWith("/")) {
+                endPoint.setPath(getJsonPath() + endPoint.getPath());
+              }
+ else {
+                endPoint.setPath(getJsonPath() + "/" + endPoint.getPath());
+              }
+            }
+          }
+ else {
+            endPoint.setPath(endPoint.getPath());
+          }
+        }
+ else {
+          if (getJsonPath() != null) {
+            endPoint.setPath(getJsonPath());
+          }
+        }
+        documentation.addApi(endPoint);
+      }
+    }
+  }
+  return new JacksonRepresentation<Documentation>(documentation);
+}

@@ -1,0 +1,13 @@
+{
+  AUTHENTICATE_COUNT++;
+  if (VALID_USERNAME.equals(credentials.getUsername()) && VALID_PASSWORD.equals(new String(credentials.getPassword()))) {
+    User user=new User();
+    user.setUsername(VALID_USERNAME);
+    user.setGroups(Arrays.asList("user","dev"));
+    return user;
+  }
+  if (SERVER_ERROR_USERNAME.equals(credentials.getUsername())) {
+    throw new RuntimeException("Error username cause an exception");
+  }
+  throw new ResourceException(Status.CLIENT_ERROR_FORBIDDEN);
+}

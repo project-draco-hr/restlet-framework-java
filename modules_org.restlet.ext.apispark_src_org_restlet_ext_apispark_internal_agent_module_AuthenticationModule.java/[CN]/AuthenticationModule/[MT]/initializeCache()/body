@@ -1,0 +1,14 @@
+{
+  CacheLoader<UserIdentifier,UserInfo> userLoader=new CacheLoader<UserIdentifier,UserInfo>(){
+    public UserInfo load(    UserIdentifier userIdentifier){
+      Credentials credentials=new Credentials(userIdentifier.getIdentifier(),userIdentifier.getSecret());
+      User user=authenticateClientResource.authenticate(credentials);
+      if (user == null) {
+        throw new AgentException("Authentication should not return null");
+      }
+      return new UserInfo(user,userIdentifier.getSecret());
+    }
+  }
+;
+  userLoadingCache=CacheBuilder.newBuilder().maximumSize(authenticationSettings.getCacheSize()).expireAfterWrite(authenticationSettings.getCacheTimeToLiveSeconds(),TimeUnit.SECONDS).build(userLoader);
+}

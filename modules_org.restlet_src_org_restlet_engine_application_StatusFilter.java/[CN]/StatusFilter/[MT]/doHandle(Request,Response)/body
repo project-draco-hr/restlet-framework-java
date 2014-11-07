@@ -3,8 +3,8 @@
     super.doHandle(request,response);
   }
  catch (  Throwable throwable) {
-    Level level=Level.INFO;
     Status status=getStatusService().toStatus(throwable,request,response);
+    Level level=Level.INFO;
     if (status.isServerError()) {
       level=Level.WARNING;
     }
@@ -17,9 +17,6 @@
     getLogger().log(level,"Exception or error caught by status service",throwable);
     if (response != null) {
       response.setStatus(status);
-      if ((response.getEntity() == null) || isOverwriting()) {
-        response.setEntity(getStatusService().toRepresentation(status,throwable,request,response,getConverterService(),getConnegService(),getMetadataService()));
-      }
     }
   }
   return CONTINUE;

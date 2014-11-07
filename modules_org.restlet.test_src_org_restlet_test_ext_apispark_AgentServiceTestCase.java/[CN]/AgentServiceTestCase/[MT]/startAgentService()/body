@@ -1,0 +1,23 @@
+{
+  this.agentServiceComponent=new Component();
+  this.agentServiceComponent.setName("agent service");
+  this.agentServiceComponent.getServers().add(Protocol.HTTP,AGNET_SERVICE_PORT);
+  final Application application=new Application(){
+    @Override public Restlet createInboundRoot(){
+      MapVerifier mapVerifier=new MapVerifier();
+      mapVerifier.getLocalSecrets().put(VALID_USERNAME,VALID_PASSWORD.toCharArray());
+      ChallengeAuthenticator authenticator=new ChallengeAuthenticator(getContext(),ChallengeScheme.HTTP_BASIC,"realm");
+      authenticator.setVerifier(mapVerifier);
+      Router router=new Router();
+      router.attach(ROOT_PATH + ModulesSettingsModule.MODULE_PATH,MockModulesSettingsServerResource.class);
+      router.attach(ROOT_PATH + AuthenticationModule.AUTHENTICATE_PATH,MockAuthenticationAuthenticateServerResource.class);
+      router.attach(ROOT_PATH + AuthorizationModule.OPERATIONS_AUTHORIZATIONS_PATH,MockAuthorizationOperationsServerResource.class);
+      router.attach(ROOT_PATH + FirewallModule.SETTINGS_PATH,MockFirewallSettingsServerResource.class);
+      authenticator.setNext(router);
+      return authenticator;
+    }
+  }
+;
+  this.agentServiceComponent.getDefaultHost().attach(application);
+  this.agentServiceComponent.start();
+}

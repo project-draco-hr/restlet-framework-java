@@ -1,0 +1,26 @@
+{
+  List<Filter> filters=new ArrayList<>();
+  if (modulesSettings.isAuthenticationModuleEnabled()) {
+    LOGGER.info("Add authentication module");
+    filters.add(new AuthenticationModule(agentConfig,modulesSettings,context));
+  }
+  if (modulesSettings.isAuthorizationModuleEnabled()) {
+    if (!modulesSettings.isAuthenticationModuleEnabled()) {
+      throw new AgentConfigurationException("Authorization module requires Authentication module which is not enabled");
+    }
+    LOGGER.info("Add authorization module");
+    filters.add(new AuthorizationModule(agentConfig,modulesSettings,context));
+  }
+  if (modulesSettings.isFirewallModuleEnabled()) {
+    LOGGER.info("Add firewall module");
+    filters.add(new FirewallModule(agentConfig,modulesSettings,context));
+  }
+  if (modulesSettings.isAnalyticsModuleEnabled()) {
+    LOGGER.info("Add analytics module");
+    filters.add(new AnalyticsModule(agentConfig,modulesSettings,context));
+  }
+  if (filters.isEmpty()) {
+    LOGGER.warning("No modules are enabled");
+  }
+  return new AgentModulesConfigurer(filters);
+}

@@ -1,0 +1,24 @@
+{
+  if (introspectorPlugins == null) {
+    introspectorPlugins=new ArrayList<>();
+  }
+  Definition definition=new Definition();
+  CollectInfo collectInfo=new CollectInfo();
+  ApplicationPath applicationPath=application.getClass().getAnnotation(ApplicationPath.class);
+  if (applicationPath != null) {
+    collectInfo.setApplicationPath(applicationPath.value());
+  }
+  scanResources(collectInfo,application,introspectorPlugins);
+  updateDefinitionContract(application,definition);
+  Contract contract=definition.getContract();
+  contract.setResources(collectInfo.getResources());
+  contract.setRepresentations(collectInfo.getRepresentations());
+  contract.setSections(collectInfo.getSections());
+  addEndpoints(application,baseRef,definition);
+  sortDefinition(definition);
+  updateRepresentationsSectionsFromResources(definition);
+  for (  IntrospectorPlugin introspectorPlugin : introspectorPlugins) {
+    introspectorPlugin.processDefinition(definition,application.getClass());
+  }
+  return definition;
+}

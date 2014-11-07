@@ -1,0 +1,50 @@
+{
+  int result;
+  if (request.getChallengeResponse() == null) {
+    result=RESULT_MISSING;
+  }
+ else {
+    String identifier=request.getChallengeResponse().getIdentifier();
+    char[] secret=request.getChallengeResponse().getSecret();
+    UserIdentifier userIdentifier=new UserIdentifier(identifier,secret);
+    try {
+      UserInfo userInfo=userLoadingCache.getUnchecked(userIdentifier);
+      if (userInfo == null) {
+        throw new AgentException("User could not be null");
+      }
+      if (!Arrays.equals(secret,userInfo.getSecret())) {
+        result=RESULT_INVALID;
+      }
+ else {
+        User user=userInfo.getUser();
+        org.restlet.security.User securityUser=new org.restlet.security.User(identifier,(char[])null,user.getFirstName(),user.getLastName(),user.getEmail());
+        request.getClientInfo().setUser(securityUser);
+        List<Role> securityRoles=new ArrayList<>();
+        Application application=Application.getCurrent();
+        if (user.getGroups() != null) {
+          for (          String role : user.getGroups()) {
+            securityRoles.add(new Role(application,role));
+          }
+        }
+        request.getClientInfo().setRoles(securityRoles);
+        result=RESULT_VALID;
+      }
+    }
+ catch (    UncheckedExecutionException e) {
+      if (e.getCause() instanceof ResourceException) {
+        ResourceException rex=(ResourceException)e.getCause();
+        if (Status.CLIENT_ERROR_UNAUTHORIZED.equals(rex.getStatus())) {
+          response.setStatus(Status.CLIENT_ERROR_UNAUTHORIZED);
+          result=RESULT_INVALID;
+        }
+ else {
+          throw new ResourceException(Status.SERVER_ERROR_INTERNAL,"Agent service error during user authentication of user: " + identifier,rex);
+        }
+      }
+ else {
+        throw new AgentException("Unexpected error during user authentication error of user: " + identifier,e);
+      }
+    }
+  }
+  return result;
+}

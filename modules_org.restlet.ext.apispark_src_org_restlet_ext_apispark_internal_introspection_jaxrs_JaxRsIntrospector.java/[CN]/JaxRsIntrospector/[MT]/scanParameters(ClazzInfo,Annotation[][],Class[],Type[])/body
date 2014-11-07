@@ -1,0 +1,23 @@
+{
+  for (int i=0; i < parameterTypes.length; i++) {
+    Annotation[] annotations=parameterAnnotations[i];
+    for (    Annotation annotation : annotations) {
+      String defaultValue=null;
+      if (annotation instanceof DefaultValue) {
+        defaultValue=((DefaultValue)annotation).value();
+      }
+      if (annotation instanceof HeaderParam) {
+        Header header=getHeader(parameterTypes[i],genericParameterTypes[i],defaultValue,(HeaderParam)annotation);
+        clazzInfo.addHeader(header);
+      }
+      if (annotation instanceof PathParam) {
+        PathVariable pathVariable=getPathVariable(parameterTypes[i],genericParameterTypes[i],(PathParam)annotation);
+        clazzInfo.addPathVariable(pathVariable);
+      }
+      if (annotation instanceof QueryParam) {
+        QueryParameter queryParameter=getQueryParameter(parameterTypes[i],genericParameterTypes[i],defaultValue,(QueryParam)annotation);
+        clazzInfo.addQueryParameter(queryParameter);
+      }
+    }
+  }
+}

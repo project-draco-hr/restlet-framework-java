@@ -1,0 +1,13 @@
+{
+  Request request=new Request(Method.GET,AGENT_URL + path);
+  if (username != null) {
+    request.setChallengeResponse(new ChallengeResponse(ChallengeScheme.HTTP_BASIC,username,password));
+  }
+  Client c=new Client(Protocol.HTTP);
+  try {
+    return c.handle(request);
+  }
+  finally {
+    c.stop();
+  }
+}

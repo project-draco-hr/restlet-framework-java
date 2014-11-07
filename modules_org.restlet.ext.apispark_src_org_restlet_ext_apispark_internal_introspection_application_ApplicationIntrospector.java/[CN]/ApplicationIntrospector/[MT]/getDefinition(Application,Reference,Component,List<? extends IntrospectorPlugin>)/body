@@ -1,0 +1,32 @@
+{
+  if (introspectorPlugins == null) {
+    introspectorPlugins=new ArrayList<>();
+  }
+  Definition definition=new Definition();
+  Contract contract=new Contract();
+  contract.setDescription(StringUtils.nullToEmpty(application.getDescription()));
+  if (StringUtils.isNullOrEmpty(application.getName())) {
+    LOGGER.log(Level.WARNING,"Please provide a name to your application, used " + contract.getName() + " by default.");
+    contract.setName(application.getClass().getName());
+  }
+ else {
+    contract.setName(application.getName());
+  }
+  CollectInfo collectInfo=new CollectInfo();
+  if (application instanceof DocumentedApplication) {
+    DocumentedApplication documentedApplication=(DocumentedApplication)application;
+    collectInfo.setSections(documentedApplication.getSections());
+  }
+  definition.setContract(contract);
+  RestletCollector.collect(collectInfo,"",application.getInboundRoot(),null,introspectorPlugins);
+  contract.setResources(collectInfo.getResources());
+  contract.setRepresentations(collectInfo.getRepresentations());
+  contract.setSections(collectInfo.getSections());
+  addEnpoints(application,baseRef,component,definition,contract,collectInfo);
+  sortDefinition(definition);
+  updateRepresentationsSectionsFromResources(definition);
+  for (  IntrospectorPlugin introspectorPlugin : introspectorPlugins) {
+    introspectorPlugin.processDefinition(definition,application.getClass());
+  }
+  return definition;
+}

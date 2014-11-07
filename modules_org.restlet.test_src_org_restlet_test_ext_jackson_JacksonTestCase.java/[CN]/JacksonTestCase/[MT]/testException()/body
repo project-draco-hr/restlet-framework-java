@@ -1,0 +1,10 @@
+{
+  Customer customer=createCustomer();
+  MyException me=new MyException(customer,"CUST-1234");
+  me.setStackTrace(new StackTraceElement[0]);
+  JacksonRepresentation<MyException> rep=new JacksonRepresentation<MyException>(MediaType.APPLICATION_JSON,me);
+  String text=rep.getText();
+  System.out.println(text);
+  rep=new JacksonRepresentation<MyException>(new StringRepresentation(text,rep.getMediaType()),MyException.class);
+  verify(me,rep.getObject());
+}

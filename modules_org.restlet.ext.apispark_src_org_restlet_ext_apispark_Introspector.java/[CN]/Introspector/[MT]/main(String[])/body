@@ -79,13 +79,13 @@
   }
 );
   LOGGER.fine("Check parameters");
-  if (isEmpty(serviceUrl)) {
+  if (StringUtils.isNullOrEmpty(serviceUrl)) {
     serviceUrl="https://apispark.com/";
   }
   if (!serviceUrl.endsWith("/")) {
     serviceUrl+="/";
   }
-  if (isEmpty(ulogin) || isEmpty(upwd) || isEmpty(defSource)) {
+  if (StringUtils.isNullOrEmpty(ulogin) || StringUtils.isNullOrEmpty(upwd) || StringUtils.isNullOrEmpty(defSource)) {
     printHelp();
     System.exit(1);
   }
@@ -105,9 +105,8 @@
       definition=ApplicationIntrospector.getDefinition(application,null,component,introspectorPlugins);
     }
  else     if (clazz != null) {
-      javax.ws.rs.core.Application jaxrsApplication=JaxrsIntrospector.getApplication(defSource);
-      JaxrsIntrospector jaxrsIntrospector=new JaxrsIntrospector(jaxrsApplication);
-      definition=jaxrsIntrospector.getDefinition();
+      javax.ws.rs.core.Application jaxrsApplication=JaxRsIntrospector.getApplication(defSource);
+      definition=JaxRsIntrospector.getDefinition(jaxrsApplication,null,introspectorPlugins);
     }
  else {
       LOGGER.log(Level.SEVERE,"Class " + defSource + " is not supported");
@@ -124,7 +123,7 @@
     }
   }
   if (definition != null) {
-    sendDefinition(definition,descriptorId,versionId,ulogin,upwd,serviceUrl,updateStrategy,create,newVersion,LOGGER);
+    IntrospectionUtils.sendDefinition(definition,descriptorId,versionId,ulogin,upwd,serviceUrl,updateStrategy,create,newVersion,LOGGER);
   }
  else {
     LOGGER.severe("Please provide a valid application class name or definition URL.");

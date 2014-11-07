@@ -1,0 +1,23 @@
+{
+  String address=request.getClientInfo().getUpstreamAddress();
+  if (filteredAddresses.contains(address)) {
+    if (whiteList) {
+      return Filter.CONTINUE;
+    }
+ else {
+      Context.getCurrentLogger().log(Level.FINE,"The current request has been blocked because \"" + address + "\" is in the black list.");
+      response.setStatus(Status.CLIENT_ERROR_FORBIDDEN);
+      return Filter.STOP;
+    }
+  }
+ else {
+    if (whiteList) {
+      Context.getCurrentLogger().log(Level.FINE,"The current request has been blocked because \"" + address + "\" is not in the white list.");
+      response.setStatus(Status.CLIENT_ERROR_FORBIDDEN);
+      return Filter.STOP;
+    }
+ else {
+      return Filter.CONTINUE;
+    }
+  }
+}

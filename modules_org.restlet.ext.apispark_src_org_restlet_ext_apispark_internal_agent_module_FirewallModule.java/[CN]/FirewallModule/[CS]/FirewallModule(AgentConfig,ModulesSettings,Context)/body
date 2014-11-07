@@ -1,0 +1,12 @@
+{
+  super(context);
+  FirewallSettingsResource firewallSettingsClientResource=AgentUtils.getConfiguredClientResource(agentConfig,modulesSettings,FirewallSettingsResource.class,SETTINGS_PATH);
+  FirewallSettings firewallSettings;
+  try {
+    firewallSettings=firewallSettingsClientResource.getSettings();
+  }
+ catch (  Exception e) {
+    throw new AgentConfigurationException("Could not get firewall module configuration from APISpark connector service",e);
+  }
+  firewallFilter=createFirewallFilter(firewallSettings);
+}

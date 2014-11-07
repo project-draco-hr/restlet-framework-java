@@ -1,0 +1,19 @@
+{
+  MockModulesSettingsServerResource.MODULES_SETTINGS.setAuthenticationModuleEnabled(true);
+  MockModulesSettingsServerResource.MODULES_SETTINGS.setFirewallModuleEnabled(true);
+  FirewallRateLimit firewallRateLimit=new FirewallRateLimit();
+  firewallRateLimit.setName("max 1 call per minute");
+  firewallRateLimit.setPeriod((int)TimeUnit.MINUTES.toSeconds(1));
+  firewallRateLimit.setGroup("admin");
+  firewallRateLimit.setRateLimit(1);
+  firewallRateLimit.setDefaultRateLimit(false);
+  MockFirewallSettingsServerResource.FIREWALL_SETTINGS.setRateLimits(Arrays.asList(firewallRateLimit));
+  AgentConfig agentConfig=getConnectorAgentConfig();
+  startAgent(agentConfig);
+  assertEquals(1,MockModulesSettingsServerResource.GET_SETTINGS_COUNT);
+  assertEquals(1,MockFirewallSettingsServerResource.GET_SETTINGS_COUNT);
+  Response response=callAgent("/test",VALID_USERNAME,VALID_PASSWORD);
+  assertEquals(Status.SUCCESS_NO_CONTENT,response.getStatus());
+  response=callAgent("/test",VALID_USERNAME,VALID_PASSWORD);
+  assertEquals(Status.SUCCESS_NO_CONTENT,response.getStatus());
+}

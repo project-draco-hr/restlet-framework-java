@@ -1,0 +1,13 @@
+{
+  MockModulesSettingsServerResource.MODULES_SETTINGS.setFirewallModuleEnabled(true);
+  FirewallIpFilter firewallIpFilter=new FirewallIpFilter();
+  firewallIpFilter.setWhiteList(true);
+  firewallIpFilter.setIps(Arrays.asList("1.1.1.1"));
+  MockFirewallSettingsServerResource.FIREWALL_SETTINGS.setIpFilters(Arrays.asList(firewallIpFilter));
+  AgentConfig agentConfig=getConnectorAgentConfig();
+  startAgent(agentConfig);
+  assertEquals(1,MockModulesSettingsServerResource.GET_SETTINGS_COUNT);
+  assertEquals(1,MockFirewallSettingsServerResource.GET_SETTINGS_COUNT);
+  Response response=callAgent("/test",VALID_USERNAME,VALID_PASSWORD);
+  assertEquals(Status.CLIENT_ERROR_FORBIDDEN,response.getStatus());
+}

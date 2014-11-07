@@ -1,0 +1,23 @@
+{
+  RestletOperationAuthorization restletOperationAuthorization=(RestletOperationAuthorization)router.getNext(request,response);
+  if (restletOperationAuthorization == null) {
+    response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+    return STOP;
+  }
+  List<Role> userRoles=request.getClientInfo().getRoles();
+  boolean authorized=false;
+  List<String> groupsAllowed=restletOperationAuthorization.getOperationAuthorization().getGroupsAllowed();
+  for (  String groupAllowed : groupsAllowed) {
+    if (hasRole(userRoles,groupAllowed)) {
+      authorized=true;
+      break;
+    }
+  }
+  if (authorized) {
+    return CONTINUE;
+  }
+ else {
+    response.setStatus(Status.CLIENT_ERROR_FORBIDDEN);
+    return STOP;
+  }
+}

@@ -1,0 +1,21 @@
+{
+  Class<?> elementClazz=field.getType();
+  Type elementType=field.getGenericType();
+  DefaultValue defaultvalue=field.getAnnotation(DefaultValue.class);
+  String defaultValueString=defaultvalue != null ? defaultvalue.value() : null;
+  HeaderParam headerParam=field.getAnnotation(HeaderParam.class);
+  if (headerParam != null) {
+    Header header=getHeader(elementClazz,elementType,defaultValueString,headerParam);
+    clazzInfo.addHeader(header);
+  }
+  PathParam pathParam=field.getAnnotation(PathParam.class);
+  if (pathParam != null) {
+    PathVariable pathVariable=getPathVariable(elementClazz,elementType,pathParam);
+    clazzInfo.addPathVariable(pathVariable);
+  }
+  QueryParam queryParam=field.getAnnotation(QueryParam.class);
+  if (queryParam != null) {
+    QueryParameter queryParameter=getQueryParameter(elementClazz,elementType,defaultValueString,queryParam);
+    clazzInfo.addQueryParameter(queryParameter);
+  }
+}

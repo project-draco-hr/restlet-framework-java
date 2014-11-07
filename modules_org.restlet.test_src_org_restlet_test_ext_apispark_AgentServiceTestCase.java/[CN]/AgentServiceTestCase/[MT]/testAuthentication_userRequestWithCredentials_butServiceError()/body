@@ -1,0 +1,9 @@
+{
+  MockModulesSettingsServerResource.MODULES_SETTINGS.setAuthenticationModuleEnabled(true);
+  AgentConfig agentConfig=getConnectorAgentConfig();
+  startAgent(agentConfig);
+  assertEquals(1,MockModulesSettingsServerResource.GET_SETTINGS_COUNT);
+  Response response=callAgent("/test",SERVER_ERROR_USERNAME,VALID_PASSWORD);
+  assertEquals(Status.SERVER_ERROR_INTERNAL,response.getStatus());
+  assertEquals(1,MockAuthenticationAuthenticateServerResource.AUTHENTICATE_COUNT);
+}
