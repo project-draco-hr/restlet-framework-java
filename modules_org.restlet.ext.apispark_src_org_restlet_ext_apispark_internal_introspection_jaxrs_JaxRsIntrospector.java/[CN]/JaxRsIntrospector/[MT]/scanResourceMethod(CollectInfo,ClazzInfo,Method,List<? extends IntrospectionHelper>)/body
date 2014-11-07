@@ -1,0 +1,123 @@
+{
+  Path path=method.getAnnotation(Path.class);
+  String fullPath=joinPaths(collectInfo.getApplicationPath(),getPathOrNull(clazzInfo.getPath()),getPathOrNull(path));
+  String cleanPath=cleanPath(fullPath);
+  Operation operation=new Operation();
+  operation.setMethod(getResourceMethod(method));
+  if (StringUtils.isNullOrEmpty(operation.getName())) {
+    LOGGER.warning("Java method " + method.getName() + " has no Method name.");
+    operation.setName(method.getName());
+  }
+  Consumes consumes=method.getAnnotation(Consumes.class);
+  if (consumes != null) {
+    operation.setConsumes(Arrays.asList(consumes.value()));
+  }
+ else   if (clazzInfo.getConsumes() != null) {
+    operation.setConsumes(Arrays.asList(clazzInfo.getConsumes().value()));
+  }
+  Produces produces=method.getAnnotation(Produces.class);
+  if (produces != null) {
+    operation.setProduces(Arrays.asList(produces.value()));
+  }
+ else   if (clazzInfo.getProduces() != null) {
+    operation.setProduces(Arrays.asList(clazzInfo.getProduces().value()));
+  }
+  Map<String,Header> headers=clazzInfo.getHeadersCopy();
+  Map<String,PathVariable> pathVariables=clazzInfo.getPathVariablesCopy();
+  Map<String,QueryParameter> queryParameters=clazzInfo.getQueryParametersCopy();
+  List<Representation> representations=new ArrayList<>();
+  Annotation[][] parameterAnnotations=method.getParameterAnnotations();
+  Class[] parameterTypes=method.getParameterTypes();
+  Type[] genericParameterTypes=method.getGenericParameterTypes();
+  for (int i=0; i < parameterTypes.length; i++) {
+    Annotation[] annotations=parameterAnnotations[i];
+    for (    Annotation annotation : annotations) {
+      String defaultValue=null;
+      boolean isEntity=true;
+      if (annotation instanceof DefaultValue) {
+        defaultValue=((DefaultValue)annotation).value();
+      }
+      if (annotation instanceof FormParam) {
+        isEntity=false;
+        addRepresentation(collectInfo,parameterTypes[i],genericParameterTypes[i],introspectionHelper);
+      }
+      if (annotation instanceof HeaderParam) {
+        isEntity=false;
+        Header header=getHeader(parameterTypes[i],genericParameterTypes[i],defaultValue,(HeaderParam)annotation);
+        headers.put(header.getName(),header);
+      }
+      if (annotation instanceof PathParam) {
+        isEntity=false;
+        PathVariable pathVariable=getPathVariable(parameterTypes[i],genericParameterTypes[i],(PathParam)annotation);
+        pathVariables.put(pathVariable.getName(),pathVariable);
+      }
+      if (annotation instanceof QueryParam) {
+        isEntity=false;
+        QueryParameter queryParameter=getQueryParameter(parameterTypes[i],genericParameterTypes[i],defaultValue,(QueryParam)annotation);
+        queryParameters.put(queryParameter.getName(),queryParameter);
+      }
+      if (annotation instanceof MatrixParam) {
+        isEntity=false;
+      }
+      if (annotation instanceof CookieParam) {
+        isEntity=false;
+      }
+      if (annotation instanceof Context) {
+        isEntity=false;
+      }
+      if (isEntity) {
+        addRepresentation(collectInfo,parameterTypes[i],genericParameterTypes[i],introspectionHelper);
+        PayLoad inputEntity=new PayLoad();
+        inputEntity.setType(Types.convertPrimitiveType(ReflectUtils.getSimpleClass(genericParameterTypes[i])));
+        inputEntity.setArray(ReflectUtils.isListType(parameterTypes[i]));
+        operation.setInputPayLoad(inputEntity);
+      }
+    }
+  }
+  operation.getQueryParameters().addAll(queryParameters.values());
+  Response response=new Response();
+  Class<?> outputClass=method.getReturnType();
+  Type outputType=method.getGenericReturnType();
+  if (outputClass != Void.TYPE) {
+    addRepresentation(collectInfo,outputClass,outputType,introspectionHelper);
+    PayLoad outputEntity=new PayLoad();
+    Class<?> simpleClass=ReflectUtils.getSimpleClass(outputType);
+    if (javax.ws.rs.core.Response.class.isAssignableFrom(simpleClass)) {
+      outputEntity.setType("file");
+    }
+ else {
+      outputEntity.setType(Types.convertPrimitiveType(simpleClass));
+    }
+    outputEntity.setArray(ReflectUtils.isListType(outputClass));
+    response.setOutputPayLoad(outputEntity);
+  }
+  response.setCode(Status.SUCCESS_OK.getCode());
+  response.setName("Success");
+  response.setDescription("");
+  response.setMessage(Status.SUCCESS_OK.getDescription());
+  operation.getResponses().add(response);
+  Resource resource=collectInfo.getResource(cleanPath);
+  if (resource == null) {
+    resource=new Resource();
+    resource.setResourcePath(cleanPath);
+    String name=clazzInfo.getClazz().getSimpleName();
+    if (name.endsWith(SUFFIX_SERVER_RESOURCE) && name.length() > SUFFIX_SERVER_RESOURCE.length()) {
+      name=name.substring(0,name.length() - SUFFIX_SERVER_RESOURCE.length());
+    }
+    if (name.endsWith(SUFFIX_RESOURCE) && name.length() > SUFFIX_RESOURCE.length()) {
+      name=name.substring(0,name.length() - SUFFIX_RESOURCE.length());
+    }
+    resource.setName(name);
+    resource.getPathVariables().addAll(pathVariables.values());
+    String sectionName=clazzInfo.getClazz().getPackage().getName();
+    resource.getSections().add(sectionName);
+    collectInfo.addResource(resource);
+    for (    IntrospectionHelper helper : introspectionHelper) {
+      helper.processResource(resource,clazzInfo.getClazz());
+    }
+  }
+  resource.getOperations().add(operation);
+  for (  IntrospectionHelper helper : introspectionHelper) {
+    helper.processOperation(resource,operation,clazzInfo.getClazz(),method);
+  }
+}

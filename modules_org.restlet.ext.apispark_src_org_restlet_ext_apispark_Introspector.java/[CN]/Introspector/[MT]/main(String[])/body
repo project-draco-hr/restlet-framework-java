@@ -9,7 +9,7 @@
   String language=null;
   String versionId=null;
   String updateStrategy=null;
-  List<IntrospectorPlugin> introspectorPlugins=new ArrayList<IntrospectorPlugin>();
+  List<IntrospectionHelper> introspectionHelpers=new ArrayList<IntrospectionHelper>();
   boolean newVersion=false;
   boolean create=false;
   LOGGER.fine("Get parameters");
@@ -48,17 +48,16 @@
  else     if ("-l".equals(args[i]) || "--language".equals(args[i])) {
       language=getParameter(args,++i).toLowerCase();
     }
- else     if ("-i".equals(args[i]) || "--introspectorPlugins".equals(args[i])) {
-      String introspectorPluginClass=getParameter(args,++i);
-      IntrospectorPlugin introspectorPlugin=ReflectUtils.newInstance(introspectorPluginClass,IntrospectorPlugin.class);
-      introspectorPlugins.add(introspectorPlugin);
-    }
  else     if ("-V".equals(args[i]) || "--verbose".equals(args[i])) {
       Engine.setLogLevel(Level.FINE);
     }
  else {
       defSource=args[i];
     }
+  }
+  ServiceLoader<IntrospectionHelper> ihLoader=ServiceLoader.load(IntrospectionHelper.class);
+  for (  IntrospectionHelper helper : ihLoader) {
+    introspectionHelpers.add(helper);
   }
   if (newVersion && create) {
     LOGGER.severe("You can't use newVersion and create at the same time. Use parameter --help for help.");
@@ -89,9 +88,9 @@
     printHelp();
     System.exit(1);
   }
-  Definition definition;
+  Definition definition=null;
   if (language == null) {
-    Class<?> clazz;
+    Class<?> clazz=null;
     try {
       clazz=Class.forName(defSource);
     }
@@ -99,14 +98,16 @@
       LOGGER.log(Level.SEVERE,"Cannot locate the application class.",e);
       throw new RuntimeException("Cannot locate the application class.",e);
     }
-    if (Application.class.isAssignableFrom(clazz)) {
+    if (JaxRsApplication.class.isAssignableFrom(clazz)) {
+    }
+ else     if (Application.class.isAssignableFrom(clazz)) {
       Application application=ApplicationIntrospector.getApplication(defSource);
       Component component=ComponentIntrospector.getComponent(compName);
-      definition=ApplicationIntrospector.getDefinition(application,null,component,introspectorPlugins);
+      definition=ApplicationIntrospector.getDefinition(application,null,component,introspectionHelpers);
     }
  else     if (clazz != null) {
       javax.ws.rs.core.Application jaxrsApplication=JaxRsIntrospector.getApplication(defSource);
-      definition=JaxRsIntrospector.getDefinition(jaxrsApplication,null,introspectorPlugins);
+      definition=JaxRsIntrospector.getDefinition(jaxrsApplication,null,introspectionHelpers);
     }
  else {
       LOGGER.log(Level.SEVERE,"Class " + defSource + " is not supported");

@@ -1,0 +1,46 @@
+{
+  ClazzInfo clazzInfo=new ClazzInfo();
+  clazzInfo.setClazz(clazz);
+  Path path=clazz.getAnnotation(Path.class);
+  clazzInfo.setPath(path);
+  Consumes consumes=clazz.getAnnotation(Consumes.class);
+  clazzInfo.setConsumes(consumes);
+  Produces produces=clazz.getAnnotation(Produces.class);
+  clazzInfo.setProduces(produces);
+  Constructor<?>[] constructors=clazz.getConstructors();
+  if (constructors.length == 1) {
+    scanConstructor(constructors[0],clazzInfo);
+  }
+ else   if (constructors.length > 1) {
+    Constructor<?> selectedConstructor=null;
+    int fieldsCount=-1;
+    for (    Constructor<?> constructor : constructors) {
+      if (constructor.getParameterTypes().length > fieldsCount) {
+        selectedConstructor=constructor;
+        fieldsCount=constructor.getParameterTypes().length;
+      }
+    }
+    scanConstructor(selectedConstructor,clazzInfo);
+  }
+  Field[] fields=ReflectUtils.getAllDeclaredFields(clazz);
+  if (fields != null) {
+    for (    Field field : fields) {
+      scanField(field,clazzInfo);
+    }
+  }
+  List<Method> resourceMethods=new ArrayList<>();
+  Method[] methods=clazz.getDeclaredMethods();
+  for (  Method method : methods) {
+    if (Modifier.isPublic(method.getModifiers())) {
+      if (isResourceMethod(method)) {
+        resourceMethods.add(method);
+      }
+ else {
+        scanSimpleMethod(collectInfo,method,clazzInfo);
+      }
+    }
+  }
+  for (  Method resourceMethod : resourceMethods) {
+    scanResourceMethod(collectInfo,clazzInfo,resourceMethod,introspectionHelper);
+  }
+}
