@@ -1,0 +1,26 @@
+{
+  HttpConnectionFactory http=new HttpConnectionFactory(configuration);
+  int spdyVersion=getSpdyVersion();
+  if (spdyVersion == 0)   return new ConnectionFactory[]{http};
+ else {
+    String pushStrategyName=getSpdyPushStrategy();
+    if (pushStrategyName == null)     pushStrategyName="org.eclipse.jetty.spdy.server.http.PushStrategy$None";
+ else     if ("referrer".equalsIgnoreCase(pushStrategyName))     pushStrategyName="org.eclipse.jetty.spdy.server.http.ReferrerPushStrategy";
+    PushStrategy pushStrategy;
+    try {
+      pushStrategy=(PushStrategy)Class.forName(pushStrategyName).newInstance();
+    }
+ catch (    Exception e) {
+      getLogger().log(Level.WARNING,"Unable to create the Jetty SPDY push strategy",e);
+      return null;
+    }
+    HTTPSPDYServerConnectionFactory spdy3=spdyVersion == 3 ? new HTTPSPDYServerConnectionFactory(3,configuration,pushStrategy) : null;
+    HTTPSPDYServerConnectionFactory spdy2=new HTTPSPDYServerConnectionFactory(2,configuration,pushStrategy);
+    NPNServerConnectionFactory npn;
+    if (spdyVersion == 3)     npn=new NPNServerConnectionFactory(spdy3.getProtocol(),spdy2.getProtocol(),http.getProtocol());
+ else     npn=new NPNServerConnectionFactory(spdy2.getProtocol(),http.getProtocol());
+    npn.setDefaultProtocol(http.getProtocol());
+    if (spdyVersion == 3)     return new ConnectionFactory[]{npn,spdy3,spdy2,http};
+ else     return new ConnectionFactory[]{npn,spdy2,http};
+  }
+}
