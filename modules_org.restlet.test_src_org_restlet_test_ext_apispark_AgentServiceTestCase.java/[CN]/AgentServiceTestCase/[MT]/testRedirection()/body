@@ -1,0 +1,19 @@
+{
+  Context.getCurrentLogger().setLevel(Level.FINE);
+  AgentService agentService=getAgentService();
+  agentService.setRedirectionEnabled(true);
+  agentService.setRedirectionUrl(USER_WEBAPI_URL);
+  startAgent(agentService,false);
+  startUserApi();
+  assertEquals(1,MockModulesSettingsServerResource.GET_SETTINGS_COUNT);
+  Response response=callAgent("/test",VALID_USERNAME,VALID_PASSWORD);
+  assertEquals(Status.SUCCESS_NO_CONTENT,response.getStatus());
+  assertEquals(1,AgentServerResource.CALL_COUNT);
+  assertNotNull(AgentServerResource.LAST_REQUEST);
+  assertEquals(USER_WEBAPI_URL + "/test",AgentServerResource.LAST_REQUEST.getResourceRef().toString());
+  response=callAgent("/test?val1=a&val2=b",VALID_USERNAME,VALID_PASSWORD);
+  assertEquals(Status.SUCCESS_NO_CONTENT,response.getStatus());
+  assertEquals(2,AgentServerResource.CALL_COUNT);
+  assertNotNull(AgentServerResource.LAST_REQUEST);
+  assertEquals(USER_WEBAPI_URL + "/test?val1=a&val2=b",AgentServerResource.LAST_REQUEST.getResourceRef().toString());
+}
