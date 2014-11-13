@@ -1,4 +1,21 @@
 {
+  boolean localAddress=false;
+  try {
+    Enumeration<NetworkInterface> n=NetworkInterface.getNetworkInterfaces();
+    for (; n.hasMoreElements(); ) {
+      NetworkInterface e=n.nextElement();
+      Enumeration<InetAddress> a=e.getInetAddresses();
+      for (; a.hasMoreElements(); ) {
+        InetAddress addr=a.nextElement();
+        if (addr.getHostAddress().equals(getRequest().getClientInfo().getAddress())) {
+          localAddress=true;
+        }
+      }
+    }
+  }
+ catch (  SocketException e1) {
+  }
+  Assert.assertTrue(localAddress);
   Assert.assertTrue(getRequest().getClientInfo().getPort() > 0);
   return new StringRepresentation("OK");
 }
