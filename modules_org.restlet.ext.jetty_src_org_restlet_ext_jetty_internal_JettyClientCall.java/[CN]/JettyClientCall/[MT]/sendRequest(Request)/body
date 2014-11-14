@@ -2,7 +2,7 @@
   Status result=null;
   try {
     final Representation entity=request.getEntity();
-    if (entity != null)     this.httpRequest.content(new InputStreamContentProvider(entity.getStream()));
+    if (entity != null && entity.isAvailable())     this.httpRequest.content(new InputStreamContentProvider(entity.getStream()));
     for (    Header header : getRequestHeaders()) {
       final String name=header.getName();
       if (!name.equals(HeaderConstants.HEADER_CONTENT_LENGTH))       this.httpRequest.header(name,header.getValue());
@@ -10,7 +10,7 @@
     this.inputStreamResponseListener=new InputStreamResponseListener();
     this.httpRequest.send(this.inputStreamResponseListener);
     long timeout=5000;
-    this.httpResponse=(HttpResponse)this.inputStreamResponseListener.get(timeout,TimeUnit.MILLISECONDS);
+    this.httpResponse=(org.eclipse.jetty.client.api.Response)this.inputStreamResponseListener.get(timeout,TimeUnit.MILLISECONDS);
     result=new Status(getStatusCode(),getReasonPhrase());
   }
  catch (  IOException e) {
