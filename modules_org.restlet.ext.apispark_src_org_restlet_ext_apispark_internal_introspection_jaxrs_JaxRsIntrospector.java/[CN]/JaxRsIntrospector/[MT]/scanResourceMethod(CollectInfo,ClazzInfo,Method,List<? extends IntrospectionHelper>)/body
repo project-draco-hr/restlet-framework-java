@@ -108,8 +108,10 @@
     }
     resource.setName(name);
     resource.getPathVariables().addAll(pathVariables.values());
-    String sectionName=clazzInfo.getClazz().getPackage().getName();
-    resource.getSections().add(sectionName);
+    if (collectInfo.isUseSectionNamingPackageStrategy()) {
+      String sectionName=clazzInfo.getClazz().getPackage().getName();
+      resource.getSections().add(sectionName);
+    }
     collectInfo.addResource(resource);
     for (    IntrospectionHelper helper : introspectionHelper) {
       helper.processResource(resource,clazzInfo.getClazz());

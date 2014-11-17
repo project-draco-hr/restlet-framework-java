@@ -1,5 +1,6 @@
 {
   Engine.register();
+  boolean useSectionNamingPackageStrategy=false;
   String ulogin=null;
   String upwd=null;
   String serviceUrl=null;
@@ -46,6 +47,9 @@
     }
  else     if ("-l".equals(args[i]) || "--language".equals(args[i])) {
       language=getParameter(args,++i).toLowerCase();
+    }
+ else     if ("--sections".equals(args[i])) {
+      useSectionNamingPackageStrategy=true;
     }
  else     if ("-V".equals(args[i]) || "--verbose".equals(args[i])) {
       Engine.setLogLevel(Level.FINE);
@@ -96,11 +100,11 @@
     if (Application.class.isAssignableFrom(clazz)) {
       Application application=ApplicationIntrospector.getApplication(defSource);
       Component component=ComponentIntrospector.getComponent(compName);
-      definition=ApplicationIntrospector.getDefinition(application,null,component);
+      definition=ApplicationIntrospector.getDefinition(application,null,component,useSectionNamingPackageStrategy);
     }
  else     if (clazz != null) {
       javax.ws.rs.core.Application jaxrsApplication=JaxRsIntrospector.getApplication(defSource);
-      definition=JaxRsIntrospector.getDefinition(jaxrsApplication,null);
+      definition=JaxRsIntrospector.getDefinition(jaxrsApplication,null,useSectionNamingPackageStrategy);
     }
  else {
       LOGGER.log(Level.SEVERE,"Class " + defSource + " is not supported");
