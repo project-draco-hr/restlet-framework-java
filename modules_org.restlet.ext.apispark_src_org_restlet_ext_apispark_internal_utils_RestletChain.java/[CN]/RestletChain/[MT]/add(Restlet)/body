@@ -1,0 +1,20 @@
+{
+  if (first == null) {
+    first=restlet;
+  }
+  if (last != null) {
+    if (last instanceof Router) {
+      Router router=(Router)last;
+      router.attachDefault(restlet);
+    }
+ else     if (last instanceof Filter) {
+      Filter filter=(Filter)last;
+      filter.setNext(restlet);
+    }
+ else {
+      throw new IllegalArgumentException("Could not chain any component after a Restlet");
+    }
+  }
+  last=restlet;
+  return this;
+}

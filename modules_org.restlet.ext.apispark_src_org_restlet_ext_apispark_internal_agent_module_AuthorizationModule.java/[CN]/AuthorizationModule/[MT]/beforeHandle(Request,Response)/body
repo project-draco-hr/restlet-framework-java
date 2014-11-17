@@ -1,9 +1,10 @@
 {
-  RestletOperationAuthorization restletOperationAuthorization=(RestletOperationAuthorization)router.getNext(request,response);
-  if (restletOperationAuthorization == null) {
+  TemplateRoute templateRoute=(TemplateRoute)router.getNext(request,response);
+  if (templateRoute == null) {
     response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
     return STOP;
   }
+  RestletOperationAuthorization restletOperationAuthorization=(RestletOperationAuthorization)templateRoute.getNext();
   List<Role> userRoles=request.getClientInfo().getRoles();
   boolean authorized=false;
   List<String> groupsAllowed=restletOperationAuthorization.getOperationAuthorization().getGroupsAllowed();

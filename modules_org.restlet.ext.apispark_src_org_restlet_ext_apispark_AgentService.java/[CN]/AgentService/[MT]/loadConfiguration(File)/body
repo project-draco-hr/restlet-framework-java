@@ -1,0 +1,14 @@
+{
+  if (configurationFile == null) {
+    throw new IllegalArgumentException("Agent configuration file is null.");
+  }
+  if (!configurationFile.exists()) {
+    throw new IllegalArgumentException("Agent configuration file does not exist: " + configurationFile.getAbsolutePath());
+  }
+  try {
+    loadConfiguration(new FileInputStream(configurationFile));
+  }
+ catch (  FileNotFoundException e) {
+    throw new IllegalArgumentException("Agent configuration file error. See exception for details.",e);
+  }
+}
