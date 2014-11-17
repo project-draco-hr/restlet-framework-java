@@ -9,7 +9,6 @@
   String language=null;
   String versionId=null;
   String updateStrategy=null;
-  List<IntrospectionHelper> introspectionHelpers=new ArrayList<IntrospectionHelper>();
   boolean newVersion=false;
   boolean create=false;
   LOGGER.fine("Get parameters");
@@ -55,10 +54,6 @@
       defSource=args[i];
     }
   }
-  ServiceLoader<IntrospectionHelper> ihLoader=ServiceLoader.load(IntrospectionHelper.class);
-  for (  IntrospectionHelper helper : ihLoader) {
-    introspectionHelpers.add(helper);
-  }
   if (newVersion && create) {
     LOGGER.severe("You can't use newVersion and create at the same time. Use parameter --help for help.");
   }
@@ -98,16 +93,14 @@
       LOGGER.log(Level.SEVERE,"Cannot locate the application class.",e);
       throw new RuntimeException("Cannot locate the application class.",e);
     }
-    if (JaxRsApplication.class.isAssignableFrom(clazz)) {
-    }
- else     if (Application.class.isAssignableFrom(clazz)) {
+    if (Application.class.isAssignableFrom(clazz)) {
       Application application=ApplicationIntrospector.getApplication(defSource);
       Component component=ComponentIntrospector.getComponent(compName);
-      definition=ApplicationIntrospector.getDefinition(application,null,component,introspectionHelpers);
+      definition=ApplicationIntrospector.getDefinition(application,null,component);
     }
  else     if (clazz != null) {
       javax.ws.rs.core.Application jaxrsApplication=JaxRsIntrospector.getApplication(defSource);
-      definition=JaxRsIntrospector.getDefinition(jaxrsApplication,null,introspectionHelpers);
+      definition=JaxRsIntrospector.getDefinition(jaxrsApplication,null);
     }
  else {
       LOGGER.log(Level.SEVERE,"Class " + defSource + " is not supported");
