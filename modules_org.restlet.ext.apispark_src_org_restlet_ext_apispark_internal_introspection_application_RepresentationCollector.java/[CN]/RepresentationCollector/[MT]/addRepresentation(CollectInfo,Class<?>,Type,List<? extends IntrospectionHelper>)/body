@@ -19,10 +19,12 @@
   }
  else {
     representation.setIdentifier(Types.convertPrimitiveType(representationType));
-    String packageName=clazz.getPackage().getName();
-    representation.getSections().add(packageName);
-    if (collectInfo.getSection(packageName) == null) {
-      collectInfo.addSection(new Section(packageName));
+    if (collectInfo.isUseSectionNamingPackageStrategy()) {
+      String packageName=clazz.getPackage().getName();
+      representation.getSections().add(packageName);
+      if (collectInfo.getSection(packageName) == null) {
+        collectInfo.addSection(new Section(packageName));
+      }
     }
     representation.setName(representationType.getSimpleName());
   }

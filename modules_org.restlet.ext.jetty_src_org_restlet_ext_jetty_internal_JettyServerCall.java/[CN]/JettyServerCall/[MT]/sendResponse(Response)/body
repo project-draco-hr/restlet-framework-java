@@ -13,6 +13,11 @@
   }
  else {
     getChannel().getResponse().setStatus(getStatusCode());
-    super.sendResponse(response);
+    try {
+      super.sendResponse(response);
+    }
+ catch (    IllegalStateException e) {
+      getLogger().log(Level.WARNING,"Unable to set the status",e);
+    }
   }
 }

@@ -2,13 +2,16 @@
   try {
     getChannel().getResponse().flushBuffer();
   }
- catch (  IOException ex) {
-    getLogger().log(Level.FINE,"Unable to flush the response",ex);
+ catch (  IOException e) {
+    getLogger().log(Level.FINE,"Unable to flush the response",e);
+  }
+catch (  IllegalStateException e) {
+    getLogger().log(Level.WARNING,"Unable to flush the response",e);
   }
   try {
     getChannel().getResponse().closeOutput();
   }
- catch (  IOException ex) {
-    getLogger().log(Level.FINE,"Unable to complete the response",ex);
+ catch (  IOException e) {
+    getLogger().log(Level.FINE,"Unable to complete the response",e);
   }
 }

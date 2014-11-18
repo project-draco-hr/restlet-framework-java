@@ -1,0 +1,62 @@
+{
+  String url=serviceUrl + "api/";
+  sortDefinition(definition);
+  ClientResource cr=new ClientResource(url);
+  try {
+    cr.setChallengeResponse(ChallengeScheme.HTTP_BASIC,ulogin,upwd);
+    cr.addQueryParameter("type","rwadef");
+    if (createNewCell) {
+      cr.addQueryParameter("cellType",cellType);
+      cr.addSegment("apis").addSegment("");
+      logger.info("Create a new cell of type " + cellType);
+      cr.post(definition,MediaType.APPLICATION_JSON);
+    }
+ else     if (createNewVersion) {
+      cr.addSegment("apis").addSegment(cellId).addSegment("versions").addSegment("");
+      logger.info("Create a new version of the cell " + cellId);
+      cr.post(definition,MediaType.APPLICATION_JSON);
+    }
+ else     if (updateCell) {
+      cr.addSegment("apis").addSegment(cellId).addSegment("versions").addSegment(cellVersion);
+      logger.info("Update version " + cellVersion + " of cell "+ cellId+ " with strategy "+ updateStrategy);
+      cr.addQueryParameter("strategy",updateStrategy);
+      cr.put(definition,MediaType.APPLICATION_JSON);
+    }
+ else {
+      throw new RuntimeException("No action error");
+    }
+    logger.fine("Call success to " + cr.getRequest());
+    if (cr.getResponseEntity() != null && cr.getResponseEntity().isAvailable()) {
+      try {
+        cr.getResponseEntity().write(System.out);
+        System.out.println();
+      }
+ catch (      IOException e) {
+        logger.log(Level.WARNING,"Request successfully achieved by the server, but it's response cannot be printed",e);
+      }
+    }
+    if (cr.getLocationRef() != null) {
+      System.out.println("Your Web API documentation is accessible at this URL: " + cr.getLocationRef());
+    }
+  }
+ catch (  ResourceException e) {
+    logger.fine("Error during call to " + cr.getRequest());
+    if (e.getStatus().isConnectorError()) {
+      throw new RuntimeException("APISpark communication error. Please check the root cause below.",e);
+    }
+ else     if (e.getStatus().isClientError()) {
+      if (e.getStatus().getCode() == 403) {
+        throw new RuntimeException("APISpark Authentication fails. Check that you provide valid credentials.",e);
+      }
+ else       if (e.getStatus().getCode() == 404) {
+        throw new RuntimeException("Resource not found. Check that you provide valid cell id and cell version.",e);
+      }
+ else {
+        throw new RuntimeException("APISpark returns client error. Please check the root cause below.",e);
+      }
+    }
+ else {
+      throw new RuntimeException("APISpark server encounters some issues, please try later",e);
+    }
+  }
+}
