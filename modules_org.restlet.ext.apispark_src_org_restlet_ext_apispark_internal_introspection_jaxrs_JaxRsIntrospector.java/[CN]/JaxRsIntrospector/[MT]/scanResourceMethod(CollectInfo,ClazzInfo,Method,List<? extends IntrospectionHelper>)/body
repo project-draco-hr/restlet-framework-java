@@ -30,6 +30,7 @@
   Type[] genericParameterTypes=method.getGenericParameterTypes();
   for (int i=0; i < parameterTypes.length; i++) {
     Annotation[] annotations=parameterAnnotations[i];
+    TypeInfo typeInfo=Types.getTypeInfo(parameterTypes[i],genericParameterTypes[i]);
     for (    Annotation annotation : annotations) {
       String defaultValue=null;
       boolean isEntity=true;
@@ -38,21 +39,21 @@
       }
       if (annotation instanceof FormParam) {
         isEntity=false;
-        addRepresentation(collectInfo,parameterTypes[i],genericParameterTypes[i],introspectionHelper);
+        addRepresentation(collectInfo,typeInfo,introspectionHelper);
       }
       if (annotation instanceof HeaderParam) {
         isEntity=false;
-        Header header=getHeader(parameterTypes[i],genericParameterTypes[i],defaultValue,(HeaderParam)annotation);
+        Header header=getHeader(typeInfo,defaultValue,(HeaderParam)annotation);
         headers.put(header.getName(),header);
       }
       if (annotation instanceof PathParam) {
         isEntity=false;
-        PathVariable pathVariable=getPathVariable(parameterTypes[i],genericParameterTypes[i],(PathParam)annotation);
+        PathVariable pathVariable=getPathVariable(typeInfo,(PathParam)annotation);
         pathVariables.put(pathVariable.getName(),pathVariable);
       }
       if (annotation instanceof QueryParam) {
         isEntity=false;
-        QueryParameter queryParameter=getQueryParameter(parameterTypes[i],genericParameterTypes[i],defaultValue,(QueryParam)annotation);
+        QueryParameter queryParameter=getQueryParameter(typeInfo,defaultValue,(QueryParam)annotation);
         queryParameters.put(queryParameter.getName(),queryParameter);
       }
       if (annotation instanceof MatrixParam) {
@@ -65,9 +66,9 @@
         isEntity=false;
       }
       if (isEntity) {
-        addRepresentation(collectInfo,parameterTypes[i],genericParameterTypes[i],introspectionHelper);
+        addRepresentation(collectInfo,typeInfo,introspectionHelper);
         PayLoad inputEntity=new PayLoad();
-        inputEntity.setType(Types.convertPrimitiveType(ReflectUtils.getSimpleClass(genericParameterTypes[i])));
+        inputEntity.setType(typeInfo.getIdentifier());
         inputEntity.setArray(ReflectUtils.isListType(parameterTypes[i]));
         operation.setInputPayLoad(inputEntity);
       }
@@ -75,19 +76,17 @@
   }
   operation.getQueryParameters().addAll(queryParameters.values());
   Response response=new Response();
-  Class<?> outputClass=method.getReturnType();
-  Type outputType=method.getGenericReturnType();
-  if (outputClass != Void.TYPE) {
-    addRepresentation(collectInfo,outputClass,outputType,introspectionHelper);
+  if (method.getReturnType() != Void.TYPE) {
+    TypeInfo outputTypeInfo=Types.getTypeInfo(method.getReturnType(),method.getGenericReturnType());
+    addRepresentation(collectInfo,outputTypeInfo,introspectionHelper);
     PayLoad outputEntity=new PayLoad();
-    Class<?> simpleClass=ReflectUtils.getSimpleClass(outputType);
-    if (javax.ws.rs.core.Response.class.isAssignableFrom(simpleClass)) {
+    if (javax.ws.rs.core.Response.class.isAssignableFrom(outputTypeInfo.getRepresentationClazz())) {
       outputEntity.setType("file");
     }
  else {
-      outputEntity.setType(Types.convertPrimitiveType(simpleClass));
+      outputEntity.setType(outputTypeInfo.getIdentifier());
     }
-    outputEntity.setArray(ReflectUtils.isListType(outputClass));
+    outputEntity.setArray(outputTypeInfo.isList());
     response.setOutputPayLoad(outputEntity);
   }
   response.setCode(Status.SUCCESS_OK.getCode());

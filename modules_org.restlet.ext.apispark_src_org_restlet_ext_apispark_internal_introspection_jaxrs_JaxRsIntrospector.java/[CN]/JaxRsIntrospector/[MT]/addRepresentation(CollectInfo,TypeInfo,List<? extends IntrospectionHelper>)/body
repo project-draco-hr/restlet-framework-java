@@ -1,0 +1,49 @@
+{
+  Representation representation=new Representation();
+  representation.setDescription("");
+  if (typeInfo.isList()) {
+    addRepresentation(collectInfo,typeInfo.getComponentTypeInfo(),introspectionHelper);
+    return;
+  }
+  if (typeInfo.isPrimitive() || typeInfo.isJdkClass()) {
+    return;
+  }
+  if (typeInfo.isFile()) {
+    representation.setIdentifier("file");
+    representation.setName("file");
+  }
+ else {
+    representation.setIdentifier(typeInfo.getIdentifier());
+    String packageName=typeInfo.getClazz().getPackage().getName();
+    representation.getSections().add(packageName);
+    if (collectInfo.getSection(packageName) == null) {
+      collectInfo.addSection(new Section(packageName));
+    }
+    representation.setName(typeInfo.getRepresentationClazz().getSimpleName());
+  }
+  representation.setRaw(typeInfo.isRaw());
+  boolean notInCache=collectInfo.getRepresentation(representation.getIdentifier()) == null;
+  if (notInCache) {
+    collectInfo.addRepresentation(representation);
+    if (!typeInfo.isRaw()) {
+      BeanInfo beanInfo=BeanInfoUtils.getBeanInfo(typeInfo.getRepresentationClazz());
+      for (      PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
+        TypeInfo propertyTypeInfo=Types.getTypeInfo(pd.getReadMethod().getReturnType(),pd.getReadMethod().getGenericReturnType());
+        Property property=new Property();
+        property.setName(pd.getName());
+        property.setDescription("");
+        property.setType(propertyTypeInfo.getIdentifier());
+        property.setMinOccurs(0);
+        property.setMaxOccurs(typeInfo.isList() ? -1 : 1);
+        addRepresentation(collectInfo,propertyTypeInfo,introspectionHelper);
+        for (        IntrospectionHelper helper : introspectionHelper) {
+          helper.processProperty(property,pd.getReadMethod());
+        }
+        representation.getProperties().add(property);
+      }
+    }
+    for (    IntrospectionHelper helper : introspectionHelper) {
+      helper.processRepresentation(representation,typeInfo.getRepresentationClazz());
+    }
+  }
+}

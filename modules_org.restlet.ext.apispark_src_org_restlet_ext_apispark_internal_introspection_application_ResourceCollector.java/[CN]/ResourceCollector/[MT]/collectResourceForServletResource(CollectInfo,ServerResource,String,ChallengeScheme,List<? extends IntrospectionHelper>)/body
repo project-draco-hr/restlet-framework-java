@@ -18,7 +18,13 @@
         }
         completeOperation(collectInfo,operation,methodAnnotationInfo,sr,introspectionHelper);
         for (        IntrospectionHelper helper : introspectionHelper) {
-          helper.processOperation(resource,operation,sr.getClass(),methodAnnotationInfo.getJavaMethod());
+          List<Class<?>> representationClasses=helper.processOperation(resource,operation,sr.getClass(),methodAnnotationInfo.getJavaMethod());
+          if (representationClasses != null && !representationClasses.isEmpty()) {
+            for (            Class<?> representationClazz : representationClasses) {
+              TypeInfo typeInfo=Types.getTypeInfo(representationClazz,null);
+              RepresentationCollector.addRepresentation(collectInfo,typeInfo,introspectionHelper);
+            }
+          }
         }
         operations.add(operation);
       }

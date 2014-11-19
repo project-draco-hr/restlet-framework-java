@@ -1,0 +1,18 @@
+{
+  this.clazz=clazz;
+  this.type=type;
+  Class<?> componentClazz=ReflectUtils.getComponentClass(type);
+  representationClazz=(componentClazz != null) ? componentClazz : clazz;
+  identifier=Types.convertPrimitiveType(representationClazz);
+  isList=ReflectUtils.isListType(clazz);
+  if (isList) {
+    componentTypeInfo=Types.getTypeInfo(componentClazz,null);
+  }
+ else {
+    componentTypeInfo=null;
+  }
+  isPrimitive=Types.isPrimitiveType(representationClazz);
+  isJdkClass=ReflectUtils.isJdkClass(representationClazz);
+  isFile=Representation.class.isAssignableFrom(representationClazz) || File.class.isAssignableFrom(representationClazz);
+  isRaw=isFile || isJdkClass;
+}

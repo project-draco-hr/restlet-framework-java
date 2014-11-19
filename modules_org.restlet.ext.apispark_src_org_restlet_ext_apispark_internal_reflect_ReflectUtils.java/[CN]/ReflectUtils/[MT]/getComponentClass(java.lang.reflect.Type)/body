@@ -1,0 +1,29 @@
+{
+  if (type instanceof Class<?>) {
+    Class<?> c=(Class<?>)type;
+    if (c.isArray()) {
+      return c.getComponentType();
+    }
+ else     if (Collection.class.isAssignableFrom(c)) {
+      return getComponentClass(c.getGenericSuperclass());
+    }
+ else {
+      return c;
+    }
+  }
+ else   if (type instanceof GenericArrayType) {
+    GenericArrayType gat=(GenericArrayType)type;
+    return getComponentClass(gat.getGenericComponentType());
+  }
+ else   if (type instanceof ParameterizedType) {
+    ParameterizedType t=(ParameterizedType)type;
+    if (t.getActualTypeArguments().length == 1) {
+      return getComponentClass(t.getActualTypeArguments()[0]);
+    }
+ else {
+      Logger.getLogger(ReflectUtils.class.getName()).warning("We don't support generic types with several arguments.");
+      return null;
+    }
+  }
+  return (type != null) ? type.getClass() : null;
+}

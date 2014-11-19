@@ -10,7 +10,8 @@
         response.setCode(statusCode);
         response.setMessage("Status " + statusCode);
         Class<?> outputPayloadType=statusAnnotation.isSerializable() ? thrownClass : StatusInfo.class;
-        RepresentationCollector.addRepresentation(collectInfo,outputPayloadType,null,introspectionHelper);
+        TypeInfo outputTypeInfo=Types.getTypeInfo(outputPayloadType,null);
+        RepresentationCollector.addRepresentation(collectInfo,outputTypeInfo,introspectionHelper);
         PayLoad outputPayLoad=new PayLoad();
         outputPayLoad.setType(outputPayloadType.getName());
         response.setOutputPayLoad(outputPayLoad);
@@ -20,12 +21,11 @@
   }
   Class<?>[] inputClasses=mai.getJavaMethod().getParameterTypes();
   if (inputClasses != null && inputClasses.length > 0) {
-    Class<?> inputClass=inputClasses[0];
-    Type inputType=mai.getJavaMethod().getGenericParameterTypes()[0];
-    RepresentationCollector.addRepresentation(collectInfo,inputClass,inputType,introspectionHelper);
+    TypeInfo inputTypeInfo=Types.getTypeInfo(inputClasses[0],mai.getJavaMethod().getGenericParameterTypes()[0]);
+    RepresentationCollector.addRepresentation(collectInfo,inputTypeInfo,introspectionHelper);
     PayLoad inputEntity=new PayLoad();
-    inputEntity.setType(Types.convertPrimitiveType(ReflectUtils.getSimpleClass(inputType)));
-    inputEntity.setArray(ReflectUtils.isListType(inputClass));
+    inputEntity.setType(inputTypeInfo.getIdentifier());
+    inputEntity.setArray(inputTypeInfo.isList());
     operation.setInputPayLoad(inputEntity);
     if (metadataService != null) {
       try {
@@ -60,17 +60,16 @@
     }
   }
   Response response=new Response();
-  Class<?> outputClass=mai.getJavaMethod().getReturnType();
-  Type outputType=mai.getJavaMethod().getGenericReturnType();
-  if (outputClass != Void.TYPE) {
-    RepresentationCollector.addRepresentation(collectInfo,outputClass,outputType,introspectionHelper);
+  if (mai.getJavaMethod().getReturnType() != Void.TYPE) {
+    TypeInfo outputTypeInfo=Types.getTypeInfo(mai.getJavaMethod().getReturnType(),mai.getJavaMethod().getGenericReturnType());
+    RepresentationCollector.addRepresentation(collectInfo,outputTypeInfo,introspectionHelper);
     PayLoad outputEntity=new PayLoad();
-    outputEntity.setType(Types.convertPrimitiveType(ReflectUtils.getSimpleClass(outputType)));
-    outputEntity.setArray(ReflectUtils.isListType(outputClass));
+    outputEntity.setType(outputTypeInfo.getIdentifier());
+    outputEntity.setArray(outputTypeInfo.isList());
     response.setOutputPayLoad(outputEntity);
   }
   response.setCode(Status.SUCCESS_OK.getCode());
-  response.setName("Success");
+  response.setName(Status.SUCCESS_OK.getReasonPhrase());
   response.setDescription("");
   response.setMessage(Status.SUCCESS_OK.getDescription());
   operation.getResponses().add(response);

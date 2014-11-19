@@ -1,0 +1,37 @@
+{
+  List<Response> responses=operation.getResponses();
+  if (responses == null) {
+    responses=new ArrayList<>();
+    operation.setResponses(responses);
+  }
+  final int code=apiResponse.code();
+  Optional<Response> existingResponse=Iterables.tryFind(responses,new Predicate<Response>(){
+    @Override public boolean apply(    Response response){
+      return response.getCode() == code;
+    }
+  }
+);
+  boolean responseExists=existingResponse.isPresent();
+  Response response;
+  if (responseExists) {
+    response=existingResponse.get();
+  }
+ else {
+    response=new Response();
+    response.setCode(code);
+  }
+  response.setCode(code);
+  if (!StringUtils.isNullOrEmpty(apiResponse.message())) {
+    response.setDescription(apiResponse.message());
+  }
+  Class<?> responseClazz=apiResponse.response();
+  if (responseClazz != null && responseClazz != Void.TYPE && responseClazz != Void.class) {
+    representationsUsed.add(responseClazz);
+    PayLoad payLoad=new PayLoad();
+    payLoad.setType(Types.convertPrimitiveType(responseClazz));
+    response.setOutputPayLoad(payLoad);
+  }
+  if (!responseExists) {
+    responses.add(response);
+  }
+}
