@@ -1,0 +1,28 @@
+{
+  Class<?>[] thrownClasses=mai.getJavaMethod().getExceptionTypes();
+  if (thrownClasses != null) {
+    for (    Class<?> thrownClass : thrownClasses) {
+      StatusAnnotationInfo statusAnnotation=AnnotationUtils.getInstance().getStatusAnnotationInfo(thrownClass);
+      if (statusAnnotation != null) {
+        int statusCode=statusAnnotation.getStatus().getCode();
+        Response response=new Response();
+        response.setCode(statusCode);
+        response.setMessage("Status " + statusCode);
+        Class<?> outputPayloadType=statusAnnotation.isSerializable() ? thrownClass : StatusInfo.class;
+        TypeInfo outputTypeInfo=null;
+        try {
+          outputTypeInfo=Types.getTypeInfo(outputPayloadType,null);
+        }
+ catch (        UnsupportedTypeException e) {
+          LOGGER.warning("Could not add output payload for exception " + thrownClass + " throws by method "+ mai.getJavaMethod()+ ". "+ e.getMessage());
+          continue;
+        }
+        RepresentationCollector.addRepresentation(collectInfo,outputTypeInfo,introspectionHelper);
+        PayLoad outputPayLoad=new PayLoad();
+        outputPayLoad.setType(outputTypeInfo.getIdentifier());
+        response.setOutputPayLoad(outputPayLoad);
+        operation.getResponses().add(response);
+      }
+    }
+  }
+}

@@ -7,13 +7,9 @@
       if (annotationInfo instanceof MethodAnnotationInfo) {
         MethodAnnotationInfo methodAnnotationInfo=(MethodAnnotationInfo)annotationInfo;
         Method method=methodAnnotationInfo.getRestletMethod();
-        if ("OPTIONS".equals(method.getName()) || "PATCH".equals(method.getName())) {
-          LOGGER.fine("Method " + method.getName() + " ignored.");
-          continue;
-        }
         Operation operation=getOperationFromMethod(method);
         if (StringUtils.isNullOrEmpty(operation.getName())) {
-          LOGGER.warning("Java method " + methodAnnotationInfo.getJavaMethod().getName() + " has no Method name.");
+          LOGGER.warning("Java method " + methodAnnotationInfo.getJavaMethod() + " has no Method name.");
           operation.setName(methodAnnotationInfo.getJavaMethod().getName());
         }
         completeOperation(collectInfo,operation,methodAnnotationInfo,sr,introspectionHelper);
@@ -21,7 +17,14 @@
           List<Class<?>> representationClasses=helper.processOperation(resource,operation,sr.getClass(),methodAnnotationInfo.getJavaMethod());
           if (representationClasses != null && !representationClasses.isEmpty()) {
             for (            Class<?> representationClazz : representationClasses) {
-              TypeInfo typeInfo=Types.getTypeInfo(representationClazz,null);
+              TypeInfo typeInfo;
+              try {
+                typeInfo=Types.getTypeInfo(representationClazz,null);
+              }
+ catch (              UnsupportedTypeException e) {
+                LOGGER.warning("Could not add representation class " + representationClazz.getName() + ". "+ e.getMessage());
+                continue;
+              }
               RepresentationCollector.addRepresentation(collectInfo,typeInfo,introspectionHelper);
             }
           }

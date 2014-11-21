@@ -1,0 +1,23 @@
+{
+  Response response=new Response();
+  if (mai.getJavaMethod().getReturnType() != Void.TYPE) {
+    TypeInfo outputTypeInfo;
+    try {
+      outputTypeInfo=Types.getTypeInfo(mai.getJavaMethod().getReturnType(),mai.getJavaMethod().getGenericReturnType());
+    }
+ catch (    UnsupportedTypeException e) {
+      LOGGER.warning("Could not add output representation of method " + mai.getJavaMethod() + ". "+ e.getMessage());
+      return;
+    }
+    RepresentationCollector.addRepresentation(collectInfo,outputTypeInfo,introspectionHelper);
+    PayLoad outputEntity=new PayLoad();
+    outputEntity.setType(outputTypeInfo.getIdentifier());
+    outputEntity.setArray(outputTypeInfo.isList());
+    response.setOutputPayLoad(outputEntity);
+  }
+  response.setCode(Status.SUCCESS_OK.getCode());
+  response.setName(Status.SUCCESS_OK.getReasonPhrase());
+  response.setDescription("");
+  response.setMessage(Status.SUCCESS_OK.getDescription());
+  operation.getResponses().add(response);
+}

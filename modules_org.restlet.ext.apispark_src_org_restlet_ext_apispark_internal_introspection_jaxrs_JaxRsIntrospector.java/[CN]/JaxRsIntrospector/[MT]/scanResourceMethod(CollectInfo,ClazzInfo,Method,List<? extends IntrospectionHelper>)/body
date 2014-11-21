@@ -30,7 +30,14 @@
   Type[] genericParameterTypes=method.getGenericParameterTypes();
   for (int i=0; i < parameterTypes.length; i++) {
     Annotation[] annotations=parameterAnnotations[i];
-    TypeInfo typeInfo=Types.getTypeInfo(parameterTypes[i],genericParameterTypes[i]);
+    TypeInfo typeInfo;
+    try {
+      typeInfo=Types.getTypeInfo(parameterTypes[i],genericParameterTypes[i]);
+    }
+ catch (    UnsupportedTypeException e) {
+      LOGGER.warning("Could not scan parameter " + Types.toString(parameterTypes[i],genericParameterTypes[i]) + " of method "+ method+ ". "+ e.getMessage());
+      continue;
+    }
     for (    Annotation annotation : annotations) {
       String defaultValue=null;
       boolean isEntity=true;

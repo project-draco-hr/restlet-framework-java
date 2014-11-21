@@ -1,0 +1,37 @@
+{
+  Class<?>[] inputClasses=mai.getJavaMethod().getParameterTypes();
+  if (inputClasses != null && inputClasses.length > 0) {
+    TypeInfo inputTypeInfo;
+    try {
+      inputTypeInfo=Types.getTypeInfo(inputClasses[0],mai.getJavaMethod().getGenericParameterTypes()[0]);
+    }
+ catch (    UnsupportedTypeException e) {
+      LOGGER.warning("Could not add input representation of method" + mai.getJavaMethod() + ". "+ e.getMessage());
+      return;
+    }
+    RepresentationCollector.addRepresentation(collectInfo,inputTypeInfo,introspectionHelper);
+    PayLoad inputEntity=new PayLoad();
+    inputEntity.setType(inputTypeInfo.getIdentifier());
+    inputEntity.setArray(inputTypeInfo.isList());
+    operation.setInputPayLoad(inputEntity);
+    if (metadataService != null) {
+      try {
+        List<Variant> requestVariants=mai.getRequestVariants(metadataService,sr.getConverterService());
+        if (requestVariants == null || requestVariants.isEmpty()) {
+          LOGGER.warning("Could not add consumes of method " + mai.getJavaMethod() + ". There is no requested variant");
+          return;
+        }
+        for (        Variant variant : requestVariants) {
+          if (variant.getMediaType() == null) {
+            LOGGER.warning("Variant has no media type: " + variant);
+            continue;
+          }
+          operation.getConsumes().add(variant.getMediaType().getName());
+        }
+      }
+ catch (      IOException e) {
+        throw new ResourceException(e);
+      }
+    }
+  }
+}

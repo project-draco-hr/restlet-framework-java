@@ -1,5 +1,12 @@
 {
-  TypeInfo typeInfo=Types.getTypeInfo(field.getType(),field.getGenericType());
+  TypeInfo typeInfo;
+  try {
+    typeInfo=Types.getTypeInfo(field.getType(),field.getGenericType());
+  }
+ catch (  UnsupportedTypeException e) {
+    LOGGER.warning("Could not add field " + field + ". "+ e.getMessage());
+    return;
+  }
   DefaultValue defaultvalue=field.getAnnotation(DefaultValue.class);
   String defaultValueString=defaultvalue != null ? defaultvalue.value() : null;
   HeaderParam headerParam=field.getAnnotation(HeaderParam.class);

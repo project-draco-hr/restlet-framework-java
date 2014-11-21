@@ -1,0 +1,14 @@
+{
+  if (mai.getQuery() != null) {
+    Form form=new Form(mai.getQuery());
+    for (    org.restlet.data.Parameter parameter : form) {
+      QueryParameter queryParameter=new QueryParameter();
+      queryParameter.setName(parameter.getName());
+      queryParameter.setRequired(true);
+      queryParameter.setDescription(StringUtils.isNullOrEmpty(parameter.getValue()) ? "" : "Value: " + parameter.getValue());
+      queryParameter.setDefaultValue(parameter.getValue());
+      queryParameter.setAllowMultiple(false);
+      operation.getQueryParameters().add(queryParameter);
+    }
+  }
+}

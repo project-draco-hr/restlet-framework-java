@@ -28,7 +28,14 @@
     if (!typeInfo.isRaw()) {
       BeanInfo beanInfo=BeanInfoUtils.getBeanInfo(typeInfo.getRepresentationClazz());
       for (      PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
-        TypeInfo propertyTypeInfo=Types.getTypeInfo(pd.getReadMethod().getReturnType(),pd.getReadMethod().getGenericReturnType());
+        TypeInfo propertyTypeInfo;
+        try {
+          propertyTypeInfo=Types.getTypeInfo(pd.getReadMethod().getReturnType(),pd.getReadMethod().getGenericReturnType());
+        }
+ catch (        UnsupportedTypeException e) {
+          LOGGER.warning("Could not add property " + pd.getName() + " of representation "+ typeInfo.getIdentifier()+ ". "+ e.getMessage());
+          continue;
+        }
         Property property=new Property();
         property.setName(pd.getName());
         property.setDescription("");
