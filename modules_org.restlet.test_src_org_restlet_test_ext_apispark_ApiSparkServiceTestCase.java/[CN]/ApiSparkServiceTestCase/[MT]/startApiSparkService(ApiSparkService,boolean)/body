@@ -1,0 +1,16 @@
+{
+  this.agentComponent=new Component();
+  this.agentComponent.setName("agent");
+  this.agentComponent.getServers().add(Protocol.HTTP,AGENT_PORT);
+  this.agentComponent.getClients().add(Protocol.HTTP);
+  Application application;
+  if (embedded) {
+    application=new UserApiApplication();
+  }
+ else {
+    application=new Application();
+  }
+  application.getServices().add(apiSparkService);
+  this.agentComponent.getDefaultHost().attach(application);
+  this.agentComponent.start();
+}

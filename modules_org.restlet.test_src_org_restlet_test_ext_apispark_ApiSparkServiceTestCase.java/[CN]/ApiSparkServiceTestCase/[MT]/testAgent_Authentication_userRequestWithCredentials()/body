@@ -1,0 +1,14 @@
+{
+  MockModulesSettingsServerResource.MODULES_SETTINGS.setAuthenticationModuleEnabled(true);
+  startApiSparkService(getAgentService(),true);
+  assertEquals(1,MockModulesSettingsServerResource.GET_SETTINGS_COUNT);
+  Response response=callAgent("/test",VALID_USERNAME,VALID_PASSWORD);
+  assertEquals(Status.SUCCESS_NO_CONTENT,response.getStatus());
+  assertEquals(1,MockAuthenticationAuthenticateServerResource.AUTHENTICATE_COUNT);
+  response=callAgent("/test",VALID_USERNAME,VALID_PASSWORD);
+  assertEquals(Status.SUCCESS_NO_CONTENT,response.getStatus());
+  assertEquals(1,MockAuthenticationAuthenticateServerResource.AUTHENTICATE_COUNT);
+  response=callAgent("/test",VALID_USERNAME,BAD_PASSWORD);
+  assertEquals(Status.CLIENT_ERROR_UNAUTHORIZED,response.getStatus());
+  assertEquals(1,MockAuthenticationAuthenticateServerResource.AUTHENTICATE_COUNT);
+}

@@ -1,0 +1,12 @@
+{
+  System.setProperty(ApiSparkService.CONFIGURATION_FILE_SYSTEM_PROPERTY_KEY,getClass().getResource("agent-configuration.properties").getPath());
+  ApiSparkService apiSparkService=new ApiSparkService();
+  apiSparkService.setAgentEnabled(true);
+  apiSparkService.loadConfiguration();
+  assertEquals(VALID_USERNAME,apiSparkService.getAgentLogin());
+  assertEquals(VALID_PASSWORD,apiSparkService.getAgentPassword());
+  assertEquals(Integer.valueOf(CELL_ID),apiSparkService.getAgentCellId());
+  assertEquals(Integer.valueOf(CELL_VERSION),apiSparkService.getAgentCellVersion());
+  assertTrue(apiSparkService.isReverseProxyEnabled());
+  assertEquals("http://myrealapi.com/",apiSparkService.getReverseProxyTargetUrl());
+}

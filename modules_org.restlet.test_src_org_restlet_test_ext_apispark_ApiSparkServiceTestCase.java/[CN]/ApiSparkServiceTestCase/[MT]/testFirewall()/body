@@ -1,0 +1,13 @@
+{
+  Context.getCurrentLogger().setLevel(Level.FINE);
+  ApiSparkService apiSparkService=new ApiSparkService();
+  apiSparkService.setFirewallEnabled(true);
+  apiSparkService.getFirewallConfig().addRolesPeriodicCounter(1,TimeUnit.MINUTES,null,1);
+  startApiSparkService(apiSparkService,true);
+  assertEquals(0,MockModulesSettingsServerResource.GET_SETTINGS_COUNT);
+  assertEquals(0,MockFirewallSettingsServerResource.GET_SETTINGS_COUNT);
+  Response response=callAgent("/test",VALID_USERNAME,VALID_PASSWORD);
+  assertEquals(Status.SUCCESS_NO_CONTENT,response.getStatus());
+  response=callAgent("/test",VALID_USERNAME,VALID_PASSWORD);
+  assertEquals(Status.CLIENT_ERROR_TOO_MANY_REQUESTS,response.getStatus());
+}

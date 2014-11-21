@@ -1,0 +1,15 @@
+{
+  super(context);
+  AuthorizationOperationsResource authorizationOperationsClientResource=AgentUtils.getClientResource(apiSparkConfig,modulesSettings,AuthorizationOperationsResource.class,OPERATIONS_AUTHORIZATIONS_PATH);
+  List<OperationAuthorization> operationAuthorizations;
+  try {
+    operationAuthorizations=authorizationOperationsClientResource.getAuthorizations();
+  }
+ catch (  Exception e) {
+    throw new AgentConfigurationException("Could not get authorization module configuration from APISpark connector service",e);
+  }
+  router=new Router();
+  for (  OperationAuthorization operationAuthorization : operationAuthorizations) {
+    router.attach(operationAuthorization.getPathTemplate(),new RestletOperationAuthorization(operationAuthorization));
+  }
+}

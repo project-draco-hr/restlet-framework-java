@@ -1,0 +1,11 @@
+{
+  MockModulesSettingsServerResource.MODULES_SETTINGS.setAuthorizationModuleEnabled(true);
+  try {
+    ApiSparkService apiSparkService=getAgentService();
+    startApiSparkService(apiSparkService,true);
+    fail("AgentConfigurationException expected");
+  }
+ catch (  AgentConfigurationException e) {
+    assertEquals("The authorization module requires the authentication module which is not enabled",e.getMessage());
+  }
+}

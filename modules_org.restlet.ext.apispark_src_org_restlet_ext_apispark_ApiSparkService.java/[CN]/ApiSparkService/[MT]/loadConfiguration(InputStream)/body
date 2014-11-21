@@ -1,0 +1,18 @@
+{
+  Properties properties=new Properties();
+  try {
+    properties.load(inputStream);
+  }
+ catch (  IOException e) {
+    throw new IllegalArgumentException("APISpark configuration file error. See exception for details.",e);
+  }
+  this.agentServiceUrl=properties.getProperty("agent.serviceUrl",DEFAULT_AGENT_SERVICE_URL);
+  this.agentLogin=properties.getProperty("agent.login");
+  this.agentPassword=getRequiredProperty(properties,"agent.password").toCharArray();
+  this.agentCellId=getRequiredIntegerProperty(properties,"agent.cellId");
+  this.agentCellVersion=getRequiredIntegerProperty(properties,"agent.cellVersion");
+  this.reverseProxyEnabled=Boolean.valueOf(getRequiredProperty(properties,"reverseProxy.enabled"));
+  if (this.reverseProxyEnabled) {
+    this.reverseProxyTargetUrl=getRequiredProperty(properties,"reverseProxy.targetUrl");
+  }
+}
