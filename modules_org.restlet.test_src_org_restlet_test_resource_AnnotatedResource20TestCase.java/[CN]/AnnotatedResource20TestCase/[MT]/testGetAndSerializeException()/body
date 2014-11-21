@@ -4,16 +4,7 @@
     fail("Should fail");
   }
  catch (  MyException02 e) {
-    fail("Exception should be caught by client resource");
-  }
-catch (  ResourceException e) {
-    assertEquals(400,e.getStatus().getCode());
-    Representation responseEntity=clientResource.getResponseEntity();
-    assertTrue(JacksonRepresentation.class.isAssignableFrom(responseEntity.getClass()));
-    @SuppressWarnings("rawtypes") JacksonRepresentation jacksonRepresentation=(JacksonRepresentation)responseEntity;
-    Object entity=jacksonRepresentation.getObject();
-    assertTrue(MyException02.class.isAssignableFrom(entity.getClass()));
-    MyException02 myException02=(MyException02)entity;
-    assertEquals("my custom error",myException02.getCustomProperty());
+    assertEquals(400,clientResource.getStatus().getCode());
+    assertEquals("my custom error",e.getCustomProperty());
   }
 }
