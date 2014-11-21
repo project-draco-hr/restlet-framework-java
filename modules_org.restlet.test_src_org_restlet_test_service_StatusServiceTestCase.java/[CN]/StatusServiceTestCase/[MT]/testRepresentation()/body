@@ -7,11 +7,12 @@
   Request request=new Request();
   Representation representation=ss.toRepresentation(status,request,new Response(request));
   Status expectedStatus=Status.CLIENT_ERROR_BAD_REQUEST;
-  HashMap<String,Object> expectedRepresentationMap=new LinkedHashMap<String,Object>();
+  HashMap<String,Object> expectedRepresentationMap=new LinkedHashMap<>();
   expectedRepresentationMap.put("code",expectedStatus.getCode());
   expectedRepresentationMap.put("description",expectedStatus.getDescription());
   expectedRepresentationMap.put("reasonPhrase",expectedStatus.getReasonPhrase());
-  String expectedJsonRepresentation=new JacksonRepresentation<HashMap<String,Object>>(expectedRepresentationMap).getText();
+  expectedRepresentationMap.put("uri",expectedStatus.getUri());
+  String expectedJsonRepresentation=new JacksonRepresentation<>(expectedRepresentationMap).getText();
   Status.CLIENT_ERROR_BAD_REQUEST.getCode();
   assertEquals(MediaType.APPLICATION_JSON,representation.getMediaType());
   assertEquals(expectedJsonRepresentation,representation.getText());
