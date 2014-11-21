@@ -23,14 +23,11 @@
       if (variants == null) {
         variants=new ArrayList<>();
       }
-      if (!variants.contains(VARIANT_HTML)) {
-        variants.add(VARIANT_HTML);
-      }
       Variant variant=connegService.getPreferredVariant(variants,request,metadataService);
       result=converterService.toRepresentation(representationObject,variant);
     }
  catch (    Exception e) {
-      Context.getCurrentLogger().log(Level.WARNING,"Could not serialize throwable class " + cause.getClass(),e);
+      Context.getCurrentLogger().log(Level.WARNING,"Could not serialize throwable class " + ((cause == null) ? null : cause.getClass()),e);
     }
   }
   return result;
