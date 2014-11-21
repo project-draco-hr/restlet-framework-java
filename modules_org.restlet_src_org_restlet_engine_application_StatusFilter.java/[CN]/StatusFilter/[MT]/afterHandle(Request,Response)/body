@@ -2,17 +2,12 @@
   if (response.getStatus() == null) {
     response.setStatus(Status.SUCCESS_OK);
   }
-  if (response.getStatus().isError() && ((response.getEntity() == null) || isOverwriting())) {
-    Representation representation=null;
-    try {
-      representation=getStatusService().toRepresentation(response.getStatus(),request,response);
+  try {
+    if (response.getStatus().isError() && ((response.getEntity() == null) || isOverwriting())) {
+      response.setEntity(getStatusService().toRepresentation(response.getStatus(),request,response));
     }
- catch (    Exception e) {
-      getLogger().log(Level.WARNING,"Unable to get the custom status representation",e);
-    }
-    if (representation == null) {
-      representation=getDefaultRepresentation(response.getStatus(),request,response);
-    }
-    response.setEntity(representation);
+  }
+ catch (  Exception e) {
+    getLogger().log(Level.WARNING,"Unable to get the custom status representation",e);
   }
 }

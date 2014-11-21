@@ -20,5 +20,18 @@
       result.add(new MethodAnnotationInfo(initialClass,restletMethod,javaMethod,value));
     }
   }
+  for (  Class<?> exceptionClass : javaMethod.getExceptionTypes()) {
+    for (    Annotation annotation : exceptionClass.getAnnotations()) {
+      org.restlet.resource.Status statusAnnotation=annotation.annotationType().getAnnotation(org.restlet.resource.Status.class);
+      if (statusAnnotation != null) {
+        int code=statusAnnotation.value();
+        boolean serializable=statusAnnotation.serialize();
+        if (result == null) {
+          result=new CopyOnWriteArrayList<AnnotationInfo>();
+        }
+        result.add(new ThrowableAnnotationInfo(initialClass,code,serializable));
+      }
+    }
+  }
   return result;
 }
