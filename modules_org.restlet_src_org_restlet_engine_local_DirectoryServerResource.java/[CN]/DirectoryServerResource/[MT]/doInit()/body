@@ -13,10 +13,8 @@
     if (this.relativePart.startsWith("/")) {
       this.relativePart=this.relativePart.substring(1);
     }
-    this.targetUri=new Reference(directory.getRootRef().toString() + this.relativePart).normalize().toString(false,false);
-    if (!this.targetUri.startsWith(directory.getRootRef().toString())) {
-      this.targetUri=directory.getRootRef().toString();
-    }
+    this.targetUri=new Reference(directory.getRootRef().toString() + this.relativePart).toString(false,false);
+    preventUpperDirectoryAccess();
     if (getClientDispatcher() == null) {
       getLogger().warning("No client dispatcher is available on the context. Can't get the target URI: " + this.targetUri);
     }
