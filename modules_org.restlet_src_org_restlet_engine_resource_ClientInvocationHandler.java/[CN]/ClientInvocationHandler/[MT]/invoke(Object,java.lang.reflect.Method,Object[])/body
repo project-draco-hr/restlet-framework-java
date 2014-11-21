@@ -7,7 +7,7 @@
     result=clientResource;
   }
  else {
-    MethodAnnotationInfo annotationInfo=annotationUtils.getMethodAnnotation(annotations,javaMethod);
+    MethodAnnotationInfo annotationInfo=getAnnotationUtils().getMethodAnnotation(annotations,javaMethod);
     if (annotationInfo != null) {
       Representation requestEntity=null;
       boolean isSynchronous=true;
@@ -74,10 +74,19 @@
       }
       Response response=getClientResource().handleOutbound(request);
       if (isSynchronous) {
-        if (response.getStatus().isError()) {
-          getClientResource().doError(response.getStatus());
+        if ((response != null) && response.getStatus().isError()) {
+          if (response.isEntityAvailable()) {
+            Class<?> throwableClazz=getAnnotationUtils().getThrowableClass(javaMethod,response.getStatus().getCode());
+            if (throwableClazz != null) {
+              Throwable t=(Throwable)getClientResource().toObject(response.getEntity(),throwableClazz);
+              throw t;
+            }
+ else {
+              getClientResource().doError(response.getStatus());
+            }
+          }
         }
-        if (!annotationInfo.getJavaOutputType().equals(void.class)) {
+ else         if (!annotationInfo.getJavaOutputType().equals(void.class)) {
           result=getClientResource().toObject((response == null ? null : response.getEntity()),annotationInfo.getJavaOutputType());
         }
       }

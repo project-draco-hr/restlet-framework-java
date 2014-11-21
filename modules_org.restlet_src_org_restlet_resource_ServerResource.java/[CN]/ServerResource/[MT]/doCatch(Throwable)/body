@@ -13,5 +13,7 @@
   getLogger().log(level,"Exception or error caught in server resource",throwable);
   if (getResponse() != null) {
     getResponse().setStatus(status);
+    Representation errorEntity=getStatusService().toRepresentation(status,this);
+    getResponse().setEntity(errorEntity);
   }
 }
