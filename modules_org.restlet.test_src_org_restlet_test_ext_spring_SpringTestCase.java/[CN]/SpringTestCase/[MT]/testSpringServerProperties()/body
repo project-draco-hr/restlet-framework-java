@@ -1,7 +1,7 @@
 {
-  ClassPathResource resource=new ClassPathResource("org/restlet/test/ext/spring/SpringTestCase.xml");
-  BeanFactory factory=new XmlBeanFactory(resource);
-  Server server=(Server)factory.getBean("server");
+  ClassPathXmlApplicationContext ctx=new ClassPathXmlApplicationContext("org/restlet/test/ext/spring/SpringTestCase.xml");
+  Server server=(Server)ctx.getBean("server");
   assertEquals("value1",server.getContext().getParameters().getFirstValue("key1"));
   assertEquals("value2",server.getContext().getParameters().getFirstValue("key2"));
+  ctx.close();
 }

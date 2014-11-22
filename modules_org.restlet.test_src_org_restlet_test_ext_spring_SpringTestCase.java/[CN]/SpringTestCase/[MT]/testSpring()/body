@@ -1,8 +1,8 @@
 {
-  ClassPathResource resource=new ClassPathResource("org/restlet/test/ext/spring/SpringTestCase.xml");
-  BeanFactory factory=new XmlBeanFactory(resource);
-  Component component=(Component)factory.getBean("component");
+  ClassPathXmlApplicationContext ctx=new ClassPathXmlApplicationContext("org/restlet/test/ext/spring/SpringTestCase.xml");
+  Component component=(Component)ctx.getBean("component");
   component.start();
   Thread.sleep(500);
   component.stop();
+  ctx.close();
 }
