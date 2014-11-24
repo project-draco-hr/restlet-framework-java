@@ -1,14 +1,15 @@
 {
-  Throwable exception=new MyException02("test message");
+  Throwable exception=new Status401SerializableException("test message",50);
   Status status=new Status(400,exception);
-  ConverterService converterService=new ConverterService();
-  ConnegService connegService=new ConnegService();
-  MetadataService metadataService=new MetadataService();
-  StatusService ss=new StatusService(true,converterService,metadataService,connegService);
+  StatusService ss=new StatusService();
   Request request=new Request();
   Representation representation=ss.toRepresentation(status,request,new Response(request));
   HashMap<String,Object> expectedRepresentationMap=new LinkedHashMap<>();
-  expectedRepresentationMap.put("customProperty","test message");
+  expectedRepresentationMap.put("stackTrace",exception.getStackTrace());
+  expectedRepresentationMap.put("value",50);
+  expectedRepresentationMap.put("message","test message");
+  expectedRepresentationMap.put("localizedMessage","test message");
+  expectedRepresentationMap.put("suppressed",new String[0]);
   String expectedJsonRepresentation=new JacksonRepresentation<>(expectedRepresentationMap).getText();
   Status.CLIENT_ERROR_BAD_REQUEST.getCode();
   assertEquals(MediaType.APPLICATION_JSON,representation.getMediaType());

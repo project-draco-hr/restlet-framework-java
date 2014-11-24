@@ -1,0 +1,13 @@
+{
+  Throwable exception=new Status402SerializableBusinessException("test message",50);
+  Status status=new Status(400,exception);
+  StatusService ss=new StatusService();
+  Request request=new Request();
+  Representation representation=ss.toRepresentation(status,request,new Response(request));
+  HashMap<String,Object> expectedRepresentationMap=new LinkedHashMap<>();
+  expectedRepresentationMap.put("value",50);
+  String expectedJsonRepresentation=new JacksonRepresentation<>(expectedRepresentationMap).getText();
+  Status.CLIENT_ERROR_BAD_REQUEST.getCode();
+  assertEquals(MediaType.APPLICATION_JSON,representation.getMediaType());
+  assertEquals(expectedJsonRepresentation,representation.getText());
+}

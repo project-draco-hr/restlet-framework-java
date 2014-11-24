@@ -1,9 +1,6 @@
 {
-  Status status=new Status(400,new MyException01(new Date()));
-  ConverterService converterService=new ConverterService();
-  ConnegService connegService=new ConnegService();
-  MetadataService metadataService=new MetadataService();
-  StatusService ss=new StatusService(true,converterService,metadataService,connegService);
+  StatusService ss=new StatusService();
+  Status status=new Status(400,new Status400Exception("test message",50));
   Request request=new Request();
   Representation representation=ss.toRepresentation(status,request,new Response(request));
   Status expectedStatus=Status.CLIENT_ERROR_BAD_REQUEST;
