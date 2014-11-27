@@ -26,6 +26,9 @@
       throw new RuntimeException("No action error");
     }
     logger.fine("Call success to " + cr.getRequest());
+    if (!cr.getResponse().getStatus().isSuccess()) {
+      throw new RuntimeException("Request failed with following status: " + cr.getResponse().getStatus());
+    }
     if (cr.getResponseEntity() != null && cr.getResponseEntity().isAvailable()) {
       try {
         cr.getResponseEntity().write(System.out);
