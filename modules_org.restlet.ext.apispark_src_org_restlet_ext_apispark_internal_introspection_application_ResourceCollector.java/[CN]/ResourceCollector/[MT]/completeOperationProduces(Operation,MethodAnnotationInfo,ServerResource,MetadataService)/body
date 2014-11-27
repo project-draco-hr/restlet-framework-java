@@ -3,7 +3,9 @@
     try {
       List<Variant> responseVariants=mai.getResponseVariants(metadataService,sr.getConverterService());
       if (responseVariants == null || responseVariants.isEmpty()) {
-        LOGGER.warning("Method has no response variant: " + mai.getJavaMethod());
+        if (mai.getJavaMethod().getReturnType() != Void.TYPE) {
+          LOGGER.warning("Method has no response variant: " + mai.getJavaMethod());
+        }
         return;
       }
       for (      Variant variant : responseVariants) {
