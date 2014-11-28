@@ -2,13 +2,13 @@
   Class<?>[] thrownClasses=mai.getJavaMethod().getExceptionTypes();
   if (thrownClasses != null) {
     for (    Class<?> thrownClass : thrownClasses) {
-      ThrowableAnnotationInfo statusAnnotation=AnnotationUtils.getInstance().getThrowableAnnotationInfo(thrownClass);
-      if (statusAnnotation != null) {
-        int statusCode=statusAnnotation.getStatus().getCode();
+      ThrowableAnnotationInfo throwableAnnotationInfo=AnnotationUtils.getInstance().getThrowableAnnotationInfo(thrownClass);
+      if (throwableAnnotationInfo != null) {
+        int statusCode=throwableAnnotationInfo.getStatus().getCode();
         Response response=new Response();
         response.setCode(statusCode);
         response.setMessage("Status " + statusCode);
-        Class<?> outputPayloadType=statusAnnotation.isSerializable() ? thrownClass : StatusInfo.class;
+        Class<?> outputPayloadType=throwableAnnotationInfo.isSerializable() ? thrownClass : StatusInfo.class;
         TypeInfo outputTypeInfo=null;
         try {
           outputTypeInfo=Types.getTypeInfo(outputPayloadType,null);
