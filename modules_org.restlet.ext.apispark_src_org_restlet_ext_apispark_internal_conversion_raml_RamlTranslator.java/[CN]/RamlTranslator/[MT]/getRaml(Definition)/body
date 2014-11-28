@@ -138,14 +138,14 @@
   Map<String,String> schemas=new HashMap<String,String>();
   raml.getSchemas().add(schemas);
   for (  Representation representation : contract.getRepresentations()) {
-    if (RamlUtils.isPrimitiveType(representation.getIdentifier())) {
+    if (RamlUtils.isPrimitiveType(representation.getName())) {
       continue;
     }
     try {
-      schemas.put(representation.getIdentifier(),m.writeValueAsString(RamlUtils.generateSchema(representation)));
+      schemas.put(representation.getName(),m.writeValueAsString(RamlUtils.generateSchema(representation)));
     }
  catch (    JsonProcessingException e) {
-      LOGGER.log(Level.WARNING,"Error when putting mime type schema for representation: " + representation.getIdentifier(),e);
+      LOGGER.log(Level.WARNING,"Error when putting mime type schema for representation: " + representation.getName(),e);
     }
   }
   return raml;
