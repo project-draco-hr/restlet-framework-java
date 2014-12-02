@@ -1,0 +1,19 @@
+{
+  try {
+    Definition definition=new Definition();
+    definition.setContract(new Contract());
+    definition.getEndpoints().add(new Endpoint(apiDeclaration.getBasePath()));
+    fillContract(definition.getContract(),apiDeclaration);
+    LOGGER.log(Level.FINE,"Definition successfully retrieved from Swagger definition");
+    return definition;
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+    if (e instanceof FileNotFoundException) {
+      throw new TranslationException("file",e.getMessage(),e);
+    }
+ else {
+      throw new TranslationException("compliance","Impossible to read your API definition, check your Swagger specs compliance",e);
+    }
+  }
+}
