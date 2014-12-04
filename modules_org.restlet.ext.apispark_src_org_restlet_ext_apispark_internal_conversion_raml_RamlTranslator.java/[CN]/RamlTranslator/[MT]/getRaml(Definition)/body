@@ -5,6 +5,7 @@
     raml.setVersion(definition.getVersion());
   }
   Contract contract=definition.getContract();
+  Map<String,Map<String,Object>> samples=getSamples(contract);
   Endpoint endpoint=null;
   if (!definition.getEndpoints().isEmpty()) {
     endpoint=definition.getEndpoints().get(0);
@@ -56,6 +57,7 @@
       uiParam.setDisplayName(pathVariable.getName());
       uiParam.setDescription(pathVariable.getDescription());
       uiParam.setType(RamlUtils.getParamType(pathVariable.getType()));
+      uiParam.setExample(pathVariable.getExample());
       ramlResource.getUriParameters().put(pathVariable.getName(),uiParam);
     }
     Action action;
@@ -84,8 +86,18 @@
           ramlInRepresentation.setSchema(operation.getInputPayLoad().getType());
         }
         action.setBody(new HashMap<String,MimeType>());
+        MimeType ramlInRepresentationWithMediaType;
         for (        String mediaType : operation.getConsumes()) {
-          action.getBody().put(mediaType,ramlInRepresentation);
+          ramlInRepresentationWithMediaType=new MimeType();
+          ramlInRepresentationWithMediaType.setSchema(ramlInRepresentation.getSchema());
+          try {
+            String representationType=operation.getInputPayLoad().getType();
+            ramlInRepresentationWithMediaType.setExample(SampleUtils.buildSampleRepresentation(samples.get(representationType),mediaType,representationType));
+          }
+ catch (          IOException e) {
+            LOGGER.log(Level.WARNING,"Error when writting sample.",e);
+          }
+          action.getBody().put(mediaType,ramlInRepresentationWithMediaType);
         }
       }
       org.raml.model.parameter.QueryParameter ramlQueryParameter;
@@ -95,6 +107,7 @@
         ramlQueryParameter.setDisplayName(queryParameter.getName());
         ramlQueryParameter.setDescription(queryParameter.getDescription());
         ramlQueryParameter.setRequired(queryParameter.isRequired());
+        ramlQueryParameter.setExample(queryParameter.getExample());
         ramlQueryParameter.setDefaultValue(queryParameter.getDefaultValue());
         ramlQueryParameter.setRepeat(queryParameter.isAllowMultiple());
         action.getQueryParameters().put(queryParameter.getName(),ramlQueryParameter);
@@ -124,8 +137,18 @@
             ramlOutRepresentation.setSchema(response.getOutputPayLoad().getType());
           }
         }
+        MimeType ramlOutRepresentationWithMediaType;
         for (        String mediaType : operation.getProduces()) {
-          ramlResponse.getBody().put(mediaType,ramlOutRepresentation);
+          ramlOutRepresentationWithMediaType=new MimeType();
+          ramlOutRepresentationWithMediaType.setSchema(ramlOutRepresentation.getSchema());
+          try {
+            String representationType=response.getOutputPayLoad().getType();
+            ramlOutRepresentationWithMediaType.setExample(SampleUtils.buildSampleRepresentation(samples.get(representationType),mediaType,representationType));
+          }
+ catch (          IOException e) {
+            LOGGER.log(Level.WARNING,"Error when writting sample.",e);
+          }
+          ramlResponse.getBody().put(mediaType,ramlOutRepresentationWithMediaType);
         }
         action.getResponses().put(Integer.toString(response.getCode()),ramlResponse);
       }

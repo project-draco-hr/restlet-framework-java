@@ -1,0 +1,15 @@
+{
+  MediaType mediaType=MediaType.valueOf(mediaTypeAsString);
+  JacksonRepresentation<Map<String,Object>> result=new JacksonRepresentation<Map<String,Object>>(mediaType,content);
+  if (new MetadataService().getAllMediaTypes("xml").contains(mediaType)) {
+    return result.getText().replaceAll("HashMap",representationType);
+  }
+  if (new MetadataService().getAllMediaTypes("csv").contains(mediaType)) {
+    char[] columnChar={'\n'};
+    Column[] columns=buildCsvColumns(content);
+    CsvSchema empty=CsvSchema.emptySchema();
+    CsvSchema schema=new CsvSchema(columns,true,false,',',empty.getQuoteChar(),empty.getEscapeChar(),columnChar);
+    result.setCsvSchema(schema);
+  }
+  return result.getText();
+}
