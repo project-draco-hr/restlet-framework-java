@@ -4,10 +4,9 @@
   if (!supportedExtensions.contains(ms.getExtension(mediaType))) {
     return null;
   }
-  org.restlet.representation.Representation result=buildSampleRepresentation(content,mediaType,representationType);
-  System.out.println(result.getText());
+  String text=new JacksonRepresentation<>(mediaType,content).getText();
   if (ms.getAllMediaTypes("xml").contains(mediaType)) {
-    return result.getText().replaceAll("HashMap",representationType);
+    text=text.replaceAll("HashMap",representationName);
   }
-  return result.getText();
+  return text;
 }

@@ -5,7 +5,7 @@
     raml.setVersion(definition.getVersion());
   }
   Contract contract=definition.getContract();
-  Map<String,Map<String,Object>> samples=getSamples(contract);
+  Map<String,Map<String,Object>> representationSamples=getSamples(contract);
   Endpoint endpoint=null;
   if (!definition.getEndpoints().isEmpty()) {
     endpoint=definition.getEndpoints().get(0);
@@ -92,7 +92,8 @@
           ramlInRepresentationWithMediaType.setSchema(ramlInRepresentation.getSchema());
           try {
             String representationType=operation.getInputPayLoad().getType();
-            ramlInRepresentationWithMediaType.setExample(SampleUtils.buildSampleAsString(samples.get(representationType),mediaType,representationType));
+            Map<String,Object> representationSample=representationSamples.get(representationType);
+            ramlInRepresentationWithMediaType.setExample(SampleUtils.convertSampleAccordingToMediaType(representationSample,mediaType,representationType));
           }
  catch (          IOException e) {
             LOGGER.log(Level.WARNING,"Error when writting sample.",e);
@@ -143,7 +144,8 @@
           ramlOutRepresentationWithMediaType.setSchema(ramlOutRepresentation.getSchema());
           try {
             String representationType=response.getOutputPayLoad().getType();
-            ramlOutRepresentationWithMediaType.setExample(SampleUtils.buildSampleAsString(samples.get(representationType),mediaType,representationType));
+            Map<String,Object> representationSample=representationSamples.get(representationType);
+            ramlOutRepresentationWithMediaType.setExample(SampleUtils.convertSampleAccordingToMediaType(representationSample,mediaType,representationType));
           }
  catch (          IOException e) {
             LOGGER.log(Level.WARNING,"Error when writting sample.",e);
