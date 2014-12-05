@@ -4,7 +4,8 @@
   if (!supportedExtensions.contains(ms.getExtension(mediaType))) {
     return null;
   }
-  JacksonRepresentation<Map<String,Object>> result=new JacksonRepresentation<Map<String,Object>>(mediaType,content);
+  org.restlet.representation.Representation result=buildSampleRepresentation(content,mediaType,representationType);
+  System.out.println(result.getText());
   if (ms.getAllMediaTypes("xml").contains(mediaType)) {
     return result.getText().replaceAll("HashMap",representationType);
   }
