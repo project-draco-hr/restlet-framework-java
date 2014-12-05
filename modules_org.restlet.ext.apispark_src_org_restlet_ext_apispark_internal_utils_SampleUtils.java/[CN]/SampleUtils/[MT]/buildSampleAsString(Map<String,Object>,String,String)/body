@@ -1,0 +1,13 @@
+{
+  MetadataService ms=new MetadataService();
+  MediaType mediaType=MediaType.valueOf(mediaTypeAsString);
+  if (!supportedExtensions.contains(ms.getExtension(mediaType))) {
+    return null;
+  }
+  org.restlet.representation.Representation result=buildSampleRepresentation(content,mediaType,representationType);
+  System.out.println(result.getText());
+  if (ms.getAllMediaTypes("xml").contains(mediaType)) {
+    return result.getText().replaceAll("HashMap",representationType);
+  }
+  return result.getText();
+}
