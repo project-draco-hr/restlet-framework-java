@@ -4,13 +4,10 @@
   Request request=new Request();
   Representation representation=ss.toRepresentation(status,request,new Response(request));
   Status expectedStatus=Status.CLIENT_ERROR_BAD_REQUEST;
-  HashMap<String,Object> expectedRepresentationMap=new LinkedHashMap<>();
-  expectedRepresentationMap.put("code",expectedStatus.getCode());
-  expectedRepresentationMap.put("description",expectedStatus.getDescription());
-  expectedRepresentationMap.put("reasonPhrase",expectedStatus.getReasonPhrase());
-  expectedRepresentationMap.put("uri",expectedStatus.getUri());
-  String expectedJsonRepresentation=new JacksonRepresentation<>(expectedRepresentationMap).getText();
-  Status.CLIENT_ERROR_BAD_REQUEST.getCode();
   assertEquals(MediaType.APPLICATION_JSON,representation.getMediaType());
-  assertEquals(expectedJsonRepresentation,representation.getText());
+  @SuppressWarnings("unchecked") HashMap<String,Object> map=(HashMap<String,Object>)new JacksonRepresentation<>(representation,HashMap.class).getObject();
+  assertEquals(expectedStatus.getCode(),map.get("code"));
+  assertEquals(expectedStatus.getDescription(),map.get("description"));
+  assertEquals(expectedStatus.getReasonPhrase(),map.get("reasonPhrase"));
+  assertEquals(expectedStatus.getUri(),map.get("uri"));
 }
