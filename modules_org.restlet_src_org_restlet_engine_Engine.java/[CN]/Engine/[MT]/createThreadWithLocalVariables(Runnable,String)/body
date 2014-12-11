@@ -3,7 +3,7 @@
   final Context currentContext=Context.getCurrent();
   final Integer currentVirtualHost=org.restlet.routing.VirtualHost.getCurrent();
   final Response currentResponse=Response.getCurrent();
-  return new Thread(new Runnable(){
+  Runnable r=new Runnable(){
     @Override public void run(){
       Response.setCurrent(currentResponse);
       Context.setCurrent(currentContext);
@@ -17,5 +17,6 @@
       }
     }
   }
-,name);
+;
+  return new Thread(r,name);
 }

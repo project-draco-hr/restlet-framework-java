@@ -1,42 +1,37 @@
 {
   InputStream result=null;
-  if (Edition.CURRENT != Edition.GAE) {
-    if (representation == null) {
-      return null;
-    }
-    final PipeStream pipe=new PipeStream();
-    final java.io.OutputStream os=pipe.getOutputStream();
-    Runnable task=new org.restlet.engine.util.ContextualRunnable(){
-      public void run(){
-        try {
-          representation.write(os);
-          os.flush();
-        }
- catch (        IOException ioe) {
-          Context.getCurrentLogger().log(Level.WARNING,"Error while writing to the piped input stream.",ioe);
-        }
+  if (representation == null) {
+    return null;
+  }
+  final PipeStream pipe=new PipeStream();
+  final java.io.OutputStream os=pipe.getOutputStream();
+  Runnable task=new org.restlet.engine.util.ContextualRunnable(){
+    public void run(){
+      try {
+        representation.write(os);
+        os.flush();
+      }
+ catch (      IOException ioe) {
+        Context.getCurrentLogger().log(Level.WARNING,"Error while writing to the piped input stream.",ioe);
+      }
  finally {
-          try {
-            os.close();
-          }
- catch (          IOException ioe2) {
-            Context.getCurrentLogger().log(Level.WARNING,"Error while closing the pipe.",ioe2);
-          }
+        try {
+          os.close();
+        }
+ catch (        IOException ioe2) {
+          Context.getCurrentLogger().log(Level.WARNING,"Error while closing the pipe.",ioe2);
         }
       }
     }
+  }
 ;
-    org.restlet.Context context=org.restlet.Context.getCurrent();
-    if (context != null && context.getExecutorService() != null) {
-      context.getExecutorService().execute(task);
-    }
- else {
-      Engine.createThreadWithLocalVariables(task,"Restlet-IoUtils").start();
-    }
-    result=pipe.getInputStream();
+  org.restlet.Context context=org.restlet.Context.getCurrent();
+  if (context != null && context.getExecutorService() != null) {
+    context.getExecutorService().execute(task);
   }
  else {
-    Context.getCurrentLogger().log(Level.WARNING,"The GAE edition is unable to get an InputStream out of an OutputRepresentation.");
+    Engine.createThreadWithLocalVariables(task,"Restlet-IoUtils").start();
   }
+  result=pipe.getInputStream();
   return result;
 }

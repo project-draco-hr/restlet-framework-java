@@ -1,39 +1,34 @@
 {
   Reader result=null;
-  if (Edition.CURRENT != Edition.GAE) {
-    final java.io.PipedWriter pipedWriter=new java.io.PipedWriter();
-    @SuppressWarnings("resource") java.io.PipedReader pipedReader=new java.io.PipedReader(pipedWriter);
-    Runnable task=new org.restlet.engine.util.ContextualRunnable(){
-      public void run(){
-        try {
-          representation.write(pipedWriter);
-          pipedWriter.flush();
-        }
- catch (        IOException ioe) {
-          Context.getCurrentLogger().log(Level.WARNING,"Error while writing to the piped reader.",ioe);
-        }
+  final java.io.PipedWriter pipedWriter=new java.io.PipedWriter();
+  @SuppressWarnings("resource") java.io.PipedReader pipedReader=new java.io.PipedReader(pipedWriter);
+  Runnable task=new org.restlet.engine.util.ContextualRunnable(){
+    public void run(){
+      try {
+        representation.write(pipedWriter);
+        pipedWriter.flush();
+      }
+ catch (      IOException ioe) {
+        Context.getCurrentLogger().log(Level.WARNING,"Error while writing to the piped reader.",ioe);
+      }
  finally {
-          try {
-            pipedWriter.close();
-          }
- catch (          IOException ioe2) {
-            Context.getCurrentLogger().log(Level.WARNING,"Error while closing the pipe.",ioe2);
-          }
+        try {
+          pipedWriter.close();
+        }
+ catch (        IOException ioe2) {
+          Context.getCurrentLogger().log(Level.WARNING,"Error while closing the pipe.",ioe2);
         }
       }
     }
+  }
 ;
-    org.restlet.Context context=org.restlet.Context.getCurrent();
-    if (context != null && context.getExecutorService() != null) {
-      context.getExecutorService().execute(task);
-    }
- else {
-      Engine.createThreadWithLocalVariables(task,"Restlet-IoUtils").start();
-    }
-    result=pipedReader;
+  org.restlet.Context context=org.restlet.Context.getCurrent();
+  if (context != null && context.getExecutorService() != null) {
+    context.getExecutorService().execute(task);
   }
  else {
-    Context.getCurrentLogger().log(Level.WARNING,"The GAE edition is unable to return a reader for a writer representation.");
+    Engine.createThreadWithLocalVariables(task,"Restlet-IoUtils").start();
   }
+  result=pipedReader;
   return result;
 }
