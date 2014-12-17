@@ -91,9 +91,7 @@
           ramlInRepresentationWithMediaType=new MimeType();
           ramlInRepresentationWithMediaType.setSchema(ramlInRepresentation.getSchema());
           try {
-            String representationType=operation.getInputPayLoad().getType();
-            Map<String,Object> representationSample=representationSamples.get(representationType);
-            ramlInRepresentationWithMediaType.setExample(SampleUtils.convertSampleAccordingToMediaType(representationSample,mediaType,representationType));
+            ramlInRepresentationWithMediaType.setExample(getExampleFromPayLoad(operation.getInputPayLoad(),representationSamples,mediaType));
           }
  catch (          Exception e) {
             LOGGER.log(Level.WARNING,"Error when writting sample.",e);
@@ -144,9 +142,7 @@
             ramlOutRepresentationWithMediaType=new MimeType();
             ramlOutRepresentationWithMediaType.setSchema(ramlOutRepresentation.getSchema());
             try {
-              String representationType=response.getOutputPayLoad().getType();
-              Map<String,Object> representationSample=representationSamples.get(representationType);
-              ramlOutRepresentationWithMediaType.setExample(SampleUtils.convertSampleAccordingToMediaType(representationSample,mediaType,representationType));
+              ramlOutRepresentationWithMediaType.setExample(getExampleFromPayLoad(response.getOutputPayLoad(),representationSamples,mediaType));
             }
  catch (            Exception e) {
               LOGGER.log(Level.WARNING,"Error when writting sample.",e);
