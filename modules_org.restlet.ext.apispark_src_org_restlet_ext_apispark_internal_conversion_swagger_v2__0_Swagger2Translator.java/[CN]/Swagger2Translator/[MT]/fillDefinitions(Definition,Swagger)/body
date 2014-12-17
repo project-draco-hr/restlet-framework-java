@@ -16,11 +16,14 @@
       String example=exampleObject == null ? null : exampleObject.toString();
       if (property.getMaxOccurs() != null && (property.getMaxOccurs() > 1 || property.getMaxOccurs() == -1)) {
         ArrayProperty arrayProperty=new ArrayProperty();
-        arrayProperty.setItems(newPropertyForType(property.getType()));
+        com.wordnik.swagger.models.properties.Property itemProperty=newPropertyForType(property.getType());
+        itemProperty.setExample(example);
+        arrayProperty.setItems(itemProperty);
         propertySwagger=arrayProperty;
       }
  else {
         propertySwagger=newPropertyForType(property.getType());
+        propertySwagger.setExample(example);
       }
       propertySwagger.setName(property.getName());
       propertySwagger.setDescription(property.getDescription());
