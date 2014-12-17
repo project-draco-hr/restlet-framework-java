@@ -12,6 +12,8 @@
     modelSwagger.setDescription(representation.getDescription());
     for (    Property property : representation.getProperties()) {
       com.wordnik.swagger.models.properties.Property propertySwagger;
+      Object exampleObject=SampleUtils.getFieldSampleValue(property);
+      String example=exampleObject == null ? null : exampleObject.toString();
       if (property.getMaxOccurs() != null && (property.getMaxOccurs() > 1 || property.getMaxOccurs() == -1)) {
         ArrayProperty arrayProperty=new ArrayProperty();
         arrayProperty.setItems(newPropertyForType(property.getType()));
