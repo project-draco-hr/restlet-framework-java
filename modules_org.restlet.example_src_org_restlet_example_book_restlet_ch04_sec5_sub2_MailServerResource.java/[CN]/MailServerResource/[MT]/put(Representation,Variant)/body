@@ -1,14 +1,8 @@
 {
   Mail mail=null;
   try {
-    if (MediaType.APPLICATION_XML.isCompatible(representation.getMediaType())) {
-      mail=new XstreamRepresentation<Mail>(representation,Mail.class).getObject();
-      System.out.println("XML representation received");
-    }
- else     if (MediaType.APPLICATION_JSON.isCompatible(representation.getMediaType())) {
-      mail=new JacksonRepresentation<Mail>(representation,Mail.class).getObject();
-      System.out.println("JSON representation received");
-    }
+    mail=new JacksonRepresentation<Mail>(representation,Mail.class).getObject();
+    System.out.println("JSON representation received");
     if (mail != null) {
       System.out.println("Status: " + mail.getStatus());
       System.out.println("Subject: " + mail.getSubject());
