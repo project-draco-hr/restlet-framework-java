@@ -1,19 +1,36 @@
 {
   final StringBuilder sb=new StringBuilder();
-  sb.append("<html><body style=\"font-family: sans-serif;\">\n");
+  sb.append("<html><head><meta charset=\"utf-8\">");
+  sb.append("<style>").append(webPageStyle).append("</style>");
+  sb.append("</head>");
+  sb.append("<body>");
   if (getIdentifier() != null) {
-    sb.append("<h2>Listing of \"" + getIdentifier().getPath() + "\"</h2>\n");
-    final Reference parentRef=getIdentifier().getParentRef();
-    if (!parentRef.equals(getIdentifier())) {
-      sb.append("<a href=\"" + parentRef + "\">..</a><br>\n");
+    sb.append("<h1>Index of \"").append(getIdentifier().getPath()).append("\"</h1>\n");
+  }
+  sb.append("<table><thead><tr><td>Name</td></tr></thead>");
+  sb.append("<tbody>");
+  if (getIdentifier() != null) {
+    Reference parentRef=getIdentifier().getParentRef();
+    if (!getIdentifier().equals(parentRef)) {
+      sb.append("<tr><td><a class=\"icon up\" href=\"");
+      sb.append(parentRef.toString());
+      sb.append("\">[parent directory]</a></td></tr>");
     }
   }
+  for (  Reference ref : this) {
+    String str=ref.toString();
+    if (str.endsWith("/")) {
+      sb.append("<tr><td><a class=\"icon dir\" href=\"");
+    }
  else {
-    sb.append("<h2>List of references</h2>\n");
+      sb.append("<tr><td><a class=\"icon file\" href=\"");
+    }
+    sb.append(str);
+    sb.append("\">");
+    sb.append(ref.getRelativeRef(getIdentifier()));
+    sb.append("</td></tr>");
   }
-  for (  final Reference ref : this) {
-    sb.append("<a href=\"" + ref.toString() + "\">"+ ref.getRelativeRef(getIdentifier())+ "</a><br>\n");
-  }
+  sb.append("</tbody></table>\n");
   sb.append("</body></html>\n");
   return new StringRepresentation(sb.toString(),MediaType.TEXT_HTML);
 }
