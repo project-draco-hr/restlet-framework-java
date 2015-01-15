@@ -3,16 +3,16 @@
     for (    FormData data : getEntries()) {
       outputStream.write(("--" + getMultipartBoundary()).getBytes());
       HeaderUtils.writeCRLF(outputStream);
-      if (MediaType.TEXT_PLAIN.equals(data.getMediaType())) {
-        String line="Content-Disposition: form-data; name=\"" + data.getName() + "\"";
-        outputStream.write(line.getBytes());
-        HeaderUtils.writeCRLF(outputStream);
-      }
- else {
+      if (!StringUtils.isNullOrEmpty(data.getFilename())) {
         String line="Content-Disposition: form-data; name=\"" + data.getName() + "\"; filename=\""+ data.getFilename()+ "\"";
         outputStream.write(line.getBytes());
         HeaderUtils.writeCRLF(outputStream);
         line="Content-Type: " + ContentType.writeHeader(data.getValueRepresentation());
+        outputStream.write(line.getBytes());
+        HeaderUtils.writeCRLF(outputStream);
+      }
+ else {
+        String line="Content-Disposition: form-data; name=\"" + data.getName() + "\"";
         outputStream.write(line.getBytes());
         HeaderUtils.writeCRLF(outputStream);
       }
