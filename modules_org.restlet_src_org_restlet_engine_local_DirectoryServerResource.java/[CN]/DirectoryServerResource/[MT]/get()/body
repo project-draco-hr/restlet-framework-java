@@ -4,27 +4,25 @@
   if ((variants == null) || (variants.isEmpty())) {
     getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND);
   }
+ else   if (variants.size() == 1) {
+    result=(Representation)variants.get(0);
+  }
  else {
-    if (variants.size() == 1) {
-      result=(Representation)variants.get(0);
+    ReferenceList variantRefs=new ReferenceList();
+    for (    Variant variant : variants) {
+      if (variant.getLocationRef() != null) {
+        variantRefs.add(variant.getLocationRef());
+      }
+ else {
+        getLogger().warning("A resource with multiple variants should provide a location for each variant when content negotiation is turned off");
+      }
+    }
+    if (!variantRefs.isEmpty()) {
+      setStatus(Status.REDIRECTION_MULTIPLE_CHOICES);
+      result=variantRefs.getTextRepresentation();
     }
  else {
-      ReferenceList variantRefs=new ReferenceList();
-      for (      Variant variant : variants) {
-        if (variant.getLocationRef() != null) {
-          variantRefs.add(variant.getLocationRef());
-        }
- else {
-          getLogger().warning("A resource with multiple variants should provide a location for each variant when content negotiation is turned off");
-        }
-      }
-      if (variantRefs.size() > 0) {
-        setStatus(Status.REDIRECTION_MULTIPLE_CHOICES);
-        result=variantRefs.getTextRepresentation();
-      }
- else {
-        setStatus(Status.CLIENT_ERROR_NOT_FOUND);
-      }
+      setStatus(Status.CLIENT_ERROR_NOT_FOUND);
     }
   }
   return result;
