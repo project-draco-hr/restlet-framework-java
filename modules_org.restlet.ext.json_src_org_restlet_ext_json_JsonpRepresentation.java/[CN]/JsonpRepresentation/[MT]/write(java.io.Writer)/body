@@ -1,5 +1,19 @@
 {
-  OutputStream os=IoUtils.getStream(writer,getCharacterSet());
-  write(os);
-  os.flush();
+  writer.write(getCallback());
+  writer.write("({\"status\":");
+  writer.write(Integer.toString(getStatus().getCode()));
+  writer.write(",\"body\":");
+  if (MediaType.APPLICATION_JSON.equals(wrappedRepresentation.getMediaType())) {
+    IoUtils.copy(wrappedRepresentation.getReader(),writer);
+  }
+ else {
+    writer.write("\"");
+    String text=wrappedRepresentation.getText();
+    if (text.indexOf('\"') >= 0) {
+      text=text.replace("\"","\\\"");
+    }
+    writer.write(text);
+    writer.write("\"");
+  }
+  writer.write("});");
 }

@@ -1,7 +1,15 @@
 {
-  long result=super.getSize();
-  if (result > 0 && MediaType.APPLICATION_JSON.equals(super.getMediaType())) {
-    return result + getCallback().length() + "({\"status\":,\"body\":});".length()+ Integer.toString(getStatus().getCode()).length();
+  long result=wrappedRepresentation.getSize();
+  if (result > 0 && MediaType.APPLICATION_JSON.equals(wrappedRepresentation.getMediaType())) {
+    try {
+      java.io.StringWriter sw=new java.io.StringWriter();
+      write(sw);
+      sw.flush();
+      return sw.toString().length();
+    }
+ catch (    IOException e) {
+      return UNKNOWN_SIZE;
+    }
   }
   return UNKNOWN_SIZE;
 }
