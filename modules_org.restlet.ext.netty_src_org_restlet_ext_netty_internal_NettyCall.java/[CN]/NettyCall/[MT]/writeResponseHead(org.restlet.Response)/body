@@ -1,0 +1,14 @@
+{
+  setNettyResponse(new DefaultHttpResponse(HTTP_1_1,new HttpResponseStatus(getStatusCode(),getReasonPhrase())));
+  HttpHeaders headers=getNettyResponse().headers();
+  for (  Header header : getResponseHeaders()) {
+    headers.add(header.getName(),header.getValue());
+  }
+  if (isKeepAlive()) {
+    headers.set(HttpHeaderNames.CONNECTION,HttpHeaderValues.KEEP_ALIVE);
+    getNettyContext().write(getNettyResponse());
+  }
+ else {
+    getNettyContext().writeAndFlush(getNettyResponse()).addListener(ChannelFutureListener.CLOSE);
+  }
+}

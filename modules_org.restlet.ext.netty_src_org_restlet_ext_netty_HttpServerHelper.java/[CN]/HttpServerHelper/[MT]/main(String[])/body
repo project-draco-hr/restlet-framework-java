@@ -1,0 +1,12 @@
+{
+  Engine.getInstance().getRegisteredServers().add(0,new HttpServerHelper(null));
+  Server server=new Server(Protocol.HTTP,8080);
+  server.setNext(new Restlet(){
+    @Override public void handle(    Request request,    Response response){
+      super.handle(request,response);
+      response.setEntity("Hello, world!",MediaType.TEXT_PLAIN);
+    }
+  }
+);
+  server.start();
+}

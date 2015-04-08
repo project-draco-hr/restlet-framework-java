@@ -1,0 +1,10 @@
+{
+  try {
+    InputStream is=responseEntity.getStream();
+    getNettyContext().write(new HttpChunkedInput(new ChunkedStream(is)));
+    getNettyContext().writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+  }
+ catch (  IOException ioe) {
+    getLogger().log(Level.FINE,"Exception while writing the entity stream.",ioe);
+  }
+}

@@ -1,0 +1,28 @@
+{
+  System.out.println("Message received: " + msg);
+  if (msg instanceof HttpRequest) {
+    HttpRequest request=this.request=(HttpRequest)msg;
+    if (HttpHeaderUtil.is100ContinueExpected(request)) {
+      send100Continue(ctx);
+    }
+    try {
+      serverHelper.handle(new NettyCall(getServerHelper().getHelped(),ctx,request));
+    }
+ catch (    Throwable e) {
+      e.printStackTrace();
+    }
+    appendDecoderResult(request);
+  }
+ else   if (msg instanceof HttpContent) {
+    HttpContent httpContent=(HttpContent)msg;
+    ByteBuf content=httpContent.content();
+    if (content.isReadable()) {
+      appendDecoderResult(request);
+    }
+    if (msg instanceof LastHttpContent) {
+      LastHttpContent trailer=(LastHttpContent)msg;
+      if (!trailer.trailingHeaders().isEmpty()) {
+      }
+    }
+  }
+}

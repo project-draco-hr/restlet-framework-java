@@ -1,0 +1,11 @@
+{
+  super.start();
+  setBossGroup(new NioEventLoopGroup(1));
+  setWorkerGroup(new NioEventLoopGroup());
+  setServerBootstrap(new ServerBootstrap());
+  getServerBootstrap().option(ChannelOption.SO_BACKLOG,1024);
+  getServerBootstrap().group(bossGroup,workerGroup).channel(NioServerSocketChannel.class).handler(new LoggingHandler(LogLevel.INFO)).childHandler(new HttpServerInitializer(this,null));
+  setChannel(serverBootstrap.bind(getHelped().getPort()).sync().channel());
+  setEphemeralPort(((InetSocketAddress)getChannel().localAddress()).getPort());
+  getLogger().info("Starting the Netty " + getProtocols() + " server on port "+ getHelped().getPort());
+}
