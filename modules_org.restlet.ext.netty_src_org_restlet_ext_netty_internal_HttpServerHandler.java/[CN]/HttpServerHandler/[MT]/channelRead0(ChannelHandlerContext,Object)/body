@@ -1,28 +1,32 @@
 {
   System.out.println("Message received: " + msg);
-  if (msg instanceof HttpRequest) {
-    HttpRequest request=this.request=(HttpRequest)msg;
-    if (HttpHeaderUtil.is100ContinueExpected(request)) {
-      send100Continue(ctx);
-    }
-    try {
-      serverHelper.handle(new NettyCall(getServerHelper().getHelped(),ctx,request));
-    }
- catch (    Throwable e) {
-      e.printStackTrace();
-    }
-    appendDecoderResult(request);
-  }
- else   if (msg instanceof HttpContent) {
-    HttpContent httpContent=(HttpContent)msg;
-    ByteBuf content=httpContent.content();
-    if (content.isReadable()) {
+  try {
+    if (msg instanceof HttpRequest) {
+      HttpRequest request=(HttpRequest)msg;
+      if (HttpHeaderUtil.is100ContinueExpected(request)) {
+        send100Continue(ctx);
+      }
+      call=new NettyCall(getServerHelper().getHelped(),ctx,request);
+      serverHelper.handle(call);
       appendDecoderResult(request);
     }
-    if (msg instanceof LastHttpContent) {
-      LastHttpContent trailer=(LastHttpContent)msg;
-      if (!trailer.trailingHeaders().isEmpty()) {
+ else     if (msg instanceof HttpContent) {
+      HttpContent httpContent=(HttpContent)msg;
+      ctx.channel().config().setAutoRead(false);
+      if (call != null) {
+        call.onContent(httpContent);
+      }
+ else {
+        throw new IOException("Unexpected error, content arrived before call created");
+      }
+      if (msg instanceof LastHttpContent) {
+        LastHttpContent trailer=(LastHttpContent)msg;
+        if (!trailer.trailingHeaders().isEmpty()) {
+        }
       }
     }
+  }
+ catch (  Throwable e) {
+    e.printStackTrace();
   }
 }
