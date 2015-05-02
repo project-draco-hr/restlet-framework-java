@@ -6,7 +6,7 @@
     if (cause != null) {
       org.restlet.engine.resource.ThrowableAnnotationInfo tai=org.restlet.engine.resource.AnnotationUtils.getInstance().getThrowableAnnotationInfo(cause.getClass());
       if (tai != null && tai.isSerializable()) {
-        if (!Application.getCurrent().isDebugging()) {
+        if (Application.getCurrent() != null && !Application.getCurrent().isDebugging()) {
           cause.setStackTrace(new StackTraceElement[]{});
           if (cause.getCause() != null) {
             Context.getCurrentLogger().log(Level.WARNING,"The cause of the exception should be null except in debug mode");

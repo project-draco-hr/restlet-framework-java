@@ -1,0 +1,17 @@
+{
+  ClientResource cr=new ClientResource("http://localhost:8182/");
+  ChallengeRequest c1=null;
+  try {
+    cr.get();
+  }
+ catch (  ResourceException re) {
+    if (Status.CLIENT_ERROR_UNAUTHORIZED.equals(cr.getStatus())) {
+      c1=getDigestChallengeRequest(cr);
+    }
+  }
+  if (c1 != null) {
+    ChallengeResponse c2=new ChallengeResponse(c1,cr.getResponse(),"scott","tiger".toCharArray());
+    cr.setChallengeResponse(c2);
+    cr.get().write(System.out);
+  }
+}

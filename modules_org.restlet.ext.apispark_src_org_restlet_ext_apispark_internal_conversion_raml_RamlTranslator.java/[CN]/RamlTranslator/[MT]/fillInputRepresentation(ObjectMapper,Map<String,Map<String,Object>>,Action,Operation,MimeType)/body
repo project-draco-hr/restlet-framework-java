@@ -1,0 +1,31 @@
+{
+  ramlInRepresentation.setType(operation.getInputPayLoad().getType());
+  if (RamlUtils.isPrimitiveType(operation.getInputPayLoad().getType())) {
+    Property inRepresentationPrimitive=new Property();
+    inRepresentationPrimitive.setName("");
+    inRepresentationPrimitive.setType(operation.getInputPayLoad().getType());
+    SimpleTypeSchema inRepresentationSchema=RamlUtils.generatePrimitiveSchema(inRepresentationPrimitive);
+    try {
+      ramlInRepresentation.setSchema(m.writeValueAsString(inRepresentationSchema));
+    }
+ catch (    JsonProcessingException e) {
+      LOGGER.log(Level.WARNING,"Error when setting mime type schema.",e);
+    }
+  }
+ else {
+    ramlInRepresentation.setSchema(operation.getInputPayLoad().getType());
+  }
+  action.setBody(new HashMap<String,MimeType>());
+  MimeType ramlInRepresentationWithMediaType;
+  for (  String mediaType : operation.getConsumes()) {
+    ramlInRepresentationWithMediaType=new MimeType();
+    ramlInRepresentationWithMediaType.setSchema(ramlInRepresentation.getSchema());
+    try {
+      ramlInRepresentationWithMediaType.setExample(getExampleFromPayLoad(operation.getInputPayLoad(),representationSamples,mediaType));
+    }
+ catch (    Exception e) {
+      LOGGER.log(Level.WARNING,"Error when writting sample.",e);
+    }
+    action.getBody().put(mediaType,ramlInRepresentationWithMediaType);
+  }
+}

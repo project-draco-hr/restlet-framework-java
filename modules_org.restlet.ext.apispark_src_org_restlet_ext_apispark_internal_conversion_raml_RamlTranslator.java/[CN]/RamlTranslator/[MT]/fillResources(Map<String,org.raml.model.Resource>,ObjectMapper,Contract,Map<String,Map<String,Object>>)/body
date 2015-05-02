@@ -1,0 +1,91 @@
+{
+  org.raml.model.Resource ramlResource;
+  List<String> paths=new ArrayList<String>();
+  for (  Resource resource : contract.getResources()) {
+    ramlResource=new org.raml.model.Resource();
+    if (resource.getName() != null) {
+      ramlResource.setDisplayName(resource.getName());
+    }
+ else {
+      ramlResource.setDisplayName(RamlUtils.processResourceName(resource.getResourcePath()));
+    }
+    ramlResource.setDescription(resource.getDescription());
+    ramlResource.setParentUri("");
+    ramlResource.setRelativeUri(resource.getResourcePath());
+    UriParameter uiParam=new UriParameter();
+    ramlResource.setUriParameters(new HashMap<String,UriParameter>());
+    for (    PathVariable pathVariable : resource.getPathVariables()) {
+      uiParam.setDisplayName(pathVariable.getName());
+      uiParam.setDescription(pathVariable.getDescription());
+      uiParam.setType(RamlUtils.getParamType(pathVariable.getType()));
+      uiParam.setExample(pathVariable.getExample());
+      ramlResource.getUriParameters().put(pathVariable.getName(),uiParam);
+    }
+    Action action;
+    ramlResource.setActions(new HashMap<ActionType,Action>());
+    for (    Operation operation : resource.getOperations()) {
+      action=new Action();
+      action.setDescription(operation.getDescription());
+      action.setResource(ramlResource);
+      if (operation.getInputPayLoad() != null) {
+        MimeType ramlInRepresentation=new MimeType();
+        fillInputRepresentation(m,representationSamples,action,operation,ramlInRepresentation);
+      }
+      action.setQueryParameters(new HashMap<String,org.raml.model.parameter.QueryParameter>());
+      for (      QueryParameter queryParameter : operation.getQueryParameters()) {
+        org.raml.model.parameter.QueryParameter ramlQueryParameter=new org.raml.model.parameter.QueryParameter();
+        ramlQueryParameter.setDisplayName(queryParameter.getName());
+        ramlQueryParameter.setDescription(queryParameter.getDescription());
+        ramlQueryParameter.setRequired(queryParameter.isRequired());
+        ramlQueryParameter.setExample(queryParameter.getExample());
+        ramlQueryParameter.setDefaultValue(queryParameter.getDefaultValue());
+        ramlQueryParameter.setRepeat(queryParameter.isAllowMultiple());
+        action.getQueryParameters().put(queryParameter.getName(),ramlQueryParameter);
+      }
+      MimeType ramlOutRepresentation;
+      org.raml.model.Response ramlResponse=new org.raml.model.Response();
+      action.setResponses(new HashMap<String,org.raml.model.Response>());
+      for (      Response response : operation.getResponses()) {
+        ramlResponse=new org.raml.model.Response();
+        ramlResponse.setDescription(response.getDescription());
+        ramlResponse.setBody(new HashMap<String,MimeType>());
+        ramlOutRepresentation=new MimeType();
+        if (Status.isSuccess(response.getCode()) && response.getOutputPayLoad() != null && response.getOutputPayLoad().getType() != null) {
+          if (RamlUtils.isPrimitiveType(response.getOutputPayLoad().getType())) {
+            Property outRepresentationPrimitive=new Property();
+            outRepresentationPrimitive.setName("");
+            outRepresentationPrimitive.setType(response.getOutputPayLoad().getType());
+            SimpleTypeSchema outRepresentationSchema=RamlUtils.generatePrimitiveSchema(outRepresentationPrimitive);
+            try {
+              ramlOutRepresentation.setSchema(m.writeValueAsString(outRepresentationSchema));
+            }
+ catch (            JsonProcessingException e) {
+              LOGGER.log(Level.WARNING,"Error when setting mime type schema.",e);
+            }
+          }
+ else {
+            ramlOutRepresentation.setSchema(response.getOutputPayLoad().getType());
+          }
+        }
+        if (response.getOutputPayLoad() != null) {
+          MimeType ramlOutRepresentationWithMediaType;
+          for (          String mediaType : operation.getProduces()) {
+            ramlOutRepresentationWithMediaType=new MimeType();
+            ramlOutRepresentationWithMediaType.setSchema(ramlOutRepresentation.getSchema());
+            try {
+              ramlOutRepresentationWithMediaType.setExample(getExampleFromPayLoad(response.getOutputPayLoad(),representationSamples,mediaType));
+            }
+ catch (            Exception e) {
+              LOGGER.log(Level.WARNING,"Error when writting sample.",e);
+            }
+            ramlResponse.getBody().put(mediaType,ramlOutRepresentationWithMediaType);
+          }
+        }
+        action.getResponses().put(Integer.toString(response.getCode()),ramlResponse);
+      }
+      ramlResource.getActions().put(RamlUtils.getActionType(operation.getMethod()),action);
+    }
+    paths.add(resource.getResourcePath());
+    resources.put(ramlResource.getRelativeUri(),ramlResource);
+  }
+}

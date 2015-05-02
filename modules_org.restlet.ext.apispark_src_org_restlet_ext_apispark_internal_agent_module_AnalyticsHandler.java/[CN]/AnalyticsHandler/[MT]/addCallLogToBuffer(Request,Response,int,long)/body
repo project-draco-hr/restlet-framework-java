@@ -1,0 +1,15 @@
+{
+  CallLog callLog=new CallLog();
+  callLog.setDate(new Date(startTime));
+  callLog.setDuration(duration);
+  callLog.setMethod(request.getMethod().getName());
+  callLog.setPath(request.getResourceRef().getPath());
+  callLog.setRemoteIp(request.getClientInfo().getUpstreamAddress());
+  callLog.setStatusCode(response.getStatus().getCode());
+  callLog.setUserAgent(request.getClientInfo().getAgent());
+  callLog.setUserToken((request.getClientInfo().getUser() == null) ? "" : request.getClientInfo().getUser().getIdentifier());
+  callLogs.add(callLog);
+  if (callLogs.size() >= bufferSize) {
+    flushLogs();
+  }
+}

@@ -5,7 +5,8 @@
   contact.setName("contact");
   definition.setContact(contact);
   License license=new License();
-  license.setName("license");
+  license.setName("licenseName");
+  license.setUrl("licenseUrl");
   definition.setLicense(license);
   Endpoint endpoint=new Endpoint();
   definition.getEndpoints().add(endpoint);
@@ -13,6 +14,7 @@
   endpoint.setDomain("domain");
   endpoint.setPort(999);
   endpoint.setBasePath("/basePath");
+  endpoint.setAuthenticationProtocol(ChallengeScheme.HTTP_BASIC.getName());
   Contract contract=new Contract();
   definition.setContract(contract);
   contract.setName("contract.name");
@@ -25,11 +27,11 @@
   operation1.setMethod("get");
   operation1.setName("nameoperation1");
   operation1.setDescription("description");
-  List<String> op1Produces=new ArrayList<String>();
+  List<String> op1Produces=new ArrayList<>();
   operation1.setProduces(op1Produces);
   op1Produces.add("produce 1");
   op1Produces.add("produce 2");
-  List<String> op1Consumes=new ArrayList<String>();
+  List<String> op1Consumes=new ArrayList<>();
   operation1.setConsumes(op1Consumes);
   op1Consumes.add("consume 1");
   op1Consumes.add("consume 2");
@@ -45,7 +47,7 @@
   pathVariable2.setDescription("description");
   PayLoad inRepr=new PayLoad();
   operation1.setInputPayLoad(inRepr);
-  inRepr.setType("integer");
+  inRepr.setType("nameRepresentation1");
   QueryParameter queryParameter1=new QueryParameter();
   operation1.getQueryParameters().add(queryParameter1);
   queryParameter1.setName("nameQueryParameter1");
@@ -112,10 +114,16 @@
   representation2.setName("nameRepresentation2");
   Swagger swagger=Swagger2Translator.getSwagger(definition);
   assertEquals("2.0",swagger.getSwagger());
+  Map<String,SecuritySchemeDefinition> securitySchemes=swagger.getSecurityDefinitions();
+  assertEquals(true,securitySchemes.containsKey("HTTP_BASIC"));
+  assertEquals(true,securitySchemes.get("HTTP_BASIC") instanceof BasicAuthDefinition);
   Info infoSwagger=swagger.getInfo();
   assertEquals("version",infoSwagger.getVersion());
   Contact contactSwagger=infoSwagger.getContact();
   assertEquals("contact",contactSwagger.getName());
+  com.wordnik.swagger.models.License licenseSwagger=infoSwagger.getLicense();
+  assertEquals("licenseName",licenseSwagger.getName());
+  assertEquals("licenseUrl",licenseSwagger.getUrl());
   assertEquals("contract.name",infoSwagger.getTitle());
   assertEquals("contract.description",infoSwagger.getDescription());
   assertEquals("/basePath",swagger.getBasePath());
@@ -143,8 +151,8 @@
   assertEquals("description",op2PathParameter2.getDescription());
   BodyParameter bodyParameter=(BodyParameter)path1Get.getParameters().get(2);
   assertNotNull(bodyParameter);
-  ModelImpl schemaBodyParameter=(ModelImpl)bodyParameter.getSchema();
-  assertEquals("integer",schemaBodyParameter.getType());
+  RefModel schemaBodyParameter=(RefModel)bodyParameter.getSchema();
+  assertEquals("#/definitions/nameRepresentation1",schemaBodyParameter.get$ref());
   com.wordnik.swagger.models.parameters.QueryParameter op1QueryParameter1=(com.wordnik.swagger.models.parameters.QueryParameter)path1Get.getParameters().get(3);
   assertEquals("query",op1QueryParameter1.getIn());
   assertEquals("nameQueryParameter1",op1QueryParameter1.getName());

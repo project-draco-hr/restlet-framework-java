@@ -1,0 +1,21 @@
+{
+  Map<String,Object> content=new HashMap<>();
+  for (  Property property : properties) {
+    if (Types.compositeType.equals(property.getType())) {
+      content.put(property.getName(),getPropertiesSample(property.getProperties()));
+    }
+ else {
+      Object sampleValue=getPropertyExampleValue(property);
+      if (property.getMaxOccurs() != null && property.getMaxOccurs() != 1) {
+        if (sampleValue != null) {
+          sampleValue=Arrays.asList(sampleValue);
+        }
+ else {
+          sampleValue=Arrays.asList();
+        }
+      }
+      content.put(property.getName(),sampleValue);
+    }
+  }
+  return content;
+}

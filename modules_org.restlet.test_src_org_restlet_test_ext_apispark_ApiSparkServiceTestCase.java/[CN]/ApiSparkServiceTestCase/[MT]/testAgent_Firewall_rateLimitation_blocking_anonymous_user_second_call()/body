@@ -1,5 +1,4 @@
 {
-  MockModulesSettingsServerResource.MODULES_SETTINGS.setAuthenticationModuleEnabled(true);
   MockModulesSettingsServerResource.MODULES_SETTINGS.setFirewallModuleEnabled(true);
   FirewallRateLimit firewallRateLimit=new FirewallRateLimit();
   firewallRateLimit.setName("max 1 call per minute");
@@ -10,8 +9,8 @@
   startApiSparkService(getAgentService(),true);
   assertEquals(1,MockModulesSettingsServerResource.GET_SETTINGS_COUNT);
   assertEquals(1,MockFirewallSettingsServerResource.GET_SETTINGS_COUNT);
-  Response response=callAgent("/test",VALID_USERNAME,VALID_PASSWORD);
+  Response response=callAgent("/test",null,null);
   assertEquals(Status.SUCCESS_NO_CONTENT,response.getStatus());
-  response=callAgent("/test",VALID_USERNAME,VALID_PASSWORD);
+  response=callAgent("/test",null,null);
   assertEquals(Status.CLIENT_ERROR_TOO_MANY_REQUESTS,response.getStatus());
 }

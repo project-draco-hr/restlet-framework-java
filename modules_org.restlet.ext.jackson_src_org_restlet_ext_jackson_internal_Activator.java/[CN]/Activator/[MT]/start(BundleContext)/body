@@ -1,0 +1,44 @@
+{
+  ServiceReference inputFactoryServiceReference=bundleContext.getServiceReference("org.codehaus.stax2.osgi.Stax2InputFactoryProvider");
+  if (inputFactoryServiceReference != null) {
+    Stax2InputFactoryProvider inputFactoryProvider=(Stax2InputFactoryProvider)bundleContext.getService(inputFactoryServiceReference);
+    registerInputFactory(inputFactoryProvider);
+  }
+  ServiceReference outputFactoryServiceReference=bundleContext.getServiceReference("org.codehaus.stax2.osgi.Stax2OutputFactoryProvider");
+  if (outputFactoryServiceReference != null) {
+    Stax2OutputFactoryProvider outputFactoryProvider=(Stax2OutputFactoryProvider)bundleContext.getService(outputFactoryServiceReference);
+    registerOutputFactory(outputFactoryProvider);
+  }
+  bundleContext.addServiceListener(new ServiceListener(){
+    @Override public void serviceChanged(    ServiceEvent serviceEvent){
+switch (serviceEvent.getType()) {
+case ServiceEvent.REGISTERED:
+case ServiceEvent.MODIFIED:
+        ServiceReference serviceReference=serviceEvent.getServiceReference();
+      Stax2InputFactoryProvider factoryProvider=(Stax2InputFactoryProvider)bundleContext.getService(serviceReference);
+    registerInputFactory(factoryProvider);
+  break;
+case ServiceEvent.UNREGISTERING:
+unregisterInputFactory();
+break;
+}
+}
+}
+,"(objectclass=org.codehaus.stax2.osgi.Stax2InputFactoryProvider)");
+bundleContext.addServiceListener(new ServiceListener(){
+@Override public void serviceChanged(ServiceEvent serviceEvent){
+switch (serviceEvent.getType()) {
+case ServiceEvent.REGISTERED:
+case ServiceEvent.MODIFIED:
+ServiceReference serviceReference=serviceEvent.getServiceReference();
+Stax2OutputFactoryProvider factoryProvider=(Stax2OutputFactoryProvider)bundleContext.getService(serviceReference);
+registerOutputFactory(factoryProvider);
+break;
+case ServiceEvent.UNREGISTERING:
+unregisterOutputFactory();
+break;
+}
+}
+}
+,"(objectclass=org.codehaus.stax2.osgi.Stax2OutputFactoryProvider)");
+}

@@ -1,0 +1,15 @@
+{
+  if (callLogs.isEmpty()) {
+    return;
+  }
+  CallLogs logsToPost;
+synchronized (callLogs) {
+    if (callLogs.isEmpty()) {
+      return;
+    }
+    logsToPost=new CallLogs(callLogs.size());
+    logsToPost.addAll(callLogs);
+    callLogs.clear();
+  }
+  postLogs(logsToPost);
+}

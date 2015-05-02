@@ -17,12 +17,13 @@
   }
  else   if (type instanceof ParameterizedType) {
     ParameterizedType t=(ParameterizedType)type;
-    if (t.getActualTypeArguments().length == 1) {
-      return getComponentClass(t.getActualTypeArguments()[0]);
+    if (t.getActualTypeArguments().length != 1) {
+      throw new UnsupportedTypeException("Type " + type + " is a generic type with zero or several arguments. This is not supported.");
     }
- else {
-      throw new UnsupportedTypeException("Type " + type + " is a generic type with several arguments. This is not supported.");
+    if (t.getActualTypeArguments()[0] instanceof TypeVariable) {
+      throw new UnsupportedTypeException("Type " + type + " is a generic type with unkwnown type. This is not supported.");
     }
+    return getComponentClass(t.getActualTypeArguments()[0]);
   }
   return (type != null) ? type.getClass() : null;
 }

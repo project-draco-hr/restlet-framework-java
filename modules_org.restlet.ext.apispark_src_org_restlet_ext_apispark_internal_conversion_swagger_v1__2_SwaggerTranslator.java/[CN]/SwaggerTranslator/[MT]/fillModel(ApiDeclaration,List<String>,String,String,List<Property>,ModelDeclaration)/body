@@ -1,0 +1,55 @@
+{
+  md.setId(model);
+  md.setDescription(description);
+  for (  Property prop : properties) {
+    String type=prop.getType();
+    boolean composite=Types.isCompositeType(type);
+    if (composite) {
+      type=model + StringUtils.firstUpper(prop.getName());
+    }
+    if (prop.getMinOccurs() > 0) {
+      md.getRequired().add(prop.getName());
+    }
+    if (!Types.isPrimitiveType(type) && !usedModelsList.contains(type)) {
+      usedModelsList.add(type);
+    }
+    TypePropertyDeclaration tpd=new TypePropertyDeclaration();
+    tpd.setDescription(prop.getDescription());
+    tpd.setEnum_(prop.getEnumeration());
+    if (prop.getMaxOccurs() > 1 || prop.getMaxOccurs() == -1) {
+      tpd.setType("array");
+      tpd.setItems(new ItemsDeclaration());
+      if (Types.isPrimitiveType(type)) {
+        SwaggerTypeFormat swaggerTypeFormat=SwaggerTypes.toSwaggerType(type);
+        tpd.getItems().setType(swaggerTypeFormat.getType());
+        tpd.getItems().setFormat(swaggerTypeFormat.getFormat());
+      }
+ else {
+        tpd.getItems().setRef(type);
+        if (composite) {
+          ModelDeclaration m=new ModelDeclaration();
+          fillModel(apiDeclaration,usedModelsList,type,null,prop.getProperties(),m);
+        }
+      }
+    }
+ else {
+      if (Types.isPrimitiveType(type)) {
+        SwaggerTypeFormat swaggerTypeFormat=SwaggerTypes.toSwaggerType(type);
+        tpd.setType(swaggerTypeFormat.getType());
+        tpd.setFormat(swaggerTypeFormat.getFormat());
+      }
+ else {
+        tpd.setRef(type);
+        if (composite) {
+          ModelDeclaration m=new ModelDeclaration();
+          fillModel(apiDeclaration,usedModelsList,type,null,prop.getProperties(),m);
+        }
+      }
+    }
+    tpd.setMaximum(prop.getMax());
+    tpd.setMinimum(prop.getMin());
+    tpd.setUniqueItems(prop.isUniqueItems());
+    md.getProperties().put(prop.getName(),tpd);
+  }
+  apiDeclaration.getModels().put(md.getId(),md);
+}

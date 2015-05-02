@@ -1,0 +1,15 @@
+{
+  assertEquals(savedModel.getDescription(),translatedModel.getDescription());
+  assertEquals(savedModel.getExample(),translatedModel.getExample());
+  Map<String,com.wordnik.swagger.models.properties.Property> savedProperties=savedModel.getProperties();
+  Map<String,com.wordnik.swagger.models.properties.Property> translatedProperties=translatedModel.getProperties();
+  for (  Entry<String,com.wordnik.swagger.models.properties.Property> entry : savedProperties.entrySet()) {
+    com.wordnik.swagger.models.properties.Property savedProperty=savedProperties.get(entry.getKey());
+    com.wordnik.swagger.models.properties.Property translatedProperty=translatedProperties.get(entry.getKey());
+    assertNotNull(savedProperty);
+    if (translatedProperty == null) {
+      assertNotNull(translatedProperty);
+    }
+    compareSwaggerProperties(savedProperty,translatedProperty);
+  }
+}

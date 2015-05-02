@@ -1,0 +1,28 @@
+{
+  PayLoad outRepr=null;
+  for (  Response response : operation.getResponses()) {
+    if (Status.isSuccess(response.getCode())) {
+      outRepr=response.getOutputPayLoad();
+    }
+  }
+  if (outRepr != null && outRepr.getType() != null) {
+    if (outRepr.isArray()) {
+      rod.setType("array");
+      if (Types.isPrimitiveType(outRepr.getType())) {
+        SwaggerTypeFormat swaggerTypeFormat=SwaggerTypes.toSwaggerType(outRepr.getType());
+        rod.getItems().setType(swaggerTypeFormat.getType());
+        rod.getItems().setFormat(swaggerTypeFormat.getFormat());
+      }
+ else {
+        rod.getItems().setRef(outRepr.getType());
+      }
+    }
+ else {
+      rod.setType(outRepr.getType());
+    }
+    usedModels.add(outRepr.getType());
+  }
+ else {
+    rod.setType("void");
+  }
+}

@@ -1,0 +1,15 @@
+{
+  analyticsClientResource=AgentUtils.getClientResource(apiSparkConfig,modulesSettings,AnalyticsResource.class,AnalyticsModule.ANALYTICS_PATH);
+  callLogs=Collections.synchronizedList(Lists.<CallLog>newArrayListWithExpectedSize(bufferSize));
+  bufferSize=apiSparkConfig.getAgentAnalyticsBufferSize();
+  executorService=new ThreadPoolExecutor(1,THREAD_MAX_NUMBER,0L,TimeUnit.SECONDS,new LinkedBlockingQueue<Runnable>(bufferSize),new ThreadFactoryBuilder().setNameFormat("analytics-poster-%d").build());
+  postPeriodInSecond=apiSparkConfig.getAgentAnalyticsPostPeriodInSecond();
+  long postPeriodInMs=TimeUnit.SECONDS.toMillis(postPeriodInSecond);
+  asyncPostTimer=new Timer();
+  asyncPostTimer.schedule(new TimerTask(){
+    @Override public void run(){
+      flushLogs();
+    }
+  }
+,postPeriodInMs,postPeriodInMs);
+}

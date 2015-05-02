@@ -1,0 +1,24 @@
+{
+  Definition definition=createDefinition();
+  Representation rep=definition.getContract().getRepresentation("nameRepresentation1");
+  Property compositeProperty=new Property();
+  compositeProperty.setName("myCompositeType");
+  compositeProperty.setDescription("description");
+  compositeProperty.setType(Types.compositeType);
+  rep.getProperties().add(compositeProperty);
+  Property nameProperty=new Property();
+  nameProperty.setName("name");
+  nameProperty.setDescription("description");
+  nameProperty.setType("string");
+  compositeProperty.getProperties().add(nameProperty);
+  Swagger swagger=Swagger2Translator.getSwagger(definition);
+  Model model1=swagger.getDefinitions().get("nameRepresentation1");
+  assertNotNull(model1);
+  RefProperty swaggerProperty=(RefProperty)model1.getProperties().get("myCompositeType");
+  assertNotNull(swaggerProperty);
+  assertEquals("#/definitions/nameRepresentation1MyCompositeType",swaggerProperty.get$ref());
+  Model model2=swagger.getDefinitions().get("nameRepresentation1MyCompositeType");
+  assertNotNull(model2);
+  assertEquals(1,model2.getProperties().size());
+  assertNotNull(model2.getProperties().get("name"));
+}

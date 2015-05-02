@@ -1,0 +1,23 @@
+{
+  for (int attemptNumber=1; attemptNumber <= MAX_ATTEMPTS + 1; attemptNumber++) {
+    try {
+      analyticsClientResource.postLogs(logsToPost);
+      LOGGER.fine(logsToPost.size() + " call logs sent to the analytics service.");
+      break;
+    }
+ catch (    Exception e) {
+      if (attemptNumber == MAX_ATTEMPTS) {
+        LOGGER.severe("Posting " + logsToPost.size() + " call logs failed permanently after "+ MAX_ATTEMPTS+ " attempts.");
+        errorSendLog(logsToPost);
+      }
+ else {
+        LOGGER.warning("Error sending " + logsToPost.size() + " call logs to the analytics service during attempt n??"+ attemptNumber+ " because \""+ e.getMessage()+ "\".");
+        try {
+          Thread.sleep(getRetryTime(attemptNumber));
+        }
+ catch (        InterruptedException e1) {
+        }
+      }
+    }
+  }
+}

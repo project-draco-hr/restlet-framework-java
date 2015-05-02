@@ -1,0 +1,40 @@
+{
+  List<IntrospectionHelper> introspectionHelpers=IntrospectionUtils.getIntrospectionHelpers();
+  Definition definition=new Definition();
+  CollectInfo collectInfo=new CollectInfo();
+  collectInfo.setUseSectionNamingPackageStrategy(useSectionNamingPackageStrategy);
+  if (baseRef != null) {
+    collectInfo.setApplicationPath(baseRef.getPath());
+  }
+ else   if (application != null) {
+    ApplicationPath applicationPath=application.getClass().getAnnotation(ApplicationPath.class);
+    if (applicationPath != null) {
+      collectInfo.setApplicationPath(applicationPath.value());
+    }
+  }
+  List<Class> allResources=getAllResources(application,resources);
+  scanResources(collectInfo,allResources,introspectionHelpers);
+  if (applicationName != null) {
+    collectInfo.setApplicationName(applicationName);
+  }
+ else   if (application != null) {
+    collectInfo.setApplicationName(application.getClass().getName());
+  }
+ else {
+    collectInfo.setApplicationName("JAXRS-Application");
+  }
+  updateDefinitionContract(collectInfo,application,definition);
+  Contract contract=definition.getContract();
+  contract.setResources(collectInfo.getResources());
+  contract.setRepresentations(collectInfo.getRepresentations());
+  contract.setSections(collectInfo.getSections());
+  addEndpoints(collectInfo.getApplicationPath(),definition);
+  sortDefinition(definition);
+  updateRepresentationsSectionsFromResources(definition);
+  if (application != null) {
+    for (    IntrospectionHelper helper : introspectionHelpers) {
+      helper.processDefinition(definition,application.getClass());
+    }
+  }
+  return definition;
+}

@@ -1,0 +1,61 @@
+{
+  modelSwagger.setName(name);
+  modelSwagger.setDescription(description);
+  for (  Property property : properties) {
+    com.wordnik.swagger.models.properties.Property propertySwagger;
+    Object exampleObject=SampleUtils.getPropertyExampleValue(property);
+    String example=exampleObject == null ? null : exampleObject.toString();
+    if (property.getMaxOccurs() != null && (property.getMaxOccurs() > 1 || property.getMaxOccurs() == -1)) {
+      ArrayProperty arrayProperty=new ArrayProperty();
+      com.wordnik.swagger.models.properties.Property itemProperty;
+      if (Types.isCompositeType(property.getType())) {
+        String compositePropertyType=name + StringUtils.firstUpper(property.getName());
+        itemProperty=newPropertyForType(compositePropertyType);
+        ModelImpl ms=new ModelImpl();
+        fillModel(compositePropertyType,null,property.getProperties(),swagger,ms);
+      }
+ else {
+        itemProperty=newPropertyForType(property.getType());
+      }
+      itemProperty.setExample(example);
+      arrayProperty.setItems(itemProperty);
+      propertySwagger=arrayProperty;
+    }
+ else {
+      if (Types.isCompositeType(property.getType())) {
+        String compositePropertyType=name + StringUtils.firstUpper(property.getName());
+        propertySwagger=newPropertyForType(compositePropertyType);
+        ModelImpl ms=new ModelImpl();
+        fillModel(compositePropertyType,null,property.getProperties(),swagger,ms);
+        propertySwagger.setExample(example);
+      }
+ else {
+        propertySwagger=newPropertyForType(property.getType());
+        propertySwagger.setExample(example);
+      }
+    }
+    propertySwagger.setName(property.getName());
+    propertySwagger.setDescription(property.getDescription());
+    if (propertySwagger instanceof AbstractNumericProperty) {
+      AbstractNumericProperty abstractNumericProperty=(AbstractNumericProperty)propertySwagger;
+      try {
+        if (property.getMin() != null) {
+          abstractNumericProperty.setMinimum(Double.valueOf(property.getMin()));
+        }
+      }
+ catch (      NumberFormatException e) {
+        LOGGER.warning("Min property is not a number: " + property.getMin());
+      }
+      try {
+        if (property.getMax() != null) {
+          abstractNumericProperty.setMaximum(Double.valueOf(property.getMax()));
+        }
+      }
+ catch (      NumberFormatException e) {
+        LOGGER.warning("Max property is not a number: " + property.getMax());
+      }
+    }
+    modelSwagger.property(property.getName(),propertySwagger);
+  }
+  swagger.addDefinition(modelSwagger.getName(),modelSwagger);
+}

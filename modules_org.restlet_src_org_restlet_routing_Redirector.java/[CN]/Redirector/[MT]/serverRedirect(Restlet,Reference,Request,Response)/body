@@ -7,10 +7,10 @@
     Reference baseRef=resourceRef.getBaseRef();
     request.setProtocol(null);
     request.setResourceRef(targetRef);
-    request.getAttributes().remove(HeaderConstants.ATTRIBUTE_HEADERS);
+    rewrite(request);
     next.handle(request,response);
     response.setEntity(rewrite(response.getEntity()));
-    response.getAttributes().remove(HeaderConstants.ATTRIBUTE_HEADERS);
+    rewrite(response);
     request.setResourceRef(resourceRef);
     if (response.getLocationRef() != null) {
       Template rt=new Template(this.targetTemplate);

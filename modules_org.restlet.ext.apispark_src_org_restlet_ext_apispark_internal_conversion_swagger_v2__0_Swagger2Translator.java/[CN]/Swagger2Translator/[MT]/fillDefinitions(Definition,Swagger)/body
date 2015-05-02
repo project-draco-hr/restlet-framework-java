@@ -8,46 +8,6 @@
       continue;
     }
     ModelImpl modelSwagger=new ModelImpl();
-    modelSwagger.setName(representation.getName());
-    modelSwagger.setDescription(representation.getDescription());
-    for (    Property property : representation.getProperties()) {
-      com.wordnik.swagger.models.properties.Property propertySwagger;
-      Object exampleObject=SampleUtils.getFieldSampleValue(property);
-      String example=exampleObject == null ? null : exampleObject.toString();
-      if (property.getMaxOccurs() != null && (property.getMaxOccurs() > 1 || property.getMaxOccurs() == -1)) {
-        ArrayProperty arrayProperty=new ArrayProperty();
-        com.wordnik.swagger.models.properties.Property itemProperty=newPropertyForType(property.getType());
-        itemProperty.setExample(example);
-        arrayProperty.setItems(itemProperty);
-        propertySwagger=arrayProperty;
-      }
- else {
-        propertySwagger=newPropertyForType(property.getType());
-        propertySwagger.setExample(example);
-      }
-      propertySwagger.setName(property.getName());
-      propertySwagger.setDescription(property.getDescription());
-      if (propertySwagger instanceof AbstractNumericProperty) {
-        AbstractNumericProperty abstractNumericProperty=(AbstractNumericProperty)propertySwagger;
-        try {
-          if (property.getMin() != null) {
-            abstractNumericProperty.setMinimum(Double.valueOf(property.getMin()));
-          }
-        }
- catch (        NumberFormatException e) {
-          LOGGER.warning("Min property is not a number: " + property.getMin());
-        }
-        try {
-          if (property.getMax() != null) {
-            abstractNumericProperty.setMaximum(Double.valueOf(property.getMax()));
-          }
-        }
- catch (        NumberFormatException e) {
-          LOGGER.warning("Max property is not a number: " + property.getMax());
-        }
-      }
-      modelSwagger.property(property.getName(),propertySwagger);
-    }
-    swagger.addDefinition(modelSwagger.getName(),modelSwagger);
+    fillModel(representation.getName(),representation.getDescription(),representation.getProperties(),swagger,modelSwagger);
   }
 }

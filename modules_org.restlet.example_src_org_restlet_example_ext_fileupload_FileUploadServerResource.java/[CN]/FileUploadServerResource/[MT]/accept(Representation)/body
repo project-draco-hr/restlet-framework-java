@@ -1,0 +1,31 @@
+{
+  Representation result=null;
+  if (entity != null && MediaType.MULTIPART_FORM_DATA.equals(entity.getMediaType(),true)) {
+    DiskFileItemFactory factory=new DiskFileItemFactory();
+    factory.setSizeThreshold(1000240);
+    RestletFileUpload upload=new RestletFileUpload(factory);
+    FileItemIterator fileIterator=upload.getItemIterator(entity);
+    boolean found=false;
+    while (fileIterator.hasNext() && !found) {
+      FileItemStream fi=fileIterator.next();
+      if (fi.getFieldName().equals("fileToUpload")) {
+        found=true;
+        StringBuilder sb=new StringBuilder("media type: ");
+        sb.append(fi.getContentType()).append("\n");
+        sb.append("file name : ");
+        sb.append(fi.getName()).append("\n");
+        BufferedReader br=new BufferedReader(new InputStreamReader(fi.openStream()));
+        String line=null;
+        while ((line=br.readLine()) != null) {
+          sb.append(line);
+        }
+        sb.append("\n");
+        result=new StringRepresentation(sb.toString(),MediaType.TEXT_PLAIN);
+      }
+    }
+  }
+ else {
+    setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+  }
+  return result;
+}

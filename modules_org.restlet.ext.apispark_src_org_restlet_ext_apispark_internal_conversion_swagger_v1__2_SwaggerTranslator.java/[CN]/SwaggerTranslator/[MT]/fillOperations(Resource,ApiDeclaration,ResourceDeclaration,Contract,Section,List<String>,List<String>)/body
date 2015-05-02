@@ -1,7 +1,7 @@
 {
   List<String> apiProduces=apiDeclaration.getProduces();
   List<String> apiConsumes=apiDeclaration.getConsumes();
-  Map<String,List<String>> subtypes=new HashMap<String,List<String>>();
+  Map<String,List<String>> subtypes=new HashMap<>();
   Representation representation;
   Operation operation;
   for (  ResourceOperationDeclaration swaggerOperation : api.getOperations()) {
@@ -10,7 +10,7 @@
     operation.setMethod(swaggerOperation.getMethod());
     operation.setName(swaggerOperation.getNickname());
     operation.setDescription(swaggerOperation.getSummary());
-    fillVariants(contract,section,operation,swaggerOperation,apiProduces,apiConsumes);
+    fillVariants(operation,swaggerOperation,apiProduces,apiConsumes);
     Response success=new Response();
     success.setCode(Status.SUCCESS_OK.getCode());
     success.setDescription("Success");

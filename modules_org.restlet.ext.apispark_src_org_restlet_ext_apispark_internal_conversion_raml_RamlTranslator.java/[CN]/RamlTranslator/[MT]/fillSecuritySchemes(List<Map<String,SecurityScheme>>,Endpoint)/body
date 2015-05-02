@@ -1,0 +1,23 @@
+{
+  Map<String,SecurityScheme> securitySchemes=new HashMap<String,SecurityScheme>();
+  SecurityScheme securityScheme=new SecurityScheme();
+  if (endpoint != null) {
+    if (ChallengeScheme.HTTP_BASIC.equals(endpoint.getAuthenticationProtocol())) {
+      securityScheme.setType(ChallengeScheme.HTTP_BASIC.getName());
+      securitySchemes.put(ChallengeScheme.HTTP_BASIC.getName(),securityScheme);
+    }
+ else     if (ChallengeScheme.HTTP_OAUTH.equals(endpoint.getAuthenticationProtocol()) || ChallengeScheme.HTTP_OAUTH_BEARER.equals(endpoint.getAuthenticationProtocol()) || ChallengeScheme.HTTP_OAUTH_MAC.equals(endpoint.getAuthenticationProtocol())) {
+      securityScheme.setType("Oauth 2.0");
+      securitySchemes.put("oauth_2_0",securityScheme);
+    }
+ else     if (ChallengeScheme.HTTP_DIGEST.equals(endpoint.getAuthenticationProtocol())) {
+      securityScheme.setType(ChallengeScheme.HTTP_DIGEST.getName());
+      securitySchemes.put(ChallengeScheme.HTTP_DIGEST.getName(),securityScheme);
+    }
+ else     if (ChallengeScheme.CUSTOM.equals(endpoint.getAuthenticationProtocol())) {
+      securityScheme.setType(ChallengeScheme.CUSTOM.getName());
+      securitySchemes.put(ChallengeScheme.CUSTOM.getName(),securityScheme);
+    }
+    securitySchemesList.add(securitySchemes);
+  }
+}

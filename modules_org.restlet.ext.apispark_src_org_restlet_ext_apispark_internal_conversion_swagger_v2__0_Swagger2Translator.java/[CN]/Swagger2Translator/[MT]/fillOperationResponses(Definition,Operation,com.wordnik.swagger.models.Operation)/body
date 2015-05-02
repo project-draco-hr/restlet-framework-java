@@ -1,7 +1,8 @@
 {
   for (  Response response : operation.getResponses()) {
     com.wordnik.swagger.models.Response responseSwagger=new com.wordnik.swagger.models.Response();
-    responseSwagger.setDescription(response.getDescription());
+    String description=response.getDescription();
+    responseSwagger.setDescription((description != null) ? description : response.getCode() + " status response");
     if (response.getOutputPayLoad() != null && response.getOutputPayLoad().getType() != null) {
       PayLoad entity=response.getOutputPayLoad();
       final Representation representation=definition.getContract().getRepresentation(entity.getType());

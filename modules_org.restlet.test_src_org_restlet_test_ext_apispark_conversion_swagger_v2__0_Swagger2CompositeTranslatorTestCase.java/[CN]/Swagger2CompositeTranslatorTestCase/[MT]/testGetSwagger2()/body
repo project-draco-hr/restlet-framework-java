@@ -1,0 +1,8 @@
+{
+  Definition savedDefinition=new JacksonRepresentation<>(new FileRepresentation(getClass().getResource("refImpl.composite.rwadef").getFile(),MediaType.APPLICATION_JSON),Definition.class).getObject();
+  Swagger translatedSwagger=Swagger2Translator.getSwagger(savedDefinition);
+  URL refImpl=getClass().getResource("refImpl.composite.swagger");
+  Swagger savedSwagger=SwaggerLoader.readJson(refImpl.getFile());
+  compareSwaggerBeans(savedSwagger,translatedSwagger);
+  compareSwaggerBeans(translatedSwagger,savedSwagger);
+}

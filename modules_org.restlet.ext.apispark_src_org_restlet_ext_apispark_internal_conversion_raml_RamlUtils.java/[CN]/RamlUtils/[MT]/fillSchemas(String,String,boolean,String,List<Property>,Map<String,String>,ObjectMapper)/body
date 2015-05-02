@@ -1,0 +1,60 @@
+{
+  ObjectSchema objectSchema=new ObjectSchema();
+  objectSchema.setTitle(name);
+  objectSchema.setDescription(description);
+  if (!isRaw) {
+    if (extendedType != null) {
+      JsonSchema[] extended=new JsonSchema[1];
+      SimpleTypeSchema typeExtended=new ObjectSchema();
+      typeExtended.set$ref(extendedType);
+      extended[0]=typeExtended;
+      objectSchema.setExtends(extended);
+    }
+    objectSchema.setProperties(new HashMap<String,JsonSchema>());
+    for (    Property property : properties) {
+      String type=property.getType();
+      if (property.getMaxOccurs() != 1) {
+        ArraySchema array=new ArraySchema();
+        array.setTitle(property.getName());
+        array.setRequired(property.getMinOccurs() > 0);
+        array.setUniqueItems(property.isUniqueItems());
+        if (isPrimitiveType(type)) {
+          Property prop=new Property();
+          prop.setName(property.getName());
+          prop.setType(type);
+          array.setItemsSchema(generatePrimitiveSchema(prop));
+        }
+ else {
+          if (Types.isCompositeType(type)) {
+            type=name + StringUtils.firstUpper(property.getName());
+            fillSchemas(type,null,false,null,property.getProperties(),schemas,m);
+          }
+          SimpleTypeSchema reference=new ObjectSchema();
+          reference.set$ref("#/schemas/" + type);
+          array.setItemsSchema(reference);
+        }
+        objectSchema.getProperties().put(array.getTitle(),array);
+      }
+ else       if (isPrimitiveType(type)) {
+        SimpleTypeSchema primitive=generatePrimitiveSchema(property);
+        primitive.setRequired(property.getMinOccurs() > 0);
+        if (property.getDefaultValue() != null) {
+          primitive.setDefault(property.getDefaultValue());
+        }
+        objectSchema.getProperties().put(property.getName(),primitive);
+      }
+ else {
+        if (Types.isCompositeType(type)) {
+          type=name + StringUtils.firstUpper(property.getName());
+          fillSchemas(type,null,false,null,property.getProperties(),schemas,m);
+        }
+        SimpleTypeSchema propertySchema=new ObjectSchema();
+        propertySchema.setTitle(property.getName());
+        propertySchema.set$ref("#/schemas/" + type);
+        propertySchema.setRequired(property.getMinOccurs() > 0);
+        objectSchema.getProperties().put(propertySchema.getTitle(),propertySchema);
+      }
+    }
+  }
+  schemas.put(name,m.writeValueAsString(objectSchema));
+}

@@ -66,7 +66,7 @@
         request.getResourceRef().addQueryParameters(queryParams);
       }
       request.setEntity(requestEntity);
-      if ((request.getClientInfo().getAcceptedCharacterSets().size() == 0) && (request.getClientInfo().getAcceptedEncodings().size() == 0) && (request.getClientInfo().getAcceptedLanguages().size() == 0)&& (request.getClientInfo().getAcceptedMediaTypes().size() == 0)) {
+      if ((request.getClientInfo().getAcceptedCharacterSets().isEmpty()) && (request.getClientInfo().getAcceptedEncodings().isEmpty()) && (request.getClientInfo().getAcceptedLanguages().isEmpty())&& (request.getClientInfo().getAcceptedMediaTypes().isEmpty())) {
         List<Variant> responseVariants=annotationInfo.getResponseVariants(getClientResource().getMetadataService(),getClientResource().getConverterService());
         if (responseVariants != null) {
           request.setClientInfo(new ClientInfo(responseVariants));
@@ -98,12 +98,6 @@
             }
             if (t != null) {
               throw t;
-            }
-          }
- else           if (response.isEntityAvailable()) {
-            StatusInfo si=getClientResource().toObject(response.getEntity(),StatusInfo.class);
-            if (si != null) {
-              response.setStatus(new Status(si.getCode(),si.getReasonPhrase(),si.getDescription()));
             }
           }
           getClientResource().doError(response.getStatus());

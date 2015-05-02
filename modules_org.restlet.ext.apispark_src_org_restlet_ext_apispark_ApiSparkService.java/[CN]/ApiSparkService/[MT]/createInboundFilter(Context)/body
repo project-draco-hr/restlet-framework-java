@@ -7,5 +7,15 @@
   apiSparkConfig.setAgentPassword(agentPassword);
   apiSparkConfig.setReverseProxyEnabled(reverseProxyEnabled);
   apiSparkConfig.setReverseProxyTargetUrl(reverseProxyTargetUrl);
-  return new ApiSparkFilter(context,apiSparkConfig,agentEnabled,firewallEnabled,firewallRules,firewallConfig);
+  apiSparkConfig.setAgentAnalyticsBufferSize(agentAnalyticsBufferSize);
+  apiSparkConfig.setAgentAnalyticsPostPeriodInSecond(agentAnalyticsPostPeriodInSecond);
+  apiSparkFilter=new ApiSparkFilter(context,apiSparkConfig,agentEnabled,firewallEnabled,firewallRules);
+  if (agentEnabled && agentRefreshPeriodInSecond > 0) {
+    TimerTask task=new AgentConfigurationTimerTask(apiSparkFilter);
+    agentRefreshTimer=new Timer(true);
+    long agentRefreshPeriodInMs=TimeUnit.SECONDS.toMillis(agentRefreshPeriodInSecond);
+    agentRefreshTimer.scheduleAtFixedRate(task,agentRefreshPeriodInMs,agentRefreshPeriodInMs);
+    LOGGER.info("Setting agent refresh timer every " + TimeUnit.SECONDS.toMinutes(agentRefreshPeriodInSecond) + " minutes");
+  }
+  return apiSparkFilter;
 }

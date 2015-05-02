@@ -1,0 +1,13 @@
+{
+  MockModulesSettingsServerResource.MODULES_SETTINGS.setAnalyticsModuleEnabled(true);
+  MockAnalyticsServerResource.BROKEN=true;
+  ApiSparkService apiSparkService=getAgentService();
+  apiSparkService.setAgentAnalyticsBufferSize(1);
+  startApiSparkService(apiSparkService,true);
+  assertEquals(0,MockAnalyticsServerResource.GET_ANALYTICS_COUNT);
+  assertEquals(0,MockAnalyticsServerResource.GET_CALLLOG_COUNT);
+  callAgent("/test",VALID_USERNAME,VALID_PASSWORD);
+  Thread.sleep(1500);
+  assertTrue("expected count >= 2, current count: " + MockAnalyticsServerResource.GET_ANALYTICS_COUNT,MockAnalyticsServerResource.GET_ANALYTICS_COUNT >= 2);
+  assertEquals(0,MockAnalyticsServerResource.GET_CALLLOG_COUNT);
+}

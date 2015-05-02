@@ -1,0 +1,13 @@
+{
+  MockModulesSettingsServerResource.MODULES_SETTINGS.setAnalyticsModuleEnabled(true);
+  ApiSparkService apiSparkService=getAgentService();
+  apiSparkService.setAgentAnalyticsPostPeriodInSecond(2);
+  apiSparkService.createInboundFilter(null);
+  startApiSparkService(apiSparkService,true);
+  assertEquals(0,MockAnalyticsServerResource.GET_ANALYTICS_COUNT);
+  assertEquals(0,MockAnalyticsServerResource.GET_CALLLOG_COUNT);
+  callAgent("/test",VALID_USERNAME,VALID_PASSWORD);
+  Thread.sleep(TimeUnit.SECONDS.toMillis(3));
+  assertEquals(1,MockAnalyticsServerResource.GET_ANALYTICS_COUNT);
+  assertEquals(1,MockAnalyticsServerResource.GET_CALLLOG_COUNT);
+}

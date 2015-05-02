@@ -1,0 +1,22 @@
+{
+  Router router=new QueryRouter(getContext());
+  Restlet restletHello=new Restlet(){
+    @Override public void handle(    Request request,    Response response){
+      response.setEntity("Hello.",MediaType.TEXT_PLAIN);
+    }
+  }
+;
+  Restlet restletBye=new Restlet(){
+    @Override public void handle(    Request request,    Response response){
+      response.setEntity("Bye",MediaType.TEXT_PLAIN);
+    }
+  }
+;
+  TemplateRoute logonRoute=router.attach("/path",restletHello);
+  Map<String,Variable> logonVariables=logonRoute.getTemplate().getVariables();
+  logonVariables.put("q",new Variable(Variable.TYPE_URI_QUERY,"hello",true,true));
+  TemplateRoute logoutRoute=router.attach("/path",restletBye);
+  Map<String,Variable> logoutVariables=logoutRoute.getTemplate().getVariables();
+  logoutVariables.put("q",new Variable(Variable.TYPE_URI_QUERY,"bye",true,true));
+  return router;
+}

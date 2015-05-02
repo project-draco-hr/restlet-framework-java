@@ -1,0 +1,12 @@
+{
+  Series<Header> headers=message.getHeaders();
+  Series<Header> extensionHeaders=new Series<Header>(Header.class);
+  for (  Header header : headers) {
+    if (!STANDARD_HEADERS.contains(header.getName())) {
+      extensionHeaders.add(header);
+    }
+  }
+  if (!extensionHeaders.isEmpty()) {
+    message.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,extensionHeaders);
+  }
+}

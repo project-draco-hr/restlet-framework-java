@@ -1,0 +1,9 @@
+{
+  try {
+    executorService.execute(new AsyncCallLogsPostTask(logsToPost));
+  }
+ catch (  RejectedExecutionException e) {
+    LOGGER.severe("Posting " + logsToPost.size() + " call logs failed permanently due to \""+ e.getCause().getMessage()+ "\".");
+    errorSendLog(logsToPost);
+  }
+}

@@ -1,0 +1,10 @@
+{
+  Map<String,SecuritySchemeDefinition> securitySchemes=new HashMap<>();
+  String httpBasic=ChallengeScheme.HTTP_BASIC.getName();
+  for (  Endpoint endpoint : definition.getEndpoints()) {
+    if (httpBasic.equals(endpoint.getAuthenticationProtocol())) {
+      securitySchemes.put(httpBasic,new BasicAuthDefinition());
+    }
+  }
+  swagger.setSecurityDefinitions(securitySchemes.isEmpty() ? null : securitySchemes);
+}

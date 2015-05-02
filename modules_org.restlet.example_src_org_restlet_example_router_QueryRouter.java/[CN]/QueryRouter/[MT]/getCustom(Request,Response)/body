@@ -1,0 +1,25 @@
+{
+  Form form=request.getResourceRef().getQueryAsForm();
+  Route result=null;
+  float bestScore=0F;
+  float score;
+  for (  Route route : getRoutes()) {
+    TemplateRoute current=(TemplateRoute)route;
+    score=current.score(request,response);
+    if ((score > bestScore)) {
+      boolean fit=true;
+      for (      Entry<String,Variable> entry : current.getTemplate().getVariables().entrySet()) {
+        String formValue=form.getFirstValue(entry.getKey());
+        if (formValue == null || !formValue.equals(entry.getValue().getDefaultValue())) {
+          fit=false;
+          break;
+        }
+      }
+      if (fit) {
+        bestScore=score;
+        result=current;
+      }
+    }
+  }
+  return result;
+}
