@@ -1,6 +1,9 @@
 {
   Representation result=null;
-  if (source instanceof String) {
+  if (source instanceof byte[]) {
+    result=new ByteArrayRepresentation((byte[])source,MediaType.getMostSpecific(target.getMediaType(),MediaType.APPLICATION_OCTET_STREAM));
+  }
+ else   if (source instanceof String) {
     result=new StringRepresentation((String)source,MediaType.getMostSpecific(target.getMediaType(),MediaType.TEXT_PLAIN));
   }
  else   if (source instanceof File) {

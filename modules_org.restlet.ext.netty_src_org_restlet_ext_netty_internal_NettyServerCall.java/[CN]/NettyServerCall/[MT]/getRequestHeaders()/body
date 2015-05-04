@@ -1,0 +1,11 @@
+{
+  final Series<Header> result=super.getRequestHeaders();
+  if (!this.requestHeadersAdded) {
+    final Iterable<Map.Entry<String,String>> headers=getNettyRequest().headers();
+    for (    Map.Entry<String,String> header : headers) {
+      result.add(header.getKey(),header.getValue());
+    }
+    this.requestHeadersAdded=true;
+  }
+  return result;
+}
