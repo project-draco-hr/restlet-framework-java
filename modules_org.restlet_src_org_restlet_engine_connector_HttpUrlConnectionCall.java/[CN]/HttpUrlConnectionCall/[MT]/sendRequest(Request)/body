@@ -20,7 +20,12 @@
     }
     getConnection().setRequestMethod(getMethod());
     for (    Header header : getRequestHeaders()) {
-      getConnection().addRequestProperty(header.getName(),header.getValue());
+      if (header.getValue() != null) {
+        getConnection().addRequestProperty(header.getName(),header.getValue());
+      }
+ else {
+        getHelper().getLogger().info("The following header has a null value and has been discarded: " + header.getName());
+      }
     }
     if ((Edition.CURRENT == Edition.GAE) && (request.getProtocol() == Protocol.SDC)) {
       getConnection().getRequestProperties().remove(HeaderConstants.HEADER_PROXY_AUTHORIZATION);
