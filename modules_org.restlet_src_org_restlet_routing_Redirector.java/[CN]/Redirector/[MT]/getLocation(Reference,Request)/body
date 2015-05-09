@@ -1,0 +1,14 @@
+{
+  Reference resourceRef=request.getResourceRef();
+  Reference baseRef=resourceRef.getBaseRef();
+  Template rt=new Template(this.targetTemplate);
+  rt.setLogger(getLogger());
+  int matched=rt.parse(locationRef.toString(),request);
+  if (matched > 0) {
+    String remainingPart=(String)request.getAttributes().get("rr");
+    if (remainingPart != null) {
+      return baseRef.toString() + remainingPart;
+    }
+  }
+  return null;
+}

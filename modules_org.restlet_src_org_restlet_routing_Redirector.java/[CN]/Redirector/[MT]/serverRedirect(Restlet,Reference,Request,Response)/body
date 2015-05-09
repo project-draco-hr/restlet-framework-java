@@ -4,24 +4,13 @@
   }
  else {
     Reference resourceRef=request.getResourceRef();
-    Reference baseRef=resourceRef.getBaseRef();
     request.setProtocol(null);
     request.setResourceRef(targetRef);
     rewrite(request);
     next.handle(request,response);
+    request.setResourceRef(resourceRef);
     response.setEntity(rewrite(response.getEntity()));
     rewrite(response);
-    request.setResourceRef(resourceRef);
-    if (response.getLocationRef() != null) {
-      Template rt=new Template(this.targetTemplate);
-      rt.setLogger(getLogger());
-      int matched=rt.parse(response.getLocationRef().toString(),request);
-      if (matched > 0) {
-        String remainingPart=(String)request.getAttributes().get("rr");
-        if (remainingPart != null) {
-          response.setLocationRef(baseRef.toString() + remainingPart);
-        }
-      }
-    }
+    rewriteLocation(request,response);
   }
 }
