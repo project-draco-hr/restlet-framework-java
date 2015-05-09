@@ -3,7 +3,7 @@
   boolean queryModified=false;
   Reference resourceRef=request.getResourceRef();
   if (resourceRef.hasQuery()) {
-    Form query=resourceRef.getQueryAsForm();
+    Form query=resourceRef.getQueryAsForm(CharacterSet.UTF_8);
     Method method=request.getMethod();
     if (tunnelService.isMethodTunnel()) {
       String methodName=query.getFirstValue(tunnelService.getMethodParameter());
@@ -62,7 +62,7 @@
       }
     }
     if (queryModified) {
-      request.getResourceRef().setQuery(query.getQueryString(null));
+      request.getResourceRef().setQuery(query.getQueryString(CharacterSet.UTF_8));
     }
   }
   return queryModified;

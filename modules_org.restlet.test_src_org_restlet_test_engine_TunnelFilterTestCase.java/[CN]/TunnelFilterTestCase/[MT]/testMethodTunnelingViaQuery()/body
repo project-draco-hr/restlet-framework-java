@@ -1,0 +1,15 @@
+{
+  tunnelFilter.getTunnelService().setExtensionsTunnel(false);
+  tunnelFilter.getTunnelService().setHeadersTunnel(false);
+  tunnelFilter.getTunnelService().setMethodTunnel(false);
+  tunnelFilter.getTunnelService().setPreferencesTunnel(true);
+  tunnelFilter.getTunnelService().setQueryTunnel(true);
+  tunnelFilter.getTunnelService().setUserAgentTunnel(false);
+  createGet(QUERY);
+  this.tunnelFilter.beforeHandle(this.request,this.response);
+  assertEquals(QUERY,this.request.getResourceRef().toString());
+  createGet(QUERY_PREF);
+  this.tunnelFilter.beforeHandle(this.request,this.response);
+  assertEquals(QUERY,this.request.getResourceRef().toString());
+  assertMediaTypes(MediaType.TEXT_PLAIN);
+}
