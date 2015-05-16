@@ -7,10 +7,9 @@
     result=clientResource;
   }
  else {
-    MethodAnnotationInfo annotationInfo=getAnnotationUtils().getMethodAnnotation(annotations,javaMethod);
+    MethodAnnotationInfo annotationInfo=getAnnotationUtils().getMethodAnnotation(getAnnotations(),javaMethod);
     if (annotationInfo != null) {
       Representation requestEntity=null;
-      boolean isSynchronous=true;
       if ((args != null) && args.length > 0) {
         for (int i=0; i < args.length; i++) {
           Object o=args[i];
@@ -18,7 +17,6 @@
             requestEntity=null;
           }
  else           if (Result.class.isAssignableFrom(o.getClass())) {
-            isSynchronous=false;
             final Result rCallback=(Result)o;
             Type[] genericParameterTypes=javaMethod.getGenericParameterTypes();
             Type genericParameterType=genericParameterTypes[i];
@@ -54,7 +52,7 @@
             getClientResource().setOnResponse(callback);
           }
  else {
-            requestEntity=getClientResource().toRepresentation(args[i]);
+            requestEntity=getClientResource().toRepresentation(o);
           }
         }
       }
@@ -73,7 +71,7 @@
         }
       }
       Response response=getClientResource().handleOutbound(request);
-      if (isSynchronous) {
+      if (getClientResource().getOnResponse() == null) {
         if ((response != null) && response.getStatus().isError()) {
           ThrowableAnnotationInfo tai=getAnnotationUtils().getThrowableAnnotationInfo(javaMethod,response.getStatus().getCode());
           if (tai != null) {

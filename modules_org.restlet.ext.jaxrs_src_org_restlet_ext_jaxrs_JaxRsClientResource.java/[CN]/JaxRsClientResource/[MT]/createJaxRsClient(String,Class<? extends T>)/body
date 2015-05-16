@@ -4,9 +4,25 @@
     throw new MissingAnnotationException("The resource interface must have the JAX-RS path annotation.");
   }
   String path=pathAnnotation.value();
-  if (path == null || path.length() == 0) {
+  if (StringUtils.isNullOrEmpty(path)) {
     throw new IllegalPathException(pathAnnotation,"The path annotation must have a value.");
   }
-  String fullUriFromPath=baseUri + (baseUri.endsWith("/") ? "" : "/") + path;
+  String fullUriFromPath=baseUri;
+  if (fullUriFromPath.endsWith("/")) {
+    if (path.startsWith("/")) {
+      fullUriFromPath+=path.substring(1);
+    }
+ else {
+      fullUriFromPath+=path;
+    }
+  }
+ else {
+    if (path.startsWith("/")) {
+      fullUriFromPath+=path;
+    }
+ else {
+      fullUriFromPath+="/" + path;
+    }
+  }
   return JaxRsClientResource.createJaxRsClient(null,new Reference(fullUriFromPath),resourceInterface);
 }

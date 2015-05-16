@@ -1,0 +1,76 @@
+{
+  Object result=null;
+  if (javaMethod.equals(Object.class.getMethod("toString"))) {
+    result="ClientProxy for resource: " + clientResource;
+  }
+ else   if (javaMethod.equals(ClientProxy.class.getMethod("getClientResource"))) {
+    result=clientResource;
+  }
+ else {
+    MethodAnnotationInfo annotationInfo=getAnnotationUtils().getMethodAnnotation(getAnnotations(),javaMethod);
+    if (annotationInfo == null) {
+      return result;
+    }
+    Request request=getRequest(javaMethod,args);
+    if ((args != null) && args.length > 0) {
+      Form form=new Form();
+      Annotation[][] parameterAnnotations=javaMethod.getParameterAnnotations();
+      Type[] genericParameterTypes=javaMethod.getGenericParameterTypes();
+      for (int i=0; i < args.length; i++) {
+        Object o=args[i];
+        Type genericParameterType=genericParameterTypes[i];
+        handleJavaMethodParameter(request,o,genericParameterType,parameterAnnotations[i],form);
+      }
+      if (!form.isEmpty()) {
+        request.setEntity(form.getWebRepresentation());
+      }
+    }
+    request.setMethod(annotationInfo.getRestletMethod());
+    String query=annotationInfo.getQuery();
+    if (query != null) {
+      Form queryParams=new Form(annotationInfo.getQuery());
+      request.getResourceRef().addQueryParameters(queryParams);
+    }
+    if ((request.getClientInfo().getAcceptedCharacterSets().isEmpty()) && (request.getClientInfo().getAcceptedEncodings().isEmpty()) && (request.getClientInfo().getAcceptedLanguages().isEmpty())&& (request.getClientInfo().getAcceptedMediaTypes().isEmpty())) {
+      List<Variant> responseVariants=annotationInfo.getResponseVariants(getClientResource().getMetadataService(),getClientResource().getConverterService());
+      if (responseVariants != null) {
+        request.setClientInfo(new ClientInfo(responseVariants));
+      }
+    }
+    Response response=getClientResource().handleOutbound(request);
+    if (getClientResource().getOnResponse() == null) {
+      if ((response != null) && response.getStatus().isError()) {
+        ThrowableAnnotationInfo tai=getAnnotationUtils().getThrowableAnnotationInfo(javaMethod,response.getStatus().getCode());
+        if (tai != null) {
+          Class<?> throwableClazz=tai.getJavaClass();
+          Throwable t=null;
+          if (tai.isSerializable() && response.isEntityAvailable()) {
+            t=(Throwable)getClientResource().toObject(response.getEntity(),throwableClazz);
+          }
+ else {
+            try {
+              t=(Throwable)throwableClazz.newInstance();
+            }
+ catch (            Exception e) {
+              Context.getCurrentLogger().log(Level.FINE,"Unable to instantiate the client-side exception using the default constructor.");
+            }
+            if (response.isEntityAvailable()) {
+              StatusInfo si=getClientResource().toObject(response.getEntity(),StatusInfo.class);
+              if (si != null) {
+                response.setStatus(new Status(si.getCode(),si.getReasonPhrase(),si.getDescription()));
+              }
+            }
+          }
+          if (t != null) {
+            throw t;
+          }
+        }
+        getClientResource().doError(response.getStatus());
+      }
+ else       if (!annotationInfo.getJavaOutputType().equals(void.class)) {
+        result=getClientResource().toObject((response == null ? null : response.getEntity()),annotationInfo.getJavaOutputType());
+      }
+    }
+  }
+  return result;
+}

@@ -2,8 +2,25 @@
   Path methodPathAnnotation=javaMethod.getAnnotation(Path.class);
   if (methodPathAnnotation != null) {
     String methodPath=methodPathAnnotation.value();
-    if (methodPath != null && methodPath.length() > 0) {
-      request.getResourceRef().setPath(request.getResourceRef().getPath() + "/" + methodPath);
+    if (!StringUtils.isNullOrEmpty(methodPath)) {
+      String fullUriFromPath=request.getResourceRef().getPath();
+      if (fullUriFromPath.endsWith("/")) {
+        if (methodPath.startsWith("/")) {
+          fullUriFromPath+=methodPath.substring(1);
+        }
+ else {
+          fullUriFromPath+=methodPath;
+        }
+      }
+ else {
+        if (methodPath.startsWith("/")) {
+          fullUriFromPath+=methodPath;
+        }
+ else {
+          fullUriFromPath+="/" + methodPath;
+        }
+      }
+      request.getResourceRef().setPath(fullUriFromPath);
     }
   }
 }

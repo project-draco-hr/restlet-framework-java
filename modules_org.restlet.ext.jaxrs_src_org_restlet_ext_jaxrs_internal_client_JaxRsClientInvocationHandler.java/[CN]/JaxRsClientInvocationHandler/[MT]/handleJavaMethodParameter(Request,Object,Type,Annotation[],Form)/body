@@ -1,0 +1,65 @@
+{
+  if (value == null) {
+    request.setEntity(null);
+  }
+ else   if (Result.class.isAssignableFrom(value.getClass())) {
+    final Result rCallback=(Result)value;
+    ParameterizedType parameterizedType=(genericParameterType instanceof java.lang.reflect.ParameterizedType) ? (java.lang.reflect.ParameterizedType)genericParameterType : null;
+    final Class<?> actualType=(parameterizedType.getActualTypeArguments()[0] instanceof Class<?>) ? (Class<?>)parameterizedType.getActualTypeArguments()[0] : null;
+    Uniform callback=new Uniform(){
+      @SuppressWarnings("unchecked") public void handle(      Request request,      Response response){
+        if (response.getStatus().isError()) {
+          rCallback.onFailure(new ResourceException(response.getStatus()));
+        }
+ else {
+          if (actualType != null) {
+            Object result=null;
+            boolean serializationError=false;
+            try {
+              result=getClientResource().toObject(response.getEntity(),actualType);
+            }
+ catch (            Exception e) {
+              serializationError=true;
+              rCallback.onFailure(new ResourceException(e));
+            }
+            if (!serializationError) {
+              rCallback.onSuccess(result);
+            }
+          }
+ else {
+            rCallback.onSuccess(null);
+          }
+        }
+      }
+    }
+;
+    getClientResource().setOnResponse(callback);
+  }
+ else   if (annotations != null && annotations.length > 0) {
+    String representationAsText=getRepresentationAsText(value);
+    if (representationAsText != null) {
+      for (      Annotation annotation : annotations) {
+        if (annotation instanceof HeaderParam) {
+          addHeaderParam(request,representationAsText,annotation);
+        }
+ else         if (annotation instanceof QueryParam) {
+          addQueryParam(request,representationAsText,annotation);
+        }
+ else         if (annotation instanceof FormParam) {
+          addFormParam(form,representationAsText,annotation);
+        }
+ else         if (annotation instanceof CookieParam) {
+          addCookieParam(request,representationAsText,annotation);
+        }
+ else         if (annotation instanceof MatrixParam) {
+        }
+ else         if (annotation instanceof PathParam) {
+          addPathParam(request,representationAsText,annotation);
+        }
+      }
+    }
+  }
+ else {
+    request.setEntity(getClientResource().toRepresentation(value));
+  }
+}

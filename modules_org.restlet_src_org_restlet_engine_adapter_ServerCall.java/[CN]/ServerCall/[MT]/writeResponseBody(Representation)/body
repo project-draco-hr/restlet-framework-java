@@ -1,13 +1,17 @@
 {
   OutputStream responseEntityStream=getResponseEntityStream();
-  writeResponseBody(responseEntity,responseEntityStream);
-  if (responseEntityStream != null) {
-    try {
-      responseEntityStream.flush();
-      responseEntityStream.close();
-    }
- catch (    IOException ioe) {
-      getLogger().log(Level.FINE,"Exception while flushing and closing the entity stream.",ioe);
+  try {
+    writeResponseBody(responseEntity,responseEntityStream);
+  }
+  finally {
+    if (responseEntityStream != null) {
+      try {
+        responseEntityStream.flush();
+        responseEntityStream.close();
+      }
+ catch (      IOException ioe) {
+        getLogger().log(Level.FINE,"Exception while flushing and closing the entity stream.",ioe);
+      }
     }
   }
 }
