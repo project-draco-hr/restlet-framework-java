@@ -2,10 +2,13 @@
   if (!SystemUtils.isWindows()) {
     Request request;
     Response response;
+    String uriEssai="http://localhost:" + TEST_PORT + "/testPut/essai.txt";
+    String uriEssai2="http://localhost:" + TEST_PORT + "/testPut/essai2.txt";
+    String uriEssai3="http://localhost:" + TEST_PORT + "/testPut/essai3.txt";
     IoUtils.delete(testDir,true);
-    Client client=new Client(new Context(),Protocol.HTTP);
-    client.getContext().getParameters().add("tracing","true");
-    request=new Request(Method.PUT,"http://localhost:" + TEST_PORT + "/testPut/essai.txt");
+    Client client=new Client(Protocol.HTTP);
+    response=client.handle(new Request(Method.GET,uriEssai));
+    request=new Request(Method.PUT,uriEssai);
     request.setEntity(new StringRepresentation("1234567890"));
     request.setRanges(Arrays.asList(new Range(0,10)));
     response=client.handle(request);
@@ -13,7 +16,7 @@
     response=client.handle(new Request(Method.GET,request.getResourceRef()));
     assertEquals(Status.SUCCESS_OK,response.getStatus());
     assertEquals("1234567890",response.getEntity().getText());
-    request=new Request(Method.PUT,"http://localhost:" + TEST_PORT + "/testPut/essai.txt");
+    request=new Request(Method.PUT,uriEssai);
     request.setEntity(new StringRepresentation("0000000000"));
     request.setRanges(Arrays.asList(new Range(1,10)));
     response=client.handle(request);
@@ -21,7 +24,7 @@
     response=client.handle(new Request(Method.GET,request.getResourceRef()));
     assertEquals(Status.SUCCESS_OK,response.getStatus());
     assertEquals("10000000000",response.getEntity().getText());
-    request=new Request(Method.PUT,"http://localhost:" + TEST_PORT + "/testPut/essai2.txt");
+    request=new Request(Method.PUT,uriEssai2);
     request.setEntity(new StringRepresentation("0000000000"));
     request.setRanges(Arrays.asList(new Range(1,10)));
     response=client.handle(request);
@@ -30,7 +33,7 @@
     response=client.handle(request);
     assertEquals(Status.SUCCESS_PARTIAL_CONTENT,response.getStatus());
     assertEquals("0000000000",response.getEntity().getText());
-    request=new Request(Method.PUT,"http://localhost:" + TEST_PORT + "/testPut/essai.txt");
+    request=new Request(Method.PUT,uriEssai);
     request.setEntity(new StringRepresentation("22"));
     request.setRanges(Arrays.asList(new Range(2,2)));
     response=client.handle(request);
@@ -38,7 +41,7 @@
     response=client.handle(new Request(Method.GET,request.getResourceRef()));
     assertEquals(Status.SUCCESS_OK,response.getStatus());
     assertEquals("10220000000",response.getEntity().getText());
-    request=new Request(Method.PUT,"http://localhost:" + TEST_PORT + "/testPut/essai.txt");
+    request=new Request(Method.PUT,uriEssai);
     request.setEntity(new StringRepresentation("888"));
     request.setRanges(Arrays.asList(new Range(8,Range.SIZE_MAX)));
     response=client.handle(request);
@@ -46,7 +49,7 @@
     response=client.handle(new Request(Method.GET,request.getResourceRef()));
     assertEquals(Status.SUCCESS_OK,response.getStatus());
     assertEquals("10220000888",response.getEntity().getText());
-    request=new Request(Method.PUT,"http://localhost:" + TEST_PORT + "/testPut/essai3.txt");
+    request=new Request(Method.PUT,uriEssai3);
     request.setEntity(new StringRepresentation("888"));
     request.setRanges(Arrays.asList(new Range(8,Range.SIZE_MAX)));
     response=client.handle(request);
@@ -55,7 +58,7 @@
     response=client.handle(request);
     assertEquals(Status.SUCCESS_PARTIAL_CONTENT,response.getStatus());
     assertEquals("888",response.getEntity().getText());
-    request=new Request(Method.PUT,"http://localhost:" + TEST_PORT + "/testPut/essai.txt");
+    request=new Request(Method.PUT,uriEssai);
     request.setEntity(new StringRepresentation("99"));
     request.setRanges(Arrays.asList(new Range(8,Range.SIZE_MAX)));
     response=client.handle(request);
