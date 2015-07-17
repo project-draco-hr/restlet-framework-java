@@ -10,6 +10,11 @@
     smileFactory.configure(Feature.AUTO_CLOSE_TARGET,false);
     result=new ObjectMapper(smileFactory);
   }
+ else   if (MediaType.APPLICATION_CBOR.isCompatible(getMediaType())) {
+    CBORFactory cborFactory=new CBORFactory();
+    cborFactory.configure(Feature.AUTO_CLOSE_TARGET,false);
+    result=new ObjectMapper(cborFactory);
+  }
  else   if (MediaType.APPLICATION_XML.isCompatible(getMediaType()) || MediaType.TEXT_XML.isCompatible(getMediaType())) {
     javax.xml.stream.XMLInputFactory xif=XmlFactoryProvider.newInputFactory();
     xif.setProperty(javax.xml.stream.XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES,isExpandingEntityRefs());
